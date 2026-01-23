@@ -111,11 +111,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          CONFIG_ARGS=()
+          if [ -f .gitleaks.toml ]; then
+            CONFIG_ARGS=(--config .gitleaks.toml)
+          fi
           gitleaks detect \
             --source . \
             --redact \
             --report-format sarif \
             --report-path gitleaks-repo.sarif \
+            "${CONFIG_ARGS[@]}" \
             --exit-code 2
       - name: Gitleaks PR diff scan (SARIF)
         id: pr_scan
@@ -125,10 +130,15 @@ jobs:
           set -euo pipefail
           BASE_SHA="${{ github.event.pull_request.base.sha || 'HEAD~1' }}"
           HEAD_SHA="${{ github.event.pull_request.head.sha || 'HEAD' }}"
+          CONFIG_ARGS=()
+          if [ -f .gitleaks.toml ]; then
+            CONFIG_ARGS=(--config .gitleaks.toml)
+          fi
           gitleaks detect \
             --redact \
             --report-format sarif \
             --report-path gitleaks-pr-diff.sarif \
+            "${CONFIG_ARGS[@]}" \
             --exit-code 2 \
             --log-opts="--no-merges --first-parent ${BASE_SHA}..${HEAD_SHA}"
       - name: Upload repo scan SARIF artifact
