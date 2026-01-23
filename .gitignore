@@ -6,3 +6,7 @@ __pycache__/
 .pytest_cache/
 dist/
 build/
+
+# PR artifacts (should not be tracked)
+PR_DIFF.patch
+PR_SUMMARY.md

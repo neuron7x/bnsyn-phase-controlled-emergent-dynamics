@@ -75,3 +75,52 @@ Baseline validation run performed on: 2026-01-23
 - **Root cause:** Only `validate-claims`, `validate-bibliography`, `validate-all` existed.
 - **Fix:** Added `ssot`, `test-smoke`, `test-validation`, `ci-local` targets.
 - **Status:** ✅ Addressed
+
+---
+
+## Gitleaks Findings (Phase 2)
+
+### FND-GTL-0001 (FALSE POSITIVE - RESOLVED)
+- **Symptom:** Gitleaks CI job failing with 22 detected "secrets".
+- **Rule ID:** `generic-api-key`
+- **Root cause:** The `generic-api-key` rule matches patterns like `key: <value>`. The `bibkey:` field in YAML files (bibliography reference keys like `bibkey: axelrod1981cooperation`) triggers false positives.
+- **Files affected:**
+  - `bibliography/mapping.yml` (10 findings)
+  - `claims/claims.yml` (10 findings)
+  - `PR_DIFF.patch` (2 findings) - artifact file incorrectly tracked
+- **Evidence (extracted 2026-01-23):**
+  ```
+  bibliography/mapping.yml:10: bibkey: jahr1990voltage
+  bibliography/mapping.yml:14: bibkey: fremaux2016neuromodulated
+  bibliography/mapping.yml:18: bibkey: izhikevich2007solving
+  bibliography/mapping.yml:22: bibkey: beggs2003neuronal
+  bibliography/mapping.yml:26: bibkey: beggs2003neuronal
+  bibliography/mapping.yml:38: bibkey: frey1997synaptic
+  bibliography/mapping.yml:42: bibkey: wilkinson2016fair
+  bibliography/mapping.yml:62: bibkey: axelrod1981cooperation
+  bibliography/mapping.yml:70: bibkey: fehr2002punishment
+  bibliography/mapping.yml:74: bibkey: kirkpatrick1983annealing
+  claims/claims.yml:66: bibkey: jahr1990voltage
+  claims/claims.yml:82: bibkey: fremaux2016neuromodulated
+  claims/claims.yml:98: bibkey: izhikevich2007solving
+  claims/claims.yml:114: bibkey: beggs2003neuronal
+  claims/claims.yml:130: bibkey: beggs2003neuronal
+  claims/claims.yml:178: bibkey: frey1997synaptic
+  claims/claims.yml:194: bibkey: kirkpatrick1983annealing
+  claims/claims.yml:210: bibkey: wilkinson2016fair
+  claims/claims.yml:292: bibkey: axelrod1981cooperation
+  claims/claims.yml:324: bibkey: fehr2002punishment
+  PR_DIFF.patch:129: bibkey: axelrod1981cooperation
+  PR_DIFF.patch:137: bibkey: fehr2002punishment
+  ```
+- **Fix:**
+  1. Created `.gitleaks.toml` with path-scoped allowlist for `bibkey:` pattern
+  2. Added `GITLEAKS_CONFIG: .gitleaks.toml` to CI workflow
+  3. Added `PR_DIFF.patch` and `PR_SUMMARY.md` to `.gitignore`
+  4. Removed `PR_DIFF.patch` and `PR_SUMMARY.md` from git tracking
+- **Status:** ✅ Resolved — gitleaks scan passes with 0 findings
+
+### FND-GTL-0002 (NOT APPLICABLE)
+- **Symptom:** None — no real secrets found in repository.
+- **Evidence:** All 22 findings were `bibkey:` false positives (FND-GTL-0001).
+- **Status:** ✅ No real secrets detected
