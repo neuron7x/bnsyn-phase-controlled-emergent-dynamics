@@ -1,7 +1,8 @@
 # Repository Inventory (SSOT Scope)
 
 This inventory defines governed paths and their SSOT alignment. Governed documents are
-scanned for normative signals by `scripts/scan_normative_tags.py`.
+scanned for normative signals by `scripts/scan_normative_tags.py`. It is intentionally
+explicit to keep audit surfaces bounded and to make rule coverage verifiable.
 
 ## Governed documents
 - `docs/ARCHITECTURE.md`
@@ -28,3 +29,8 @@ scanned for normative signals by `scripts/scan_normative_tags.py`.
 | `.github/workflows/` | CI gates for SSOT + tests. | `docs/SSOT_RULES.md`, `docs/REPRODUCIBILITY.md` |
 | `src/` | Reference implementation (`bnsyn`). | `docs/SPEC.md` |
 | `tests/` | Smoke + validation tests. | `docs/SPEC.md`, `docs/REPRODUCIBILITY.md` |
+
+## Maintenance expectations
+
+- Keep the governed documents list aligned with additions/removals in `docs/`.
+- Ensure any new SSOT-relevant directory is reflected in the repository sections table.

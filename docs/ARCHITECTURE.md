@@ -1,14 +1,25 @@
 # Architecture
 
 This document binds the BN-Syn architecture to the formal specification (`docs/SPEC.md`)
-and SSOT evidence registry (`bibliography/*`, `claims/claims.yml`).
+and the SSOT evidence registry (`bibliography/*`, `claims/claims.yml`). It is a
+traceability index, not an independent source of truth. The authoritative definition
+of behavior remains the specification, while evidence provenance is governed by SSOT.
 
-## Control loops
+## Scope and traceability
 
-- **Micro**: AdEx + conductance synapses update per timestep.
-- **Meso**: Plasticity updates (three-factor learning).
-- **Macro**: Criticality controller adjusts global gain to keep σ near target.
-- **Meta**: Temperature scheduler gates plasticity / consolidation phases.
+- **Spec authority**: equations, invariants, and parameters are defined in `docs/SPEC.md`.
+- **Evidence authority**: claim IDs and bibliographic provenance are defined in
+  `claims/claims.yml` and `bibliography/*`.
+- **Purpose**: expose the mapping between architecture components and their formal
+  references without introducing new semantics.
+
+## Control loops (timescale-segregated)
+
+- **Micro (per timestep)**: AdEx + conductance synapses update neuron and synapse state.
+- **Meso (per learning event)**: three-factor plasticity accumulates eligibility and
+  applies neuromodulated updates.
+- **Macro (slow control)**: criticality controller adjusts global gain to keep σ near target.
+- **Meta (schedule)**: temperature gating switches exploration ↔ consolidation phases.
 
 ## Evidence crosswalk (core components)
 
@@ -25,6 +36,10 @@ and SSOT evidence registry (`bibliography/*`, `claims/claims.yml`).
 | Dual-weight consolidation | P1-6 | CLM-0010 |
 | Governance SSOT policy | P2-8..12 | CLM-0011 |
 | Reproducibility process anchors | P2-8..12 | CLM-0012, CLM-0013, CLM-0014 |
+
+The table is intentionally minimal: it enumerates the canonical components and
+the authoritative claim IDs that substantiate them. For full equations and
+parameterization, consult the cited SPEC sections.
 
 ## State layout (reference simulator)
 
