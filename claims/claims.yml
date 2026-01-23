@@ -16,7 +16,7 @@ claims:
   statement: AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based
     Hodgkin–Huxley model.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
   locator: Abstract + results summary near p.3637 (verify exact sentence in paper
@@ -27,7 +27,7 @@ claims:
   statement: The AdEx neuron model combines leaky integrate-and-fire dynamics with an
     exponential spike initiation term and an adaptation variable w.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
   locator: Model equations describing exponential term and adaptation variable w.
@@ -37,7 +37,7 @@ claims:
   statement: NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in
     mM and V in mV.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Jahr & Stevens (1990) J Neurosci 10(9):3178–3182
   locator: Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990
@@ -47,7 +47,7 @@ claims:
   statement: Three-factor learning rules update weights proportional to eligibility
     traces and a modulatory signal.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Frémaux & Gerstner (2016) Front Neural Circuits 9:85
   locator: Formal definition of three-factor learning rules with eligibility traces.
@@ -57,7 +57,7 @@ claims:
   statement: Eligibility traces allow spike-timing-dependent plasticity to be modulated
     by delayed reward signals.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Izhikevich (2007) Cerebral Cortex 17(10):2443–2452
   locator: Reward-modulated STDP with eligibility trace formalism.
@@ -67,7 +67,7 @@ claims:
   statement: Neuronal avalanche sizes in cortical circuits exhibit scale-free (power-law)
     distributions consistent with critical dynamics.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
   locator: Avalanche size distributions and criticality discussion.
@@ -77,7 +77,7 @@ claims:
   statement: Branching ratio σ is defined by the ratio of activity in successive
     time bins during avalanche propagation.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
   locator: Definition of branching parameter in avalanche analysis.
@@ -87,7 +87,7 @@ claims:
   statement: The multistep regression (MR) estimator provides a subsampling-corrected
     estimate of branching ratio in neural systems.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Wilting & Priesemann (2018) Nat Commun 9:2325
   locator: MR estimator section for subsampling-corrected σ.
@@ -97,7 +97,7 @@ claims:
   statement: Clauset et al. define statistical procedures for fitting and validating
     power-law distributions.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Clauset et al. (2009) SIAM Review 51(4):661–703
   locator: Power-law fitting and goodness-of-fit methodology.
@@ -107,7 +107,7 @@ claims:
   statement: Synaptic tagging and capture supports consolidation of transient synaptic
     changes into long-term modifications.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Frey & Morris (1997) Nature 385(6616):533–536
   locator: Synaptic tagging and capture mechanism description.
@@ -117,7 +117,7 @@ claims:
   statement: Simulated annealing uses a temperature schedule that is gradually reduced
     to transition from exploration toward convergence.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Kirkpatrick et al. (1983) Science 220(4598):671–680
   locator: Temperature schedule description in simulated annealing method.
@@ -127,17 +127,17 @@ claims:
   statement: FAIR principles define data management requirements for Findability,
     Accessibility, Interoperability, and Reuse.
   status: PROVEN
-  tier: A
-  normative: false
+  tier: Tier-A
+  normative: true
   source: Wilkinson et al. (2016) Scientific Data 3:160018
   locator: FAIR principles definition section.
   action: KEEP
-  notes: Process and documentation guidance; non-normative in claims ledger.
+  notes: Process and documentation guidance; enforceable when cited.
 - id: CLM-0012
   statement: The NeurIPS paper checklist provides reproducibility guidance for machine
     learning research artifacts.
   status: PROVEN
-  tier: C
+  tier: Tier-S
   normative: false
   source: NeurIPS Paper Checklist Guidelines (2026)
   locator: Official checklist documentation.
@@ -146,7 +146,7 @@ claims:
 - id: CLM-0013
   statement: ACM artifact badging defines criteria for artifact evaluation and badges.
   status: PROVEN
-  tier: C
+  tier: Tier-S
   normative: false
   source: ACM Artifact Review and Badging v1.1 (2020)
   locator: Official ACM badging policy.
@@ -155,7 +155,7 @@ claims:
 - id: CLM-0014
   statement: PyTorch determinism notes document reproducible computation practices.
   status: PROVEN
-  tier: C
+  tier: Tier-S
   normative: false
   source: PyTorch Notes on Randomness and Determinism (2026)
   locator: Official documentation.
@@ -165,7 +165,7 @@ claims:
   statement: Reciprocal altruism can be favored by natural selection when interactions
     are repeated and contingent on observed outcomes.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Trivers (1971) The Quarterly Review of Biology 46(1):35–57
   locator: DOI:10.1086/406755
@@ -175,7 +175,7 @@ claims:
   statement: In iterated dilemmas, contingent reciprocity strategies (e.g., tit-for-tat)
     can stabilize cooperation under suitable conditions.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Axelrod & Hamilton (1981) Science 211(4489):1390–1396
   locator: DOI:10.1126/science.7466396
@@ -185,7 +185,7 @@ claims:
   statement: Indirect reciprocity based on reputation (image scoring) can promote
     cooperation without repeated pairwise encounters.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Nowak & Sigmund (1998) Nature 393(6685):573–577
   locator: DOI:10.1038/31225
@@ -195,7 +195,7 @@ claims:
   statement: Costly sanctioning (altruistic punishment) can sustain cooperation in
     human groups and suppress free-riding.
   status: PROVEN
-  tier: A
+  tier: Tier-A
   normative: true
   source: Fehr & Gächter (2002) Nature 415(6868):137–140
   locator: DOI:10.1038/415137a

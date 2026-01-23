@@ -28,7 +28,7 @@ CLAIMS = ROOT / "claims" / "claims.yml"
 DOI_RE = re.compile(r"doi\s*=\s*\{([^}]+)\}", re.IGNORECASE)
 KEY_RE = re.compile(r"@\w+\{([^,]+),")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
-TIER_RE = re.compile(r"^Tier-(A|S|C)$")
+ALLOWED_TIERS = {"Tier-A", "Tier-S", "Tier-B", "Tier-C"}
 
 def sha256_hex(s: str) -> str:
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
@@ -65,8 +65,8 @@ def load_mapping(path: Path) -> dict[str, dict[str, str]]:
         tier = v["tier"]
         if not isinstance(bibkey, str) or not bibkey:
             raise SystemExit(f"{clm}: bibkey must be non-empty string")
-        if not isinstance(tier, str) or not TIER_RE.match(tier):
-            raise SystemExit(f"{clm}: tier must be Tier-A|Tier-S|Tier-C")
+        if not isinstance(tier, str) or tier not in ALLOWED_TIERS:
+            raise SystemExit(f"{clm}: tier must be one of {sorted(ALLOWED_TIERS)}")
         out[clm] = {"bibkey": bibkey, "tier": tier, "section": str(v["section"])}
     return out
 
@@ -142,6 +142,17 @@ def main() -> int:
             doi = bib[bk]["doi"]
             if not doi:
                 print(f"ERROR: {clm} is Tier-A but bibkey {bk} has no DOI", file=sys.stderr)
+                return 5
+        if tier == "Tier-S":
+            lock_entry = lock_by_key.get(bk)
+            if not lock_entry:
+                print(f"ERROR: {clm} Tier-S bibkey {bk} missing in sources.lock", file=sys.stderr)
+                return 5
+            if lock_entry["doi_or_nodoi"] != "NODOI":
+                print(f"ERROR: {clm} Tier-S bibkey {bk} must be NODOI in sources.lock", file=sys.stderr)
+                return 5
+            if not lock_entry["url"]:
+                print(f"ERROR: {clm} Tier-S bibkey {bk} missing canonical URL in sources.lock", file=sys.stderr)
                 return 5
 
     missing_claims = sorted(set(claim_ids) - set(mapping.keys()))

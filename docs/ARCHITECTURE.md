@@ -23,8 +23,8 @@ and SSOT evidence registry (`bibliography/*`, `claims/claims.yml`).
 | Power-law validation for avalanches | P0-4 | `clauset2009power` | [NORMATIVE][CLM-0009] |
 | Temperature schedule + gating | P1-5 | `kirkpatrick1983annealing` | [NORMATIVE][CLM-0019] |
 | Dual-weight consolidation | P1-6 | `frey1997synaptic` | [NORMATIVE][CLM-0010] |
-| Governance SSOT policy | P2-12 | `wilkinson2016fair` | [NON-NORMATIVE][CLM-0011] |
-| Reproducibility process anchors | P2-12 | `neurips2026checklist`, `acm2020badges`, `pytorch2026randomness` | [NON-NORMATIVE][CLM-0012], [NON-NORMATIVE][CLM-0013], [NON-NORMATIVE][CLM-0014] |
+| Governance SSOT policy | P2-8..12 | `wilkinson2016fair` | [NORMATIVE][CLM-0011] |
+| Reproducibility process anchors | P2-8..12 | `neurips2026checklist`, `acm2020badges`, `pytorch2026randomness` | [NON-NORMATIVE][CLM-0012], [NON-NORMATIVE][CLM-0013], [NON-NORMATIVE][CLM-0014] |
 
 ## State layout (reference simulator)
 
