@@ -83,7 +83,7 @@ class SparseConnectivity:
             if sp.issparse(y):
                 return np.asarray(y.todense(), dtype=np.float64).ravel()
             return np.asarray(y, dtype=np.float64).ravel()
-        return np.dot(self.W, x)
+        return np.asarray(np.dot(self.W, x), dtype=np.float64)
 
     def to_dense(self) -> Float64Array:
         """Convert to dense matrix."""
