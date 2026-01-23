@@ -24,6 +24,10 @@ jobs:
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_normative_tags.py
+          python scripts/scan_governed_docs.py
+      - name: Generate evidence coverage
+        run: |
+          python scripts/generate_evidence_coverage.py
       - name: Validation tests
         run: |
           pytest -m validation

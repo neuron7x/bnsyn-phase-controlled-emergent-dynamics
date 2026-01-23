@@ -24,6 +24,23 @@ jobs:
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_normative_tags.py
+          python scripts/scan_governed_docs.py
+      - name: Generate evidence coverage
+        run: |
+          python scripts/generate_evidence_coverage.py
+      - name: CI summary
+        run: |
+          echo "## SSOT Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bibkeys | $(grep -c '^@' bibliography/bnsyn.bib || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lock entries | $(grep -cv '^#\|^$' bibliography/sources.lock || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Mapping entries | $(grep -c '^CLM-' bibliography/mapping.yml || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Claims total | $(grep -c '^\- id:' claims/claims.yml || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tier-A claims | $(grep -c 'tier: Tier-A' claims/claims.yml || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tier-S claims | $(grep -c 'tier: Tier-S' claims/claims.yml || echo 0) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Normative claims | $(grep -c 'normative: true' claims/claims.yml || echo 0) |" >> $GITHUB_STEP_SUMMARY
       - name: Smoke tests
         run: |
           pytest -m "not validation"

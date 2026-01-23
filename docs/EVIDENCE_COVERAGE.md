@@ -12,6 +12,7 @@
 | CLM-0008 | Tier-A | true | wilting2018inferring | 10.1038/s41467-018-04725-4 | P0-3 MR estimator | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
 | CLM-0009 | Tier-A | true | clauset2009power | 10.1137/070710111 | P0-3 Power-law fitting | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
 | CLM-0010 | Tier-A | true | frey1997synaptic | 10.1038/385533a0 | P1-5 Synaptic tagging | `src/bnsyn/consolidation/dual_weight.py` | `tests/test_consolidation_smoke.py` |
+| CLM-0019 | Tier-A | true | kirkpatrick1983annealing | 10.1126/science.220.4598.671 | P1-5 Temperature schedule | `src/bnsyn/temperature/schedule.py` | `tests/test_temperature_smoke.py` |
 | CLM-0011 | Tier-A | true | wilkinson2016fair | 10.1038/sdata.2016.18 | P2-8..12 FAIR principles | `scripts/validate_bibliography.py`, `scripts/validate_claims.py`, `scripts/scan_normative_tags.py` | `scripts/validate_bibliography.py`, `scripts/validate_claims.py`, `scripts/scan_normative_tags.py` |
 | CLM-0012 | Tier-S | false | neurips2026checklist | NODOI | P2-8..12 Reproducibility checklist | `scripts/validate_claims.py` | `scripts/validate_claims.py` |
 | CLM-0013 | Tier-S | false | acm2020badges | NODOI | P2-8..12 Artifact badges | `scripts/validate_claims.py` | `scripts/validate_claims.py` |
@@ -20,4 +21,3 @@
 | CLM-0016 | Tier-A | true | axelrod1981cooperation | 10.1126/science.7466396 | GOV-1 Symmetric reciprocity (tit-for-tat) | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
 | CLM-0017 | Tier-A | true | nowak1998imagescoring | 10.1038/31225 | GOV-1 Reputation / indirect reciprocity | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
 | CLM-0018 | Tier-A | true | fehr2002punishment | 10.1038/415137a | GOV-1 Costly sanctioning / defector suppression | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
-| CLM-0019 | Tier-A | true | kirkpatrick1983annealing | 10.1126/science.220.4598.671 | P1-5 Temperature schedule | `src/bnsyn/temperature/schedule.py` | `tests/test_temperature_smoke.py` |
