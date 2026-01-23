@@ -13,7 +13,7 @@ LOCK = ROOT / "bibliography" / "sources.lock"
 MAP = ROOT / "bibliography" / "mapping.yml"
 
 KEY_RE = re.compile(r"@\w+\{([^,]+),")
-FIELD_RE = re.compile(r'(?im)^\s*(\w+)\s*=\s*[\{\"]([^\"}]+)[\}\"]\s*,?')
+FIELD_RE = re.compile(r"(?im)^\s*(\w+)\s*=\s*[\{\"]([^\"}]+)[\}\"]\s*,?")
 DOI_RE = re.compile(r"doi\s*=\s*\{([^}]+)\}", re.IGNORECASE)
 URL_IN_HOWPUBLISHED_RE = re.compile(r"\\url\{([^}]+)\}")
 
@@ -147,7 +147,15 @@ def main() -> int:
     lines.extend(new_entries)
     new_text = "\n".join(lines) + "\n"
 
-    old_lines = [ln for ln in LOCK.read_text(encoding="utf-8").splitlines() if ln and not ln.startswith("#")] if LOCK.exists() else []
+    old_lines = (
+        [
+            ln
+            for ln in LOCK.read_text(encoding="utf-8").splitlines()
+            if ln and not ln.startswith("#")
+        ]
+        if LOCK.exists()
+        else []
+    )
     new_lines = [ln for ln in new_entries]
 
     added = len([ln for ln in new_lines if ln not in old_lines])

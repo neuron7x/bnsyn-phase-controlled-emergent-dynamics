@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -94,10 +93,10 @@ class ConductanceSynapses:
         params: SynapseParams,
     ) -> np.ndarray:
         B = nmda_mg_block(V_mV, params.mg_mM)
-        I = (
+        current = (
             g_ampa_nS * (V_mV - params.E_AMPA_mV)
             + g_nmda_nS * B * (V_mV - params.E_NMDA_mV)
             + g_gabaa_nS * (V_mV - params.E_GABAA_mV)
         )
         # nS*mV => pA
-        return I
+        return np.asarray(current)

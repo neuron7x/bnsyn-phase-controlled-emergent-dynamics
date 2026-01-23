@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -18,7 +19,7 @@ class NeuromodulatorTrace:
 
 
 def decay(x: np.ndarray, dt_ms: float, tau_ms: float) -> np.ndarray:
-    return x * np.exp(-dt_ms / tau_ms)
+    return cast(np.ndarray, x * np.exp(-dt_ms / tau_ms))
 
 
 def three_factor_update(

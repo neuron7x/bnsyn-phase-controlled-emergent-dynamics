@@ -125,7 +125,10 @@ class Network:
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
         # safety bounds
-        if float(np.min(self.state.V_mV)) < self.np.V_min_mV or float(np.max(self.state.V_mV)) > self.np.V_max_mV:
+        if (
+            float(np.min(self.state.V_mV)) < self.np.V_min_mV
+            or float(np.max(self.state.V_mV)) > self.np.V_max_mV
+        ):
             raise RuntimeError("Voltage bounds violation (numerical instability)")
 
         # criticality estimation from population activity

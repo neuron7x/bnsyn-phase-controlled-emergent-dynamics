@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.ssot_rules import RULE_IDS, assert_rule_ids_match
+from scripts.ssot_rules import RULE_IDS, assert_rule_ids_match  # noqa: E402
 
 REQUIRED_TOP_KEYS = {"version", "claims"}
 REQUIRED_CLAIM_KEYS = {
@@ -99,7 +99,7 @@ def main() -> int:
             fail("Claim entry is not a dict")
         miss = REQUIRED_CLAIM_KEYS - set(c.keys())
         if miss:
-            fail(f"Claim {c.get('id','<no-id>')} missing keys: {sorted(miss)}")
+            fail(f"Claim {c.get('id', '<no-id>')} missing keys: {sorted(miss)}")
         cid = str(c["id"]).strip()
         if not re.match(r"^CLM-\d{4}$", cid):
             fail(f"Invalid claim id format: {cid}")
@@ -162,7 +162,9 @@ def main() -> int:
         if mapping_entry["tier"] != tier:
             fail(f"{cid}: tier mismatch (claims={tier}, mapping={mapping_entry['tier']})")
 
-    print(f"[claims-gate] OK: {len(claims)} claims validated; {sum(1 for c in claims if c.get('normative'))} normative.")
+    print(
+        f"[claims-gate] OK: {len(claims)} claims validated; {sum(1 for c in claims if c.get('normative'))} normative."
+    )
     return 0
 
 

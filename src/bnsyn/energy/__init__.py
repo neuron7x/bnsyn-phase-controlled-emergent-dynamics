@@ -1,1 +1,3 @@
-from .regularization import energy_cost, total_reward
+from .regularization import energy_cost as energy_cost, total_reward as total_reward
+
+__all__ = ["energy_cost", "total_reward"]
