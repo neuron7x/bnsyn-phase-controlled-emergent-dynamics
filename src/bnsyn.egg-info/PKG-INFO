@@ -13,6 +13,7 @@ Provides-Extra: dev
 Requires-Dist: pytest>=8.0; extra == "dev"
 Requires-Dist: pytest-cov>=5.0; extra == "dev"
 Requires-Dist: hypothesis>=6.100; extra == "dev"
+Requires-Dist: pyyaml>=6.0; extra == "dev"
 Requires-Dist: ruff>=0.6; extra == "dev"
 Requires-Dist: mypy>=1.10; extra == "dev"
 Dynamic: license-file
@@ -51,14 +52,26 @@ bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000 --seed 42
 ## Repository map
 
 - `docs/SPEC.md` — formal 12-component specification (equations, calibration, failure envelopes)
+- `docs/appendix/EXECUTIVE_SUMMARY.md` — imported executive summary (NON-NORMATIVE)
+- `docs/appendix/PRODUCTION_AUDIT.md` — imported production audit (NON-NORMATIVE)
+- `docs/appendix/PRODUCTION_ROADMAP.md` — imported roadmap (NON-NORMATIVE)
+- `docs/ARCHITECTURE.md` — architecture ↔ evidence crosswalk
+- `docs/SSOT.md` — single-source-of-truth policy
+- `docs/INVENTORY.md` — governed path inventory
 - `src/bnsyn/` — reference implementation
 - `tests/` — smoke + validation tests (CI excludes `-m validation`)
+- `bibliography/` + `claims/` — SSOT evidence registry + claims ledger
 
 ## Determinism contract
 
 - single entrypoint seeding: `bnsyn.rng.seed_all(seed)`
 - all stochastic terms use `numpy.random.Generator` passed explicitly (no hidden global RNG)
 - Δt-invariance checks compare dt vs dt/2 runs under the same seed
+
+## SSOT & evidence governance
+
+- Bibliography + claims are validated by `scripts/validate_bibliography.py` and `scripts/validate_claims.py`.
+- CI enforces SSOT gates + smoke tests; validation tests run separately (`-m validation`).
 
 ## Sources
 

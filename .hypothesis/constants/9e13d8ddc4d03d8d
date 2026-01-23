@@ -1,0 +1,4 @@
+# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/sim/network.py
+# hypothesis_version: 6.150.3
+
+[-100.0, 0.0, 0.05, 0.2, 0.3, 0.5, 0.7, 1.0, 2.0, 5.0, 50.0, 1000.0, 200, 'A_t', 'A_t1', 'N must be positive', 'gain', 'rate_mean_hz', 'rate_std', 'sigma', 'sigma_mean', 'sigma_std', 'spike_rate_hz']

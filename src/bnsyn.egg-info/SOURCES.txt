@@ -5,6 +5,7 @@ src/bnsyn/__init__.py
 src/bnsyn/cli.py
 src/bnsyn/config.py
 src/bnsyn/rng.py
+src/bnsyn/vcg.py
 src/bnsyn.egg-info/PKG-INFO
 src/bnsyn.egg-info/SOURCES.txt
 src/bnsyn.egg-info/dependency_links.txt
@@ -16,6 +17,7 @@ src/bnsyn/calibration/fit.py
 src/bnsyn/consolidation/__init__.py
 src/bnsyn/consolidation/dual_weight.py
 src/bnsyn/criticality/__init__.py
+src/bnsyn/criticality/analysis.py
 src/bnsyn/criticality/branching.py
 src/bnsyn/energy/__init__.py
 src/bnsyn/energy/regularization.py
@@ -26,6 +28,10 @@ src/bnsyn/numerics/integrators.py
 src/bnsyn/plasticity/__init__.py
 src/bnsyn/plasticity/stdp.py
 src/bnsyn/plasticity/three_factor.py
+src/bnsyn/production/__init__.py
+src/bnsyn/production/adex.py
+src/bnsyn/production/connectivity.py
+src/bnsyn/production/jax_backend.py
 src/bnsyn/sim/__init__.py
 src/bnsyn/sim/network.py
 src/bnsyn/synapse/__init__.py
@@ -44,4 +50,4 @@ tests/test_network_smoke.py
 tests/test_plasticity_smoke.py
 tests/test_synapse_smoke.py
 tests/test_temperature_smoke.py
-tests/test_validation_largeN.py
+tests/test_vcg_smoke.py

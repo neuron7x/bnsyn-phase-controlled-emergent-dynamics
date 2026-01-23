@@ -1,0 +1,4 @@
+# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/consolidation/dual_weight.py
+# hypothesis_version: 6.150.3
+
+[0.0, 1.0, 50.0, 'DualWeights']
