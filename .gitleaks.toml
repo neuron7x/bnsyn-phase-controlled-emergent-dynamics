@@ -24,8 +24,7 @@ description = "Allow bibliography reference keys (bibkey:) in YAML metadata file
 # Path-scoped: only these specific files
 paths = [
   '''^bibliography/mapping\.yml$''',
-  '''^claims/claims\.yml$''',
-  '''^PR_DIFF\.patch$'''
+  '''^claims/claims\.yml$'''
 ]
 
 # Pattern-scoped: only the bibkey field (author-year-word format)
