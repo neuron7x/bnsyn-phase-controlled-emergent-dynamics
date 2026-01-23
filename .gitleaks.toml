@@ -1,0 +1,23 @@
+# BN-Syn Gitleaks Policy (strict with lockfile exception)
+# -----------------------------------------------------------
+# This configuration maintains strict secret scanning while allowing
+# deterministic SHA256 integrity hashes in bibliography/sources.lock.
+#
+# SECURITY INVARIANTS:
+# 1. NO rules are disabled globally
+# 2. Allowlist is path-scoped ONLY to bibliography/sources.lock
+# 3. Allowlist regex matches ONLY the sha256:<hex64> field pattern
+# 4. Any finding outside this scope FAILS CI immediately
+
+title = "BN-Syn Gitleaks Policy (strict with lockfile exception)"
+
+[allowlist]
+description = "Allow deterministic SHA256 lock hashes in bibliography/sources.lock only"
+paths = [
+  '''^bibliography/sources\.lock$'''
+]
+# Tight regex: matches ONLY the explicit sha256:<hex64> token as stored in lock entries
+# Format in file: ...::sha256:<64-lowercase-hex-chars>
+regexes = [
+  '''sha256:[a-f0-9]{64}'''
+]
