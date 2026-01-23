@@ -2,7 +2,7 @@
 ## Verified Contribution Gating (VCG) — Result-Based Social Verification Module
 
 **Status**: Optional governance extension (non-core).  
-**Normativity**: Normative for VCG behavior if enabled; VCG MUST NOT alter the 12-core neurodynamics components.
+**Normativity**: Normative for VCG behavior if enabled; VCG does not alter the 12-core neurodynamics components.
 
 ### 1) Purpose
 VCG reduces **parasitic strategies** (pattern-matching interaction without measurable contribution) by applying a *symmetric, outcome-based* policy:
@@ -18,7 +18,7 @@ VCG is grounded in peer-reviewed reciprocity and cooperation mechanisms:
 - [NORMATIVE][CLM-0018] **Defector suppression via costly sanctioning** (Fehr & Gächter 2002, DOI:10.1038/415137a).
 
 ### 3) Inputs and observable metrics (SSOT)
-VCG operates ONLY on **observable outcomes** (no mind-reading, no intent inference).
+VCG operates on **observable outcomes** (no mind-reading, no intent inference).
 
 Let an agent be indexed by *i* and an evaluation window be *W* discrete steps.
 
@@ -47,7 +47,7 @@ Parameters: `θ_C` (minimum contribution), `α_down` (decrease rate), `α_up` (r
 - I1: `S_i` is deterministic given the same observable log + parameters.
 - I2: `S_i` is monotonic non-increasing while `C_i < θ_C` persists.
 - I3: Recovery is possible (no permanent exclusion) if `C_i ≥ θ_C`.
-- I4: VCG must be side-effect free on the simulation core: no coupling into neuron/synapse state.
+- I4: VCG remains side-effect free on the simulation core: no coupling into neuron/synapse state.
 
 ### 5) Failure envelopes & mitigations
 - **False-negative contribution** (measurement misses real value) → require *verifiable* contribution signals; keep `α_down` conservative.

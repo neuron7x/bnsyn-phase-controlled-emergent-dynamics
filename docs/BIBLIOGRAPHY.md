@@ -1,5 +1,5 @@
 # /docs/BIBLIOGRAPHY.md
-## Tier-A Canonical Peer-Reviewed Sources (DOI required)
+## Tier-A Canonical Peer-Reviewed Sources (DOI)
 
 1. Brette & Gerstner (2005) — AdEx model — DOI:10.1152/jn.00686.2005
 2. Jahr & Stevens (1990) — NMDA Mg-block — DOI:10.1523/JNEUROSCI.10-09-03178.1990
@@ -10,17 +10,16 @@
 7. Clauset et al. (2009) — Power-law fitting — DOI:10.1137/070710111
 8. Frey & Morris (1997) — Synaptic tagging — DOI:10.1038/385533a0
 9. Wilkinson et al. (2016) — FAIR principles — DOI:10.1038/sdata.2016.18
-
 10. Trivers (1971) — Reciprocal altruism — DOI:10.1086/406755
 11. Axelrod & Hamilton (1981) — Evolution of cooperation — DOI:10.1126/science.7466396
 12. Kirkpatrick et al. (1983) — Simulated annealing — DOI:10.1126/science.220.4598.671
 13. Nowak & Sigmund (1998) — Indirect reciprocity (image scoring) — DOI:10.1038/31225
 14. Fehr & Gächter (2002) — Altruistic punishment — DOI:10.1038/415137a
 
-## Tier-S Standards and Documentation (no DOI required)
+## Tier-S Standards and Documentation (no DOI)
 
 1. NeurIPS Paper Checklist — https://neurips.cc/public/guides/PaperChecklist
 2. ACM Artifact Review and Badging v1.1 — https://www.acm.org/publications/policies/artifact-review-and-badging-current
 3. PyTorch Notes on Randomness and Determinism — https://pytorch.org/docs/stable/notes/randomness.html
 
-Policy: normative scientific claims must cite Tier-A; process/compliance rules may cite Tier-S.
+Policy: normative scientific claims cite Tier-A sources; process/compliance guidance can cite Tier-S sources.

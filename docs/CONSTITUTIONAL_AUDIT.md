@@ -1,18 +1,18 @@
 # BN‑Syn Constitutional Audit Report (Evidence-First)
 
 This document defines the **constitutional constraints** for the BN‑Syn specification:
-- Quantitative claims in **normative** sections are allowed **only** if they are proven by Tier‑A SSOT sources.
-- Anything else must be **downgraded** to NON‑NORMATIVE examples or removed.
+- Quantitative claims in **normative** sections are allowed only if they are proven by Tier‑A SSOT sources.
+- Anything else is downgraded to NON‑NORMATIVE examples or removed.
 
 Inventory of governed paths: see `docs/INVENTORY.md`.
 
 ## Normative labeling convention
 Use explicit tags:
-- **[NORMATIVE]** — required for correctness, reproducibility, or safety gates
-- **[NON‑NORMATIVE]** — illustrative, optional, or example-only
+- **NORMATIVE** — for correctness, reproducibility, or safety gates
+- **NON‑NORMATIVE** — illustrative, optional, or example-only
 
 ## Claim binding
-Every **[NORMATIVE]** quantitative claim MUST include a `claim_id` in the text, e.g.:
+Every **NORMATIVE** quantitative claim includes a `CLM-XXXX` identifier, e.g.:
 > [NORMATIVE][CLM-0003] NMDA Mg²⁺ block uses canonical coefficients ...
 
 The authoritative claim record lives in `claims/claims.yml`.
