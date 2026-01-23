@@ -23,9 +23,11 @@ class TemperatureSchedule:
 
     def step_geometric(self) -> float:
         p = self.params
-        self.T = max(float(p.Tmin), float(self.T) * float(p.alpha))
+        temperature = self.T if self.T is not None else float(p.T0)
+        self.T = max(float(p.Tmin), float(temperature) * float(p.alpha))
         return float(self.T)
 
     def plasticity_gate(self) -> float:
         p = self.params
-        return gate_sigmoid(float(self.T), float(p.Tc), float(p.gate_tau))
+        temperature = self.T if self.T is not None else float(p.T0)
+        return gate_sigmoid(float(temperature), float(p.Tc), float(p.gate_tau))

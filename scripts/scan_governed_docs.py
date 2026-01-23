@@ -14,10 +14,10 @@ Exit codes:
 - 2: Orphan normative statements found ([NORMATIVE] without CLM tag)
 - 3: Invalid CLM references (referenced CLM not in claims.yml)
 """
+
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 import yaml
@@ -97,7 +97,9 @@ def main() -> int:
         rp = rel(path)
         allow_label_only = rp in ALLOWLIST_LABEL_DOCS
 
-        for ln, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
+        for ln, line in enumerate(
+            path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1
+        ):
             has_normative_tag = NORMATIVE_TAG_RE.search(line) is not None
             clm_ids_in_line = CLM_RE.findall(line)
 

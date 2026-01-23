@@ -1,0 +1,5 @@
+/scripts/ @bnsyn/maintainers
+/claims/ @bnsyn/maintainers
+/bibliography/ @bnsyn/maintainers
+/docs/SSOT* @bnsyn/maintainers
+/.github/workflows/ @bnsyn/maintainers

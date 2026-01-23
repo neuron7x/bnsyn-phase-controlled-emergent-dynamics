@@ -14,12 +14,12 @@ pytestmark = pytest.mark.validation
 @given(
     n=st.integers(min_value=1, max_value=256),
     dt=st.floats(min_value=1e-5, max_value=5e-3, allow_nan=False, allow_infinity=False),
-    I=st.floats(min_value=-5e-9, max_value=5e-9, allow_nan=False, allow_infinity=False),
+    current=st.floats(min_value=-5e-9, max_value=5e-9, allow_nan=False, allow_infinity=False),
 )
-def test_adex_step_finite(n, dt, I):
+def test_adex_step_finite(n, dt, current):
     neuron = AdExNeuron.init(n=n, params=AdExParams())
-    Ivec = np.full((n,), float(I), dtype=np.float64)
-    spikes, V = neuron.step(Ivec, float(dt), 0.0)
+    current_vec = np.full((n,), float(current), dtype=np.float64)
+    spikes, V = neuron.step(current_vec, float(dt), 0.0)
     assert spikes.shape == (n,)
     assert V.shape == (n,)
     assert np.isfinite(V).all()

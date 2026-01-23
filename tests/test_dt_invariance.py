@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 from bnsyn.sim.network import run_simulation
 
