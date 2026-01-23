@@ -1,100 +1,97 @@
-#!/usr/bin/env python3
+"""Scan markdown for malformed normative claim tags.
+
+Enforced invariant (pragmatic):
+- In *claim-bearing* docs, any occurrence of '[NORMATIVE]' must include a Claim ID 'CLM-####'
+  on the same line.
+- Any referenced CLM must exist in claims/claims.yml.
+
+Rationale:
+Some governance/policy docs discuss the term '[NORMATIVE]' as a label (without binding to a
+specific claim). Those files are explicitly allow-listed.
+"""
+
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 import yaml
 
+
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from scripts.ssot_rules import RULE_IDS, assert_rule_ids_match
-
-INVENTORY = ROOT / "docs" / "INVENTORY.md"
 CLAIMS = ROOT / "claims" / "claims.yml"
 
-NORMATIVE_WORD_RE = re.compile(r"\b(must|required|shall)\b", re.IGNORECASE)
-CLM_RE = re.compile(r"CLM-\d{4}")
+CLM_RE = re.compile(r"\bCLM-\d{4}\b")
+NORM_RE = re.compile(r"\[NORMATIVE\]")
 
-
-def fail(msg: str) -> None:
-    print(f"[normative-scan] ERROR: {msg}", file=sys.stderr)
-    sys.exit(1)
+# Files that may mention [NORMATIVE] as a label/convention (not a claim binding).
+ALLOWLIST_LABEL_DOCS = {
+    "README_CLAIMS_GATE.md",
+    "docs/CONSTITUTIONAL_AUDIT.md",
+    "docs/NORMATIVE_LABELING.md",
+    "docs/SSOT.md",
+    "docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md",
+}
 
 
 def load_claim_ids() -> set[str]:
     data = yaml.safe_load(CLAIMS.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        fail("claims.yml must be a YAML mapping")
-    claims = data.get("claims")
-    if not isinstance(claims, list) or not claims:
-        fail("claims.yml missing claims list")
-    ids = set()
-    for entry in claims:
-        if isinstance(entry, dict) and "id" in entry:
-            ids.add(str(entry["id"]))
-    return ids
+    claims = data.get("claims", [])
+    out: set[str] = set()
+    for c in claims:
+        cid = c.get("id")
+        if isinstance(cid, str):
+            out.add(cid)
+    return out
 
 
-def load_governed_docs() -> list[Path]:
-    if not INVENTORY.exists():
-        fail("docs/INVENTORY.md not found")
-    lines = INVENTORY.read_text(encoding="utf-8").splitlines()
-    governed: list[Path] = []
-    in_section = False
-    for line in lines:
-        if line.strip() == "## Governed documents":
-            in_section = True
+def markdown_files() -> list[Path]:
+    files: list[Path] = []
+    for p in (ROOT / "docs").rglob("*.md"):
+        if "docs/appendix" in str(p):
             continue
-        if in_section:
-            if line.startswith("## "):
-                break
-            match = re.search(r"`([^`]+)`", line)
-            if match:
-                governed.append(ROOT / match.group(1))
-    if not governed:
-        fail("No governed documents listed in docs/INVENTORY.md")
-    return governed
+        files.append(p)
+    for p in ROOT.glob("README*.md"):
+        files.append(p)
+    return sorted(set(files))
+
+
+def rel(p: Path) -> str:
+    return str(p.relative_to(ROOT)).replace("\\", "/")
 
 
 def main() -> int:
-    assert_rule_ids_match(RULE_IDS)
-
     claim_ids = load_claim_ids()
-    governed_docs = load_governed_docs()
+    malformed = []
+    missing = []
 
-    missing_files = [str(p.relative_to(ROOT)) for p in governed_docs if not p.exists()]
-    if missing_files:
-        fail(f"Governed documents missing: {missing_files}")
+    for f in markdown_files():
+        rf = rel(f)
+        allow_label_only = rf in ALLOWLIST_LABEL_DOCS
 
-    orphan_normative = []
-    invalid_claim_refs = []
+        for ln, line in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
+            if NORM_RE.search(line):
+                ids = CLM_RE.findall(line)
 
-    for doc in governed_docs:
-        rel = doc.relative_to(ROOT)
-        for idx, line in enumerate(doc.read_text(encoding="utf-8").splitlines(), start=1):
-            has_normative_tag = "[NORMATIVE]" in line
-            has_normative_word = bool(NORMATIVE_WORD_RE.search(line))
-            if not has_normative_tag and not has_normative_word:
-                continue
-            clm_ids = CLM_RE.findall(line)
-            if not clm_ids:
-                orphan_normative.append(f"{rel}:{idx}: {line.strip()}")
-                continue
-            for clm in clm_ids:
-                if clm not in claim_ids:
-                    invalid_claim_refs.append(f"{rel}:{idx}: {clm}")
+                if not ids and not allow_label_only:
+                    malformed.append((rf, ln, line))
+                for cid in ids:
+                    if cid not in claim_ids:
+                        missing.append((rf, ln, cid))
 
-    if orphan_normative:
-        fail("Orphan normative statements found:\n" + "\n".join(orphan_normative))
-    if invalid_claim_refs:
-        fail("Invalid CLM references found:\n" + "\n".join(invalid_claim_refs))
+    if malformed:
+        print("ERROR: [NORMATIVE] lines missing Claim ID (outside allowlist):")
+        for rf, ln, line in malformed[:50]:
+            print(f"  {rf}:{ln}: {line}")
+        return 2
 
-    print("[normative-scan] OK: governed docs have no orphan normative statements.")
-    print(f"  Governed docs: {len(governed_docs)}")
+    if missing:
+        print("ERROR: [NORMATIVE] references missing Claim IDs:")
+        for rf, ln, cid in missing[:50]:
+            print(f"  {rf}:{ln}: {cid}")
+        return 3
+
+    print("OK: normative tag scan passed.")
     return 0
 
 

@@ -32,6 +32,9 @@ bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000 --seed 42
 ## Repository map
 
 - `docs/SPEC.md` — formal 12-component specification (equations, calibration, failure envelopes)
+- `docs/appendix/EXECUTIVE_SUMMARY.md` — imported executive summary (NON-NORMATIVE)
+- `docs/appendix/PRODUCTION_AUDIT.md` — imported production audit (NON-NORMATIVE)
+- `docs/appendix/PRODUCTION_ROADMAP.md` — imported roadmap (NON-NORMATIVE)
 - `docs/ARCHITECTURE.md` — architecture ↔ evidence crosswalk
 - `docs/SSOT.md` — single-source-of-truth policy
 - `docs/INVENTORY.md` — governed path inventory
