@@ -7,7 +7,7 @@ REQUIRED_TOP_KEYS = {"version", "claims"}
 REQUIRED_CLAIM_KEYS = {"id","statement","status","tier","normative","source","locator","action","notes"}
 
 ALLOWED_STATUS = {"PROVEN","UNPROVEN"}
-ALLOWED_TIER = {"A","B","C"}
+ALLOWED_TIER = {"Tier-A","Tier-B","Tier-C","Tier-S"}
 ALLOWED_ACTION = {"KEEP","REMOVE","DOWNGRADE","CORRECT"}
 
 def parse_yaml_minimal(text: str):
@@ -102,7 +102,7 @@ def main():
         ids.add(cid)
 
         status=str(c["status"]).strip().upper()
-        tier=str(c["tier"]).strip().upper()
+        tier=str(c["tier"]).strip()
         action=str(c["action"]).strip().upper()
         normative=bool(c["normative"])
 
@@ -113,12 +113,18 @@ def main():
         if action not in ALLOWED_ACTION:
             fail(f"{cid}: invalid action {action}")
 
+        # Hard rules: tier ↔ normativity
+        if tier == "Tier-A" and not normative:
+            fail(f"{cid}: Tier-A requires normative=true")
+        if tier in {"Tier-S", "Tier-B", "Tier-C"} and normative:
+            fail(f"{cid}: {tier} requires normative=false")
+
         # Hard rule: NORMATIVE claims must be PROVEN + Tier-A and have source+locator
         if normative:
             if status != "PROVEN":
                 fail(f"{cid}: normative=true requires status=PROVEN")
-            if tier != "A":
-                fail(f"{cid}: normative=true requires tier=A")
+            if tier != "Tier-A":
+                fail(f"{cid}: normative=true requires tier=Tier-A")
             if not str(c["source"]).strip() or str(c["source"]).strip().lower()=="unresolved":
                 fail(f"{cid}: normative=true requires source")
             if not str(c["locator"]).strip() or str(c["locator"]).strip().lower()=="unresolved":

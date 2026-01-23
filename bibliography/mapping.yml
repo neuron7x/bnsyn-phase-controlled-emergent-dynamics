@@ -40,19 +40,19 @@ CLM-0010:
   tier: Tier-A
 CLM-0011:
   bibkey: wilkinson2016fair
-  section: P2-7 FAIR principles
+  section: P2-8..12 FAIR principles
   tier: Tier-A
 CLM-0012:
   bibkey: neurips2026checklist
-  section: P2-7 Reproducibility checklist
+  section: P2-8..12 Reproducibility checklist
   tier: Tier-S
 CLM-0013:
   bibkey: acm2020badges
-  section: P2-7 Artifact badges
+  section: P2-8..12 Artifact badges
   tier: Tier-S
 CLM-0014:
   bibkey: pytorch2026randomness
-  section: P2-8 Determinism docs
+  section: P2-8..12 Determinism docs
   tier: Tier-S
 CLM-0015:
   bibkey: trivers1971reciprocal
@@ -69,4 +69,8 @@ CLM-0017:
 CLM-0018:
   bibkey: fehr2002punishment
   section: GOV-1 Costly sanctioning / defector suppression
+  tier: Tier-A
+CLM-0019:
+  bibkey: kirkpatrick1983annealing
+  section: P1-5 Temperature schedule
   tier: Tier-A

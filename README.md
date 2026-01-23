@@ -32,14 +32,23 @@ bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000 --seed 42
 ## Repository map
 
 - `docs/SPEC.md` — formal 12-component specification (equations, calibration, failure envelopes)
+- `docs/ARCHITECTURE.md` — architecture ↔ evidence crosswalk
+- `docs/SSOT.md` — single-source-of-truth policy
+- `docs/INVENTORY.md` — governed path inventory
 - `src/bnsyn/` — reference implementation
 - `tests/` — smoke + validation tests (CI excludes `-m validation`)
+- `bibliography/` + `claims/` — SSOT evidence registry + claims ledger
 
 ## Determinism contract
 
 - single entrypoint seeding: `bnsyn.rng.seed_all(seed)`
 - all stochastic terms use `numpy.random.Generator` passed explicitly (no hidden global RNG)
 - Δt-invariance checks compare dt vs dt/2 runs under the same seed
+
+## SSOT & evidence governance
+
+- Bibliography + claims are validated by `scripts/validate_bibliography.py` and `scripts/validate_claims.py`.
+- CI enforces SSOT gates + smoke tests; validation tests run separately (`-m validation`).
 
 ## Sources
 

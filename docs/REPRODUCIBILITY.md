@@ -11,6 +11,7 @@
 
 - Smoke tests: `pytest -m "not validation"`
 - Validation tests (slow): `pytest -m validation`
+ - SSOT gates: `python scripts/validate_bibliography.py` and `python scripts/validate_claims.py`
 
 This repo keeps CI fast and deterministic while allowing heavy statistical validation to run
 manually or on schedule.

@@ -4,6 +4,8 @@ This document defines the **constitutional constraints** for the BN‑Syn specif
 - Quantitative claims in **normative** sections are allowed **only** if they are proven by Tier‑A SSOT sources.
 - Anything else must be **downgraded** to NON‑NORMATIVE examples or removed.
 
+Inventory of governed paths: see `docs/INVENTORY.md`.
+
 ## Normative labeling convention
 Use explicit tags:
 - **[NORMATIVE]** — required for correctness, reproducibility, or safety gates

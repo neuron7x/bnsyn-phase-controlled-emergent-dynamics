@@ -1,18 +1,20 @@
-# Normative vs Non‑Normative Documentation Policy
+# Normative vs Non-Normative Labeling Policy
 
 ## Purpose
-Prevent evidence drift: remove or downgrade claims that are not supported by primary sources.
+Define labeling rules for requirements and claims tied to SSOT evidence.
 
-## Required markup
-- Put **[NORMATIVE]** at the start of any requirement.
-- If the sentence contains a falsifiable quantitative claim, append `[CLM-XXXX]`.
+## Labeling tags
+- **[NORMATIVE]**: Required for correctness, reproducibility, or safety gates.
+- **[NON-NORMATIVE]**: Illustrative guidance, examples, or optional material.
 
-## Examples
-✅ Good:
-- [NORMATIVE][CLM-0003] Use canonical NMDA Mg²⁺ block coefficients.
+## Tier rules (SSOT-aligned)
+- Tier-A: peer-reviewed sources with DOI; required for all [NORMATIVE] scientific claims.
+- Tier-S: standards/docs; non-normative only.
+- Tier-B/Tier-C: non-normative only.
 
-✅ Good (non-normative):
-- [NON‑NORMATIVE] Some studies report large efficiency gains for sparse SNNs; values vary by hardware and workload.
+## Claim binding
+- Any [NORMATIVE] quantitative statement MUST include a `CLM-XXXX` identifier.
+- Claim IDs are authoritative in `claims/claims.yml` and must map in `bibliography/mapping.yml`.
 
-❌ Bad:
-- "SNNs are 6–8× more efficient" (no SSOT, no claim id, normative implied)
+## Authority
+`docs/SSOT.md` is the single-source-of-truth for tier definitions and validator behavior.

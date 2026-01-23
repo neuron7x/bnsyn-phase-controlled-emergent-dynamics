@@ -23,11 +23,12 @@ ROOT = Path(__file__).resolve().parents[1]
 BIB = ROOT / "bibliography" / "bnsyn.bib"
 LOCK = ROOT / "bibliography" / "sources.lock"
 MAP = ROOT / "bibliography" / "mapping.yml"
+CLAIMS = ROOT / "claims" / "claims.yml"
 
 DOI_RE = re.compile(r"doi\s*=\s*\{([^}]+)\}", re.IGNORECASE)
 KEY_RE = re.compile(r"@\w+\{([^,]+),")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
-TIER_RE = re.compile(r"^Tier-(A|S|C)$")
+ALLOWED_TIERS = {"Tier-A", "Tier-S", "Tier-B", "Tier-C"}
 
 def sha256_hex(s: str) -> str:
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
@@ -64,10 +65,29 @@ def load_mapping(path: Path) -> dict[str, dict[str, str]]:
         tier = v["tier"]
         if not isinstance(bibkey, str) or not bibkey:
             raise SystemExit(f"{clm}: bibkey must be non-empty string")
-        if not isinstance(tier, str) or not TIER_RE.match(tier):
-            raise SystemExit(f"{clm}: tier must be Tier-A|Tier-S|Tier-C")
+        if not isinstance(tier, str) or tier not in ALLOWED_TIERS:
+            raise SystemExit(f"{clm}: tier must be one of {sorted(ALLOWED_TIERS)}")
         out[clm] = {"bibkey": bibkey, "tier": tier, "section": str(v["section"])}
     return out
+
+def load_claims(path: Path) -> set[str]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise SystemExit("claims.yml must be a YAML mapping")
+    claims = data.get("claims")
+    if not isinstance(claims, list) or not claims:
+        raise SystemExit("claims.yml must contain a non-empty claims list")
+    ids: set[str] = set()
+    for entry in claims:
+        if not isinstance(entry, dict):
+            raise SystemExit("claims.yml claim entry must be a mapping")
+        cid = entry.get("id")
+        if not isinstance(cid, str) or not cid.startswith("CLM-"):
+            raise SystemExit(f"claims.yml invalid claim id: {cid!r}")
+        if cid in ids:
+            raise SystemExit(f"claims.yml duplicate claim id: {cid}")
+        ids.add(cid)
+    return ids
 
 def parse_lock(path: Path) -> list[dict[str, str]]:
     rows = []
@@ -94,13 +114,14 @@ def parse_lock(path: Path) -> list[dict[str, str]]:
     return rows
 
 def main() -> int:
-    for p in (BIB, LOCK, MAP):
+    for p in (BIB, LOCK, MAP, CLAIMS):
         if not p.exists():
             print(f"ERROR: missing required file: {p}", file=sys.stderr)
             return 2
 
     bib = parse_bibtex(BIB)
     mapping = load_mapping(MAP)
+    claim_ids = load_claims(CLAIMS)
     lock_rows = parse_lock(LOCK)
 
     lock_by_key = {r["bibkey"]: r for r in lock_rows}
@@ -122,6 +143,22 @@ def main() -> int:
             if not doi:
                 print(f"ERROR: {clm} is Tier-A but bibkey {bk} has no DOI", file=sys.stderr)
                 return 5
+        if tier == "Tier-S":
+            lock_entry = lock_by_key.get(bk)
+            if not lock_entry:
+                print(f"ERROR: {clm} Tier-S bibkey {bk} missing in sources.lock", file=sys.stderr)
+                return 5
+            if lock_entry["doi_or_nodoi"] != "NODOI":
+                print(f"ERROR: {clm} Tier-S bibkey {bk} must be NODOI in sources.lock", file=sys.stderr)
+                return 5
+            if not lock_entry["url"]:
+                print(f"ERROR: {clm} Tier-S bibkey {bk} missing canonical URL in sources.lock", file=sys.stderr)
+                return 5
+
+    missing_claims = sorted(set(claim_ids) - set(mapping.keys()))
+    if missing_claims:
+        print(f"ERROR: claims.yml has unmapped claim IDs: {missing_claims}", file=sys.stderr)
+        return 8
 
     # Validate lock hashes
     for bk, entry in lock_by_key.items():
@@ -142,6 +179,7 @@ def main() -> int:
     print("OK: bibliography SSOT validated.")
     print(f"  Bibkeys: {len(bib)}")
     print(f"  Mapping entries: {len(mapping)}")
+    print(f"  Claim IDs: {len(claim_ids)}")
     print(f"  Lock entries: {len(lock_rows)}")
     return 0
 

@@ -12,10 +12,10 @@ This is **not** framed as “punishment”; it is a deterministic resource-alloc
 
 ### 2) Scientific foundation (Tier-A)
 VCG is grounded in peer-reviewed reciprocity and cooperation mechanisms:
-- **Reciprocal altruism / contingent reciprocity** (Trivers 1971, DOI:10.1086/406755) — outcome-contingent cooperation.  
-- **Tit-for-tat stability in repeated interactions** (Axelrod & Hamilton 1981, DOI:10.1126/science.7466396).  
-- **Reputation / indirect reciprocity via public outcome signals** (Nowak & Sigmund 1998, DOI:10.1038/31225).  
-- **Defector suppression via costly sanctioning** (Fehr & Gächter 2002, DOI:10.1038/415137a).
+- [NORMATIVE][CLM-0015] **Reciprocal altruism / contingent reciprocity** (Trivers 1971, DOI:10.1086/406755) — outcome-contingent cooperation.  
+- [NORMATIVE][CLM-0016] **Tit-for-tat stability in repeated interactions** (Axelrod & Hamilton 1981, DOI:10.1126/science.7466396).  
+- [NORMATIVE][CLM-0017] **Reputation / indirect reciprocity via public outcome signals** (Nowak & Sigmund 1998, DOI:10.1038/31225).  
+- [NORMATIVE][CLM-0018] **Defector suppression via costly sanctioning** (Fehr & Gächter 2002, DOI:10.1038/415137a).
 
 ### 3) Inputs and observable metrics (SSOT)
 VCG operates ONLY on **observable outcomes** (no mind-reading, no intent inference).
@@ -64,4 +64,3 @@ Parameters: `θ_C` (minimum contribution), `α_down` (decrease rate), `α_up` (r
 ### 7) Claim mapping
 Normative claims in this module map to:
 - CLM-0015, CLM-0016, CLM-0017, CLM-0018 (see `bibliography/mapping.yml`).
-
