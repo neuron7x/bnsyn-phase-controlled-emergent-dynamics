@@ -5,6 +5,7 @@ import pytest
 from hypothesis import given, settings, strategies as st
 
 from bnsyn.production import AdExNeuron, AdExParams, ConnectivityConfig, build_connectivity
+from bnsyn.rng import seed_all
 
 
 pytestmark = pytest.mark.validation
@@ -45,7 +46,8 @@ def test_adex_refractory_holds_reset():
 )
 def test_connectivity_shape_and_diagonal(n, p, seed):
     cfg = ConnectivityConfig(n_pre=n, n_post=n, p_connect=float(p), allow_self=False)
-    adj = build_connectivity(cfg, seed=int(seed))
+    pack = seed_all(int(seed))
+    adj = build_connectivity(cfg, rng=pack.np_rng)
     assert adj.shape == (n, n)
     assert adj.dtype == bool
     assert np.diag(adj).sum() == 0
