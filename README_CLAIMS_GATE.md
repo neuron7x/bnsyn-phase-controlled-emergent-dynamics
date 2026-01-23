@@ -3,7 +3,8 @@
 ## What this adds
 - `claims/claims.yml` — SSOT ledger of quantitative claims
 - `scripts/validate_claims.py` — CI validator (no external deps)
-- `.github/workflows/claims-gate.yml` — PR/Push enforcement
+- `.github/workflows/ci-smoke.yml` — PR/Push enforcement (SSOT + smoke tests)
+- `.github/workflows/ci-validation.yml` — scheduled/manual validation tests
 - `docs/*` — policy + criticality separation docs
 - `Makefile` target: `make validate-claims`
 

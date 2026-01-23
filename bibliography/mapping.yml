@@ -70,3 +70,7 @@ CLM-0018:
   bibkey: fehr2002punishment
   section: GOV-1 Costly sanctioning / defector suppression
   tier: Tier-A
+CLM-0019:
+  bibkey: kirkpatrick1983annealing
+  section: P1-5 Temperature schedule
+  tier: Tier-A

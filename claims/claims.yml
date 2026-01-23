@@ -23,6 +23,16 @@ claims:
     PDF)
   action: KEEP
   notes: 'Use exact phrasing: 96% within ±2 ms (not ''±2 ms always'').'
+- id: CLM-0002
+  statement: The AdEx neuron model combines leaky integrate-and-fire dynamics with an
+    exponential spike initiation term and an adaptation variable w.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
+  locator: Model equations describing exponential term and adaptation variable w.
+  action: KEEP
+  notes: Core AdEx structure for BN-Syn neuron dynamics.
 - id: CLM-0003
   statement: NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in
     mM and V in mV.
@@ -33,15 +43,124 @@ claims:
   locator: Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990
   action: KEEP
   notes: Ensure units are stated explicitly.
-- id: CLM-0099
-  statement: STREAM achieves 100% on DVS Gesture (10-class).
-  status: UNPROVEN
-  tier: B
+- id: CLM-0004
+  statement: Three-factor learning rules update weights proportional to eligibility
+    traces and a modulatory signal.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Frémaux & Gerstner (2016) Front Neural Circuits 9:85
+  locator: Formal definition of three-factor learning rules with eligibility traces.
+  action: KEEP
+  notes: Aligns with BN-Syn three-factor plasticity implementation.
+- id: CLM-0005
+  statement: Eligibility traces allow spike-timing-dependent plasticity to be modulated
+    by delayed reward signals.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Izhikevich (2007) Cerebral Cortex 17(10):2443–2452
+  locator: Reward-modulated STDP with eligibility trace formalism.
+  action: KEEP
+  notes: Supports neuromodulator × eligibility design.
+- id: CLM-0006
+  statement: Neuronal avalanche sizes in cortical circuits exhibit scale-free (power-law)
+    distributions consistent with critical dynamics.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
+  locator: Avalanche size distributions and criticality discussion.
+  action: KEEP
+  notes: Criticality motivation for σ tracking.
+- id: CLM-0007
+  statement: Branching ratio σ is defined by the ratio of activity in successive
+    time bins during avalanche propagation.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
+  locator: Definition of branching parameter in avalanche analysis.
+  action: KEEP
+  notes: Basis for σ estimator in BN-Syn.
+- id: CLM-0008
+  statement: The multistep regression (MR) estimator provides a subsampling-corrected
+    estimate of branching ratio in neural systems.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Wilting & Priesemann (2018) Nat Commun 9:2325
+  locator: MR estimator section for subsampling-corrected σ.
+  action: KEEP
+  notes: Used for offline criticality validation.
+- id: CLM-0009
+  statement: Clauset et al. define statistical procedures for fitting and validating
+    power-law distributions.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Clauset et al. (2009) SIAM Review 51(4):661–703
+  locator: Power-law fitting and goodness-of-fit methodology.
+  action: KEEP
+  notes: Power-law validation reference for criticality checks.
+- id: CLM-0010
+  statement: Synaptic tagging and capture supports consolidation of transient synaptic
+    changes into long-term modifications.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Frey & Morris (1997) Nature 385(6616):533–536
+  locator: Synaptic tagging and capture mechanism description.
+  action: KEEP
+  notes: Supports dual-weight consolidation rationale.
+- id: CLM-0019
+  statement: Simulated annealing uses a temperature schedule that is gradually reduced
+    to transition from exploration toward convergence.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Kirkpatrick et al. (1983) Science 220(4598):671–680
+  locator: Temperature schedule description in simulated annealing method.
+  action: KEEP
+  notes: Supports BN-Syn temperature-gated exploration/consolidation framing.
+- id: CLM-0011
+  statement: FAIR principles define data management requirements for Findability,
+    Accessibility, Interoperability, and Reuse.
+  status: PROVEN
+  tier: A
   normative: false
-  source: Unresolved
-  locator: No identifiable primary paper
-  action: REMOVE
-  notes: Remove from benchmark tables unless a primary source is added.
+  source: Wilkinson et al. (2016) Scientific Data 3:160018
+  locator: FAIR principles definition section.
+  action: KEEP
+  notes: Process and documentation guidance; non-normative in claims ledger.
+- id: CLM-0012
+  statement: The NeurIPS paper checklist provides reproducibility guidance for machine
+    learning research artifacts.
+  status: PROVEN
+  tier: C
+  normative: false
+  source: NeurIPS Paper Checklist Guidelines (2026)
+  locator: Official checklist documentation.
+  action: KEEP
+  notes: Process checklist reference.
+- id: CLM-0013
+  statement: ACM artifact badging defines criteria for artifact evaluation and badges.
+  status: PROVEN
+  tier: C
+  normative: false
+  source: ACM Artifact Review and Badging v1.1 (2020)
+  locator: Official ACM badging policy.
+  action: KEEP
+  notes: Process compliance reference.
+- id: CLM-0014
+  statement: PyTorch determinism notes document reproducible computation practices.
+  status: PROVEN
+  tier: C
+  normative: false
+  source: PyTorch Notes on Randomness and Determinism (2026)
+  locator: Official documentation.
+  action: KEEP
+  notes: Process guidance for determinism.
 - id: CLM-0015
   statement: Reciprocal altruism can be favored by natural selection when interactions
     are repeated and contingent on observed outcomes.
