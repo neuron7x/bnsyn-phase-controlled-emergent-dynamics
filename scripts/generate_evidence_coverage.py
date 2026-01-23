@@ -6,6 +6,7 @@ traceability for each claim in the registry.
 
 Output: docs/EVIDENCE_COVERAGE.md
 """
+
 from __future__ import annotations
 
 import re

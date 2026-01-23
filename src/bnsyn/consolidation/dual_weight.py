@@ -64,4 +64,4 @@ class DualWeights:
 
     @property
     def w_total(self) -> np.ndarray:
-        return self.w_fast + self.w_cons
+        return np.asarray(self.w_fast + self.w_cons)

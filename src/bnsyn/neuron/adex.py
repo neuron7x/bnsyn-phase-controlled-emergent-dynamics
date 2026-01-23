@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 import numpy as np
 
 from bnsyn.config import AdExParams
-from bnsyn.numerics.integrators import clamp_exp_arg
 
 
 @dataclass
@@ -38,13 +36,7 @@ def adex_step(
     exp_arg = (V - params.VT_mV) / params.DeltaT_mV
     exp_arg = np.minimum(exp_arg, 20.0)  # prevent overflow
     I_exp = params.gL_nS * params.DeltaT_mV * np.exp(exp_arg)  # nS*mV ~ pA
-    dV = (
-        -params.gL_nS * (V - params.EL_mV)
-        + I_exp
-        - w
-        - I_syn_pA
-        + I_ext_pA
-    ) / params.C_pF
+    dV = (-params.gL_nS * (V - params.EL_mV) + I_exp - w - I_syn_pA + I_ext_pA) / params.C_pF
     V = V + dt_ms * dV
 
     # dw/dt = ( a(V-EL) - w ) / tauw

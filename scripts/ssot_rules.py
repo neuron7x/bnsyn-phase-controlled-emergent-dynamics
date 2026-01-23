@@ -53,7 +53,4 @@ def assert_rule_ids_match(expected: Iterable[str]) -> None:
     if expected_set != doc_ids:
         missing = sorted(expected_set - doc_ids)
         extra = sorted(doc_ids - expected_set)
-        raise SystemExit(
-            "SSOT_RULES.md drift detected:"
-            f" missing={missing} extra={extra}"
-        )
+        raise SystemExit(f"SSOT_RULES.md drift detected: missing={missing} extra={extra}")

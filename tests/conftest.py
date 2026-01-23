@@ -19,8 +19,8 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
         in_validation_dir = "tests/validation" in path.as_posix()
         has_validation_marker = item.get_closest_marker("validation") is not None
         if in_validation_dir and not has_validation_marker:
-            errors.append(f"Missing @pytest.mark.validation for {path}")
+            errors.append(f"Missing @pytest.mark.validation for {item.nodeid}")
         if not in_validation_dir and has_validation_marker:
-            errors.append(f"Validation marker used outside tests/validation: {path}")
+            errors.append(f"Validation marker used outside tests/validation: {item.nodeid}")
     if errors:
         raise pytest.UsageError("\n".join(errors))

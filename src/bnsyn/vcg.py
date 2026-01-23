@@ -37,7 +37,9 @@ def allocation_multiplier(support: float, params: VCGParams) -> float:
     return float(params.epsilon + (1.0 - params.epsilon) * support)
 
 
-def update_support_vector(contributions: np.ndarray, support: np.ndarray, params: VCGParams) -> np.ndarray:
+def update_support_vector(
+    contributions: np.ndarray, support: np.ndarray, params: VCGParams
+) -> np.ndarray:
     """Vectorized support update for multiple agents."""
     if contributions.shape != support.shape:
         raise ValueError("contributions and support must have the same shape")

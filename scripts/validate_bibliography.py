@@ -6,6 +6,7 @@ Validate BN-Syn bibliography SSOT:
 - sources.lock lines are syntactically valid and SHA256 matches LOCK_STRING
 - tiers and claim mappings are consistent across claims/mapping
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.ssot_rules import RULE_IDS, assert_rule_ids_match
+from scripts.ssot_rules import RULE_IDS, assert_rule_ids_match  # noqa: E402
 
 BIB = ROOT / "bibliography" / "bnsyn.bib"
 LOCK = ROOT / "bibliography" / "sources.lock"
@@ -28,7 +29,7 @@ CLAIMS = ROOT / "claims" / "claims.yml"
 
 DOI_RE = re.compile(r"doi\s*=\s*\{([^}]+)\}", re.IGNORECASE)
 KEY_RE = re.compile(r"@\w+\{([^,]+),")
-FIELD_RE = re.compile(r'(?im)^\s*(\w+)\s*=\s*[\{\"]([^\"}]+)[\}\"]\s*,?')
+FIELD_RE = re.compile(r"(?im)^\s*(\w+)\s*=\s*[\{\"]([^\"}]+)[\}\"]\s*,?")
 URL_IN_HOWPUBLISHED_RE = re.compile(r"\\url\{([^}]+)\}")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED_TIERS = {"Tier-A", "Tier-S", "Tier-B", "Tier-C"}
@@ -219,16 +220,12 @@ def main() -> int:
     for bk, entry in lock_by_key.items():
         sha = entry["sha"]
         if not HEX64_RE.match(sha):
-            return fail(
-                f"sources.lock {bk} has invalid SHA256 (must be 64 lowercase hex): {sha}"
-            )
+            return fail(f"sources.lock {bk} has invalid SHA256 (must be 64 lowercase hex): {sha}")
         doi_or_nodoi = entry["doi_or_nodoi"]
         if doi_or_nodoi == "NODOI":
             lock_string = f"{bk}=NODOI::{entry['url']}::{entry['f3']}::{entry['f4']}"
         else:
-            lock_string = (
-                f"{bk}={doi_or_nodoi}::{entry['url']}::{entry['f3']}::{entry['f4']}"
-            )
+            lock_string = f"{bk}={doi_or_nodoi}::{entry['url']}::{entry['f3']}::{entry['f4']}"
         expected = sha256_hex(lock_string)
         if expected != sha:
             return fail(
