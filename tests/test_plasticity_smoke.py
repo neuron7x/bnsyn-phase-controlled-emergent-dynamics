@@ -1,6 +1,10 @@
 import numpy as np
 from bnsyn.config import PlasticityParams
-from bnsyn.plasticity.three_factor import EligibilityTraces, NeuromodulatorTrace, three_factor_update
+from bnsyn.plasticity.three_factor import (
+    EligibilityTraces,
+    NeuromodulatorTrace,
+    three_factor_update,
+)
 
 
 def test_three_factor_bounds() -> None:

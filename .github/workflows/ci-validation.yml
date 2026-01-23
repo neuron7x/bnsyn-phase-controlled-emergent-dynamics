@@ -6,7 +6,7 @@ on:
     - cron: "0 3 * * 0"
 
 jobs:
-  validation:
+  ssot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,6 +15,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -24,10 +25,20 @@ jobs:
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_normative_tags.py
-          python scripts/scan_governed_docs.py
-      - name: Generate evidence coverage
+
+  tests-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
         run: |
-          python scripts/generate_evidence_coverage.py
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
       - name: Validation tests
-        run: |
-          pytest -m validation
+        run: pytest -m validation

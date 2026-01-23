@@ -69,7 +69,9 @@ def main() -> int:
         rf = rel(f)
         allow_label_only = rf in ALLOWLIST_LABEL_DOCS
 
-        for ln, line in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
+        for ln, line in enumerate(
+            f.read_text(encoding="utf-8", errors="replace").splitlines(), start=1
+        ):
             if NORM_RE.search(line):
                 ids = CLM_RE.findall(line)
 
