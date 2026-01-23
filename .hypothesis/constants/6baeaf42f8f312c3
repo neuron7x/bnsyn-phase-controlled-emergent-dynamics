@@ -1,4 +1,0 @@
-# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/numerics/integrators.py
-# hypothesis_version: 6.150.3
-
-[0.5, 20.0, 'State', 'tau must be positive']

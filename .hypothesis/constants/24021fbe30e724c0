@@ -1,4 +1,0 @@
-# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/rng.py
-# hypothesis_version: 6.150.3
-
-['PYTHONHASHSEED', 'n must be positive', 'seed must be int']

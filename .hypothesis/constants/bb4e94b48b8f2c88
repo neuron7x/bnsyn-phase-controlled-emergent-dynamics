@@ -1,4 +1,0 @@
-# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/synapse/conductance.py
-# hypothesis_version: 6.150.3
-
-[-0.062, 0.0, 0.1, 0.3, 0.6, 1.0, 3.57, 'N must be positive']

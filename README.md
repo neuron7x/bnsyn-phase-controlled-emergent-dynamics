@@ -8,6 +8,8 @@ A biologically-inspired neural simulation toolkit implementing:
 4) Temperature-gated exploration ↔ consolidation with dual-weight synapses  
 5) Deterministic, Δt-invariant validation harnesses
 
+---
+
 ## Quickstart
 
 ```bash
@@ -29,30 +31,79 @@ Run Δt invariance harness:
 bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000 --seed 42
 ```
 
-## Repository map
+---
 
-- `docs/SPEC.md` — formal 12-component specification (equations, calibration, failure envelopes)
-- `docs/appendix/EXECUTIVE_SUMMARY.md` — imported executive summary (NON-NORMATIVE)
-- `docs/appendix/PRODUCTION_AUDIT.md` — imported production audit (NON-NORMATIVE)
-- `docs/appendix/PRODUCTION_ROADMAP.md` — imported roadmap (NON-NORMATIVE)
-- `docs/ARCHITECTURE.md` — architecture ↔ evidence crosswalk
-- `docs/SSOT.md` — single-source-of-truth policy
-- `docs/INVENTORY.md` — governed path inventory
-- `src/bnsyn/` — reference implementation
-- `tests/` — smoke + validation tests (CI excludes `-m validation`)
-- `bibliography/` + `claims/` — SSOT evidence registry + claims ledger
+## Repository Map
 
-## Determinism contract
+| Path | Purpose |
+|------|---------|
+| [`docs/INDEX.md`](docs/INDEX.md) | **Navigation hub** — start here for all documentation |
+| [`docs/SPEC.md`](docs/SPEC.md) | Formal 12-component specification |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Architecture ↔ evidence crosswalk |
+| [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md) | Governance entry (SSOT, claims, validators) |
+| [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) | Determinism protocol |
+| [`docs/INVENTORY.md`](docs/INVENTORY.md) | Governed path inventory |
+| [`src/bnsyn/`](src/bnsyn/) | Reference implementation |
+| [`tests/`](tests/) | Smoke + validation tests |
+| [`bibliography/`](bibliography/) | SSOT bibliography artifacts |
+| [`claims/`](claims/) | Evidence ledger |
+| [`scripts/`](scripts/) | SSOT validators |
 
-- single entrypoint seeding: `bnsyn.rng.seed_all(seed)`
-- all stochastic terms use `numpy.random.Generator` passed explicitly (no hidden global RNG)
-- Δt-invariance checks compare dt vs dt/2 runs under the same seed
+---
 
-## SSOT & evidence governance
+## SSOT Gates (Run These)
 
-- Bibliography + claims are validated by `scripts/validate_bibliography.py` and `scripts/validate_claims.py`.
-- CI enforces SSOT gates + smoke tests; validation tests run separately (`-m validation`).
+```bash
+# Validate SSOT closure
+python scripts/validate_bibliography.py
+python scripts/validate_claims.py
+python scripts/scan_normative_tags.py
+
+# Or use Makefile
+make ssot
+```
+
+---
+
+## Test Commands
+
+```bash
+# Smoke tests (fast, CI default)
+pytest -m "not validation"
+make test-smoke
+
+# Validation tests (slow, statistical)
+pytest -m validation
+make test-validation
+
+# Full local CI check
+make ci-local
+```
+
+---
+
+## Determinism Contract
+
+- **Single entrypoint seeding**: `bnsyn.rng.seed_all(seed)`
+- **Explicit RNG**: all stochastic terms use `numpy.random.Generator` passed explicitly
+- **Δt-invariance**: checks compare dt vs dt/2 runs under the same seed
+
+See [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) for full protocol.
+
+---
+
+## Governance & Evidence
+
+- **SSOT Policy**: [`docs/SSOT.md`](docs/SSOT.md) (summary) + [`docs/SSOT_RULES.md`](docs/SSOT_RULES.md) (authoritative rules)
+- **Claims Ledger**: [`claims/claims.yml`](claims/claims.yml)
+- **Bibliography**: [`bibliography/bnsyn.bib`](bibliography/bnsyn.bib)
+- **Validators**: `scripts/validate_bibliography.py`, `scripts/validate_claims.py`, `scripts/scan_normative_tags.py`
+
+CI enforces SSOT gates on every PR. See [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md) for details.
+
+---
 
 ## Sources
 
-Primary references are listed in `docs/SPEC.md` and are aligned to the equations implemented here.
+Primary references are listed in [`docs/SPEC.md`](docs/SPEC.md) and [`docs/BIBLIOGRAPHY.md`](docs/BIBLIOGRAPHY.md).
+All normative claims cite Tier-A peer-reviewed sources with DOI.

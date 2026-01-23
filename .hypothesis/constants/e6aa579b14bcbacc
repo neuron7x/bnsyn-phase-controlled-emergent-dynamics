@@ -1,4 +1,0 @@
-# file: /home/runner/work/bnsyn-phase-controlled-emergent-dynamics/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/criticality/__init__.py
-# hypothesis_version: 6.150.3
-
-['BranchingEstimator', 'PowerLawFit', 'SigmaController', 'fit_power_law_mle', 'mr_branching_ratio']

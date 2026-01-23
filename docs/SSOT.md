@@ -4,6 +4,8 @@
 This document is a human summary of SSOT governance. The authoritative, machine-readable
 rule registry lives in `docs/SSOT_RULES.md` and is enforced by the validators in `scripts/`.
 
+**Navigation**: [INDEX.md](INDEX.md) | [GOVERNANCE.md](GOVERNANCE.md) | [SSOT_RULES.md](SSOT_RULES.md)
+
 ## Authority chain
 
 1) **Rules**: `docs/SSOT_RULES.md` defines the normative constraints.
