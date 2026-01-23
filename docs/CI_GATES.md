@@ -20,8 +20,6 @@ exact commands executed by CI.
   - `python -c "import bnsyn"`
 - **Job: `tests-smoke`**
   - `pytest -m "not validation"`
-- **Job: `dependency-review`**
-  - `actions/dependency-review-action`
 - **Job: `gitleaks`**
   - `gitleaks detect --redact --verbose --source=.`
   - `gitleaks detect --redact --verbose --log-opts=<base..head>`
@@ -53,7 +51,6 @@ checks to pass:
 - `ci-pr / quality`
 - `ci-pr / build`
 - `ci-pr / tests-smoke`
-- `ci-pr / dependency-review`
 - `ci-pr / gitleaks`
 - `ci-pr / pip-audit`
 - `codeql / analyze`

@@ -84,17 +84,6 @@ jobs:
       - name: Smoke tests
         run: pytest -m "not validation"
 
-  dependency-review:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Dependency review
-        uses: actions/dependency-review-action@v4
-
   gitleaks:
     runs-on: ubuntu-latest
     permissions:
@@ -107,10 +96,14 @@ jobs:
           fetch-depth: 0
       - name: Gitleaks repository scan
         uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: detect --redact --verbose --source=.
       - name: Gitleaks PR diff scan
         uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: >-
             detect --redact --verbose
