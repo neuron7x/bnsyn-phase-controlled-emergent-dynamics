@@ -6,14 +6,12 @@ and scans those documents for normative language compliance.
 
 Rules:
 - Lines containing "[NORMATIVE]" must include a CLM-#### identifier
-- Lines containing "must", "shall", or "required" (case-insensitive) without
-  "[NORMATIVE][CLM-####]" are flagged as potential orphans
 - Every referenced CLM-#### must exist in claims/claims.yml
 
 Exit codes:
 - 0: All checks pass
 - 1: Governed paths could not be parsed from REPO_STRUCTURE.md
-- 2: Orphan normative statements found (lines with must/shall/required missing CLM tag)
+- 2: Orphan normative statements found ([NORMATIVE] without CLM tag)
 - 3: Invalid CLM references (referenced CLM not in claims.yml)
 """
 from __future__ import annotations
@@ -30,7 +28,6 @@ CLAIMS = ROOT / "claims" / "claims.yml"
 
 CLM_RE = re.compile(r"\bCLM-\d{4}\b")
 NORMATIVE_TAG_RE = re.compile(r"\[NORMATIVE\]")
-NORMATIVE_KEYWORDS_RE = re.compile(r"\b(must|shall|required)\b", re.IGNORECASE)
 
 # Files that discuss normative conventions without being bound to claims
 ALLOWLIST_LABEL_DOCS = {
@@ -102,25 +99,11 @@ def main() -> int:
 
         for ln, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
             has_normative_tag = NORMATIVE_TAG_RE.search(line) is not None
-            has_normative_keyword = NORMATIVE_KEYWORDS_RE.search(line) is not None
             clm_ids_in_line = CLM_RE.findall(line)
 
             # Check for [NORMATIVE] without CLM
             if has_normative_tag and not clm_ids_in_line and not allow_label_only:
                 orphans.append((rp, ln, line.strip()[:100]))
-
-            # Check for must/shall/required without proper tagging
-            if has_normative_keyword and not has_normative_tag and not allow_label_only:
-                # Skip code blocks and list items that are clearly not normative statements
-                stripped = line.strip()
-                if stripped.startswith(("```", "#", "|", "-", "*", ">", "<!--")):
-                    continue
-                # Skip lines that are clearly code or technical descriptions
-                if "==" in line or "::" in line or "def " in line or "import " in line:
-                    continue
-                # This is a potential orphan - normative language without proper tagging
-                # Note: we don't fail on this since it would be too strict; we just track it
-                pass
 
             # Validate all CLM references exist
             for cid in clm_ids_in_line:
