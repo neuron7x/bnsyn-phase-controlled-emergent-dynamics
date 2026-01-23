@@ -94,20 +94,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Gitleaks repository scan
+      - name: Gitleaks scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: detect --redact --verbose --source=.
-      - name: Gitleaks PR diff scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: >-
-            detect --redact --verbose
-            --log-opts="${{ github.event.pull_request.base.sha || 'HEAD~1' }}..${{ github.event.pull_request.head.sha || 'HEAD' }}"
+          GITLEAKS_CONFIG: .gitleaks.toml
 
   pip-audit:
     runs-on: ubuntu-latest
