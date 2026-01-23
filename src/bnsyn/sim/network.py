@@ -5,10 +5,12 @@ from dataclasses import dataclass
 import numpy as np
 
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
+from bnsyn.connectivity import SparseConnectivity
 from bnsyn.criticality.branching import BranchingEstimator, SigmaController
 from bnsyn.neuron.adex import AdExState, adex_step
 from bnsyn.numerics.integrators import exp_decay_step
 from bnsyn.synapse.conductance import nmda_mg_block
+from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matrix
 
 
 @dataclass(frozen=True)
@@ -62,19 +64,25 @@ class Network:
         mask = rng.random((N, N)) < nparams.p_conn
         np.fill_diagonal(mask, False)
         # excitatory weights (E->*)
-        self.W_exc = (mask[:nE, :].astype(float) * nparams.w_exc_nS).T  # shape (N, nE)
+        W_exc = np.asarray((mask[:nE, :].astype(np.float64) * nparams.w_exc_nS).T)
         # inhibitory weights (I->*)
-        self.W_inh = (mask[nE:, :].astype(float) * nparams.w_inh_nS).T  # shape (N, nI)
+        W_inh = np.asarray((mask[nE:, :].astype(np.float64) * nparams.w_inh_nS).T)
+
+        validate_connectivity_matrix(W_exc, shape=(N, nE), name="W_exc")
+        validate_connectivity_matrix(W_inh, shape=(N, nI), name="W_inh")
+
+        self.W_exc = SparseConnectivity(W_exc)
+        self.W_inh = SparseConnectivity(W_inh)
 
         # neuron state
-        V0 = rng.normal(loc=adex.EL_mV, scale=5.0, size=N)
-        w0 = np.zeros(N, dtype=float)
+        V0 = np.asarray(rng.normal(loc=adex.EL_mV, scale=5.0, size=N), dtype=np.float64)
+        w0 = np.zeros(N, dtype=np.float64)
         self.state = AdExState(V_mV=V0, w_pA=w0, spiked=np.zeros(N, dtype=bool))
 
         # conductances
-        self.g_ampa = np.zeros(N, dtype=float)
-        self.g_nmda = np.zeros(N, dtype=float)
-        self.g_gabaa = np.zeros(N, dtype=float)
+        self.g_ampa = np.zeros(N, dtype=np.float64)
+        self.g_nmda = np.zeros(N, dtype=np.float64)
+        self.g_gabaa = np.zeros(N, dtype=np.float64)
 
         # criticality tracking
         self.branch = BranchingEstimator()
@@ -96,8 +104,8 @@ class Network:
         spikes_E = spikes[: self.nE].astype(float)
         spikes_I = spikes[self.nE :].astype(float)
 
-        incoming_exc = self.W_exc @ spikes_E  # nS increments
-        incoming_inh = self.W_inh @ spikes_I  # nS increments
+        incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))  # nS increments
+        incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))  # nS increments
 
         # apply increments (split E into AMPA/NMDA)
         self.g_ampa += 0.7 * incoming_exc + 0.7 * incoming_ext
@@ -119,7 +127,7 @@ class Network:
         )
 
         # gain: multiplies external current (proxy for global excitability)
-        I_ext = np.zeros(N, dtype=float)
+        I_ext = np.zeros(N, dtype=np.float64)
         I_ext += 50.0 * (self.gain - 1.0)  # pA offset
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
@@ -156,6 +164,7 @@ def run_simulation(
 ) -> dict[str, float]:
     from bnsyn.rng import seed_all
 
+    _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
     pack = seed_all(seed)
     rng = pack.np_rng
     nparams = NetworkParams(N=N)

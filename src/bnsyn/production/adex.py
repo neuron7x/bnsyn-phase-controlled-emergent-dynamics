@@ -20,7 +20,7 @@ import numpy as np
 @dataclass(frozen=True, slots=True)
 class AdExParams:
     # Membrane
-    C: float = 200e-12  # Farads
+    C: float = 90e-12  # Farads
     gL: float = 10e-9  # Siemens
     EL: float = -70e-3  # Volts
     VT: float = -50e-3  # Volts
@@ -88,6 +88,7 @@ class AdExNeuron:
 
         V_new = V_eff + dt * dV
         w_new = self.w + dt * dw
+        V_new = np.where(in_ref, p.V_reset, V_new)
 
         spikes = V_new >= p.V_spike
         if np.any(spikes):
