@@ -1,5 +1,7 @@
 # Reproducibility & Determinism Protocol
 
+**Navigation**: [INDEX.md](INDEX.md) | [SPEC.md](SPEC.md) | [GOVERNANCE.md](GOVERNANCE.md)
+
 ## Environment setup
 
 Run from repository root:

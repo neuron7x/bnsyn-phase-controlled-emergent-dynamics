@@ -4,6 +4,8 @@ This document is the **authoritative** spec for the reference implementation in 
 It is structured as **12 components** with: (a) equations, (b) calibration knobs, (c) failure envelopes,
 (d) acceptance checks implemented in `tests/`.
 
+**Navigation**: [INDEX.md](INDEX.md) | [ARCHITECTURE.md](ARCHITECTURE.md) | [GOVERNANCE.md](GOVERNANCE.md)
+
 > Scope: The repo implements a **minimal but complete** reference system suitable for deterministic CI.
 > Scaling to large-N / GPU is explicitly out-of-scope for v0.2.0 but interfaces are stable.
 
