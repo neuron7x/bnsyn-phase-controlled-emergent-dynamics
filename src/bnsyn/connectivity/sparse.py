@@ -78,6 +78,7 @@ class SparseConnectivity:
     def apply(self, x: Float64Array) -> Float64Array:
         """Compute y = W @ x with automatic dispatch."""
         if self.format == "sparse":
+            assert isinstance(self.W, sp.csr_matrix)
             y = self.W @ x
             if sp.issparse(y):
                 return np.asarray(y.todense(), dtype=np.float64).ravel()
@@ -87,6 +88,7 @@ class SparseConnectivity:
     def to_dense(self) -> Float64Array:
         """Convert to dense matrix."""
         if self.format == "sparse":
+            assert isinstance(self.W, sp.csr_matrix)
             return np.asarray(self.W.todense(), dtype=np.float64)
         return np.asarray(self.W, dtype=np.float64)
 
