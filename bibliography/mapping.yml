@@ -1,0 +1,60 @@
+# /bibliography/mapping.yml
+# Maps CLM-ID -> bibliography source (bibkey) + tier + spec section.
+# Rule: normative-scientific CLM must map to Tier-A.
+
+CLM-0001:
+  bibkey: brette2005adaptive
+  section: P0-1 AdEx neuron model
+  tier: Tier-A
+CLM-0002:
+  bibkey: brette2005adaptive
+  section: P0-1 AdEx model
+  tier: Tier-A
+CLM-0003:
+  bibkey: jahr1990voltage
+  section: P0-1 NMDA block
+  tier: Tier-A
+CLM-0004:
+  bibkey: fremaux2016neuromodulated
+  section: P0-2 Three-factor learning
+  tier: Tier-A
+CLM-0005:
+  bibkey: izhikevich2007solving
+  section: P0-2 Neuromodulated STDP
+  tier: Tier-A
+CLM-0006:
+  bibkey: beggs2003neuronal
+  section: P0-3 Avalanche exponents
+  tier: Tier-A
+CLM-0007:
+  bibkey: beggs2003neuronal
+  section: P0-3 Branching parameter σ
+  tier: Tier-A
+CLM-0008:
+  bibkey: wilting2018inferring
+  section: P0-3 MR estimator
+  tier: Tier-A
+CLM-0009:
+  bibkey: clauset2009power
+  section: P0-3 Power-law fitting
+  tier: Tier-A
+CLM-0010:
+  bibkey: frey1997synaptic
+  section: P1-5 Synaptic tagging
+  tier: Tier-A
+CLM-0011:
+  bibkey: wilkinson2016fair
+  section: P2-7 FAIR principles
+  tier: Tier-A
+CLM-0012:
+  bibkey: neurips2026checklist
+  section: P2-7 Reproducibility checklist
+  tier: Tier-S
+CLM-0013:
+  bibkey: acm2020badges
+  section: P2-7 Artifact badges
+  tier: Tier-S
+CLM-0014:
+  bibkey: pytorch2026randomness
+  section: P2-8 Determinism docs
+  tier: Tier-S

@@ -1,0 +1,22 @@
+# /bibliography/sources.lock
+# Lockfile for BN-Syn Bibliography
+#
+# Tier-A LOCK_STRING = "<bibkey>|<doi_lower>|<canonical_url>|<year>|<journal_or_publisher>"
+# Tier-S LOCK_STRING = "<bibkey>|<canonical_url>|<publisher>|<retrieved_date>" (retrieved_date=2026-01-23)
+# SHA256 is computed over LOCK_STRING (UTF-8) and stored as 64 lowercase hex.
+# Format:
+#   Tier-A: bibkey=doi_lower::canonical_url::year::journal_or_publisher::sha256
+#   Tier-S: bibkey=NODOI::canonical_url::publisher::retrieved_date::sha256
+
+brette2005adaptive=10.1152/jn.00686.2005::https://doi.org/10.1152/jn.00686.2005::2005::Journal of Neurophysiology::857e1606dd3244c34511fef06b4d8fb856e40a95025f293406f64704dab5a545
+jahr1990voltage=10.1523/jneurosci.10-09-03178.1990::https://doi.org/10.1523/JNEUROSCI.10-09-03178.1990::1990::Journal of Neuroscience::efe121fbc4a30df36b5bb4dbad1a299cbc3ca8d2ae710703576d92d19501b95d
+fremaux2016neuromodulated=10.3389/fncir.2015.00085::https://doi.org/10.3389/fncir.2015.00085::2016::Frontiers in Neural Circuits::1fb7ef10dec733f2a5e8efb512a6466f11c5ade167c2c46d6f54b046139dc0d0
+izhikevich2007solving=10.1093/cercor/bhl152::https://doi.org/10.1093/cercor/bhl152::2007::Cerebral Cortex::d741c740e8160268ac30685cf4f106b17e19abcdeefc6a99416dbf31e968b082
+beggs2003neuronal=10.1523/jneurosci.23-35-11167.2003::https://doi.org/10.1523/JNEUROSCI.23-35-11167.2003::2003::Journal of Neuroscience::04416b675dca8245e633f7743d08a6c9f2c739ad3d5a4740739b975e290a412e
+wilting2018inferring=10.1038/s41467-018-04725-4::https://doi.org/10.1038/s41467-018-04725-4::2018::Nature Communications::905502fcb66f9ccfb3845ad130f92f5bc005f4cdc83ae2eb0c38bdb5f13eaf9f
+clauset2009power=10.1137/070710111::https://doi.org/10.1137/070710111::2009::SIAM Review::7deec69c77701f4e7d2d6c73cffe0ac8cae364d56a9f25180a24e9622a0f981e
+frey1997synaptic=10.1038/385533a0::https://doi.org/10.1038/385533a0::1997::Nature::2d1fd6e1f73cf7ea04f2d7412cea2a723cbe1b70f210addfd7bec84f81a21a2a
+wilkinson2016fair=10.1038/sdata.2016.18::https://doi.org/10.1038/sdata.2016.18::2016::Scientific Data::049a78027a395634dba278eb97b713e1074a684a8d025e22a81a51f7c3922fb2
+neurips2026checklist=NODOI::https://neurips.cc/public/guides/PaperChecklist::NeurIPS::2026-01-23::f0744219a373e41b6609b0bb8d73c37758d90ccb214147d7cab36aac08ab1935
+acm2020badges=NODOI::https://www.acm.org/publications/policies/artifact-review-and-badging-current::ACM::2026-01-23::1d2066dead3323d50b1b1617859aa2500d9d06d93679bd87992e555be32cb115
+pytorch2026randomness=NODOI::https://pytorch.org/docs/stable/notes/randomness.html::PyTorch::2026-01-23::453588087f095dd66ed59854bfdcd811fba4e91cd3906ffd7ba6ee0c0950341c
