@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 from bnsyn.config import PlasticityParams
+
+Float64Array = NDArray[np.float64]
+BoolArray = NDArray[np.bool_]
 
 
 @dataclass
 class EligibilityTraces:
-    e: np.ndarray  # shape (N_pre, N_post)
+    e: Float64Array  # shape (N_pre, N_post)
 
 
 @dataclass
@@ -18,19 +21,19 @@ class NeuromodulatorTrace:
     n: float  # scalar dopamine / TD trace
 
 
-def decay(x: np.ndarray, dt_ms: float, tau_ms: float) -> np.ndarray:
-    return cast(np.ndarray, x * np.exp(-dt_ms / tau_ms))
+def decay(x: Float64Array, dt_ms: float, tau_ms: float) -> Float64Array:
+    return np.asarray(x * np.exp(-dt_ms / tau_ms), dtype=np.float64)
 
 
 def three_factor_update(
-    w: np.ndarray,
+    w: Float64Array,
     elig: EligibilityTraces,
     neuromod: NeuromodulatorTrace,
-    pre_spikes: np.ndarray,
-    post_spikes: np.ndarray,
+    pre_spikes: BoolArray,
+    post_spikes: BoolArray,
     dt_ms: float,
     p: PlasticityParams,
-) -> tuple[np.ndarray, EligibilityTraces]:
+) -> tuple[Float64Array, EligibilityTraces]:
     """Vectorized three-factor update.
 
     - eligibility trace receives STDP-like coincidence: outer(pre, post)
@@ -52,11 +55,13 @@ def three_factor_update(
 
     # coincidence term: for spikes at this dt, add fixed increments approximating STDP window
     # (for full spike-time STDP, track last spike times; see docs/SPEC.md)
-    coincidence = np.outer(pre_spikes.astype(float), post_spikes.astype(float))
+    coincidence = np.outer(
+        pre_spikes.astype(np.float64, copy=False), post_spikes.astype(np.float64, copy=False)
+    )
     e = e + coincidence
 
     dw = p.eta * e * float(neuromod.n)
-    w_new = np.clip(w + dw, p.w_min, p.w_max)
+    w_new = np.asarray(np.clip(w + dw, p.w_min, p.w_max), dtype=np.float64)
 
     return w_new, EligibilityTraces(e=e)
 
