@@ -1,27 +1,27 @@
 # /bibliography/sources.lock
 # Lockfile for BN-Syn Bibliography
 #
-# Tier-A LOCK_STRING = "<bibkey>|<doi_lower>|<canonical_url>|<year>|<journal_or_publisher>"
-# Tier-S LOCK_STRING = "<bibkey>|<canonical_url>|<publisher>|<retrieved_date>" (retrieved_date=2026-01-23)
+# Tier-A LOCK_STRING = '<bibkey>=<doi>::<canonical_url>::<year>::<publisher_or_journal>'
+# Tier-S LOCK_STRING = '<bibkey>=NODOI::<canonical_url>::<publisher>::<retrieved_date>'
 # SHA256 is computed over LOCK_STRING (UTF-8) and stored as 64 lowercase hex.
 # Format:
-#   Tier-A: bibkey=doi_lower::canonical_url::year::journal_or_publisher::sha256
-#   Tier-S: bibkey=NODOI::canonical_url::publisher::retrieved_date::sha256
+#   Tier-A: <bibkey>=<doi>::<canonical_url>::<year>::<publisher_or_journal>::sha256:<hex>
+#   Tier-S: <bibkey>=NODOI::<canonical_url>::<publisher>::<retrieved_date>::sha256:<hex>
 
-brette2005adaptive=10.1152/jn.00686.2005::https://doi.org/10.1152/jn.00686.2005::2005::Journal of Neurophysiology::857e1606dd3244c34511fef06b4d8fb856e40a95025f293406f64704dab5a545
-jahr1990voltage=10.1523/jneurosci.10-09-03178.1990::https://doi.org/10.1523/JNEUROSCI.10-09-03178.1990::1990::Journal of Neuroscience::efe121fbc4a30df36b5bb4dbad1a299cbc3ca8d2ae710703576d92d19501b95d
-fremaux2016neuromodulated=10.3389/fncir.2015.00085::https://doi.org/10.3389/fncir.2015.00085::2016::Frontiers in Neural Circuits::1fb7ef10dec733f2a5e8efb512a6466f11c5ade167c2c46d6f54b046139dc0d0
-izhikevich2007solving=10.1093/cercor/bhl152::https://doi.org/10.1093/cercor/bhl152::2007::Cerebral Cortex::d741c740e8160268ac30685cf4f106b17e19abcdeefc6a99416dbf31e968b082
-beggs2003neuronal=10.1523/jneurosci.23-35-11167.2003::https://doi.org/10.1523/JNEUROSCI.23-35-11167.2003::2003::Journal of Neuroscience::04416b675dca8245e633f7743d08a6c9f2c739ad3d5a4740739b975e290a412e
-wilting2018inferring=10.1038/s41467-018-04725-4::https://doi.org/10.1038/s41467-018-04725-4::2018::Nature Communications::905502fcb66f9ccfb3845ad130f92f5bc005f4cdc83ae2eb0c38bdb5f13eaf9f
-clauset2009power=10.1137/070710111::https://doi.org/10.1137/070710111::2009::SIAM Review::7deec69c77701f4e7d2d6c73cffe0ac8cae364d56a9f25180a24e9622a0f981e
-frey1997synaptic=10.1038/385533a0::https://doi.org/10.1038/385533a0::1997::Nature::2d1fd6e1f73cf7ea04f2d7412cea2a723cbe1b70f210addfd7bec84f81a21a2a
-wilkinson2016fair=10.1038/sdata.2016.18::https://doi.org/10.1038/sdata.2016.18::2016::Scientific Data::049a78027a395634dba278eb97b713e1074a684a8d025e22a81a51f7c3922fb2
-trivers1971reciprocal=10.1086/406755::https://doi.org/10.1086/406755::1971::The Quarterly Review of Biology::1adf5148d94e8eaf5b15f97ac56e1734de40664f8c6909fea9086b20af9c2b65
-axelrod1981cooperation=10.1126/science.7466396::https://doi.org/10.1126/science.7466396::1981::Science::34abc13e55940a8bd8544064bf56db19df3ce7fe41844e9af36ca541e4d4c9f9
-kirkpatrick1983annealing=10.1126/science.220.4598.671::https://doi.org/10.1126/science.220.4598.671::1983::Science::32b8aee8b4dbc1d8376d5fa28e5783d8094ea52f15436176249cf8a16c710803
-nowak1998imagescoring=10.1038/31225::https://doi.org/10.1038/31225::1998::Nature::d546280c9f409afbcc84aea72ee66a1f3501156b32d3e181a29d7f45cbb86966
-fehr2002punishment=10.1038/415137a::https://doi.org/10.1038/415137a::2002::Nature::a6a1c799f93555b5a1f39f5369c61b79e94914289bfd557f6eed2169d854eedf
-neurips2026checklist=NODOI::https://neurips.cc/public/guides/PaperChecklist::NeurIPS::2026-01-23::f0744219a373e41b6609b0bb8d73c37758d90ccb214147d7cab36aac08ab1935
-acm2020badges=NODOI::https://www.acm.org/publications/policies/artifact-review-and-badging-current::ACM::2026-01-23::1d2066dead3323d50b1b1617859aa2500d9d06d93679bd87992e555be32cb115
-pytorch2026randomness=NODOI::https://pytorch.org/docs/stable/notes/randomness.html::PyTorch::2026-01-23::453588087f095dd66ed59854bfdcd811fba4e91cd3906ffd7ba6ee0c0950341c
+acm2020badges=NODOI::https://www.acm.org/publications/policies/artifact-review-and-badging-current::ACM::2026-01-23::sha256:0068e6f3f2e3f6c202ebdfce58e694d80506629e303a8ce682e6f9d945080fd2
+axelrod1981cooperation=10.1126/science.7466396::https://doi.org/10.1126/science.7466396::1981::Science::sha256:98bab64154b1646601bce99629377a9745cf07c99de06f2e99b0719703340aa5
+beggs2003neuronal=10.1523/jneurosci.23-35-11167.2003::https://doi.org/10.1523/JNEUROSCI.23-35-11167.2003::2003::Journal of Neuroscience::sha256:b3ad8951f6981edae4b64758ab4a2410f3ef04b9013fc6f25a33e8f2bdf74f4e
+brette2005adaptive=10.1152/jn.00686.2005::https://doi.org/10.1152/jn.00686.2005::2005::Journal of Neurophysiology::sha256:540bdf914fd19c74ca05c0b06cc959bc6abbd2489a5824dd51bc488c06ad6840
+clauset2009power=10.1137/070710111::https://doi.org/10.1137/070710111::2009::SIAM Review::sha256:177230d3c323f9ae9e39d2f92631ef6bdf441652f69040cefe45ca70d764eb85
+fehr2002punishment=10.1038/415137a::https://doi.org/10.1038/415137a::2002::Nature::sha256:9f4f009a668935483862c1619a44617a505a1c7be8cd93523bbefae09f7f683b
+fremaux2016neuromodulated=10.3389/fncir.2015.00085::https://doi.org/10.3389/fncir.2015.00085::2016::Frontiers in Neural Circuits::sha256:5a0a1e3927501adc67b4efbe2a541568e829ae6e858f4d7503e97e5f8a1b6f51
+frey1997synaptic=10.1038/385533a0::https://doi.org/10.1038/385533a0::1997::Nature::sha256:eb1d530abdb0b75327d6179e21b48f7c780b6e88bbe64793ba2ea32cc6f779c1
+izhikevich2007solving=10.1093/cercor/bhl152::https://doi.org/10.1093/cercor/bhl152::2007::Cerebral Cortex::sha256:de0b31bed1cadc0239fc38bf4372b62033a8bcb9abd3ee40b85e968e9ba55c69
+jahr1990voltage=10.1523/jneurosci.10-09-03178.1990::https://doi.org/10.1523/JNEUROSCI.10-09-03178.1990::1990::Journal of Neuroscience::sha256:3b7200fd2bf77bcc850b66567bcfaf46efbb5c3fb9f9ef4416854bde1dc5c4aa
+kirkpatrick1983annealing=10.1126/science.220.4598.671::https://doi.org/10.1126/science.220.4598.671::1983::Science::sha256:a8fe694ec4f0fb7076d0bf6ac05acfe77616a8f992033a5ec27fa097e538f7ca
+neurips2026checklist=NODOI::https://neurips.cc/public/guides/PaperChecklist::NeurIPS::2026-01-23::sha256:03c50b4d5077ad5ee2fb93e0ec9ec7f67fd58695fcd4d6e45936bc8966fd6dbe
+nowak1998imagescoring=10.1038/31225::https://doi.org/10.1038/31225::1998::Nature::sha256:9524ed4ec2051b9b3f30facb3555fddd1183125b69bc672a28e4b7b5354131bc
+pytorch2026randomness=NODOI::https://pytorch.org/docs/stable/notes/randomness.html::PyTorch::2026-01-23::sha256:f8975c799f86d59d7f1f556b0eabf4cbde487837fddea3141eec628b3e10dce2
+trivers1971reciprocal=10.1086/406755::https://doi.org/10.1086/406755::1971::The Quarterly Review of Biology::sha256:f0ac835e9c07a318d64f9b49e780fa8118f2f681f39f8d4a60dc559ad77ad127
+wilkinson2016fair=10.1038/sdata.2016.18::https://doi.org/10.1038/sdata.2016.18::2016::Scientific Data::sha256:12838b9282181d87810327379809ed63ff1d1a424aff3f73e12c4a660bdb7b2c
+wilting2018inferring=10.1038/s41467-018-04725-4::https://doi.org/10.1038/s41467-018-04725-4::2018::Nature Communications::sha256:7064a50c9033f7475da8e9c0919988269622fa0a0d3d27a5db4a67dca96e6cee

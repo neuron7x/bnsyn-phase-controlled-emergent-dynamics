@@ -23,6 +23,7 @@ jobs:
         run: |
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
+          python scripts/scan_normative_tags.py
       - name: Smoke tests
         run: |
           pytest -m "not validation"

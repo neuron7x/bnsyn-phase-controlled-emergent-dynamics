@@ -8,7 +8,7 @@ Example proxy:
 
 **Constraints**
 - Label as **proxy** in code + docs.
-- Do NOT claim validated criticality from σ_proxy.
+- Avoid claims of validated criticality from σ_proxy.
 
 ## Offline validation (measurement)
 **Goal:** evidence-grade criticality assessment.
@@ -22,4 +22,4 @@ Minimum protocol:
 6) Likelihood ratio vs alternatives (e.g., log-normal)
 7) Subsampling correction using MR estimator
 
-**[NORMATIVE]** Any claims about critical exponents or σ ranges must bind to claim IDs.
+Claims about critical exponents or σ ranges bind to claim identifiers.
