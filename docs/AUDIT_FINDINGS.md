@@ -43,7 +43,7 @@ Baseline validation run performed on: 2026-01-23
 
 ### FND-0004 (PRE-EXISTING)
 - **Symptom:** `test_adex_refractory_holds_reset` fails in validation tests.
-- **Root cause:** Test expects spike at V0=-45mV with V_spike=-40mV threshold, but AdEx dynamics may not produce a spike within one 0.1ms timestep.
+- **Root cause:** Test expects spike at V0=-45mV with V_spike=-40mV threshold, but AdEx dynamics may not produce a spike within one dt=1e-4s (0.1ms) timestep.
 - **Anchors:** `tests/validation/test_production_properties.py:29-33`
 - **Status:** ⚠️ Pre-existing failure — not introduced by architecture changes.
 - **Notes:** This is a test design issue in the production properties tests, not a core logic bug. The test is marked as `@pytest.mark.validation` and runs in the separate validation CI workflow.
