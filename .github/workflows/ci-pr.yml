@@ -85,29 +85,84 @@ jobs:
         run: pytest -m "not validation"
 
   gitleaks:
+    name: gitleaks (repo + pr-diff)
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
+      security-events: write
     steps:
-      - name: Checkout
+      - name: Checkout (full history for diff scan)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Gitleaks repository scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Gitleaks (pinned)
+        shell: bash
+        run: |
+          set -euo pipefail
+          GITLEAKS_VERSION="8.24.3"
+          curl -sSL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+      - name: Gitleaks repository scan (SARIF)
+        id: repo_scan
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          gitleaks detect \
+            --source . \
+            --redact \
+            --report-format sarif \
+            --report-path gitleaks-repo.sarif \
+            --exit-code 2
+      - name: Gitleaks PR diff scan (SARIF)
+        id: pr_scan
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_SHA="${{ github.event.pull_request.base.sha || 'HEAD~1' }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha || 'HEAD' }}"
+          gitleaks detect \
+            --redact \
+            --report-format sarif \
+            --report-path gitleaks-pr-diff.sarif \
+            --exit-code 2 \
+            --log-opts="--no-merges --first-parent ${BASE_SHA}..${HEAD_SHA}"
+      - name: Upload repo scan SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          args: detect --redact --verbose --source=.
-      - name: Gitleaks PR diff scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: gitleaks-repo-sarif-${{ github.run_id }}
+          path: gitleaks-repo.sarif
+          retention-days: 30
+      - name: Upload PR diff SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          args: >-
-            detect --redact --verbose
-            --log-opts="${{ github.event.pull_request.base.sha || 'HEAD~1' }}..${{ github.event.pull_request.head.sha || 'HEAD' }}"
+          name: gitleaks-pr-diff-sarif-${{ github.run_id }}
+          path: gitleaks-pr-diff.sarif
+          retention-days: 30
+      - name: Upload repo SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks-repo.sarif
+          category: gitleaks-repo
+      - name: Upload PR diff SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks-pr-diff.sarif
+          category: gitleaks-pr-diff
+      - name: Fail if any scan found secrets
+        if: steps.repo_scan.outcome == 'failure' || steps.pr_scan.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::error::Gitleaks detected secrets. Review uploaded SARIF artifacts."
+          exit 1
 
   pip-audit:
     runs-on: ubuntu-latest
