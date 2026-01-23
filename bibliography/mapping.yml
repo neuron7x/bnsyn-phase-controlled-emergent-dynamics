@@ -1,7 +1,3 @@
-# /bibliography/mapping.yml
-# Maps CLM-ID -> bibliography source (bibkey) + tier + spec section.
-# Rule: normative-scientific CLM must map to Tier-A.
-
 CLM-0001:
   bibkey: brette2005adaptive
   section: P0-1 AdEx neuron model
@@ -58,3 +54,19 @@ CLM-0014:
   bibkey: pytorch2026randomness
   section: P2-8 Determinism docs
   tier: Tier-S
+CLM-0015:
+  bibkey: trivers1971reciprocal
+  section: GOV-1 Result-based reciprocity (foundation)
+  tier: Tier-A
+CLM-0016:
+  bibkey: axelrod1981cooperation
+  section: GOV-1 Symmetric reciprocity (tit-for-tat)
+  tier: Tier-A
+CLM-0017:
+  bibkey: nowak1998imagescoring
+  section: GOV-1 Reputation / indirect reciprocity
+  tier: Tier-A
+CLM-0018:
+  bibkey: fehr2002punishment
+  section: GOV-1 Costly sanctioning / defector suppression
+  tier: Tier-A

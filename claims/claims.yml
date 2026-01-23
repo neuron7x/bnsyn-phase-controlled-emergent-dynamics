@@ -1,44 +1,84 @@
 version: 1
-generated_utc: 2026-01-23T00:00:00Z
+generated_utc: 2026-01-23 00:00:00+00:00
 schema:
   required_fields:
-    - id
-    - statement
-    - status
-    - tier
-    - normative
-    - source
-    - locator
-    - action
-    - notes
-
+  - id
+  - statement
+  - status
+  - tier
+  - normative
+  - source
+  - locator
+  - action
+  - notes
 claims:
-  - id: CLM-0001
-    statement: "AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based Hodgkin–Huxley model."
-    status: PROVEN
-    tier: A
-    normative: true
-    source: "Brette & Gerstner (2005) J Neurophysiol 94:3637–3642"
-    locator: "Abstract + results summary near p.3637 (verify exact sentence in paper PDF)"
-    action: KEEP
-    notes: "Use exact phrasing: 96% within ±2 ms (not '±2 ms always')."
-
-  - id: CLM-0003
-    statement: "NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in mM and V in mV."
-    status: PROVEN
-    tier: A
-    normative: true
-    source: "Jahr & Stevens (1990) J Neurosci 10(9):3178–3182"
-    locator: "Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990"
-    action: KEEP
-    notes: "Ensure units are stated explicitly."
-
-  - id: CLM-0017
-    statement: "STREAM achieves 100% on DVS Gesture (10-class)."
-    status: UNPROVEN
-    tier: B
-    normative: false
-    source: "Unresolved"
-    locator: "No identifiable primary paper"
-    action: REMOVE
-    notes: "Remove from benchmark tables unless a primary source is added."
+- id: CLM-0001
+  statement: AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based
+    Hodgkin–Huxley model.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
+  locator: Abstract + results summary near p.3637 (verify exact sentence in paper
+    PDF)
+  action: KEEP
+  notes: 'Use exact phrasing: 96% within ±2 ms (not ''±2 ms always'').'
+- id: CLM-0003
+  statement: NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in
+    mM and V in mV.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Jahr & Stevens (1990) J Neurosci 10(9):3178–3182
+  locator: Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990
+  action: KEEP
+  notes: Ensure units are stated explicitly.
+- id: CLM-0099
+  statement: STREAM achieves 100% on DVS Gesture (10-class).
+  status: UNPROVEN
+  tier: B
+  normative: false
+  source: Unresolved
+  locator: No identifiable primary paper
+  action: REMOVE
+  notes: Remove from benchmark tables unless a primary source is added.
+- id: CLM-0015
+  statement: Reciprocal altruism can be favored by natural selection when interactions
+    are repeated and contingent on observed outcomes.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Trivers (1971) The Quarterly Review of Biology 46(1):35–57
+  locator: DOI:10.1086/406755
+  action: KEEP
+  notes: Use as biological foundation for result-based reciprocity gating.
+- id: CLM-0016
+  statement: In iterated dilemmas, contingent reciprocity strategies (e.g., tit-for-tat)
+    can stabilize cooperation under suitable conditions.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Axelrod & Hamilton (1981) Science 211(4489):1390–1396
+  locator: DOI:10.1126/science.7466396
+  action: KEEP
+  notes: Use as algorithmic justification for symmetric response to prior outcomes.
+- id: CLM-0017
+  statement: Indirect reciprocity based on reputation (image scoring) can promote
+    cooperation without repeated pairwise encounters.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Nowak & Sigmund (1998) Nature 393(6685):573–577
+  locator: DOI:10.1038/31225
+  action: KEEP
+  notes: Use for group-level 'social verification' via public outcome signals.
+- id: CLM-0018
+  statement: Costly sanctioning (altruistic punishment) can sustain cooperation in
+    human groups and suppress free-riding.
+  status: PROVEN
+  tier: A
+  normative: true
+  source: Fehr & Gächter (2002) Nature 415(6868):137–140
+  locator: DOI:10.1038/415137a
+  action: KEEP
+  notes: Use to justify resource withdrawal / sanction analogs as cooperation stabilizers.

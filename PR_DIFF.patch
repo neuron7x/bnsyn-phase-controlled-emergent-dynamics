@@ -1,0 +1,385 @@
+diff --git a/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/.github/workflows/bibliography-gate.yml b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/.github/workflows/bibliography-gate.yml
+new file mode 100644
+index 0000000..738be9d
+--- /dev/null
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/.github/workflows/bibliography-gate.yml
+@@ -0,0 +1,22 @@
++name: bibliography-gate
++
++on:
++  pull_request:
++  push:
++    branches: [ main, master ]
++
++jobs:
++  validate-bibliography:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-python@v5
++        with:
++          python-version: "3.11"
++      - name: Install validator deps
++        run: |
++          python -m pip install --upgrade pip
++          pip install pyyaml
++      - name: Run bibliography SSOT validator
++        run: |
++          python scripts/validate_bibliography.py
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/Makefile b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/Makefile
+index a045812..f2cadd3 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/Makefile
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/Makefile
+@@ -1,4 +1,10 @@
+-.PHONY: validate-claims
++.PHONY: validate-claims validate-bibliography validate-all
++
+ 
+ validate-claims:
+ 	python scripts/validate_claims.py
++
++validate-bibliography:
++	python scripts/validate_bibliography.py
++
++validate-all: validate-claims validate-bibliography
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/bnsyn.bib b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/bnsyn.bib
+index a03286b..417b8e1 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/bnsyn.bib
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/bnsyn.bib
+@@ -118,6 +118,58 @@
+   note         = {Tier-A: FAIR principles}
+ }
+ 
++@article{trivers1971reciprocal,
++  author       = {Trivers, Robert L.},
++  title        = {The Evolution of Reciprocal Altruism},
++  journal      = {The Quarterly Review of Biology},
++  volume       = {46},
++  number       = {1},
++  pages        = {35--57},
++  year         = {1971},
++  doi          = {10.1086/406755},
++  url          = {https://doi.org/10.1086/406755},
++  note         = {Tier-A: Foundational reciprocal altruism model (result-based reciprocity)}
++}
++
++@article{axelrod1981cooperation,
++  author       = {Axelrod, Robert and Hamilton, William D.},
++  title        = {The Evolution of Cooperation},
++  journal      = {Science},
++  volume       = {211},
++  number       = {4489},
++  pages        = {1390--1396},
++  year         = {1981},
++  doi          = {10.1126/science.7466396},
++  url          = {https://doi.org/10.1126/science.7466396},
++  note         = {Tier-A: Tit-for-tat reciprocity as a robust cooperation mechanism}
++}
++
++@article{nowak1998imagescoring,
++  author       = {Nowak, Martin A. and Sigmund, Karl},
++  title        = {Evolution of Indirect Reciprocity by Image Scoring},
++  journal      = {Nature},
++  volume       = {393},
++  number       = {6685},
++  pages        = {573--577},
++  year         = {1998},
++  doi          = {10.1038/31225},
++  url          = {https://doi.org/10.1038/31225},
++  note         = {Tier-A: Reputation-based cooperation (indirect reciprocity)}
++}
++
++@article{fehr2002punishment,
++  author       = {Fehr, Ernst and G{"a}chter, Simon},
++  title        = {Altruistic Punishment in Humans},
++  journal      = {Nature},
++  volume       = {415},
++  number       = {6868},
++  pages        = {137--140},
++  year         = {2002},
++  doi          = {10.1038/415137a},
++  url          = {https://doi.org/10.1038/415137a},
++  note         = {Tier-A: Costly sanctioning can stabilize cooperation in groups}
++}
++
+ % Tier-S Entries (Standards and Documentation, No DOI Required)
+ 
+ @misc{neurips2026checklist,
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/mapping.yml b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/mapping.yml
+index d55124f..da369d9 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/mapping.yml
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/mapping.yml
+@@ -1,7 +1,3 @@
+-# /bibliography/mapping.yml
+-# Maps CLM-ID -> bibliography source (bibkey) + tier + spec section.
+-# Rule: normative-scientific CLM must map to Tier-A.
+-
+ CLM-0001:
+   bibkey: brette2005adaptive
+   section: P0-1 AdEx neuron model
+@@ -58,3 +54,19 @@ CLM-0014:
+   bibkey: pytorch2026randomness
+   section: P2-8 Determinism docs
+   tier: Tier-S
++CLM-0015:
++  bibkey: trivers1971reciprocal
++  section: GOV-1 Result-based reciprocity (foundation)
++  tier: Tier-A
++CLM-0016:
++  bibkey: axelrod1981cooperation
++  section: GOV-1 Symmetric reciprocity (tit-for-tat)
++  tier: Tier-A
++CLM-0017:
++  bibkey: nowak1998imagescoring
++  section: GOV-1 Reputation / indirect reciprocity
++  tier: Tier-A
++CLM-0018:
++  bibkey: fehr2002punishment
++  section: GOV-1 Costly sanctioning / defector suppression
++  tier: Tier-A
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/sources.lock b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/sources.lock
+index e8fdf74..33ee2d7 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/sources.lock
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/bibliography/sources.lock
+@@ -17,6 +17,10 @@ wilting2018inferring=10.1038/s41467-018-04725-4::https://doi.org/10.1038/s41467-
+ clauset2009power=10.1137/070710111::https://doi.org/10.1137/070710111::2009::SIAM Review::7deec69c77701f4e7d2d6c73cffe0ac8cae364d56a9f25180a24e9622a0f981e
+ frey1997synaptic=10.1038/385533a0::https://doi.org/10.1038/385533a0::1997::Nature::2d1fd6e1f73cf7ea04f2d7412cea2a723cbe1b70f210addfd7bec84f81a21a2a
+ wilkinson2016fair=10.1038/sdata.2016.18::https://doi.org/10.1038/sdata.2016.18::2016::Scientific Data::049a78027a395634dba278eb97b713e1074a684a8d025e22a81a51f7c3922fb2
++trivers1971reciprocal=10.1086/406755::https://doi.org/10.1086/406755::1971::The Quarterly Review of Biology::1adf5148d94e8eaf5b15f97ac56e1734de40664f8c6909fea9086b20af9c2b65
++axelrod1981cooperation=10.1126/science.7466396::https://doi.org/10.1126/science.7466396::1981::Science::34abc13e55940a8bd8544064bf56db19df3ce7fe41844e9af36ca541e4d4c9f9
++nowak1998imagescoring=10.1038/31225::https://doi.org/10.1038/31225::1998::Nature::d546280c9f409afbcc84aea72ee66a1f3501156b32d3e181a29d7f45cbb86966
++fehr2002punishment=10.1038/415137a::https://doi.org/10.1038/415137a::2002::Nature::a6a1c799f93555b5a1f39f5369c61b79e94914289bfd557f6eed2169d854eedf
+ neurips2026checklist=NODOI::https://neurips.cc/public/guides/PaperChecklist::NeurIPS::2026-01-23::f0744219a373e41b6609b0bb8d73c37758d90ccb214147d7cab36aac08ab1935
+ acm2020badges=NODOI::https://www.acm.org/publications/policies/artifact-review-and-badging-current::ACM::2026-01-23::1d2066dead3323d50b1b1617859aa2500d9d06d93679bd87992e555be32cb115
+ pytorch2026randomness=NODOI::https://pytorch.org/docs/stable/notes/randomness.html::PyTorch::2026-01-23::453588087f095dd66ed59854bfdcd811fba4e91cd3906ffd7ba6ee0c0950341c
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/claims/claims.yml b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/claims/claims.yml
+index 6d8bf9a..1d8facc 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/claims/claims.yml
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/claims/claims.yml
+@@ -1,44 +1,84 @@
+ version: 1
+-generated_utc: 2026-01-23T00:00:00Z
++generated_utc: 2026-01-23 00:00:00+00:00
+ schema:
+   required_fields:
+-    - id
+-    - statement
+-    - status
+-    - tier
+-    - normative
+-    - source
+-    - locator
+-    - action
+-    - notes
+-
++  - id
++  - statement
++  - status
++  - tier
++  - normative
++  - source
++  - locator
++  - action
++  - notes
+ claims:
+-  - id: CLM-0001
+-    statement: "AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based Hodgkin–Huxley model."
+-    status: PROVEN
+-    tier: A
+-    normative: true
+-    source: "Brette & Gerstner (2005) J Neurophysiol 94:3637–3642"
+-    locator: "Abstract + results summary near p.3637 (verify exact sentence in paper PDF)"
+-    action: KEEP
+-    notes: "Use exact phrasing: 96% within ±2 ms (not '±2 ms always')."
+-
+-  - id: CLM-0003
+-    statement: "NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in mM and V in mV."
+-    status: PROVEN
+-    tier: A
+-    normative: true
+-    source: "Jahr & Stevens (1990) J Neurosci 10(9):3178–3182"
+-    locator: "Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990"
+-    action: KEEP
+-    notes: "Ensure units are stated explicitly."
+-
+-  - id: CLM-0017
+-    statement: "STREAM achieves 100% on DVS Gesture (10-class)."
+-    status: UNPROVEN
+-    tier: B
+-    normative: false
+-    source: "Unresolved"
+-    locator: "No identifiable primary paper"
+-    action: REMOVE
+-    notes: "Remove from benchmark tables unless a primary source is added."
++- id: CLM-0001
++  statement: AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based
++    Hodgkin–Huxley model.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
++  locator: Abstract + results summary near p.3637 (verify exact sentence in paper
++    PDF)
++  action: KEEP
++  notes: 'Use exact phrasing: 96% within ±2 ms (not ''±2 ms always'').'
++- id: CLM-0003
++  statement: NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in
++    mM and V in mV.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Jahr & Stevens (1990) J Neurosci 10(9):3178–3182
++  locator: Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990
++  action: KEEP
++  notes: Ensure units are stated explicitly.
++- id: CLM-0099
++  statement: STREAM achieves 100% on DVS Gesture (10-class).
++  status: UNPROVEN
++  tier: B
++  normative: false
++  source: Unresolved
++  locator: No identifiable primary paper
++  action: REMOVE
++  notes: Remove from benchmark tables unless a primary source is added.
++- id: CLM-0015
++  statement: Reciprocal altruism can be favored by natural selection when interactions
++    are repeated and contingent on observed outcomes.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Trivers (1971) The Quarterly Review of Biology 46(1):35–57
++  locator: DOI:10.1086/406755
++  action: KEEP
++  notes: Use as biological foundation for result-based reciprocity gating.
++- id: CLM-0016
++  statement: In iterated dilemmas, contingent reciprocity strategies (e.g., tit-for-tat)
++    can stabilize cooperation under suitable conditions.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Axelrod & Hamilton (1981) Science 211(4489):1390–1396
++  locator: DOI:10.1126/science.7466396
++  action: KEEP
++  notes: Use as algorithmic justification for symmetric response to prior outcomes.
++- id: CLM-0017
++  statement: Indirect reciprocity based on reputation (image scoring) can promote
++    cooperation without repeated pairwise encounters.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Nowak & Sigmund (1998) Nature 393(6685):573–577
++  locator: DOI:10.1038/31225
++  action: KEEP
++  notes: Use for group-level 'social verification' via public outcome signals.
++- id: CLM-0018
++  statement: Costly sanctioning (altruistic punishment) can sustain cooperation in
++    human groups and suppress free-riding.
++  status: PROVEN
++  tier: A
++  normative: true
++  source: Fehr & Gächter (2002) Nature 415(6868):137–140
++  locator: DOI:10.1038/415137a
++  action: KEEP
++  notes: Use to justify resource withdrawal / sanction analogs as cooperation stabilizers.
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/docs/ARCHITECTURE.md b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/ARCHITECTURE.md
+index 3548316..bf52143 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/docs/ARCHITECTURE.md
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/ARCHITECTURE.md
+@@ -12,3 +12,8 @@
+ - neuron state: (V, w, spiked)
+ - synapse state: (g_ampa, g_nmda, g_gabaa)
+ - criticality: (σ estimator, gain controller)
++
++
++## Optional governance extension: Verified Contribution Gating (VCG)
++
++VCG is an **engineering-contract** module that enforces *result-based reciprocity* at the system boundary: agents that repeatedly match a social/interaction pattern without measurable contribution are **deprioritized** by withdrawing future routing priority and resource budget. VCG is specified as a non-core extension (does not change the 12 core neurodynamics components) and is documented in `docs/VCG.md`.
+diff --git a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/docs/BIBLIOGRAPHY.md b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/BIBLIOGRAPHY.md
+index de4f0c7..6160137 100644
+--- a/tmp/tmpbyyoe6s9/bnsyn-phase-controlled-emergent-dynamics-main/docs/BIBLIOGRAPHY.md
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/BIBLIOGRAPHY.md
+@@ -11,6 +11,11 @@
+ 8. Frey & Morris (1997) — Synaptic tagging — DOI:10.1038/385533a0
+ 9. Wilkinson et al. (2016) — FAIR principles — DOI:10.1038/sdata.2016.18
+ 
++10. Trivers (1971) — Reciprocal altruism — DOI:10.1086/406755
++11. Axelrod & Hamilton (1981) — Evolution of cooperation — DOI:10.1126/science.7466396
++12. Nowak & Sigmund (1998) — Indirect reciprocity (image scoring) — DOI:10.1038/31225
++13. Fehr & Gächter (2002) — Altruistic punishment — DOI:10.1038/415137a
++
+ ## Tier-S Standards and Documentation (no DOI required)
+ 
+ 1. NeurIPS Paper Checklist — https://neurips.cc/public/guides/PaperChecklist
+diff --git a/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/VCG.md b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/VCG.md
+new file mode 100644
+index 0000000..3081149
+--- /dev/null
++++ b/tmp/tmp50l9mpjs/bnsyn-phase-controlled-emergent-dynamics-main/docs/VCG.md
+@@ -0,0 +1,67 @@
++# /docs/VCG.md
++## Verified Contribution Gating (VCG) — Result-Based Social Verification Module
++
++**Status**: Optional governance extension (non-core).  
++**Normativity**: Normative for VCG behavior if enabled; VCG MUST NOT alter the 12-core neurodynamics components.
++
++### 1) Purpose
++VCG reduces **parasitic strategies** (pattern-matching interaction without measurable contribution) by applying a *symmetric, outcome-based* policy:
++- If an agent's observable contribution is consistently below threshold, the system mirrors that outcome by withdrawing future **social/resource support** (routing priority, compute budget, access).
++
++This is **not** framed as “punishment”; it is a deterministic resource-allocation rule.
++
++### 2) Scientific foundation (Tier-A)
++VCG is grounded in peer-reviewed reciprocity and cooperation mechanisms:
++- **Reciprocal altruism / contingent reciprocity** (Trivers 1971, DOI:10.1086/406755) — outcome-contingent cooperation.  
++- **Tit-for-tat stability in repeated interactions** (Axelrod & Hamilton 1981, DOI:10.1126/science.7466396).  
++- **Reputation / indirect reciprocity via public outcome signals** (Nowak & Sigmund 1998, DOI:10.1038/31225).  
++- **Defector suppression via costly sanctioning** (Fehr & Gächter 2002, DOI:10.1038/415137a).
++
++### 3) Inputs and observable metrics (SSOT)
++VCG operates ONLY on **observable outcomes** (no mind-reading, no intent inference).
++
++Let an agent be indexed by *i* and an evaluation window be *W* discrete steps.
++
++**Contribution score**:
++- Define task-specific measurable output: `contrib_i(t)` (e.g., validated PR merged, passed tests, accepted patches, verified dataset improvements).
++- Define effort proxy (optional, non-normative): `cost_i(t)` (e.g., CPU seconds, tokens, wall-time).
++
++Compute rolling aggregates:
++- `C_i = Σ_{t∈W} contrib_i(t)`
++- `K_i = Σ_{t∈W} cost_i(t)` (optional)
++
++**Support level**:
++- `S_i ∈ [0, 1]` (routing priority / resource multiplier)
++
++### 4) Deterministic gating rule (contract)
++Parameters: `θ_C` (minimum contribution), `α_down` (decrease rate), `α_up` (recovery rate), `ε` (stability floor).
++
++1. **Update** (per window):
++   - If `C_i < θ_C` then `S_i ← max(0, S_i - α_down)`
++   - Else `S_i ← min(1, S_i + α_up)`
++2. **Routing & budget application**:
++   - Effective allocation multiplier: `alloc_i = ε + (1-ε)·S_i`
++   - Apply to: queue priority, parallelism limit, retries, or compute credits.
++
++**Hard invariants**:
++- I1: `S_i` is deterministic given the same observable log + parameters.
++- I2: `S_i` is monotonic non-increasing while `C_i < θ_C` persists.
++- I3: Recovery is possible (no permanent exclusion) if `C_i ≥ θ_C`.
++- I4: VCG must be side-effect free on the simulation core: no coupling into neuron/synapse state.
++
++### 5) Failure envelopes & mitigations
++- **False-negative contribution** (measurement misses real value) → require *verifiable* contribution signals; keep `α_down` conservative.
++- **Goodharting** (gaming the metric) → use multi-signal contribution, audit sampling, and per-task validators.
++- **Cold start disadvantage** → set initial `S_i = 1` and apply a grace period `W_grace`.
++- **Collusion / reputation manipulation** → use signed logs, reviewer diversity constraints, and anomaly detection (non-core).
++
++### 6) Acceptance criteria (VCG-enabled)
++- A1: Replaying the same event log yields identical `S_i(t)` traces (bitwise).
++- A2: An agent with `C_i < θ_C` for `k` consecutive windows shows strictly decreasing `S_i` until floor.
++- A3: An agent regains `S_i → 1` after sustained `C_i ≥ θ_C`.
++- A4: Disabling VCG yields identical core simulation results (golden tests).
++
++### 7) Claim mapping
++Normative claims in this module map to:
++- CLM-0015, CLM-0016, CLM-0017, CLM-0018 (see `bibliography/mapping.yml`).
++

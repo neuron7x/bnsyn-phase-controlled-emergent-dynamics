@@ -11,6 +11,11 @@
 8. Frey & Morris (1997) — Synaptic tagging — DOI:10.1038/385533a0
 9. Wilkinson et al. (2016) — FAIR principles — DOI:10.1038/sdata.2016.18
 
+10. Trivers (1971) — Reciprocal altruism — DOI:10.1086/406755
+11. Axelrod & Hamilton (1981) — Evolution of cooperation — DOI:10.1126/science.7466396
+12. Nowak & Sigmund (1998) — Indirect reciprocity (image scoring) — DOI:10.1038/31225
+13. Fehr & Gächter (2002) — Altruistic punishment — DOI:10.1038/415137a
+
 ## Tier-S Standards and Documentation (no DOI required)
 
 1. NeurIPS Paper Checklist — https://neurips.cc/public/guides/PaperChecklist
