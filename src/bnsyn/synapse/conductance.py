@@ -85,9 +85,7 @@ class ConductanceSynapses:
 
         # I_syn = g*(V - E) terms are computed outside (needs V). Here return conductances.
         # We return a tuple-like stacked array for downstream. For convenience, return (3,N).
-        return np.stack(
-            [self.state.g_ampa_nS, self.state.g_nmda_nS, self.state.g_gabaa_nS], axis=0
-        )
+        return np.stack([self.state.g_ampa_nS, self.state.g_nmda_nS, self.state.g_gabaa_nS], axis=0)
 
     @staticmethod
     def current_pA(
