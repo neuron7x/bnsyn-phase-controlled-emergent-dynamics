@@ -19,6 +19,13 @@ class AdExState:
     spiked: BoolArray  # shape (N,)
 
 
+@dataclass(frozen=True)
+class IntegrationMetrics:
+    lte_estimate: float
+    global_error_bound: float
+    recommended_dt_ms: float
+
+
 def adex_step(
     state: AdExState,
     params: AdExParams,
@@ -61,3 +68,46 @@ def adex_step(
         w[spiked] = w[spiked] + params.b_pA
 
     return AdExState(V_mV=V, w_pA=w, spiked=spiked)
+
+
+def adex_step_with_error_tracking(
+    state: AdExState,
+    params: AdExParams,
+    dt_ms: float,
+    I_syn_pA: Float64Array,
+    I_ext_pA: Float64Array,
+    *,
+    atol: float = 1e-6,
+    rtol: float = 1e-3,
+) -> tuple[AdExState, IntegrationMetrics]:
+    """One Euler step with step-doubling error tracking for AdEx dynamics."""
+    if dt_ms <= 0:
+        raise ValueError("dt_ms must be positive")
+    if atol <= 0 or rtol <= 0:
+        raise ValueError("atol and rtol must be positive")
+
+    full = adex_step(state, params, dt_ms, I_syn_pA, I_ext_pA)
+    half = adex_step(state, params, dt_ms * 0.5, I_syn_pA, I_ext_pA)
+    half2 = adex_step(half, params, dt_ms * 0.5, I_syn_pA, I_ext_pA)
+
+    delta_v = np.abs(full.V_mV - half2.V_mV)
+    delta_w = np.abs(full.w_pA - half2.w_pA)
+    scale_v = atol + rtol * np.maximum(np.abs(full.V_mV), np.abs(half2.V_mV))
+    scale_w = atol + rtol * np.maximum(np.abs(full.w_pA), np.abs(half2.w_pA))
+    err_v = delta_v / scale_v
+    err_w = delta_w / scale_w
+    lte_estimate = float(np.max(np.concatenate([err_v, err_w])))
+    global_error_bound = lte_estimate
+
+    safety = 0.9
+    order = 1.0
+    err = max(lte_estimate, 1e-12)
+    factor = safety * err ** (-1.0 / (order + 1.0))
+    recommended_dt_ms = float(dt_ms * min(2.0, max(0.1, factor)))
+
+    metrics = IntegrationMetrics(
+        lte_estimate=lte_estimate,
+        global_error_bound=global_error_bound,
+        recommended_dt_ms=recommended_dt_ms,
+    )
+    return full, metrics
