@@ -101,6 +101,7 @@ jobs:
           GITLEAKS_CONFIG: .gitleaks.toml
         with:
           args: detect --redact --verbose --source=.
+          artifact_name: gitleaks-repo-results
       - name: Gitleaks PR diff scan
         uses: gitleaks/gitleaks-action@v2
         env:
@@ -110,6 +111,7 @@ jobs:
           args: >-
             detect --redact --verbose
             --log-opts="${{ github.event.pull_request.base.sha || 'HEAD~1' }}..${{ github.event.pull_request.head.sha || 'HEAD' }}"
+          artifact_name: gitleaks-pr-diff-results
 
   pip-audit:
     runs-on: ubuntu-latest
