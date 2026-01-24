@@ -16,6 +16,7 @@ Use this index to find any document, specification, or governance artifact.
 | **Governance** | [GOVERNANCE.md](GOVERNANCE.md) |
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |
+| **Performance Benchmarks** | [PERFORMANCE.md](PERFORMANCE.md) |
 
 ---
 

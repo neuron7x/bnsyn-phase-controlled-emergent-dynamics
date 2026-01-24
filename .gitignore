@@ -10,6 +10,7 @@ build/
 # Benchmark results (local runs)
 results/
 artifacts/
+benchmarks/results/
 
 # PR artifacts (should not be tracked)
 PR_DIFF.patch

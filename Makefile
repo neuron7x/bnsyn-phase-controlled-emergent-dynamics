@@ -1,4 +1,4 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report
+.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-micro bench-sweep bench-report
 
 # SSOT validators
 validate-claims:
@@ -33,11 +33,13 @@ ci-full:
 	$(MAKE) test-validation
 
 # Benchmark targets
-bench:
-	python benchmarks/run_benchmarks.py --scenario quick --repeats 3 --out results/bench.csv --json results/bench.json
+bench-micro:
+	python scripts/run_benchmarks.py --suite micro --json-out benchmarks/results/bench_micro.json
 
-bench-sweep:
-	python benchmarks/run_benchmarks.py --scenario full --repeats 5 --out results/bench_full.csv --json results/bench_full.json
+bench:
+	python scripts/run_benchmarks.py --suite full --json-out benchmarks/results/bench_full.json
+
+bench-sweep: bench
 
 bench-report:
-	python benchmarks/report.py --input results/bench.csv --output docs/benchmarks/README.md
+	@echo "Benchmark reports are emitted to JSON under benchmarks/results/"

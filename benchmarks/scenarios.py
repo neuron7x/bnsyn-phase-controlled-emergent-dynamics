@@ -1,11 +1,4 @@
-"""Benchmark scenario definitions for BN-Syn scalability testing.
-
-Defines parameter sweeps for:
-- N_neurons (network size)
-- Connection density
-- Simulation steps
-- Integration timestep
-"""
+"""Benchmark scenario definitions for deterministic BN-Syn performance runs."""
 
 from __future__ import annotations
 
@@ -15,8 +8,9 @@ from typing import Any
 
 @dataclass(frozen=True)
 class BenchmarkScenario:
-    """Definition of a single benchmark scenario."""
+    """Definition of a deterministic benchmark scenario."""
 
+    scenario_id: str
     name: str
     seed: int
     dt_ms: float
@@ -29,6 +23,7 @@ class BenchmarkScenario:
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
+            "scenario_id": self.scenario_id,
             "name": self.name,
             "seed": self.seed,
             "dt_ms": self.dt_ms,
@@ -40,109 +35,107 @@ class BenchmarkScenario:
         }
 
 
-# CI smoke test: minimal scenario for fast CI validation
-CI_SMOKE = BenchmarkScenario(
-    name="ci_smoke",
-    seed=42,
+SMOKE_BENCH = BenchmarkScenario(
+    scenario_id="SCN-001",
+    name="smoke-bench",
+    seed=4242,
     dt_ms=0.1,
-    steps=100,
-    N_neurons=50,
+    steps=120,
+    N_neurons=64,
     p_conn=0.05,
     frac_inhib=0.2,
-    description="Minimal scenario for CI smoke test",
+    description="Tiny deterministic run for CI microbench",
 )
 
-# N_neurons sweep: scalability with network size (fixed steps)
-N_SWEEP_SMALL = [
+CORE_STEP = BenchmarkScenario(
+    scenario_id="SCN-002",
+    name="core-step",
+    seed=4242,
+    dt_ms=0.1,
+    steps=800,
+    N_neurons=512,
+    p_conn=0.05,
+    frac_inhib=0.2,
+    description="Representative core stepping workload",
+)
+
+SCALE_SWEEP = [
     BenchmarkScenario(
-        name=f"n_sweep_{n}",
-        seed=42,
+        scenario_id="SCN-003",
+        name=f"scale-sweep-{n}",
+        seed=4242,
         dt_ms=0.1,
-        steps=500,
+        steps=600,
         N_neurons=n,
         p_conn=0.05,
         frac_inhib=0.2,
-        description=f"Network size sweep: N={n}",
+        description=f"Scale sweep for network size N={n}",
     )
-    for n in [100, 200, 500, 1000]
+    for n in [256, 512, 1024, 2048]
 ]
 
-N_SWEEP_LARGE = [
+LEGACY_STEPS_SWEEP = [
     BenchmarkScenario(
-        name=f"n_sweep_{n}",
-        seed=42,
+        scenario_id="SCN-004",
+        name=f"steps-sweep-{steps}",
+        seed=4242,
         dt_ms=0.1,
-        steps=500,
-        N_neurons=n,
+        steps=steps,
+        N_neurons=512,
         p_conn=0.05,
         frac_inhib=0.2,
-        description=f"Network size sweep: N={n}",
+        description=f"Legacy steps sweep: steps={steps}",
     )
-    for n in [2000, 5000, 10000]
+    for steps in [400, 800, 1600]
 ]
 
-# Steps sweep: scalability with simulation length (fixed N)
-STEPS_SWEEP = [
+LEGACY_CONN_SWEEP = [
     BenchmarkScenario(
-        name=f"steps_sweep_{s}",
-        seed=42,
+        scenario_id="SCN-005",
+        name=f"conn-sweep-{int(p_conn * 100)}pct",
+        seed=4242,
         dt_ms=0.1,
-        steps=s,
-        N_neurons=500,
+        steps=600,
+        N_neurons=512,
+        p_conn=p_conn,
+        frac_inhib=0.2,
+        description=f"Legacy connection sweep: p_conn={p_conn}",
+    )
+    for p_conn in [0.02, 0.05, 0.1]
+]
+
+LEGACY_DT_SWEEP = [
+    BenchmarkScenario(
+        scenario_id="SCN-006",
+        name=f"dt-sweep-{int(dt_ms * 1000)}us",
+        seed=4242,
+        dt_ms=dt_ms,
+        steps=600,
+        N_neurons=256,
         p_conn=0.05,
         frac_inhib=0.2,
-        description=f"Steps sweep: steps={s}",
+        description=f"Legacy timestep sweep: dt={dt_ms}ms",
     )
-    for s in [500, 1000, 2000, 5000]
-]
-
-# Connectivity density sweep
-CONN_SWEEP = [
-    BenchmarkScenario(
-        name=f"conn_sweep_{int(p * 100)}pct",
-        seed=42,
-        dt_ms=0.1,
-        steps=500,
-        N_neurons=500,
-        p_conn=p,
-        frac_inhib=0.2,
-        description=f"Connectivity sweep: p_conn={p}",
-    )
-    for p in [0.01, 0.05, 0.1, 0.2]
-]
-
-# Timestep sweep (dt invariance check)
-DT_SWEEP = [
-    BenchmarkScenario(
-        name=f"dt_sweep_{int(dt * 1000)}us",
-        seed=42,
-        dt_ms=dt,
-        steps=1000,
-        N_neurons=200,
-        p_conn=0.05,
-        frac_inhib=0.2,
-        description=f"Timestep sweep: dt={dt}ms",
-    )
-    for dt in [0.05, 0.1, 0.2, 0.5]
+    for dt_ms in [0.05, 0.1, 0.2]
 ]
 
 
-# Scenario sets for different benchmark runs
 SCENARIO_SETS = {
-    "ci_smoke": [CI_SMOKE],
-    "quick": [CI_SMOKE] + N_SWEEP_SMALL[:2] + STEPS_SWEEP[:2],
-    "n_sweep": N_SWEEP_SMALL + N_SWEEP_LARGE,
-    "steps_sweep": STEPS_SWEEP,
-    "conn_sweep": CONN_SWEEP,
-    "dt_sweep": DT_SWEEP,
-    "full": N_SWEEP_SMALL + N_SWEEP_LARGE + STEPS_SWEEP + CONN_SWEEP + DT_SWEEP,
+    "micro": [SMOKE_BENCH],
+    "full": [SMOKE_BENCH, CORE_STEP, *SCALE_SWEEP],
+    "ci_smoke": [SMOKE_BENCH],
+    "quick": [SMOKE_BENCH, CORE_STEP],
+    "n_sweep": SCALE_SWEEP,
+    "steps_sweep": LEGACY_STEPS_SWEEP,
+    "conn_sweep": LEGACY_CONN_SWEEP,
+    "dt_sweep": LEGACY_DT_SWEEP,
 }
 
 
-def get_scenarios(scenario_set: str = "quick") -> list[BenchmarkScenario]:
-    """Get scenarios for a given benchmark set."""
-    if scenario_set not in SCENARIO_SETS:
+def get_scenarios(suite: str = "micro") -> list[BenchmarkScenario]:
+    """Get scenarios for a given benchmark suite."""
+    if suite not in SCENARIO_SETS:
         raise ValueError(
-            f"Unknown scenario set '{scenario_set}'. Available: {', '.join(SCENARIO_SETS.keys())}"
+            f"Unknown suite '{suite}'. Available: {', '.join(SCENARIO_SETS.keys())}"
         )
-    return SCENARIO_SETS[scenario_set]
+    return SCENARIO_SETS[suite]

@@ -26,6 +26,7 @@ dev = [
 
 [project.scripts]
 bnsyn = "bnsyn.cli:main"
+bnsyn-bench = "bnsyn.bench_cli:main"
 
 [build-system]
 requires = ["setuptools>=69"]
