@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    import jax.numpy as jnp  # type: ignore[import-not-found]
+    import jax.numpy as jnp
 except Exception as e:  # pragma: no cover
     raise ImportError(
         "JAX is not installed. Install an appropriate jax/jaxlib build to use this module."

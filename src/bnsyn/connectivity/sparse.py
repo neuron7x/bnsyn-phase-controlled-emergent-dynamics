@@ -1,4 +1,7 @@
-"""Sparse connectivity utilities with CSR representation."""
+"""Sparse connectivity utilities with CSR representation.
+
+Implements deterministic connectivity construction and metrics for SPEC P2-11.
+"""
 
 from __future__ import annotations
 
@@ -14,7 +17,16 @@ Float64Array = NDArray[np.float64]
 
 @dataclass(frozen=True)
 class SparseConnectivityMetrics:
-    """Sparsity metrics and performance estimates."""
+    """Sparsity metrics and performance estimates.
+
+    Args:
+        density: Fraction of non-zero entries.
+        sparsity: Fraction of zero entries.
+        nnz: Number of non-zero entries.
+        memory_dense_mb: Dense matrix size estimate in MB.
+        memory_sparse_mb: Sparse CSR size estimate in MB.
+        speedup_estimated: Heuristic speedup estimate for sparse vs dense.
+    """
 
     density: float
     sparsity: float
@@ -25,7 +37,16 @@ class SparseConnectivityMetrics:
 
 
 class SparseConnectivity:
-    """Adaptive sparse/dense matrix dispatcher."""
+    """Adaptive sparse/dense matrix dispatcher.
+
+    Args:
+        W: Dense weight matrix (shape: [n_pre, n_post]).
+        density_threshold: Density cutoff for sparse vs dense format.
+        force_format: Explicit format override.
+
+    Raises:
+        ValueError: If W is not 2D.
+    """
 
     def __init__(
         self,
@@ -76,7 +97,14 @@ class SparseConnectivity:
         return min(10.0, 2.0 ** (1.0 - density) / density) if density > 0 else 10.0
 
     def apply(self, x: Float64Array) -> Float64Array:
-        """Compute y = W @ x with automatic dispatch."""
+        """Compute y = W @ x with automatic format dispatch.
+
+        Args:
+            x: Input vector (shape: [n_post]).
+
+        Returns:
+            Output vector (shape: [n_pre]).
+        """
         if self.format == "sparse":
             assert isinstance(self.W, sp.csr_matrix)
             y = self.W @ x
@@ -117,7 +145,22 @@ def build_random_connectivity(
 ) -> SparseConnectivity:
     """Build Erdős-Rényi random connectivity with explicit RNG control.
 
-    Determinism is achieved by passing a managed NumPy Generator.
+    Args:
+        n_pre: Number of presynaptic neurons.
+        n_post: Number of postsynaptic neurons.
+        connection_prob: Connection probability in [0, 1].
+        rng: NumPy Generator for deterministic sampling.
+        weight_mean: Mean weight for absolute normal sampling.
+        weight_std: Standard deviation of weights.
+
+    Returns:
+        SparseConnectivity instance.
+
+    Raises:
+        ValueError: If shapes or probabilities are invalid.
+
+    Notes:
+        Determinism is achieved by passing a managed NumPy Generator.
     """
     if n_pre <= 0 or n_post <= 0:
         raise ValueError("n_pre and n_post must be positive")

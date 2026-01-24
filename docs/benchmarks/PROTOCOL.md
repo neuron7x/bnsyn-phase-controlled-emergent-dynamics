@@ -11,11 +11,15 @@ All benchmarks are deterministic given fixed environment and seeds:
    - Python `random` module (fallback)
    - `PYTHONHASHSEED` environment variable
 
-2. **Parameter serialization**: All scenario parameters are serialized to JSON/CSV with exact types
+2. **Parameter serialization**: All scenario parameters are serialized to JSON with exact types
 
 3. **Subprocess isolation**: Each run executes in a fresh subprocess with clean state
 
 4. **No hidden state**: BN-Syn core has no module-level globals that accumulate state
+
+Notes:
+- Subprocess teardown releases Python and (if enabled) GPU allocations.
+- OS-level caches are not explicitly flushed; performance metrics should be interpreted with this in mind.
 
 ## Environment Requirements
 
@@ -44,28 +48,30 @@ Benchmarks are OS-agnostic but timing will vary:
 
 ## Running Benchmarks
 
+### Scenario Sets
+
+- **small_network**: single scenario, N=128, steps=300
+- **medium_network**: single scenario, N=512, steps=400
+- **large_network**: single scenario, N=2000, steps=400
+- **criticality_sweep**: sigma_target in [0.8, 1.0, 1.2], steps=300
+- **temperature_sweep**: T0 in [0.5, 1.0, 1.5], steps=300
+- **dt_sweep**: dt_ms in [0.05, 0.1, 0.2], steps=400 (adaptive dt enabled)
+
+Defaults:
+- `--repeats` defaults to 3 (increase to 5+ for baselines)
+- `--warmup` defaults to 1 (set to 0 if you need to skip warmup)
+
 ### Minimal Example (CI Smoke Test)
 
 ```bash
 python benchmarks/run_benchmarks.py \
-  --scenario ci_smoke \
+  --scenario small_network \
   --repeats 3 \
-  --out results/ci_smoke.csv \
-  --json results/ci_smoke.json
+  --warmup 1 \
+  --json results/small_network.json
 ```
 
-Expected runtime: <10 seconds
-
-### Quick Local Benchmark
-
-```bash
-python benchmarks/run_benchmarks.py \
-  --scenario quick \
-  --repeats 3 \
-  --out results/quick.csv
-```
-
-Expected runtime: 1-2 minutes
+Expected runtime: <1 minute
 
 ### Full Parameter Sweep
 
@@ -73,18 +79,11 @@ Expected runtime: 1-2 minutes
 python benchmarks/run_benchmarks.py \
   --scenario full \
   --repeats 5 \
-  --out results/full.csv
+  --warmup 1 \
+  --json results/full.json
 ```
 
 Expected runtime: 10-30 minutes (depends on hardware)
-
-### Generate Report
-
-```bash
-python benchmarks/report.py \
-  --input results/quick.csv \
-  --output docs/benchmarks/README.md
-```
 
 ## Interpreting Results
 
@@ -99,27 +98,47 @@ python benchmarks/report.py \
 
 ### Metric Definitions
 
-**wall_time_sec:**
+**performance_wall_time_sec:**
 - Total elapsed wall-clock time (includes Python overhead)
 - Use for absolute performance assessment
 
-**per_step_ms:**
+**performance_per_step_ms:**
 - Time per simulation step (wall_time / steps × 1000)
 - Use for comparing step efficiency across scenarios
 
-**peak_rss_mb:**
+**performance_peak_rss_mb:**
 - Peak resident set size (process memory footprint)
 - Includes Python interpreter, NumPy arrays, overhead
 - Use for memory scaling analysis
 
-**neuron_steps_per_sec:**
+**performance_neuron_steps_per_sec:**
 - Throughput metric: (N_neurons × steps) / wall_time
 - Use for comparing hardware efficiency
 - Higher is better
 
-**spike_count_total:**
-- Total spikes across all runs (diagnostic)
-- Should be consistent across repeats for same scenario (determinism check)
+**physics_spike_rate_hz:**
+- Mean spike rate across the run (Hz)
+- Computed from per-step spike_rate_hz values
+
+**physics_sigma:**
+- Mean σ tracking signal across the run
+- Reported alongside `physics_sigma_std`
+
+**stability_nan_rate:**
+- Fraction of NaN entries observed in state vectors
+
+**reproducibility_bitwise_delta:**
+- Fraction of float64 entries that differ at the bit level between two runs
+- Computed as max(delta(sigma), delta(spike_rate_hz))
+- 0.0 indicates bitwise-identical outputs
+
+### Aggregated Outputs
+
+Per-scenario JSON output aggregates each base metric with suffixes:
+- `_mean`, `_std`, `_p5`, `_p50`, `_p95`
+
+`benchmarks/run_benchmarks.py` also logs per-scenario summaries (mean, p50/p95) to `bench.log`
+for CI traceability.
 
 ### Expected Variance
 
@@ -131,6 +150,11 @@ python benchmarks/report.py \
 - Timing: ±1-3% (cache effects, OS scheduling)
 - Memory: ±1% (Python GC non-determinism)
 
+### Serialization and Aggregation
+
+- Non-finite metric values (NaN/Inf) are serialized as `null` in JSON output.
+- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+
 ### Regression Detection
 
 **Significant regression:**
@@ -139,11 +163,23 @@ python benchmarks/report.py \
 
 **Investigate if:**
 - Throughput drops >10%
-- Spike count changes (determinism violation)
+- Stability metrics change unexpectedly (determinism violation)
 
 **Likely false positive:**
 - <5% changes on shared runners
 - Single-run outliers (check p95 vs mean)
+
+### Regression Test Tolerances
+
+`tests/benchmarks/test_regression.py` compares two runs per scenario and enforces:
+- Default `rtol=1e-6`, `atol=1e-9`
+- Stricter overrides for deterministic metrics:
+  - `stability_nan_rate`: `rtol=0`, `atol=1e-12`
+  - `stability_divergence_rate`: `rtol=0`, `atol=1e-12`
+  - `reproducibility_bitwise_delta`: `rtol=0`, `atol=1e-8`
+  - `thermostat_temperature_exploration_corr`: `rtol=1e-6`, `atol=1e-8`
+
+Performance metrics are excluded from this deterministic regression check.
 
 ## Baseline Establishment
 
@@ -151,7 +187,7 @@ To establish a baseline for regression tracking:
 
 1. Run full sweep with 5+ repeats on dedicated hardware
 2. Record: hardware spec, OS, Python version, git SHA
-3. Store results as `baselines/{sha}.csv`
+3. Store results as `baselines/{sha}.json`
 4. Use p50 values for comparison (robust to outliers)
 
 ## Limitations
@@ -191,4 +227,4 @@ To make merge-blocking (not recommended without baselines):
 
 ## Changelog
 
-- **2026-01-24**: Initial protocol (git SHA: TBD)
+- **2026-01-24**: Initial protocol (git SHA: cc3b5f0c8d75c398a488d70390e9917cc720ba21)

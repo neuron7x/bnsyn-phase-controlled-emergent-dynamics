@@ -6,10 +6,12 @@ __pycache__/
 .pytest_cache/
 dist/
 build/
+docs/_build/
 
 # Benchmark results (local runs)
 results/
 artifacts/
+benchmarks/baselines/
 
 # PR artifacts (should not be tracked)
 PR_DIFF.patch

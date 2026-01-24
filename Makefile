@@ -1,4 +1,4 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report
+.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report docs docs-clean docs-linkcheck
 
 # SSOT validators
 validate-claims:
@@ -41,3 +41,13 @@ bench-sweep:
 
 bench-report:
 	python benchmarks/report.py --input results/bench.csv --output docs/benchmarks/README.md
+
+# Docs targets
+docs:
+	sphinx-build -b html -W -a -v docs/api docs/_build/html
+
+docs-clean:
+	rm -rf docs/_build
+
+docs-linkcheck:
+	sphinx-build -b linkcheck docs/api docs/_build/linkcheck

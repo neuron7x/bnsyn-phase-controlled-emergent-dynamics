@@ -22,6 +22,15 @@ dev = [
   "mypy>=1.10",
   "psutil>=5.9",
   "tabulate>=0.9",
+  "sphinx>=7",
+  "myst-parser>=2",
+  "sphinx-autodoc-typehints>=2",
+  "sphinx-copybutton>=0.5",
+  "furo>=2024.1.29",
+  "torch>=2.1",
+  "pip-audit>=2.9",
+  "dependency-check>=0.6",
+  "pre-commit>=3.7",
 ]
 
 [project.scripts]
@@ -63,6 +72,14 @@ plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
 ignore_missing_imports = true
 
 [tool.setuptools.packages.find]

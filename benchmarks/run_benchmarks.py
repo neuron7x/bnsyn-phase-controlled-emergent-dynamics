@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
-"""Benchmark harness for BN-Syn scalability testing.
-
-Runs benchmark scenarios with subprocess isolation for clean measurements.
-Outputs machine-readable CSV/JSON and human-readable console logs.
-
-Usage:
-    python benchmarks/run_benchmarks.py --scenario quick --repeats 3 --out results/bench.csv
-    python benchmarks/run_benchmarks.py --scenario full --repeats 5 --out results/bench_full.csv
-"""
+"""Benchmark harness for BN-Syn benchmarking and validation."""
 
 from __future__ import annotations
 
 import argparse
-import csv
 import json
+import logging
+import math
 import os
 import subprocess
 import sys
@@ -25,6 +18,13 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from benchmarks.scenarios import get_scenarios
+
+try:
+    import torch
+    from torch.utils.bottleneck import bottleneck
+except Exception:  # pragma: no cover - optional GPU tooling
+    torch = None
+    bottleneck = None
 
 
 def get_git_sha() -> str:
@@ -47,87 +47,29 @@ def get_python_version() -> str:
     return f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
 
-def run_single_benchmark(scenario_dict: dict[str, Any]) -> dict[str, Any]:
-    """Run a single benchmark scenario in-process (called by subprocess)."""
-    import gc
-    import time
-
-    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
-    from bnsyn.rng import seed_all
-    from bnsyn.sim.network import Network, NetworkParams
-
-    # Extract scenario params
-    seed = scenario_dict["seed"]
-    dt_ms = scenario_dict["dt_ms"]
-    steps = scenario_dict["steps"]
-    N = scenario_dict["N_neurons"]
-    p_conn = scenario_dict["p_conn"]
-    frac_inhib = scenario_dict["frac_inhib"]
-
-    # Seed all RNGs
-    pack = seed_all(seed)
-    rng = pack.np_rng
-
-    # Force GC before benchmark
-    gc.collect()
-
-    # Setup network
-    nparams = NetworkParams(N=N, p_conn=p_conn, frac_inhib=frac_inhib)
-    net = Network(
-        nparams,
-        AdExParams(),
-        SynapseParams(),
-        CriticalityParams(),
-        dt_ms=dt_ms,
-        rng=rng,
-    )
-
-    # Track metrics
-    import psutil
-
-    process = psutil.Process(os.getpid())
-    start_rss = process.memory_info().rss / (1024 * 1024)  # MB
-    start_time = time.perf_counter()
-
-    spike_count = 0
-    # Run simulation
-    for _ in range(steps):
-        metrics = net.step()
-        spike_count += int(metrics["A_t1"])
-
-    # Finalize metrics
-    wall_time = time.perf_counter() - start_time
-    end_rss = process.memory_info().rss / (1024 * 1024)  # MB
-    peak_rss = max(end_rss, start_rss)
-
-    per_step_ms = (wall_time / steps) * 1000.0
-    neuron_steps = N * steps
-    neuron_steps_per_sec = neuron_steps / wall_time
-
-    return {
-        "wall_time_sec": wall_time,
-        "peak_rss_mb": peak_rss,
-        "per_step_ms": per_step_ms,
-        "neuron_steps_per_sec": neuron_steps_per_sec,
-        "spike_count": spike_count,
-    }
-
-
-def run_scenario_subprocess(
-    scenario_dict: dict[str, Any], repeat_idx: int
-) -> dict[str, Any] | None:
+def run_scenario_subprocess(scenario_dict: dict[str, Any]) -> dict[str, Any] | None:
     """Run a benchmark scenario in a subprocess for isolation."""
-    # Prepare subprocess script
     script = f"""
+import atexit
+import shutil
+import tempfile
+import resource
 import sys
 import json
 sys.path.insert(0, {repr(str(Path.cwd()))})
 
-from benchmarks.run_benchmarks import run_single_benchmark
+from benchmarks.metrics import metrics_to_dict, run_benchmark
+from benchmarks.scenarios.base import BenchmarkScenario
 
-scenario = {repr(scenario_dict)}
-result = run_single_benchmark(scenario)
-print(json.dumps(result))
+tmpdir = tempfile.mkdtemp(prefix="bnsyn-bench-")
+atexit.register(lambda: shutil.rmtree(tmpdir, ignore_errors=True))
+
+limit_bytes = 1024 * 1024 * 1024
+resource.setrlimit(resource.RLIMIT_AS, (limit_bytes, limit_bytes))
+
+scenario = BenchmarkScenario(**{repr(scenario_dict)})
+result = run_benchmark(scenario)
+print(json.dumps(metrics_to_dict(result)))
 """
 
     try:
@@ -135,157 +77,213 @@ print(json.dumps(result))
             [sys.executable, "-c", script],
             capture_output=True,
             text=True,
-            timeout=300,  # 5 min timeout per run
+            timeout=600,
             check=True,
         )
-        metrics = json.loads(result.stdout.strip())
-        return metrics
+        return json.loads(result.stdout.strip())
     except subprocess.TimeoutExpired:
-        print(f"  WARNING: Repeat {repeat_idx} timed out", file=sys.stderr)
+        print("  WARNING: scenario timed out", file=sys.stderr)
         return None
-    except Exception as e:
-        print(f"  WARNING: Repeat {repeat_idx} failed: {e}", file=sys.stderr)
+    except Exception as exc:
+        print(f"  WARNING: scenario failed: {exc}", file=sys.stderr)
         return None
 
 
-def aggregate_metrics(runs: list[dict[str, Any]]) -> dict[str, float]:
-    """Aggregate metrics across multiple runs."""
+def aggregate_metrics(runs: list[dict[str, Any]]) -> dict[str, float | None]:
+    """Aggregate metrics across multiple runs using mean/std/p5/p50/p95."""
     import numpy as np
+    from scipy.stats import zscore
 
     if not runs:
         return {}
 
-    keys = ["wall_time_sec", "peak_rss_mb", "per_step_ms", "neuron_steps_per_sec"]
-    agg = {}
+    keys = list(runs[0].keys())
+    aggregated: dict[str, float | None] = {}
     for key in keys:
-        values = [r[key] for r in runs]
-        agg[f"{key}_mean"] = float(np.mean(values))
-        agg[f"{key}_p50"] = float(np.percentile(values, 50))
-        agg[f"{key}_p95"] = float(np.percentile(values, 95))
-        agg[f"{key}_std"] = float(np.std(values))
+        raw_values = [run.get(key) for run in runs]
+        values = np.asarray(
+            [float(value) for value in raw_values if value is not None],
+            dtype=np.float64,
+        )
+        values = values[np.isfinite(values)]
+        if values.size >= 3:
+            z = np.abs(zscore(values, nan_policy="omit"))
+            values = values[z <= 2.0]
+        if values.size == 0:
+            aggregated[f"{key}_mean"] = None
+            aggregated[f"{key}_std"] = None
+            aggregated[f"{key}_p5"] = None
+            aggregated[f"{key}_p50"] = None
+            aggregated[f"{key}_p95"] = None
+            continue
+        aggregated[f"{key}_mean"] = float(np.mean(values))
+        aggregated[f"{key}_std"] = float(np.std(values))
+        aggregated[f"{key}_p5"] = float(np.percentile(values, 5))
+        aggregated[f"{key}_p50"] = float(np.percentile(values, 50))
+        aggregated[f"{key}_p95"] = float(np.percentile(values, 95))
+    return aggregated
 
-    # Spike count is summed
-    agg["spike_count_total"] = sum(r["spike_count"] for r in runs)
 
-    return agg
+def _sanitize_for_json(payload: Any) -> Any:
+    if isinstance(payload, float):
+        if math.isfinite(payload):
+            return payload
+        return None
+    if isinstance(payload, list):
+        return [_sanitize_for_json(item) for item in payload]
+    if isinstance(payload, dict):
+        return {key: _sanitize_for_json(value) for key, value in payload.items()}
+    return payload
 
 
 def run_benchmarks(
     scenario_set: str,
     repeats: int,
-    output_csv: str | None,
     output_json: str | None,
-    warmup: bool = True,
-) -> None:
-    """Run benchmark scenarios and write results."""
+    warmup: int,
+) -> list[dict[str, Any]]:
+    """Run benchmark scenarios and return results."""
     scenarios = get_scenarios(scenario_set)
     git_sha = get_git_sha()
     python_ver = get_python_version()
     timestamp = datetime.now().astimezone().isoformat()
 
-    print(f"Running {len(scenarios)} scenarios with {repeats} repeats each")
-    print(f"Git SHA: {git_sha}")
-    print(f"Python: {python_ver}")
-    print(f"Timestamp: {timestamp}")
-    print()
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        handlers=[logging.FileHandler("bench.log", mode="w"), logging.StreamHandler(sys.stdout)],
+    )
+    logging.info("Running %d scenarios with %d repeats each", len(scenarios), repeats)
+    logging.info("Warmup runs per scenario: %d", warmup)
+    logging.info("Git SHA: %s", git_sha)
+    logging.info("Python: %s", python_ver)
+    logging.info("Timestamp: %s", timestamp)
 
-    all_results = []
+    device = None
+    if torch is not None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        torch.manual_seed(42)
+        logging.info("Torch device: %s", device)
+        os.environ["BNSYN_USE_TORCH"] = "1"
+        os.environ["BNSYN_DEVICE"] = str(device)
+
+    all_results: list[dict[str, Any]] = []
 
     for idx, scenario in enumerate(scenarios):
-        print(
+        logging.info(
             f"[{idx + 1}/{len(scenarios)}] {scenario.name}: "
             f"N={scenario.N_neurons}, steps={scenario.steps}, dt={scenario.dt_ms}ms"
         )
-
         scenario_dict = scenario.to_dict()
 
-        # Warmup run (not recorded)
-        if warmup:
-            print("  Warmup...", end="", flush=True)
-            _ = run_scenario_subprocess(scenario_dict, 0)
-            print(" done")
+        for warmup_idx in range(warmup):
+            logging.info("  Warmup %d/%d...", warmup_idx + 1, warmup)
+            _ = run_scenario_subprocess(scenario_dict)
 
-        # Actual runs
-        runs = []
-        for r in range(repeats):
-            print(f"  Repeat {r + 1}/{repeats}...", end="", flush=True)
-            result = run_scenario_subprocess(scenario_dict, r + 1)
-            if result is not None:
-                runs.append(result)
-                print(
-                    f" {result['wall_time_sec']:.2f}s, "
-                    f"{result['peak_rss_mb']:.1f}MB, "
-                    f"{result['neuron_steps_per_sec']:.0f} neuron-steps/sec"
-                )
-            else:
-                print(" FAILED")
+        runs: list[dict[str, Any]] = []
+        for repeat in range(repeats):
+            logging.info("  Repeat %d/%d...", repeat + 1, repeats)
+            metrics = run_scenario_subprocess(scenario_dict)
+            if metrics is None:
+                logging.info("  FAILED")
+                continue
+            runs.append(metrics)
+            logging.info(
+                "  wall_time=%.3fs, rss=%.1fMB, sigma=%.3f",
+                metrics["performance_wall_time_sec"],
+                metrics["performance_peak_rss_mb"],
+                metrics["physics_sigma"],
+            )
 
         if not runs:
-            print("  ERROR: All runs failed, skipping scenario")
+            logging.info("  ERROR: All runs failed, skipping scenario")
             continue
 
-        # Aggregate
-        agg = aggregate_metrics(runs)
-
-        # Build result row
-        result_row = {
-            "scenario": scenario.name,
-            "git_sha": git_sha,
-            "python_version": python_ver,
-            "timestamp": timestamp,
-            **scenario_dict,
-            "repeats": len(runs),
-            **agg,
-        }
-        all_results.append(result_row)
-
-        print(
-            f"  Summary: {agg['wall_time_sec_mean']:.2f}s (±{agg['wall_time_sec_std']:.2f}), "
-            f"{agg['peak_rss_mb_mean']:.1f}MB, "
-            f"{agg['neuron_steps_per_sec_mean']:.0f} neuron-steps/sec"
+        aggregated = aggregate_metrics(runs)
+        all_results.append(
+            {
+                "scenario": scenario.name,
+                "git_sha": git_sha,
+                "python_version": python_ver,
+                "timestamp": timestamp,
+                **scenario_dict,
+                "warmup": warmup,
+                "repeats": len(runs),
+                **aggregated,
+            }
         )
-        print()
+        summary_wall_time = aggregated.get("performance_wall_time_sec_mean")
+        summary_sigma = aggregated.get("physics_sigma_mean")
+        summary_nan_rate = aggregated.get("stability_nan_rate_mean")
+        summary_wall_time_p50 = aggregated.get("performance_wall_time_sec_p50")
+        summary_wall_time_p95 = aggregated.get("performance_wall_time_sec_p95")
+        summary_rss_p95 = aggregated.get("performance_peak_rss_mb_p95")
+        if summary_wall_time is None:
+            logging.info("  Summary: wall_time_mean=n/a")
+        else:
+            logging.info("  Summary: wall_time_mean=%.3fs", summary_wall_time)
+        if summary_sigma is not None and summary_nan_rate is not None:
+            logging.info(
+                "  Summary: sigma_mean=%.3f, nan_rate=%.6f",
+                summary_sigma,
+                summary_nan_rate,
+            )
+        if (
+            summary_wall_time_p50 is not None
+            and summary_wall_time_p95 is not None
+            and summary_rss_p95 is not None
+        ):
+            logging.info(
+                "  Summary: wall_time_p50=%.3fs, wall_time_p95=%.3fs, rss_p95=%.1fMB",
+                summary_wall_time_p50,
+                summary_wall_time_p95,
+                summary_rss_p95,
+            )
 
-    # Write CSV
-    if output_csv and all_results:
-        Path(output_csv).parent.mkdir(parents=True, exist_ok=True)
-        fieldnames = list(all_results[0].keys())
-        with open(output_csv, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(all_results)
-        print(f"Wrote CSV: {output_csv}")
-
-    # Write JSON
     if output_json and all_results:
         Path(output_json).parent.mkdir(parents=True, exist_ok=True)
         with open(output_json, "w") as f:
-            json.dump(all_results, f, indent=2)
-        print(f"Wrote JSON: {output_json}")
+            json.dump(_sanitize_for_json(all_results), f, indent=2, allow_nan=False)
+        logging.info("Wrote JSON: %s", output_json)
 
-    print(f"\nCompleted {len(all_results)} scenarios")
+    if bottleneck is not None and device is not None and device.type == "cuda":
+        bottleneck()
+
+    return all_results
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run BN-Syn benchmarks")
     parser.add_argument(
         "--scenario",
-        default="quick",
-        help="Scenario set to run (ci_smoke, quick, n_sweep, steps_sweep, conn_sweep, dt_sweep, full)",
+        default="small_network",
+        choices=[
+            "small_network",
+            "medium_network",
+            "large_network",
+            "criticality_sweep",
+            "temperature_sweep",
+            "dt_sweep",
+            "full",
+        ],
+        help="Scenario set to run",
     )
     parser.add_argument("--repeats", type=int, default=3, help="Number of repeats per scenario")
-    parser.add_argument("--out", help="Output CSV file path")
+    parser.add_argument("--warmup", type=int, default=1, help="Warmup runs per scenario")
     parser.add_argument("--json", help="Output JSON file path")
-    parser.add_argument("--no-warmup", action="store_true", help="Skip warmup runs")
 
     args = parser.parse_args()
+
+    if args.repeats <= 0:
+        raise SystemExit("repeats must be positive")
+    if args.warmup < 0:
+        raise SystemExit("warmup must be non-negative")
 
     run_benchmarks(
         scenario_set=args.scenario,
         repeats=args.repeats,
-        output_csv=args.out,
         output_json=args.json,
-        warmup=not args.no_warmup,
+        warmup=args.warmup,
     )
 
     return 0
