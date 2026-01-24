@@ -1,4 +1,4 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local bench bench-sweep bench-report
+.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report
 
 # SSOT validators
 validate-claims:
@@ -22,6 +22,15 @@ test-validation:
 
 # Local CI check (SSOT + smoke)
 ci-local: ssot test-smoke
+
+# Full CI check (format, lint, audit, smoke, validation)
+ci-full:
+	ruff format --check .
+	ruff check .
+	python scripts/audit_spec_implementation.py
+	$(MAKE) ssot
+	$(MAKE) test-smoke
+	$(MAKE) test-validation
 
 # Benchmark targets
 bench:
