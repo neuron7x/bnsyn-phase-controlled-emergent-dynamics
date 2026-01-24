@@ -13,16 +13,16 @@
       "min": 170028.78516538543
     },
     "performance_peak_rss_mb": {
-      "max": 81.0140625,
+      "max": 85.0,
       "min": 54.009375000000006
     },
     "performance_per_step_ms": {
       "max": 0.5646102799983055,
-      "min": 0.18820342666610182
+      "min": 0.0
     },
     "performance_wall_time_sec": {
       "max": 0.16938308399949165,
-      "min": 0.05646102799983055
+      "min": 0.0
     },
     "physics_sigma_mean": {
       "max": 1.0,

@@ -18,11 +18,11 @@
     },
     "performance_per_step_ms": {
       "max": 4.283048805000362,
-      "min": 1.4276829350001208
+      "min": 0.0
     },
     "performance_wall_time_sec": {
       "max": 1.713219522000145,
-      "min": 0.5710731740000483
+      "min": 0.0
     },
     "physics_sigma_mean": {
       "max": 1.0,

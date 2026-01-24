@@ -1,3 +1,8 @@
+"""Adaptive Exponential (AdEx) neuron dynamics and integration utilities.
+
+Implements SPEC P0-1 AdEx neuron dynamics with deterministic Euler integration.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +19,14 @@ BoolArray = NDArray[np.bool_]
 
 @dataclass
 class AdExState:
+    """Represent the AdEx neuron state vector.
+
+    Args:
+        V_mV: Membrane voltage vector in millivolts (shape: [N]).
+        w_pA: Adaptation current vector in picoamps (shape: [N]).
+        spiked: Spike indicator vector (shape: [N]).
+    """
+
     V_mV: Float64Array  # shape (N,)
     w_pA: Float64Array  # shape (N,)
     spiked: BoolArray  # shape (N,)
@@ -21,6 +34,14 @@ class AdExState:
 
 @dataclass(frozen=True)
 class IntegrationMetrics:
+    """Capture integration error estimates for AdEx dynamics.
+
+    Args:
+        lte_estimate: Local truncation error estimate (dimensionless).
+        global_error_bound: Conservative global error bound (dimensionless).
+        recommended_dt_ms: Suggested timestep in milliseconds.
+    """
+
     lte_estimate: float
     global_error_bound: float
     recommended_dt_ms: float
@@ -33,10 +54,28 @@ def adex_step(
     I_syn_pA: Float64Array,
     I_ext_pA: Float64Array,
 ) -> AdExState:
-    """One explicit Euler step for AdEx with spike-reset and exponential clamp.
+    """Advance AdEx state by one timestep using explicit Euler.
 
-    Equations follow Brette & Gerstner (2005) with standard reset:
-      - if V > Vpeak: V <- Vreset, w <- w + b
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
+
+    Returns:
+        Updated AdEx state after one timestep.
+
+    Raises:
+        ValueError: If dt_ms is non-positive or state arrays are invalid.
+
+    Notes:
+        Implements SPEC P0-1 explicit Euler update with spike reset at Vpeak.
+        Exponential term is clamped to avoid overflow.
+
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
@@ -81,7 +120,30 @@ def adex_step_with_error_tracking(
     atol: float = 1e-6,
     rtol: float = 1e-3,
 ) -> tuple[AdExState, IntegrationMetrics]:
-    """One Euler step with step-doubling error tracking for AdEx dynamics."""
+    """Advance AdEx state with step-doubling error tracking.
+
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
+        atol: Absolute tolerance for error scaling.
+        rtol: Relative tolerance for error scaling.
+
+    Returns:
+        Tuple of (updated state, integration metrics).
+
+    Raises:
+        ValueError: If dt_ms, atol, or rtol are non-positive.
+
+    Notes:
+        Uses step-doubling to estimate local truncation error for SPEC P0-1.
+
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
+    """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
     if atol <= 0 or rtol <= 0:

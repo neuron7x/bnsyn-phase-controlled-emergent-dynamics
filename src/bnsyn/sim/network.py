@@ -1,3 +1,8 @@
+"""Reference network simulator for BN-Syn.
+
+Implements SPEC P2-11 reference network dynamics for deterministic tests.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -15,6 +20,20 @@ from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matr
 
 @dataclass(frozen=True)
 class NetworkParams:
+    """Network configuration parameters.
+
+    Args:
+        N: Number of neurons.
+        frac_inhib: Fraction of inhibitory neurons (0, 1).
+        p_conn: Connection probability for random connectivity.
+        w_exc_nS: Excitatory synaptic weight in nS.
+        w_inh_nS: Inhibitory synaptic weight in nS.
+        ext_rate_hz: External Poisson drive rate per neuron (Hz).
+        ext_w_nS: External synaptic weight in nS.
+        V_min_mV: Minimum membrane voltage bound (mV).
+        V_max_mV: Maximum membrane voltage bound (mV).
+    """
+
     N: int = 200
     frac_inhib: float = 0.2
     p_conn: float = 0.05
@@ -29,7 +48,26 @@ class NetworkParams:
 
 
 class Network:
-    """Small reference network (dense enough for tests, not optimized)."""
+    """Small reference network (dense enough for tests, not optimized).
+
+    Args:
+        nparams: Network configuration parameters.
+        adex: AdEx neuron parameters.
+        syn: Synapse parameters.
+        crit: Criticality control parameters.
+        dt_ms: Timestep in milliseconds.
+        rng: NumPy RNG for deterministic sampling.
+
+    Raises:
+        ValueError: If parameters are invalid.
+
+    Notes:
+        Implements SPEC P2-11 and integrates SPEC P0-1, P0-2, P0-4 components.
+
+    References:
+        - docs/SPEC.md#P2-11
+        - docs/SSOT.md
+    """
 
     def __init__(
         self,
@@ -91,6 +129,17 @@ class Network:
         self._A_prev = 1.0
 
     def step(self) -> dict[str, float]:
+        """Advance the network by one timestep.
+
+        Returns:
+            Dictionary of metrics including sigma, gain, and spike rate.
+
+        Raises:
+            RuntimeError: If voltage bounds are violated (numerical instability).
+
+        Notes:
+            Criticality gain is updated each step using sigma tracking.
+        """
         N = self.np.N
         dt = self.dt_ms
 
@@ -162,6 +211,21 @@ def run_simulation(
     seed: int,
     N: int = 200,
 ) -> dict[str, float]:
+    """Run a deterministic simulation and return summary metrics.
+
+    Args:
+        steps: Number of simulation steps.
+        dt_ms: Timestep in milliseconds.
+        seed: RNG seed.
+        N: Number of neurons.
+
+    Returns:
+        Summary metrics with mean and standard deviation for sigma and firing rate.
+
+    References:
+        - docs/SPEC.md#P2-11
+        - docs/REPRODUCIBILITY.md
+    """
     from bnsyn.rng import seed_all
 
     _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
