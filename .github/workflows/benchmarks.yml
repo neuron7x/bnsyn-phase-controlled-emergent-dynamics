@@ -1,0 +1,75 @@
+name: benchmarks
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Benchmark scenario to run'
+        required: false
+        default: 'ci_smoke'
+        type: choice
+        options:
+          - ci_smoke
+          - quick
+          - n_sweep
+          - steps_sweep
+          - conn_sweep
+          - dt_sweep
+  schedule:
+    # Weekly on Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      
+      - name: Run benchmark
+        run: |
+          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
+          echo "Running benchmark scenario: $SCENARIO"
+          python benchmarks/run_benchmarks.py \
+            --scenario "$SCENARIO" \
+            --repeats 3 \
+            --out "artifacts/bench_${SCENARIO}.csv" \
+            --json "artifacts/bench_${SCENARIO}.json"
+      
+      - name: Generate report
+        run: |
+          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
+          python benchmarks/report.py \
+            --input "artifacts/bench_${SCENARIO}.csv" \
+            --output "artifacts/bench_${SCENARIO}_report.md"
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: artifacts/
+          retention-days: 90
+      
+      - name: Summary
+        run: |
+          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
+          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Scenario:** $SCENARIO" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat "artifacts/bench_${SCENARIO}_report.md" >> $GITHUB_STEP_SUMMARY

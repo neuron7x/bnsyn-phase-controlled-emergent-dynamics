@@ -7,6 +7,10 @@ __pycache__/
 dist/
 build/
 
+# Benchmark results (local runs)
+results/
+artifacts/
+
 # PR artifacts (should not be tracked)
 PR_DIFF.patch
 PR_SUMMARY.md
