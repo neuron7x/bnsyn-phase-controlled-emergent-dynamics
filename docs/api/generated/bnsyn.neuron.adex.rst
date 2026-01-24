@@ -9,6 +9,7 @@
    .. autosummary::
    
       adex_step
+      adex_step_adaptive
       adex_step_with_error_tracking
    
    .. rubric:: Classes

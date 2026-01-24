@@ -13,6 +13,7 @@ SCENARIOS = [
         N_neurons=256,
         p_conn=0.05,
         frac_inhib=0.2,
+        use_adaptive_dt=True,
         description=f"dt sweep with dt_ms={dt_ms:.3f}.",
     )
     for dt_ms in [0.05, 0.1, 0.2]

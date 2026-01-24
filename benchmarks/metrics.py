@@ -111,8 +111,18 @@ def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
     total_count = 0
     divergence_steps = 0
 
+    divergence = False
     for _ in range(scenario.steps):
-        metrics = net.step()
+        try:
+            if scenario.use_adaptive_dt:
+                metrics = net.step_adaptive()
+            else:
+                metrics = net.step()
+        except RuntimeError:
+            divergence_steps += 1
+            divergence = True
+            break
+
         sigma_series.append(float(metrics["sigma"]))
         spike_rate_series.append(float(metrics["spike_rate_hz"]))
         gain_series.append(float(metrics["gain"]))
@@ -121,8 +131,10 @@ def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
         w = net.state.w_pA
         nan_count += int(np.isnan(V).sum() + np.isnan(w).sum())
         total_count += int(V.size + w.size)
-        if not (np.all(np.isfinite(V)) and np.all(np.isfinite(w))):
+        if np.any(np.isnan(V)) or np.any(np.isnan(w)):
             divergence_steps += 1
+            divergence = True
+            break
 
     weights_exc = net.W_exc.to_dense()
     weights_inh = net.W_inh.to_dense()
@@ -135,6 +147,7 @@ def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
         "nan_count": nan_count,
         "total_count": total_count,
         "divergence_steps": divergence_steps,
+        "divergence": divergence,
         "weight_entropy": weight_entropy,
         "sigma_target": _criticality_params(scenario).sigma_target,
     }

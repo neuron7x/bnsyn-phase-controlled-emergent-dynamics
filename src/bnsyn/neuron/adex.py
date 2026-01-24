@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import NDArray
+from scipy.integrate import solve_ivp
 
 from bnsyn.config import AdExParams
 from bnsyn.validation import validate_spike_array, validate_state_vector
@@ -174,3 +175,84 @@ def adex_step_with_error_tracking(
         recommended_dt_ms=recommended_dt_ms,
     )
     return full, metrics
+
+
+def adex_step_adaptive(
+    state: AdExState,
+    params: AdExParams,
+    dt_ms: float,
+    I_syn_pA: Float64Array,
+    I_ext_pA: Float64Array,
+    *,
+    atol: float = 1e-8,
+    rtol: float = 1e-6,
+) -> AdExState:
+    """Advance AdEx state by one timestep using adaptive RK45 integration.
+
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
+        atol: Absolute tolerance for adaptive integration.
+        rtol: Relative tolerance for adaptive integration.
+
+    Returns:
+        Updated AdEx state after one timestep.
+
+    Raises:
+        ValueError: If dt_ms is non-positive.
+
+    Notes:
+        Uses solve_ivp with fixed inputs over the step interval; spike reset is
+        applied after integration, consistent with the discrete step model.
+
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
+    """
+    if dt_ms <= 0:
+        raise ValueError("dt_ms must be positive")
+    N = state.V_mV.shape[0]
+    validate_state_vector(state.V_mV, N, name="V_mV")
+    validate_state_vector(state.w_pA, N, name="w_pA")
+    validate_spike_array(state.spiked, N, name="spiked")
+    validate_state_vector(I_syn_pA, N, name="I_syn_pA")
+    validate_state_vector(I_ext_pA, N, name="I_ext_pA")
+
+    V0 = np.asarray(state.V_mV, dtype=np.float64)
+    w0 = np.asarray(state.w_pA, dtype=np.float64)
+    y0 = np.concatenate([V0, w0])
+    I_syn = np.asarray(I_syn_pA, dtype=np.float64)
+    I_ext = np.asarray(I_ext_pA, dtype=np.float64)
+
+    def rhs(_t: float, y: np.ndarray) -> np.ndarray:
+        V = y[:N]
+        w = y[N:]
+        exp_arg = (V - params.VT_mV) / params.DeltaT_mV
+        exp_arg = np.minimum(exp_arg, 20.0)
+        I_exp = params.gL_nS * params.DeltaT_mV * np.exp(exp_arg)
+        dV = (-params.gL_nS * (V - params.EL_mV) + I_exp - w - I_syn + I_ext) / params.C_pF
+        dw = (params.a_nS * (V - params.EL_mV) - w) / params.tauw_ms
+        return np.concatenate([dV, dw])
+
+    sol = solve_ivp(
+        rhs,
+        (0.0, dt_ms),
+        y0,
+        method="RK45",
+        atol=atol,
+        rtol=rtol,
+        t_eval=(dt_ms,),
+    )
+    y_end = sol.y[:, -1]
+    V = y_end[:N]
+    w = y_end[N:]
+
+    spiked = np.asarray(V >= params.Vpeak_mV, dtype=np.bool_)
+    if np.any(spiked):
+        V[spiked] = params.Vreset_mV
+        w[spiked] = w[spiked] + params.b_pA
+
+    return AdExState(V_mV=V, w_pA=w, spiked=spiked)

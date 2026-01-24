@@ -24,6 +24,7 @@ class BenchmarkScenario:
     temperature_Tmin: float | None = None
     temperature_Tc: float | None = None
     temperature_gate_tau: float | None = None
+    use_adaptive_dt: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -42,4 +43,5 @@ class BenchmarkScenario:
             "temperature_Tmin": self.temperature_Tmin,
             "temperature_Tc": self.temperature_Tc,
             "temperature_gate_tau": self.temperature_gate_tau,
+            "use_adaptive_dt": self.use_adaptive_dt,
         }
