@@ -1,0 +1,41 @@
+name: ci-benchmarks
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  nightly-benchmarks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run benchmark suite
+        run: |
+          python benchmarks/run_benchmarks.py \
+            --scenario full \
+            --repeats 1 \
+            --json "artifacts/bench_full.json"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-benchmark-results-${{ github.run_id }}
+          path: artifacts/
+          retention-days: 90
