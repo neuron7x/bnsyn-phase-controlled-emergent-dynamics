@@ -1,7 +1,6 @@
 """Deterministic connectivity builders for BN-Syn experiments.
 
-Determinism is controlled by explicit NumPy generators; `seed` is a fallback
-for legacy call sites only.
+Determinism is controlled by explicit NumPy generators.
 """
 
 from __future__ import annotations
@@ -21,8 +20,7 @@ class ConnectivityConfig:
 def build_connectivity(
     cfg: ConnectivityConfig,
     *,
-    rng: np.random.Generator | None = None,
-    seed: int | None = None,
+    rng: np.random.Generator,
 ) -> np.ndarray:
     """Build a boolean adjacency matrix with Bernoulli(p_connect).
 
@@ -32,8 +30,6 @@ def build_connectivity(
         raise ValueError("n_pre and n_post must be > 0")
     if not (0.0 <= cfg.p_connect <= 1.0):
         raise ValueError("p_connect must be in [0, 1]")
-    if rng is None:
-        rng = np.random.default_rng(seed)
     adj = rng.random((cfg.n_post, cfg.n_pre)) < cfg.p_connect
     if not cfg.allow_self and cfg.n_pre == cfg.n_post:
         np.fill_diagonal(adj, False)

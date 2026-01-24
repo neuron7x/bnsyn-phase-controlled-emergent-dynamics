@@ -14,10 +14,15 @@ def test_no_global_numpy_rng_usage() -> None:
     src_root = root / "src" / "bnsyn"
     offenders: list[str] = []
     for path in src_root.rglob("*.py"):
+        rel_path = path.relative_to(root)
         text = path.read_text()
         for line_no, line in enumerate(text.splitlines(), start=1):
             if "np.random." in line:
-                if "np.random.default_rng" in line or "np.random.Generator" in line:
+                if "np.random.Generator" in line:
                     continue
-                offenders.append(f"{path.relative_to(root)}:{line_no}:{line.strip()}")
+                if rel_path.as_posix() == "src/bnsyn/rng.py":
+                    continue
+                offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
+            if "random." in line or line.strip().startswith("import random"):
+                offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
     assert offenders == []

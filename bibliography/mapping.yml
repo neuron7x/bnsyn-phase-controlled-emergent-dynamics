@@ -8,35 +8,35 @@ CLM-0002:
   tier: Tier-A
 CLM-0003:
   bibkey: jahr1990voltage
-  section: P0-1 NMDA block
+  section: P0-2 NMDA block
   tier: Tier-A
 CLM-0004:
   bibkey: fremaux2016neuromodulated
-  section: P0-2 Three-factor learning
+  section: P0-3 Three-factor learning
   tier: Tier-A
 CLM-0005:
   bibkey: izhikevich2007solving
-  section: P0-2 Neuromodulated STDP
+  section: P0-3 Neuromodulated STDP
   tier: Tier-A
 CLM-0006:
   bibkey: beggs2003neuronal
-  section: P0-3 Avalanche exponents
+  section: P0-4 Avalanche exponents
   tier: Tier-A
 CLM-0007:
   bibkey: beggs2003neuronal
-  section: P0-3 Branching parameter σ
+  section: P0-4 Branching parameter σ
   tier: Tier-A
 CLM-0008:
   bibkey: wilting2018inferring
-  section: P0-3 MR estimator
+  section: P0-4 MR estimator
   tier: Tier-A
 CLM-0009:
   bibkey: clauset2009power
-  section: P0-3 Power-law fitting
+  section: P0-4 Power-law fitting
   tier: Tier-A
 CLM-0010:
   bibkey: frey1997synaptic
-  section: P1-5 Synaptic tagging
+  section: P1-6 Synaptic tagging
   tier: Tier-A
 CLM-0011:
   bibkey: wilkinson2016fair
@@ -74,3 +74,31 @@ CLM-0019:
   bibkey: kirkpatrick1983annealing
   section: P1-5 Temperature schedule
   tier: Tier-A
+CLM-0020:
+  bibkey: benna2016synaptic
+  section: P1-6 Dual-weight consolidation
+  tier: Tier-A
+CLM-0021:
+  bibkey: hopfield1982neural
+  section: P1-7 Energy regularization
+  tier: Tier-A
+CLM-0022:
+  bibkey: hairer1993solving
+  section: P2-8 Numerical methods
+  tier: Tier-A
+CLM-0023:
+  bibkey: matsumoto1998mersenne
+  section: P2-9 Determinism protocol
+  tier: Tier-A
+CLM-0024:
+  bibkey: bjorck1996least
+  section: P2-10 Calibration utilities
+  tier: Tier-A
+CLM-0025:
+  bibkey: izhikevich2003simple
+  section: P2-11 Reference network simulator
+  tier: Tier-A
+CLM-0026:
+  bibkey: cliguidelines2024
+  section: P2-12 Bench harness contract
+  tier: Tier-S

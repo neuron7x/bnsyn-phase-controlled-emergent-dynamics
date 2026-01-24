@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import random
 from dataclasses import dataclass
 import numpy as np
 
@@ -15,8 +14,7 @@ class RNGPack:
 def seed_all(seed: int) -> RNGPack:
     """Seed all RNGs used by this project.
 
-    Note: This package is NumPy-first. We seed Python's `random` to avoid
-    accidental nondeterminism if user code uses it.
+    Note: This package is NumPy-first and returns an explicit Generator.
     """
     if not isinstance(seed, int):
         raise TypeError("seed must be int")
@@ -24,7 +22,6 @@ def seed_all(seed: int) -> RNGPack:
         raise ValueError("seed must be in [0, 2**32-1]")
 
     os.environ["PYTHONHASHSEED"] = str(seed)
-    random.seed(seed)
     np_rng = np.random.default_rng(seed)
     return RNGPack(seed=seed, np_rng=np_rng)
 

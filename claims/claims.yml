@@ -64,7 +64,7 @@ claims:
   action: KEEP
   notes: Ensure units are stated explicitly.
   bibkey: jahr1990voltage
-  spec_section: P0-1 NMDA block
+  spec_section: P0-2 NMDA block
   implementation_paths:
   - src/bnsyn/synapse/conductance.py
   verification_paths:
@@ -80,7 +80,7 @@ claims:
   action: KEEP
   notes: Aligns with BN-Syn three-factor plasticity implementation.
   bibkey: fremaux2016neuromodulated
-  spec_section: P0-2 Three-factor learning
+  spec_section: P0-3 Three-factor learning
   implementation_paths:
   - src/bnsyn/plasticity/three_factor.py
   verification_paths:
@@ -96,7 +96,7 @@ claims:
   action: KEEP
   notes: Supports neuromodulator × eligibility design.
   bibkey: izhikevich2007solving
-  spec_section: P0-2 Neuromodulated STDP
+  spec_section: P0-3 Neuromodulated STDP
   implementation_paths:
   - src/bnsyn/plasticity/three_factor.py
   verification_paths:
@@ -112,7 +112,7 @@ claims:
   action: KEEP
   notes: Criticality motivation for σ tracking.
   bibkey: beggs2003neuronal
-  spec_section: P0-3 Avalanche exponents
+  spec_section: P0-4 Avalanche exponents
   implementation_paths:
   - src/bnsyn/criticality/branching.py
   verification_paths:
@@ -128,7 +128,7 @@ claims:
   action: KEEP
   notes: Basis for σ estimator in BN-Syn.
   bibkey: beggs2003neuronal
-  spec_section: P0-3 Branching parameter σ
+  spec_section: P0-4 Branching parameter σ
   implementation_paths:
   - src/bnsyn/criticality/branching.py
   verification_paths:
@@ -144,7 +144,7 @@ claims:
   action: KEEP
   notes: Used for offline criticality validation.
   bibkey: wilting2018inferring
-  spec_section: P0-3 MR estimator
+  spec_section: P0-4 MR estimator
   implementation_paths:
   - src/bnsyn/criticality/analysis.py
   verification_paths:
@@ -160,7 +160,7 @@ claims:
   action: KEEP
   notes: Power-law validation reference for criticality checks.
   bibkey: clauset2009power
-  spec_section: P0-3 Power-law fitting
+  spec_section: P0-4 Power-law fitting
   implementation_paths:
   - src/bnsyn/criticality/analysis.py
   verification_paths:
@@ -176,7 +176,7 @@ claims:
   action: KEEP
   notes: Supports dual-weight consolidation rationale.
   bibkey: frey1997synaptic
-  spec_section: P1-5 Synaptic tagging
+  spec_section: P1-6 Synaptic tagging
   implementation_paths:
   - src/bnsyn/consolidation/dual_weight.py
   verification_paths:
@@ -197,6 +197,126 @@ claims:
   - src/bnsyn/temperature/schedule.py
   verification_paths:
   - tests/test_temperature_smoke.py
+- id: CLM-0020
+  statement: Synaptic consolidation models use fast and slow weight components with
+    tagging/capture mechanisms to stabilize long-term memory traces.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Benna & Fusi (2016) Nat Neurosci 19:1697–1706
+  locator: Multiple timescale consolidation model with fast/slow components and capture.
+  action: KEEP
+  notes: Supports dual-weight consolidation dynamics and tag-based capture.
+  bibkey: benna2016synaptic
+  spec_section: P1-6 Dual-weight consolidation
+  implementation_paths:
+  - src/bnsyn/consolidation/dual_weight.py
+  verification_paths:
+  - tests/test_consolidation_smoke.py
+  - tests/validation/test_consolidation_validation.py
+- id: CLM-0021
+  statement: Energy-based neural models define a quadratic energy function that
+    penalizes large firing rates and weights.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Hopfield (1982) PNAS 79(8):2554–2558
+  locator: Energy function definition for neural network states.
+  action: KEEP
+  notes: Grounds BN-Syn energy regularization objective.
+  bibkey: hopfield1982neural
+  spec_section: P1-7 Energy regularization
+  implementation_paths:
+  - src/bnsyn/energy/regularization.py
+  verification_paths:
+  - tests/test_energy_smoke.py
+  - tests/validation/test_energy_validation.py
+- id: CLM-0022
+  statement: Explicit Euler and second-order Runge–Kutta methods are standard
+    deterministic integrators for ordinary differential equations.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Hairer, Nørsett & Wanner (1993) Solving ODEs I
+  locator: Chapter on explicit Runge–Kutta methods (Euler/RK2).
+  action: KEEP
+  notes: Validates BN-Syn numerical integration choices and dt-invariance checks.
+  bibkey: hairer1993solving
+  spec_section: P2-8 Numerical methods
+  implementation_paths:
+  - src/bnsyn/numerics/integrators.py
+  verification_paths:
+  - tests/test_dt_invariance.py
+  - tests/validation/test_numerics_validation.py
+- id: CLM-0023
+  statement: Deterministic pseudorandom number generation is achieved through explicit
+    seeding of a well-defined generator.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Matsumoto & Nishimura (1998) ACM TOMACS 8(1):3–30
+  locator: Definition of a reproducible, seed-driven RNG (Mersenne Twister).
+  action: KEEP
+  notes: Supports explicit RNG injection in BN-Syn determinism protocol.
+  bibkey: matsumoto1998mersenne
+  spec_section: P2-9 Determinism protocol
+  implementation_paths:
+  - src/bnsyn/rng.py
+  - src/bnsyn/sim/network.py
+  verification_paths:
+  - tests/test_determinism.py
+  - tests/validation/test_determinism_validation.py
+- id: CLM-0024
+  statement: Least-squares regression provides a deterministic linear fit for
+    calibration of response curves.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Björck (1996) Numerical Methods for Least Squares Problems
+  locator: Linear least-squares formulation and solution methods.
+  action: KEEP
+  notes: Grounds deterministic f–I calibration utilities.
+  bibkey: bjorck1996least
+  spec_section: P2-10 Calibration utilities
+  implementation_paths:
+  - src/bnsyn/calibration/fit.py
+  verification_paths:
+  - tests/test_calibration_smoke.py
+  - tests/validation/test_calibration_validation.py
+- id: CLM-0025
+  statement: Reduced spiking neuron models support efficient small-N network
+    simulations for verification and analysis.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Izhikevich (2003) IEEE TNN 14(6):1569–1572
+  locator: Simple spiking neuron model enabling efficient network simulation.
+  action: KEEP
+  notes: Supports reference simulator expectations in BN-Syn.
+  bibkey: izhikevich2003simple
+  spec_section: P2-11 Reference network simulator
+  implementation_paths:
+  - src/bnsyn/sim/network.py
+  verification_paths:
+  - tests/test_network_smoke.py
+  - tests/validation/test_network_validation.py
+- id: CLM-0026
+  statement: Command-line benchmark harnesses should expose deterministic metrics and
+    documented interfaces for reproducible evaluation.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: Command Line Interface Guidelines (2024)
+  locator: Guidance on consistent CLI interfaces and outputs.
+  action: KEEP
+  notes: Documents CLI expectations for BN-Syn bench harness.
+  bibkey: cliguidelines2024
+  spec_section: P2-12 Bench harness contract
+  implementation_paths:
+  - src/bnsyn/cli.py
+  verification_paths:
+  - tests/test_cli_smoke.py
+  - tests/validation/test_cli_validation.py
 - id: CLM-0011
   statement: FAIR principles define data management requirements for Findability,
     Accessibility, Interoperability, and Reuse.
