@@ -75,6 +75,9 @@ class ColdEmergenceValidator:
     ) -> float:
         """Estimate first Lyapunov exponent from trajectory.
 
+        Note: This is a simplified estimation. For accurate Lyapunov calculation,
+        the perturbed trajectory should be evolved through the actual system dynamics.
+
         Args:
             state_trajectory: Sequence of system states
             dt: Time step between states
@@ -86,15 +89,14 @@ class ColdEmergenceValidator:
         if len(state_trajectory) < 2:
             return 0.0
 
+        # Simplified Lyapunov: measure how adjacent states diverge over time
         divergences = []
         for i in range(len(state_trajectory) - 1):
-            # Add small perturbation
-            perturbed = state_trajectory[i] + eps
-
-            # Measure divergence at next step
-            divergence = float(np.linalg.norm(state_trajectory[i + 1] - perturbed))
+            state_diff = state_trajectory[i + 1] - state_trajectory[i]
+            divergence = float(np.linalg.norm(state_diff))
             if divergence > eps:
-                divergences.append(np.log(divergence / eps) / dt)
+                # Log divergence rate
+                divergences.append(np.log(divergence + eps) / dt)
 
         if not divergences:
             return 0.0

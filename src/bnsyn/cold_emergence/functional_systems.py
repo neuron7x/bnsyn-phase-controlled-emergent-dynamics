@@ -77,15 +77,17 @@ class ColdFunctionalSystem:
         Result evaluated on informational accuracy, not reward.
 
         Args:
-            action_command: Action to execute
+            action_command: Action to execute (influences system state)
             sensory_state: Current sensory input
             memory_state: Current memory context
 
         Returns:
             Tuple of (success, correction_signal)
         """
-        # Afferent synthesis
-        prediction = self.afferent_synthesis(sensory_state, memory_state)
+        # Afferent synthesis - integrate action command with sensory/memory
+        # Action command modulates the integration process
+        action_weighted_sensory = sensory_state * (1.0 + 0.1 * np.mean(action_command))
+        prediction = self.afferent_synthesis(action_weighted_sensory, memory_state)
 
         # Acceptor of result comparison
         correction_signal = self.acceptor_of_result(prediction)

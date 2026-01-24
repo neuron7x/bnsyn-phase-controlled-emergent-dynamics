@@ -168,11 +168,11 @@ def test_cold_emergence_validator_basic(rng: np.random.Generator) -> None:
     assert isinstance(result["is_truly_cold_emergent"], bool)
 
 
-def test_cold_emergence_validator_determinism() -> None:
+def test_cold_emergence_validator_determinism(rng: np.random.Generator) -> None:
     """Test determinism criterion."""
     validator = ColdEmergenceValidator(lyapunov_threshold=-0.1)
 
-    state = np.random.random(20)
+    state = rng.random(20)
 
     # Deterministic system
     result_det = validator.validate_cold_emergence(state, lyapunov_exponent=-0.5, temperature=0.1)

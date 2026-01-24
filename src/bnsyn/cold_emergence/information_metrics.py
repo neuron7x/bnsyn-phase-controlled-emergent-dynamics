@@ -124,11 +124,15 @@ class IntegratedInformationMetric:
             parts_entropy += self._compute_entropy(part)
 
         # Synergy: whole entropy vs sum of parts
-        # If whole < parts: synergistic (information loss when separated)
+        # If whole < parts: synergistic (more organized as a whole)
+        # Ratio should be higher when system is more synergistic
         if parts_entropy < 1e-10:
             return 0.5
 
-        synergy_ratio = 1.0 - (whole_entropy / parts_entropy)
+        # Higher ratio when whole is more organized (lower entropy) than parts
+        synergy_ratio = parts_entropy / (whole_entropy + 1e-10)
+        # Normalize to [0, 1] range
+        synergy_ratio = min(synergy_ratio, 2.0) / 2.0
         return float(np.clip(synergy_ratio, 0.0, 1.0))
 
     def _compute_entropy(self, data: np.ndarray) -> float:
