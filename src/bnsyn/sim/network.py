@@ -6,6 +6,7 @@ Implements SPEC P2-11 reference network dynamics for deterministic tests.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import os
 import numpy as np
@@ -18,10 +19,13 @@ from bnsyn.numerics.integrators import exp_decay_step
 from bnsyn.synapse.conductance import nmda_mg_block
 from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matrix
 
+torch: Any | None
 try:
-    import torch
+    import torch as torch_module  # type: ignore[import-not-found]
 except Exception:  # pragma: no cover - optional GPU support
     torch = None
+else:
+    torch = torch_module
 
 
 @dataclass(frozen=True)
@@ -171,6 +175,7 @@ class Network:
         spikes_I = spikes[self.nE :].astype(float)
 
         if self._use_torch:
+            assert torch is not None
             spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
             spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
             incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
@@ -252,6 +257,7 @@ class Network:
         spikes_I = spikes[self.nE :].astype(float)
 
         if self._use_torch:
+            assert torch is not None
             spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
             spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
             incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()

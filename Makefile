@@ -44,7 +44,7 @@ bench-report:
 
 # Docs targets
 docs:
-	sphinx-build -b html docs/api docs/_build/html
+	sphinx-build -b html -W -a -v docs/api docs/_build/html
 
 docs-clean:
 	rm -rf docs/_build

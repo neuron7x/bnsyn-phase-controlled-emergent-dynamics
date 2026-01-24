@@ -16,9 +16,7 @@ from typing import Any
 # Add repo root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from benchmarks.metrics import metrics_to_dict, run_benchmark
 from benchmarks.scenarios import get_scenarios
-from benchmarks.scenarios.base import BenchmarkScenario
 
 try:
     import torch

@@ -27,6 +27,7 @@ extensions = [
 autosummary_generate = True
 
 autodoc_typehints = "description"
+autodoc_typehints_description_target = "all"
 autodoc_default_options = {
     "members": True,
     "undoc-members": False,
@@ -63,7 +64,10 @@ intersphinx_mapping: dict[str, tuple[str, str] | tuple[str, None]] = {}
 
 html_title = "BN-Syn API Documentation"
 html_theme_options = {
-    "sidebar_hide_name": False,
+    "sidebar_hide_name": True,
 }
+
+nitpicky = False
+suppress_warnings = ["autodoc"]
 
 os.environ.setdefault("PYTHONUTF8", "1")
