@@ -22,7 +22,6 @@ def main() -> int:
 
     # Import here to avoid import-time dependencies
     import sys
-    import os
 
     # Add parent to path for imports
     repo_root = Path(__file__).parent.parent
