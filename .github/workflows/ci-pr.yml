@@ -7,6 +7,7 @@ on:
 
 jobs:
   ssot:
+    name: Evidence SSOT (claims+bib+rules)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,12 +22,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - name: SSOT gates
-        run: |
-          python scripts/validate_bibliography.py
-          python scripts/validate_claims.py
-          python scripts/scan_normative_tags.py
+        run: make ssot
 
   quality:
+    name: Static quality (ruff+mypy)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,6 +47,7 @@ jobs:
         run: mypy src
 
   build:
+    name: Build (package installability)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -64,10 +64,13 @@ jobs:
           pip install build
       - name: Build package
         run: python -m build
+      - name: Install wheel
+        run: python -m pip install --force-reinstall dist/*.whl
       - name: Import check
-        run: python -c "import bnsyn"
+        run: python -c "import bnsyn; import bnsyn.cli; print('OK')"
 
   tests-smoke:
+    name: Tests: smoke (fast)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -85,6 +88,7 @@ jobs:
         run: pytest -m "not validation"
 
   gitleaks:
+    name: Secrets scan (gitleaks)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -101,6 +105,7 @@ jobs:
           GITLEAKS_CONFIG: .gitleaks.toml
 
   pip-audit:
+    name: Dependency vulns (pip-audit)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -90,7 +90,7 @@ Use this index to find any document, specification, or governance artifact.
 
 | Workflow | Purpose |
 |----------|---------|
-| [ci-smoke.yml](../.github/workflows/ci-smoke.yml) | SSOT gates + smoke tests (every PR) |
+| [ci-pr.yml](../.github/workflows/ci-pr.yml) | SSOT gates + smoke tests (every PR) |
 | [ci-validation.yml](../.github/workflows/ci-validation.yml) | Validation tests (weekly + manual) |
 
 ---
