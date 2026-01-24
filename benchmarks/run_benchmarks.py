@@ -141,7 +141,7 @@ def run_benchmarks(
                 **aggregated,
             }
         )
-        print("  Summary: " f"wall_time={aggregated['performance_wall_time_sec']:.3f}s")
+        print(f"  Summary: wall_time={aggregated['performance_wall_time_sec']:.3f}s")
         print()
 
     if output_json and all_results:
