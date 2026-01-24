@@ -8,29 +8,32 @@ import json
 import math
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-from benchmarks.bench_adex import run_benchmark as run_adex
-from benchmarks.bench_criticality import run_benchmark as run_criticality
-from benchmarks.bench_dt_invariance import run_benchmark as run_dt_invariance
-from benchmarks.bench_plasticity import run_benchmark as run_plasticity
-from benchmarks.bench_synapses import run_benchmark as run_synapses
 
 
-BENCHMARKS = [
-    ("bench_adex", run_adex),
-    ("bench_synapses", run_synapses),
-    ("bench_plasticity", run_plasticity),
-    ("bench_criticality", run_criticality),
-    ("bench_dt_invariance", run_dt_invariance),
-]
+def load_benchmarks() -> list[tuple[str, Callable[..., list[dict[str, object]]]]]:
+    """Load benchmark callables after ensuring repo paths are available."""
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    if str(SRC) not in sys.path:
+        sys.path.insert(0, str(SRC))
+
+    from benchmarks.bench_adex import run_benchmark as run_adex
+    from benchmarks.bench_criticality import run_benchmark as run_criticality
+    from benchmarks.bench_dt_invariance import run_benchmark as run_dt_invariance
+    from benchmarks.bench_plasticity import run_benchmark as run_plasticity
+    from benchmarks.bench_synapses import run_benchmark as run_synapses
+
+    return [
+        ("bench_adex", run_adex),
+        ("bench_synapses", run_synapses),
+        ("bench_plasticity", run_plasticity),
+        ("bench_criticality", run_criticality),
+        ("bench_dt_invariance", run_dt_invariance),
+    ]
 
 
 def parse_args() -> argparse.Namespace:
@@ -119,10 +122,11 @@ def main() -> None:
         repeats = 3
 
     entries: list[dict[str, Any]] = []
+    benchmarks = load_benchmarks()
     for n in n_values:
         for dt_ms in dt_values:
             steps = 500 if args.suite == "ci" else (50 if n >= 100000 else 200)
-            for _name, bench in BENCHMARKS:
+            for _name, bench in benchmarks:
                 entries.extend(
                     bench(seed=args.seed, n_neurons=n, dt_ms=dt_ms, steps=steps, repeats=repeats)
                 )

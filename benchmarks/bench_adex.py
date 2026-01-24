@@ -10,7 +10,7 @@ from bnsyn.config import AdExParams
 from bnsyn.neuron.adex import AdExState, adex_step
 from bnsyn.rng import seed_all
 
-from benchmarks.common import BenchmarkContext, build_context, metric_payload, peak_rss_mb
+from benchmarks.common import build_context, metric_payload, peak_rss_mb
 
 
 def run_benchmark(
