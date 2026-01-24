@@ -167,6 +167,9 @@ Numerical integration uses explicit Euler and RK2 where specified, and exponenti
 updates for conductance decay. Δt-invariance checks are defined in
 `tests/test_dt_invariance.py`.
 
+Performance and dt-invariance benchmark references are documented in
+`docs/PERFORMANCE.md`.
+
 ## P2-9: Determinism protocol (seed + explicit RNG)
 
 All stochasticity is routed through explicit RNG injection; see `bnsyn/rng.py`

@@ -8,3 +8,24 @@ repos:
     rev: v1.19.1
     hooks:
       - id: mypy
+  - repo: local
+    hooks:
+      - id: pip-audit
+        name: pip-audit
+        entry: pip-audit --desc
+        language: python
+        pass_filenames: false
+        additional_dependencies:
+          - pip-audit
+      - id: no-requirements-txt
+        name: Prevent requirements.txt
+        entry: bash -c 'if git diff --cached --name-only | grep -q "^requirements\\.txt$"; then echo "ERROR: requirements.txt detected. Use pyproject.toml."; exit 1; fi'
+        language: system
+        pass_filenames: false
+      - id: validate-pyproject
+        name: Validate pyproject.toml
+        entry: validate-pyproject
+        language: python
+        files: ^pyproject\.toml$
+        additional_dependencies:
+          - validate-pyproject

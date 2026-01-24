@@ -26,6 +26,42 @@ jobs:
           python scripts/validate_claims.py
           python scripts/scan_normative_tags.py
 
+  dependency-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Verify requirements.txt is absent
+        run: |
+          if [ -f requirements.txt ]; then
+            echo "ERROR: requirements.txt detected. Use pyproject.toml as the SSOT."
+            exit 1
+          fi
+      - name: Validate pyproject.toml
+        run: |
+          python -m pip install --upgrade pip build validate-pyproject
+          validate-pyproject pyproject.toml
+      - name: Check dependency resolution
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" --dry-run --report /tmp/dep-report.json
+      - name: Audit dependencies
+        run: |
+          pip install -e ".[dev]"
+          mkdir -p artifacts
+          pip-audit --desc --format json --output artifacts/pip-audit.json
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-${{ github.sha }}
+          path: artifacts/pip-audit.json
+          retention-days: 30
+
   quality:
     runs-on: ubuntu-latest
     steps:

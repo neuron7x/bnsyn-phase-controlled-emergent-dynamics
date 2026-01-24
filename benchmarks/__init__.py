@@ -1,3 +1,5 @@
-"""BN-Syn benchmark harness."""
+"""Deterministic benchmark suite for BN-Syn."""
 
-__all__ = ["scenarios", "metrics", "run_benchmarks"]
+from __future__ import annotations
+
+__all__ = []

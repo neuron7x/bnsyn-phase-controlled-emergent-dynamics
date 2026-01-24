@@ -50,6 +50,11 @@ claims:
   implementation_paths:
   - src/bnsyn/neuron/adex.py
   - src/bnsyn/sim/network.py
+  benchmark_paths:
+  - benchmarks/bench_adex.py
+  performance_metrics:
+  - adex_steps_per_sec
+  - memory_per_neuron_mb
   verification_paths:
   - tests/test_adex_smoke.py
   - tests/test_network_smoke.py
@@ -67,6 +72,10 @@ claims:
   spec_section: P0-2 NMDA block
   implementation_paths:
   - src/bnsyn/synapse/conductance.py
+  benchmark_paths:
+  - benchmarks/bench_synapses.py
+  performance_metrics:
+  - synapse_update_cost_ms
   verification_paths:
   - tests/test_synapse_smoke.py
 - id: CLM-0004
@@ -83,6 +92,10 @@ claims:
   spec_section: P0-3 Three-factor learning
   implementation_paths:
   - src/bnsyn/plasticity/three_factor.py
+  benchmark_paths:
+  - benchmarks/bench_plasticity.py
+  performance_metrics:
+  - plasticity_update_cost_ms
   verification_paths:
   - tests/test_plasticity_smoke.py
 - id: CLM-0005
@@ -115,6 +128,10 @@ claims:
   spec_section: P0-4 Avalanche exponents
   implementation_paths:
   - src/bnsyn/criticality/branching.py
+  benchmark_paths:
+  - benchmarks/bench_criticality.py
+  performance_metrics:
+  - criticality_sigma_drift
   verification_paths:
   - tests/test_criticality_smoke.py
 - id: CLM-0007
@@ -245,6 +262,10 @@ claims:
   spec_section: P2-8 Numerical methods
   implementation_paths:
   - src/bnsyn/numerics/integrators.py
+  benchmark_paths:
+  - benchmarks/bench_dt_invariance.py
+  performance_metrics:
+  - dt_invariance_drift
   verification_paths:
   - tests/test_dt_invariance.py
   - tests/validation/test_numerics_validation.py
@@ -297,6 +318,10 @@ claims:
   spec_section: P2-11 Reference network simulator
   implementation_paths:
   - src/bnsyn/sim/network.py
+  benchmark_paths:
+  - benchmarks/bench_adex.py
+  performance_metrics:
+  - memory_per_neuron_mb
   verification_paths:
   - tests/test_network_smoke.py
   - tests/validation/test_network_validation.py
