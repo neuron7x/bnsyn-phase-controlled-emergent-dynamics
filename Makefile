@@ -1,77 +1,60 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation coverage format lint mypy security check dev-setup ci-local ci-full bench bench-sweep bench-report docs docs-clean docs-linkcheck
-
-# SSOT validators
-validate-claims:
-	python scripts/validate_claims.py
-
-validate-bibliography:
-	python scripts/validate_bibliography.py
-
-validate-normative:
-	python scripts/scan_normative_tags.py
-
-# Alias: run all SSOT validators
-ssot: validate-bibliography validate-claims validate-normative
-
-# Test targets
-test-smoke:
-	pytest -m "not validation"
-
-test-validation:
-	pytest -m validation
-
-coverage:
-	pytest --cov=src/bnsyn --cov-report=term-missing --cov-fail-under=85
-
-# Quality targets
-format:
-	ruff format .
-
-lint:
-	ruff check .
-
-mypy:
-	mypy src --strict
-
-security:
-	pip-audit --desc
-
-check: format lint mypy ssot test-smoke coverage security
-	@echo "✅ All checks passed!"
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean
 
 dev-setup:
+	pip install --upgrade pip setuptools wheel
 	pip install -e ".[dev]"
 	pre-commit install
 	pre-commit autoupdate
 
-# Local CI check (SSOT + smoke)
-ci-local: ssot test-smoke
+test:
+	pytest -m "not validation" -v --tb=short
 
-# Full CI check (format, lint, audit, smoke, validation)
-ci-full:
-	ruff format --check .
+test-determinism:
+	pytest tests/test_determinism.py tests/test_properties_determinism.py -v
+
+test-validation:
+	pytest -m validation -v
+
+coverage:
+	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=term-missing --cov-fail-under=85
+	@echo "Coverage report: htmlcov/index.html"
+
+quality: format lint mypy ssot security
+	@echo "✅ All quality checks passed"
+
+format:
+	ruff format .
+	@echo "Formatted code"
+
+fix:
+	ruff check . --fix
+	@echo "Fixed lint issues"
+
+lint:
 	ruff check .
-	python scripts/audit_spec_implementation.py
-	$(MAKE) ssot
-	$(MAKE) test-smoke
-	$(MAKE) test-validation
+	pylint src/bnsyn
 
-# Benchmark targets
-bench:
-	python benchmarks/run_benchmarks.py --scenario quick --repeats 3 --out results/bench.csv --json results/bench.json
+mypy:
+	mypy src --strict --config-file pyproject.toml
 
-bench-sweep:
-	python benchmarks/run_benchmarks.py --scenario full --repeats 5 --out results/bench_full.csv --json results/bench_full.json
+ssot:
+	python scripts/validate_bibliography.py
+	python scripts/validate_claims.py
+	python scripts/scan_normative_tags.py
 
-bench-report:
-	python benchmarks/report.py --input results/bench.csv --output docs/benchmarks/README.md
+security:
+	gitleaks detect --redact --verbose --source=.
+	pip-audit --desc
+	bandit -r src/ -ll
 
-# Docs targets
-docs:
-	sphinx-build -b html -W -a -v docs/api docs/_build/html
+check: format lint mypy coverage ssot security
+	@echo "✅ All checks passed"
 
-docs-clean:
-	rm -rf docs/_build
-
-docs-linkcheck:
-	sphinx-build -b linkcheck docs/api docs/_build/linkcheck
+clean:
+	find . -type d -name __pycache__ -exec rm -rf {} +
+	find . -type d -name .pytest_cache -exec rm -rf {} +
+	find . -type d -name .mypy_cache -exec rm -rf {} +
+	find . -type d -name htmlcov -exec rm -rf {} +
+	find . -type f -name .coverage -delete
+	find . -type d -name "*.egg-info" -exec rm -rf {} +
+	@echo "Cleaned temporary files"

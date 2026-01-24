@@ -90,7 +90,7 @@ class Network:
     ):
         if nparams.N <= 0:
             raise ValueError("N must be positive")
-        if not (0.0 < nparams.frac_inhib < 1.0):
+        if not 0.0 < nparams.frac_inhib < 1.0:
             raise ValueError("frac_inhib must be in (0,1)")
         if dt_ms <= 0:
             raise ValueError("dt_ms must be positive")
