@@ -32,6 +32,44 @@ def adex_step_jax(
     V_spike: float,
     dt: float,
 ) -> tuple[Any, Any, Any]:
+    """Advance AdEx state one step using JAX arrays.
+
+    Parameters
+    ----------
+    V
+        Membrane potential array.
+    w
+        Adaptation current array.
+    input_current
+        Input current array.
+    C
+        Membrane capacitance.
+    gL
+        Leak conductance.
+    EL
+        Leak reversal potential.
+    VT
+        Spike threshold.
+    DeltaT
+        Slope factor.
+    tau_w
+        Adaptation time constant.
+    a
+        Subthreshold adaptation conductance.
+    b
+        Spike-triggered adaptation increment.
+    V_reset
+        Reset voltage.
+    V_spike
+        Spike detection voltage.
+    dt
+        Time step.
+
+    Returns
+    -------
+    tuple[Any, Any, Any]
+        Updated ``V``, ``w``, and spike indicator arrays.
+    """
     exp_term = gL * DeltaT * jnp.exp((V - VT) / DeltaT)
     dV = (-(gL * (V - EL)) + exp_term - w + input_current) / C
     dw = (a * (V - EL) - w) / tau_w

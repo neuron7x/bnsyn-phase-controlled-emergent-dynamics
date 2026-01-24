@@ -1,3 +1,5 @@
+"""Command-line interface for BN-Syn simulations."""
+
 from __future__ import annotations
 
 import argparse
@@ -23,6 +25,19 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
+    """Run the BN-Syn CLI entrypoint.
+
+    Returns
+    -------
+    None
+        Exits the process with the selected subcommand status code.
+
+    Examples
+    --------
+    Run the deterministic demo:
+
+    >>> bnsyn demo --steps 2000 --dt-ms 0.1 --seed 42 --N 200
+    """
     p = argparse.ArgumentParser(prog="bnsyn", description="BN-Syn CLI")
     sub = p.add_subparsers(dest="cmd", required=True)
 

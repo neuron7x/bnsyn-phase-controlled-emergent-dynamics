@@ -25,7 +25,17 @@ class SparseConnectivityMetrics:
 
 
 class SparseConnectivity:
-    """Adaptive sparse/dense matrix dispatcher."""
+    """Adaptive sparse/dense matrix dispatcher.
+
+    Parameters
+    ----------
+    W
+        Dense weight matrix.
+    density_threshold
+        Threshold for choosing sparse storage in ``auto`` mode.
+    force_format
+        Force ``\"dense\"`` or ``\"sparse\"`` format, or select automatically.
+    """
 
     def __init__(
         self,
@@ -76,7 +86,18 @@ class SparseConnectivity:
         return min(10.0, 2.0 ** (1.0 - density) / density) if density > 0 else 10.0
 
     def apply(self, x: Float64Array) -> Float64Array:
-        """Compute y = W @ x with automatic dispatch."""
+        """Compute ``y = W @ x`` with automatic format dispatch.
+
+        Parameters
+        ----------
+        x
+            Input vector with shape matching ``W`` columns.
+
+        Returns
+        -------
+        numpy.ndarray
+            Output vector of shape ``(n_post,)``.
+        """
         if self.format == "sparse":
             assert isinstance(self.W, sp.csr_matrix)
             y = self.W @ x
@@ -86,14 +107,26 @@ class SparseConnectivity:
         return np.asarray(np.dot(self.W, x), dtype=np.float64)
 
     def to_dense(self) -> Float64Array:
-        """Convert to dense matrix."""
+        """Convert to a dense matrix.
+
+        Returns
+        -------
+        numpy.ndarray
+            Dense ``float64`` weight matrix.
+        """
         if self.format == "sparse":
             assert isinstance(self.W, sp.csr_matrix)
             return np.asarray(self.W.todense(), dtype=np.float64)
         return np.asarray(self.W, dtype=np.float64)
 
     def to_sparse(self) -> sp.csr_matrix:
-        """Convert to sparse CSR."""
+        """Convert to sparse CSR format.
+
+        Returns
+        -------
+        scipy.sparse.csr_matrix
+            CSR representation of the weights.
+        """
         if self.format == "sparse":
             return self.W.copy()
         return sp.csr_matrix(self.W, dtype=np.float64)
@@ -117,8 +150,32 @@ def build_random_connectivity(
 ) -> SparseConnectivity:
     """Build Erdős-Rényi random connectivity with explicit RNG control.
 
-    Determinism is achieved by passing a managed NumPy Generator; `seed` is a
-    fallback for legacy call sites.
+    Parameters
+    ----------
+    n_pre
+        Number of presynaptic neurons.
+    n_post
+        Number of postsynaptic neurons.
+    connection_prob
+        Connection probability.
+    weight_mean
+        Mean of the absolute weight distribution.
+    weight_std
+        Standard deviation of the absolute weight distribution.
+    rng
+        Optional NumPy generator for deterministic sampling.
+    seed
+        Optional seed for a new generator if ``rng`` is ``None``.
+
+    Returns
+    -------
+    SparseConnectivity
+        Connectivity wrapper with automatic format selection.
+
+    Raises
+    ------
+    ValueError
+        If sizes or probabilities are invalid.
     """
     if n_pre <= 0 or n_post <= 0:
         raise ValueError("n_pre and n_post must be positive")

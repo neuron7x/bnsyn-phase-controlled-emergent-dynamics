@@ -1,3 +1,5 @@
+"""VCG-style support and allocation updates."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,6 +9,8 @@ import numpy as np
 
 @dataclass(frozen=True)
 class VCGParams:
+    """Parameters for VCG support updates."""
+
     theta_c: float
     alpha_down: float
     alpha_up: float
@@ -22,7 +26,27 @@ class VCGParams:
 
 
 def update_support_level(contribution: float, support: float, params: VCGParams) -> float:
-    """Update support level deterministically based on contribution threshold."""
+    """Update support level deterministically based on contribution threshold.
+
+    Parameters
+    ----------
+    contribution
+        Agent contribution scalar.
+    support
+        Current support level in ``[0, 1]``.
+    params
+        Support update parameters.
+
+    Returns
+    -------
+    float
+        Updated support level.
+
+    Raises
+    ------
+    ValueError
+        If ``support`` is outside ``[0, 1]``.
+    """
     if not 0.0 <= support <= 1.0:
         raise ValueError("support must be in [0, 1]")
     if contribution < params.theta_c:
@@ -31,7 +55,25 @@ def update_support_level(contribution: float, support: float, params: VCGParams)
 
 
 def allocation_multiplier(support: float, params: VCGParams) -> float:
-    """Compute allocation multiplier from support level."""
+    """Compute allocation multiplier from support level.
+
+    Parameters
+    ----------
+    support
+        Support level in ``[0, 1]``.
+    params
+        Support update parameters.
+
+    Returns
+    -------
+    float
+        Allocation multiplier in ``[epsilon, 1]``.
+
+    Raises
+    ------
+    ValueError
+        If ``support`` is outside ``[0, 1]``.
+    """
     if not 0.0 <= support <= 1.0:
         raise ValueError("support must be in [0, 1]")
     return float(params.epsilon + (1.0 - params.epsilon) * support)
@@ -40,7 +82,27 @@ def allocation_multiplier(support: float, params: VCGParams) -> float:
 def update_support_vector(
     contributions: np.ndarray, support: np.ndarray, params: VCGParams
 ) -> np.ndarray:
-    """Vectorized support update for multiple agents."""
+    """Vectorized support update for multiple agents.
+
+    Parameters
+    ----------
+    contributions
+        Contribution values per agent.
+    support
+        Current support levels per agent.
+    params
+        Support update parameters.
+
+    Returns
+    -------
+    numpy.ndarray
+        Updated support levels.
+
+    Raises
+    ------
+    ValueError
+        If ``contributions`` and ``support`` shapes differ.
+    """
     if contributions.shape != support.shape:
         raise ValueError("contributions and support must have the same shape")
     updated = np.where(

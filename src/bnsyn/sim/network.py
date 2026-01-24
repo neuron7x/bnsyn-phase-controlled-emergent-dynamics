@@ -1,3 +1,5 @@
+"""Reference network simulator for BN-Syn smoke tests."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -15,6 +17,8 @@ from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matr
 
 @dataclass(frozen=True)
 class NetworkParams:
+    """Configuration parameters for the reference network."""
+
     N: int = 200
     frac_inhib: float = 0.2
     p_conn: float = 0.05
@@ -29,7 +33,23 @@ class NetworkParams:
 
 
 class Network:
-    """Small reference network (dense enough for tests, not optimized)."""
+    """Small reference network (dense enough for tests, not optimized).
+
+    Parameters
+    ----------
+    nparams
+        Network configuration parameters.
+    adex
+        AdEx neuron parameters.
+    syn
+        Synapse parameters.
+    crit
+        Criticality controller parameters.
+    dt_ms
+        Integration time step in milliseconds.
+    rng
+        NumPy random generator for deterministic sampling.
+    """
 
     def __init__(
         self,
@@ -39,7 +59,7 @@ class Network:
         crit: CriticalityParams,
         dt_ms: float,
         rng: np.random.Generator,
-    ):
+    ) -> None:
         if nparams.N <= 0:
             raise ValueError("N must be positive")
         if not (0.0 < nparams.frac_inhib < 1.0):
@@ -91,6 +111,18 @@ class Network:
         self._A_prev = 1.0
 
     def step(self) -> dict[str, float]:
+        """Advance the network by one integration step.
+
+        Returns
+        -------
+        dict[str, float]
+            Summary metrics for the step, including spike rate and sigma.
+
+        Raises
+        ------
+        RuntimeError
+            If voltage safety bounds are violated.
+        """
         N = self.np.N
         dt = self.dt_ms
 
@@ -162,6 +194,24 @@ def run_simulation(
     seed: int,
     N: int = 200,
 ) -> dict[str, float]:
+    """Run a deterministic reference simulation and return summary metrics.
+
+    Parameters
+    ----------
+    steps
+        Number of integration steps.
+    dt_ms
+        Time step in milliseconds.
+    seed
+        RNG seed for deterministic execution.
+    N
+        Number of neurons in the network.
+
+    Returns
+    -------
+    dict[str, float]
+        Aggregated sigma and firing-rate statistics.
+    """
     from bnsyn.rng import seed_all
 
     _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)

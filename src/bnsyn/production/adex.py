@@ -19,6 +19,7 @@ import numpy as np
 
 @dataclass(frozen=True, slots=True)
 class AdExParams:
+    """AdEx parameterization for production benchmarks."""
     # Membrane
     C: float = 90e-12  # Farads
     gL: float = 10e-9  # Siemens
@@ -41,7 +42,7 @@ class AdExParams:
 
 @dataclass(slots=True)
 class AdExNeuron:
-    """Vectorized AdEx neuron state."""
+    """Vectorized AdEx neuron state for production benchmarks."""
 
     params: AdExParams
     V: np.ndarray
@@ -52,6 +53,22 @@ class AdExNeuron:
     def init(
         cls, n: int, params: AdExParams | None = None, *, V0: float | None = None
     ) -> "AdExNeuron":
+        """Initialize a vectorized AdEx neuron population.
+
+        Parameters
+        ----------
+        n
+            Number of neurons.
+        params
+            Optional parameter override.
+        V0
+            Optional initial membrane voltage in Volts.
+
+        Returns
+        -------
+        AdExNeuron
+            Initialized neuron state.
+        """
         p = params or AdExParams()
         v0 = p.EL if V0 is None else float(V0)
         V = np.full((n,), v0, dtype=np.float64)
@@ -62,14 +79,24 @@ class AdExNeuron:
     def step(self, input_current: np.ndarray, dt: float, t: float) -> Tuple[np.ndarray, np.ndarray]:
         """Advance state by one Euler step.
 
-        Args:
-            input_current: input current (Amps), shape (n,)
-            dt: timestep (seconds)
-            t: current simulation time (seconds), used for refractory tracking
+        Parameters
+        ----------
+        input_current
+            Input current in Amps with shape ``(n,)``.
+        dt
+            Time step in seconds.
+        t
+            Current simulation time in seconds.
 
-        Returns:
-            spikes: boolean array (n,)
-            V: updated membrane potentials (n,)
+        Returns
+        -------
+        tuple[numpy.ndarray, numpy.ndarray]
+            Spike indicators and updated membrane voltages.
+
+        Raises
+        ------
+        ValueError
+            If ``input_current`` shape mismatches state.
         """
         p = self.params
         current = np.asarray(input_current, dtype=np.float64)

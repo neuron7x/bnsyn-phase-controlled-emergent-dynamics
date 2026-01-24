@@ -1,3 +1,5 @@
+"""Three-factor plasticity updates with eligibility and neuromodulation."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,15 +15,35 @@ BoolArray = NDArray[np.bool_]
 
 @dataclass
 class EligibilityTraces:
+    """Eligibility traces for synaptic updates."""
+
     e: Float64Array  # shape (N_pre, N_post)
 
 
 @dataclass
 class NeuromodulatorTrace:
+    """Neuromodulator trace for global reward signals."""
+
     n: float  # scalar dopamine / TD trace
 
 
 def decay(x: Float64Array, dt_ms: float, tau_ms: float) -> Float64Array:
+    """Exponentially decay a trace.
+
+    Parameters
+    ----------
+    x
+        Trace values.
+    dt_ms
+        Time step in milliseconds.
+    tau_ms
+        Time constant in milliseconds.
+
+    Returns
+    -------
+    numpy.ndarray
+        Decayed trace values.
+    """
     return np.asarray(x * np.exp(-dt_ms / tau_ms), dtype=np.float64)
 
 
@@ -34,11 +56,34 @@ def three_factor_update(
     dt_ms: float,
     p: PlasticityParams,
 ) -> tuple[Float64Array, EligibilityTraces]:
-    """Vectorized three-factor update.
+    """Apply a vectorized three-factor plasticity update.
 
-    - eligibility trace receives STDP-like coincidence: outer(pre, post)
-    - weights updated by eta * e * M
-    - weights bounded to [w_min, w_max]
+    Parameters
+    ----------
+    w
+        Current weight matrix.
+    elig
+        Eligibility traces.
+    neuromod
+        Neuromodulator trace.
+    pre_spikes
+        Pre-synaptic spike indicator array.
+    post_spikes
+        Post-synaptic spike indicator array.
+    dt_ms
+        Time step in milliseconds.
+    p
+        Plasticity parameters.
+
+    Returns
+    -------
+    tuple[numpy.ndarray, EligibilityTraces]
+        Updated weights and eligibility traces.
+
+    Raises
+    ------
+    ValueError
+        If shapes mismatch or ``dt_ms`` is non-positive.
     """
     if w.ndim != 2:
         raise ValueError("w must be 2D (N_pre, N_post)")
@@ -67,6 +112,23 @@ def three_factor_update(
 
 
 def neuromod_step(n: float, dt_ms: float, tau_ms: float, d_t: float) -> float:
-    """dn/dt = -n/tau + d(t) (Euler exact via exp)."""
+    """Update neuromodulator trace by exponential decay plus drive.
+
+    Parameters
+    ----------
+    n
+        Current neuromodulator level.
+    dt_ms
+        Time step in milliseconds.
+    tau_ms
+        Decay constant in milliseconds.
+    d_t
+        Instantaneous drive term.
+
+    Returns
+    -------
+    float
+        Updated neuromodulator level.
+    """
     n = float(n) * float(np.exp(-dt_ms / tau_ms)) + float(d_t)
     return float(n)

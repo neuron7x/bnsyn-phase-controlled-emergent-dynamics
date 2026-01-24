@@ -1,9 +1,13 @@
+"""Pydantic configuration models for BN-Syn parameters."""
+
 from __future__ import annotations
 
 from pydantic import BaseModel, Field, PositiveFloat
 
 
 class AdExParams(BaseModel):
+    """Parameters for the AdEx neuron model."""
+
     # Units: pF, nS, mV, ms, pA
     C_pF: PositiveFloat = Field(default=150.0, description="Membrane capacitance (pF)")
     gL_nS: PositiveFloat = Field(default=10.0, description="Leak conductance (nS)")
@@ -18,6 +22,8 @@ class AdExParams(BaseModel):
 
 
 class SynapseParams(BaseModel):
+    """Parameters for conductance-based synapses."""
+
     E_AMPA_mV: float = 0.0
     E_NMDA_mV: float = 0.0
     E_GABAA_mV: float = -70.0
@@ -31,6 +37,8 @@ class SynapseParams(BaseModel):
 
 
 class PlasticityParams(BaseModel):
+    """Parameters for plasticity rules and bounds."""
+
     tau_e_ms: PositiveFloat = 500.0
     tau_plus_ms: PositiveFloat = 20.0
     tau_minus_ms: PositiveFloat = 20.0
@@ -42,6 +50,8 @@ class PlasticityParams(BaseModel):
 
 
 class CriticalityParams(BaseModel):
+    """Parameters for criticality gain control."""
+
     sigma_target: float = 1.0
     eta_sigma: PositiveFloat = 1e-3
     gain_min: PositiveFloat = 0.2
@@ -49,6 +59,8 @@ class CriticalityParams(BaseModel):
 
 
 class TemperatureParams(BaseModel):
+    """Parameters for temperature schedule and gating."""
+
     T0: PositiveFloat = 1.0
     Tmin: PositiveFloat = 1e-3
     alpha: float = Field(default=0.95, ge=0.0, le=1.0)
@@ -57,6 +69,8 @@ class TemperatureParams(BaseModel):
 
 
 class DualWeightParams(BaseModel):
+    """Parameters for dual-weight consolidation dynamics."""
+
     tau_f_s: PositiveFloat = 1800.0  # 30 min
     tau_tag_s: PositiveFloat = 5400.0  # 90 min
     tau_p_s: PositiveFloat = 7200.0  # 2 h
@@ -66,6 +80,7 @@ class DualWeightParams(BaseModel):
 
 
 class EnergyParams(BaseModel):
+    """Parameters for energy regularization and activity floors."""
     lambda_rate: PositiveFloat = 1e-3
     lambda_weight: PositiveFloat = 5e-4
     lambda_energy: PositiveFloat = 1e-2

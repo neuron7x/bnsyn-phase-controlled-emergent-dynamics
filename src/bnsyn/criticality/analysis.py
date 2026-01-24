@@ -1,3 +1,5 @@
+"""Criticality analysis utilities (branching ratios and power laws)."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,15 +9,31 @@ import numpy as np
 
 @dataclass(frozen=True)
 class PowerLawFit:
+    """Parameters for a fitted power-law distribution."""
+
     alpha: float
     xmin: float
 
 
 def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
-    """Estimate branching ratio using a multistep regression approach.
+    """Estimate the branching ratio using multistep regression.
 
-    For each lag k, estimate slope of A(t+k) vs A(t) via least squares, then
-    infer sigma_k = slope ** (1/k). Returns the mean sigma_k across lags.
+    Parameters
+    ----------
+    activity
+        Non-negative activity time series ``A(t)``.
+    max_lag
+        Maximum lag for the regression estimator.
+
+    Returns
+    -------
+    float
+        Estimated branching ratio.
+
+    Raises
+    ------
+    ValueError
+        If inputs are invalid or the estimator cannot be computed.
     """
     if activity.ndim != 1:
         raise ValueError("activity must be 1D")
@@ -41,7 +59,25 @@ def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
 
 
 def fit_power_law_mle(data: np.ndarray, xmin: float) -> PowerLawFit:
-    """Continuous power-law MLE fit for alpha with fixed xmin."""
+    """Fit a continuous power-law using MLE with fixed ``xmin``.
+
+    Parameters
+    ----------
+    data
+        One-dimensional sample data.
+    xmin
+        Lower bound for the fit.
+
+    Returns
+    -------
+    PowerLawFit
+        Fitted power-law parameters.
+
+    Raises
+    ------
+    ValueError
+        If inputs are invalid or insufficient for the fit.
+    """
     if data.ndim != 1:
         raise ValueError("data must be 1D")
     if xmin <= 0:

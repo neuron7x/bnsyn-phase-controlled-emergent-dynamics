@@ -1,3 +1,5 @@
+"""Conductance-based synapse dynamics with deterministic delays."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,21 +15,47 @@ Float64Array = NDArray[np.float64]
 
 @dataclass
 class ConductanceState:
+    """Conductance state for AMPA/NMDA/GABA receptors."""
+
     g_ampa_nS: Float64Array
     g_nmda_nS: Float64Array
     g_gabaa_nS: Float64Array
 
 
 def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
-    """Jahr-Stevens Mg2+ block: B(V) = 1 / (1 + ([Mg]/3.57)*exp(-0.062 V))."""
+    """Compute the Jahr-Stevens Mg2+ block for NMDA receptors.
+
+    Parameters
+    ----------
+    V_mV
+        Membrane voltage in mV.
+    mg_mM
+        Extracellular magnesium concentration in mM.
+
+    Returns
+    -------
+    numpy.ndarray
+        Voltage-dependent NMDA block term.
+    """
     return np.asarray(1.0 / (1.0 + (mg_mM / 3.57) * np.exp(-0.062 * V_mV)), dtype=np.float64)
 
 
 class ConductanceSynapses:
     """Event-driven conductance synapses with fixed delay using a ring buffer.
 
-    This class does not implement connectivity; it applies aggregate incoming spikes.
-    Upstream code supplies per-neuron incoming spike counts (or weighted counts).
+    Parameters
+    ----------
+    N
+        Number of neurons.
+    params
+        Synapse parameters controlling time constants and reversal potentials.
+    dt_ms
+        Integration time step in milliseconds.
+
+    Notes
+    -----
+    Connectivity is managed upstream. This class applies aggregate incoming
+    spike counts (or weighted increments) per neuron.
     """
 
     def __init__(self, N: int, params: SynapseParams, dt_ms: float) -> None:
@@ -52,20 +80,35 @@ class ConductanceSynapses:
 
     @property
     def delay_steps(self) -> int:
+        """Number of integration steps corresponding to the synaptic delay."""
         return self._delay_steps
 
     def queue_events(self, incoming: Float64Array) -> None:
         """Queue incoming events to be applied after the fixed delay.
 
-        `incoming` is shape (N,) and represents aggregate conductance increments.
-        Units are nS increments per timestep (already includes weights).
+        Parameters
+        ----------
+        incoming
+            Array of shape ``(N,)`` with conductance increments in nS.
+
+        Raises
+        ------
+        ValueError
+            If ``incoming`` does not match ``(N,)``.
         """
         if incoming.shape != (self.N,):
             raise ValueError(f"incoming must have shape ({self.N},)")
         self._buf[self._buf_idx, :] = np.asarray(incoming, dtype=np.float64)
 
     def step(self) -> Float64Array:
-        """Advance synaptic state by one dt and return I_syn in pA for each neuron."""
+        """Advance synaptic state by one step.
+
+        Returns
+        -------
+        numpy.ndarray
+            Stacked conductances with shape ``(3, N)`` in nS order
+            ``[AMPA, NMDA, GABA_A]``.
+        """
         # apply delayed events (written delay_steps ago)
         apply = self._buf[self._buf_idx, :].copy()
         self._buf[self._buf_idx, :] = 0.0
@@ -95,6 +138,26 @@ class ConductanceSynapses:
         g_gabaa_nS: Float64Array,
         params: SynapseParams,
     ) -> Float64Array:
+        """Compute synaptic current in pA from conductances.
+
+        Parameters
+        ----------
+        V_mV
+            Membrane voltage in mV.
+        g_ampa_nS
+            AMPA conductance in nS.
+        g_nmda_nS
+            NMDA conductance in nS.
+        g_gabaa_nS
+            GABA_A conductance in nS.
+        params
+            Synapse parameters with reversal potentials and Mg2+ level.
+
+        Returns
+        -------
+        numpy.ndarray
+            Synaptic current in pA for each neuron.
+        """
         B = nmda_mg_block(V_mV, params.mg_mM)
         current = (
             g_ampa_nS * (V_mV - params.E_AMPA_mV)

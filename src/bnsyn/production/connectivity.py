@@ -12,6 +12,8 @@ import numpy as np
 
 @dataclass(frozen=True, slots=True)
 class ConnectivityConfig:
+    """Configuration for random connectivity."""
+
     n_pre: int
     n_post: int
     p_connect: float
@@ -24,9 +26,30 @@ def build_connectivity(
     rng: np.random.Generator | None = None,
     seed: int | None = None,
 ) -> np.ndarray:
-    """Build a boolean adjacency matrix with Bernoulli(p_connect).
+    """Build a boolean adjacency matrix with Bernoulli connections.
 
-    Pass a managed NumPy Generator to preserve deterministic reproducibility.
+    Parameters
+    ----------
+    cfg
+        Connectivity configuration.
+    rng
+        Optional NumPy generator for deterministic sampling.
+    seed
+        Optional seed to construct a generator if ``rng`` is ``None``.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean adjacency matrix with shape ``(n_post, n_pre)``.
+
+    Raises
+    ------
+    ValueError
+        If dimensions or probabilities are invalid.
+
+    Notes
+    -----
+    Prefer passing a managed NumPy Generator to preserve reproducibility.
     """
     if cfg.n_pre <= 0 or cfg.n_post <= 0:
         raise ValueError("n_pre and n_post must be > 0")

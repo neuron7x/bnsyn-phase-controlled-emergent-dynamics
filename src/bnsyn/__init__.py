@@ -1,3 +1,5 @@
+"""BN-Syn package root for deterministic phase-controlled dynamics."""
+
 from __future__ import annotations
 
 from importlib import metadata

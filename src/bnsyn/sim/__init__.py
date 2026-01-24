@@ -1,3 +1,5 @@
+"""Simulation entrypoints and reference network."""
+
 from .network import (
     Network as Network,
     NetworkParams as NetworkParams,

@@ -1,3 +1,5 @@
+"""Calibration utilities for neuron transfer functions."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,12 +9,33 @@ import numpy as np
 
 @dataclass(frozen=True)
 class LineFit:
+    """Linear fit parameters and fit quality."""
+
     slope: float
     intercept: float
     r2: float
 
 
 def fit_line(x: np.ndarray, y: np.ndarray) -> LineFit:
+    """Fit a line to data using least squares.
+
+    Parameters
+    ----------
+    x
+        One-dimensional input values.
+    y
+        One-dimensional target values.
+
+    Returns
+    -------
+    LineFit
+        Fitted line parameters and R2.
+
+    Raises
+    ------
+    ValueError
+        If inputs are not 1D arrays with matching shapes.
+    """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     if x.ndim != 1 or y.ndim != 1 or x.shape != y.shape:
@@ -27,5 +50,18 @@ def fit_line(x: np.ndarray, y: np.ndarray) -> LineFit:
 
 
 def fit_fI_curve(I_pA: np.ndarray, rate_hz: np.ndarray) -> LineFit:
-    """Minimal f-I fit: piecewise-threshold is not implemented; this fits linear region."""
+    """Fit a linear approximation to an f-I curve.
+
+    Parameters
+    ----------
+    I_pA
+        Input current values in pA.
+    rate_hz
+        Firing rate values in Hz.
+
+    Returns
+    -------
+    LineFit
+        Linear fit parameters for the f-I curve.
+    """
     return fit_line(I_pA, rate_hz)

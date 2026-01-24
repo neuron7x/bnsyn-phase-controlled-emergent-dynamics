@@ -1,3 +1,5 @@
+"""Plasticity rules and trace containers for BN-Syn."""
+
 from .stdp import stdp_kernel as stdp_kernel
 from .three_factor import (
     EligibilityTraces as EligibilityTraces,

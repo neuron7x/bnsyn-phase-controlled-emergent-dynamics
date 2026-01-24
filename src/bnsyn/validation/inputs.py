@@ -40,7 +40,24 @@ def _ensure_ndarray(value: Any, name: str) -> np.ndarray:
 
 
 def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "state") -> None:
-    """Validate a 1D float64 state vector."""
+    """Validate a 1D float64 state vector.
+
+    Parameters
+    ----------
+    state
+        State vector to validate.
+    n_neurons
+        Expected number of neurons.
+    name
+        Label for error messages.
+
+    Raises
+    ------
+    TypeError
+        If the input is not a NumPy array.
+    ValueError
+        If dtype, shape, or NaN checks fail.
+    """
     arr = _ensure_ndarray(state, name)
     if arr.dtype != np.float64:
         raise ValueError(f"{name}: expected dtype float64, got {arr.dtype}")
@@ -51,7 +68,24 @@ def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "stat
 
 
 def validate_spike_array(spikes: BoolArray, n_neurons: int, name: str = "spikes") -> None:
-    """Validate a 1D boolean spike array."""
+    """Validate a 1D boolean spike array.
+
+    Parameters
+    ----------
+    spikes
+        Spike indicator array.
+    n_neurons
+        Expected number of neurons.
+    name
+        Label for error messages.
+
+    Raises
+    ------
+    TypeError
+        If the input is not a NumPy array.
+    ValueError
+        If dtype or shape checks fail.
+    """
     arr = _ensure_ndarray(spikes, name)
     if arr.dtype != np.bool_:
         raise ValueError(f"{name}: expected dtype bool, got {arr.dtype}")
@@ -64,7 +98,24 @@ def validate_connectivity_matrix(
     shape: tuple[int, int],
     name: str = "connectivity",
 ) -> None:
-    """Validate a 2D float64 connectivity matrix."""
+    """Validate a 2D float64 connectivity matrix.
+
+    Parameters
+    ----------
+    matrix
+        Connectivity matrix to validate.
+    shape
+        Expected matrix shape.
+    name
+        Label for error messages.
+
+    Raises
+    ------
+    TypeError
+        If the input is not a NumPy array.
+    ValueError
+        If dtype, shape, or NaN checks fail.
+    """
     arr = _ensure_ndarray(matrix, name)
     if arr.dtype != np.float64:
         raise ValueError(f"{name}: expected dtype float64, got {arr.dtype}")

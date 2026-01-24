@@ -1,3 +1,5 @@
+"""Dual-weight synaptic consolidation model."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,13 +11,7 @@ from bnsyn.config import DualWeightParams
 
 @dataclass
 class DualWeights:
-    """Dual-weight synapse model: w_total = w_fast + w_cons.
-
-    - Fast weights decay to baseline w0 on tau_f.
-    - Tag set when |w_fast - w0| > theta_tag.
-    - Protein is a global scalar synthesised when enough tags active.
-    - Consolidated weights follow slow tracking when Tag & Protein.
-    """
+    """Dual-weight synapse model with fast and consolidated components."""
 
     w_fast: np.ndarray
     w_cons: np.ndarray
@@ -25,6 +21,20 @@ class DualWeights:
 
     @classmethod
     def init(cls, shape: tuple[int, int], w0: float = 0.0) -> "DualWeights":
+        """Initialize dual-weight arrays.
+
+        Parameters
+        ----------
+        shape
+            Weight matrix shape ``(N_pre, N_post)``.
+        w0
+            Baseline weight for initialization.
+
+        Returns
+        -------
+        DualWeights
+            Initialized dual-weight container.
+        """
         return cls(
             w_fast=np.full(shape, w0, dtype=float),
             w_cons=np.full(shape, w0, dtype=float),
@@ -39,6 +49,22 @@ class DualWeights:
         p: DualWeightParams,
         fast_update: np.ndarray,
     ) -> None:
+        """Advance dual-weight dynamics by one time step.
+
+        Parameters
+        ----------
+        dt_s
+            Time step in seconds.
+        p
+            Consolidation parameter set.
+        fast_update
+            Fast weight update matrix.
+
+        Raises
+        ------
+        ValueError
+            If ``dt_s`` is non-positive or ``fast_update`` shape mismatches.
+        """
         if dt_s <= 0:
             raise ValueError("dt_s must be positive")
         if fast_update.shape != self.w_fast.shape:
@@ -64,4 +90,5 @@ class DualWeights:
 
     @property
     def w_total(self) -> np.ndarray:
+        """Return the total weight matrix ``w_fast + w_cons``."""
         return np.asarray(self.w_fast + self.w_cons)

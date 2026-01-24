@@ -1,3 +1,5 @@
+"""AdEx neuron dynamics and integration utilities."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +16,8 @@ BoolArray = NDArray[np.bool_]
 
 @dataclass
 class AdExState:
+    """State container for AdEx neurons."""
+
     V_mV: Float64Array  # shape (N,)
     w_pA: Float64Array  # shape (N,)
     spiked: BoolArray  # shape (N,)
@@ -21,6 +25,8 @@ class AdExState:
 
 @dataclass(frozen=True)
 class IntegrationMetrics:
+    """Error tracking metrics for integrator step-doubling."""
+
     lte_estimate: float
     global_error_bound: float
     recommended_dt_ms: float
@@ -33,10 +39,30 @@ def adex_step(
     I_syn_pA: Float64Array,
     I_ext_pA: Float64Array,
 ) -> AdExState:
-    """One explicit Euler step for AdEx with spike-reset and exponential clamp.
+    """Advance AdEx state by one Euler step with spike reset.
 
-    Equations follow Brette & Gerstner (2005) with standard reset:
-      - if V > Vpeak: V <- Vreset, w <- w + b
+    Parameters
+    ----------
+    state
+        Current AdEx state.
+    params
+        AdEx parameters.
+    dt_ms
+        Time step in milliseconds.
+    I_syn_pA
+        Synaptic input current in pA.
+    I_ext_pA
+        External input current in pA.
+
+    Returns
+    -------
+    AdExState
+        Updated AdEx state after one step.
+
+    Raises
+    ------
+    ValueError
+        If input arrays are invalid or ``dt_ms`` is non-positive.
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
@@ -80,7 +106,35 @@ def adex_step_with_error_tracking(
     atol: float = 1e-6,
     rtol: float = 1e-3,
 ) -> tuple[AdExState, IntegrationMetrics]:
-    """One Euler step with step-doubling error tracking for AdEx dynamics."""
+    """Advance AdEx state with step-doubling error tracking.
+
+    Parameters
+    ----------
+    state
+        Current AdEx state.
+    params
+        AdEx parameters.
+    dt_ms
+        Time step in milliseconds.
+    I_syn_pA
+        Synaptic input current in pA.
+    I_ext_pA
+        External input current in pA.
+    atol
+        Absolute tolerance for error estimation.
+    rtol
+        Relative tolerance for error estimation.
+
+    Returns
+    -------
+    tuple[AdExState, IntegrationMetrics]
+        Updated state and integration error metrics.
+
+    Raises
+    ------
+    ValueError
+        If ``dt_ms`` or tolerances are non-positive.
+    """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
     if atol <= 0 or rtol <= 0:

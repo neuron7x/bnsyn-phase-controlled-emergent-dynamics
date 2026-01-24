@@ -1,3 +1,5 @@
+"""Neuron dynamics models for BN-Syn simulations."""
+
 from .adex import (
     AdExState as AdExState,
     IntegrationMetrics as IntegrationMetrics,

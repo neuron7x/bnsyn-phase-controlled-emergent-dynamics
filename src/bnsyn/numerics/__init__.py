@@ -1,3 +1,5 @@
+"""Numerical integration utilities."""
+
 from .integrators import (
     clamp_exp_arg as clamp_exp_arg,
     euler_step as euler_step,
