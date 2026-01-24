@@ -32,6 +32,27 @@ def adex_step_jax(
     V_spike: float,
     dt: float,
 ) -> tuple[Any, Any, Any]:
+    """JAX-accelerated AdEx neuron step.
+
+    Args:
+        V: Membrane potential (mV) array.
+        w: Adaptation current (pA) array.
+        input_current: External input current (pA) array.
+        C: Membrane capacitance (pF).
+        gL: Leak conductance (nS).
+        EL: Leak reversal potential (mV).
+        VT: Threshold potential (mV).
+        DeltaT: Slope factor (mV).
+        tau_w: Adaptation time constant (ms).
+        a: Subthreshold adaptation (nS).
+        b: Spike-triggered adaptation (pA).
+        V_reset: Reset potential after spike (mV).
+        V_spike: Spike detection threshold (mV).
+        dt: Timestep (ms).
+
+    Returns:
+        Tuple of (V_new, w_new, spikes) with updated state and spike mask.
+    """
     exp_term = gL * DeltaT * jnp.exp((V - VT) / DeltaT)
     dV = (-(gL * (V - EL)) + exp_term - w + input_current) / C
     dw = (a * (V - EL) - w) / tau_w

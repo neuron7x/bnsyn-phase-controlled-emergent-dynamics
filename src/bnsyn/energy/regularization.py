@@ -12,6 +12,17 @@ def energy_cost(rate_hz: np.ndarray, w: np.ndarray, I_ext_pA: np.ndarray, p: Ene
     return float(E_rate + E_w + E_stim)
 
 
-def total_reward(R_task: float, E_total: float, rate_mean_hz: float, p: EnergyParams) -> float:
+def total_reward(r_task: float, e_total: float, rate_mean_hz: float, p: EnergyParams) -> float:
+    """Compute total reward with energy cost and activity floor.
+
+    Args:
+        r_task: Task-specific reward.
+        e_total: Total energy expenditure.
+        rate_mean_hz: Mean network firing rate (Hz).
+        p: Energy regularization parameters.
+
+    Returns:
+        Total reward after energy penalty and activity floor adjustment.
+    """
     activity_floor = float(min(rate_mean_hz, float(p.r_min_hz)))
-    return float(R_task - float(p.lambda_energy) * float(E_total) + activity_floor)
+    return float(r_task - float(p.lambda_energy) * float(e_total) + activity_floor)
