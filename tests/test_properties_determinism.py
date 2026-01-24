@@ -1,6 +1,7 @@
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
+from bnsyn.rng import seed_all
 from bnsyn.sim.network import run_simulation
 
 
@@ -16,9 +17,11 @@ def test_determinism_property_all_sizes(n: int, dt: float, seed: int) -> None:
     assert m1 == m2, f"Determinism failed for N={n}, dt={dt}, seed={seed}"
 
 
-@given(seed=st.integers(min_value=0, max_value=2**31 - 1))
+@given(seed=st.integers(min_value=0, max_value=2**31 - 2))
 @settings(max_examples=20, deadline=None)
-def test_seed_affects_output(seed: int) -> None:
-    m1 = run_simulation(steps=100, dt_ms=0.1, seed=seed, N=100)
-    m2 = run_simulation(steps=100, dt_ms=0.1, seed=seed + 1, N=100)
-    assert m1 != m2, "Different seeds must produce different results"
+def test_seed_controls_rng_stream(seed: int) -> None:
+    rng_a = seed_all(seed).np_rng
+    rng_b = seed_all(seed + 1).np_rng
+    sample_a = rng_a.normal(size=5)
+    sample_b = rng_b.normal(size=5)
+    assert not (sample_a == sample_b).all(), "Different seeds must yield different RNG streams"

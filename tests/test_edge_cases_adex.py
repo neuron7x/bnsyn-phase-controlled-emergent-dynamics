@@ -39,7 +39,7 @@ class TestAdExEdgeCases:
     @pytest.mark.parametrize("dt_ms", [1e-6, 1e-4, 0.1, 1.0, 10.0])
     def test_dt_stability(self, dt_ms: float) -> None:
         p = AdExParams()
-        V = np.array([p.EL_mV + np.random.randn() * 5], dtype=float)
+        V = np.array([p.EL_mV + 5.0], dtype=float)
         w = np.zeros(1)
         state = AdExState(V_mV=V, w_pA=w, spiked=np.zeros(1, dtype=bool))
         out = adex_step(state, p, dt_ms=dt_ms, I_syn_pA=np.zeros(1), I_ext_pA=np.zeros(1))

@@ -12,7 +12,7 @@ class TestCriticalityEdgeCases:
         ctl = SigmaController(params=p, gain=1.0)
         estimator = BranchingEstimator()
         for _ in range(100):
-            sigma = estimator.update(np.random.poisson(5), np.random.poisson(10))
+            sigma = estimator.update(5.0, 10.0)
             g = ctl.step(sigma)
             assert p.gain_min <= g <= p.gain_max
 

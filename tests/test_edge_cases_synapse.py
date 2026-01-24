@@ -6,9 +6,7 @@ from bnsyn.synapse.conductance import ConductanceSynapses, nmda_mg_block
 
 
 class TestSynapseEdgeCases:
-    @pytest.mark.parametrize(
-        "V_mV", [-200.0, -100.0, -80.0, -40.0, 0.0, 40.0, 100.0, 200.0]
-    )
+    @pytest.mark.parametrize("V_mV", [-200.0, -100.0, -80.0, -40.0, 0.0, 40.0, 100.0, 200.0])
     def test_nmda_block_all_voltages(self, V_mV: float) -> None:
         V = np.array([V_mV], dtype=float)
         B = nmda_mg_block(V, mg_mM=1.0)
