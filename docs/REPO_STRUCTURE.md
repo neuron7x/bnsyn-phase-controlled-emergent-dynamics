@@ -2,8 +2,8 @@
 
 **Navigation**: [INDEX.md](INDEX.md) | [SSOT.md](SSOT.md) | [GOVERNANCE.md](GOVERNANCE.md)
 
-This document defines the authoritative structure of the BN-Syn repository. Validators and CI
-pipelines reference this document to enforce structural invariants.
+This document defines the authoritative structure of the BN-Syn repository. Governed document
+lists and normative scans are defined in [INVENTORY.md](INVENTORY.md).
 
 ## Top-Level Directories
 
@@ -17,32 +17,10 @@ pipelines reference this document to enforce structural invariants.
 | `claims/`       | Claims registry (claims.yml) and related metadata             | Stable paths    |
 | `.github/`      | GitHub workflows and CI configuration                         | Stable paths    |
 
-## Governed Paths (Authoritative List)
+## Governed Paths
 
-The following paths are **governed** and subject to SSOT enforcement. Scripts like
-`scripts/scan_governed_docs.py` read this list to enforce normative tagging rules.
-
-```yaml
-governed_paths:
-  docs:
-    - docs/SPEC.md
-    - docs/ARCHITECTURE.md
-    - docs/GOVERNANCE.md
-    - docs/SSOT.md
-    - docs/SSOT_RULES.md
-    - docs/BIBLIOGRAPHY.md
-    - docs/REPRODUCIBILITY.md
-    - docs/EVIDENCE_COVERAGE.md
-    - docs/VCG.md
-  readme:
-    - README.md
-  claims:
-    - claims/claims.yml
-  bibliography:
-    - bibliography/mapping.yml
-    - bibliography/bnsyn.bib
-    - bibliography/sources.lock
-```
+The governed documentation list is maintained in [INVENTORY.md](INVENTORY.md) and is consumed by
+`scripts/scan_governed_docs.py` and `scripts/scan_normative_tags.py`.
 
 ## What Goes Where Rules
 
@@ -51,7 +29,7 @@ governed_paths:
 
 2. **Tests** (`tests/**`):
    - `tests/*.py`: Smoke tests (fast, critical-path, no `@pytest.mark.validation`)
-   - `tests/validation/*.py`: Validation tests (slow, statistical; **must** use `@pytest.mark.validation`)
+   - `tests/validation/*.py`: Validation tests (slow, statistical; use `@pytest.mark.validation`)
 
 3. **Scripts** (`scripts/`): SSOT validators, audit generators, and utility scripts.
    - `validate_bibliography.py`: Enforces bibliography SSOT rules

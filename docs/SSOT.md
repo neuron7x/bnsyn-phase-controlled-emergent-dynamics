@@ -10,8 +10,8 @@ rule registry lives in `docs/SSOT_RULES.md` and is enforced by the validators in
 
 1) **Rules**: `docs/SSOT_RULES.md` defines the normative constraints.
 2) **Data**: `bibliography/` and `claims/` instantiate those constraints.
-3) **Validators**: `scripts/validate_bibliography.py`, `scripts/validate_claims.py`, and
-   `scripts/scan_normative_tags.py` enforce rule adherence.
+3) **Validators**: `scripts/validate_bibliography.py`, `scripts/validate_claims.py`,
+   `scripts/scan_governed_docs.py`, and `scripts/scan_normative_tags.py` enforce rule adherence.
 4) **Documentation**: this document provides a concise narrative overview.
 
 ## Summary highlights (non-exhaustive)
