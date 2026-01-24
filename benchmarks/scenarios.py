@@ -99,7 +99,7 @@ STEPS_SWEEP = [
 # Connectivity density sweep
 CONN_SWEEP = [
     BenchmarkScenario(
-        name=f"conn_sweep_{int(p*100)}pct",
+        name=f"conn_sweep_{int(p * 100)}pct",
         seed=42,
         dt_ms=0.1,
         steps=500,
@@ -114,7 +114,7 @@ CONN_SWEEP = [
 # Timestep sweep (dt invariance check)
 DT_SWEEP = [
     BenchmarkScenario(
-        name=f"dt_sweep_{int(dt*1000)}us",
+        name=f"dt_sweep_{int(dt * 1000)}us",
         seed=42,
         dt_ms=dt,
         steps=1000,
@@ -143,7 +143,6 @@ def get_scenarios(scenario_set: str = "quick") -> list[BenchmarkScenario]:
     """Get scenarios for a given benchmark set."""
     if scenario_set not in SCENARIO_SETS:
         raise ValueError(
-            f"Unknown scenario set '{scenario_set}'. "
-            f"Available: {', '.join(SCENARIO_SETS.keys())}"
+            f"Unknown scenario set '{scenario_set}'. Available: {', '.join(SCENARIO_SETS.keys())}"
         )
     return SCENARIO_SETS[scenario_set]

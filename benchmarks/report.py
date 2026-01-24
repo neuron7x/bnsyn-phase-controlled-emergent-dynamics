@@ -91,8 +91,12 @@ def generate_markdown_report(results: list[dict[str, Any]]) -> str:
     md.append("\n## Summary Table\n")
 
     # Summary table
-    md.append("| Scenario | N | Steps | dt (ms) | Time (s) | RSS (MB) | Throughput (neuron-steps/s) |\n")
-    md.append("|----------|---|-------|---------|----------|----------|------------------------------|\n")
+    md.append(
+        "| Scenario | N | Steps | dt (ms) | Time (s) | RSS (MB) | Throughput (neuron-steps/s) |\n"
+    )
+    md.append(
+        "|----------|---|-------|---------|----------|----------|------------------------------|\n"
+    )
 
     for r in results:
         scenario = r["scenario"]
@@ -102,7 +106,9 @@ def generate_markdown_report(results: list[dict[str, Any]]) -> str:
         time_mean = f"{r['wall_time_sec_mean']:.2f}"
         rss_mean = f"{r['peak_rss_mb_mean']:.1f}"
         throughput = format_number(r["neuron_steps_per_sec_mean"], 0)
-        md.append(f"| {scenario} | {n} | {steps} | {dt} | {time_mean} | {rss_mean} | {throughput} |\n")
+        md.append(
+            f"| {scenario} | {n} | {steps} | {dt} | {time_mean} | {rss_mean} | {throughput} |\n"
+        )
 
     md.append("\n## Detailed Metrics\n")
 

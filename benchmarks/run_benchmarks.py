@@ -52,8 +52,6 @@ def run_single_benchmark(scenario_dict: dict[str, Any]) -> dict[str, Any]:
     import gc
     import time
 
-    import numpy as np
-
     from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
     from bnsyn.rng import seed_all
     from bnsyn.sim.network import Network, NetworkParams
@@ -195,7 +193,7 @@ def run_benchmarks(
 
     for idx, scenario in enumerate(scenarios):
         print(
-            f"[{idx+1}/{len(scenarios)}] {scenario.name}: "
+            f"[{idx + 1}/{len(scenarios)}] {scenario.name}: "
             f"N={scenario.N_neurons}, steps={scenario.steps}, dt={scenario.dt_ms}ms"
         )
 
@@ -210,7 +208,7 @@ def run_benchmarks(
         # Actual runs
         runs = []
         for r in range(repeats):
-            print(f"  Repeat {r+1}/{repeats}...", end="", flush=True)
+            print(f"  Repeat {r + 1}/{repeats}...", end="", flush=True)
             result = run_scenario_subprocess(scenario_dict, r + 1)
             if result is not None:
                 runs.append(result)
@@ -275,14 +273,10 @@ def main() -> int:
         default="quick",
         help="Scenario set to run (ci_smoke, quick, n_sweep, steps_sweep, conn_sweep, dt_sweep, full)",
     )
-    parser.add_argument(
-        "--repeats", type=int, default=3, help="Number of repeats per scenario"
-    )
+    parser.add_argument("--repeats", type=int, default=3, help="Number of repeats per scenario")
     parser.add_argument("--out", help="Output CSV file path")
     parser.add_argument("--json", help="Output JSON file path")
-    parser.add_argument(
-        "--no-warmup", action="store_true", help="Skip warmup runs"
-    )
+    parser.add_argument("--no-warmup", action="store_true", help="Skip warmup runs")
 
     args = parser.parse_args()
 
