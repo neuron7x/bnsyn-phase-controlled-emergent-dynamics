@@ -41,10 +41,9 @@ def main() -> int:
             print(f"  - {cid}: {name}")
         return 1
 
-    mapping = yaml.safe_load(MAP_PATH.read_text()) or {}
-    components = mapping.get("components", {})
+    components = yaml.safe_load(MAP_PATH.read_text()) or {}
     if not isinstance(components, dict):
-        print("spec_to_code.yml missing 'components' mapping")
+        print("spec_to_code.yml must be a mapping of component IDs")
         return 1
 
     errors: list[str] = []
@@ -54,19 +53,22 @@ def main() -> int:
             errors.append(f"Missing mapping for {comp_id} ({comp_name})")
             continue
         impl_paths = entry.get("implementation_paths") or []
-        ver_paths = entry.get("verification_paths") or []
+        test_paths = entry.get("test_paths") or []
+        claim_ids = entry.get("claim_ids") or []
         if not impl_paths:
             errors.append(f"{comp_id} missing implementation_paths")
-        if not ver_paths:
-            errors.append(f"{comp_id} missing verification_paths")
+        if not test_paths:
+            errors.append(f"{comp_id} missing test_paths")
+        if not claim_ids:
+            errors.append(f"{comp_id} missing claim_ids")
         for rel in impl_paths:
             path = ROOT / rel
             if not path.exists():
                 errors.append(f"{comp_id} implementation missing: {rel}")
-        for rel in ver_paths:
+        for rel in test_paths:
             path = ROOT / rel
             if not path.exists():
-                errors.append(f"{comp_id} verification missing: {rel}")
+                errors.append(f"{comp_id} test missing: {rel}")
                 continue
             text = path.read_text()
             if "tests/validation" in rel.replace("\\", "/"):

@@ -110,22 +110,19 @@ def build_random_connectivity(
     n_pre: int,
     n_post: int,
     connection_prob: float,
+    *,
+    rng: np.random.Generator,
     weight_mean: float = 1.0,
     weight_std: float = 0.1,
-    rng: np.random.Generator | None = None,
-    seed: int | None = None,
 ) -> SparseConnectivity:
     """Build Erdős-Rényi random connectivity with explicit RNG control.
 
-    Determinism is achieved by passing a managed NumPy Generator; `seed` is a
-    fallback for legacy call sites.
+    Determinism is achieved by passing a managed NumPy Generator.
     """
     if n_pre <= 0 or n_post <= 0:
         raise ValueError("n_pre and n_post must be positive")
     if not (0.0 <= connection_prob <= 1.0):
         raise ValueError("connection_prob must be in [0,1]")
-    if rng is None:
-        rng = np.random.default_rng(seed)
     is_connected = rng.binomial(1, connection_prob, (n_pre, n_post))
     weights = np.abs(rng.normal(weight_mean, weight_std, (n_pre, n_post)))
     W = np.asarray(is_connected * weights, dtype=np.float64)
