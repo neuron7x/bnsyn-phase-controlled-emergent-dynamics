@@ -191,4 +191,4 @@ To make merge-blocking (not recommended without baselines):
 
 ## Changelog
 
-- **2026-01-24**: Initial protocol (git SHA: TBD)
+- **2026-01-24**: Initial protocol (git SHA: cc3b5f0c8d75c398a488d70390e9917cc720ba21)

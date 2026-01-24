@@ -166,4 +166,4 @@ Use **p50** for typical performance, **p95** for worst-case, **std** for stabili
 
 ## Changelog
 
-- **2026-01-24**: Initial schema (git SHA: TBD)
+- **2026-01-24**: Initial schema (git SHA: cc3b5f0c8d75c398a488d70390e9917cc720ba21)
