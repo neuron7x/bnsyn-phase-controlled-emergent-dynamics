@@ -1,24 +1,6 @@
 """Three-factor plasticity rules for synaptic updates.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and fixed timestep.
-
-SPEC
-----
-SPEC.md §P0-3
-
-Claims
-------
-CLM-0004, CLM-0005
+Implements SPEC P0-3 three-factor learning: eligibility × neuromodulator.
 """
 
 from __future__ import annotations
@@ -38,27 +20,8 @@ BoolArray = NDArray[np.bool_]
 class EligibilityTraces:
     """Store eligibility traces for synapses.
 
-    Parameters
-    ----------
-    e : numpy.ndarray
-        Eligibility matrix (shape: [N_pre, N_post]).
-
-    Returns
-    -------
-    EligibilityTraces
-        Eligibility trace container.
-
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-3
-
-    Claims
-    ------
-    CLM-0004
+    Args:
+        e: Eligibility matrix (shape: [N_pre, N_post]).
     """
 
     e: Float64Array  # shape (N_pre, N_post)
@@ -68,27 +31,8 @@ class EligibilityTraces:
 class NeuromodulatorTrace:
     """Store neuromodulator trace value.
 
-    Parameters
-    ----------
-    n : float
-        Scalar neuromodulator value (dimensionless).
-
-    Returns
-    -------
-    NeuromodulatorTrace
-        Neuromodulator trace container.
-
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-3
-
-    Claims
-    ------
-    CLM-0005
+    Args:
+        n: Scalar neuromodulator value (dimensionless).
     """
 
     n: float  # scalar dopamine / TD trace
@@ -97,31 +41,13 @@ class NeuromodulatorTrace:
 def decay(x: Float64Array, dt_ms: float, tau_ms: float) -> Float64Array:
     """Apply exponential decay to a trace.
 
-    Parameters
-    ----------
-    x : numpy.ndarray
-        Trace array to decay.
-    dt_ms : float
-        Timestep in milliseconds.
-    tau_ms : float
-        Time constant in milliseconds.
+    Args:
+        x: Trace array to decay.
+        dt_ms: Timestep in milliseconds.
+        tau_ms: Time constant in milliseconds.
 
-    Returns
-    -------
-    numpy.ndarray
+    Returns:
         Decayed trace array.
-
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-3
-
-    Claims
-    ------
-    CLM-0004
     """
     return np.asarray(x * np.exp(-dt_ms / tau_ms), dtype=np.float64)
 
@@ -137,39 +63,28 @@ def three_factor_update(
 ) -> tuple[Float64Array, EligibilityTraces]:
     """Update synaptic weights using three-factor learning.
 
-    Parameters
-    ----------
-    w : numpy.ndarray
-        Weight matrix (shape: [N_pre, N_post]).
-    elig : EligibilityTraces
-        Eligibility trace container.
-    neuromod : NeuromodulatorTrace
-        Neuromodulator trace.
-    pre_spikes : numpy.ndarray
-        Presynaptic spike indicators (shape: [N_pre]).
-    post_spikes : numpy.ndarray
-        Postsynaptic spike indicators (shape: [N_post]).
-    dt_ms : float
-        Timestep in milliseconds (must be positive).
-    p : PlasticityParams
-        Plasticity parameter set.
+    Args:
+        w: Weight matrix (shape: [N_pre, N_post]).
+        elig: Eligibility trace container.
+        neuromod: Neuromodulator trace.
+        pre_spikes: Presynaptic spike indicators (shape: [N_pre]).
+        post_spikes: Postsynaptic spike indicators (shape: [N_post]).
+        dt_ms: Timestep in milliseconds (must be positive).
+        p: Plasticity parameter set.
 
-    Returns
-    -------
-    tuple[numpy.ndarray, EligibilityTraces]
-        Updated weights and eligibility traces.
+    Returns:
+        Tuple of (updated weights, updated eligibility traces).
 
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
+    Raises:
+        ValueError: If input shapes are inconsistent or dt_ms is non-positive.
 
-    SPEC
-    ----
-    SPEC.md §P0-3
+    Notes:
+        Eligibility updates use an STDP-like coincidence outer product and weights
+        are bounded to [w_min, w_max] (SPEC P0-3).
 
-    Claims
-    ------
-    CLM-0004, CLM-0005
+    References:
+        - docs/SPEC.md#P0-3
+        - docs/SSOT.md
     """
     if w.ndim != 2:
         raise ValueError("w must be 2D (N_pre, N_post)")
@@ -200,33 +115,17 @@ def three_factor_update(
 def neuromod_step(n: float, dt_ms: float, tau_ms: float, d_t: float) -> float:
     """Update neuromodulator trace with exponential decay and drive.
 
-    Parameters
-    ----------
-    n : float
-        Current neuromodulator value.
-    dt_ms : float
-        Timestep in milliseconds.
-    tau_ms : float
-        Time constant in milliseconds.
-    d_t : float
-        Driving term for neuromodulation at this step.
+    Args:
+        n: Current neuromodulator value.
+        dt_ms: Timestep in milliseconds.
+        tau_ms: Time constant in milliseconds.
+        d_t: Driving term for neuromodulation at this step.
 
-    Returns
-    -------
-    float
+    Returns:
         Updated neuromodulator value.
 
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-3
-
-    Claims
-    ------
-    CLM-0005
+    Notes:
+        Uses exact exponential decay for deterministic dynamics.
     """
     n = float(n) * float(np.exp(-dt_ms / tau_ms)) + float(d_t)
     return float(n)

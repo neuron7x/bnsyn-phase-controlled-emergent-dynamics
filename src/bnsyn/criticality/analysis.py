@@ -1,26 +1,3 @@
-"""Offline criticality analysis utilities.
-
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs.
-
-SPEC
-----
-SPEC.md §P0-4
-
-Claims
-------
-CLM-0008, CLM-0009
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -30,32 +7,6 @@ import numpy as np
 
 @dataclass(frozen=True)
 class PowerLawFit:
-    """Power-law fit parameters for alpha and xmin.
-
-    Parameters
-    ----------
-    alpha : float
-        Power-law exponent.
-    xmin : float
-        Minimum value used for the fit.
-
-    Returns
-    -------
-    PowerLawFit
-        Fit parameter container.
-
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-4
-
-    Claims
-    ------
-    CLM-0009
-    """
     alpha: float
     xmin: float
 
@@ -63,29 +14,8 @@ class PowerLawFit:
 def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
     """Estimate branching ratio using a multistep regression approach.
 
-    Parameters
-    ----------
-    activity : numpy.ndarray
-        1D activity counts per time bin.
-    max_lag : int
-        Maximum regression lag.
-
-    Returns
-    -------
-    float
-        Estimated branching ratio.
-
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-4
-
-    Claims
-    ------
-    CLM-0008
+    For each lag k, estimate slope of A(t+k) vs A(t) via least squares, then
+    infer sigma_k = slope ** (1/k). Returns the mean sigma_k across lags.
     """
     if activity.ndim != 1:
         raise ValueError("activity must be 1D")
@@ -111,32 +41,7 @@ def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
 
 
 def fit_power_law_mle(data: np.ndarray, xmin: float) -> PowerLawFit:
-    """Continuous power-law MLE fit for alpha with fixed xmin.
-
-    Parameters
-    ----------
-    data : numpy.ndarray
-        1D sample data for the fit.
-    xmin : float
-        Minimum value to include in the fit.
-
-    Returns
-    -------
-    PowerLawFit
-        Fit parameters for the power-law model.
-
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-4
-
-    Claims
-    ------
-    CLM-0009
-    """
+    """Continuous power-law MLE fit for alpha with fixed xmin."""
     if data.ndim != 1:
         raise ValueError("data must be 1D")
     if xmin <= 0:

@@ -1,24 +1,6 @@
 """Command-line interface for BN-Syn demos and checks.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed seeds and fixed parameters.
-
-SPEC
-----
-SPEC.md §P2-11, §P2-12
-
-Claims
-------
-CLM-0026
+Provides deterministic demo runs and dt invariance checks per SPEC P2-11/P2-12.
 """
 
 from __future__ import annotations
@@ -33,27 +15,11 @@ from bnsyn.sim.network import run_simulation
 def _cmd_demo(args: argparse.Namespace) -> int:
     """Run a deterministic demo simulation and print metrics.
 
-    Parameters
-    ----------
-    args : argparse.Namespace
-        Parsed CLI arguments.
+    Args:
+        args: Parsed CLI arguments.
 
-    Returns
-    -------
-    int
+    Returns:
         Exit code.
-
-    Determinism
-    -----------
-    Deterministic under fixed seed and fixed parameters.
-
-    SPEC
-    ----
-    SPEC.md §P2-11, §P2-12
-
-    Claims
-    ------
-    CLM-0026
     """
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
@@ -63,27 +29,11 @@ def _cmd_demo(args: argparse.Namespace) -> int:
 def _cmd_dtcheck(args: argparse.Namespace) -> int:
     """Run dt vs dt/2 invariance check and print metrics.
 
-    Parameters
-    ----------
-    args : argparse.Namespace
-        Parsed CLI arguments.
+    Args:
+        args: Parsed CLI arguments.
 
-    Returns
-    -------
-    int
+    Returns:
         Exit code.
-
-    Determinism
-    -----------
-    Deterministic under fixed seed and fixed parameters.
-
-    SPEC
-    ----
-    SPEC.md §P2-11, §P2-12
-
-    Claims
-    ------
-    CLM-0026
     """
     m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
@@ -94,28 +44,7 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
-    """Entry point for the BN-Syn CLI.
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    None
-
-    Determinism
-    -----------
-    Deterministic under fixed CLI inputs.
-
-    SPEC
-    ----
-    SPEC.md §P2-12
-
-    Claims
-    ------
-    CLM-0026
-    """
+    """Entry point for the BN-Syn CLI."""
     p = argparse.ArgumentParser(prog="bnsyn", description="BN-Syn CLI")
     sub = p.add_subparsers(dest="cmd", required=True)
 

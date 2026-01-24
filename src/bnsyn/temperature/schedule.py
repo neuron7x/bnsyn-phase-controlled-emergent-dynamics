@@ -1,24 +1,6 @@
 """Temperature scheduling and plasticity gating utilities.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and parameters.
-
-SPEC
-----
-SPEC.md §P1-5
-
-Claims
-------
-CLM-0019
+Implements SPEC P1-5 temperature schedule and gate function.
 """
 
 from __future__ import annotations
@@ -33,31 +15,20 @@ from bnsyn.config import TemperatureParams
 def gate_sigmoid(T: float, Tc: float, tau: float) -> float:
     """Compute the plasticity gate sigmoid value.
 
-    Parameters
-    ----------
-    T : float
-        Current temperature (dimensionless).
-    Tc : float
-        Gate center temperature.
-    tau : float
-        Gate slope parameter.
+    Args:
+        T: Current temperature (dimensionless).
+        Tc: Gate center temperature.
+        tau: Gate slope parameter.
 
-    Returns
-    -------
-    float
+    Returns:
         Gate value in [0, 1].
 
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
+    Notes:
+        G(T) = 1 / (1 + exp(-(T - Tc) / tau)).
 
-    SPEC
-    ----
-    SPEC.md §P1-5
-
-    Claims
-    ------
-    CLM-0019
+    References:
+        - docs/SPEC.md#P1-5
+        - docs/SSOT.md
     """
     return float(1.0 / (1.0 + np.exp(-(float(T) - float(Tc)) / float(tau))))
 
@@ -66,29 +37,13 @@ def gate_sigmoid(T: float, Tc: float, tau: float) -> float:
 class TemperatureSchedule:
     """Track geometric temperature schedule and plasticity gate.
 
-    Parameters
-    ----------
-    params : TemperatureParams
-        Temperature schedule parameters.
-    T : float | None
-        Optional initial temperature (defaults to params.T0).
+    Args:
+        params: Temperature schedule parameters.
+        T: Optional initial temperature (defaults to params.T0).
 
-    Returns
-    -------
-    TemperatureSchedule
-        Schedule instance.
-
-    Determinism
-    -----------
-    Deterministic given fixed parameters.
-
-    SPEC
-    ----
-    SPEC.md §P1-5
-
-    Claims
-    ------
-    CLM-0019
+    References:
+        - docs/SPEC.md#P1-5
+        - docs/SSOT.md
     """
 
     params: TemperatureParams
@@ -101,26 +56,8 @@ class TemperatureSchedule:
     def step_geometric(self) -> float:
         """Advance the temperature by one geometric decay step.
 
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        float
+        Returns:
             Updated temperature value.
-
-        Determinism
-        -----------
-        Deterministic under fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P1-5
-
-        Claims
-        ------
-        CLM-0019
         """
         p = self.params
         temperature = self.T if self.T is not None else float(p.T0)
@@ -130,26 +67,8 @@ class TemperatureSchedule:
     def plasticity_gate(self) -> float:
         """Compute the plasticity gate value from the current temperature.
 
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        float
+        Returns:
             Gate value in [0, 1].
-
-        Determinism
-        -----------
-        Deterministic under fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P1-5
-
-        Claims
-        ------
-        CLM-0019
         """
         p = self.params
         temperature = self.T if self.T is not None else float(p.T0)

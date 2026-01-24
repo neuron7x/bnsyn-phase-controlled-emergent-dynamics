@@ -1,25 +1,4 @@
-"""Input validation and configuration models.
-
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs.
-
-SPEC
-----
-SPEC.md §P2-11
-
-Claims
-------
-None
-"""
+"""Input validation and configuration models."""
 
 from __future__ import annotations
 

@@ -1,24 +1,6 @@
 """Criticality estimation and homeostatic gain control.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and fixed parameters.
-
-SPEC
-----
-SPEC.md §P0-4
-
-Claims
-------
-CLM-0006, CLM-0007
+Implements SPEC P0-4 sigma tracking and gain control.
 """
 
 from __future__ import annotations
@@ -34,29 +16,16 @@ from bnsyn.config import CriticalityParams
 class BranchingEstimator:
     """Estimate branching ratio sigma with exponential smoothing.
 
-    Parameters
-    ----------
-    eps : float
-        Guard epsilon to avoid divide-by-zero.
-    ema_alpha : float
-        EMA smoothing factor.
+    Args:
+        eps: Guard epsilon to avoid divide-by-zero.
+        ema_alpha: EMA smoothing factor.
 
-    Returns
-    -------
-    BranchingEstimator
-        Estimator instance.
+    Notes:
+        Uses deterministic EMA smoothing for CI stability.
 
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-4
-
-    Claims
-    ------
-    CLM-0007
+    References:
+        - docs/SPEC.md#P0-4
+        - docs/SSOT.md
     """
 
     eps: float = 1e-9
@@ -66,29 +35,12 @@ class BranchingEstimator:
     def update(self, A_t: float, A_t1: float) -> float:
         """Update sigma estimate based on consecutive activity counts.
 
-        Parameters
-        ----------
-        A_t : float
-            Activity at time t (spike count).
-        A_t1 : float
-            Activity at time t+1 (spike count).
+        Args:
+            A_t: Activity at time t (spike count).
+            A_t1: Activity at time t+1 (spike count).
 
-        Returns
-        -------
-        float
+        Returns:
             Smoothed sigma estimate.
-
-        Determinism
-        -----------
-        Deterministic given fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P0-4
-
-        Claims
-        ------
-        CLM-0007
         """
         A_t = float(A_t)
         A_t1 = float(A_t1)
@@ -101,29 +53,16 @@ class BranchingEstimator:
 class SigmaController:
     """Homeostatic gain controller for sigma regulation.
 
-    Parameters
-    ----------
-    params : CriticalityParams
-        Criticality parameter set.
-    gain : float
-        Initial gain value.
+    Args:
+        params: Criticality parameter set.
+        gain: Initial gain value.
 
-    Returns
-    -------
-    SigmaController
-        Controller instance.
+    Notes:
+        Gain is clipped to [gain_min, gain_max] per SPEC P0-4.
 
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-4
-
-    Claims
-    ------
-    CLM-0006
+    References:
+        - docs/SPEC.md#P0-4
+        - docs/SSOT.md
     """
 
     params: CriticalityParams
@@ -132,27 +71,11 @@ class SigmaController:
     def step(self, sigma: float) -> float:
         """Update the gain given the current sigma estimate.
 
-        Parameters
-        ----------
-        sigma : float
-            Current sigma estimate.
+        Args:
+            sigma: Current sigma estimate.
 
-        Returns
-        -------
-        float
+        Returns:
             Updated gain value.
-
-        Determinism
-        -----------
-        Deterministic given fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P0-4
-
-        Claims
-        ------
-        CLM-0006
         """
         p = self.params
         self.gain = float(self.gain - p.eta_sigma * (float(sigma) - p.sigma_target))

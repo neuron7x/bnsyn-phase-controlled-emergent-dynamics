@@ -1,24 +1,6 @@
 """Reference network simulator for BN-Syn.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed RNG, fixed parameters, and fixed timestep.
-
-SPEC
-----
-SPEC.md §P2-11, §P2-9
-
-Claims
-------
-CLM-0025, CLM-0023
+Implements SPEC P2-11 reference network dynamics for deterministic tests.
 """
 
 from __future__ import annotations
@@ -50,43 +32,16 @@ else:
 class NetworkParams:
     """Network configuration parameters.
 
-    Parameters
-    ----------
-    N : int
-        Number of neurons.
-    frac_inhib : float
-        Fraction of inhibitory neurons (0, 1).
-    p_conn : float
-        Connection probability for random connectivity.
-    w_exc_nS : float
-        Excitatory synaptic weight in nS.
-    w_inh_nS : float
-        Inhibitory synaptic weight in nS.
-    ext_rate_hz : float
-        External Poisson drive rate per neuron (Hz).
-    ext_w_nS : float
-        External synaptic weight in nS.
-    V_min_mV : float
-        Minimum membrane voltage bound (mV).
-    V_max_mV : float
-        Maximum membrane voltage bound (mV).
-
-    Returns
-    -------
-    NetworkParams
-        Parameter container instance.
-
-    Determinism
-    -----------
-    Deterministic data container.
-
-    SPEC
-    ----
-    SPEC.md §P2-11
-
-    Claims
-    ------
-    CLM-0025
+    Args:
+        N: Number of neurons.
+        frac_inhib: Fraction of inhibitory neurons (0, 1).
+        p_conn: Connection probability for random connectivity.
+        w_exc_nS: Excitatory synaptic weight in nS.
+        w_inh_nS: Inhibitory synaptic weight in nS.
+        ext_rate_hz: External Poisson drive rate per neuron (Hz).
+        ext_w_nS: External synaptic weight in nS.
+        V_min_mV: Minimum membrane voltage bound (mV).
+        V_max_mV: Maximum membrane voltage bound (mV).
     """
 
     N: int = 200
@@ -105,37 +60,23 @@ class NetworkParams:
 class Network:
     """Small reference network (dense enough for tests, not optimized).
 
-    Parameters
-    ----------
-    nparams : NetworkParams
-        Network configuration parameters.
-    adex : AdExParams
-        AdEx neuron parameters.
-    syn : SynapseParams
-        Synapse parameters.
-    crit : CriticalityParams
-        Criticality control parameters.
-    dt_ms : float
-        Timestep in milliseconds.
-    rng : numpy.random.Generator
-        NumPy RNG for deterministic sampling.
+    Args:
+        nparams: Network configuration parameters.
+        adex: AdEx neuron parameters.
+        syn: Synapse parameters.
+        crit: Criticality control parameters.
+        dt_ms: Timestep in milliseconds.
+        rng: NumPy RNG for deterministic sampling.
 
-    Returns
-    -------
-    Network
-        Network simulator instance.
+    Raises:
+        ValueError: If parameters are invalid.
 
-    Determinism
-    -----------
-    Deterministic under fixed RNG, fixed parameters, and fixed timestep.
+    Notes:
+        Implements SPEC P2-11 and integrates SPEC P0-1, P0-2, P0-4 components.
 
-    SPEC
-    ----
-    SPEC.md §P2-11
-
-    Claims
-    ------
-    CLM-0025, CLM-0023
+    References:
+        - docs/SPEC.md#P2-11
+        - docs/SSOT.md
     """
 
     def __init__(
@@ -211,26 +152,14 @@ class Network:
     def step(self) -> dict[str, float]:
         """Advance the network by one timestep.
 
-        Parameters
-        ----------
-        None
+        Returns:
+            Dictionary of metrics including sigma, gain, and spike rate.
 
-        Returns
-        -------
-        dict[str, float]
-            Metrics including sigma, gain, and spike rate.
+        Raises:
+            RuntimeError: If voltage bounds are violated (numerical instability).
 
-        Determinism
-        -----------
-        Deterministic under fixed RNG and fixed parameters.
-
-        SPEC
-        ----
-        SPEC.md §P2-11
-
-        Claims
-        ------
-        CLM-0025, CLM-0023
+        Notes:
+            Criticality gain is updated each step using sigma tracking.
         """
         N = self.np.N
         dt = self.dt_ms
@@ -306,29 +235,15 @@ class Network:
     def step_adaptive(self, *, atol: float = 1e-8, rtol: float = 1e-6) -> dict[str, float]:
         """Advance the network by one timestep using adaptive AdEx integration.
 
-        Parameters
-        ----------
-        atol : float
-            Absolute tolerance for adaptive AdEx integration.
-        rtol : float
-            Relative tolerance for adaptive AdEx integration.
+        Args:
+            atol: Absolute tolerance for adaptive AdEx integration.
+            rtol: Relative tolerance for adaptive AdEx integration.
 
-        Returns
-        -------
-        dict[str, float]
-            Metrics including sigma, gain, and spike rate.
+        Returns:
+            Dictionary of metrics including sigma, gain, and spike rate.
 
-        Determinism
-        -----------
-        Deterministic under fixed RNG and fixed parameters.
-
-        SPEC
-        ----
-        SPEC.md §P2-11, §P2-8
-
-        Claims
-        ------
-        CLM-0025, CLM-0022
+        Raises:
+            RuntimeError: If voltage bounds are violated (numerical instability).
         """
         N = self.np.N
         dt = self.dt_ms
@@ -410,33 +325,18 @@ def run_simulation(
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 
-    Parameters
-    ----------
-    steps : int
-        Number of simulation steps.
-    dt_ms : float
-        Timestep in milliseconds.
-    seed : int
-        RNG seed.
-    N : int
-        Number of neurons.
+    Args:
+        steps: Number of simulation steps.
+        dt_ms: Timestep in milliseconds.
+        seed: RNG seed.
+        N: Number of neurons.
 
-    Returns
-    -------
-    dict[str, float]
+    Returns:
         Summary metrics with mean and standard deviation for sigma and firing rate.
 
-    Determinism
-    -----------
-    Deterministic under fixed seed and fixed parameters.
-
-    SPEC
-    ----
-    SPEC.md §P2-11, §P2-9
-
-    Claims
-    ------
-    CLM-0025, CLM-0023
+    References:
+        - docs/SPEC.md#P2-11
+        - docs/REPRODUCIBILITY.md
     """
     from bnsyn.rng import seed_all
 

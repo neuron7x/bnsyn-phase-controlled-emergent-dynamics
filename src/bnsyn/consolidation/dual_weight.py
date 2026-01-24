@@ -1,26 +1,3 @@
-"""Dual-weight consolidation dynamics for synapses.
-
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and fixed timestep.
-
-SPEC
-----
-SPEC.md §P1-6
-
-Claims
-------
-CLM-0010, CLM-0020
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -34,35 +11,10 @@ from bnsyn.config import DualWeightParams
 class DualWeights:
     """Dual-weight synapse model: w_total = w_fast + w_cons.
 
-    Parameters
-    ----------
-    w_fast : numpy.ndarray
-        Fast weight matrix.
-    w_cons : numpy.ndarray
-        Consolidated weight matrix.
-    w0 : float
-        Baseline weight.
-    tags : numpy.ndarray
-        Tag indicators for consolidation.
-    protein : float
-        Global protein availability scalar.
-
-    Returns
-    -------
-    DualWeights
-        Dual-weight state container.
-
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P1-6
-
-    Claims
-    ------
-    CLM-0010, CLM-0020
+    - Fast weights decay to baseline w0 on tau_f.
+    - Tag set when |w_fast - w0| > theta_tag.
+    - Protein is a global scalar synthesised when enough tags active.
+    - Consolidated weights follow slow tracking when Tag & Protein.
     """
 
     w_fast: np.ndarray
@@ -73,32 +25,6 @@ class DualWeights:
 
     @classmethod
     def init(cls, shape: tuple[int, int], w0: float = 0.0) -> "DualWeights":
-        """Initialize a dual-weight container with baseline weights.
-
-        Parameters
-        ----------
-        shape : tuple[int, int]
-            Matrix shape for the weights.
-        w0 : float
-            Baseline weight value.
-
-        Returns
-        -------
-        DualWeights
-            Initialized dual-weight container.
-
-        Determinism
-        -----------
-        Deterministic given fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P1-6
-
-        Claims
-        ------
-        CLM-0010, CLM-0020
-        """
         return cls(
             w_fast=np.full(shape, w0, dtype=float),
             w_cons=np.full(shape, w0, dtype=float),
@@ -113,33 +39,6 @@ class DualWeights:
         p: DualWeightParams,
         fast_update: np.ndarray,
     ) -> None:
-        """Advance dual-weight dynamics by one timestep.
-
-        Parameters
-        ----------
-        dt_s : float
-            Timestep in seconds.
-        p : DualWeightParams
-            Consolidation parameter set.
-        fast_update : numpy.ndarray
-            Fast weight update increment.
-
-        Returns
-        -------
-        None
-
-        Determinism
-        -----------
-        Deterministic under fixed inputs.
-
-        SPEC
-        ----
-        SPEC.md §P1-6
-
-        Claims
-        ------
-        CLM-0010, CLM-0020
-        """
         if dt_s <= 0:
             raise ValueError("dt_s must be positive")
         if fast_update.shape != self.w_fast.shape:
@@ -165,27 +64,4 @@ class DualWeights:
 
     @property
     def w_total(self) -> np.ndarray:
-        """Return total weights as the sum of fast and consolidated components.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        numpy.ndarray
-            Total weight matrix.
-
-        Determinism
-        -----------
-        Deterministic under fixed state.
-
-        SPEC
-        ----
-        SPEC.md §P1-6
-
-        Claims
-        ------
-        CLM-0010, CLM-0020
-        """
         return np.asarray(self.w_fast + self.w_cons)

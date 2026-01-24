@@ -1,24 +1,7 @@
 """Production-oriented utilities for BN-Syn.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and fixed parameters.
-
-SPEC
-----
-SPEC.md §P2-11
-
-Claims
-------
-None
+These modules are optional helpers for experiments and benchmarking. They are not required
+by the core reference simulator and are kept dependency-light (NumPy-only by default).
 """
 
 from .adex import AdExNeuron, AdExParams

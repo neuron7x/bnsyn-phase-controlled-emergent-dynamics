@@ -1,24 +1,6 @@
 """Optional JAX backend experiments.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and fixed parameters.
-
-SPEC
-----
-SPEC.md §P0-1
-
-Claims
-------
-None
+This module is intentionally optional. It is not imported by default.
 """
 
 from __future__ import annotations
@@ -50,56 +32,6 @@ def adex_step_jax(
     V_spike: float,
     dt: float,
 ) -> tuple[Any, Any, Any]:
-    """Advance AdEx dynamics by one step using JAX arrays.
-
-    Parameters
-    ----------
-    V : Any
-        Membrane potentials.
-    w : Any
-        Adaptation currents.
-    input_current : Any
-        Input currents.
-    C : float
-        Membrane capacitance (F).
-    gL : float
-        Leak conductance (S).
-    EL : float
-        Leak reversal potential (V).
-    VT : float
-        Threshold voltage (V).
-    DeltaT : float
-        Slope factor (V).
-    tau_w : float
-        Adaptation time constant (s).
-    a : float
-        Adaptation conductance (S).
-    b : float
-        Adaptation increment (A).
-    V_reset : float
-        Reset voltage (V).
-    V_spike : float
-        Spike threshold (V).
-    dt : float
-        Timestep (s).
-
-    Returns
-    -------
-    tuple[Any, Any, Any]
-        Updated V, updated w, and spike indicators.
-
-    Determinism
-    -----------
-    Deterministic under fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P0-1
-
-    Claims
-    ------
-    None
-    """
     exp_term = gL * DeltaT * jnp.exp((V - VT) / DeltaT)
     dV = (-(gL * (V - EL)) + exp_term - w + input_current) / C
     dw = (a * (V - EL) - w) / tau_w

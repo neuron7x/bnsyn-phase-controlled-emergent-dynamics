@@ -13,7 +13,6 @@ Use this index to find any document, specification, or governance artifact.
 | **Formal Specification** | [SPEC.md](SPEC.md) |
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | **Reproducibility** | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
-| **API Reference** | [index.rst](index.rst) |
 | **Governance** | [GOVERNANCE.md](GOVERNANCE.md) |
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |

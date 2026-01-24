@@ -1,24 +1,6 @@
 """Adaptive Exponential (AdEx) neuron dynamics and integration utilities.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Determinism
------------
-Deterministic under fixed inputs and explicit RNG control in calling code.
-
-SPEC
-----
-SPEC.md §P0-1, §P2-8
-
-Claims
-------
-CLM-0002
+Implements SPEC P0-1 AdEx neuron dynamics with deterministic Euler integration.
 """
 
 from __future__ import annotations
@@ -40,31 +22,10 @@ BoolArray = NDArray[np.bool_]
 class AdExState:
     """Represent the AdEx neuron state vector.
 
-    Parameters
-    ----------
-    V_mV : numpy.ndarray
-        Membrane voltage vector in millivolts (shape: [N]).
-    w_pA : numpy.ndarray
-        Adaptation current vector in picoamps (shape: [N]).
-    spiked : numpy.ndarray
-        Spike indicator vector (shape: [N]).
-
-    Returns
-    -------
-    AdExState
-        State container instance.
-
-    Determinism
-    -----------
-    Deterministic given fixed state arrays.
-
-    SPEC
-    ----
-    SPEC.md §P0-1
-
-    Claims
-    ------
-    CLM-0002
+    Args:
+        V_mV: Membrane voltage vector in millivolts (shape: [N]).
+        w_pA: Adaptation current vector in picoamps (shape: [N]).
+        spiked: Spike indicator vector (shape: [N]).
     """
 
     V_mV: Float64Array  # shape (N,)
@@ -76,31 +37,10 @@ class AdExState:
 class IntegrationMetrics:
     """Capture integration error estimates for AdEx dynamics.
 
-    Parameters
-    ----------
-    lte_estimate : float
-        Local truncation error estimate (dimensionless).
-    global_error_bound : float
-        Conservative global error bound (dimensionless).
-    recommended_dt_ms : float
-        Suggested timestep in milliseconds.
-
-    Returns
-    -------
-    IntegrationMetrics
-        Metrics container instance.
-
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
-
-    SPEC
-    ----
-    SPEC.md §P2-8
-
-    Claims
-    ------
-    CLM-0022
+    Args:
+        lte_estimate: Local truncation error estimate (dimensionless).
+        global_error_bound: Conservative global error bound (dimensionless).
+        recommended_dt_ms: Suggested timestep in milliseconds.
     """
 
     lte_estimate: float
@@ -117,35 +57,26 @@ def adex_step(
 ) -> AdExState:
     """Advance AdEx state by one timestep using explicit Euler.
 
-    Parameters
-    ----------
-    state : AdExState
-        Current AdEx state vectors.
-    params : AdExParams
-        AdEx parameter set (units: pF, nS, mV, ms, pA).
-    dt_ms : float
-        Timestep in milliseconds (must be positive).
-    I_syn_pA : numpy.ndarray
-        Synaptic input current per neuron in picoamps.
-    I_ext_pA : numpy.ndarray
-        External input current per neuron in picoamps.
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
 
-    Returns
-    -------
-    AdExState
+    Returns:
         Updated AdEx state after one timestep.
 
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
+    Raises:
+        ValueError: If dt_ms is non-positive or state arrays are invalid.
 
-    SPEC
-    ----
-    SPEC.md §P0-1
+    Notes:
+        Implements SPEC P0-1 explicit Euler update with spike reset at Vpeak.
+        Exponential term is clamped to avoid overflow.
 
-    Claims
-    ------
-    CLM-0002
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
@@ -192,39 +123,27 @@ def adex_step_with_error_tracking(
 ) -> tuple[AdExState, IntegrationMetrics]:
     """Advance AdEx state with step-doubling error tracking.
 
-    Parameters
-    ----------
-    state : AdExState
-        Current AdEx state vectors.
-    params : AdExParams
-        AdEx parameter set (units: pF, nS, mV, ms, pA).
-    dt_ms : float
-        Timestep in milliseconds (must be positive).
-    I_syn_pA : numpy.ndarray
-        Synaptic input current per neuron in picoamps.
-    I_ext_pA : numpy.ndarray
-        External input current per neuron in picoamps.
-    atol : float
-        Absolute tolerance for error scaling.
-    rtol : float
-        Relative tolerance for error scaling.
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
+        atol: Absolute tolerance for error scaling.
+        rtol: Relative tolerance for error scaling.
 
-    Returns
-    -------
-    tuple[AdExState, IntegrationMetrics]
-        Updated state and integration metrics.
+    Returns:
+        Tuple of (updated state, integration metrics).
 
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
+    Raises:
+        ValueError: If dt_ms, atol, or rtol are non-positive.
 
-    SPEC
-    ----
-    SPEC.md §P0-1, §P2-8
+    Notes:
+        Uses step-doubling to estimate local truncation error for SPEC P0-1.
 
-    Claims
-    ------
-    CLM-0022
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
@@ -270,39 +189,28 @@ def adex_step_adaptive(
 ) -> AdExState:
     """Advance AdEx state by one timestep using adaptive RK45 integration.
 
-    Parameters
-    ----------
-    state : AdExState
-        Current AdEx state vectors.
-    params : AdExParams
-        AdEx parameter set (units: pF, nS, mV, ms, pA).
-    dt_ms : float
-        Timestep in milliseconds (must be positive).
-    I_syn_pA : numpy.ndarray
-        Synaptic input current per neuron in picoamps.
-    I_ext_pA : numpy.ndarray
-        External input current per neuron in picoamps.
-    atol : float
-        Absolute tolerance for adaptive integration.
-    rtol : float
-        Relative tolerance for adaptive integration.
+    Args:
+        state: Current AdEx state vectors.
+        params: AdEx parameter set (units: pF, nS, mV, ms, pA).
+        dt_ms: Timestep in milliseconds (must be positive).
+        I_syn_pA: Synaptic input current per neuron in picoamps.
+        I_ext_pA: External input current per neuron in picoamps.
+        atol: Absolute tolerance for adaptive integration.
+        rtol: Relative tolerance for adaptive integration.
 
-    Returns
-    -------
-    AdExState
+    Returns:
         Updated AdEx state after one timestep.
 
-    Determinism
-    -----------
-    Deterministic given fixed inputs.
+    Raises:
+        ValueError: If dt_ms is non-positive.
 
-    SPEC
-    ----
-    SPEC.md §P0-1, §P2-8
+    Notes:
+        Uses solve_ivp with fixed inputs over the step interval; spike reset is
+        applied after integration, consistent with the discrete step model.
 
-    Claims
-    ------
-    CLM-0022
+    References:
+        - docs/SPEC.md#P0-1
+        - docs/SSOT.md
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
