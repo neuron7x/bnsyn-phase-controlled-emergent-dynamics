@@ -21,7 +21,7 @@ from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matr
 
 torch: Any | None
 try:
-    import torch as torch_module  # type: ignore[import-not-found]
+    import torch as torch_module
 except Exception:  # pragma: no cover - optional GPU support
     torch = None
 else:

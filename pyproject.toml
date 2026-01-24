@@ -74,5 +74,13 @@ plugins = ["pydantic.mypy"]
 module = "scipy.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
 [tool.setuptools.packages.find]
 where = ["src"]

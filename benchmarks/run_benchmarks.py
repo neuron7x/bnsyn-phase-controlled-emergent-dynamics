@@ -6,11 +6,12 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import math
 import os
 import subprocess
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 # Add repo root to path for imports
@@ -88,8 +89,8 @@ print(json.dumps(metrics_to_dict(result)))
         return None
 
 
-def aggregate_metrics(runs: list[dict[str, Any]]) -> dict[str, float]:
-    """Aggregate metrics across multiple runs using mean."""
+def aggregate_metrics(runs: list[dict[str, Any]]) -> dict[str, float | None]:
+    """Aggregate metrics across multiple runs using mean/std/p5/p50/p95."""
     import numpy as np
     from scipy.stats import zscore
 
@@ -97,22 +98,49 @@ def aggregate_metrics(runs: list[dict[str, Any]]) -> dict[str, float]:
         return {}
 
     keys = list(runs[0].keys())
-    aggregated: dict[str, float] = {}
+    aggregated: dict[str, float | None] = {}
     for key in keys:
-        values = np.asarray([float(run[key]) for run in runs], dtype=np.float64)
+        raw_values = [run.get(key) for run in runs]
+        values = np.asarray(
+            [float(value) for value in raw_values if value is not None],
+            dtype=np.float64,
+        )
+        values = values[np.isfinite(values)]
         if values.size >= 3:
             z = np.abs(zscore(values, nan_policy="omit"))
             values = values[z <= 2.0]
         if values.size == 0:
-            values = np.asarray([float(run[key]) for run in runs], dtype=np.float64)
-        aggregated[key] = float(np.mean(values))
+            aggregated[f"{key}_mean"] = None
+            aggregated[f"{key}_std"] = None
+            aggregated[f"{key}_p5"] = None
+            aggregated[f"{key}_p50"] = None
+            aggregated[f"{key}_p95"] = None
+            continue
+        aggregated[f"{key}_mean"] = float(np.mean(values))
+        aggregated[f"{key}_std"] = float(np.std(values))
+        aggregated[f"{key}_p5"] = float(np.percentile(values, 5))
+        aggregated[f"{key}_p50"] = float(np.percentile(values, 50))
+        aggregated[f"{key}_p95"] = float(np.percentile(values, 95))
     return aggregated
+
+
+def _sanitize_for_json(payload: Any) -> Any:
+    if isinstance(payload, float):
+        if math.isfinite(payload):
+            return payload
+        return None
+    if isinstance(payload, list):
+        return [_sanitize_for_json(item) for item in payload]
+    if isinstance(payload, dict):
+        return {key: _sanitize_for_json(value) for key, value in payload.items()}
+    return payload
 
 
 def run_benchmarks(
     scenario_set: str,
     repeats: int,
     output_json: str | None,
+    warmup: int,
 ) -> list[dict[str, Any]]:
     """Run benchmark scenarios and return results."""
     scenarios = get_scenarios(scenario_set)
@@ -126,6 +154,7 @@ def run_benchmarks(
         handlers=[logging.FileHandler("bench.log", mode="w"), logging.StreamHandler(sys.stdout)],
     )
     logging.info("Running %d scenarios with %d repeats each", len(scenarios), repeats)
+    logging.info("Warmup runs per scenario: %d", warmup)
     logging.info("Git SHA: %s", git_sha)
     logging.info("Python: %s", python_ver)
     logging.info("Timestamp: %s", timestamp)
@@ -147,7 +176,11 @@ def run_benchmarks(
         )
         scenario_dict = scenario.to_dict()
 
-        runs = []
+        for warmup_idx in range(warmup):
+            logging.info("  Warmup %d/%d...", warmup_idx + 1, warmup)
+            _ = run_scenario_subprocess(scenario_dict)
+
+        runs: list[dict[str, Any]] = []
         for repeat in range(repeats):
             logging.info("  Repeat %d/%d...", repeat + 1, repeats)
             metrics = run_scenario_subprocess(scenario_dict)
@@ -159,7 +192,7 @@ def run_benchmarks(
                 "  wall_time=%.3fs, rss=%.1fMB, sigma=%.3f",
                 metrics["performance_wall_time_sec"],
                 metrics["performance_peak_rss_mb"],
-                metrics["physics_sigma_mean"],
+                metrics["physics_sigma"],
             )
 
         if not runs:
@@ -174,16 +207,43 @@ def run_benchmarks(
                 "python_version": python_ver,
                 "timestamp": timestamp,
                 **scenario_dict,
+                "warmup": warmup,
                 "repeats": len(runs),
                 **aggregated,
             }
         )
-        logging.info("  Summary: wall_time=%.3fs", aggregated["performance_wall_time_sec"])
+        summary_wall_time = aggregated.get("performance_wall_time_sec_mean")
+        summary_sigma = aggregated.get("physics_sigma_mean")
+        summary_nan_rate = aggregated.get("stability_nan_rate_mean")
+        summary_wall_time_p50 = aggregated.get("performance_wall_time_sec_p50")
+        summary_wall_time_p95 = aggregated.get("performance_wall_time_sec_p95")
+        summary_rss_p95 = aggregated.get("performance_peak_rss_mb_p95")
+        if summary_wall_time is None:
+            logging.info("  Summary: wall_time_mean=n/a")
+        else:
+            logging.info("  Summary: wall_time_mean=%.3fs", summary_wall_time)
+        if summary_sigma is not None and summary_nan_rate is not None:
+            logging.info(
+                "  Summary: sigma_mean=%.3f, nan_rate=%.6f",
+                summary_sigma,
+                summary_nan_rate,
+            )
+        if (
+            summary_wall_time_p50 is not None
+            and summary_wall_time_p95 is not None
+            and summary_rss_p95 is not None
+        ):
+            logging.info(
+                "  Summary: wall_time_p50=%.3fs, wall_time_p95=%.3fs, rss_p95=%.1fMB",
+                summary_wall_time_p50,
+                summary_wall_time_p95,
+                summary_rss_p95,
+            )
 
     if output_json and all_results:
         Path(output_json).parent.mkdir(parents=True, exist_ok=True)
         with open(output_json, "w") as f:
-            json.dump(all_results, f, indent=2)
+            json.dump(_sanitize_for_json(all_results), f, indent=2, allow_nan=False)
         logging.info("Wrote JSON: %s", output_json)
 
     if bottleneck is not None and device is not None and device.type == "cuda":
@@ -208,18 +268,22 @@ def main() -> int:
         ],
         help="Scenario set to run",
     )
-    parser.add_argument("--repeats", type=int, default=1, help="Number of repeats per scenario")
+    parser.add_argument("--repeats", type=int, default=3, help="Number of repeats per scenario")
+    parser.add_argument("--warmup", type=int, default=1, help="Warmup runs per scenario")
     parser.add_argument("--json", help="Output JSON file path")
 
     args = parser.parse_args()
 
     if args.repeats <= 0:
         raise SystemExit("repeats must be positive")
+    if args.warmup < 0:
+        raise SystemExit("warmup must be non-negative")
 
     run_benchmarks(
         scenario_set=args.scenario,
         repeats=args.repeats,
         output_json=args.json,
+        warmup=args.warmup,
     )
 
     return 0

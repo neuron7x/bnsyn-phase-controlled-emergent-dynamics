@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import os
 import time
 from dataclasses import dataclass
@@ -23,8 +24,8 @@ class BenchmarkMetrics:
 
     stability_nan_rate: float
     stability_divergence_rate: float
-    physics_spike_rate_hz_mean: float
-    physics_sigma_mean: float
+    physics_spike_rate_hz: float
+    physics_sigma: float
     physics_sigma_std: float
     learning_weight_entropy: float
     learning_convergence_error: float
@@ -83,6 +84,24 @@ def _bitwise_delta(a: np.ndarray, b: np.ndarray) -> float:
     a_bits = a.view(np.uint64)
     b_bits = b.view(np.uint64)
     return float(np.count_nonzero(a_bits != b_bits) / a_bits.size)
+
+
+def _safe_stat(value: float) -> float:
+    if np.isfinite(value):
+        return float(value)
+    return 0.0
+
+
+def _safe_mean(values: np.ndarray) -> float:
+    if values.size == 0:
+        return 0.0
+    return _safe_stat(float(np.nanmean(values)))
+
+
+def _safe_std(values: np.ndarray) -> float:
+    if values.size == 0:
+        return 0.0
+    return _safe_stat(float(np.nanstd(values)))
 
 
 def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
@@ -171,13 +190,13 @@ def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
     nan_rate = float(series["nan_count"] / series["total_count"]) if series["total_count"] else 0.0
     divergence_rate = float(series["divergence_steps"] / scenario.steps) if scenario.steps else 0.0
 
-    sigma_mean = float(np.mean(sigmas))
-    sigma_std = float(np.std(sigmas))
-    spike_rate_mean = float(np.mean(spike_rates))
+    sigma_mean = _safe_mean(sigmas)
+    sigma_std = _safe_std(sigmas)
+    spike_rate_mean = _safe_mean(spike_rates)
 
     window = max(1, int(0.1 * scenario.steps))
     sigma_target = float(series["sigma_target"])
-    convergence_error = float(abs(np.mean(sigmas[-window:]) - sigma_target))
+    convergence_error = _safe_stat(float(abs(_safe_mean(sigmas[-window:]) - sigma_target)))
 
     temp_params = _temperature_params(scenario)
     schedule = TemperatureSchedule(params=temp_params)
@@ -186,10 +205,10 @@ def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
         temperatures[idx] = schedule.step_geometric()
 
     exploration = np.abs(np.diff(spike_rates, prepend=spike_rates[0]))
-    temp_std = float(np.std(temperatures))
-    exploration_std = float(np.std(exploration))
+    temp_std = _safe_std(temperatures)
+    exploration_std = _safe_std(exploration)
     if temp_std > 0.0 and exploration_std > 0.0:
-        corr = float(np.corrcoef(temperatures, exploration)[0, 1])
+        corr = _safe_stat(float(np.corrcoef(temperatures, exploration)[0, 1]))
     else:
         corr = 0.0
 
@@ -206,13 +225,13 @@ def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
     return BenchmarkMetrics(
         stability_nan_rate=nan_rate,
         stability_divergence_rate=divergence_rate,
-        physics_spike_rate_hz_mean=spike_rate_mean,
-        physics_sigma_mean=sigma_mean,
+        physics_spike_rate_hz=spike_rate_mean,
+        physics_sigma=sigma_mean,
         physics_sigma_std=sigma_std,
         learning_weight_entropy=float(series["weight_entropy"]),
         learning_convergence_error=convergence_error,
-        thermostat_temperature_mean=float(np.mean(temperatures)),
-        thermostat_exploration_mean=float(np.mean(exploration)),
+        thermostat_temperature_mean=_safe_mean(temperatures),
+        thermostat_exploration_mean=_safe_mean(exploration),
         thermostat_temperature_exploration_corr=corr,
         reproducibility_bitwise_delta=reproducibility_delta,
         performance_wall_time_sec=wall_time,
@@ -225,22 +244,28 @@ def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
 
 def metrics_to_dict(metrics: BenchmarkMetrics) -> dict[str, Any]:
     """Serialize metrics to dict."""
+
+    def _sanitize(value: float) -> float | None:
+        if math.isfinite(value):
+            return float(value)
+        return None
+
     return {
-        "stability_nan_rate": metrics.stability_nan_rate,
-        "stability_divergence_rate": metrics.stability_divergence_rate,
-        "physics_spike_rate_hz_mean": metrics.physics_spike_rate_hz_mean,
-        "physics_sigma_mean": metrics.physics_sigma_mean,
-        "physics_sigma_std": metrics.physics_sigma_std,
-        "learning_weight_entropy": metrics.learning_weight_entropy,
-        "learning_convergence_error": metrics.learning_convergence_error,
-        "thermostat_temperature_mean": metrics.thermostat_temperature_mean,
-        "thermostat_exploration_mean": metrics.thermostat_exploration_mean,
-        "thermostat_temperature_exploration_corr": (
+        "stability_nan_rate": _sanitize(metrics.stability_nan_rate),
+        "stability_divergence_rate": _sanitize(metrics.stability_divergence_rate),
+        "physics_spike_rate_hz": _sanitize(metrics.physics_spike_rate_hz),
+        "physics_sigma": _sanitize(metrics.physics_sigma),
+        "physics_sigma_std": _sanitize(metrics.physics_sigma_std),
+        "learning_weight_entropy": _sanitize(metrics.learning_weight_entropy),
+        "learning_convergence_error": _sanitize(metrics.learning_convergence_error),
+        "thermostat_temperature_mean": _sanitize(metrics.thermostat_temperature_mean),
+        "thermostat_exploration_mean": _sanitize(metrics.thermostat_exploration_mean),
+        "thermostat_temperature_exploration_corr": _sanitize(
             metrics.thermostat_temperature_exploration_corr
         ),
-        "reproducibility_bitwise_delta": metrics.reproducibility_bitwise_delta,
-        "performance_wall_time_sec": metrics.performance_wall_time_sec,
-        "performance_peak_rss_mb": metrics.performance_peak_rss_mb,
-        "performance_per_step_ms": metrics.performance_per_step_ms,
-        "performance_neuron_steps_per_sec": metrics.performance_neuron_steps_per_sec,
+        "reproducibility_bitwise_delta": _sanitize(metrics.reproducibility_bitwise_delta),
+        "performance_wall_time_sec": _sanitize(metrics.performance_wall_time_sec),
+        "performance_peak_rss_mb": _sanitize(metrics.performance_peak_rss_mb),
+        "performance_per_step_ms": _sanitize(metrics.performance_per_step_ms),
+        "performance_neuron_steps_per_sec": _sanitize(metrics.performance_neuron_steps_per_sec),
     }

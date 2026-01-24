@@ -4,11 +4,7 @@ Schema definition for CSV/JSON benchmark results.
 
 ## Output Format
 
-Benchmark results are written in two formats:
-- **CSV**: One row per scenario (with headers)
-- **JSON**: Array of objects (one per scenario)
-
-Both formats contain identical fields with identical semantics.
+`benchmarks/run_benchmarks.py` writes a JSON array (one object per scenario).
 
 ## Field Definitions
 
@@ -20,7 +16,7 @@ Both formats contain identical fields with identical semantics.
 | `git_sha` | string | Git commit SHA (full 40 chars) | `"a1b2c3d4..."` |
 | `python_version` | string | Python version (major.minor.micro) | `"3.11.5"` |
 | `timestamp` | string | UTC timestamp (ISO 8601) | `"2026-01-24T12:34:56.789Z"` |
-| `description` | string | Human-readable scenario description | `"Network size sweep: N=1000"` |
+| `warmup` | integer | Warmup runs per scenario | `1` |
 | `repeats` | integer | Number of successful runs | `3` |
 
 ### Scenario Parameters
@@ -33,33 +29,44 @@ Both formats contain identical fields with identical semantics.
 | `N_neurons` | integer | - | Total neurons (excitatory + inhibitory) |
 | `p_conn` | float | - | Connection probability (0 to 1) |
 | `frac_inhib` | float | - | Fraction of inhibitory neurons (0 to 1) |
+| `description` | string | - | Human-readable scenario summary |
+| `sigma_target` | float or null | - | Criticality target (when applicable) |
+| `temperature_T0` | float or null | - | Temperature schedule initial value |
+| `temperature_alpha` | float or null | - | Temperature schedule decay factor |
+| `temperature_Tmin` | float or null | - | Temperature schedule minimum |
+| `temperature_Tc` | float or null | - | Temperature schedule cutoff |
+| `temperature_gate_tau` | float or null | - | Temperature gate time constant |
+| `use_adaptive_dt` | boolean | - | Enable adaptive timestep integration |
 
 ### Timing Metrics
 
 | Field | Type | Units | Description |
 |-------|------|-------|-------------|
-| `wall_time_sec_mean` | float | seconds | Mean wall-clock time across repeats |
-| `wall_time_sec_p50` | float | seconds | Median (50th percentile) wall-clock time |
-| `wall_time_sec_p95` | float | seconds | 95th percentile wall-clock time |
-| `wall_time_sec_std` | float | seconds | Standard deviation of wall-clock time |
-| `per_step_ms_mean` | float | milliseconds | Mean time per simulation step |
-| `per_step_ms_p50` | float | milliseconds | Median time per simulation step |
-| `per_step_ms_p95` | float | milliseconds | 95th percentile time per step |
-| `per_step_ms_std` | float | milliseconds | Standard deviation of time per step |
+| `performance_wall_time_sec_mean` | float | seconds | Mean wall-clock time across repeats |
+| `performance_wall_time_sec_p5` | float | seconds | 5th percentile wall-clock time |
+| `performance_wall_time_sec_p50` | float | seconds | Median wall-clock time |
+| `performance_wall_time_sec_p95` | float | seconds | 95th percentile wall-clock time |
+| `performance_wall_time_sec_std` | float | seconds | Standard deviation of wall-clock time |
+| `performance_per_step_ms_mean` | float | milliseconds | Mean time per simulation step |
+| `performance_per_step_ms_p5` | float | milliseconds | 5th percentile time per step |
+| `performance_per_step_ms_p50` | float | milliseconds | Median time per step |
+| `performance_per_step_ms_p95` | float | milliseconds | 95th percentile time per step |
+| `performance_per_step_ms_std` | float | milliseconds | Standard deviation of time per step |
 
 **Definition:**
 ```
-per_step_ms = (wall_time_sec / steps) * 1000
+performance_per_step_ms = (performance_wall_time_sec / steps) * 1000
 ```
 
 ### Memory Metrics
 
 | Field | Type | Units | Description |
 |-------|------|-------|-------------|
-| `peak_rss_mb_mean` | float | megabytes | Mean peak resident set size |
-| `peak_rss_mb_p50` | float | megabytes | Median peak RSS |
-| `peak_rss_mb_p95` | float | megabytes | 95th percentile peak RSS |
-| `peak_rss_mb_std` | float | megabytes | Standard deviation of peak RSS |
+| `performance_peak_rss_mb_mean` | float | megabytes | Mean peak resident set size |
+| `performance_peak_rss_mb_p5` | float | megabytes | 5th percentile peak RSS |
+| `performance_peak_rss_mb_p50` | float | megabytes | Median peak RSS |
+| `performance_peak_rss_mb_p95` | float | megabytes | 95th percentile peak RSS |
+| `performance_peak_rss_mb_std` | float | megabytes | Standard deviation of peak RSS |
 
 **Definition:**
 - Measured via `psutil.Process().memory_info().rss`
@@ -70,14 +77,15 @@ per_step_ms = (wall_time_sec / steps) * 1000
 
 | Field | Type | Units | Description |
 |-------|------|-------|-------------|
-| `neuron_steps_per_sec_mean` | float | neuron-steps/sec | Mean throughput |
-| `neuron_steps_per_sec_p50` | float | neuron-steps/sec | Median throughput |
-| `neuron_steps_per_sec_p95` | float | neuron-steps/sec | 95th percentile throughput |
-| `neuron_steps_per_sec_std` | float | neuron-steps/sec | Standard deviation of throughput |
+| `performance_neuron_steps_per_sec_mean` | float | neuron-steps/sec | Mean throughput |
+| `performance_neuron_steps_per_sec_p5` | float | neuron-steps/sec | 5th percentile throughput |
+| `performance_neuron_steps_per_sec_p50` | float | neuron-steps/sec | Median throughput |
+| `performance_neuron_steps_per_sec_p95` | float | neuron-steps/sec | 95th percentile throughput |
+| `performance_neuron_steps_per_sec_std` | float | neuron-steps/sec | Standard deviation of throughput |
 
 **Definition:**
 ```
-neuron_steps_per_sec = (N_neurons * steps) / wall_time_sec
+performance_neuron_steps_per_sec = (N_neurons * steps) / performance_wall_time_sec
 ```
 
 Interpretation:
@@ -85,22 +93,30 @@ Interpretation:
 - Accounts for both network size and simulation length
 - Use for cross-hardware comparisons
 
-### Activity Metrics
+### Activity and Stability Metrics
 
-| Field | Type | Units | Description |
-|-------|------|-------|-------------|
-| `spike_count_total` | integer | spikes | Total spikes summed across all repeats |
+All base metrics from a single run are aggregated across repeats using the suffixes
+`_mean`, `_std`, `_p5`, and `_p95`. Base metric keys include:
+
+| Base Metric | Units | Description |
+|-------------|-------|-------------|
+| `stability_nan_rate` | fraction | NaN rate across state vectors |
+| `stability_divergence_rate` | fraction | Divergence steps / total steps |
+| `physics_spike_rate_hz` | Hz | Mean spike rate |
+| `physics_sigma` | - | Mean sigma |
+| `physics_sigma_std` | - | Sigma standard deviation |
+| `learning_weight_entropy` | bits | Shannon entropy of final weights |
+| `learning_convergence_error` | - | |mean(sigma_tail) - sigma_target| |
+| `thermostat_temperature_mean` | - | Mean temperature schedule value |
+| `thermostat_exploration_mean` | - | Mean exploration proxy |
+| `thermostat_temperature_exploration_corr` | - | Correlation between temperature and exploration |
+| `reproducibility_bitwise_delta` | fraction | Bitwise mismatch fraction across two runs |
 
 **Definition:**
-- Sum of all spikes detected across all neurons, all steps, all repeats
-- Diagnostic metric (should be deterministic for same seed)
-
-## Example Row (CSV)
-
-```csv
-scenario,git_sha,python_version,timestamp,name,seed,dt_ms,steps,N_neurons,p_conn,frac_inhib,description,repeats,wall_time_sec_mean,wall_time_sec_p50,wall_time_sec_p95,wall_time_sec_std,peak_rss_mb_mean,peak_rss_mb_p50,peak_rss_mb_p95,peak_rss_mb_std,per_step_ms_mean,per_step_ms_p50,per_step_ms_p95,per_step_ms_std,neuron_steps_per_sec_mean,neuron_steps_per_sec_p50,neuron_steps_per_sec_p95,neuron_steps_per_sec_std,spike_count_total
-n_sweep_1000,a1b2c3d4e5f6...,3.11.5,2026-01-24T12:34:56.789Z,n_sweep_1000,42,0.1,500,1000,0.05,0.2,"Network size sweep: N=1000",3,2.451,2.450,2.475,0.012,125.3,125.1,126.2,0.5,4.902,4.900,4.950,0.024,204082,204164,202020,1020,15234
-```
+- `reproducibility_bitwise_delta` is the fraction of float64 entries that differ at the bit level between two runs.
+- Non-finite values are serialized as `null` in JSON.
+- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+- `learning_weight_entropy` uses Shannon entropy on positive weights: `-Σ(p * log2(p))` with `p = w / Σw`.
 
 ## Example Object (JSON)
 
@@ -118,24 +134,34 @@ n_sweep_1000,a1b2c3d4e5f6...,3.11.5,2026-01-24T12:34:56.789Z,n_sweep_1000,42,0.1
   "p_conn": 0.05,
   "frac_inhib": 0.2,
   "description": "Network size sweep: N=1000",
+  "warmup": 1,
   "repeats": 3,
-  "wall_time_sec_mean": 2.451,
-  "wall_time_sec_p50": 2.450,
-  "wall_time_sec_p95": 2.475,
-  "wall_time_sec_std": 0.012,
-  "peak_rss_mb_mean": 125.3,
-  "peak_rss_mb_p50": 125.1,
-  "peak_rss_mb_p95": 126.2,
-  "peak_rss_mb_std": 0.5,
-  "per_step_ms_mean": 4.902,
-  "per_step_ms_p50": 4.900,
-  "per_step_ms_p95": 4.950,
-  "per_step_ms_std": 0.024,
-  "neuron_steps_per_sec_mean": 204082,
-  "neuron_steps_per_sec_p50": 204164,
-  "neuron_steps_per_sec_p95": 202020,
-  "neuron_steps_per_sec_std": 1020,
-  "spike_count_total": 15234
+  "performance_wall_time_sec_mean": 2.451,
+  "performance_wall_time_sec_p5": 2.445,
+  "performance_wall_time_sec_p50": 2.450,
+  "performance_wall_time_sec_p95": 2.475,
+  "performance_wall_time_sec_std": 0.012,
+  "performance_peak_rss_mb_mean": 125.3,
+  "performance_peak_rss_mb_p5": 125.0,
+  "performance_peak_rss_mb_p50": 125.1,
+  "performance_peak_rss_mb_p95": 126.2,
+  "performance_peak_rss_mb_std": 0.5,
+  "performance_per_step_ms_mean": 4.902,
+  "performance_per_step_ms_p5": 4.895,
+  "performance_per_step_ms_p50": 4.900,
+  "performance_per_step_ms_p95": 4.950,
+  "performance_per_step_ms_std": 0.024,
+  "performance_neuron_steps_per_sec_mean": 204082,
+  "performance_neuron_steps_per_sec_p5": 202500,
+  "performance_neuron_steps_per_sec_p50": 204164,
+  "performance_neuron_steps_per_sec_p95": 205000,
+  "performance_neuron_steps_per_sec_std": 1020,
+  "stability_nan_rate_mean": 0.0,
+  "stability_nan_rate_p5": 0.0,
+  "stability_nan_rate_p50": 0.0,
+  "stability_nan_rate_p95": 0.0,
+  "stability_nan_rate_std": 0.0,
+  "reproducibility_bitwise_delta_mean": 0.0
 }
 ```
 
@@ -156,8 +182,9 @@ n_sweep_1000,a1b2c3d4e5f6...,3.11.5,2026-01-24T12:34:56.789Z,n_sweep_1000,42,0.1
 
 ## Aggregation Statistics
 
-All metrics report 4 aggregation statistics:
+All metrics report 5 aggregation statistics:
 - **mean**: Arithmetic mean across repeats
+- **p5**: 5th percentile - captures best-case behavior
 - **p50**: Median (50th percentile) - robust to outliers
 - **p95**: 95th percentile - captures worst-case behavior
 - **std**: Standard deviation - measures variance
