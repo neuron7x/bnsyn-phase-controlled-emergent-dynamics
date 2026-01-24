@@ -1,10 +1,20 @@
 import numpy as np
 import pytest
 
-from bnsyn.config import AdExParams, CriticalityParams, PlasticityParams, SynapseParams, TemperatureParams
+from bnsyn.config import (
+    AdExParams,
+    CriticalityParams,
+    PlasticityParams,
+    SynapseParams,
+    TemperatureParams,
+)
 from bnsyn.criticality.branching import BranchingEstimator, SigmaController
 from bnsyn.neuron.adex import AdExState, adex_step
-from bnsyn.plasticity.three_factor import EligibilityTraces, NeuromodulatorTrace, three_factor_update
+from bnsyn.plasticity.three_factor import (
+    EligibilityTraces,
+    NeuromodulatorTrace,
+    three_factor_update,
+)
 from bnsyn.synapse.conductance import ConductanceSynapses
 from bnsyn.temperature.schedule import TemperatureSchedule
 

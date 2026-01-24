@@ -23,9 +23,7 @@ def test_adex_convergence_with_dt_halving() -> None:
     out_dt2 = integrate(0.1, 10)
     out_dt4 = integrate(0.05, 20)
 
-    err_dt = np.linalg.norm(out_dt.V_mV - out_dt4.V_mV) + np.linalg.norm(
-        out_dt.w_pA - out_dt4.w_pA
-    )
+    err_dt = np.linalg.norm(out_dt.V_mV - out_dt4.V_mV) + np.linalg.norm(out_dt.w_pA - out_dt4.w_pA)
     err_dt2 = np.linalg.norm(out_dt2.V_mV - out_dt4.V_mV) + np.linalg.norm(
         out_dt2.w_pA - out_dt4.w_pA
     )

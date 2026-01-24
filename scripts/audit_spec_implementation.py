@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pathlib
 import re
-import sys
 from typing import Iterable
 
 import yaml
@@ -72,7 +71,9 @@ def main() -> int:
             text = path.read_text()
             if "tests/validation" in rel.replace("\\", "/"):
                 if not _has_validation_marker(text):
-                    errors.append(f"{comp_id} validation test missing pytest.mark.validation: {rel}")
+                    errors.append(
+                        f"{comp_id} validation test missing pytest.mark.validation: {rel}"
+                    )
             else:
                 if _has_validation_marker(text):
                     errors.append(f"{comp_id} smoke test incorrectly marked validation: {rel}")

@@ -2,7 +2,11 @@ import numpy as np
 import pytest
 
 from bnsyn.config import PlasticityParams
-from bnsyn.plasticity.three_factor import EligibilityTraces, NeuromodulatorTrace, three_factor_update
+from bnsyn.plasticity.three_factor import (
+    EligibilityTraces,
+    NeuromodulatorTrace,
+    three_factor_update,
+)
 from tests.tolerances import DEFAULT_RTOL
 
 
