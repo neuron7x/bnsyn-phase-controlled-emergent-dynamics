@@ -43,6 +43,34 @@ BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated 
 python -m pip install -e ".[dev]"
 ```
 
+## PR Quality Standards
+
+All PRs must pass:
+- ✅ Pre-commit hooks (ruff, mypy, pylint, pydocstyle, pytest-smoke, coverage)
+- ✅ Unit tests with ≥85% coverage
+- ✅ Determinism checks (identical seed = identical results)
+- ✅ SSOT gates (bibliography, claims, normative tags)
+- ✅ Security audits (gitleaks, pip-audit, bandit)
+- ✅ Branch protection rules (all required checks must pass)
+
+## Local Development
+
+```bash
+make dev-setup
+make check
+make test
+make coverage
+```
+
+## Testing in Docker
+
+```bash
+docker build -t bnsyn-dev .
+docker run bnsyn-dev
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full developer workflow.
+
 ```bash
 python scripts/validate_bibliography.py
 python scripts/validate_claims.py
