@@ -49,6 +49,7 @@ def adex_step(
 
     V = np.asarray(state.V_mV, dtype=np.float64).copy()
     w = np.asarray(state.w_pA, dtype=np.float64).copy()
+    V_prev = V.copy()
 
     # Convert conductances/currents: parameters are in pF/nS/mV/ms/pA so ms is consistent.
     # dV/dt = ( -gL(V-EL) + gL*DeltaT*exp((V-VT)/DeltaT) - w - I_syn + I_ext ) / C
@@ -59,7 +60,7 @@ def adex_step(
     V = V + dt_ms * dV
 
     # dw/dt = ( a(V-EL) - w ) / tauw
-    dw = (params.a_nS * (V - params.EL_mV) - w) / params.tauw_ms
+    dw = (params.a_nS * (V_prev - params.EL_mV) - w) / params.tauw_ms
     w = w + dt_ms * dw
 
     spiked = np.asarray(V >= params.Vpeak_mV, dtype=np.bool_)
