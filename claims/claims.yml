@@ -327,3 +327,40 @@ claims:
   - src/bnsyn/vcg.py
   verification_paths:
   - tests/test_vcg_smoke.py
+- id: CLM-0020
+  statement: BN-Syn implements cold emergence through deterministic, information-driven
+    organization without affective/motivational modulation via phase control.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: BN-Syn Cold Emergence Implementation (2026)
+  locator: docs/COLD_EMERGENCE.md
+  action: KEEP
+  notes: Cold emergence arises from multi-scale architecture (Micro→Meso→Macro→Meta)
+    with temperature-controlled phase transitions and criticality tracking.
+  bibkey: bnsyn2026coldemergence
+  spec_section: Cold Emergence Extension
+  implementation_paths:
+  - src/bnsyn/cold_emergence/controller.py
+  - src/bnsyn/cold_emergence/information_metrics.py
+  - src/bnsyn/cold_emergence/functional_systems.py
+  - src/bnsyn/cold_emergence/validator.py
+  verification_paths:
+  - tests/test_cold_emergence_smoke.py
+- id: CLM-0021
+  statement: Anokhin functional systems can be implemented without affective modulation
+    through informational error signals and cold phase control.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: Anokhin P.K. (1974) Biology and Neurophysiology of the Conditioned Reflex
+  locator: Functional system organization principles without motivational drive
+  action: KEEP
+  notes: Cold functional system implements afferent synthesis + acceptor-of-result
+    using informational correction signals instead of dopamine/reward.
+  bibkey: anokhin1974functional
+  spec_section: Cold Emergence Extension
+  implementation_paths:
+  - src/bnsyn/cold_emergence/functional_systems.py
+  verification_paths:
+  - tests/test_cold_emergence_smoke.py

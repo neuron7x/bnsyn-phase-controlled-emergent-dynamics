@@ -25,3 +25,5 @@ pytorch2026randomness=NODOI::https://pytorch.org/docs/stable/notes/randomness.ht
 trivers1971reciprocal=10.1086/406755::https://doi.org/10.1086/406755::1971::The Quarterly Review of Biology::sha256:f0ac835e9c07a318d64f9b49e780fa8118f2f681f39f8d4a60dc559ad77ad127
 wilkinson2016fair=10.1038/sdata.2016.18::https://doi.org/10.1038/sdata.2016.18::2016::Scientific Data::sha256:12838b9282181d87810327379809ed63ff1d1a424aff3f73e12c4a660bdb7b2c
 wilting2018inferring=10.1038/s41467-018-04725-4::https://doi.org/10.1038/s41467-018-04725-4::2018::Nature Communications::sha256:7064a50c9033f7475da8e9c0919988269622fa0a0d3d27a5db4a67dca96e6cee
+anokhin1974functional=NODOI::https://www.worldcat.org/title/biology-and-neurophysiology-of-the-conditioned-reflex-and-its-role-in-adaptive-behavior/oclc/1065324::Pergamon Press::2026-01-24::sha256:5f98d151f1b4a4cefa938cf2fb6f33bece1af151fff5652253fed9dc255a2fed
+bnsyn2026coldemergence=NODOI::https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/COLD_EMERGENCE.md::BN-Syn Documentation::2026-01-24::sha256:f37f9bcede926d876bc8e5c74cbee4ce6df82484df61d3a62af313bff4794e6c

@@ -25,6 +25,24 @@ of behavior remains the specification, while evidence provenance is governed by 
 - **Macro (slow control)**: criticality controller adjusts global gain to keep σ near target.
 - **Meta (schedule)**: temperature gating switches exploration ↔ consolidation phases.
 
+## Cold Emergence Layer
+
+BN-Syn implements **cold emergence**: deterministic, information-driven organization
+without affective/motivational modulation. Cold emergence naturally arises from the
+multi-scale architecture and is controlled through thermodynamic phase transitions:
+
+- **Attractor control**: Phase control via temperature and criticality (σ) stabilizes
+  deterministic attractors (Lyapunov exp < 0).
+- **Information integration**: System exhibits high integrated information (Φ) when
+  in cold phase, indicating non-reducible emergent organization.
+- **Functional systems**: Anokhin-style afferent synthesis + acceptor-of-result operate
+  without dopamine/reward, using purely informational error signals.
+- **Validation**: Formal verification confirms cold emergence through determinism,
+  integration, and synergistic (non-redundant) information processing.
+
+See [`docs/COLD_EMERGENCE.md`](COLD_EMERGENCE.md) for detailed theoretical foundation
+and implementation details.
+
 ## Evidence crosswalk (core components)
 
 | Component | SPEC section | Claim IDs |
@@ -38,6 +56,7 @@ of behavior remains the specification, while evidence provenance is governed by 
 | Power-law validation for avalanches | P0-4 | CLM-0009 |
 | Temperature schedule + gating | P1-5 | CLM-0019 |
 | Dual-weight consolidation | P1-6 | CLM-0010 |
+| Cold emergence mechanisms | (extension) | CLM-0020, CLM-0021 |
 | Governance SSOT policy | P2-8..P2-12 | CLM-0011 |
 | Reproducibility process anchors | P2-8..P2-12 | CLM-0012, CLM-0013, CLM-0014 |
 

@@ -74,3 +74,11 @@ CLM-0019:
   bibkey: kirkpatrick1983annealing
   section: P1-5 Temperature schedule
   tier: Tier-A
+CLM-0020:
+  bibkey: bnsyn2026coldemergence
+  section: Cold Emergence Extension
+  tier: Tier-S
+CLM-0021:
+  bibkey: anokhin1974functional
+  section: Cold Emergence Extension
+  tier: Tier-S
