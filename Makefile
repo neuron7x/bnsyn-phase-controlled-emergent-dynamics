@@ -1,4 +1,4 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report docs docs-clean docs-linkcheck
+.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation coverage format lint mypy security check dev-setup ci-local ci-full bench bench-sweep bench-report docs docs-clean docs-linkcheck
 
 # SSOT validators
 validate-claims:
@@ -19,6 +19,30 @@ test-smoke:
 
 test-validation:
 	pytest -m validation
+
+coverage:
+	pytest --cov=src/bnsyn --cov-report=term-missing --cov-fail-under=85
+
+# Quality targets
+format:
+	ruff format .
+
+lint:
+	ruff check .
+
+mypy:
+	mypy src --strict
+
+security:
+	pip-audit --desc
+
+check: format lint mypy ssot test-smoke coverage security
+	@echo "✅ All checks passed!"
+
+dev-setup:
+	pip install -e ".[dev]"
+	pre-commit install
+	pre-commit autoupdate
 
 # Local CI check (SSOT + smoke)
 ci-local: ssot test-smoke

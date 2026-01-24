@@ -29,3 +29,21 @@ repos:
         files: ^pyproject\.toml$
         additional_dependencies:
           - validate-pyproject
+      - id: pytest-smoke
+        name: pytest smoke tests
+        entry: pytest -m "not validation" -v --tb=short
+        language: system
+        stages: [push]
+        pass_filenames: false
+      - id: coverage-check
+        name: coverage must be >= 85%
+        entry: pytest --cov=src/bnsyn --cov-fail-under=85 -q
+        language: system
+        stages: [push]
+        pass_filenames: false
+      - id: ssot-gates
+        name: SSOT gates
+        entry: bash -c 'python scripts/validate_bibliography.py && python scripts/validate_claims.py && python scripts/scan_normative_tags.py'
+        language: system
+        stages: [push]
+        pass_filenames: false
