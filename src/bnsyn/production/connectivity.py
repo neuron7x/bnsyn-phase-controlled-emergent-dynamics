@@ -1,6 +1,24 @@
 """Deterministic connectivity builders for BN-Syn experiments.
 
-Determinism is controlled by explicit NumPy generators.
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Determinism
+-----------
+Deterministic under fixed RNG state.
+
+SPEC
+----
+SPEC.md §P2-11
+
+Claims
+------
+None
 """
 
 from __future__ import annotations
@@ -11,6 +29,36 @@ import numpy as np
 
 @dataclass(frozen=True, slots=True)
 class ConnectivityConfig:
+    """Connectivity configuration for deterministic builders.
+
+    Parameters
+    ----------
+    n_pre : int
+        Number of presynaptic units.
+    n_post : int
+        Number of postsynaptic units.
+    p_connect : float
+        Connection probability.
+    allow_self : bool
+        Allow self-connections when n_pre == n_post.
+
+    Returns
+    -------
+    ConnectivityConfig
+        Configuration instance.
+
+    Determinism
+    -----------
+    Deterministic data container.
+
+    SPEC
+    ----
+    SPEC.md §P2-11
+
+    Claims
+    ------
+    None
+    """
     n_pre: int
     n_post: int
     p_connect: float
@@ -24,7 +72,29 @@ def build_connectivity(
 ) -> np.ndarray:
     """Build a boolean adjacency matrix with Bernoulli(p_connect).
 
-    Pass a managed NumPy Generator to preserve deterministic reproducibility.
+    Parameters
+    ----------
+    cfg : ConnectivityConfig
+        Connectivity configuration.
+    rng : numpy.random.Generator
+        NumPy Generator for deterministic sampling.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean adjacency matrix.
+
+    Determinism
+    -----------
+    Deterministic under fixed RNG state.
+
+    SPEC
+    ----
+    SPEC.md §P2-11, §P2-9
+
+    Claims
+    ------
+    CLM-0023
     """
     if cfg.n_pre <= 0 or cfg.n_post <= 0:
         raise ValueError("n_pre and n_post must be > 0")

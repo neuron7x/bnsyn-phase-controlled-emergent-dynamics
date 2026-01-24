@@ -1,6 +1,24 @@
 """Deterministic RNG utilities for BN-Syn.
 
-Implements SPEC P2-9 determinism protocol with explicit seeding.
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Determinism
+-----------
+All RNG state is derived from explicit seeds and returned as NumPy generators.
+
+SPEC
+----
+SPEC.md §P2-9
+
+Claims
+------
+CLM-0023
 """
 
 from __future__ import annotations
@@ -14,9 +32,29 @@ import numpy as np
 class RNGPack:
     """Bundle RNG artifacts produced by seeding.
 
-    Args:
-        seed: Seed value used to initialize RNGs.
-        np_rng: NumPy Generator instance.
+    Parameters
+    ----------
+    seed : int
+        Seed value used to initialize RNGs.
+    np_rng : numpy.random.Generator
+        NumPy Generator instance.
+
+    Returns
+    -------
+    RNGPack
+        Container with the seed and generator.
+
+    Determinism
+    -----------
+    Deterministic under fixed seed.
+
+    SPEC
+    ----
+    SPEC.md §P2-9
+
+    Claims
+    ------
+    CLM-0023
     """
 
     seed: int
@@ -26,22 +64,28 @@ class RNGPack:
 def seed_all(seed: int) -> RNGPack:
     """Seed all RNGs used by this project.
 
-    Args:
-        seed: Integer seed in [0, 2**32 - 1].
+    Parameters
+    ----------
+    seed : int
+        Integer seed in [0, 2**32 - 1].
 
-    Returns:
-        RNGPack containing the NumPy Generator and seed.
+    Returns
+    -------
+    RNGPack
+        Container holding the seed and NumPy Generator.
 
-    Raises:
-        TypeError: If seed is not an int.
-        ValueError: If seed is outside the allowed range.
+    Determinism
+    -----------
+    Deterministic under fixed integer seed; sets ``PYTHONHASHSEED`` and returns an explicit
+    NumPy ``Generator`` instance.
 
-    Notes:
-        Sets PYTHONHASHSEED and returns an explicit NumPy Generator.
+    SPEC
+    ----
+    SPEC.md §P2-9
 
-    References:
-        - docs/SPEC.md#P2-9
-        - docs/REPRODUCIBILITY.md
+    Claims
+    ------
+    CLM-0023
     """
     if not isinstance(seed, int):
         raise TypeError("seed must be int")
@@ -56,18 +100,29 @@ def seed_all(seed: int) -> RNGPack:
 def split(rng: np.random.Generator, n: int) -> list[np.random.Generator]:
     """Deterministically split a generator into child generators.
 
-    Args:
-        rng: Source NumPy Generator.
-        n: Number of child generators.
+    Parameters
+    ----------
+    rng : numpy.random.Generator
+        Source NumPy generator.
+    n : int
+        Number of child generators to create.
 
-    Returns:
-        List of NumPy Generators seeded deterministically.
+    Returns
+    -------
+    list[numpy.random.Generator]
+        Child generators seeded deterministically from the parent.
 
-    Raises:
-        ValueError: If n is non-positive.
+    Determinism
+    -----------
+    Deterministic under fixed parent generator state.
 
-    Notes:
-        Uses integer draws from the parent generator to seed children.
+    SPEC
+    ----
+    SPEC.md §P2-9
+
+    Claims
+    ------
+    CLM-0023
     """
     if n <= 0:
         raise ValueError("n must be positive")

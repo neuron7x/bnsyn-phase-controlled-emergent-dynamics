@@ -1,6 +1,24 @@
 """Conductance-based synapse dynamics and NMDA Mg2+ block.
 
-Implements SPEC P0-2 conductance synapses and magnesium block for NMDA.
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Determinism
+-----------
+Deterministic under fixed inputs and fixed timestep.
+
+SPEC
+----
+SPEC.md §P0-2
+
+Claims
+------
+CLM-0003
 """
 
 from __future__ import annotations
@@ -20,10 +38,31 @@ Float64Array = NDArray[np.float64]
 class ConductanceState:
     """Track conductance state for AMPA, NMDA, and GABA_A receptors.
 
-    Args:
-        g_ampa_nS: AMPA conductance vector in nS (shape: [N]).
-        g_nmda_nS: NMDA conductance vector in nS (shape: [N]).
-        g_gabaa_nS: GABA_A conductance vector in nS (shape: [N]).
+    Parameters
+    ----------
+    g_ampa_nS : numpy.ndarray
+        AMPA conductance vector in nS (shape: [N]).
+    g_nmda_nS : numpy.ndarray
+        NMDA conductance vector in nS (shape: [N]).
+    g_gabaa_nS : numpy.ndarray
+        GABA_A conductance vector in nS (shape: [N]).
+
+    Returns
+    -------
+    ConductanceState
+        Conductance state container.
+
+    Determinism
+    -----------
+    Deterministic given fixed inputs.
+
+    SPEC
+    ----
+    SPEC.md §P0-2
+
+    Claims
+    ------
+    CLM-0003
     """
 
     g_ampa_nS: Float64Array
@@ -34,19 +73,29 @@ class ConductanceState:
 def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
     """Compute the NMDA magnesium block term.
 
-    Args:
-        V_mV: Membrane voltage in millivolts.
-        mg_mM: Extracellular magnesium concentration in mM.
+    Parameters
+    ----------
+    V_mV : numpy.ndarray
+        Membrane voltage in millivolts.
+    mg_mM : float
+        Extracellular magnesium concentration in mM.
 
-    Returns:
+    Returns
+    -------
+    numpy.ndarray
         Mg2+ block factor for each voltage value.
 
-    Notes:
-        Uses the Jahr-Stevens formulation: B(V)=1/(1+([Mg]/3.57)exp(-0.062 V)).
+    Determinism
+    -----------
+    Deterministic under fixed inputs.
 
-    References:
-        - docs/SPEC.md#P0-2
-        - docs/SSOT.md
+    SPEC
+    ----
+    SPEC.md §P0-2
+
+    Claims
+    ------
+    CLM-0003
     """
     return np.asarray(1.0 / (1.0 + (mg_mM / 3.57) * np.exp(-0.062 * V_mV)), dtype=np.float64)
 
@@ -54,23 +103,31 @@ def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
 class ConductanceSynapses:
     """Apply conductance synapse updates with a fixed delay buffer.
 
-    This class does not implement connectivity; it applies aggregate incoming spikes.
-    Upstream code supplies per-neuron incoming spike counts (or weighted counts).
+    Parameters
+    ----------
+    N : int
+        Number of neurons.
+    params : SynapseParams
+        Synapse parameter set (units: nS, ms, mV).
+    dt_ms : float
+        Timestep in milliseconds.
 
-    Args:
-        N: Number of neurons.
-        params: Synapse parameter set (units: nS, ms, mV).
-        dt_ms: Timestep in milliseconds.
+    Returns
+    -------
+    ConductanceSynapses
+        Synapse handler instance.
 
-    Raises:
-        ValueError: If N or dt_ms are non-positive.
+    Determinism
+    -----------
+    Deterministic under fixed inputs and fixed timestep.
 
-    Notes:
-        Implements SPEC P0-2 and uses deterministic buffering.
+    SPEC
+    ----
+    SPEC.md §P0-2
 
-    References:
-        - docs/SPEC.md#P0-2
-        - docs/SSOT.md
+    Claims
+    ------
+    CLM-0003
     """
 
     def __init__(self, N: int, params: SynapseParams, dt_ms: float) -> None:
@@ -95,19 +152,54 @@ class ConductanceSynapses:
 
     @property
     def delay_steps(self) -> int:
+        """Return the integer delay buffer length in steps.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        int
+            Delay buffer length in steps.
+
+        Determinism
+        -----------
+        Deterministic property derived from initialization.
+
+        SPEC
+        ----
+        SPEC.md §P0-2
+
+        Claims
+        ------
+        CLM-0003
+        """
         return self._delay_steps
 
     def queue_events(self, incoming: Float64Array) -> None:
         """Queue incoming conductance increments for delayed application.
 
-        Args:
-            incoming: Aggregate conductance increments in nS (shape: [N]).
+        Parameters
+        ----------
+        incoming : numpy.ndarray
+            Aggregate conductance increments in nS (shape: [N]).
 
-        Raises:
-            ValueError: If incoming does not match the network size.
+        Returns
+        -------
+        None
 
-        Notes:
-            Increments are applied after the configured synaptic delay.
+        Determinism
+        -----------
+        Deterministic given fixed inputs.
+
+        SPEC
+        ----
+        SPEC.md §P0-2
+
+        Claims
+        ------
+        CLM-0003
         """
         if incoming.shape != (self.N,):
             raise ValueError(f"incoming must have shape ({self.N},)")
@@ -116,11 +208,26 @@ class ConductanceSynapses:
     def step(self) -> Float64Array:
         """Advance synaptic conductances by one timestep.
 
-        Returns:
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        numpy.ndarray
             Stacked conductances with shape (3, N) in nS for AMPA, NMDA, GABA_A.
 
-        Notes:
-            Conductance decay uses exponential update for dt invariance (SPEC P0-2).
+        Determinism
+        -----------
+        Deterministic under fixed inputs.
+
+        SPEC
+        ----
+        SPEC.md §P0-2
+
+        Claims
+        ------
+        CLM-0003
         """
         # apply delayed events (written delay_steps ago)
         apply = self._buf[self._buf_idx, :].copy()
@@ -153,22 +260,35 @@ class ConductanceSynapses:
     ) -> Float64Array:
         """Compute synaptic current from conductances.
 
-        Args:
-            V_mV: Membrane voltage in millivolts.
-            g_ampa_nS: AMPA conductance in nS.
-            g_nmda_nS: NMDA conductance in nS.
-            g_gabaa_nS: GABA_A conductance in nS.
-            params: Synapse parameter set.
+        Parameters
+        ----------
+        V_mV : numpy.ndarray
+            Membrane voltage in millivolts.
+        g_ampa_nS : numpy.ndarray
+            AMPA conductance in nS.
+        g_nmda_nS : numpy.ndarray
+            NMDA conductance in nS.
+        g_gabaa_nS : numpy.ndarray
+            GABA_A conductance in nS.
+        params : SynapseParams
+            Synapse parameter set.
 
-        Returns:
+        Returns
+        -------
+        numpy.ndarray
             Synaptic current per neuron in picoamps.
 
-        Notes:
-            NMDA current includes Mg2+ block; current units are nS*mV => pA.
+        Determinism
+        -----------
+        Deterministic under fixed inputs.
 
-        References:
-            - docs/SPEC.md#P0-2
-            - docs/SSOT.md
+        SPEC
+        ----
+        SPEC.md §P0-2
+
+        Claims
+        ------
+        CLM-0003
         """
         B = nmda_mg_block(V_mV, params.mg_mM)
         current = (

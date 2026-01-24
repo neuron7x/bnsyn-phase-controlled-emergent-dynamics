@@ -12,7 +12,6 @@ docs/_build/
 results/
 artifacts/
 benchmarks/baselines/
-benchmarks/results/
 
 # PR artifacts (should not be tracked)
 PR_DIFF.patch

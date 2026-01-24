@@ -1,3 +1,26 @@
+"""Neuron API surface for AdEx dynamics.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Determinism
+-----------
+Deterministic under fixed inputs.
+
+SPEC
+----
+SPEC.md §P0-1, §P2-8
+
+Claims
+------
+CLM-0001, CLM-0002
+"""
+
 from .adex import (
     AdExState as AdExState,
     IntegrationMetrics as IntegrationMetrics,

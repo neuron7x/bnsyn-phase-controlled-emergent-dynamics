@@ -1,4 +1,4 @@
-.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-micro bench-sweep bench-report docs docs-clean docs-linkcheck
+.PHONY: validate-claims validate-bibliography validate-normative ssot test-smoke test-validation ci-local ci-full bench bench-sweep bench-report docs docs-clean docs-linkcheck
 
 # SSOT validators
 validate-claims:
@@ -34,10 +34,7 @@ ci-full:
 
 # Benchmark targets
 bench:
-	python scripts/run_benchmarks.py --suite full --json-out benchmarks/results/full.json
-
-bench-micro:
-	python scripts/run_benchmarks.py --suite micro --json-out benchmarks/results/micro.json
+	python benchmarks/run_benchmarks.py --scenario quick --repeats 3 --out results/bench.csv --json results/bench.json
 
 bench-sweep:
 	python benchmarks/run_benchmarks.py --scenario full --repeats 5 --out results/bench_full.csv --json results/bench_full.json

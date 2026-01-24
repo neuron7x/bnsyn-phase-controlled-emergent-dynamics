@@ -1,3 +1,26 @@
+"""Numerical integration API surface.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Determinism
+-----------
+Deterministic under fixed inputs.
+
+SPEC
+----
+SPEC.md §P2-8
+
+Claims
+------
+CLM-0022
+"""
+
 from .integrators import (
     clamp_exp_arg as clamp_exp_arg,
     euler_step as euler_step,
