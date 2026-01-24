@@ -16,4 +16,4 @@ sphinx-copybutton==0.5.2
 furo==2025.12.19
 torch==2.1.0
 pip-audit==2.9.0
-dependency-check==0.6.1
+dependency-check==0.6.0
