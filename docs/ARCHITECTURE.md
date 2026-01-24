@@ -14,6 +14,8 @@ of behavior remains the specification, while evidence provenance is governed by 
   `claims/claims.yml` and `bibliography/*`.
 - **Purpose**: expose the mapping between architecture components and their formal
   references without introducing new semantics.
+- **Audit artifacts**: component mappings live in `docs/spec_to_code.yml` and the
+  verification table is tracked in `docs/COMPONENT_AUDIT.md`.
 
 ## Control loops (timescale-segregated)
 
@@ -36,8 +38,8 @@ of behavior remains the specification, while evidence provenance is governed by 
 | Power-law validation for avalanches | P0-4 | CLM-0009 |
 | Temperature schedule + gating | P1-5 | CLM-0019 |
 | Dual-weight consolidation | P1-6 | CLM-0010 |
-| Governance SSOT policy | P2-8..12 | CLM-0011 |
-| Reproducibility process anchors | P2-8..12 | CLM-0012, CLM-0013, CLM-0014 |
+| Governance SSOT policy | P2-8..P2-12 | CLM-0011 |
+| Reproducibility process anchors | P2-8..P2-12 | CLM-0012, CLM-0013, CLM-0014 |
 
 The table is intentionally minimal: it enumerates the canonical components and
 the authoritative claim IDs that substantiate them. For full equations and

@@ -45,7 +45,7 @@ class DualWeights:
             raise ValueError("fast_update shape mismatch")
 
         # fast dynamics: update + decay to baseline
-        self.w_fast += p.eta_f * fast_update
+        self.w_fast += p.eta_f * fast_update * dt_s
         self.w_fast += (-(self.w_fast - self.w0) / p.tau_f_s) * dt_s
 
         # tag setting

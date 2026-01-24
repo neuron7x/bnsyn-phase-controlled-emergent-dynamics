@@ -142,11 +142,50 @@ Fast weights decay to baseline:
 
 Tag: \(\mathbb{1}(|w^f-w_0|>\theta_{tag})\). Consolidation tracks fast weights only when Tag & Protein.
 
+Protein synthesis uses a cooperative tag-count threshold \(N_p\) (default 50 in the
+reference implementation) to gate the scalar protein trace.
+
 ---
 
-## P2-8..12: Validation, determinism, Δt-invariance
+## P1-7: Energy regularization objective terms
 
-See `docs/REPRODUCIBILITY.md` and `tests/test_dt_invariance.py`.
+Energy cost:
+\[
+E = \lambda_{rate}\sum r^2 + \lambda_{weight}\sum w^2 + \sum I_{ext}^2
+\]
+
+Total reward:
+\[
+R = R_{task} - \lambda_{energy} E + \min(r_{mean}, r_{min})
+\]
+
+---
+
+## P2-8: Numerical methods (Euler/RK2/exp decay)
+
+Numerical integration uses explicit Euler and RK2 where specified, and exponential
+updates for conductance decay. Δt-invariance checks are defined in
+`tests/test_dt_invariance.py`.
+
+## P2-9: Determinism protocol (seed + explicit RNG)
+
+All stochasticity is routed through explicit RNG injection; see `bnsyn/rng.py`
+and `docs/REPRODUCIBILITY.md` for the deterministic workflow.
+
+## P2-10: Calibration utilities (f–I fit)
+
+Calibration utilities provide deterministic linear fits for f–I curves via
+least-squares regression.
+
+## P2-11: Reference network simulator (small-N)
+
+The reference network simulator is a small-N deterministic harness used in
+tests and CLI demos. It enforces safety bounds on membrane voltage.
+
+## P2-12: Bench harness contract (CLI + metrics)
+
+The CLI exposes deterministic demo and Δt-check harnesses that report summary
+metrics for reproducibility checks.
 
 ---
 
