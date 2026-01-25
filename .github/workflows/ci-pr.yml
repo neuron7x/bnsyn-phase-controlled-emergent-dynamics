@@ -140,6 +140,27 @@ jobs:
       - name: Smoke tests
         run: pytest -m "not validation"
 
+  ci-benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Determinism benchmark
+        run: python benchmarks/determinism.py
+      - name: dt-invariance benchmark
+        run: python benchmarks/scaling.py
+      - name: Criticality benchmark
+        run: python benchmarks/criticality.py
+
   gitleaks:
     runs-on: ubuntu-latest
     permissions:
