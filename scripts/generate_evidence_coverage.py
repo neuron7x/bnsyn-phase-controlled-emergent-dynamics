@@ -41,9 +41,9 @@ def parse_bibtex_dois(path: Path) -> dict[str, str]:
     return entries
 
 
-def parse_lock_dois(path: Path) -> dict[str, str]:
-    """Extract bibkey -> DOI/NODOI from sources.lock."""
-    result: dict[str, str] = {}
+def parse_lock_entries(path: Path) -> dict[str, dict[str, str]]:
+    """Extract bibkey -> DOI/NODOI and canonical URL from sources.lock."""
+    result: dict[str, dict[str, str]] = {}
     if not path.exists():
         return result
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -54,9 +54,10 @@ def parse_lock_dois(path: Path) -> dict[str, str]:
             continue
         bibkey, rest = line.split("=", 1)
         parts = rest.split("::")
-        if parts:
+        if len(parts) >= 2:
             doi_or_nodoi = parts[0].strip()
-            result[bibkey.strip()] = doi_or_nodoi
+            url = parts[1].strip()
+            result[bibkey.strip()] = {"doi_or_nodoi": doi_or_nodoi, "url": url}
     return result
 
 
@@ -77,34 +78,38 @@ def main() -> int:
         return 1
 
     bib_dois = parse_bibtex_dois(BIB) if BIB.exists() else {}
-    lock_dois = parse_lock_dois(LOCK)
+    lock_entries = parse_lock_entries(LOCK)
 
     lines = [
         "# Evidence Coverage",
         "",
-        "| Claim ID | Tier | Normative | Bibkey | DOI | Spec Section | Implementation Paths | Verification Paths |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Claim ID | Tier | Normative | Status | Bibkey | DOI/URL | Spec Section | Implementation Paths | Verification Paths |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
 
     for c in claims:
         cid = str(c.get("id", ""))
         tier = str(c.get("tier", ""))
         normative = "true" if c.get("normative") else "false"
+        status = str(c.get("status", ""))
         bibkey = str(c.get("bibkey", ""))
         spec_section = str(c.get("spec_section", ""))
         impl_paths = c.get("implementation_paths", [])
         ver_paths = c.get("verification_paths", [])
 
-        # Get DOI from bib or lock
-        doi = bib_dois.get(bibkey, "")
-        if not doi:
-            doi = lock_dois.get(bibkey, "")
+        # Get DOI from bib or fall back to lock URL
+        doi_or_url = bib_dois.get(bibkey, "")
+        if not doi_or_url:
+            lock_entry = lock_entries.get(bibkey, {})
+            doi_or_url = lock_entry.get("doi_or_nodoi", "")
+            if doi_or_url == "NODOI":
+                doi_or_url = lock_entry.get("url", "")
 
         impl_str = format_paths(impl_paths) if impl_paths else ""
         ver_str = format_paths(ver_paths) if ver_paths else ""
 
         lines.append(
-            f"| {cid} | {tier} | {normative} | {bibkey} | {doi} | {spec_section} | {impl_str} | {ver_str} |"
+            f"| {cid} | {tier} | {normative} | {status} | {bibkey} | {doi_or_url} | {spec_section} | {impl_str} | {ver_str} |"
         )
 
     OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")

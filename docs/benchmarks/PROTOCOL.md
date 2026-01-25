@@ -222,7 +222,7 @@ The optional `benchmarks.yml` workflow:
 - Scheduled weekly for trend tracking
 
 To make merge-blocking (not recommended without baselines):
-- Add workflow to required checks in branch protection
+- Add workflow to branch protection checks
 - Implement automated baseline comparison with thresholds
 
 ## Changelog

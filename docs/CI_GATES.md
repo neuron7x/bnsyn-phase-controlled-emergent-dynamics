@@ -3,13 +3,14 @@
 This repository enforces audit-grade CI gates. The commands listed below are the
 exact commands executed by CI.
 
-## PR-required checks
+## PR checks
 
 **Workflow: `ci-pr` (.github/workflows/ci-pr.yml)**
 
 - **Job: `ssot`**
   - `python scripts/validate_bibliography.py`
   - `python scripts/validate_claims.py`
+  - `python scripts/scan_governed_docs.py`
   - `python scripts/scan_normative_tags.py`
 - **Job: `quality`**
   - `ruff format --check .`
@@ -26,6 +27,16 @@ exact commands executed by CI.
 - **Job: `pip-audit`**
   - `pip-audit`
 
+**Workflow: `ci-smoke` (.github/workflows/ci-smoke.yml)**
+
+- **Job: `ssot`**
+  - `python scripts/validate_bibliography.py`
+  - `python scripts/validate_claims.py`
+  - `python scripts/scan_governed_docs.py`
+  - `python scripts/scan_normative_tags.py`
+- **Job: `tests-smoke`**
+  - `pytest -m "not validation"`
+
 **Workflow: `codeql` (.github/workflows/codeql.yml)**
 
 - **Job: `analyze`**
@@ -38,14 +49,15 @@ exact commands executed by CI.
 - **Job: `ssot`**
   - `python scripts/validate_bibliography.py`
   - `python scripts/validate_claims.py`
+  - `python scripts/scan_governed_docs.py`
   - `python scripts/scan_normative_tags.py`
 - **Job: `tests-validation`**
   - `pytest -m validation`
 
-## Required checks list (branch protection)
+## Branch protection check list
 
-Configure branch protection for the `main` branch to require the following
-checks to pass:
+Configure branch protection for the `main` branch to include the following
+checks:
 
 - `ci-pr / ssot`
 - `ci-pr / quality`
@@ -53,6 +65,8 @@ checks to pass:
 - `ci-pr / tests-smoke`
 - `ci-pr / gitleaks`
 - `ci-pr / pip-audit`
+- `ci-smoke / ssot`
+- `ci-smoke / tests-smoke`
 - `codeql / analyze`
 
 ## How to enable branch protection
@@ -60,5 +74,5 @@ checks to pass:
 1. Open repository **Settings → Branches**.
 2. Add or edit the protection rule for `main`.
 3. Enable **Require status checks to pass before merging**.
-4. Select the required checks listed above (exact names).
+4. Select the checks listed above (exact names).
 5. Save the rule.

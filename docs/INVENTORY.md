@@ -2,6 +2,62 @@
 
 This document is the **authoritative list** of governed and non-governed paths in the BN-Syn repository.
 
+## Normative language definition
+
+Normative language in governed documents is **line-level** and is triggered by the
+keywords listed below. Lines that contain any of these keywords are treated as
+normative signals and are tagged with a NORMATIVE + CLM-#### tag in governed
+documents.
+
+```
+must
+shall
+required
+guarantee
+```
+
+## Governed documents (authoritative list)
+
+The following list is consumed by `scripts/scan_governed_docs.py` and
+`scripts/scan_normative_tags.py`. Only these files are scanned for normative
+keywords and NORMATIVE claim bindings.
+
+```yaml
+governed_docs:
+  - README.md
+  - README_CLAIMS_GATE.md
+  - docs/API_CONTRACT.md
+  - docs/ARCHITECTURE.md
+  - docs/AUDIT_LEDGER.md
+  - docs/AUDIT_FINDINGS.md
+  - docs/BENCHMARK_MAP.md
+  - docs/BIBLIOGRAPHY.md
+  - docs/CI_GATES.md
+  - docs/COMPONENT_AUDIT.md
+  - docs/CONSTITUTIONAL_AUDIT.md
+  - docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md
+  - docs/EVIDENCE_COVERAGE.md
+  - docs/GOVERNANCE.md
+  - docs/INDEX.md
+  - docs/INVENTORY.md
+  - docs/NORMATIVE_LABELING.md
+  - docs/PERFORMANCE.md
+  - docs/PERFORMANCE_REPORT.md
+  - docs/PHYSICAL_VALIDITY.md
+  - docs/REPO_STRUCTURE.md
+  - docs/REPRODUCIBILITY.md
+  - docs/SCALABILITY_REPORT.md
+  - docs/SECURITY_GITLEAKS.md
+  - docs/SPEC.md
+  - docs/SSOT.md
+  - docs/SSOT_RULES.md
+  - docs/VCG.md
+  - docs/api/api_bnsyn.md
+  - docs/api/index.md
+  - docs/api/modules.md
+  - docs/benchmarks/PROTOCOL.md
+```
+
 ---
 
 ## Governed Paths
@@ -11,7 +67,7 @@ This document is the **authoritative list** of governed and non-governed paths i
 | `docs/` | Formal specification, architecture, reproducibility, and governance docs | [SSOT.md](SSOT.md), [GOVERNANCE.md](GOVERNANCE.md) |
 | `bibliography/` | SSOT bibliography (`bnsyn.bib`), mappings (`mapping.yml`), lockfile (`sources.lock`) | [SSOT.md](SSOT.md) |
 | `claims/` | Evidence ledger for normative claims (`claims.yml`) | [SSOT.md](SSOT.md), [NORMATIVE_LABELING.md](NORMATIVE_LABELING.md) |
-| `scripts/` | SSOT validators (`validate_bibliography.py`, `validate_claims.py`, `scan_normative_tags.py`) | [SSOT.md](SSOT.md) |
+| `scripts/` | SSOT validators (`validate_bibliography.py`, `validate_claims.py`, `scan_governed_docs.py`, `scan_normative_tags.py`) | [SSOT.md](SSOT.md) |
 | `.github/workflows/` | CI gates for SSOT + tests | [SSOT.md](SSOT.md) |
 | `src/` | Reference implementation (`bnsyn`) | [SPEC.md](SPEC.md) |
 | `tests/` | Smoke + validation tests | [SPEC.md](SPEC.md), [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
@@ -48,6 +104,7 @@ docs/
 ├── VCG.md                      # VCG extension
 ├── CRITICALITY_CONTROL_VS_MEASUREMENT.md  # Criticality docs
 ├── AUDIT_FINDINGS.md           # Audit findings
+├── AUDIT_LEDGER.md             # Audit ledger (findings → fixes)
 └── appendix/                   # NON-NORMATIVE imports
     ├── EXECUTIVE_SUMMARY.md
     ├── PRODUCTION_AUDIT.md
@@ -73,7 +130,7 @@ tests/
 
 ## SSOT Artifact Closure
 
-The following artifacts must remain in sync (enforced by validators):
+The following artifacts remain in sync (enforced by validators):
 
 1. `bibliography/bnsyn.bib` — BibTeX entries
 2. `bibliography/mapping.yml` — Claim ID → bibkey mappings

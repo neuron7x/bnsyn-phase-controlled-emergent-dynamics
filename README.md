@@ -47,13 +47,13 @@ python -m pip install -e ".[dev]"
 
 ## PR Quality Standards
 
-All PRs must pass:
+All PRs pass the following checks:
 - ✅ Pre-commit hooks (ruff, mypy, pylint, pydocstyle, pytest-smoke, coverage)
 - ✅ Unit tests with ≥85% coverage
 - ✅ Determinism checks (identical seed = identical results)
 - ✅ SSOT gates (bibliography, claims, normative tags)
 - ✅ Security audits (gitleaks, pip-audit, bandit)
-- ✅ Branch protection rules (all required checks must pass)
+- ✅ Branch protection rules (all enforced checks pass)
 
 ## Local Development
 

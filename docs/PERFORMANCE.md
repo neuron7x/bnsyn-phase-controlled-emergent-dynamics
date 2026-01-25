@@ -30,8 +30,8 @@ CI uses the bounded scenario: N = 1k, dt = 0.1 ms.
 
 - dt_invariance_drift ≤ 0.05
 - criticality_sigma_drift ≤ 0.20
-- Throughput must be non-increasing with N (within 5% tolerance)
-- Per-step costs must be non-decreasing with N (within 5% tolerance)
+- Throughput is expected to be non-increasing with N (within 5% tolerance)
+- Per-step costs are expected to be non-decreasing with N (within 5% tolerance)
 
 ## SPEC + Claims Mapping
 

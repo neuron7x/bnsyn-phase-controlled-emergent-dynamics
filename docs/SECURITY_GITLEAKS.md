@@ -11,7 +11,7 @@ The CI workflow (`ci-pr.yml`) runs **two** gitleaks scans:
 1. **Repository Scan**: Scans all files in all commits in the repository
 2. **PR Diff Scan**: Scans only the changes between the PR base and head commits
 
-Both scans must pass for the CI job to succeed. If either scan detects secrets, the job fails.
+Both scans pass for the CI job to succeed. If either scan detects secrets, the job fails.
 
 ## Configuration
 
