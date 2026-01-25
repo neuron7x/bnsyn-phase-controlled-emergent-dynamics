@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean
+.PHONY: dev-setup check test test-determinism test-validation coverage validate-coverage quality format fix lint mypy ssot security clean
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -16,8 +16,12 @@ test-validation:
 	pytest -m validation -v
 
 coverage:
-	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=term-missing --cov-fail-under=85
+	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=json --cov-report=term-missing --cov-fail-under=85
 	@echo "Coverage report: htmlcov/index.html"
+
+validate-coverage:
+	@echo "Validating coverage against threshold..."
+	python scripts/validate_coverage.py
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"

@@ -76,7 +76,8 @@ jobs:
             pyproject.toml
             requirements-lock.txt
       - run: pip install -e ".[dev]"
-      - run: |
+      - name: Run tests with coverage
+        run: |
           pytest \
             -m "not validation" \
             --cov=src/bnsyn \
@@ -86,32 +87,29 @@ jobs:
             --cov-fail-under=85 \
             -v
         timeout-minutes: 10
-      - name: Upload coverage to Codecov
+      - name: Validate coverage (PRIMARY GATE)
+        run: python scripts/validate_coverage.py
+      - name: Upload coverage to Codecov (OBSERVABILITY LAYER)
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.json
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
           flags: smoke-tests
           name: smoke-coverage-${{ github.sha }}
         timeout-minutes: 5
+        continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage artifact (fallback)
-        if: failure()
+      - name: Upload coverage artifacts (ALWAYS)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-failed-${{ github.sha }}
+          name: coverage-report-${{ github.sha }}
           path: |
             coverage.json
             htmlcov/
-          retention-days: 7
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: coverage-report-${{ github.sha }}
-          path: htmlcov/
           retention-days: 30
 
   ssot:
