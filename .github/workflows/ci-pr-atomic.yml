@@ -91,11 +91,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.json
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
           flags: smoke-tests
           name: smoke-coverage-${{ github.sha }}
         timeout-minutes: 5
+        continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage artifact (fallback)
@@ -128,6 +129,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: python scripts/validate_bibliography.py
       - run: python scripts/validate_claims.py
+      - run: python scripts/scan_governed_docs.py
       - run: python scripts/scan_normative_tags.py
 
   security:
