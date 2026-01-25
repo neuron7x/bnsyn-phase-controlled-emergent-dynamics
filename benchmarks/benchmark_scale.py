@@ -1,5 +1,7 @@
 """Scale benchmark for BN-Syn network sizes."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
@@ -74,9 +76,7 @@ def run_scale(smoke: bool) -> dict[str, Any]:
         "memory_mb": peak_memory,
         "events_per_sec": last_run.events_per_sec if last_run else 0.0,
         "spikes_per_sec": last_run.spikes_per_sec if last_run else 0.0,
-        "synaptic_updates_per_sec": (
-            last_run.synaptic_updates_per_sec if last_run else 0.0
-        ),
+        "synaptic_updates_per_sec": (last_run.synaptic_updates_per_sec if last_run else 0.0),
         "spike_count": last_run.spike_count if last_run else 0.0,
         "runs": [_to_result(run) for run in runs],
     }
@@ -97,12 +97,8 @@ def run_scale(smoke: bool) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="BN-Syn scale benchmark")
-    parser.add_argument(
-        "--smoke", action="store_true", help="Run a reduced smoke benchmark"
-    )
-    parser.add_argument(
-        "--output", type=str, default=None, help="Optional JSON output path"
-    )
+    parser.add_argument("--smoke", action="store_true", help="Run a reduced smoke benchmark")
+    parser.add_argument("--output", type=str, default=None, help="Optional JSON output path")
     args = parser.parse_args()
     payload = run_scale(args.smoke)
     emit_json(payload, output_path=args.output)

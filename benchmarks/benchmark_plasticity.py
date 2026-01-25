@@ -1,5 +1,7 @@
 """Plasticity on/off benchmark for BN-Syn."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
@@ -162,12 +164,8 @@ def run_plasticity(smoke: bool) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="BN-Syn plasticity benchmark")
-    parser.add_argument(
-        "--smoke", action="store_true", help="Run a reduced smoke benchmark"
-    )
-    parser.add_argument(
-        "--output", type=str, default=None, help="Optional JSON output path"
-    )
+    parser.add_argument("--smoke", action="store_true", help="Run a reduced smoke benchmark")
+    parser.add_argument("--output", type=str, default=None, help="Optional JSON output path")
     args = parser.parse_args()
     payload = run_plasticity(args.smoke)
     emit_json(payload, output_path=args.output)
