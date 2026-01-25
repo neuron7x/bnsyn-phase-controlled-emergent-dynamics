@@ -123,8 +123,8 @@ python scripts/validate_coverage.py
 **Rationale:** External observability services provide value but cannot be allowed to halt development workflow.
 
 **Enforcement:**
-- `.github/workflows/ci-pr-atomic.yml` line 94: `fail_ci_if_error: false`
-- `.github/workflows/ci-pr-atomic.yml` line 97: `continue-on-error: true`
+- `.github/workflows/ci-pr-atomic.yml` step "Upload coverage to Codecov": `fail_ci_if_error: false`
+- `.github/workflows/ci-pr-atomic.yml` step "Upload coverage to Codecov": `continue-on-error: true`
 
 **Verification:**
 ```bash

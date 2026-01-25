@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# SSOT: Coverage threshold from pyproject.toml and Makefile
+# SSOT: Coverage threshold from Makefile line 19 and CI workflow line 87
 DEFAULT_THRESHOLD = 85.0
 COVERAGE_FILE = Path("coverage.json")
 
@@ -37,6 +37,9 @@ def load_coverage_data() -> dict[str, Any]:
 
 def calculate_coverage(data: dict[str, Any]) -> tuple[float, int, int]:
     """Calculate total coverage percentage and line counts.
+    
+    Args:
+        data: Coverage data dictionary from coverage.json
     
     Returns:
         (coverage_percent, covered_lines, total_lines)

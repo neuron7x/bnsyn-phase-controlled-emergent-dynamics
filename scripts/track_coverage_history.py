@@ -10,6 +10,7 @@ Format: {"timestamp": "...", "sha": "...", "coverage": 86.25, "covered": 778, "t
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -33,8 +34,6 @@ def load_coverage_data() -> dict[str, Any]:
 def get_git_sha() -> str:
     """Get current Git commit SHA."""
     try:
-        import subprocess
-
         result = subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
             capture_output=True,
