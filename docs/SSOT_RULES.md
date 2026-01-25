@@ -45,4 +45,12 @@ rules:
     statement: Governed docs lines with normative signals include CLM identifiers.
     enforcement: scripts/scan_normative_tags.py
     failure_code: SSOT-010
+  - id: COV-001
+    statement: Coverage validation MUST be self-contained with no external dependencies.
+    enforcement: scripts/validate_coverage.py, .github/workflows/ci-pr-atomic.yml
+    failure_code: COV-001
+  - id: COV-002
+    statement: Codecov MUST NOT block CI (fail_ci_if_error=false, continue-on-error=true).
+    enforcement: .github/workflows/ci-pr-atomic.yml
+    failure_code: COV-002
 ```

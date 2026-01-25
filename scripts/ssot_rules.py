@@ -20,6 +20,8 @@ RULE_IDS: tuple[str, ...] = (
     "SSR-008",
     "SSR-009",
     "SSR-010",
+    "COV-001",
+    "COV-002",
 )
 
 

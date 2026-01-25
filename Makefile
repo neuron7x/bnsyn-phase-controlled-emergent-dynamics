@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage validate-coverage quality format fix lint mypy ssot security clean
+.PHONY: dev-setup check test test-determinism test-validation coverage validate-coverage coverage-history quality format fix lint mypy ssot security clean
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -22,6 +22,9 @@ coverage:
 validate-coverage:
 	@echo "Validating coverage against threshold..."
 	python scripts/validate_coverage.py
+
+coverage-history:
+	@python scripts/track_coverage_history.py view
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"
