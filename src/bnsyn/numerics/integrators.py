@@ -55,7 +55,9 @@ def clamp_exp_arg(x: float, max_arg: float = 20.0) -> float:
     return float(min(x, max_arg))
 
 
-def euler_step(x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]) -> Float64Array:
+def euler_step(
+    x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]
+) -> Float64Array:
     """Perform an explicit Euler integration step.
 
     Parameters

@@ -64,6 +64,7 @@ class AdExParams:
     -----
     Units are SI for the production helper, distinct from the core model.
     """
+
     # Membrane
     C: float = 90e-12  # Farads
     gL: float = 10e-9  # Siemens
