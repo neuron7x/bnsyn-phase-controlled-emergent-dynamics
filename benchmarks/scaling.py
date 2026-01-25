@@ -15,13 +15,13 @@ if str(ROOT) not in sys.path:
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
-from bnsyn.rng import seed_all
-from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.config import AdExParams, CriticalityParams, SynapseParams  # noqa: E402
+from bnsyn.rng import seed_all  # noqa: E402
+from bnsyn.sim.network import Network, NetworkParams  # noqa: E402
 
-from benchmarks.common import build_context, metric_payload
+from benchmarks.common import build_context, metric_payload  # noqa: E402
 
 
 @dataclass(frozen=True)

@@ -15,13 +15,13 @@ if str(ROOT) not in sys.path:
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
-from bnsyn.rng import seed_all
-from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.config import AdExParams, CriticalityParams, SynapseParams  # noqa: E402
+from bnsyn.rng import seed_all  # noqa: E402
+from bnsyn.sim.network import Network, NetworkParams  # noqa: E402
 
-from benchmarks.common import build_context, metric_payload
+from benchmarks.common import build_context, metric_payload  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -37,7 +37,9 @@ EXT_RATE_HZ = 1000.0
 EXT_W_NS = 50.0
 
 
-def _simulate_activity(seed: int, n_neurons: int, dt_ms: float, steps: int) -> tuple[np.ndarray, np.ndarray]:
+def _simulate_activity(
+    seed: int, n_neurons: int, dt_ms: float, steps: int
+) -> tuple[np.ndarray, np.ndarray]:
     pack = seed_all(seed)
     rng = pack.np_rng
     net = Network(
@@ -123,8 +125,12 @@ def main() -> None:
     metrics = [
         metric_payload(ctx, "criticality_sigma_mean", summary.sigma_mean, "sigma", "criticality"),
         metric_payload(ctx, "criticality_sigma_std", summary.sigma_std, "sigma", "criticality"),
-        metric_payload(ctx, "criticality_avalanche_count", summary.avalanche_count, "count", "criticality"),
-        metric_payload(ctx, "criticality_powerlaw_slope", summary.power_law_slope, "slope", "criticality"),
+        metric_payload(
+            ctx, "criticality_avalanche_count", summary.avalanche_count, "count", "criticality"
+        ),
+        metric_payload(
+            ctx, "criticality_powerlaw_slope", summary.power_law_slope, "slope", "criticality"
+        ),
         metric_payload(ctx, "criticality_powerlaw_r2", summary.power_law_r2, "r2", "criticality"),
     ]
     _emit_metrics(metrics)
