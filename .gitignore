@@ -12,6 +12,8 @@ docs/_build/
 results/
 artifacts/
 benchmarks/baselines/
+bench.json
+diffs.json
 
 # PR artifacts (should not be tracked)
 PR_DIFF.patch

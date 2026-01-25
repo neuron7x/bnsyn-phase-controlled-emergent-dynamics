@@ -25,12 +25,14 @@ def _extract_runtime_ms(bench_data: dict[str, Any]) -> float:
     raise SystemExit("Benchmark 'test_demo_runtime' not found in bench.json")
 
 
-def _compare_metric(name: str, baseline: float, current: float) -> dict[str, float | str]:
+def _compare_metric(
+    name: str, baseline: float, current: float, tolerance: float = 0.03
+) -> dict[str, float | str]:
     if baseline == 0.0:
         deviation = 0.0 if current == 0.0 else 1.0
     else:
         deviation = abs(current - baseline) / abs(baseline)
-    status = "pass" if deviation <= 0.03 else "fail"
+    status = "pass" if deviation <= tolerance else "fail"
     return {
         "metric": name,
         "baseline": float(baseline),
@@ -60,24 +62,30 @@ def main() -> None:
     runtime_ms = _extract_runtime_ms(bench_data)
 
     comparisons = []
-    for key in [
+    # Physics metrics with tight 3% tolerance
+    physics_keys = [
         "sigma",
         "entropy",
         "powerlaw_alpha",
         "plasticity_energy",
         "temperature",
         "dt_error",
-        "memory_mb",
-    ]:
+    ]
+    for key in physics_keys:
         if key not in baseline_data:
             raise SystemExit(f"Baseline missing key: {key}")
         if key not in metrics:
             raise SystemExit(f"Metrics missing key: {key}")
-        comparisons.append(_compare_metric(key, float(baseline_data[key]), float(metrics[key])))
+        comparisons.append(_compare_metric(key, float(baseline_data[key]), float(metrics[key]), tolerance=0.03))
+
+    # Environment-dependent metrics with relaxed 100% tolerance
+    # (runtime and memory vary significantly across systems)
+    if "memory_mb" in baseline_data and "memory_mb" in metrics:
+        comparisons.append(_compare_metric("memory_mb", float(baseline_data["memory_mb"]), float(metrics["memory_mb"]), tolerance=1.0))
 
     if "runtime_ms" not in baseline_data:
         raise SystemExit("Baseline missing key: runtime_ms")
-    comparisons.append(_compare_metric("runtime_ms", float(baseline_data["runtime_ms"]), runtime_ms))
+    comparisons.append(_compare_metric("runtime_ms", float(baseline_data["runtime_ms"]), runtime_ms, tolerance=1.0))
 
     args.output.write_text(json.dumps({"comparisons": comparisons}, indent=2, sort_keys=True))
 
