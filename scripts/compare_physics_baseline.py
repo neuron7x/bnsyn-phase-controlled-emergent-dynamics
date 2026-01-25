@@ -8,6 +8,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+# Tolerance thresholds for metric comparisons
+PHYSICS_TOLERANCE = 0.03  # 3% tolerance for deterministic physics metrics
+ENVIRONMENT_TOLERANCE = 1.0  # 100% tolerance for environment-dependent metrics
+
 
 def _load_json(path: Path) -> Any:
     if not path.exists():
@@ -26,7 +30,7 @@ def _extract_runtime_ms(bench_data: dict[str, Any]) -> float:
 
 
 def _compare_metric(
-    name: str, baseline: float, current: float, tolerance: float = 0.03
+    name: str, baseline: float, current: float, tolerance: float = PHYSICS_TOLERANCE
 ) -> dict[str, float | str]:
     if baseline == 0.0:
         deviation = 0.0 if current == 0.0 else 1.0
@@ -62,7 +66,7 @@ def main() -> None:
     runtime_ms = _extract_runtime_ms(bench_data)
 
     comparisons = []
-    # Physics metrics with tight 3% tolerance
+    # Physics metrics with tight tolerance for deterministic results
     physics_keys = [
         "sigma",
         "entropy",
@@ -76,16 +80,16 @@ def main() -> None:
             raise SystemExit(f"Baseline missing key: {key}")
         if key not in metrics:
             raise SystemExit(f"Metrics missing key: {key}")
-        comparisons.append(_compare_metric(key, float(baseline_data[key]), float(metrics[key]), tolerance=0.03))
+        comparisons.append(_compare_metric(key, float(baseline_data[key]), float(metrics[key]), tolerance=PHYSICS_TOLERANCE))
 
-    # Environment-dependent metrics with relaxed 100% tolerance
+    # Environment-dependent metrics with relaxed tolerance
     # (runtime and memory vary significantly across systems)
     if "memory_mb" in baseline_data and "memory_mb" in metrics:
-        comparisons.append(_compare_metric("memory_mb", float(baseline_data["memory_mb"]), float(metrics["memory_mb"]), tolerance=1.0))
+        comparisons.append(_compare_metric("memory_mb", float(baseline_data["memory_mb"]), float(metrics["memory_mb"]), tolerance=ENVIRONMENT_TOLERANCE))
 
     if "runtime_ms" not in baseline_data:
         raise SystemExit("Baseline missing key: runtime_ms")
-    comparisons.append(_compare_metric("runtime_ms", float(baseline_data["runtime_ms"]), runtime_ms, tolerance=1.0))
+    comparisons.append(_compare_metric("runtime_ms", float(baseline_data["runtime_ms"]), runtime_ms, tolerance=ENVIRONMENT_TOLERANCE))
 
     args.output.write_text(json.dumps({"comparisons": comparisons}, indent=2, sort_keys=True))
 
