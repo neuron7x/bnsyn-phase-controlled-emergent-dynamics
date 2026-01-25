@@ -1,3 +1,23 @@
+"""BN-Syn package entry point and version metadata.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+This module exposes the package version and provides top-level access to
+core configuration and RNG utilities without modifying simulation behavior.
+
+References
+----------
+docs/SPEC.md
+"""
+
 from __future__ import annotations
 
 from importlib import metadata
@@ -7,4 +27,4 @@ try:
 except metadata.PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0"
 
-__all__ = ["__version__", "rng", "config"]
+__all__ = ["__version__", "rng", "config", "neurons", "synapses", "control", "simulation"]

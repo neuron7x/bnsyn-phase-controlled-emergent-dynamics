@@ -1,3 +1,22 @@
+"""Numerical integration helpers for deterministic updates.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Exports integration helpers used by neuron and synapse dynamics.
+
+References
+----------
+docs/SPEC.md
+"""
+
 from .integrators import (
     clamp_exp_arg as clamp_exp_arg,
     euler_step as euler_step,

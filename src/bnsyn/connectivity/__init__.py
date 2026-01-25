@@ -1,4 +1,21 @@
-"""Connectivity management (sparse and dense)."""
+"""Connectivity management (sparse and dense).
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Exports deterministic sparse connectivity builders and metrics.
+
+References
+----------
+docs/SPEC.md#P2-11
+"""
 
 from __future__ import annotations
 

@@ -1,3 +1,22 @@
+"""Simulation entry points for BN-Syn.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Exports the reference Network model and simulation runner.
+
+References
+----------
+docs/SPEC.md
+"""
+
 from .network import (
     Network as Network,
     NetworkParams as NetworkParams,

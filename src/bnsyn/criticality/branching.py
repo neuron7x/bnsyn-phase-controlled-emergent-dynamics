@@ -1,6 +1,21 @@
 """Criticality estimation and homeostatic gain control.
 
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
 Implements SPEC P0-4 sigma tracking and gain control.
+
+References
+----------
+docs/SPEC.md#P0-4
+docs/SSOT.md
 """
 
 from __future__ import annotations
@@ -16,16 +31,21 @@ from bnsyn.config import CriticalityParams
 class BranchingEstimator:
     """Estimate branching ratio sigma with exponential smoothing.
 
-    Args:
-        eps: Guard epsilon to avoid divide-by-zero.
-        ema_alpha: EMA smoothing factor.
+    Parameters
+    ----------
+    eps : float, optional
+        Guard epsilon to avoid divide-by-zero.
+    ema_alpha : float, optional
+        EMA smoothing factor.
 
-    Notes:
-        Uses deterministic EMA smoothing for CI stability.
+    Notes
+    -----
+    Uses deterministic EMA smoothing for CI stability.
 
-    References:
-        - docs/SPEC.md#P0-4
-        - docs/SSOT.md
+    References
+    ----------
+    docs/SPEC.md#P0-4
+    docs/SSOT.md
     """
 
     eps: float = 1e-9
@@ -35,12 +55,25 @@ class BranchingEstimator:
     def update(self, A_t: float, A_t1: float) -> float:
         """Update sigma estimate based on consecutive activity counts.
 
-        Args:
-            A_t: Activity at time t (spike count).
-            A_t1: Activity at time t+1 (spike count).
+        Parameters
+        ----------
+        A_t : float
+            Activity at time t (spike count).
+        A_t1 : float
+            Activity at time t+1 (spike count).
 
-        Returns:
+        Returns
+        -------
+        float
             Smoothed sigma estimate.
+
+        Notes
+        -----
+        Uses an exponential moving average to ensure stable sigma estimates.
+
+        References
+        ----------
+        docs/SPEC.md#P0-4
         """
         A_t = float(A_t)
         A_t1 = float(A_t1)
@@ -53,16 +86,21 @@ class BranchingEstimator:
 class SigmaController:
     """Homeostatic gain controller for sigma regulation.
 
-    Args:
-        params: Criticality parameter set.
-        gain: Initial gain value.
+    Parameters
+    ----------
+    params : CriticalityParams
+        Criticality parameter set.
+    gain : float, optional
+        Initial gain value.
 
-    Notes:
-        Gain is clipped to [gain_min, gain_max] per SPEC P0-4.
+    Notes
+    -----
+    Gain is clipped to [gain_min, gain_max] per SPEC P0-4.
 
-    References:
-        - docs/SPEC.md#P0-4
-        - docs/SSOT.md
+    References
+    ----------
+    docs/SPEC.md#P0-4
+    docs/SSOT.md
     """
 
     params: CriticalityParams
@@ -71,11 +109,19 @@ class SigmaController:
     def step(self, sigma: float) -> float:
         """Update the gain given the current sigma estimate.
 
-        Args:
-            sigma: Current sigma estimate.
+        Parameters
+        ----------
+        sigma : float
+            Current sigma estimate.
 
-        Returns:
+        Returns
+        -------
+        float
             Updated gain value.
+
+        References
+        ----------
+        docs/SPEC.md#P0-4
         """
         p = self.params
         self.gain = float(self.gain - p.eta_sigma * (float(sigma) - p.sigma_target))

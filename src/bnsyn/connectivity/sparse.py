@@ -1,6 +1,21 @@
 """Sparse connectivity utilities with CSR representation.
 
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
 Implements deterministic connectivity construction and metrics for SPEC P2-11.
+
+References
+----------
+docs/SPEC.md#P2-11
+docs/SSOT.md
 """
 
 from __future__ import annotations
@@ -19,13 +34,28 @@ Float64Array = NDArray[np.float64]
 class SparseConnectivityMetrics:
     """Sparsity metrics and performance estimates.
 
-    Args:
-        density: Fraction of non-zero entries.
-        sparsity: Fraction of zero entries.
-        nnz: Number of non-zero entries.
-        memory_dense_mb: Dense matrix size estimate in MB.
-        memory_sparse_mb: Sparse CSR size estimate in MB.
-        speedup_estimated: Heuristic speedup estimate for sparse vs dense.
+    Parameters
+    ----------
+    density : float
+        Fraction of non-zero entries.
+    sparsity : float
+        Fraction of zero entries.
+    nnz : int
+        Number of non-zero entries.
+    memory_dense_mb : float
+        Dense matrix size estimate in MB.
+    memory_sparse_mb : float
+        Sparse CSR size estimate in MB.
+    speedup_estimated : float
+        Heuristic speedup estimate for sparse vs dense.
+
+    Notes
+    -----
+    Metrics are used for auditability and performance tracking.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
     """
 
     density: float
@@ -39,13 +69,27 @@ class SparseConnectivityMetrics:
 class SparseConnectivity:
     """Adaptive sparse/dense matrix dispatcher.
 
-    Args:
-        W: Dense weight matrix (shape: [n_pre, n_post]).
-        density_threshold: Density cutoff for sparse vs dense format.
-        force_format: Explicit format override.
+    Parameters
+    ----------
+    W : Float64Array
+        Dense weight matrix (shape: [n_pre, n_post]).
+    density_threshold : float, optional
+        Density cutoff for sparse vs dense format.
+    force_format : Literal["auto", "dense", "sparse"], optional
+        Explicit format override.
 
-    Raises:
-        ValueError: If W is not 2D.
+    Raises
+    ------
+    ValueError
+        If W is not 2D.
+
+    Notes
+    -----
+    Automatically selects dense or sparse representation based on density.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
     """
 
     def __init__(
@@ -99,11 +143,19 @@ class SparseConnectivity:
     def apply(self, x: Float64Array) -> Float64Array:
         """Compute y = W @ x with automatic format dispatch.
 
-        Args:
-            x: Input vector (shape: [n_post]).
+        Parameters
+        ----------
+        x : Float64Array
+            Input vector (shape: [n_post]).
 
-        Returns:
+        Returns
+        -------
+        Float64Array
             Output vector (shape: [n_pre]).
+
+        Notes
+        -----
+        Dispatches to dense or CSR multiplication based on internal format.
         """
         if self.format == "sparse":
             assert isinstance(self.W, sp.csr_matrix)
@@ -114,14 +166,34 @@ class SparseConnectivity:
         return np.asarray(np.dot(self.W, x), dtype=np.float64)
 
     def to_dense(self) -> Float64Array:
-        """Convert to dense matrix."""
+        """Convert to dense matrix.
+
+        Returns
+        -------
+        Float64Array
+            Dense weight matrix.
+
+        Notes
+        -----
+        Copies data if the internal representation is sparse.
+        """
         if self.format == "sparse":
             assert isinstance(self.W, sp.csr_matrix)
             return np.asarray(self.W.todense(), dtype=np.float64)
         return np.asarray(self.W, dtype=np.float64)
 
     def to_sparse(self) -> sp.csr_matrix:
-        """Convert to sparse CSR."""
+        """Convert to sparse CSR.
+
+        Returns
+        -------
+        sp.csr_matrix
+            Sparse CSR matrix representation.
+
+        Notes
+        -----
+        Copies data if the internal representation is dense.
+        """
         if self.format == "sparse":
             return self.W.copy()
         return sp.csr_matrix(self.W, dtype=np.float64)
@@ -145,22 +217,38 @@ def build_random_connectivity(
 ) -> SparseConnectivity:
     """Build Erdős-Rényi random connectivity with explicit RNG control.
 
-    Args:
-        n_pre: Number of presynaptic neurons.
-        n_post: Number of postsynaptic neurons.
-        connection_prob: Connection probability in [0, 1].
-        rng: NumPy Generator for deterministic sampling.
-        weight_mean: Mean weight for absolute normal sampling.
-        weight_std: Standard deviation of weights.
+    Parameters
+    ----------
+    n_pre : int
+        Number of presynaptic neurons.
+    n_post : int
+        Number of postsynaptic neurons.
+    connection_prob : float
+        Connection probability in [0, 1].
+    rng : np.random.Generator
+        NumPy Generator for deterministic sampling.
+    weight_mean : float, optional
+        Mean weight for absolute normal sampling.
+    weight_std : float, optional
+        Standard deviation of weights.
 
-    Returns:
+    Returns
+    -------
+    SparseConnectivity
         SparseConnectivity instance.
 
-    Raises:
-        ValueError: If shapes or probabilities are invalid.
+    Raises
+    ------
+    ValueError
+        If shapes or probabilities are invalid.
 
-    Notes:
-        Determinism is achieved by passing a managed NumPy Generator.
+    Notes
+    -----
+    Determinism is achieved by passing a managed NumPy Generator.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
     """
     if n_pre <= 0 or n_post <= 0:
         raise ValueError("n_pre and n_post must be positive")

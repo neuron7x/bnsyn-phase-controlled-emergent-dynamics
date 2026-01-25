@@ -1,6 +1,21 @@
 """Command-line interface for BN-Syn demos and checks.
 
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
 Provides deterministic demo runs and dt invariance checks per SPEC P2-11/P2-12.
+
+References
+----------
+docs/SPEC.md#P2-11
+docs/SPEC.md#P2-12
 """
 
 from __future__ import annotations
@@ -15,11 +30,23 @@ from bnsyn.sim.network import run_simulation
 def _cmd_demo(args: argparse.Namespace) -> int:
     """Run a deterministic demo simulation and print metrics.
 
-    Args:
-        args: Parsed CLI arguments.
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the demo subcommand.
 
-    Returns:
-        Exit code.
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Calls the deterministic simulation harness with explicit dt and seed.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
     """
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
@@ -29,11 +56,23 @@ def _cmd_demo(args: argparse.Namespace) -> int:
 def _cmd_dtcheck(args: argparse.Namespace) -> int:
     """Run dt vs dt/2 invariance check and print metrics.
 
-    Args:
-        args: Parsed CLI arguments.
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the dt invariance subcommand.
 
-    Returns:
-        Exit code.
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+
+    References
+    ----------
+    docs/SPEC.md#P2-12
     """
     m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
@@ -44,7 +83,24 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
-    """Entry point for the BN-Syn CLI."""
+    """Entry point for the BN-Syn CLI.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Builds the CLI parser and dispatches to deterministic command handlers.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    """
     p = argparse.ArgumentParser(prog="bnsyn", description="BN-Syn CLI")
     sub = p.add_subparsers(dest="cmd", required=True)
 

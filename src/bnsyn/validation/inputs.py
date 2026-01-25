@@ -1,4 +1,21 @@
-"""Pydantic validation models and NumPy input validators."""
+"""Pydantic validation models and NumPy input validators.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Provides shape/type guards for external API inputs.
+
+References
+----------
+docs/SSOT.md
+"""
 
 from __future__ import annotations
 
@@ -15,7 +32,37 @@ BoolArray = NDArray[np.bool_]
 
 
 class NetworkValidationConfig(BaseModel):
-    """Validated network configuration for API boundaries."""
+    """Validated network configuration for API boundaries.
+
+    Parameters
+    ----------
+    N : int
+        Number of neurons.
+    frac_inhib : float
+        Fraction of inhibitory neurons.
+    p_conn : float
+        Connection probability.
+    w_exc_nS : float
+        Excitatory synaptic weight (nS).
+    w_inh_nS : float
+        Inhibitory synaptic weight (nS).
+    ext_rate_hz : float
+        External Poisson drive rate (Hz).
+    ext_w_nS : float
+        External synaptic weight (nS).
+    dt_ms : float
+        Simulation timestep (ms).
+    adex : AdExParams
+        AdEx neuron parameters.
+    syn : SynapseParams
+        Synapse parameters.
+    crit : CriticalityParams
+        Criticality control parameters.
+
+    Notes
+    -----
+    Model is immutable and validates assignments for API safety.
+    """
 
     model_config = ConfigDict(frozen=True, validate_assignment=True)
 
@@ -34,13 +81,51 @@ class NetworkValidationConfig(BaseModel):
 
 
 def _ensure_ndarray(value: Any, name: str) -> np.ndarray:
+    """Ensure the provided value is a NumPy array.
+
+    Parameters
+    ----------
+    value : Any
+        Value to validate.
+    name : str
+        Name used in error messages.
+
+    Returns
+    -------
+    np.ndarray
+        Verified NumPy array.
+
+    Raises
+    ------
+    TypeError
+        If value is not a NumPy array.
+    """
     if not isinstance(value, np.ndarray):
         raise TypeError(f"{name}: expected ndarray, got {type(value)}")
     return value
 
 
 def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "state") -> None:
-    """Validate a 1D float64 state vector."""
+    """Validate a 1D float64 state vector.
+
+    Parameters
+    ----------
+    state : Float64Array
+        State vector to validate.
+    n_neurons : int
+        Expected number of neurons.
+    name : str, optional
+        Label used in error messages.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If dtype, shape, or NaN constraints are violated.
+    """
     arr = _ensure_ndarray(state, name)
     if arr.dtype != np.float64:
         raise ValueError(f"{name}: expected dtype float64, got {arr.dtype}")
@@ -51,7 +136,26 @@ def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "stat
 
 
 def validate_spike_array(spikes: BoolArray, n_neurons: int, name: str = "spikes") -> None:
-    """Validate a 1D boolean spike array."""
+    """Validate a 1D boolean spike array.
+
+    Parameters
+    ----------
+    spikes : BoolArray
+        Spike indicator array to validate.
+    n_neurons : int
+        Expected number of neurons.
+    name : str, optional
+        Label used in error messages.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If dtype or shape constraints are violated.
+    """
     arr = _ensure_ndarray(spikes, name)
     if arr.dtype != np.bool_:
         raise ValueError(f"{name}: expected dtype bool, got {arr.dtype}")
@@ -64,7 +168,26 @@ def validate_connectivity_matrix(
     shape: tuple[int, int],
     name: str = "connectivity",
 ) -> None:
-    """Validate a 2D float64 connectivity matrix."""
+    """Validate a 2D float64 connectivity matrix.
+
+    Parameters
+    ----------
+    matrix : Float64Array
+        Connectivity matrix to validate.
+    shape : tuple[int, int]
+        Expected matrix shape.
+    name : str, optional
+        Label used in error messages.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    ValueError
+        If dtype, shape, or NaN constraints are violated.
+    """
     arr = _ensure_ndarray(matrix, name)
     if arr.dtype != np.float64:
         raise ValueError(f"{name}: expected dtype float64, got {arr.dtype}")

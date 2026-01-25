@@ -1,3 +1,23 @@
+"""Dual-weight consolidation dynamics for synaptic memory.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Implements the SPEC P1-3 dual-weight consolidation rule with tags and protein.
+
+References
+----------
+docs/SPEC.md#P1-3
+docs/SSOT.md
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -11,10 +31,29 @@ from bnsyn.config import DualWeightParams
 class DualWeights:
     """Dual-weight synapse model: w_total = w_fast + w_cons.
 
+    Parameters
+    ----------
+    w_fast : np.ndarray
+        Fast synaptic weights (shape: [N_pre, N_post]).
+    w_cons : np.ndarray
+        Consolidated synaptic weights (shape: [N_pre, N_post]).
+    w0 : float
+        Baseline weight.
+    tags : np.ndarray
+        Boolean tag matrix (shape: [N_pre, N_post]).
+    protein : float
+        Global protein availability scalar.
+
+    Notes
+    -----
     - Fast weights decay to baseline w0 on tau_f.
     - Tag set when |w_fast - w0| > theta_tag.
-    - Protein is a global scalar synthesised when enough tags active.
+    - Protein is a global scalar synthesised when enough tags are active.
     - Consolidated weights follow slow tracking when Tag & Protein.
+
+    References
+    ----------
+    docs/SPEC.md#P1-3
     """
 
     w_fast: np.ndarray
@@ -25,6 +64,20 @@ class DualWeights:
 
     @classmethod
     def init(cls, shape: tuple[int, int], w0: float = 0.0) -> "DualWeights":
+        """Initialize dual-weight state tensors.
+
+        Parameters
+        ----------
+        shape : tuple[int, int]
+            Matrix shape for synaptic weights.
+        w0 : float, optional
+            Baseline weight value.
+
+        Returns
+        -------
+        DualWeights
+            Initialized dual-weight container.
+        """
         return cls(
             w_fast=np.full(shape, w0, dtype=float),
             w_cons=np.full(shape, w0, dtype=float),
@@ -39,6 +92,34 @@ class DualWeights:
         p: DualWeightParams,
         fast_update: np.ndarray,
     ) -> None:
+        """Advance dual-weight dynamics by one timestep.
+
+        Parameters
+        ----------
+        dt_s : float
+            Timestep in seconds (must be positive).
+        p : DualWeightParams
+            Dual-weight consolidation parameters.
+        fast_update : np.ndarray
+            Fast weight update increments (shape: [N_pre, N_post]).
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If dt_s is non-positive or update shapes mismatch.
+
+        Notes
+        -----
+        Updates fast weights, tags, protein synthesis, and consolidation.
+
+        References
+        ----------
+        docs/SPEC.md#P1-3
+        """
         if dt_s <= 0:
             raise ValueError("dt_s must be positive")
         if fast_update.shape != self.w_fast.shape:
@@ -64,4 +145,11 @@ class DualWeights:
 
     @property
     def w_total(self) -> np.ndarray:
+        """Return total synaptic weights.
+
+        Returns
+        -------
+        np.ndarray
+            Total weights ``w_fast + w_cons``.
+        """
         return np.asarray(self.w_fast + self.w_cons)

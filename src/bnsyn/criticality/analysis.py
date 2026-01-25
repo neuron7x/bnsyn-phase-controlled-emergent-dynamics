@@ -1,3 +1,23 @@
+"""Criticality analysis utilities for branching and avalanche statistics.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Provides deterministic estimators used to evaluate criticality metrics.
+
+References
+----------
+docs/SPEC.md#P0-4
+docs/SSOT.md
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -7,6 +27,24 @@ import numpy as np
 
 @dataclass(frozen=True)
 class PowerLawFit:
+    """Continuous power-law fit parameters.
+
+    Parameters
+    ----------
+    alpha : float
+        Power-law exponent.
+    xmin : float
+        Lower cutoff used in the fit.
+
+    Notes
+    -----
+    Parameters correspond to the continuous MLE fit used for avalanche analysis.
+
+    References
+    ----------
+    docs/SPEC.md#P0-4
+    """
+
     alpha: float
     xmin: float
 
@@ -14,8 +52,31 @@ class PowerLawFit:
 def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
     """Estimate branching ratio using a multistep regression approach.
 
+    Parameters
+    ----------
+    activity : np.ndarray
+        1D activity counts per timestep (non-negative).
+    max_lag : int, optional
+        Maximum lag for multi-step regression.
+
+    Returns
+    -------
+    float
+        Mean branching ratio estimate across valid lags.
+
+    Raises
+    ------
+    ValueError
+        If activity is not 1D, too short, or contains negative values.
+
+    Notes
+    -----
     For each lag k, estimate slope of A(t+k) vs A(t) via least squares, then
     infer sigma_k = slope ** (1/k). Returns the mean sigma_k across lags.
+
+    References
+    ----------
+    docs/SPEC.md#P0-4
     """
     if activity.ndim != 1:
         raise ValueError("activity must be 1D")
@@ -41,7 +102,33 @@ def mr_branching_ratio(activity: np.ndarray, max_lag: int = 5) -> float:
 
 
 def fit_power_law_mle(data: np.ndarray, xmin: float) -> PowerLawFit:
-    """Continuous power-law MLE fit for alpha with fixed xmin."""
+    """Continuous power-law MLE fit for alpha with fixed xmin.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        1D sample data for the fit.
+    xmin : float
+        Lower cutoff for the power-law fit.
+
+    Returns
+    -------
+    PowerLawFit
+        Fitted power-law parameters.
+
+    Raises
+    ------
+    ValueError
+        If data are not 1D, xmin is invalid, or samples are out of range.
+
+    Notes
+    -----
+    Uses the continuous maximum-likelihood estimator for alpha.
+
+    References
+    ----------
+    docs/SPEC.md#P0-4
+    """
     if data.ndim != 1:
         raise ValueError("data must be 1D")
     if xmin <= 0:
