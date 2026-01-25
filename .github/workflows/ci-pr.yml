@@ -42,6 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-lock.txt
           pip install -e .
+          pip install pytest-benchmark
       - name: Pytest (non-validation)
         run: pytest -m "not validation"
 

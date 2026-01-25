@@ -1,8 +1,8 @@
 # CI Gates
 
-## Merge-Blocking Checks (Required for PRs)
+## Merge-Blocking Checks for PRs
 
-All jobs in `.github/workflows/ci-pr.yml` are required for pull requests and must pass before merge.
+All jobs in `.github/workflows/ci-pr.yml` block pull request merge if they fail.
 
 | Gate | Workflow Job | When It Runs | Local Command | Blocks Merge |
 | --- | --- | --- | --- | --- |
