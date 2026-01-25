@@ -58,3 +58,32 @@ agents that repeatedly match a social/interaction pattern without measurable con
 deprioritized by withdrawing future routing priority and resource budget. VCG is specified
 as a non-core extension (does not change the 12 core neurodynamics components) and is documented
 in `docs/VCG.md`.
+
+## Related Work / Bio-Inspired & Neuromorphic Context (Tier-S)
+
+**⚠️ NON-NORMATIVE SECTION**: The following sources provide contextual inspiration and design vocabulary
+for bio-inspired, neuromorphic, and embodied AI research directions. These Tier-S materials are NOT used
+to justify equations, parameters, or normative claims in the BN-Syn system specification.
+
+The 2026 landscape of bio-inspired and neuromorphic computing offers diverse perspectives on energy
+efficiency, physical embodiment, and biomimetic design principles:
+
+- **SPIE BIMPS 2026** provides context on biologically inspired materials and processes, motivating
+  exploration of how material properties can inform computational architectures.
+- **3Bs Materials Tech 2026** informs design vocabulary for biomimetic approaches, offering insights
+  into how biological structures inspire synthetic systems.
+- **BioINSP 2026** explores bioinspired hierarchical structures and biomineralisation-inspired systems,
+  providing context for multi-scale organizational principles.
+- **ACM Neuromorphic Computing 2026** offers a broader neuromorphic computing landscape, informing
+  perspectives on brain-inspired computation beyond the specific neuron models used in BN-Syn.
+- **CEC GMU Energy-Efficient AI** provides context on how brainpower inspires energy-efficient AI,
+  motivating but not prescribing efficiency considerations.
+- **MDPI Bio-Inspired AI Special Issue** explores intersections of generative AI and biomimicry,
+  offering perspectives on bio-inspired learning mechanisms.
+- **Frontiers Embodied AI** informs thinking about physical and embodied artificial intelligence,
+  providing context for embodied computation paradigms.
+
+These sources contribute to the intellectual context and motivation for exploring bio-inspired approaches
+but do NOT constitute evidence for any specific parameter choice, equation, or algorithmic decision in
+the BN-Syn architecture. For normative references that substantiate the system specification, see the
+evidence crosswalk table above and consult `claims/claims.yml` for Tier-A claims.

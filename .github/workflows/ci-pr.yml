@@ -26,6 +26,7 @@ jobs:
           python scripts/validate_claims.py
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
+          python scripts/scan_tierS_misuse.py
 
   dependency-consistency:
     runs-on: ubuntu-latest
