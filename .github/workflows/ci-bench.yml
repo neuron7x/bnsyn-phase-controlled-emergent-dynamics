@@ -1,0 +1,38 @@
+name: ci-bench
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 5 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  physics-benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+          pip install -e .
+          pip install pytest-benchmark
+      - name: Run physics invariants
+        run: pytest tests/validation/test_physical_invariants.py
+      - name: Run benchmarks
+        run: pytest --benchmark-json=bench.json
+      - name: Compare baselines
+        run: python scripts/compare_physics_baseline.py --bench bench.json --metrics artifacts/physics_metrics.json --output diffs.json
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-benchmarks-${{ github.run_id }}
+          path: |
+            bench.json
+            diffs.json
+            artifacts/physics_metrics.json

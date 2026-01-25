@@ -1,45 +1,60 @@
 name: ci-validation
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 3 * * 0"
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  ssot:
+  validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
-      - name: SSOT gates
+          pip install -r requirements-lock.txt
+          pip install -e .
+      - name: Run validation suite
         run: |
-          python scripts/validate_bibliography.py
-          python scripts/validate_claims.py
-          python scripts/scan_governed_docs.py
-          python scripts/scan_normative_tags.py
+          mkdir -p artifacts/validation
+          python scripts/validate_bibliography.py | tee artifacts/validation/validate_bibliography.log
+          python scripts/validate_claims.py | tee artifacts/validation/validate_claims.log
+          python scripts/scan_normative_tags.py | tee artifacts/validation/scan_normative_tags.log
+          python scripts/scan_governed_docs.py | tee artifacts/validation/scan_governed_docs.log
+          pytest -m validation | tee artifacts/validation/pytest-validation.log
+      - name: Upload validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-logs-${{ github.run_id }}
+          path: artifacts/validation
 
-  tests-validation:
+  benchmarks-weekly:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
-      - name: Validation tests
-        run: pytest -m validation
+          pip install -r requirements-lock.txt
+          pip install -e .
+          pip install pytest-benchmark
+      - name: Run full benchmarks
+        run: |
+          python scripts/run_benchmarks.py --suite full --output benchmarks/weekly-results.json --summary benchmarks/weekly-summary.json
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarks-weekly-${{ github.run_id }}
+          path: |
+            benchmarks/weekly-results.json
+            benchmarks/weekly-summary.json

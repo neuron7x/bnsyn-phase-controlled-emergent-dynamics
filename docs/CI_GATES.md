@@ -1,78 +1,37 @@
 # CI Gates
 
-This repository enforces audit-grade CI gates. The commands listed below are the
-exact commands executed by CI.
+## Merge-Blocking Checks (Required for PRs)
 
-## PR checks
+All jobs in `.github/workflows/ci-pr.yml` are required for pull requests and must pass before merge.
 
-**Workflow: `ci-pr` (.github/workflows/ci-pr.yml)**
+| Gate | Workflow Job | When It Runs | Local Command | Blocks Merge |
+| --- | --- | --- | --- | --- |
+| SSOT governance | `ssot-governance` | PR/push/dispatch | `python scripts/validate_bibliography.py`<br>`python scripts/validate_claims.py`<br>`python scripts/scan_normative_tags.py`<br>`python scripts/scan_governed_docs.py` | Yes |
+| Tests (non-validation) | `tests` | PR/push/dispatch | `pytest -m "not validation"` | Yes |
+| Code quality | `code-quality` | PR/push/dispatch | `ruff check .`<br>`mypy src` | Yes |
+| Dependency review | `dependency-security` | PR only | GitHub Action: `actions/dependency-review-action` | Yes |
+| OSV scan | `dependency-security` | PR/push/dispatch | `osv-scanner --severity=HIGH --format sarif --output osv.sarif .` | Yes |
+| Secrets scan | `secrets` | PR/push/dispatch | `gitleaks detect --source . --report-path gitleaks-repo.sarif --report-format sarif`<br>`gitleaks detect --source . --report-path gitleaks-pr.sarif --report-format sarif --log-opts "BASE..HEAD"` | Yes |
+| SAST (CodeQL) | `sast` | PR/push/dispatch | CodeQL CLI (optional), or GitHub Action `github/codeql-action` | Yes |
+| Micro-benchmarks | `benchmarks-pr` | PR/push/dispatch | `python scripts/run_benchmarks.py --suite ci --output benchmarks/pr-results.json --summary benchmarks/pr-summary.json` | Yes |
+| Physics invariants + benchmarks | `physics-benchmarks` | PR + weekly | `pytest tests/validation/test_physical_invariants.py`<br>`pytest --benchmark-json=bench.json`<br>`python scripts/compare_physics_baseline.py --bench bench.json --metrics artifacts/physics_metrics.json --output diffs.json` | Yes |
 
-- **Job: `ssot`**
-  - `python scripts/validate_bibliography.py`
-  - `python scripts/validate_claims.py`
-  - `python scripts/scan_governed_docs.py`
-  - `python scripts/scan_normative_tags.py`
-- **Job: `quality`**
-  - `ruff format --check .`
-  - `ruff check .`
-  - `mypy src`
-- **Job: `build`**
-  - `python -m build`
-  - `python -c "import bnsyn"`
-- **Job: `tests-smoke`**
-  - `pytest -m "not validation"`
-- **Job: `gitleaks`**
-  - `gitleaks detect --redact --verbose --source=.`
-  - `gitleaks detect --redact --verbose --log-opts=<base..head>`
-- **Job: `pip-audit`**
-  - `pip-audit`
+## Scheduled Validation & Performance
 
-**Workflow: `ci-smoke` (.github/workflows/ci-smoke.yml)**
+These workflows run weekly and on manual dispatch. They do not block PRs directly but provide continuous validation artifacts.
 
-- **Job: `ssot`**
-  - `python scripts/validate_bibliography.py`
-  - `python scripts/validate_claims.py`
-  - `python scripts/scan_governed_docs.py`
-  - `python scripts/scan_normative_tags.py`
-- **Job: `tests-smoke`**
-  - `pytest -m "not validation"`
+| Workflow | Job | When It Runs | Local Command | Artifact Output |
+| --- | --- | --- | --- | --- |
+| `ci-validation.yml` | `validation` | weekly/dispatch | `python scripts/validate_bibliography.py`<br>`python scripts/validate_claims.py`<br>`python scripts/scan_normative_tags.py`<br>`python scripts/scan_governed_docs.py`<br>`pytest -m validation` | `validation-logs-<run_id>` |
+| `ci-validation.yml` | `benchmarks-weekly` | weekly/dispatch | `python scripts/run_benchmarks.py --suite full --output benchmarks/weekly-results.json --summary benchmarks/weekly-summary.json` | `benchmarks-weekly-<run_id>` |
+| `sbom.yml` | `generate-sbom` | weekly/dispatch | `syft packages dir:. -o syft-json=sbom.syft.json` | `sbom-<run_id>` |
+| `ci-bench.yml` | `physics-benchmarks` | weekly | `pytest tests/validation/test_physical_invariants.py`<br>`pytest --benchmark-json=bench.json`<br>`python scripts/compare_physics_baseline.py --bench bench.json --metrics artifacts/physics_metrics.json --output diffs.json` | `physics-benchmarks-<run_id>` |
 
-**Workflow: `codeql` (.github/workflows/codeql.yml)**
+## Artifacts
 
-- **Job: `analyze`**
-  - `github/codeql-action` (Python)
+Artifacts are uploaded for:
 
-## Scheduled/manual checks (non-PR blocking)
-
-**Workflow: `ci-validation` (.github/workflows/ci-validation.yml)**
-
-- **Job: `ssot`**
-  - `python scripts/validate_bibliography.py`
-  - `python scripts/validate_claims.py`
-  - `python scripts/scan_governed_docs.py`
-  - `python scripts/scan_normative_tags.py`
-- **Job: `tests-validation`**
-  - `pytest -m validation`
-
-## Branch protection check list
-
-Configure branch protection for the `main` branch to include the following
-checks:
-
-- `ci-pr / ssot`
-- `ci-pr / quality`
-- `ci-pr / build`
-- `ci-pr / tests-smoke`
-- `ci-pr / gitleaks`
-- `ci-pr / pip-audit`
-- `ci-smoke / ssot`
-- `ci-smoke / tests-smoke`
-- `codeql / analyze`
-
-## How to enable branch protection
-
-1. Open repository **Settings → Branches**.
-2. Add or edit the protection rule for `main`.
-3. Enable **Require status checks to pass before merging**.
-4. Select the checks listed above (exact names).
-5. Save the rule.
+- Gitleaks reports (`gitleaks-repo-<run_id>`, `gitleaks-pr-<run_id>`)
+- Validation logs (`validation-logs-<run_id>`)
+- Benchmarks (`benchmarks-pr-<run_id>`, `benchmarks-weekly-<run_id>`)
+- SBOM (`sbom-<run_id>`)

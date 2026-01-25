@@ -136,8 +136,13 @@ def main() -> None:
     _enforce_thresholds(entries)
 
     if args.suite == "ci" and args.baseline.exists() and not args.write_baseline:
-        baseline = json.loads(args.baseline.read_text())
-        _compare_baseline(entries, baseline)
+        baseline_data = json.loads(args.baseline.read_text())
+        if isinstance(baseline_data, dict):
+            baseline_entries = baseline_data.get("performance", [])
+        else:
+            baseline_entries = baseline_data
+        if baseline_entries:
+            _compare_baseline(entries, baseline_entries)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(entries, indent=2, sort_keys=True))
@@ -146,7 +151,15 @@ def main() -> None:
     args.summary.write_text(json.dumps(summary, indent=2, sort_keys=True))
 
     if args.write_baseline:
-        args.baseline.write_text(json.dumps(entries, indent=2, sort_keys=True))
+        if args.baseline.exists():
+            baseline_data = json.loads(args.baseline.read_text())
+        else:
+            baseline_data = {}
+        if isinstance(baseline_data, dict):
+            baseline_data["performance"] = entries
+            args.baseline.write_text(json.dumps(baseline_data, indent=2, sort_keys=True))
+        else:
+            args.baseline.write_text(json.dumps(entries, indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
