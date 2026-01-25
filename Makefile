@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -49,6 +49,10 @@ security:
 
 check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
+
+docs:
+	sphinx-build docs docs/_build
+	@echo "Docs built at docs/_build"
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

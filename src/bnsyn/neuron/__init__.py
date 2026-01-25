@@ -1,3 +1,22 @@
+"""Neuron dynamics subpackage.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Re-exports AdEx state and integration helpers for external API consumers.
+
+References
+----------
+docs/SPEC.md#P0-1
+"""
+
 from .adex import (
     AdExState as AdExState,
     IntegrationMetrics as IntegrationMetrics,

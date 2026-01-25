@@ -1,4 +1,21 @@
-"""Input validation and configuration models."""
+"""Input validation and configuration models.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Exports validation helpers used at API boundaries.
+
+References
+----------
+docs/SSOT.md
+"""
 
 from __future__ import annotations
 

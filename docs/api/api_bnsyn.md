@@ -16,9 +16,13 @@
 
    cli
    config
+   control
+   neurons
    rng
+   simulation
    sim.network
    neuron.adex
+   synapses
    synapse.conductance
    plasticity.three_factor
    criticality.branching

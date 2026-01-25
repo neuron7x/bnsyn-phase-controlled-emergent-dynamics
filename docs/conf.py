@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 
 sys.path.insert(0, str(SRC))
@@ -20,7 +20,6 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "sphinx_copybutton",
     "sphinx_autodoc_typehints",
 ]
 
@@ -32,7 +31,6 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": False,
     "show-inheritance": True,
-    "exclude-members": "Field, BaseModel, PositiveFloat",
 }
 
 napoleon_google_docstring = False
@@ -54,20 +52,16 @@ source_suffix = {
     ".rst": "restructuredtext",
 }
 
-templates_path = ["_templates"]
+templates_path = ["api/_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
-html_static_path = ["_static"]
-
-intersphinx_mapping: dict[str, tuple[str, str] | tuple[str, None]] = {}
-
-html_title = "BN-Syn API Documentation"
+html_static_path = ["api/_static"]
+html_title = "BN-Syn Documentation"
 html_theme_options = {
     "sidebar_hide_name": True,
 }
 
 nitpicky = False
-suppress_warnings = ["autodoc"]
 
 os.environ.setdefault("PYTHONUTF8", "1")

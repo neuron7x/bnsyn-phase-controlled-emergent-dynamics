@@ -1,6 +1,21 @@
 """Conductance-based synapse dynamics and NMDA Mg2+ block.
 
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
 Implements SPEC P0-2 conductance synapses and magnesium block for NMDA.
+
+References
+----------
+docs/SPEC.md#P0-2
+docs/SSOT.md
 """
 
 from __future__ import annotations
@@ -20,10 +35,22 @@ Float64Array = NDArray[np.float64]
 class ConductanceState:
     """Track conductance state for AMPA, NMDA, and GABA_A receptors.
 
-    Args:
-        g_ampa_nS: AMPA conductance vector in nS (shape: [N]).
-        g_nmda_nS: NMDA conductance vector in nS (shape: [N]).
-        g_gabaa_nS: GABA_A conductance vector in nS (shape: [N]).
+    Parameters
+    ----------
+    g_ampa_nS : Float64Array
+        AMPA conductance vector in nS (shape: [N]).
+    g_nmda_nS : Float64Array
+        NMDA conductance vector in nS (shape: [N]).
+    g_gabaa_nS : Float64Array
+        GABA_A conductance vector in nS (shape: [N]).
+
+    Notes
+    -----
+    Conductances are per-neuron and are updated by deterministic decay steps.
+
+    References
+    ----------
+    docs/SPEC.md#P0-2
     """
 
     g_ampa_nS: Float64Array
@@ -34,19 +61,26 @@ class ConductanceState:
 def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
     """Compute the NMDA magnesium block term.
 
-    Args:
-        V_mV: Membrane voltage in millivolts.
-        mg_mM: Extracellular magnesium concentration in mM.
+    Parameters
+    ----------
+    V_mV : Float64Array
+        Membrane voltage in millivolts.
+    mg_mM : float
+        Extracellular magnesium concentration in mM.
 
-    Returns:
+    Returns
+    -------
+    Float64Array
         Mg2+ block factor for each voltage value.
 
-    Notes:
-        Uses the Jahr-Stevens formulation: B(V)=1/(1+([Mg]/3.57)exp(-0.062 V)).
+    Notes
+    -----
+    Uses the Jahr-Stevens formulation: B(V)=1/(1+([Mg]/3.57)exp(-0.062 V)).
 
-    References:
-        - docs/SPEC.md#P0-2
-        - docs/SSOT.md
+    References
+    ----------
+    docs/SPEC.md#P0-2
+    docs/SSOT.md
     """
     return np.asarray(1.0 / (1.0 + (mg_mM / 3.57) * np.exp(-0.062 * V_mV)), dtype=np.float64)
 
@@ -57,20 +91,28 @@ class ConductanceSynapses:
     This class does not implement connectivity; it applies aggregate incoming spikes.
     Upstream code supplies per-neuron incoming spike counts (or weighted counts).
 
-    Args:
-        N: Number of neurons.
-        params: Synapse parameter set (units: nS, ms, mV).
-        dt_ms: Timestep in milliseconds.
+    Parameters
+    ----------
+    N : int
+        Number of neurons.
+    params : SynapseParams
+        Synapse parameter set (units: nS, ms, mV).
+    dt_ms : float
+        Timestep in milliseconds.
 
-    Raises:
-        ValueError: If N or dt_ms are non-positive.
+    Raises
+    ------
+    ValueError
+        If N or dt_ms are non-positive.
 
-    Notes:
-        Implements SPEC P0-2 and uses deterministic buffering.
+    Notes
+    -----
+    Implements SPEC P0-2 and uses deterministic buffering.
 
-    References:
-        - docs/SPEC.md#P0-2
-        - docs/SSOT.md
+    References
+    ----------
+    docs/SPEC.md#P0-2
+    docs/SSOT.md
     """
 
     def __init__(self, N: int, params: SynapseParams, dt_ms: float) -> None:
@@ -100,14 +142,19 @@ class ConductanceSynapses:
     def queue_events(self, incoming: Float64Array) -> None:
         """Queue incoming conductance increments for delayed application.
 
-        Args:
-            incoming: Aggregate conductance increments in nS (shape: [N]).
+        Parameters
+        ----------
+        incoming : Float64Array
+            Aggregate conductance increments in nS (shape: [N]).
 
-        Raises:
-            ValueError: If incoming does not match the network size.
+        Raises
+        ------
+        ValueError
+            If incoming does not match the network size.
 
-        Notes:
-            Increments are applied after the configured synaptic delay.
+        Notes
+        -----
+        Increments are applied after the configured synaptic delay.
         """
         if incoming.shape != (self.N,):
             raise ValueError(f"incoming must have shape ({self.N},)")
@@ -116,11 +163,14 @@ class ConductanceSynapses:
     def step(self) -> Float64Array:
         """Advance synaptic conductances by one timestep.
 
-        Returns:
+        Returns
+        -------
+        Float64Array
             Stacked conductances with shape (3, N) in nS for AMPA, NMDA, GABA_A.
 
-        Notes:
-            Conductance decay uses exponential update for dt invariance (SPEC P0-2).
+        Notes
+        -----
+        Conductance decay uses exponential update for dt invariance (SPEC P0-2).
         """
         # apply delayed events (written delay_steps ago)
         apply = self._buf[self._buf_idx, :].copy()
@@ -153,22 +203,32 @@ class ConductanceSynapses:
     ) -> Float64Array:
         """Compute synaptic current from conductances.
 
-        Args:
-            V_mV: Membrane voltage in millivolts.
-            g_ampa_nS: AMPA conductance in nS.
-            g_nmda_nS: NMDA conductance in nS.
-            g_gabaa_nS: GABA_A conductance in nS.
-            params: Synapse parameter set.
+        Parameters
+        ----------
+        V_mV : Float64Array
+            Membrane voltage in millivolts.
+        g_ampa_nS : Float64Array
+            AMPA conductance in nS.
+        g_nmda_nS : Float64Array
+            NMDA conductance in nS.
+        g_gabaa_nS : Float64Array
+            GABA_A conductance in nS.
+        params : SynapseParams
+            Synapse parameter set.
 
-        Returns:
+        Returns
+        -------
+        Float64Array
             Synaptic current per neuron in picoamps.
 
-        Notes:
-            NMDA current includes Mg2+ block; current units are nS*mV => pA.
+        Notes
+        -----
+        NMDA current includes Mg2+ block; current units are nS*mV => pA.
 
-        References:
-            - docs/SPEC.md#P0-2
-            - docs/SSOT.md
+        References
+        ----------
+        docs/SPEC.md#P0-2
+        docs/SSOT.md
         """
         B = nmda_mg_block(V_mV, params.mg_mM)
         current = (

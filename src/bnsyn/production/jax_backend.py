@@ -1,6 +1,20 @@
 """Optional JAX backend experiments.
 
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
 This module is intentionally optional. It is not imported by default.
+
+References
+----------
+docs/SPEC.md#P0-1
 """
 
 from __future__ import annotations
@@ -34,24 +48,49 @@ def adex_step_jax(
 ) -> tuple[Any, Any, Any]:
     """JAX-accelerated AdEx neuron step.
 
-    Args:
-        V: Membrane potential (mV) array.
-        w: Adaptation current (pA) array.
-        input_current: External input current (pA) array.
-        C: Membrane capacitance (pF).
-        gL: Leak conductance (nS).
-        EL: Leak reversal potential (mV).
-        VT: Threshold potential (mV).
-        DeltaT: Slope factor (mV).
-        tau_w: Adaptation time constant (ms).
-        a: Subthreshold adaptation (nS).
-        b: Spike-triggered adaptation (pA).
-        V_reset: Reset potential after spike (mV).
-        V_spike: Spike detection threshold (mV).
-        dt: Timestep (ms).
+    Parameters
+    ----------
+    V : Any
+        Membrane potential (mV) array.
+    w : Any
+        Adaptation current (pA) array.
+    input_current : Any
+        External input current (pA) array.
+    C : float
+        Membrane capacitance (pF).
+    gL : float
+        Leak conductance (nS).
+    EL : float
+        Leak reversal potential (mV).
+    VT : float
+        Threshold potential (mV).
+    DeltaT : float
+        Slope factor (mV).
+    tau_w : float
+        Adaptation time constant (ms).
+    a : float
+        Subthreshold adaptation (nS).
+    b : float
+        Spike-triggered adaptation (pA).
+    V_reset : float
+        Reset potential after spike (mV).
+    V_spike : float
+        Spike detection threshold (mV).
+    dt : float
+        Timestep (ms).
 
-    Returns:
+    Returns
+    -------
+    tuple[Any, Any, Any]
         Tuple of (V_new, w_new, spikes) with updated state and spike mask.
+
+    Notes
+    -----
+    Function signature uses ``Any`` to avoid hard dependency on JAX types.
+
+    References
+    ----------
+    docs/SPEC.md#P0-1
     """
     exp_term = gL * DeltaT * jnp.exp((V - VT) / DeltaT)
     dV = (-(gL * (V - EL)) + exp_term - w + input_current) / C
