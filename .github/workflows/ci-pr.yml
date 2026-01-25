@@ -76,9 +76,12 @@ jobs:
         with:
           fail-on-severity: high
       - name: OSV Scanner
-        uses: google/osv-scanner-action@v1
+        uses: google/osv-scanner/actions/scanner@v1
         with:
-          scan-args: --severity=HIGH --format sarif --output osv.sarif .
+          scan-args: |-
+            --format=sarif
+            --output=osv.sarif
+            .
 
   secrets:
     runs-on: ubuntu-latest
