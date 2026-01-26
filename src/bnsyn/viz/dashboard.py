@@ -13,6 +13,7 @@ docs/features/viz_dashboard.md
 
 from __future__ import annotations
 
+import importlib
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -25,6 +26,46 @@ if TYPE_CHECKING:
     from bnsyn.sleep import SleepCycle
 
 Float64Array = NDArray[np.float64]
+
+# Module-level caches for matplotlib imports
+_plt: Any | None = None
+_animation: Any | None = None
+
+
+def _load_matplotlib() -> tuple[Any, Any]:
+    """Load matplotlib modules dynamically.
+
+    Returns
+    -------
+    tuple[Any, Any]
+        Tuple of (pyplot, animation) modules.
+
+    Raises
+    ------
+    RuntimeError
+        If matplotlib is not installed.
+
+    Notes
+    -----
+    Imports matplotlib at runtime to avoid mypy checking missing stubs.
+    The 3D projection toolkit is imported for side effects (registration).
+    """
+    global _plt, _animation
+
+    if _plt is not None and _animation is not None:
+        return _plt, _animation
+
+    try:
+        _plt = importlib.import_module("matplotlib.pyplot")
+        _animation = importlib.import_module("matplotlib.animation")
+        # Import for side effects: registers 3d projection
+        importlib.import_module("mpl_toolkits.mplot3d")
+    except ModuleNotFoundError as e:
+        raise RuntimeError(
+            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+        ) from e
+
+    return _plt, _animation
 
 
 class EmergenceDashboard:
@@ -193,11 +234,9 @@ class EmergenceDashboard:
         Imports matplotlib and renders all panels with accumulated data.
         Blocks execution until the window is closed.
         """
+        plt, _ = _load_matplotlib()
         self._ensure_figure()
         self._render()
-
-        # Import matplotlib.pyplot only when needed
-        import matplotlib.pyplot as plt
 
         plt.tight_layout()
         plt.show()
@@ -219,11 +258,9 @@ class EmergenceDashboard:
         For static formats (.png, .pdf), saves current state.
         For animated formats (.gif, .mp4), requires additional dependencies.
         """
+        plt, _ = _load_matplotlib()
         self._ensure_figure()
         self._render()
-
-        # Import matplotlib.pyplot only when needed
-        import matplotlib.pyplot as plt
 
         plt.tight_layout()
         self._fig.savefig(filename, dpi=150, bbox_inches="tight")
@@ -246,9 +283,7 @@ class EmergenceDashboard:
         if self._fig is not None:
             return
 
-        # Import matplotlib only when actually creating visualizations
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D  # type: ignore[import-untyped] # noqa: F401
+        plt, _ = _load_matplotlib()
 
         self._fig = plt.figure(figsize=self._figsize)
 
