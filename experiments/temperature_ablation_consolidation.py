@@ -38,6 +38,8 @@ def run_single_trial(
     dual_params: DualWeightParams,
     pulse_amplitude: float,
     pulse_prob: float,
+    matrix_size: tuple[int, int] = (10, 10),
+    warmup_steps: int = 0,
 ) -> dict[str, Any]:
     """Run a single trial of the temperature ablation experiment.
 
@@ -68,8 +70,8 @@ def run_single_trial(
     rng_pack = seed_all(seed)
     rng = rng_pack.np_rng
 
-    # Initialize dual weights (10x10 synapse matrix)
-    dw = DualWeights.init((10, 10), w0=0.0)
+    # Initialize dual weights with specified matrix size
+    dw = DualWeights.init(matrix_size, w0=0.0)
 
     # Initialize temperature schedule
     temp_sched = TemperatureSchedule(temp_params)
@@ -83,14 +85,20 @@ def run_single_trial(
 
     for step in range(steps):
         # Generate synthetic fast_update pulses
-        pulses = rng.random((10, 10)) < pulse_prob
+        pulses = rng.random(matrix_size) < pulse_prob
         fast_update = (
-            pulses.astype(float) * pulse_amplitude * rng.choice([-1.0, 1.0], size=(10, 10))
+            pulses.astype(float) * pulse_amplitude * rng.choice([-1.0, 1.0], size=matrix_size)
         )
 
         # Determine temperature for this step
         if condition == "cooling_geometric":
             T = temp_sched.step_geometric()
+        elif condition == "cooling_piecewise":
+            # Piecewise cooling: warmup phase then geometric cooling
+            if step < warmup_steps:
+                T = temp_params.T0
+            else:
+                T = temp_sched.step_geometric()
         elif condition == "fixed_high":
             T = temp_params.T0
         elif condition == "fixed_low":
@@ -150,6 +158,8 @@ def run_condition(
     dual_params: DualWeightParams,
     pulse_amplitude: float,
     pulse_prob: float,
+    matrix_size: tuple[int, int] = (10, 10),
+    warmup_steps: int = 0,
 ) -> dict[str, Any]:
     """Run multiple trials for a single condition.
 
@@ -188,6 +198,8 @@ def run_condition(
             dual_params=dual_params,
             pulse_amplitude=pulse_amplitude,
             pulse_prob=pulse_prob,
+            matrix_size=matrix_size,
+            warmup_steps=warmup_steps,
         )
         trials.append(trial_result)
 
@@ -251,7 +263,17 @@ def run_temperature_ablation_experiment(
     )
     dual_params = DualWeightParams()
 
-    conditions = ["cooling_geometric", "fixed_high", "fixed_low", "random_T"]
+    # Extract optional parameters
+    matrix_size = params.get("matrix_size", (10, 10))
+    warmup_steps = params.get("warmup_steps", 0)
+
+    # Determine conditions based on presence of warmup_steps
+    if warmup_steps > 0:
+        # v2 uses piecewise cooling instead of cooling_geometric
+        conditions = ["cooling_piecewise", "fixed_high", "fixed_low", "random_T"]
+    else:
+        # v1 uses standard cooling_geometric
+        conditions = ["cooling_geometric", "fixed_high", "fixed_low", "random_T"]
 
     condition_results = {}
     for condition in conditions:
@@ -265,6 +287,8 @@ def run_temperature_ablation_experiment(
             dual_params=dual_params,
             pulse_amplitude=params["pulse_amplitude"],
             pulse_prob=params["pulse_prob"],
+            matrix_size=matrix_size,
+            warmup_steps=warmup_steps,
         )
         condition_results[condition] = result
 

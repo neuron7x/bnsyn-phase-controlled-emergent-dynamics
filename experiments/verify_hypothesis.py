@@ -62,7 +62,14 @@ def verify_hypothesis_h1(results_dir: Path) -> tuple[bool, dict[str, Any]]:
         Detailed verification results.
     """
     # Load results for cooling and fixed_high conditions
-    cooling_results = load_condition_results(results_dir, "cooling_geometric")
+    # Try both condition names (v1 uses cooling_geometric, v2 uses cooling_piecewise)
+    try:
+        cooling_results = load_condition_results(results_dir, "cooling_geometric")
+        cooling_condition_name = "cooling_geometric"
+    except FileNotFoundError:
+        cooling_results = load_condition_results(results_dir, "cooling_piecewise")
+        cooling_condition_name = "cooling_piecewise"
+
     fixed_high_results = load_condition_results(results_dir, "fixed_high")
 
     cooling_agg = cooling_results["aggregates"]
@@ -74,6 +81,44 @@ def verify_hypothesis_h1(results_dir: Path) -> tuple[bool, dict[str, Any]]:
 
     cooling_w_total_var = cooling_agg["stability_w_total_var_end"]
     fixed_high_w_total_var = fixed_high_agg["stability_w_total_var_end"]
+
+    # Extract consolidation activity metrics
+    cooling_protein = cooling_agg["protein_mean_end"]
+    fixed_high_protein = fixed_high_agg["protein_mean_end"]
+    cooling_w_cons_mean = cooling_agg["w_cons_mean_final"]
+    fixed_high_w_cons_mean = fixed_high_agg["w_cons_mean_final"]
+
+    # Check non-trivial consolidation gates
+    # Both cooling and fixed_high must show active consolidation
+    consolidation_protein_threshold = 0.90
+    consolidation_w_cons_threshold = 1e-4
+
+    cooling_consolidation_nontrivial = (
+        cooling_protein >= consolidation_protein_threshold
+        and abs(cooling_w_cons_mean) >= consolidation_w_cons_threshold
+    )
+    fixed_high_consolidation_nontrivial = (
+        fixed_high_protein >= consolidation_protein_threshold
+        and abs(fixed_high_w_cons_mean) >= consolidation_w_cons_threshold
+    )
+
+    # If either condition fails non-trivial consolidation gate, hypothesis is refuted
+    if not cooling_consolidation_nontrivial:
+        print(
+            f"REFUTED: {cooling_condition_name} failed non-trivial consolidation gate "
+            f"(protein={cooling_protein:.4f}, w_cons_mean={cooling_w_cons_mean:.6f})",
+            file=sys.stderr,
+        )
+    if not fixed_high_consolidation_nontrivial:
+        print(
+            f"REFUTED: fixed_high failed non-trivial consolidation gate "
+            f"(protein={fixed_high_protein:.4f}, w_cons_mean={fixed_high_w_cons_mean:.6f})",
+            file=sys.stderr,
+        )
+
+    consolidation_gates_pass = (
+        cooling_consolidation_nontrivial and fixed_high_consolidation_nontrivial
+    )
 
     # Compute relative reductions
     if fixed_high_w_cons_var > 0:
@@ -93,11 +138,20 @@ def verify_hypothesis_h1(results_dir: Path) -> tuple[bool, dict[str, Any]]:
     # Acceptance criterion: at least 10% reduction
     w_cons_pass = w_cons_reduction >= 10.0
     w_total_pass = w_total_reduction >= 10.0
-    h1_supported = w_cons_pass and w_total_pass
+
+    # H1 is supported only if consolidation gates pass AND stability improvement is achieved
+    h1_supported = consolidation_gates_pass and w_total_pass
 
     verification = {
         "hypothesis": "H1",
         "supported": h1_supported,
+        "consolidation_gates_pass": consolidation_gates_pass,
+        "cooling_consolidation_nontrivial": cooling_consolidation_nontrivial,
+        "fixed_high_consolidation_nontrivial": fixed_high_consolidation_nontrivial,
+        "cooling_protein": cooling_protein,
+        "fixed_high_protein": fixed_high_protein,
+        "cooling_w_cons_mean": cooling_w_cons_mean,
+        "fixed_high_w_cons_mean": fixed_high_w_cons_mean,
         "cooling_w_cons_var": cooling_w_cons_var,
         "fixed_high_w_cons_var": fixed_high_w_cons_var,
         "w_cons_reduction_pct": w_cons_reduction,
@@ -152,18 +206,32 @@ def main() -> int:
         print("=" * 60)
         print("Hypothesis Verification: H1")
         print("=" * 60)
-        print(f"cooling_geometric w_cons variance: {verification['cooling_w_cons_var']:.6f}")
+        print(
+            f"Consolidation gates:              {'PASS' if verification['consolidation_gates_pass'] else 'FAIL'}"
+        )
+        print(
+            f"  cooling consolidation active:   {'YES' if verification['cooling_consolidation_nontrivial'] else 'NO'}"
+        )
+        print(f"    protein:                      {verification['cooling_protein']:.4f}")
+        print(f"    w_cons_mean:                  {verification['cooling_w_cons_mean']:.6f}")
+        print(
+            f"  fixed_high consolidation active: {'YES' if verification['fixed_high_consolidation_nontrivial'] else 'NO'}"
+        )
+        print(f"    protein:                      {verification['fixed_high_protein']:.4f}")
+        print(f"    w_cons_mean:                  {verification['fixed_high_w_cons_mean']:.6f}")
+        print()
+        print(f"cooling w_cons variance:          {verification['cooling_w_cons_var']:.6f}")
         print(f"fixed_high w_cons variance:       {verification['fixed_high_w_cons_var']:.6f}")
         print(f"w_cons reduction:                 {verification['w_cons_reduction_pct']:.2f}%")
         print(
             f"w_cons criterion (≥10%):          {'PASS' if verification['w_cons_pass'] else 'FAIL'}"
         )
         print()
-        print(f"cooling_geometric w_total variance: {verification['cooling_w_total_var']:.6f}")
-        print(f"fixed_high w_total variance:       {verification['fixed_high_w_total_var']:.6f}")
-        print(f"w_total reduction:                 {verification['w_total_reduction_pct']:.2f}%")
+        print(f"cooling w_total variance:         {verification['cooling_w_total_var']:.6f}")
+        print(f"fixed_high w_total variance:      {verification['fixed_high_w_total_var']:.6f}")
+        print(f"w_total reduction:                {verification['w_total_reduction_pct']:.2f}%")
         print(
-            f"w_total criterion (≥10%):          {'PASS' if verification['w_total_pass'] else 'FAIL'}"
+            f"w_total criterion (≥10%):         {'PASS' if verification['w_total_pass'] else 'FAIL'}"
         )
         print()
         print("=" * 60)

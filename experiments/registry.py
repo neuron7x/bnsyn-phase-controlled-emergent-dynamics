@@ -56,6 +56,25 @@ EXPERIMENTS: dict[str, ExperimentConfig] = {
             "pulse_prob": 0.05,  # More frequent pulses
         },
     ),
+    "temp_ablation_v2": ExperimentConfig(
+        name="temp_ablation_v2",
+        description="Temperature ablation v2: piecewise cooling with warmup to preserve consolidation",
+        default_seeds=20,
+        smoke_seeds=5,
+        default_steps=5000,
+        params={
+            "T0": 1.0,
+            "Tmin": 1e-3,
+            "alpha": 0.9995,  # Slow cooling to maintain consolidation
+            "Tc": 0.1,
+            "gate_tau": 0.02,
+            "warmup_steps": 500,  # Hold T=T0 before cooling
+            "matrix_size": (10, 10),  # Explicit synapse matrix dimensions
+            "dt_s": 1.0,
+            "pulse_amplitude": 2.0,
+            "pulse_prob": 0.05,
+        },
+    ),
 }
 
 

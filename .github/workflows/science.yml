@@ -27,11 +27,11 @@ jobs:
 
       - name: Run flagship experiment
         run: |
-          python -m experiments.runner temp_ablation_v1 --seeds 20 --out results/ci_run
+          python -m experiments.runner temp_ablation_v2 --seeds 20 --out results/ci_run
 
       - name: Generate visualizations
         run: |
-          python scripts/visualize_experiment.py --run-id temp_ablation_v1 --results results/ci_run --out figures/ci_run
+          python scripts/visualize_experiment.py --run-id temp_ablation_v2 --results results/ci_run --out figures/ci_run
 
       - name: Verify hypothesis
         run: |
