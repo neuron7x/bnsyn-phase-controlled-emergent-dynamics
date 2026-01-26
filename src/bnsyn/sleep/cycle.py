@@ -197,8 +197,8 @@ class SleepCycle:
         old_stage = self.current_stage
         self.current_stage = SleepStage.WAKE
         if old_stage != SleepStage.WAKE:
-            for cb in self._stage_callbacks:
-                cb(old_stage, SleepStage.WAKE)
+            for stage_cb in self._stage_callbacks:
+                stage_cb(old_stage, SleepStage.WAKE)
 
         metrics = []
         for i in range(duration_steps):
@@ -219,9 +219,7 @@ class SleepCycle:
 
         return metrics
 
-    def sleep(
-        self, stages: list[SleepStageConfig]
-    ) -> dict[str, Any]:
+    def sleep(self, stages: list[SleepStageConfig]) -> dict[str, Any]:
         """Run through sleep stages.
 
         Parameters
@@ -254,8 +252,8 @@ class SleepCycle:
             self.step_in_stage = 0
 
             if old_stage != stage_config.stage:
-                for cb in self._stage_callbacks:
-                    cb(old_stage, stage_config.stage)
+                for stage_cb in self._stage_callbacks:
+                    stage_cb(old_stage, stage_config.stage)
 
             # set temperature for this stage
             T_min, T_max = stage_config.temperature_range
@@ -284,8 +282,8 @@ class SleepCycle:
                 )
 
         # notify cycle complete
-        for cb in self._cycle_callbacks:
-            cb()
+        for cycle_cb in self._cycle_callbacks:
+            cycle_cb()
 
         return {
             "total_steps": len(total_metrics),
@@ -347,7 +345,6 @@ class SleepCycle:
             V_pattern = memory.voltage_mV
             # expand if subsampled
             if len(V_pattern) < N:
-                indices = np.linspace(0, len(V_pattern) - 1, N)
                 V_pattern = np.interp(
                     np.arange(N),
                     np.linspace(0, N - 1, len(V_pattern)),

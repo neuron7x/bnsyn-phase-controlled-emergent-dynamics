@@ -19,7 +19,6 @@ docs/features/sleep_cycle.md
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
 
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams

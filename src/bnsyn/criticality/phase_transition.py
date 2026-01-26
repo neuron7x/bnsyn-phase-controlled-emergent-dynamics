@@ -102,9 +102,7 @@ class PhaseTransitionDetector:
         history_size: int = 200,
     ):
         if subcritical_threshold >= supercritical_threshold:
-            raise ValueError(
-                "subcritical_threshold must be less than supercritical_threshold"
-            )
+            raise ValueError("subcritical_threshold must be less than supercritical_threshold")
         if history_size <= 0:
             raise ValueError("history_size must be positive")
 

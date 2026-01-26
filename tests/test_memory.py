@@ -20,7 +20,6 @@ docs/features/memory.md
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
 from bnsyn.memory import ConsolidationLedger, MemoryTrace
 

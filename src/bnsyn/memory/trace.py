@@ -171,9 +171,7 @@ class MemoryTrace:
             similarities.append(sim)
 
         # Find matches above threshold
-        matches = [
-            (idx, sim) for idx, sim in enumerate(similarities) if sim >= threshold
-        ]
+        matches = [(idx, sim) for idx, sim in enumerate(similarities) if sim >= threshold]
         matches.sort(key=lambda x: x[1], reverse=True)
         indices = [idx for idx, _ in matches]
 
@@ -218,7 +216,7 @@ class MemoryTrace:
 
         # Consolidation gain: protein modulated by temperature
         gain = protein_level * (1.0 + temperature) * 0.1
-        self.importance *= (1.0 + gain)
+        self.importance *= 1.0 + gain
 
     def get_state(self) -> dict[str, Any]:
         """Return memory trace state for inspection or serialization.

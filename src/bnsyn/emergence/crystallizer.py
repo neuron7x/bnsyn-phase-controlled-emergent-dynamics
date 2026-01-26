@@ -33,20 +33,20 @@ Float64Array = NDArray[np.float64]
 
 class Phase(Enum):
     """Crystallization phase enumeration.
-    
+
     Parameters
     ----------
     None
-    
+
     Returns
     -------
     None
-    
+
     Notes
     -----
     Defines the four phases of attractor crystallization.
     """
-    
+
     FLUID = "fluid"
     NUCLEATION = "nucleation"
     GROWTH = "growth"
@@ -56,7 +56,7 @@ class Phase(Enum):
 @dataclass(frozen=True)
 class Attractor:
     """Attractor representation with stability metrics.
-    
+
     Parameters
     ----------
     center : Float64Array
@@ -69,16 +69,16 @@ class Attractor:
         Timestep when this attractor was first detected.
     crystallization : float
         Local crystallization progress in [0, 1].
-    
+
     Notes
     -----
     Immutable attractor descriptor for tracking emergent dynamics.
-    
+
     References
     ----------
     docs/SPEC.md
     """
-    
+
     center: Float64Array
     basin_radius: float
     stability: float
@@ -89,7 +89,7 @@ class Attractor:
 @dataclass(frozen=True)
 class CrystallizationState:
     """Global crystallization state snapshot.
-    
+
     Parameters
     ----------
     progress : float
@@ -102,16 +102,16 @@ class CrystallizationState:
         Current crystallization phase.
     temperature : float
         Current system temperature.
-    
+
     Notes
     -----
     Provides a snapshot of the system's crystallization dynamics.
-    
+
     References
     ----------
     docs/SPEC.md
     """
-    
+
     progress: float
     num_attractors: int
     dominant_attractor: int | None
@@ -122,7 +122,7 @@ class CrystallizationState:
 @dataclass
 class AttractorCrystallizer:
     """Track attractor formation and crystallization in phase-controlled systems.
-    
+
     Parameters
     ----------
     state_dim : int
@@ -137,24 +137,24 @@ class AttractorCrystallizer:
         DBSCAN epsilon parameter for clustering (default: 0.1).
     cluster_min_samples : int
         DBSCAN min_samples parameter (default: 5).
-    
+
     Notes
     -----
     Uses ring buffer for memory efficiency, incremental PCA for dimensionality
     reduction, and cKDTree-based DBSCAN for attractor detection.
-    
+
     References
     ----------
     docs/SPEC.md
     """
-    
+
     state_dim: int
     max_buffer_size: int = 1000
     snapshot_dim: int = 100
     pca_update_interval: int = 100
     cluster_eps: float = 0.1
     cluster_min_samples: int = 5
-    
+
     _buffer: Float64Array = field(init=False, repr=False)
     _buffer_idx: int = field(default=0, init=False, repr=False)
     _buffer_filled: bool = field(default=False, init=False, repr=False)
@@ -170,23 +170,23 @@ class AttractorCrystallizer:
     _phase_callbacks: list[Callable[[Phase, Phase], None]] = field(
         default_factory=list, init=False, repr=False
     )
-    
+
     def __post_init__(self) -> None:
         """Initialize ring buffer and internal state.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
-        
+
         Raises
         ------
         ValueError
             If dimensions or parameters are invalid.
-        
+
         Notes
         -----
         Sets up the ring buffer with snapshot_dim columns.
@@ -205,58 +205,56 @@ class AttractorCrystallizer:
             raise ValueError("cluster_eps must be positive")
         if self.cluster_min_samples <= 0:
             raise ValueError("cluster_min_samples must be positive")
-        
+
         object.__setattr__(
             self,
             "_buffer",
             np.zeros((self.max_buffer_size, self.snapshot_dim), dtype=np.float64),
         )
-    
+
     def _subsample_state(self, state: Float64Array) -> Float64Array:
         """Subsample state to snapshot_dim if necessary.
-        
+
         Parameters
         ----------
         state : Float64Array
             Full state vector (shape: [state_dim]).
-        
+
         Returns
         -------
         Float64Array
             Subsampled state (shape: [snapshot_dim]).
-        
+
         Raises
         ------
         ValueError
             If state shape is invalid.
-        
+
         Notes
         -----
         Uses uniform subsampling when state_dim > snapshot_dim.
         """
         if state.shape[0] != self.state_dim:
-            raise ValueError(
-                f"Expected state shape ({self.state_dim},), got {state.shape}"
-            )
-        
+            raise ValueError(f"Expected state shape ({self.state_dim},), got {state.shape}")
+
         if self.state_dim == self.snapshot_dim:
             return state.copy()
-        
+
         # Uniform subsampling
         indices = np.linspace(0, self.state_dim - 1, self.snapshot_dim, dtype=int)
         return state[indices]
-    
+
     def _update_pca(self) -> None:
         """Recompute PCA components from current buffer.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
-        
+
         Notes
         -----
         Uses numpy.linalg.svd for PCA computation. Only called every
@@ -266,14 +264,14 @@ class AttractorCrystallizer:
             data = self._buffer.copy()
         else:
             data = self._buffer[: self._buffer_idx].copy()
-        
+
         if data.shape[0] < 2:
             return
-        
+
         # Center data
         mean = np.mean(data, axis=0)
         centered = data - mean
-        
+
         # Compute SVD
         try:
             U, S, Vt = np.linalg.svd(centered, full_matrices=False)
@@ -282,43 +280,43 @@ class AttractorCrystallizer:
         except np.linalg.LinAlgError:
             # If SVD fails, keep previous components
             pass
-    
+
     def _transform_to_pca(self, state: Float64Array) -> Float64Array:
         """Transform state snapshot to PCA space.
-        
+
         Parameters
         ----------
         state : Float64Array
             State snapshot (shape: [snapshot_dim]).
-        
+
         Returns
         -------
         Float64Array
             PCA-transformed state.
-        
+
         Notes
         -----
         Returns original state if PCA not yet computed.
         """
         if self._pca_components is None or self._pca_mean is None:
             return state
-        
+
         centered = state - self._pca_mean
         return centered @ self._pca_components.T
-    
+
     def _dbscan_lite(self, data: Float64Array) -> list[list[int]]:
         """Lightweight DBSCAN clustering using cKDTree.
-        
+
         Parameters
         ----------
         data : Float64Array
             Data points to cluster (shape: [N, D]).
-        
+
         Returns
         -------
         list[list[int]]
             List of clusters, each containing indices of member points.
-        
+
         Notes
         -----
         Uses cKDTree for efficient neighbor queries. Does not return noise
@@ -326,54 +324,54 @@ class AttractorCrystallizer:
         """
         if data.shape[0] < self.cluster_min_samples:
             return []
-        
+
         tree = cKDTree(data)
         visited = np.zeros(data.shape[0], dtype=bool)
         clusters: list[list[int]] = []
-        
+
         for i in range(data.shape[0]):
             if visited[i]:
                 continue
-            
+
             neighbors = tree.query_ball_point(data[i], self.cluster_eps)
-            
+
             if len(neighbors) < self.cluster_min_samples:
                 visited[i] = True
                 continue
-            
+
             # Start new cluster
             cluster: list[int] = []
             to_visit = list(neighbors)
-            
+
             while to_visit:
                 idx = to_visit.pop(0)
                 if visited[idx]:
                     continue
-                
+
                 visited[idx] = True
                 cluster.append(idx)
-                
+
                 idx_neighbors = tree.query_ball_point(data[idx], self.cluster_eps)
                 if len(idx_neighbors) >= self.cluster_min_samples:
                     to_visit.extend(idx_neighbors)
-            
+
             if len(cluster) >= self.cluster_min_samples:
                 clusters.append(cluster)
-        
+
         return clusters
-    
+
     def _detect_attractors(self) -> list[Attractor]:
         """Detect attractors from current buffer using clustering.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         list[Attractor]
             Detected attractors.
-        
+
         Notes
         -----
         Uses PCA-transformed buffer states for clustering. Computes attractor
@@ -383,30 +381,30 @@ class AttractorCrystallizer:
             buffer_data = self._buffer.copy()
         else:
             buffer_data = self._buffer[: self._buffer_idx].copy()
-        
+
         if buffer_data.shape[0] < self.cluster_min_samples:
             return []
-        
+
         # Transform to PCA space if available
         if self._pca_components is not None and self._pca_mean is not None:
             pca_data = np.array([self._transform_to_pca(s) for s in buffer_data])
         else:
             pca_data = buffer_data
-        
+
         # Cluster in PCA space
         clusters = self._dbscan_lite(pca_data)
-        
+
         attractors: list[Attractor] = []
         for cluster_indices in clusters:
             cluster_points = buffer_data[cluster_indices]
-            
+
             # Compute attractor properties
             center = np.mean(cluster_points, axis=0)
             distances = np.linalg.norm(cluster_points - center, axis=1)
             basin_radius = float(np.max(distances))
             stability = float(len(cluster_indices) / buffer_data.shape[0])
             crystallization = min(1.0, stability * 2.0)
-            
+
             attractor = Attractor(
                 center=center,
                 basin_radius=basin_radius,
@@ -415,27 +413,27 @@ class AttractorCrystallizer:
                 crystallization=crystallization,
             )
             attractors.append(attractor)
-        
+
         return attractors
-    
+
     def _update_phase(self) -> None:
         """Update crystallization phase based on attractor count and stability.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
-        
+
         Notes
         -----
         Phase transitions trigger registered callbacks.
         """
         old_phase = self._current_phase
         num_attractors = len(self._attractors)
-        
+
         if num_attractors == 0:
             new_phase = Phase.FLUID
         elif num_attractors == 1:
@@ -449,32 +447,32 @@ class AttractorCrystallizer:
                 new_phase = Phase.CRYSTALLIZED
             else:
                 new_phase = Phase.GROWTH
-        
+
         object.__setattr__(self, "_current_phase", new_phase)
-        
+
         if old_phase != new_phase:
             for callback in self._phase_callbacks:
                 callback(old_phase, new_phase)
-    
+
     def observe(self, state: Float64Array, temperature: float) -> None:
         """Observe and record a new state.
-        
+
         Parameters
         ----------
         state : Float64Array
             Full state vector (shape: [state_dim]).
         temperature : float
             Current system temperature.
-        
+
         Returns
         -------
         None
-        
+
         Raises
         ------
         ValueError
             If state shape is invalid or temperature is negative.
-        
+
         Notes
         -----
         Updates ring buffer, recomputes PCA periodically, detects attractors,
@@ -482,27 +480,27 @@ class AttractorCrystallizer:
         """
         if temperature < 0:
             raise ValueError("temperature must be non-negative")
-        
+
         object.__setattr__(self, "_current_temperature", temperature)
-        
+
         # Subsample and store
         snapshot = self._subsample_state(state)
         self._buffer[self._buffer_idx] = snapshot
-        
+
         object.__setattr__(self, "_buffer_idx", (self._buffer_idx + 1) % self.max_buffer_size)
         if self._buffer_idx == 0:
             object.__setattr__(self, "_buffer_filled", True)
-        
+
         object.__setattr__(self, "_observation_count", self._observation_count + 1)
-        
+
         # Update PCA periodically
         if self._observation_count % self.pca_update_interval == 0:
             self._update_pca()
-        
+
         # Detect attractors
         if self._observation_count % self.pca_update_interval == 0:
             new_attractors = self._detect_attractors()
-            
+
             # Check for new attractors
             for new_attr in new_attractors:
                 is_new = True
@@ -511,69 +509,69 @@ class AttractorCrystallizer:
                     if dist < self.cluster_eps:
                         is_new = False
                         break
-                
+
                 if is_new:
                     self._attractors.append(new_attr)
                     for callback in self._attractor_callbacks:
                         callback(new_attr)
-            
+
             self._update_phase()
-    
+
     def get_attractors(self) -> list[Attractor]:
         """Return list of detected attractors.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         list[Attractor]
             List of all detected attractors.
-        
+
         Notes
         -----
         Returns a copy to prevent external mutation.
         """
         return self._attractors.copy()
-    
+
     def crystallization_progress(self) -> float:
         """Compute global crystallization progress.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         float
             Progress in [0, 1], where 1 indicates full crystallization.
-        
+
         Notes
         -----
         Based on number of attractors and their stability metrics.
         """
         if not self._attractors:
             return 0.0
-        
+
         # Weight by stability
         total_stability = sum(a.stability for a in self._attractors)
         progress = min(1.0, total_stability)
-        
+
         return float(progress)
-    
+
     def get_crystallization_state(self) -> CrystallizationState:
         """Get current crystallization state snapshot.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         CrystallizationState
             Current state snapshot.
-        
+
         Notes
         -----
         Includes progress, attractor count, dominant attractor, phase, and temperature.
@@ -582,7 +580,7 @@ class AttractorCrystallizer:
         if self._attractors:
             stabilities = [a.stability for a in self._attractors]
             dominant_idx = int(np.argmax(stabilities))
-        
+
         return CrystallizationState(
             progress=self.crystallization_progress(),
             num_attractors=len(self._attractors),
@@ -590,37 +588,37 @@ class AttractorCrystallizer:
             phase=self._current_phase,
             temperature=self._current_temperature,
         )
-    
+
     def on_attractor_formed(self, callback: Callable[[Attractor], None]) -> None:
         """Register callback for new attractor formation.
-        
+
         Parameters
         ----------
         callback : Callable[[Attractor], None]
             Callback function invoked when a new attractor is detected.
-        
+
         Returns
         -------
         None
-        
+
         Notes
         -----
         Callbacks are invoked synchronously during observe().
         """
         self._attractor_callbacks.append(callback)
-    
+
     def on_phase_transition(self, callback: Callable[[Phase, Phase], None]) -> None:
         """Register callback for phase transitions.
-        
+
         Parameters
         ----------
         callback : Callable[[Phase, Phase], None]
             Callback function invoked on phase change with (old_phase, new_phase).
-        
+
         Returns
         -------
         None
-        
+
         Notes
         -----
         Callbacks are invoked synchronously during observe().
