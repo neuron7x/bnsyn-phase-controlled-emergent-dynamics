@@ -55,5 +55,3 @@ def test_smoke_marker_exists() -> None:
         "smoke marker not found in pytest configuration.\n"
         "Add to pyproject.toml: markers = ['smoke: ...']"
     )
-
-
