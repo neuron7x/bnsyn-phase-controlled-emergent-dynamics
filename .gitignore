@@ -14,7 +14,8 @@ htmlcov/
 coverage.json
 
 # Benchmark results (local runs)
-results/
+results/*
+!results/temp_ablation_v1/
 artifacts/
 benchmarks/baselines/
 
