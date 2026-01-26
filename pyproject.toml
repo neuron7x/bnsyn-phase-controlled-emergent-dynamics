@@ -69,6 +69,8 @@ testpaths = ["tests"]
 markers = [
   "smoke: fast critical-path tests",
   "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
 ]
 
 [tool.ruff]
