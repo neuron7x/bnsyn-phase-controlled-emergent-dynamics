@@ -25,6 +25,7 @@ from typing import Any, Literal
 
 import os
 import numpy as np
+from numpy.typing import NDArray
 
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
 from bnsyn.connectivity import SparseConnectivity
@@ -208,8 +209,17 @@ class Network:
             self._W_inh_t = torch.as_tensor(self.W_inh.to_dense(), device=self._torch_device)
             self._use_torch = True
 
-    def step(self) -> dict[str, float]:
+    def step(
+        self,
+        external_current_pA: NDArray[np.float64] | None = None,
+    ) -> dict[str, float]:
         """Advance the network by one timestep.
+
+        Parameters
+        ----------
+        external_current_pA : NDArray[np.float64] | None, optional
+            External current injection per neuron in pA. Shape must be (N,).
+            If None, no external current injection is applied (default behavior).
 
         Returns
         -------
@@ -218,6 +228,8 @@ class Network:
 
         Raises
         ------
+        ValueError
+            If external_current_pA shape does not match number of neurons.
         RuntimeError
             If voltage bounds are violated (numerical instability).
 
@@ -231,6 +243,14 @@ class Network:
         """
         N = self.np.N
         dt = self.dt_ms
+
+        # validate external current if provided
+        if external_current_pA is not None:
+            if external_current_pA.shape != (N,):
+                raise ValueError(
+                    f"external_current_pA shape {external_current_pA.shape} "
+                    f"does not match number of neurons ({N},)"
+                )
 
         # external Poisson spikes (rate per neuron)
         lam = self.np.ext_rate_hz * (dt / 1000.0)
@@ -274,6 +294,10 @@ class Network:
         # gain: multiplies external current (proxy for global excitability)
         I_ext = np.zeros(N, dtype=np.float64)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
+
+        # add optional external current injection
+        if external_current_pA is not None:
+            I_ext = np.asarray(I_ext + external_current_pA, dtype=np.float64)
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
