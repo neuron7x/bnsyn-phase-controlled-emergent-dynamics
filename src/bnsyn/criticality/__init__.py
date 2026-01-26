@@ -19,6 +19,7 @@ docs/SPEC.md#P0-4
 
 from .analysis import PowerLawFit, fit_power_law_mle, mr_branching_ratio
 from .branching import BranchingEstimator, SigmaController
+from .phase_transition import CriticalPhase, PhaseTransition, PhaseTransitionDetector
 
 __all__ = [
     "BranchingEstimator",
@@ -26,4 +27,7 @@ __all__ = [
     "PowerLawFit",
     "fit_power_law_mle",
     "mr_branching_ratio",
+    "CriticalPhase",
+    "PhaseTransition",
+    "PhaseTransitionDetector",
 ]
