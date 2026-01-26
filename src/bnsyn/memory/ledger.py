@@ -142,8 +142,9 @@ class ConsolidationLedger:
         dw_tags_sum: float | None = None
         tag_count: int | None = None
         if dw_tags is not None:
-            dw_tags_sum = float(np.sum(dw_tags))
-            tag_count = int(np.sum(dw_tags))
+            tag_sum = np.sum(dw_tags)
+            dw_tags_sum = float(tag_sum)
+            tag_count = int(tag_sum)
 
         event = ConsolidationEvent(
             step=step,

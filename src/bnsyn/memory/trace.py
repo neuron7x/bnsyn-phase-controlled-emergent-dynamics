@@ -114,9 +114,10 @@ class MemoryTrace:
             self.recall_counters = self.recall_counters[1:]
 
         # Store new pattern
+        timestamp_value = float(len(self.patterns))
         self.patterns.append(pattern.copy())
         self.importance = np.append(self.importance, importance)
-        self.timestamps = np.append(self.timestamps, float(len(self.patterns)))
+        self.timestamps = np.append(self.timestamps, timestamp_value)
         self.recall_counters = np.append(self.recall_counters, 0.0)
 
     def recall(self, cue: Float64Array, threshold: float) -> list[int]:
