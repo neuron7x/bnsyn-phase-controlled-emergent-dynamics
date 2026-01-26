@@ -365,7 +365,26 @@ def main() -> int:
     print(f"Visualizing results from: {results_dir}")
     print(f"Output directory: {output_dir}")
 
-    conditions = ["cooling_geometric", "fixed_high", "fixed_low", "random_T"]
+    # Detect available conditions from results directory
+    available_files = list(results_dir.glob("*.json"))
+    available_conditions = []
+    for f in available_files:
+        if f.name != "manifest.json":
+            condition_name = f.stem
+            available_conditions.append(condition_name)
+    
+    # Determine which cooling condition is present
+    if "cooling_piecewise" in available_conditions:
+        conditions = ["cooling_piecewise", "fixed_high", "fixed_low", "random_T"]
+    elif "cooling_geometric" in available_conditions:
+        conditions = ["cooling_geometric", "fixed_high", "fixed_low", "random_T"]
+    else:
+        print(f"Error: No cooling condition found in {results_dir}", file=sys.stderr)
+        return 1
+    
+    # Filter to only conditions that exist
+    conditions = [c for c in conditions if c in available_conditions]
+    print(f"Found conditions: {conditions}")
 
     # Generate all figures
     plot_stability_comparison(results_dir, output_dir / "hero.png", conditions)
