@@ -20,13 +20,16 @@ from bnsyn.synapse.conductance import nmda_mg_block
 def test_adex_step_performance() -> None:
     """Test AdEx step performance for N=1000 neurons."""
     # Setup
+    rng_pack = seed_all(42)
+    rng = rng_pack.np_rng
+    
     N = 1000
     params = AdExParams()
     state = AdExState(
         V_mV=np.full(N, -65.0), w_pA=np.zeros(N), spiked=np.zeros(N, dtype=bool)
     )
     I_syn = np.zeros(N)
-    I_ext = np.random.randn(N) * 10.0
+    I_ext = rng.normal(0, 10.0, size=N)
 
     # Warmup
     for _ in range(10):
@@ -49,8 +52,11 @@ def test_adex_step_performance() -> None:
 @pytest.mark.performance
 def test_nmda_block_performance() -> None:
     """Test NMDA block computation performance."""
+    rng_pack = seed_all(42)
+    rng = rng_pack.np_rng
+    
     N = 10000
-    V = np.random.randn(N) * 20.0 - 60.0  # Voltages around -60mV
+    V = rng.normal(-60.0, 20.0, size=N)  # Voltages around -60mV
 
     # Warmup
     for _ in range(10):
@@ -121,8 +127,9 @@ def test_sparse_matmul_performance() -> None:
     rng_pack = seed_all(42)
     rng = rng_pack.np_rng
 
-    # Create sparse connectivity - use actual initialization method
-    W_dense = (rng.random((N, N)) < p_conn).astype(np.float64) * rng.random((N, N))
+    # Create sparse connectivity - optimized: generate mask first
+    mask = rng.random((N, N)) < p_conn
+    W_dense = mask.astype(np.float64) * rng.random((N, N))
     W = SparseConnectivity(W_dense, force_format="sparse")
 
     x = rng.random(N)
