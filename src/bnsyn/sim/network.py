@@ -127,7 +127,7 @@ class Network:
         crit: CriticalityParams,
         dt_ms: float,
         rng: np.random.Generator,
-        backend: str = "reference",
+        backend: Literal["reference", "accelerated"] = "reference",
     ):
         if nparams.N <= 0:
             raise ValueError("N must be positive")

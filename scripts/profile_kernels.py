@@ -44,8 +44,11 @@ from typing import Any
 import numpy as np
 
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
+from bnsyn.neuron.adex import adex_step
+from bnsyn.numerics.integrators import exp_decay_step
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.synapse.conductance import nmda_mg_block
 
 
 class KernelProfiler:
@@ -194,8 +197,6 @@ def profile_network_kernels(
 
         # Conductance decay
         t0 = time.perf_counter()
-        from bnsyn.numerics.integrators import exp_decay_step
-
         _ = exp_decay_step(net.g_ampa, dt_ms, net.syn.tau_AMPA_ms)
         _ = exp_decay_step(net.g_nmda, dt_ms, net.syn.tau_NMDA_ms)
         _ = exp_decay_step(net.g_gabaa, dt_ms, net.syn.tau_GABAA_ms)
@@ -203,15 +204,11 @@ def profile_network_kernels(
 
         # NMDA Mg block
         t0 = time.perf_counter()
-        from bnsyn.synapse.conductance import nmda_mg_block
-
         _ = nmda_mg_block(net.state.V_mV, net.syn.mg_mM)
         profiler.record("nmda_mg_block", time.perf_counter() - t0)
 
         # AdEx neuron update
         t0 = time.perf_counter()
-        from bnsyn.neuron.adex import adex_step
-
         I_syn = np.zeros(n_neurons)
         I_ext = np.zeros(n_neurons)
         _ = adex_step(net.state, net.adex, dt_ms, I_syn_pA=I_syn, I_ext_pA=I_ext)
@@ -301,6 +298,14 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    # Validate input parameters
+    if args.steps <= 0:
+        raise ValueError("steps must be positive")
+    if args.neurons <= 0:
+        raise ValueError("neurons must be positive")
+    if args.dt <= 0:
+        raise ValueError("dt must be positive")
 
     # Run profiler
     manifest = profile_network_kernels(

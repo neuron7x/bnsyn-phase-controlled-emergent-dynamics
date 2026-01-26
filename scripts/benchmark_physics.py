@@ -162,7 +162,9 @@ def run_physics_benchmark(
         spike_history.append(float(metrics["A_t1"]))
         sigma_history.append(float(metrics["sigma"]))
         gain_history.append(float(metrics["gain"]))
-        # Temperature is implicit in gain for now (placeholder)
+        # NOTE: Temperature tracking placeholder - temperature gating is implicit in gain
+        # for this baseline. Full temperature schedule tracking requires temperature module
+        # integration, which is outside the scope of the throughput scaling framework.
         temperature_history.append(1.0)
 
     wall_time = time.perf_counter() - start_time
@@ -283,6 +285,14 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    # Validate input parameters
+    if args.steps <= 0:
+        raise ValueError("steps must be positive")
+    if args.neurons <= 0:
+        raise ValueError("neurons must be positive")
+    if args.dt <= 0:
+        raise ValueError("dt must be positive")
 
     # Run benchmark
     manifest = run_physics_benchmark(

@@ -59,14 +59,26 @@ def calculate_gains(ref: dict[str, Any], acc: dict[str, Any]) -> dict[str, Any]:
     ref_perf = ref["performance"]
     acc_perf = acc["performance"]
 
-    # Throughput speedup
-    speedup = acc_perf["updates_per_sec"] / ref_perf["updates_per_sec"]
+    # Throughput speedup (protect against division by zero)
+    speedup = (
+        acc_perf["updates_per_sec"] / ref_perf["updates_per_sec"]
+        if ref_perf["updates_per_sec"] > 0
+        else 0.0
+    )
 
-    # Wall time reduction
-    wall_time_reduction = 1.0 - (acc_perf["wall_time_sec"] / ref_perf["wall_time_sec"])
+    # Wall time reduction (protect against division by zero)
+    wall_time_reduction = (
+        1.0 - (acc_perf["wall_time_sec"] / ref_perf["wall_time_sec"])
+        if ref_perf["wall_time_sec"] > 0
+        else 0.0
+    )
 
-    # Energy cost reduction (proxy: lower wall time = lower energy)
-    energy_reduction = 1.0 - (acc_perf["energy_cost"] / ref_perf["energy_cost"])
+    # Energy cost reduction (protect against division by zero)
+    energy_reduction = (
+        1.0 - (acc_perf["energy_cost"] / ref_perf["energy_cost"])
+        if ref_perf["energy_cost"] > 0
+        else 0.0
+    )
 
     # Memory reduction (sparse CSR vs dense matrix)
     ref_synapses = ref["configuration"]["synapses"]
