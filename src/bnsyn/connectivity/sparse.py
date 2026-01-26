@@ -252,7 +252,7 @@ def build_random_connectivity(
     """
     if n_pre <= 0 or n_post <= 0:
         raise ValueError("n_pre and n_post must be positive")
-    if not 0.0 <= connection_prob <= 1.0:
+    if not (0.0 <= connection_prob <= 1.0):
         raise ValueError("connection_prob must be in [0,1]")
     is_connected = rng.binomial(1, connection_prob, (n_pre, n_post))
     weights = np.abs(rng.normal(weight_mean, weight_std, (n_pre, n_post)))

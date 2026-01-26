@@ -274,7 +274,7 @@ class AttractorCrystallizer:
 
         # Compute SVD
         try:
-            _, _, Vt = np.linalg.svd(centered, full_matrices=False)
+            U, S, Vt = np.linalg.svd(centered, full_matrices=False)
             object.__setattr__(self, "_pca_components", Vt)
             object.__setattr__(self, "_pca_mean", mean)
         except np.linalg.LinAlgError:
