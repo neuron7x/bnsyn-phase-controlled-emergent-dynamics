@@ -156,6 +156,13 @@ def run_experiment(experiment_name: str, seeds: int | None, output_dir: str | No
             output_dir=output_path,
             params=config.params,
         )
+    elif experiment_name == "temp_ablation_v2":
+        run_temperature_ablation_experiment(
+            seeds=seed_list,
+            steps=config.default_steps,
+            output_dir=output_path,
+            params=config.params,
+        )
     else:
         print(f"Error: Unknown experiment implementation: {experiment_name}", file=sys.stderr)
         return 1
