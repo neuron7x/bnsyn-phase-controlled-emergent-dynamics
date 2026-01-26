@@ -80,8 +80,9 @@ def test_golden_hash_determinism() -> None:
     """
     # Expected hash for the reference run
     # Generated with: seed=42, steps=200, N=50, dt_ms=0.1
+    # Hash: 02bc1ecc98333d70402ebfc508e181e1786cfd1d4885ec1d2d89b293ec8e7640
     # If this changes, document why in git commit message
-    EXPECTED_HASH = compute_run_hash(seed=42, steps=200, N=50, dt_ms=0.1)
+    EXPECTED_HASH = "02bc1ecc98333d70402ebfc508e181e1786cfd1d4885ec1d2d89b293ec8e7640"
 
     # Run simulation and compute hash
     actual_hash = compute_run_hash(seed=42, steps=200, N=50, dt_ms=0.1)

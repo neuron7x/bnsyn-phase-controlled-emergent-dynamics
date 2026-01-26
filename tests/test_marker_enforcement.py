@@ -9,6 +9,8 @@ This is a meta-test that validates test infrastructure correctness.
 It runs as part of the smoke suite to catch marking violations early.
 """
 
+import subprocess
+
 
 def test_validation_marker_exists() -> None:
     """Test that validation marker is properly configured.
@@ -18,8 +20,6 @@ def test_validation_marker_exists() -> None:
     Ensures pytest configuration includes the validation marker definition.
     Without this, --strict-markers would fail on validation tests.
     """
-    import subprocess
-
     result = subprocess.run(
         ["pytest", "--markers"],
         cwd=".",
@@ -41,8 +41,6 @@ def test_smoke_marker_exists() -> None:
     -----
     Ensures pytest configuration includes the smoke marker definition.
     """
-    import subprocess
-
     result = subprocess.run(
         ["pytest", "--markers"],
         cwd=".",
