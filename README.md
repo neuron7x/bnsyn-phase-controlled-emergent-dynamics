@@ -16,12 +16,12 @@ BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-g
 
 | Condition | w_cons Variance | w_total Variance | Reduction vs Fixed-High |
 |-----------|-----------------|------------------|-------------------------|
-| **cooling_geometric** | 0.000000 | 0.000001 | **100.0%** ✓ |
+| **cooling_geometric** | 0.000000 | 0.000001 | **99.996%** ✓ (24,693× lower) |
 | fixed_high | 0.003600 | 0.012683 | baseline |
 | fixed_low | 0.000000 | 0.000000 | — |
 | random_T | 0.004653 | 0.016347 | worse |
 
-**Hypothesis H1 SUPPORTED**: Cooling reduces stability variance by >99% (target: ≥10%).
+**Hypothesis H1 SUPPORTED**: Cooling reduces w_total stability variance by **99.996%** (24,693× ratio), massively exceeding the ≥10% target.
 
 ### Visualizations
 

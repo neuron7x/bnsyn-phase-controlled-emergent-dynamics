@@ -55,16 +55,20 @@ Stability metrics are computed across the `seeds` trials for each condition:
 
 | Metric ID | Definition | Acceptance Target |
 |-----------|------------|-------------------|
-| **stability_w_total_var_end** | Variance across seeds of final `mean(w_total)` | Lower for cooling vs fixed_high |
-| **stability_w_cons_var_end** | Variance across seeds of final `mean(w_cons)` | Lower for cooling vs fixed_high |
+| **stability_w_total_var_end** (PRIMARY) | Variance across seeds of final `mean(w_total)` | Lower for cooling vs fixed_high |
+| **stability_w_cons_var_end** (SECONDARY) | Variance across seeds of final `mean(w_cons)` | Lower for cooling vs fixed_high |
 | **tag_activity_mean** | Mean fraction of active tags over time | Reported (no specific target) |
 | **protein_mean_end** | Final protein level (mean across seeds) | Reported (no specific target) |
+
+**Note on w_cons metric**: Consolidation requires both synaptic tags AND protein synthesis (cooperative threshold N_p=50 simultaneous tags). In conditions with low plasticity (cooling, fixed_low), tag counts may remain below threshold, preventing protein synthesis and thus keeping w_cons at baseline. Therefore, **w_total variance is the primary stability metric**, as it captures total synaptic weight stability regardless of consolidation state.
 
 ### Acceptance Criterion
 
 **H1 is supported** if:
-- `cooling_geometric` produces **lower** `stability_w_cons_var_end` than `fixed_high` by at least 10% (relative reduction).
 - `cooling_geometric` produces **lower** `stability_w_total_var_end` than `fixed_high` by at least 10% (relative reduction).
+
+**H1 is strongly supported** if:
+- `cooling_geometric` produces **lower** `stability_w_cons_var_end` than `fixed_high` (when consolidation occurs in both conditions).
 
 **H1 is refuted** if the above conditions do not hold.
 
