@@ -109,7 +109,8 @@ def test_v2_piecewise_cooling_improves_stability() -> None:
     """Validate that v2 piecewise cooling reduces stability variance with active consolidation.
 
     This test verifies the v2 hypothesis: piecewise cooling provides
-    stability improvement while maintaining non-trivial consolidation.
+    stability improvement while maintaining non-trivial consolidation
+    (protein >= 0.90 and |w_cons| >= 1e-4).
     """
     config = get_experiment_config("temp_ablation_v2")
     temp_params = TemperatureParams(

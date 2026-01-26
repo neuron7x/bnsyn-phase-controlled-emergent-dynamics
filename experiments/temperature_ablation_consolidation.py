@@ -93,7 +93,7 @@ def run_single_trial(
         # Determine temperature for this step
         if condition == "cooling_geometric":
             T = temp_sched.step_geometric()
-        elif condition == "cooling_piecewise" or condition == "cooling_geometric_v2":
+        elif condition == "cooling_piecewise":
             # Piecewise cooling: warmup phase then geometric cooling
             if step < warmup_steps:
                 T = temp_params.T0
