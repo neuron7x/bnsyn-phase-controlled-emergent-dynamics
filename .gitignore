@@ -16,6 +16,7 @@ coverage.json
 # Benchmark results (local runs)
 results/*
 !results/temp_ablation_v1/
+!results/temp_ablation_v2/
 artifacts/
 benchmarks/baselines/
 

@@ -10,26 +10,28 @@ BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated 
 
 ## Results: Temperature-Controlled Consolidation
 
-BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-gated synaptic consolidation. Our flagship experiment validates that geometric cooling schedules improve consolidation stability compared to fixed temperature regimes.
+BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-gated synaptic consolidation. Our flagship experiment (v2) validates that piecewise cooling schedules improve consolidation stability while maintaining active protein synthesis and consolidation, demonstrating stability gains without trivially suppressing plasticity.
 
-### Key Findings
+### Key Findings (v2: Piecewise Cooling with Non-Trivial Consolidation)
 
-| Condition | w_cons Variance | w_total Variance | Reduction vs Fixed-High |
-|-----------|-----------------|------------------|-------------------------|
-| **cooling_geometric** | 0.000000 | 0.000001 | **99.996%** ✓ (24,693× lower) |
-| fixed_high | 0.003600 | 0.012683 | baseline |
-| fixed_low | 0.000000 | 0.000000 | — |
-| random_T | 0.004653 | 0.016347 | worse |
+| Condition | w_cons Variance | w_total Variance | Protein Level | Reduction vs Fixed-High |
+|-----------|-----------------|------------------|---------------|-------------------------|
+| **cooling_piecewise** | 0.003039 | 0.010302 | 0.9999 | **18.77%** ✓ |
+| fixed_high | 0.003600 | 0.012683 | 0.9999 | baseline |
+| fixed_low | 0.000000 | 0.000000 | 0.0002 | — |
+| random_T | 0.004736 | 0.016460 | 0.9999 | worse |
 
-**Hypothesis H1 SUPPORTED**: Cooling reduces w_total stability variance by **99.996%** (24,693× ratio), massively exceeding the ≥10% target.
+**Hypothesis H1 SUPPORTED**: Piecewise cooling reduces w_total stability variance by **18.77%** while maintaining active consolidation (protein=0.9999, |w_cons|=0.0012), exceeding the ≥10% target without trivially disabling plasticity.
+
+**v1 showed extreme variance reduction (99.996%) but achieved this by suppressing consolidation; v2 demonstrates stability gains with protein synthesis active.**
 
 ### Visualizations
 
-![Stability Comparison](figures/hero.png)
+![Stability Comparison](figures/temp_ablation_v2/hero.png)
 
 *Stability variance across temperature conditions (20 seeds). Lower variance indicates more reproducible consolidation.*
 
-![Comparison Grid](figures/comparison_grid.png)
+![Comparison Grid](figures/temp_ablation_v2/comparison_grid.png)
 
 *Multi-panel view: temperature profiles, weight dynamics, protein synthesis, and stability metrics.*
 
@@ -39,19 +41,24 @@ BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-g
 # Install with visualization dependencies
 pip install -e ".[dev,viz]"
 
-# Run full validation experiment (20 seeds, ~2-3 minutes)
-python -m experiments.runner temp_ablation_v1
+# Run full validation experiment v2 (20 seeds, ~2-3 minutes)
+python -m experiments.runner temp_ablation_v2
 
 # Generate visualizations
-python scripts/visualize_experiment.py --run-id temp_ablation_v1
+python scripts/visualize_experiment.py --run-id temp_ablation_v2
 
 # Verify hypothesis
-python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/temp_ablation_v1
+python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/temp_ablation_v2
 ```
 
 **Fast smoke test** (5 seeds):
 ```bash
-python -m experiments.runner temp_ablation_v1 --seeds 5 --out results/_smoke
+python -m experiments.runner temp_ablation_v2 --seeds 5 --out results/_smoke
+```
+
+**Baseline v1 experiment** (extreme variance reduction but suppresses consolidation):
+```bash
+python -m experiments.runner temp_ablation_v1
 ```
 
 See [`docs/HYPOTHESIS.md`](docs/HYPOTHESIS.md) for experimental design and acceptance criteria.
