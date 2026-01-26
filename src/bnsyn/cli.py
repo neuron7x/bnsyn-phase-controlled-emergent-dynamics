@@ -93,6 +93,25 @@ def main() -> None:
     -------
     None
 
+    Examples
+    --------
+    Run a deterministic demo simulation::
+
+        $ bnsyn demo --steps 1000 --seed 42 --N 100
+
+    Check dt-invariance (dt vs dt/2 comparison)::
+
+        $ bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000
+
+    Output format (demo)::
+
+        {
+          "sigma": 1.02,
+          "spike_rate_hz": 3.45,
+          "V_mean_mV": -62.1,
+          "energy_cost_aJ": 1234.56
+        }
+
     Notes
     -----
     Builds the CLI parser and dispatches to deterministic command handlers.
