@@ -150,7 +150,7 @@ def main() -> None:
 
     summary = gain_manifest["summary"]
     print(f"✅ Throughput gain report written to {output_path}")
-    print(f"\n📊 Performance Summary:")
+    print("\n📊 Performance Summary:")
     print(f"  Speedup: {summary['speedup']:.2f}x")
     print(f"  Wall time reduction: {summary['wall_time_reduction_pct']:.2f}%")
     print(f"  Energy reduction: {summary['energy_reduction_pct']:.2f}%")

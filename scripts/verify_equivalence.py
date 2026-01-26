@@ -37,8 +37,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
 
 def load_manifest(path: str) -> dict[str, Any]:
     """Load physics manifest from JSON.
@@ -93,9 +91,7 @@ def compare_scalars(
     }
 
 
-def compare_physics(
-    ref: dict[str, Any], acc: dict[str, Any], tolerance: float
-) -> dict[str, Any]:
+def compare_physics(ref: dict[str, Any], acc: dict[str, Any], tolerance: float) -> dict[str, Any]:
     """Compare physics metrics between reference and accelerated backends.
 
     Parameters
@@ -256,17 +252,13 @@ def generate_report(
     acc_throughput = acc["performance"]["updates_per_sec"]
     speedup = acc_throughput / ref_throughput if ref_throughput > 0 else 0.0
 
-    lines.append(
-        f"| Updates/sec | {ref_throughput:.2e} | {acc_throughput:.2e} | {speedup:.2f}x |"
-    )
+    lines.append(f"| Updates/sec | {ref_throughput:.2e} | {acc_throughput:.2e} | {speedup:.2f}x |")
 
     ref_wall = ref["performance"]["wall_time_sec"]
     acc_wall = acc["performance"]["wall_time_sec"]
     wall_speedup = ref_wall / acc_wall if acc_wall > 0 else 0.0
 
-    lines.append(
-        f"| Wall time (sec) | {ref_wall:.4f} | {acc_wall:.4f} | {wall_speedup:.2f}x |"
-    )
+    lines.append(f"| Wall time (sec) | {ref_wall:.4f} | {acc_wall:.4f} | {wall_speedup:.2f}x |")
 
     lines.extend(
         [

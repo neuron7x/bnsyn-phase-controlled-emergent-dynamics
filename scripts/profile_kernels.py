@@ -320,14 +320,9 @@ def main() -> None:
     print(f"✅ Kernel profile written to {output_path}")
     print("\nTop kernels by total time:")
     kernels = manifest["kernels"]
-    sorted_kernels = sorted(
-        kernels.items(), key=lambda x: x[1]["total_time_sec"], reverse=True
-    )
+    sorted_kernels = sorted(kernels.items(), key=lambda x: x[1]["total_time_sec"], reverse=True)
     for kernel_name, metrics in sorted_kernels[:5]:
-        print(
-            f"  {kernel_name}: {metrics['total_time_sec']:.4f}s "
-            f"({metrics['call_count']} calls)"
-        )
+        print(f"  {kernel_name}: {metrics['total_time_sec']:.4f}s ({metrics['call_count']} calls)")
 
 
 if __name__ == "__main__":

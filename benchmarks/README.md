@@ -13,7 +13,112 @@ This directory contains tools for deterministic benchmarking across scale and ph
 - **Reproducibility:** bitwise delta
 - **Performance:** wall time, memory, throughput
 
-## Quick Start
+---
+
+## 🧬 Throughput Scaling Framework (NEW)
+
+The BN-Syn throughput scaling framework implements **physics-preserving optimizations**
+while maintaining exact emergent dynamics. This follows a rigorous 7-step validation process.
+
+### Quick Start
+
+Run the complete validation suite:
+
+```bash
+python scripts/orchestrate_throughput_scaling.py
+```
+
+This executes all 7 steps and generates comprehensive reports in `benchmarks/`.
+
+### The 7-Step Framework
+
+#### STEP 1: Ground-Truth Baseline
+```bash
+python scripts/benchmark_physics.py --backend reference --output benchmarks/physics_baseline.json
+```
+Establishes the reference physics manifold that all optimizations must preserve.
+
+#### STEP 2: Kernel Profiling
+```bash
+python scripts/profile_kernels.py --output benchmarks/kernel_profile.json
+```
+Creates the "Performance Jacobian" - identifies computational bottlenecks.
+
+#### STEP 3: Scaling Surface Analysis
+See `benchmarks/scaling_plan.md` for analysis of optimization opportunities.
+
+#### STEP 4: Accelerated Backend
+```bash
+python scripts/benchmark_physics.py --backend accelerated --output benchmarks/physics_accelerated.json
+```
+Runs the optimized backend (sparse synapse propagation, vectorization).
+
+#### STEP 5: Physics Equivalence Verification
+```bash
+python scripts/verify_equivalence.py \
+  --reference benchmarks/physics_baseline.json \
+  --accelerated benchmarks/physics_accelerated.json \
+  --output benchmarks/equivalence_report.md
+```
+Validates that accelerated backend preserves all physics within tolerance.
+
+#### STEP 6: Throughput Gains
+```bash
+python scripts/calculate_throughput_gain.py \
+  --reference benchmarks/physics_baseline.json \
+  --accelerated benchmarks/physics_accelerated.json \
+  --output benchmarks/throughput_gain.json
+```
+Records speedup, memory reduction, and energy savings.
+
+#### STEP 7: CI Gate
+The workflow `.github/workflows/physics-equivalence.yml` automatically validates
+physics preservation on every PR.
+
+### Key Files
+
+- `physics_baseline.json` - Ground-truth reference backend metrics
+- `physics_accelerated.json` - Optimized backend metrics
+- `kernel_profile.json` - Performance Jacobian (kernel timings)
+- `scaling_plan.md` - Optimization roadmap and analysis
+- `equivalence_report.md` - Physics validation report
+- `throughput_gain.json` - Performance improvements
+
+### Backend Modes
+
+**Reference Backend** (`--backend reference`)
+- Dense matrix operations
+- Exact baseline for validation
+- NEVER modified
+
+**Accelerated Backend** (`--backend accelerated`)
+- Sparse CSR matrix format
+- Vectorized operations
+- Physics-preserving optimizations
+
+### Success Criteria
+
+All optimizations must meet:
+
+- ✅ Spike statistics: < 1% deviation
+- ✅ Sigma (σ): < 0.1% drift
+- ✅ Attractor structure: correlation > 0.999
+- ✅ Determinism: bit-exact for same seed
+- ✅ Δt-invariance: maintained
+
+### Physics Invariants (NEVER CHANGE)
+
+- AdEx equations
+- 3-factor plasticity laws
+- Criticality control (σ)
+- Temperature gating semantics
+- SSOT, claims, bibliography
+- Δt-invariance
+- Determinism
+
+---
+
+## Quick Start (Legacy Benchmarks)
 
 Install development dependencies:
 ```bash
