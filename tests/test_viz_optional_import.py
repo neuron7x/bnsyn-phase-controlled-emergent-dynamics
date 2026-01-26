@@ -45,6 +45,7 @@ def test_viz_runtime_error_when_matplotlib_missing() -> None:
     with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
         # Reset the module cache to force reload attempt
         import bnsyn.viz.dashboard
+
         bnsyn.viz.dashboard._plt = None
         bnsyn.viz.dashboard._animation = None
 
@@ -67,6 +68,7 @@ def test_viz_load_matplotlib_caching() -> None:
 
     # Reset cache
     import bnsyn.viz.dashboard
+
     bnsyn.viz.dashboard._plt = None
     bnsyn.viz.dashboard._animation = None
 
@@ -84,7 +86,9 @@ def test_viz_load_matplotlib_caching() -> None:
             return mock_mplot3d
         return MagicMock()
 
-    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module) as mock_import:
+    with patch(
+        "bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module
+    ) as mock_import:
         # First call should import
         plt1, anim1 = _load_matplotlib()
         assert plt1 is mock_plt
@@ -134,6 +138,7 @@ def test_save_animation_requires_matplotlib() -> None:
     with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
         # Reset the module cache
         import bnsyn.viz.dashboard
+
         bnsyn.viz.dashboard._plt = None
         bnsyn.viz.dashboard._animation = None
 
@@ -142,4 +147,3 @@ def test_save_animation_requires_matplotlib() -> None:
         # Attempting to save should raise RuntimeError
         with pytest.raises(RuntimeError, match=r".*pip install.*viz.*"):
             dashboard.save_animation("test.png")
-
