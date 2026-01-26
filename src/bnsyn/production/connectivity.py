@@ -83,7 +83,7 @@ def build_connectivity(
     """
     if cfg.n_pre <= 0 or cfg.n_post <= 0:
         raise ValueError("n_pre and n_post must be > 0")
-    if not (0.0 <= cfg.p_connect <= 1.0):
+    if not 0.0 <= cfg.p_connect <= 1.0:
         raise ValueError("p_connect must be in [0, 1]")
     adj = rng.random((cfg.n_post, cfg.n_pre)) < cfg.p_connect
     if not cfg.allow_self and cfg.n_pre == cfg.n_post:
