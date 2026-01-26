@@ -42,6 +42,14 @@ except Exception:  # pragma: no cover - optional GPU support
 else:
     torch = torch_module
 
+# Physics constants for synaptic transmission
+AMPA_FRACTION = 0.7  # Fraction of excitatory current through AMPA receptors
+NMDA_FRACTION = 0.3  # Fraction of excitatory current through NMDA receptors
+GAIN_CURRENT_SCALE_PA = 50.0  # Current scaling factor for criticality gain (pA)
+INITIAL_V_STD_MV = 5.0  # Standard deviation for initial voltage distribution (mV)
+
+__all__ = ["Network", "NetworkParams", "run_simulation"]
+
 
 @dataclass(frozen=True)
 class NetworkParams:
@@ -172,7 +180,9 @@ class Network:
             self.W_inh = SparseConnectivity(W_inh, force_format="sparse")
 
         # neuron state
-        V0 = np.asarray(rng.normal(loc=adex.EL_mV, scale=5.0, size=N), dtype=np.float64)
+        V0 = np.asarray(
+            rng.normal(loc=adex.EL_mV, scale=INITIAL_V_STD_MV, size=N), dtype=np.float64
+        )
         w0 = np.zeros(N, dtype=np.float64)
         self.state = AdExState(V_mV=V0, w_pA=w0, spiked=np.zeros(N, dtype=bool))
 
@@ -243,8 +253,8 @@ class Network:
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
 
         # apply increments (split E into AMPA/NMDA)
-        self.g_ampa += 0.7 * incoming_exc + 0.7 * incoming_ext
-        self.g_nmda += 0.3 * incoming_exc + 0.3 * incoming_ext
+        self.g_ampa += AMPA_FRACTION * incoming_exc + AMPA_FRACTION * incoming_ext
+        self.g_nmda += NMDA_FRACTION * incoming_exc + NMDA_FRACTION * incoming_ext
         self.g_gabaa += incoming_inh
 
         # decay (exponential, dt-invariant)
@@ -263,7 +273,7 @@ class Network:
 
         # gain: multiplies external current (proxy for global excitability)
         I_ext = np.zeros(N, dtype=np.float64)
-        I_ext += 50.0 * (self.gain - 1.0)  # pA offset
+        I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
@@ -339,8 +349,8 @@ class Network:
             incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
 
-        self.g_ampa += 0.7 * incoming_exc + 0.7 * incoming_ext
-        self.g_nmda += 0.3 * incoming_exc + 0.3 * incoming_ext
+        self.g_ampa += AMPA_FRACTION * incoming_exc + AMPA_FRACTION * incoming_ext
+        self.g_nmda += NMDA_FRACTION * incoming_exc + NMDA_FRACTION * incoming_ext
         self.g_gabaa += incoming_inh
 
         self.g_ampa = exp_decay_step(self.g_ampa, dt, self.syn.tau_AMPA_ms)
@@ -356,7 +366,7 @@ class Network:
         )
 
         I_ext = np.zeros(N, dtype=np.float64)
-        I_ext += 50.0 * (self.gain - 1.0)
+        I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
 
         self.state = adex_step_adaptive(
             self.state,
@@ -409,7 +419,7 @@ def run_simulation(
         RNG seed.
     N : int, optional
         Number of neurons.
-    backend : str, optional
+    backend : Literal["reference", "accelerated"], optional
         Backend mode: 'reference' (default) or 'accelerated'.
 
     Returns

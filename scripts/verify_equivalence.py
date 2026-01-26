@@ -51,9 +51,21 @@ def load_manifest(path: str) -> dict[str, Any]:
     -------
     dict[str, Any]
         Physics manifest
+
+    Raises
+    ------
+    FileNotFoundError
+        If the manifest file does not exist
+    ValueError
+        If the JSON is invalid
     """
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Manifest file not found: {path}")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in manifest file {path}: {e}")
 
 
 def compare_scalars(
@@ -371,6 +383,10 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    # Validate tolerance
+    if args.tolerance <= 0:
+        raise ValueError("tolerance must be positive")
 
     # Load manifests
     ref = load_manifest(args.reference)
