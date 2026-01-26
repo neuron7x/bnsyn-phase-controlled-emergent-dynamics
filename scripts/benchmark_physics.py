@@ -74,8 +74,8 @@ def compute_attractor_metrics(spike_history: list[float]) -> dict[str, float]:
     mean_act = float(np.mean(arr))
     variance = float(np.var(arr))
 
-    # Autocorrelation at lag 1
-    if len(arr) > 1:
+    # Autocorrelation at lag 1 (handle constant arrays)
+    if len(arr) > 1 and np.std(arr) > 1e-12:
         autocorr = float(np.corrcoef(arr[:-1], arr[1:])[0, 1])
         if not np.isfinite(autocorr):
             autocorr = 0.0

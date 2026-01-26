@@ -366,7 +366,7 @@ def main() -> None:
         "--tolerance",
         type=float,
         default=0.01,
-        help="Maximum allowed relative deviation (default: 0.01 = 1%%)",
+        help="Maximum allowed relative deviation (default: 0.01 = 1%)",
     )
 
     args = parser.parse_args()

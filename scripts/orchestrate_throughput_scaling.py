@@ -38,7 +38,6 @@ Problem statement: All 7 steps
 from __future__ import annotations
 
 import argparse
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -97,7 +96,7 @@ def main() -> None:
         "--tolerance",
         type=float,
         default=0.01,
-        help="Physics equivalence tolerance (default: 0.01 = 1%%)",
+        help="Physics equivalence tolerance (default: 0.01 = 1%)",
     )
     parser.add_argument(
         "--output-dir",

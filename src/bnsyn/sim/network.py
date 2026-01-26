@@ -21,7 +21,7 @@ docs/SSOT.md
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import os
 import numpy as np
@@ -395,7 +395,7 @@ def run_simulation(
     dt_ms: float,
     seed: int,
     N: int = 200,
-    backend: str = "reference",
+    backend: Literal["reference", "accelerated"] = "reference",
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 

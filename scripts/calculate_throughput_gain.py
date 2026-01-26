@@ -34,6 +34,12 @@ import json
 from pathlib import Path
 from typing import Any
 
+# Memory calculation constants
+BYTES_PER_FLOAT64 = 8
+BYTES_PER_INT32 = 4
+CSR_OVERHEAD_PER_NNZ = BYTES_PER_FLOAT64 + BYTES_PER_INT32  # data + indices
+BYTES_TO_MB = 1024**2
+
 
 def calculate_gains(ref: dict[str, Any], acc: dict[str, Any]) -> dict[str, Any]:
     """Calculate throughput gains between reference and accelerated backends.
@@ -62,13 +68,18 @@ def calculate_gains(ref: dict[str, Any], acc: dict[str, Any]) -> dict[str, Any]:
     # Energy cost reduction (proxy: lower wall time = lower energy)
     energy_reduction = 1.0 - (acc_perf["energy_cost"] / ref_perf["energy_cost"])
 
-    # Memory reduction (if applicable - for now, estimate based on sparse format)
-    # Since sparse format uses less memory, estimate reduction
+    # Memory reduction (sparse CSR vs dense matrix)
     ref_synapses = ref["configuration"]["synapses"]
     neurons = ref["configuration"]["neurons"]
-    # Dense: neurons * neurons * 8 bytes, Sparse: synapses * (8 + 4) + neurons * 4
-    dense_mb = (neurons * neurons * 8) / (1024**2)
-    sparse_mb = (ref_synapses * 12 + neurons * 4) / (1024**2)
+
+    # Dense: neurons * neurons * 8 bytes
+    dense_mb = (neurons * neurons * BYTES_PER_FLOAT64) / BYTES_TO_MB
+
+    # Sparse CSR: nnz * (data + indices) + (rows + 1) * indptr
+    sparse_mb = (
+        ref_synapses * CSR_OVERHEAD_PER_NNZ + (neurons + 1) * BYTES_PER_INT32
+    ) / BYTES_TO_MB
+
     memory_reduction = 1.0 - (sparse_mb / dense_mb) if dense_mb > 0 else 0.0
 
     gain_manifest = {
