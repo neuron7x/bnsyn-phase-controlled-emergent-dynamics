@@ -21,7 +21,7 @@ docs/SSOT.md
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import os
 import numpy as np
@@ -41,6 +41,14 @@ except Exception:  # pragma: no cover - optional GPU support
     torch = None
 else:
     torch = torch_module
+
+# Physics constants for synaptic transmission
+AMPA_FRACTION = 0.7  # Fraction of excitatory current through AMPA receptors
+NMDA_FRACTION = 0.3  # Fraction of excitatory current through NMDA receptors
+GAIN_CURRENT_SCALE_PA = 50.0  # Current scaling factor for criticality gain (pA)
+INITIAL_V_STD_MV = 5.0  # Standard deviation for initial voltage distribution (mV)
+
+__all__ = ["Network", "NetworkParams", "run_simulation"]
 
 
 @dataclass(frozen=True)
@@ -127,6 +135,7 @@ class Network:
         crit: CriticalityParams,
         dt_ms: float,
         rng: np.random.Generator,
+        backend: Literal["reference", "accelerated"] = "reference",
     ):
         if nparams.N <= 0:
             raise ValueError("N must be positive")
@@ -134,12 +143,15 @@ class Network:
             raise ValueError("frac_inhib must be in (0,1)")
         if dt_ms <= 0:
             raise ValueError("dt_ms must be positive")
+        if backend not in ("reference", "accelerated"):
+            raise ValueError("backend must be 'reference' or 'accelerated'")
 
         self.np = nparams
         self.adex = adex
         self.syn = syn
         self.dt_ms = dt_ms
         self.rng = rng
+        self.backend = backend
 
         N = nparams.N
         nI = int(round(N * nparams.frac_inhib))
@@ -159,11 +171,18 @@ class Network:
         validate_connectivity_matrix(W_exc, shape=(N, nE), name="W_exc")
         validate_connectivity_matrix(W_inh, shape=(N, nI), name="W_inh")
 
-        self.W_exc = SparseConnectivity(W_exc)
-        self.W_inh = SparseConnectivity(W_inh)
+        # Backend-aware connectivity (reference = force dense, accelerated = auto sparse)
+        if backend == "reference":
+            self.W_exc = SparseConnectivity(W_exc, force_format="dense")
+            self.W_inh = SparseConnectivity(W_inh, force_format="dense")
+        else:  # accelerated
+            self.W_exc = SparseConnectivity(W_exc, force_format="sparse")
+            self.W_inh = SparseConnectivity(W_inh, force_format="sparse")
 
         # neuron state
-        V0 = np.asarray(rng.normal(loc=adex.EL_mV, scale=5.0, size=N), dtype=np.float64)
+        V0 = np.asarray(
+            rng.normal(loc=adex.EL_mV, scale=INITIAL_V_STD_MV, size=N), dtype=np.float64
+        )
         w0 = np.zeros(N, dtype=np.float64)
         self.state = AdExState(V_mV=V0, w_pA=w0, spiked=np.zeros(N, dtype=bool))
 
@@ -234,8 +253,8 @@ class Network:
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
 
         # apply increments (split E into AMPA/NMDA)
-        self.g_ampa += 0.7 * incoming_exc + 0.7 * incoming_ext
-        self.g_nmda += 0.3 * incoming_exc + 0.3 * incoming_ext
+        self.g_ampa += AMPA_FRACTION * incoming_exc + AMPA_FRACTION * incoming_ext
+        self.g_nmda += NMDA_FRACTION * incoming_exc + NMDA_FRACTION * incoming_ext
         self.g_gabaa += incoming_inh
 
         # decay (exponential, dt-invariant)
@@ -254,7 +273,7 @@ class Network:
 
         # gain: multiplies external current (proxy for global excitability)
         I_ext = np.zeros(N, dtype=np.float64)
-        I_ext += 50.0 * (self.gain - 1.0)  # pA offset
+        I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
@@ -330,8 +349,8 @@ class Network:
             incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
 
-        self.g_ampa += 0.7 * incoming_exc + 0.7 * incoming_ext
-        self.g_nmda += 0.3 * incoming_exc + 0.3 * incoming_ext
+        self.g_ampa += AMPA_FRACTION * incoming_exc + AMPA_FRACTION * incoming_ext
+        self.g_nmda += NMDA_FRACTION * incoming_exc + NMDA_FRACTION * incoming_ext
         self.g_gabaa += incoming_inh
 
         self.g_ampa = exp_decay_step(self.g_ampa, dt, self.syn.tau_AMPA_ms)
@@ -347,7 +366,7 @@ class Network:
         )
 
         I_ext = np.zeros(N, dtype=np.float64)
-        I_ext += 50.0 * (self.gain - 1.0)
+        I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
 
         self.state = adex_step_adaptive(
             self.state,
@@ -386,6 +405,7 @@ def run_simulation(
     dt_ms: float,
     seed: int,
     N: int = 200,
+    backend: Literal["reference", "accelerated"] = "reference",
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 
@@ -399,6 +419,8 @@ def run_simulation(
         RNG seed.
     N : int, optional
         Number of neurons.
+    backend : Literal["reference", "accelerated"], optional
+        Backend mode: 'reference' (default) or 'accelerated'.
 
     Returns
     -------
@@ -420,7 +442,15 @@ def run_simulation(
     pack = seed_all(seed)
     rng = pack.np_rng
     nparams = NetworkParams(N=N)
-    net = Network(nparams, AdExParams(), SynapseParams(), CriticalityParams(), dt_ms=dt_ms, rng=rng)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=dt_ms,
+        rng=rng,
+        backend=backend,
+    )
 
     sigmas: list[float] = []
     rates: list[float] = []
