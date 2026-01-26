@@ -1,13 +1,5 @@
 """Interactive dashboard for visualizing emergent dynamics.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
 Notes
 -----
 Provides real-time visualization of attractor crystallization, criticality,

@@ -1,13 +1,5 @@
 """Visualization dashboard for emergent dynamics.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
 Notes
 -----
 Optional visualization tools requiring matplotlib. Dashboard provides

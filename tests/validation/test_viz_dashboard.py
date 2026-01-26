@@ -1,13 +1,5 @@
 """Validation tests for visualization dashboard.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
 Notes
 -----
 Tests marked with @pytest.mark.validation to ensure optional viz
