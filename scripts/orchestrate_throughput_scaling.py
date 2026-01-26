@@ -107,6 +107,14 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    # Validate input parameters
+    if args.steps <= 0:
+        raise ValueError("steps must be positive")
+    if args.neurons <= 0:
+        raise ValueError("neurons must be positive")
+    if args.tolerance <= 0:
+        raise ValueError("tolerance must be positive")
+
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 

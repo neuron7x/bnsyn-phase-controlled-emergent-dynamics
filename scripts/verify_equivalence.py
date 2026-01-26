@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -391,10 +392,10 @@ def main() -> None:
     print(f"✅ Equivalence report written to {output_path}")
     if comparison["all_passed"]:
         print("✅ PASSED: Physics preserved within tolerance")
-        exit(0)
+        sys.exit(0)
     else:
         print(f"❌ FAILED: {comparison['num_failures']} metric(s) exceeded tolerance")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
