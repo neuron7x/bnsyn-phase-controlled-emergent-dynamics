@@ -138,7 +138,7 @@ def verify_hypothesis_h1(results_dir: Path) -> tuple[bool, dict[str, Any]]:
     # Acceptance criterion: at least 10% reduction
     w_cons_pass = w_cons_reduction >= 10.0
     w_total_pass = w_total_reduction >= 10.0
-    
+
     # H1 is supported only if consolidation gates pass AND stability improvement is achieved
     h1_supported = consolidation_gates_pass and w_total_pass
 
@@ -206,11 +206,17 @@ def main() -> int:
         print("=" * 60)
         print("Hypothesis Verification: H1")
         print("=" * 60)
-        print(f"Consolidation gates:              {'PASS' if verification['consolidation_gates_pass'] else 'FAIL'}")
-        print(f"  cooling consolidation active:   {'YES' if verification['cooling_consolidation_nontrivial'] else 'NO'}")
+        print(
+            f"Consolidation gates:              {'PASS' if verification['consolidation_gates_pass'] else 'FAIL'}"
+        )
+        print(
+            f"  cooling consolidation active:   {'YES' if verification['cooling_consolidation_nontrivial'] else 'NO'}"
+        )
         print(f"    protein:                      {verification['cooling_protein']:.4f}")
         print(f"    w_cons_mean:                  {verification['cooling_w_cons_mean']:.6f}")
-        print(f"  fixed_high consolidation active: {'YES' if verification['fixed_high_consolidation_nontrivial'] else 'NO'}")
+        print(
+            f"  fixed_high consolidation active: {'YES' if verification['fixed_high_consolidation_nontrivial'] else 'NO'}"
+        )
         print(f"    protein:                      {verification['fixed_high_protein']:.4f}")
         print(f"    w_cons_mean:                  {verification['fixed_high_w_cons_mean']:.6f}")
         print()

@@ -372,7 +372,7 @@ def main() -> int:
         if f.name != "manifest.json":
             condition_name = f.stem
             available_conditions.append(condition_name)
-    
+
     # Determine which cooling condition is present
     if "cooling_piecewise" in available_conditions:
         conditions = ["cooling_piecewise", "fixed_high", "fixed_low", "random_T"]
@@ -381,7 +381,7 @@ def main() -> int:
     else:
         print(f"Error: No cooling condition found in {results_dir}", file=sys.stderr)
         return 1
-    
+
     # Filter to only conditions that exist
     conditions = [c for c in conditions if c in available_conditions]
     print(f"Found conditions: {conditions}")

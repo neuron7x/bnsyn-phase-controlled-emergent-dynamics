@@ -171,8 +171,7 @@ def test_v2_piecewise_cooling_improves_stability() -> None:
 
     # Cooling should provide stability improvement
     assert cooling_var <= fixed_high_var, (
-        f"Cooling variance ({cooling_var:.6e}) is worse than "
-        f"fixed_high ({fixed_high_var:.6e})"
+        f"Cooling variance ({cooling_var:.6e}) is worse than fixed_high ({fixed_high_var:.6e})"
     )
 
 
