@@ -132,7 +132,7 @@ def run_physics_benchmark(
         ext_w_nS=0.3,
     )
 
-    # Create network
+    # Create network with specified backend
     net = Network(
         nparams,
         AdExParams(),
@@ -140,6 +140,7 @@ def run_physics_benchmark(
         CriticalityParams(),
         dt_ms=dt_ms,
         rng=rng,
+        backend=backend,
     )
 
     # Count synapses
