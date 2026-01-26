@@ -21,3 +21,5 @@ benchmarks/baselines/
 # PR artifacts (should not be tracked)
 PR_DIFF.patch
 PR_SUMMARY.md
+# Temporary - will commit final results
+results/_*

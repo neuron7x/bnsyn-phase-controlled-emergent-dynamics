@@ -42,7 +42,8 @@ def load_condition_results(results_dir: Path, condition: str) -> dict[str, Any]:
         raise FileNotFoundError(f"Condition results not found: {condition_file}")
 
     with open(condition_file, encoding="utf-8") as f:
-        return json.load(f)
+        data: dict[str, Any] = json.load(f)
+        return data
 
 
 def verify_hypothesis_h1(results_dir: Path) -> tuple[bool, dict[str, Any]]:
@@ -154,12 +155,16 @@ def main() -> int:
         print(f"cooling_geometric w_cons variance: {verification['cooling_w_cons_var']:.6f}")
         print(f"fixed_high w_cons variance:       {verification['fixed_high_w_cons_var']:.6f}")
         print(f"w_cons reduction:                 {verification['w_cons_reduction_pct']:.2f}%")
-        print(f"w_cons criterion (≥10%):          {'PASS' if verification['w_cons_pass'] else 'FAIL'}")
+        print(
+            f"w_cons criterion (≥10%):          {'PASS' if verification['w_cons_pass'] else 'FAIL'}"
+        )
         print()
         print(f"cooling_geometric w_total variance: {verification['cooling_w_total_var']:.6f}")
         print(f"fixed_high w_total variance:       {verification['fixed_high_w_total_var']:.6f}")
         print(f"w_total reduction:                 {verification['w_total_reduction_pct']:.2f}%")
-        print(f"w_total criterion (≥10%):          {'PASS' if verification['w_total_pass'] else 'FAIL'}")
+        print(
+            f"w_total criterion (≥10%):          {'PASS' if verification['w_total_pass'] else 'FAIL'}"
+        )
         print()
         print("=" * 60)
         print(f"H1 VERDICT: {'SUPPORTED' if supported else 'REFUTED'}")

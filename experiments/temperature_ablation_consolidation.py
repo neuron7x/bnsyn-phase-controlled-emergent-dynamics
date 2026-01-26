@@ -84,8 +84,8 @@ def run_single_trial(
     for step in range(steps):
         # Generate synthetic fast_update pulses
         pulses = rng.random((10, 10)) < pulse_prob
-        fast_update = pulses.astype(float) * pulse_amplitude * rng.choice(
-            [-1.0, 1.0], size=(10, 10)
+        fast_update = (
+            pulses.astype(float) * pulse_amplitude * rng.choice([-1.0, 1.0], size=(10, 10))
         )
 
         # Determine temperature for this step

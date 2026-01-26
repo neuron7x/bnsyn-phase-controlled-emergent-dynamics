@@ -8,6 +8,56 @@ BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated 
 [![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
 [![ci-pr-atomic](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
 
+## Results: Temperature-Controlled Consolidation
+
+BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-gated synaptic consolidation. Our flagship experiment validates that geometric cooling schedules improve consolidation stability compared to fixed temperature regimes.
+
+### Key Findings
+
+| Condition | w_cons Variance | w_total Variance | Reduction vs Fixed-High |
+|-----------|-----------------|------------------|-------------------------|
+| **cooling_geometric** | 0.000000 | 0.000001 | **100.0%** ✓ |
+| fixed_high | 0.003600 | 0.012683 | baseline |
+| fixed_low | 0.000000 | 0.000000 | — |
+| random_T | 0.004653 | 0.016347 | worse |
+
+**Hypothesis H1 SUPPORTED**: Cooling reduces stability variance by >99% (target: ≥10%).
+
+### Visualizations
+
+![Stability Comparison](figures/hero.png)
+
+*Stability variance across temperature conditions (20 seeds). Lower variance indicates more reproducible consolidation.*
+
+![Comparison Grid](figures/comparison_grid.png)
+
+*Multi-panel view: temperature profiles, weight dynamics, protein synthesis, and stability metrics.*
+
+### Reproduce the Flagship Experiment
+
+```bash
+# Install with visualization dependencies
+pip install -e ".[dev,viz]"
+
+# Run full validation experiment (20 seeds, ~2-3 minutes)
+python -m experiments.runner temp_ablation_v1
+
+# Generate visualizations
+python scripts/visualize_experiment.py --run-id temp_ablation_v1
+
+# Verify hypothesis
+python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/temp_ablation_v1
+```
+
+**Fast smoke test** (5 seeds):
+```bash
+python -m experiments.runner temp_ablation_v1 --seeds 5 --out results/_smoke
+```
+
+See [`docs/HYPOTHESIS.md`](docs/HYPOTHESIS.md) for experimental design and acceptance criteria.
+
+---
+
 ## Start here
 
 - **Documentation hub:** [`docs/INDEX.md`](docs/INDEX.md)

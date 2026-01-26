@@ -85,7 +85,14 @@ def generate_manifest(
     params : dict[str, Any]
         Experiment parameters.
     """
-    manifest = {
+    result_files: dict[str, str] = {}
+
+    # Compute hashes for all result files
+    for result_file in output_dir.glob("*.json"):
+        if result_file.name != "manifest.json":
+            result_files[result_file.name] = compute_file_hash(result_file)
+
+    manifest: dict[str, Any] = {
         "experiment": experiment_name,
         "version": "1.0",
         "git_commit": get_git_commit(),
@@ -93,13 +100,8 @@ def generate_manifest(
         "seeds": seeds,
         "steps": steps,
         "params": params,
-        "result_files": {},
+        "result_files": result_files,
     }
-
-    # Compute hashes for all result files
-    for result_file in output_dir.glob("*.json"):
-        if result_file.name != "manifest.json":
-            manifest["result_files"][result_file.name] = compute_file_hash(result_file)
 
     manifest_path = output_dir / "manifest.json"
     with open(manifest_path, "w", encoding="utf-8") as f:
