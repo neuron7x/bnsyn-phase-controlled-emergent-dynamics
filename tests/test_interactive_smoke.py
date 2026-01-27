@@ -6,6 +6,8 @@ Does not actually launch Streamlit.
 
 from __future__ import annotations
 
+from unittest.mock import Mock, patch
+
 import numpy as np
 import pytest
 
@@ -181,3 +183,108 @@ def test_schema_validation() -> None:
     }
     with pytest.raises(Exception):  # Pydantic ValidationError
         BNSynExperimentConfig(**invalid_config2)
+
+
+@pytest.mark.smoke
+@patch("streamlit.set_page_config")
+@patch("streamlit.title")
+@patch("streamlit.markdown")
+@patch("streamlit.sidebar.header")
+@patch("streamlit.sidebar.slider", return_value=100)
+@patch("streamlit.sidebar.select_slider", return_value=0.1)
+@patch("streamlit.sidebar.number_input", return_value=42)
+@patch("streamlit.sidebar.button", return_value=False)
+@patch("streamlit.info")
+def test_dashboard_ui_no_simulation(
+    mock_info: Mock,
+    mock_button: Mock,
+    mock_input: Mock,
+    mock_select: Mock,
+    mock_slider: Mock,
+    mock_header: Mock,
+    mock_markdown: Mock,
+    mock_title: Mock,
+    mock_config: Mock,
+) -> None:
+    """Test dashboard renders UI without running simulation."""
+    try:
+        from bnsyn.viz.interactive import main
+
+        main()  # Should not raise
+        mock_title.assert_called_once()
+        assert mock_slider.call_count >= 1
+    except ImportError as e:
+        if "streamlit" in str(e) or "plotly" in str(e):
+            pytest.skip("Streamlit/plotly not installed (optional dependency)")
+        else:
+            raise
+
+
+@pytest.mark.smoke
+@patch("streamlit.set_page_config")
+@patch("streamlit.title")
+@patch("streamlit.markdown")
+@patch("streamlit.sidebar.header")
+@patch("streamlit.sidebar.slider", return_value=50)
+@patch("streamlit.sidebar.select_slider", return_value=0.1)
+@patch("streamlit.sidebar.number_input", return_value=42)
+@patch("streamlit.sidebar.button", return_value=True)  # User clicks "Run"
+@patch("streamlit.spinner")
+@patch("streamlit.sidebar.progress")
+@patch("streamlit.tabs")
+@patch("streamlit.subheader")
+@patch("streamlit.plotly_chart")
+@patch("streamlit.columns", return_value=[Mock(), Mock(), Mock(), Mock()])
+def test_dashboard_simulation_flow(
+    mock_columns: Mock,
+    mock_chart: Mock,
+    mock_subheader: Mock,
+    mock_tabs: Mock,
+    mock_progress: Mock,
+    mock_spinner: Mock,
+    mock_button: Mock,
+    mock_input: Mock,
+    mock_select: Mock,
+    mock_slider: Mock,
+    mock_header: Mock,
+    mock_markdown: Mock,
+    mock_title: Mock,
+    mock_config: Mock,
+) -> None:
+    """Test simulation runs when button clicked."""
+    try:
+        from bnsyn.viz.interactive import main
+
+        # Mock context managers
+        mock_spinner_context = Mock()
+        mock_spinner_context.__enter__ = Mock(return_value=mock_spinner_context)
+        mock_spinner_context.__exit__ = Mock(return_value=None)
+        mock_spinner.return_value = mock_spinner_context
+
+        mock_progress_obj = Mock()
+        mock_progress_obj.progress = Mock()
+        mock_progress_obj.empty = Mock()
+        mock_progress.return_value = mock_progress_obj
+
+        # Mock tabs as context managers
+        mock_tab = Mock()
+        mock_tab.__enter__ = Mock(return_value=mock_tab)
+        mock_tab.__exit__ = Mock(return_value=None)
+        mock_tabs.return_value = [mock_tab, mock_tab, mock_tab, mock_tab]
+
+        # Mock st.metric calls
+        mock_col = Mock()
+        mock_col.__enter__ = Mock(return_value=mock_col)
+        mock_col.__exit__ = Mock(return_value=None)
+        mock_col.metric = Mock()
+        mock_columns.return_value = [mock_col, mock_col, mock_col, mock_col]
+
+        main()
+
+        # Verify simulation ran
+        assert mock_chart.call_count >= 4  # 4 tabs with charts
+    except ImportError as e:
+        if "streamlit" in str(e) or "plotly" in str(e):
+            pytest.skip("Streamlit/plotly not installed (optional dependency)")
+        else:
+            raise

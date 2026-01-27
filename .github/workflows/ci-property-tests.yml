@@ -28,7 +28,7 @@ jobs:
 
       - name: Run property-based tests
         run: |
-          pytest -m property -v --tb=short --hypothesis-show-statistics
+          pytest -m property -v --tb=short --hypothesis-show-statistics --hypothesis-profile=ci
 
       - name: Upload test results
         if: always()

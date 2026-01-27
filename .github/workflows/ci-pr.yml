@@ -139,7 +139,7 @@ jobs:
       - name: Spec implementation audit
         run: python scripts/audit_spec_implementation.py
       - name: Smoke tests
-        run: pytest -m "not validation"
+        run: pytest -m "not (validation or property)"
 
   ci-benchmarks:
     runs-on: ubuntu-latest

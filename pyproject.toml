@@ -78,6 +78,14 @@ markers = [
   "property: property-based tests using Hypothesis",
 ]
 
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

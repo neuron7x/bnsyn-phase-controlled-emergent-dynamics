@@ -78,7 +78,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: |
           pytest \
-            -m "not validation" \
+            -m "not (validation or property)" \
             --cov=src/bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
