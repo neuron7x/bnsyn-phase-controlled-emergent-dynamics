@@ -1,15 +1,5 @@
 """Declarative experiment execution from YAML configurations.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Provides YAML-driven experiment runner with schema validation.
 
 References

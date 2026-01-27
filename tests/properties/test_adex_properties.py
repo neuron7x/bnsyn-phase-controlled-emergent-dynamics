@@ -1,15 +1,5 @@
 """Property-based tests for AdEx neuron dynamics using Hypothesis.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Uses Hypothesis to generate 1000+ test cases automatically.
 Tests universal properties: finiteness, boundedness, monotonicity.
 

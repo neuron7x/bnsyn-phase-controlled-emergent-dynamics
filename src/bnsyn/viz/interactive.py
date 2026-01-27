@@ -1,15 +1,5 @@
 """Interactive Streamlit dashboard for BN-Syn exploration.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Provides real-time parameter exploration with 4 visualization tabs:
 - Raster plot
 - Voltage traces

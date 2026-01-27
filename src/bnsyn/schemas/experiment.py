@@ -1,15 +1,5 @@
 """Pydantic models for experiment configuration schema.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Auto-generated from schemas/experiment.schema.json.
 Provides type-safe experiment configuration with validation.
 

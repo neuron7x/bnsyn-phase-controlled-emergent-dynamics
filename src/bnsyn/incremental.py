@@ -1,15 +1,5 @@
 """Incremental computation with joblib caching for 10-100x speedup.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Provides persistent caching decorator for expensive computations.
 Cache invalidates when dependencies change.
 

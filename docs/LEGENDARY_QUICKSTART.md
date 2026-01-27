@@ -194,8 +194,8 @@ net.step(dt_ms=0.1)
 
 ## Performance Targets
 
-- ✅ Interactive dashboard startup: &lt;3s
-- ✅ Simulation (N=100, 1000 steps): &lt;5s
+- ✅ Interactive dashboard startup: <3s
+- ✅ Simulation (N=100, 1000 steps): <5s
 - ✅ Incremental computation: 10x speedup on cached runs
 
 ## Success Criteria

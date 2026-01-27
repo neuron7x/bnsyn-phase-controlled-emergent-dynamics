@@ -1,15 +1,5 @@
 """Smoke test for interactive dashboard components.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
 Tests that interactive module can be imported and basic functions work.
 Does not actually launch Streamlit.
 """
@@ -25,9 +15,6 @@ def test_interactive_import() -> None:
     """Test that interactive module can be imported."""
     try:
         from bnsyn.viz import interactive  # noqa: F401
-
-        # Module imported successfully
-        assert True
     except ImportError as e:
         # Streamlit/plotly not installed - this is OK
         if "streamlit" in str(e) or "plotly" in str(e):
