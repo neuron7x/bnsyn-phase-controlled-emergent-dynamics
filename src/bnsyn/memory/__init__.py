@@ -19,7 +19,7 @@ docs/SPEC.md
 """
 
 from .consolidator import MemoryConsolidator as MemoryConsolidator
-from .consolidator import MemoryTrace as MemoryTrace
 from .ledger import ConsolidationLedger as ConsolidationLedger
+from .trace import MemoryTrace as MemoryTrace
 
 __all__ = ["MemoryTrace", "MemoryConsolidator", "ConsolidationLedger"]

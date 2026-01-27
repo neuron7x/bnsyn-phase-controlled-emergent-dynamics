@@ -10,7 +10,7 @@ None
 
 Notes
 -----
-Implements a high-level consolidator interface that wraps MemoryTrace
+Implements a high-level consolidator interface that wraps internal MemoryTrace
 with enhanced eviction logic and consolidation tracking.
 
 References
@@ -31,7 +31,7 @@ Float64Array = NDArray[np.float64]
 
 
 @dataclass
-class MemoryTrace:
+class ConsolidatedMemory:
     """A stored memory pattern with metadata.
 
     Parameters
@@ -51,7 +51,7 @@ class MemoryTrace:
 
     Notes
     -----
-    Immutable snapshot of a memory trace.
+    Immutable snapshot of a memory trace returned by MemoryConsolidator.
 
     References
     ----------
@@ -96,7 +96,7 @@ class MemoryConsolidator:
         self._strengths: list[float] = []
         self._tag_steps: list[int] = []
 
-    def tag(self, pattern: Float64Array, importance: float) -> MemoryTrace:
+    def tag(self, pattern: Float64Array, importance: float) -> ConsolidatedMemory:
         """Tag a new memory pattern.
 
         Parameters
@@ -108,7 +108,7 @@ class MemoryConsolidator:
 
         Returns
         -------
-        MemoryTrace
+        ConsolidatedMemory
             The stored memory trace.
 
         Raises
@@ -140,9 +140,9 @@ class MemoryConsolidator:
         self._tag_steps.append(self._step_counter)
         self._step_counter += 1
 
-        # Return MemoryTrace snapshot
+        # Return ConsolidatedMemory snapshot
         idx = len(self._storage.patterns) - 1
-        return MemoryTrace(
+        return ConsolidatedMemory(
             pattern=self._storage.patterns[idx].copy(),
             importance=float(self._storage.importance[idx]),
             tag_step=self._tag_steps[idx],
@@ -199,7 +199,9 @@ class MemoryConsolidator:
         self._strengths.pop(idx)
         self._tag_steps.pop(idx)
 
-    def consolidate(self, protein_level: float, temperature: float) -> list[MemoryTrace]:
+    def consolidate(
+        self, protein_level: float, temperature: float
+    ) -> list[ConsolidatedMemory]:
         """Apply consolidation to stored patterns.
 
         Parameters
@@ -211,8 +213,8 @@ class MemoryConsolidator:
 
         Returns
         -------
-        list[MemoryTrace]
-            List of consolidated memory traces.
+        list[ConsolidatedMemory]
+            List of newly consolidated memory traces.
 
         Raises
         ------
@@ -242,7 +244,7 @@ class MemoryConsolidator:
                 if not self._consolidated_flags[i]:
                     self._consolidated_flags[i] = True
                     consolidated_traces.append(
-                        MemoryTrace(
+                        ConsolidatedMemory(
                             pattern=self._storage.patterns[i].copy(),
                             importance=float(self._storage.importance[i]),
                             tag_step=self._tag_steps[i],
@@ -254,7 +256,9 @@ class MemoryConsolidator:
 
         return consolidated_traces
 
-    def recall(self, cue: Float64Array, threshold: float = 0.7) -> MemoryTrace | None:
+    def recall(
+        self, cue: Float64Array, threshold: float = 0.7
+    ) -> ConsolidatedMemory | None:
         """Recall a memory similar to the cue.
 
         Parameters
@@ -266,7 +270,7 @@ class MemoryConsolidator:
 
         Returns
         -------
-        MemoryTrace | None
+        ConsolidatedMemory | None
             Most similar memory trace above threshold, or None if no match.
 
         Raises
@@ -292,7 +296,7 @@ class MemoryConsolidator:
 
         # Return best match (first in sorted list)
         best_idx = indices[0]
-        return MemoryTrace(
+        return ConsolidatedMemory(
             pattern=self._storage.patterns[best_idx].copy(),
             importance=float(self._storage.importance[best_idx]),
             tag_step=self._tag_steps[best_idx],
