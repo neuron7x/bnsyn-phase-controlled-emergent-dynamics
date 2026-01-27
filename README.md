@@ -65,6 +65,84 @@ See [`docs/HYPOTHESIS.md`](docs/HYPOTHESIS.md) for experimental design and accep
 
 ---
 
+## Sleep–Emergence Stack
+
+BN-Syn now includes a **Sleep–Emergence Stack** that integrates sleep-wake cycles, memory consolidation, attractor crystallization, and phase transition tracking. This provides a cohesive framework for studying emergent dynamics with deterministic guarantees.
+
+### Quick Demo
+
+Run the end-to-end sleep-stack demo:
+
+```bash
+bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1
+```
+
+**Outputs:**
+- `results/demo1/manifest.json`: Reproducibility metadata (seed, params, git SHA)
+- `results/demo1/metrics.json`: Metrics (phase transitions, attractors, consolidation stats)
+- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)
+
+**Expected runtime:** ~5-10 seconds
+
+### Minimal Usage Example
+
+```python
+from bnsyn.rng import seed_all
+from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.config import AdExParams, SynapseParams, CriticalityParams, TemperatureParams
+from bnsyn.temperature.schedule import TemperatureSchedule
+from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+from bnsyn.memory import MemoryConsolidator
+from bnsyn.criticality import PhaseTransitionDetector
+from bnsyn.emergence import AttractorCrystallizer
+
+# Initialize with deterministic seed
+pack = seed_all(42)
+net = Network(NetworkParams(N=64), AdExParams(), SynapseParams(), 
+              CriticalityParams(), dt_ms=0.5, rng=pack.np_rng)
+
+# Setup sleep-emergence stack
+temp_schedule = TemperatureSchedule(TemperatureParams())
+sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=pack.np_rng)
+consolidator = MemoryConsolidator(capacity=100)
+phase_detector = PhaseTransitionDetector()
+crystallizer = AttractorCrystallizer(state_dim=64, snapshot_dim=50)
+
+# Wake phase: run network and record memories
+for _ in range(500):
+    m = net.step()
+    if _ % 20 == 0:
+        consolidator.tag(net.state.V_mV, importance=0.8)
+        sleep_cycle.record_memory(importance=0.8)
+    phase_detector.observe(m["sigma"], _)
+    crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+
+# Sleep phase: consolidation + replay
+sleep_cycle.sleep(default_human_sleep_cycle())
+consolidator.consolidate(protein_level=0.9, temperature=0.8)
+
+# Results
+print(f"Memories: {sleep_cycle.get_memory_count()}")
+print(f"Transitions: {len(phase_detector.get_transitions())}")
+print(f"Attractors: {len(crystallizer.get_attractors())}")
+print(f"Consolidation: {consolidator.stats()}")
+```
+
+### Key Features
+
+- **Sleep Stages**: Wake, Light Sleep, Deep Sleep, REM with configurable durations
+- **Memory Consolidation**: Tag, consolidate, and recall patterns with protein-dependent dynamics
+- **Phase Transitions**: Real-time detection of subcritical/critical/supercritical phases
+- **Attractor Crystallization**: Online detection of stable attractors (no sklearn dependency)
+- **Full Determinism**: Same seed → identical results across all components
+- **Lazy Visualization**: Optional matplotlib-based dashboard (install with `pip install -e ".[viz]"`)
+
+**Documentation:**
+- [`docs/sleep_stack.md`](docs/sleep_stack.md): Sleep cycle and consolidation details
+- [`docs/emergence_tracking.md`](docs/emergence_tracking.md): Attractor detection and phase transitions
+
+---
+
 ## Start here
 
 - **Documentation hub:** [`docs/INDEX.md`](docs/INDEX.md)

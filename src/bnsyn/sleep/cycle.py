@@ -381,3 +381,55 @@ class SleepCycle:
     def clear_memories(self) -> None:
         """Clear all stored memories."""
         self.memories.clear()
+
+
+def default_human_sleep_cycle() -> list[SleepStageConfig]:
+    """Return default human sleep cycle configuration.
+
+    Returns
+    -------
+    list[SleepStageConfig]
+        List of sleep stage configurations representing a typical human sleep cycle.
+
+    Notes
+    -----
+    Provides a realistic sleep cycle with durations tuned for demo speed.
+    - Light sleep: 150 steps, temperature 0.8-1.0
+    - Deep sleep: 200 steps, temperature 0.3-0.5 (consolidation active)
+    - REM: 100 steps, temperature 0.9-1.2 (replay active)
+
+    Total duration: 450 steps (reasonable for demos at dt=0.5ms ~225ms simulated).
+
+    References
+    ----------
+    docs/features/sleep_cycle.md
+    """
+    return [
+        SleepStageConfig(
+            stage=SleepStage.LIGHT_SLEEP,
+            duration_steps=150,
+            temperature_range=(0.8, 1.0),
+            plasticity_gate=0.6,
+            consolidation_active=False,
+            replay_active=False,
+            replay_noise=0.0,
+        ),
+        SleepStageConfig(
+            stage=SleepStage.DEEP_SLEEP,
+            duration_steps=200,
+            temperature_range=(0.3, 0.5),
+            plasticity_gate=0.3,
+            consolidation_active=True,
+            replay_active=False,
+            replay_noise=0.0,
+        ),
+        SleepStageConfig(
+            stage=SleepStage.REM,
+            duration_steps=100,
+            temperature_range=(0.9, 1.2),
+            plasticity_gate=0.9,
+            consolidation_active=False,
+            replay_active=True,
+            replay_noise=0.3,
+        ),
+    ]

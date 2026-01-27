@@ -1,0 +1,115 @@
+"""Memory replay utilities for sleep cycles.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Provides replay pattern generation and importance weighting for sleep cycles.
+
+References
+----------
+docs/features/sleep_cycle.md
+"""
+
+from __future__ import annotations
+
+import numpy as np
+from numpy.typing import NDArray
+
+Float64Array = NDArray[np.float64]
+
+
+def weighted_pattern_selection(
+    patterns: list[Float64Array],
+    importance: Float64Array,
+    rng: np.random.Generator,
+) -> Float64Array:
+    """Select a pattern weighted by importance.
+
+    Parameters
+    ----------
+    patterns : list[Float64Array]
+        List of pattern vectors.
+    importance : Float64Array
+        Importance weights (non-negative).
+    rng : np.random.Generator
+        Random number generator for selection.
+
+    Returns
+    -------
+    Float64Array
+        Selected pattern.
+
+    Raises
+    ------
+    ValueError
+        If patterns is empty or importance has wrong shape.
+
+    Notes
+    -----
+    Uses importance-weighted random selection. If all importance values
+    are zero, uses uniform selection.
+    """
+    if not patterns:
+        raise ValueError("patterns list is empty")
+    if len(importance) != len(patterns):
+        raise ValueError("importance length must match patterns length")
+
+    # Normalize weights
+    weights = importance.copy()
+    if float(np.sum(weights)) == 0:
+        weights = np.ones_like(weights)
+    weights = weights / float(np.sum(weights))
+
+    # Select index
+    idx = rng.choice(len(patterns), p=weights)
+    return patterns[idx].copy()
+
+
+def add_replay_noise(
+    pattern: Float64Array,
+    noise_level: float,
+    noise_scale: float,
+    rng: np.random.Generator,
+) -> Float64Array:
+    """Add noise to a replay pattern.
+
+    Parameters
+    ----------
+    pattern : Float64Array
+        Original pattern.
+    noise_level : float
+        Noise level in [0, 1] (0 = no noise, 1 = max noise).
+    noise_scale : float
+        Standard deviation scale for noise.
+    rng : np.random.Generator
+        Random number generator for noise.
+
+    Returns
+    -------
+    Float64Array
+        Noisy pattern.
+
+    Raises
+    ------
+    ValueError
+        If noise_level is out of range.
+
+    Notes
+    -----
+    Adds Gaussian noise scaled by noise_level * noise_scale.
+    """
+    if not 0.0 <= noise_level <= 1.0:
+        raise ValueError("noise_level must be in [0, 1]")
+
+    if noise_level == 0.0:
+        return pattern.copy()
+
+    noise = rng.normal(0.0, noise_level * noise_scale, pattern.shape)
+    return np.asarray(pattern + noise, dtype=np.float64)
