@@ -199,9 +199,7 @@ class MemoryConsolidator:
         self._strengths.pop(idx)
         self._tag_steps.pop(idx)
 
-    def consolidate(
-        self, protein_level: float, temperature: float
-    ) -> list[ConsolidatedMemory]:
+    def consolidate(self, protein_level: float, temperature: float) -> list[ConsolidatedMemory]:
         """Apply consolidation to stored patterns.
 
         Parameters
@@ -256,9 +254,7 @@ class MemoryConsolidator:
 
         return consolidated_traces
 
-    def recall(
-        self, cue: Float64Array, threshold: float = 0.7
-    ) -> ConsolidatedMemory | None:
+    def recall(self, cue: Float64Array, threshold: float = 0.7) -> ConsolidatedMemory | None:
         """Recall a memory similar to the cue.
 
         Parameters

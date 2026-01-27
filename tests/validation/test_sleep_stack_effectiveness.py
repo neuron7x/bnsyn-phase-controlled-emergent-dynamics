@@ -151,7 +151,7 @@ def test_replay_increases_recall() -> None:
         # record patterns during wake
         patterns_stored = []
         for i in range(100):
-            m = net.step()
+            net.step()
             if i % 10 == 0:
                 importance = 0.8
                 consolidator.tag(net.state.V_mV, importance)
@@ -185,7 +185,7 @@ def test_replay_increases_recall() -> None:
         # record patterns during wake
         patterns_stored = []
         for i in range(100):
-            m = net.step()
+            net.step()
             if i % 10 == 0:
                 importance = 0.8
                 consolidator.tag(net.state.V_mV, importance)
@@ -254,7 +254,7 @@ def test_determinism_across_sleep_runs() -> None:
 
         # wake
         for i in range(50):
-            m = net.step()
+            net.step()
             if i % 10 == 0:
                 consolidator.tag(net.state.V_mV, importance=0.5)
                 sleep_cycle.record_memory(importance=0.5)

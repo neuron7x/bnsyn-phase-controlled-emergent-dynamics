@@ -31,9 +31,7 @@ def test_detector_creation() -> None:
 
     # invalid thresholds
     with pytest.raises(ValueError, match="subcritical_threshold must be less than"):
-        PhaseTransitionDetector(
-            subcritical_threshold=1.1, supercritical_threshold=1.0
-        )
+        PhaseTransitionDetector(subcritical_threshold=1.1, supercritical_threshold=1.0)
 
     with pytest.raises(ValueError, match="history_size must be positive"):
         PhaseTransitionDetector(history_size=0)

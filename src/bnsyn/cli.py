@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -196,7 +195,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     cryst_state = crystallizer.get_crystallization_state()
     cons_stats = consolidator.stats()
 
-    metrics = {
+    metrics: dict[str, Any] = {
         "wake": {
             "steps": args.steps_wake,
             "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
@@ -258,9 +257,11 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
 
     # Generate figure (optional, only if matplotlib available)
     try:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # type: ignore[import-not-found]
+        from typing import Any as _Any
 
-        fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+        fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
+        axes: _Any = axes_raw  # Type hint to satisfy mypy
 
         # Sigma trace
         ax = axes[0, 0]
