@@ -93,7 +93,7 @@ Exact pins + hashes guarantee:
 - No supply-chain attacks (hash verification)
 
 **Evidence:**
-- Commit SHA: `<PENDING_C2>`
+- Commit SHA: `ca35f31`
 - Files modified: 2
 - Dependencies pinned: 50+
 - Hashes added: 200+

@@ -1,0 +1,195 @@
+name: Reusable Pytest
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to use'
+        type: string
+        default: '3.11'
+      markers:
+        description: 'Pytest marker expression'
+        type: string
+        default: 'not (validation or property)'
+      coverage-threshold:
+        description: 'Minimum coverage percentage'
+        type: number
+        default: 85
+      timeout-minutes:
+        description: 'Timeout in minutes'
+        type: number
+        default: 10
+      upload-codecov:
+        description: 'Upload coverage to Codecov'
+        type: boolean
+        default: false
+    secrets:
+      CODECOV_TOKEN:
+        description: 'Codecov token (required if upload-codecov is true)'
+        required: false
+
+jobs:
+  pytest:
+    name: Pytest (Coverage ${{ inputs.coverage-threshold }}%)
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,viz]"
+      
+      - name: Run pytest
+        id: pytest
+        run: |
+          START_TIME=$(date +%s)
+          pytest \
+            -m "${{ inputs.markers }}" \
+            --cov=src/bnsyn \
+            --cov-report=term-missing:skip-covered \
+            --cov-report=json \
+            --cov-report=html \
+            --cov-fail-under=${{ inputs.coverage-threshold }} \
+            --junit-xml=junit.xml \
+            -v 2>&1 | tee pytest.log
+          PYTEST_EXIT=$?
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "PYTEST_RESULT=$PYTEST_EXIT" >> $GITHUB_ENV
+          echo "DURATION=$DURATION" >> $GITHUB_ENV
+          exit $PYTEST_EXIT
+        continue-on-error: true
+      
+      - name: Parse coverage
+        if: always()
+        id: coverage
+        run: |
+          if [ -f coverage.json ]; then
+            COVERAGE=$(python -c "import json; print(json.load(open('coverage.json'))['totals']['percent_covered'])")
+            echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+            
+            # Count tests
+            if [ -f junit.xml ]; then
+              TEST_COUNT=$(grep -c '<testcase' junit.xml || echo "0")
+              echo "TEST_COUNT=$TEST_COUNT" >> $GITHUB_ENV
+            fi
+          else
+            echo "COVERAGE=N/A" >> $GITHUB_ENV
+            echo "TEST_COUNT=0" >> $GITHUB_ENV
+          fi
+      
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🧪 Pytest Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+            echo "| Status | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Status | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Tests Run | ${{ env.TEST_COUNT }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage | ${{ env.COVERAGE }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Threshold | ${{ inputs.coverage-threshold }}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duration | ${{ env.DURATION }}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Markers | \`${{ inputs.markers }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Python | ${{ inputs.python-version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Show failure details if tests failed
+          if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+            echo "### ❌ Failure Details" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Extract failed tests
+            if [ -f pytest.log ]; then
+              echo "**Failed Tests:**" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              grep "FAILED" pytest.log | head -10 >> $GITHUB_STEP_SUMMARY || echo "No FAILED markers found" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            # Show coverage hotspots (lowest 5 files)
+            if [ -f coverage.json ]; then
+              echo "**Coverage Hotspots (Lowest 5 Files):**" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              python -c "
+import json
+data = json.load(open('coverage.json'))
+files = [(k, v['summary']['percent_covered']) for k, v in data.get('files', {}).items()]
+files.sort(key=lambda x: x[1])
+for file, cov in files[:5]:
+    print(f'{file}: {cov:.1f}%')
+" >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Could not parse coverage" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            # Reproduction commands
+            echo "### 🔄 Reproduction Commands" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+            echo "# Clone and setup" >> $GITHUB_STEP_SUMMARY
+            echo "git clone https://github.com/${{ github.repository }}.git" >> $GITHUB_STEP_SUMMARY
+            echo "cd ${{ github.event.repository.name }}" >> $GITHUB_STEP_SUMMARY
+            echo "git checkout ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "# Install dependencies" >> $GITHUB_STEP_SUMMARY
+            echo "python${{ inputs.python-version }} -m pip install -e \".[dev,viz]\"" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "# Run tests" >> $GITHUB_STEP_SUMMARY
+            echo "pytest -m \"${{ inputs.markers }}\" \\" >> $GITHUB_STEP_SUMMARY
+            echo "  --cov=src/bnsyn \\" >> $GITHUB_STEP_SUMMARY
+            echo "  --cov-fail-under=${{ inputs.coverage-threshold }} \\" >> $GITHUB_STEP_SUMMARY
+            echo "  -v" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Upload coverage to Codecov
+        if: inputs.upload-codecov && always()
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.json
+          fail_ci_if_error: false
+          verbose: true
+          flags: pytest-${{ inputs.markers }}
+          name: pytest-coverage-${{ github.sha }}
+        timeout-minutes: 5
+        continue-on-error: true
+      
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-failure-${{ github.sha }}
+          path: |
+            pytest.log
+            junit.xml
+            htmlcov/
+            coverage.json
+          retention-days: 7
+      
+      - name: Upload coverage artifact on success
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ github.sha }}
+          path: htmlcov/
+          retention-days: 30
+      
+      - name: Fail if tests failed
+        if: env.PYTEST_RESULT != '0'
+        run: exit 1
