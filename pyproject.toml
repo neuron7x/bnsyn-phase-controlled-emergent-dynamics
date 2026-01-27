@@ -10,6 +10,8 @@ dependencies = [
   "numpy>=1.26",
   "pydantic>=2.7",
   "scipy>=1.10",
+  "jsonschema>=4.17.0",
+  "joblib>=1.3.0",
 ]
 
 [project.optional-dependencies]
@@ -37,6 +39,8 @@ dev = [
 viz = [
   "matplotlib>=3.7.0",
   "pillow>=10.0.0",
+  "streamlit>=1.28.0",
+  "plotly>=5.17.0",
 ]
 
 jax = [
@@ -71,6 +75,7 @@ markers = [
   "validation: slow statistical/large-N validation tests (excluded from CI by default)",
   "performance: performance regression tests with timing assertions",
   "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
 ]
 
 [tool.ruff]
