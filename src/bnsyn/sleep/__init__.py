@@ -17,7 +17,7 @@ References
 docs/features/sleep_cycle.md
 """
 
-from .cycle import MemorySnapshot, SleepCycle
+from .cycle import MemorySnapshot, SleepCycle, default_human_sleep_cycle
 from .stages import SleepStage, SleepStageConfig
 
 __all__ = [
@@ -25,4 +25,5 @@ __all__ = [
     "SleepStageConfig",
     "SleepCycle",
     "MemorySnapshot",
+    "default_human_sleep_cycle",
 ]
