@@ -376,7 +376,7 @@ Makes quality tracking **discoverable** and **transparent**:
 - Demonstrates commitment to quality (trust signal)
 
 **Evidence:**
-- Commit SHA: `<PENDING_C7>`
+- Commit SHA: `360fdba`
 - Files modified: 2 (README.md, QUALITY_LEDGER.md)
 - Lines added to README: ~20
 - Ledger entries completed: 7
