@@ -22,6 +22,7 @@ results/*
 !results/temp_ablation_v2/
 artifacts/
 benchmarks/baselines/
+!benchmarks/baselines/golden_baseline.yml
 
 # PR artifacts (should not be tracked)
 PR_DIFF.patch
