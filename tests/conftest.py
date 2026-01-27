@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import pytest
-from hypothesis import settings
+from hypothesis import Verbosity, settings
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -27,6 +28,20 @@ settings.register_profile(
     print_blob=True,
     derandomize=True,
 )
+settings.register_profile(
+    "ci-quick",
+    max_examples=50,
+    deadline=5000,
+    verbosity=Verbosity.verbose,
+    print_blob=True,
+    derandomize=True,
+)
+
+# Load profile based on environment
+if os.getenv("CI"):
+    settings.load_profile("ci-quick")
+elif os.getenv("HYPOTHESIS_PROFILE"):
+    settings.load_profile(os.getenv("HYPOTHESIS_PROFILE"))
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
