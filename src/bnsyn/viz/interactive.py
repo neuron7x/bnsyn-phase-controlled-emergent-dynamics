@@ -23,12 +23,17 @@ docs/LEGENDARY_QUICKSTART.md
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 
 try:
-    import plotly.graph_objects as go
+    import plotly.graph_objects as go  # type: ignore[import-untyped]
     import streamlit as st
+
+    HAVE_STREAMLIT = True
 except ImportError as e:
+    HAVE_STREAMLIT = False
     print(f"Error: Missing required dependency: {e}")
     print('Install with: pip install -e ".[viz]"')
     raise
@@ -77,12 +82,20 @@ def main() -> None:
     if st.sidebar.button("▶️ Run Simulation", type="primary"):
         with st.spinner("Running simulation..."):
             # Import here to keep startup fast
+            from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
             from bnsyn.rng import seed_all
-            from bnsyn.sim.network import Network
+            from bnsyn.sim.network import Network, NetworkParams
 
             # Run simulation
             pack = seed_all(seed)
-            net = Network(N=N, rng=pack.np_rng)
+            net = Network(
+                NetworkParams(N=N),
+                AdExParams(),
+                SynapseParams(),
+                CriticalityParams(),
+                dt_ms=dt_ms,
+                rng=pack.np_rng,
+            )
 
             steps = int(duration_ms / dt_ms)
             spike_trains = []
@@ -91,7 +104,7 @@ def main() -> None:
 
             progress_bar = st.sidebar.progress(0)
             for i in range(steps):
-                metrics = net.step(dt_ms=dt_ms)
+                metrics = net.step()
 
                 # Record spikes
                 spikes = np.where(metrics.get("spikes", np.zeros(N, dtype=bool)))[0]
@@ -240,7 +253,7 @@ def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.F
     return fig
 
 
-def create_firing_rate_plot(metrics_history: list[dict], dt_ms: float) -> go.Figure:
+def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
     """Create population firing rate plot.
 
     Parameters
@@ -269,7 +282,7 @@ def create_firing_rate_plot(metrics_history: list[dict], dt_ms: float) -> go.Fig
     return fig
 
 
-def create_stats_plot(metrics_history: list[dict], dt_ms: float) -> go.Figure:
+def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
     """Create multi-panel statistics plot.
 
     Parameters
@@ -284,7 +297,7 @@ def create_stats_plot(metrics_history: list[dict], dt_ms: float) -> go.Figure:
     go.Figure
         Plotly figure with subplots
     """
-    from plotly.subplots import make_subplots
+    from plotly.subplots import make_subplots  # type: ignore[import-untyped]
 
     times = np.arange(len(metrics_history)) * dt_ms
     sigmas = [m.get("sigma", 0) for m in metrics_history]

@@ -325,7 +325,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
 
     # Generate figure (optional, only if matplotlib available)
     try:
-        import matplotlib.pyplot as plt  # type: ignore[import-not-found]
+        import matplotlib.pyplot as plt
         from typing import Any as _Any
 
         fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))

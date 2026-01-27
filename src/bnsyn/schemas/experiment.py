@@ -20,9 +20,7 @@ docs/LEGENDARY_QUICKSTART.md
 
 from __future__ import annotations
 
-from typing import Literal
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ExperimentConfig(BaseModel):
@@ -66,12 +64,21 @@ class SimulationConfig(BaseModel):
     ----------
     duration_ms : float
         Simulation duration in milliseconds (≥1)
-    dt_ms : Literal[0.01, 0.05, 0.1, 0.5, 1.0]
-        Timestep in milliseconds
+    dt_ms : float
+        Timestep in milliseconds (must be 0.01, 0.05, 0.1, 0.5, or 1.0)
     """
 
     duration_ms: float = Field(..., ge=1)
-    dt_ms: Literal[0.01, 0.05, 0.1, 0.5, 1.0]
+    dt_ms: float
+
+    @field_validator("dt_ms")
+    @classmethod
+    def validate_dt_ms(cls, v: float) -> float:
+        """Validate that dt_ms is one of the allowed values."""
+        allowed_values = [0.01, 0.05, 0.1, 0.5, 1.0]
+        if v not in allowed_values:
+            raise ValueError(f"dt_ms must be one of {allowed_values}, got {v}")
+        return v
 
     model_config = {"extra": "forbid"}
 

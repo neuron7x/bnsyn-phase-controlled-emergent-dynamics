@@ -24,11 +24,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
-from bnsyn.rng import seed_all
 from bnsyn.schemas.experiment import BNSynExperimentConfig
-from bnsyn.sim.network import Network, run_simulation
+from bnsyn.sim.network import run_simulation
 
 
 def load_config(config_path: str | Path) -> BNSynExperimentConfig:
