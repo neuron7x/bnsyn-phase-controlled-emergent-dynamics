@@ -265,6 +265,7 @@ class Network:
         if self._use_torch:
             if torch is None:
                 raise RuntimeError("PyTorch not available. Install with: pip install torch")
+            assert torch is not None  # Type narrowing for mypy
             spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
             spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
             incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
@@ -367,6 +368,7 @@ class Network:
         if self._use_torch:
             if torch is None:
                 raise RuntimeError("PyTorch not available. Install with: pip install torch")
+            assert torch is not None  # Type narrowing for mypy
             spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
             spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
             incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()

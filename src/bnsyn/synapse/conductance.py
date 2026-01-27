@@ -77,13 +77,13 @@ def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
     --------
     >>> import numpy as np
     >>> from bnsyn.synapse.conductance import nmda_mg_block
-    >>> 
+    >>>
     >>> # Voltage array from hyperpolarized to depolarized
     >>> V = np.array([-80.0, -65.0, -40.0, 0.0])  # mV
-    >>> 
+    >>>
     >>> # Typical extracellular Mg concentration
     >>> mg_mM = 1.0
-    >>> 
+    >>>
     >>> # Compute block factor
     >>> block = nmda_mg_block(V, mg_mM)
     >>> # Block is stronger at hyperpolarized potentials

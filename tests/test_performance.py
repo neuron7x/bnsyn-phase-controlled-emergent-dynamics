@@ -22,12 +22,10 @@ def test_adex_step_performance() -> None:
     # Setup
     rng_pack = seed_all(42)
     rng = rng_pack.np_rng
-    
+
     N = 1000
     params = AdExParams()
-    state = AdExState(
-        V_mV=np.full(N, -65.0), w_pA=np.zeros(N), spiked=np.zeros(N, dtype=bool)
-    )
+    state = AdExState(V_mV=np.full(N, -65.0), w_pA=np.zeros(N), spiked=np.zeros(N, dtype=bool))
     I_syn = np.zeros(N)
     I_ext = rng.normal(0, 10.0, size=N)
 
@@ -54,7 +52,7 @@ def test_nmda_block_performance() -> None:
     """Test NMDA block computation performance."""
     rng_pack = seed_all(42)
     rng = rng_pack.np_rng
-    
+
     N = 10000
     V = rng.normal(-60.0, 20.0, size=N)  # Voltages around -60mV
 
@@ -87,7 +85,7 @@ def test_network_step_performance() -> None:
     adex = AdExParams()
     syn = SynapseParams()
     crit = CriticalityParams()
-    
+
     net = Network(
         nparams=nparams,
         adex=adex,
@@ -95,7 +93,7 @@ def test_network_step_performance() -> None:
         crit=crit,
         dt_ms=0.1,
         rng=rng_pack.np_rng,
-        backend="reference"
+        backend="reference",
     )
 
     # Warmup

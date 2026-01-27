@@ -124,21 +124,21 @@ def adex_step(
     >>> import numpy as np
     >>> from bnsyn.config import AdExParams
     >>> from bnsyn.neuron.adex import AdExState, adex_step
-    >>> 
+    >>>
     >>> # Initialize state for 2 neurons
     >>> state = AdExState(
     ...     V_mV=np.array([-65.0, -60.0]),
     ...     w_pA=np.array([0.0, 50.0]),
     ...     spiked=np.array([False, False])
     ... )
-    >>> 
+    >>>
     >>> # Use default AdEx parameters
     >>> params = AdExParams()
-    >>> 
+    >>>
     >>> # Apply synaptic and external currents
     >>> I_syn = np.array([100.0, 50.0])  # pA
     >>> I_ext = np.array([0.0, 0.0])     # pA
-    >>> 
+    >>>
     >>> # Advance one timestep
     >>> new_state = adex_step(state, params, dt_ms=0.1, I_syn_pA=I_syn, I_ext_pA=I_ext)
     >>> # Voltage increases due to excitatory current
