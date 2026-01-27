@@ -1,0 +1,86 @@
+name: ci-benchmarks-elite
+
+on:
+  schedule:
+    # Weekly on Sunday at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    # Manual trigger for on-demand benchmark runs
+
+concurrency:
+  group: ci-benchmarks-elite-${{ github.ref }}
+  cancel-in-progress: false  # Let benchmarks complete
+
+jobs:
+  benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          
+      - name: Run benchmarks
+        id: run-benchmarks
+        run: |
+          echo "## 🏃 Running Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Run each benchmark and collect results
+          python benchmarks/bench_adex.py || echo "AdEx benchmark failed"
+          python benchmarks/bench_synapses.py || echo "Synapse benchmark failed"
+          python benchmarks/bench_plasticity.py || echo "Plasticity benchmark failed"
+          python benchmarks/bench_criticality.py || echo "Criticality benchmark failed"
+          python benchmarks/bench_dt_invariance.py || echo "dt-invariance benchmark failed"
+          
+          echo "Benchmarks completed" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Compare against golden baseline
+        id: compare
+        run: |
+          echo "## 📊 Benchmark Regression Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          python scripts/compare_benchmarks.py --format markdown >> $GITHUB_STEP_SUMMARY
+          python scripts/compare_benchmarks.py --format json > benchmark_report.json
+          
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: |
+            benchmarks/baseline.json
+            benchmark_report.json
+          retention-days: 90
+          
+      - name: Upload regression report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regression-report-${{ github.sha }}
+          path: benchmark_report.json
+          retention-days: 90
+          
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.run-benchmarks.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Comparison:** ${{ steps.compare.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
+          echo "Review benchmark reports manually for performance insights." >> $GITHUB_STEP_SUMMARY
