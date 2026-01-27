@@ -188,21 +188,22 @@ def test_dashboard_ui_no_simulation() -> None:
     """Test dashboard renders UI without running simulation."""
     pytest.importorskip("streamlit", reason="Streamlit not installed (optional dependency)")
     pytest.importorskip("plotly", reason="Plotly not installed (optional dependency)")
-    
+
     from unittest.mock import patch
-    
-    with patch("streamlit.set_page_config"), \
-         patch("streamlit.title") as mock_title, \
-         patch("streamlit.markdown"), \
-         patch("streamlit.sidebar.header"), \
-         patch("streamlit.sidebar.slider", return_value=100) as mock_slider, \
-         patch("streamlit.sidebar.select_slider", return_value=0.1), \
-         patch("streamlit.sidebar.number_input", return_value=42), \
-         patch("streamlit.sidebar.button", return_value=False), \
-         patch("streamlit.info"):
-        
+
+    with (
+        patch("streamlit.set_page_config"),
+        patch("streamlit.title") as mock_title,
+        patch("streamlit.markdown"),
+        patch("streamlit.sidebar.header"),
+        patch("streamlit.sidebar.slider", return_value=100) as mock_slider,
+        patch("streamlit.sidebar.select_slider", return_value=0.1),
+        patch("streamlit.sidebar.number_input", return_value=42),
+        patch("streamlit.sidebar.button", return_value=False),
+        patch("streamlit.info"),
+    ):
         from bnsyn.viz.interactive import main
-        
+
         main()  # Should not raise
         mock_title.assert_called_once()
         assert mock_slider.call_count >= 1
@@ -213,47 +214,48 @@ def test_dashboard_simulation_flow() -> None:
     """Test simulation runs when button clicked."""
     pytest.importorskip("streamlit", reason="Streamlit not installed (optional dependency)")
     pytest.importorskip("plotly", reason="Plotly not installed (optional dependency)")
-    
+
     from unittest.mock import Mock, patch
-    
+
     # Create context manager mocks
     mock_spinner_context = Mock()
     mock_spinner_context.__enter__ = Mock(return_value=mock_spinner_context)
     mock_spinner_context.__exit__ = Mock(return_value=None)
-    
+
     mock_progress_obj = Mock()
     mock_progress_obj.progress = Mock()
     mock_progress_obj.empty = Mock()
-    
+
     # Mock tabs as context managers
     mock_tab = Mock()
     mock_tab.__enter__ = Mock(return_value=mock_tab)
     mock_tab.__exit__ = Mock(return_value=None)
-    
+
     # Mock columns as context managers
     mock_col = Mock()
     mock_col.__enter__ = Mock(return_value=mock_col)
     mock_col.__exit__ = Mock(return_value=None)
     mock_col.metric = Mock()
-    
-    with patch("streamlit.set_page_config"), \
-         patch("streamlit.title"), \
-         patch("streamlit.markdown"), \
-         patch("streamlit.sidebar.header"), \
-         patch("streamlit.sidebar.slider", return_value=50), \
-         patch("streamlit.sidebar.select_slider", return_value=0.1), \
-         patch("streamlit.sidebar.number_input", return_value=42), \
-         patch("streamlit.sidebar.button", return_value=True), \
-         patch("streamlit.spinner", return_value=mock_spinner_context), \
-         patch("streamlit.sidebar.progress", return_value=mock_progress_obj), \
-         patch("streamlit.tabs", return_value=[mock_tab, mock_tab, mock_tab, mock_tab]), \
-         patch("streamlit.subheader"), \
-         patch("streamlit.plotly_chart") as mock_chart, \
-         patch("streamlit.columns", return_value=[mock_col, mock_col, mock_col, mock_col]):
-        
+
+    with (
+        patch("streamlit.set_page_config"),
+        patch("streamlit.title"),
+        patch("streamlit.markdown"),
+        patch("streamlit.sidebar.header"),
+        patch("streamlit.sidebar.slider", return_value=50),
+        patch("streamlit.sidebar.select_slider", return_value=0.1),
+        patch("streamlit.sidebar.number_input", return_value=42),
+        patch("streamlit.sidebar.button", return_value=True),
+        patch("streamlit.spinner", return_value=mock_spinner_context),
+        patch("streamlit.sidebar.progress", return_value=mock_progress_obj),
+        patch("streamlit.tabs", return_value=[mock_tab, mock_tab, mock_tab, mock_tab]),
+        patch("streamlit.subheader"),
+        patch("streamlit.plotly_chart") as mock_chart,
+        patch("streamlit.columns", return_value=[mock_col, mock_col, mock_col, mock_col]),
+    ):
         from bnsyn.viz.interactive import main
-        
+
         main()
-        
+
         # Verify simulation ran
         assert mock_chart.call_count >= 4  # 4 tabs with charts
