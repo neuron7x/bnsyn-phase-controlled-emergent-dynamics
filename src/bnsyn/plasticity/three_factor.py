@@ -135,6 +135,31 @@ def three_factor_update(
     ValueError
         If input shapes are inconsistent or dt_ms is non-positive.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from bnsyn.config import PlasticityParams
+    >>> from bnsyn.plasticity.three_factor import (
+    ...     three_factor_update, EligibilityTraces, NeuromodulatorTrace
+    ... )
+    >>>
+    >>> # Setup: 2 pre × 3 post synapses
+    >>> w = np.array([[0.5, 0.3, 0.1], [0.2, 0.4, 0.6]])
+    >>> elig = EligibilityTraces(e=np.zeros((2, 3)))
+    >>> neuromod = NeuromodulatorTrace(n=1.0)  # Reward present
+    >>>
+    >>> # Pre-neuron 0 and post-neuron 1 spike together
+    >>> pre_spikes = np.array([True, False])
+    >>> post_spikes = np.array([False, True, False])
+    >>>
+    >>> # Apply three-factor update
+    >>> params = PlasticityParams(eta=0.01, w_min=0.0, w_max=1.0)
+    >>> w_new, elig_new = three_factor_update(
+    ...     w, elig, neuromod, pre_spikes, post_spikes, dt_ms=1.0, p=params
+    ... )
+    >>> # Weight at (0, 1) increases due to coincident activity + reward
+    >>> assert w_new[0, 1] > w[0, 1]
+
     Notes
     -----
     Eligibility updates use an STDP-like coincidence outer product and weights

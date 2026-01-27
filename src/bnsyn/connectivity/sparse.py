@@ -158,7 +158,8 @@ class SparseConnectivity:
         Dispatches to dense or CSR multiplication based on internal format.
         """
         if self.format == "sparse":
-            assert isinstance(self.W, sp.csr_matrix)
+            if not isinstance(self.W, sp.csr_matrix):
+                raise TypeError(f"Expected csr_matrix for sparse format, got {type(self.W)}")
             y = self.W @ x
             if sp.issparse(y):
                 return np.asarray(y.todense(), dtype=np.float64).ravel()
@@ -178,7 +179,8 @@ class SparseConnectivity:
         Copies data if the internal representation is sparse.
         """
         if self.format == "sparse":
-            assert isinstance(self.W, sp.csr_matrix)
+            if not isinstance(self.W, sp.csr_matrix):
+                raise TypeError(f"Expected csr_matrix for sparse format, got {type(self.W)}")
             return np.asarray(self.W.todense(), dtype=np.float64)
         return np.asarray(self.W, dtype=np.float64)
 

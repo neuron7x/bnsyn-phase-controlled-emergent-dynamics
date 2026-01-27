@@ -20,6 +20,7 @@ docs/SPEC.md
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -29,6 +30,8 @@ from numpy.typing import NDArray
 from scipy.spatial import cKDTree
 
 Float64Array = NDArray[np.float64]
+
+logger = logging.getLogger(__name__)
 
 
 class Phase(Enum):
@@ -277,8 +280,13 @@ class AttractorCrystallizer:
             U, S, Vt = np.linalg.svd(centered, full_matrices=False)
             object.__setattr__(self, "_pca_components", Vt)
             object.__setattr__(self, "_pca_mean", mean)
-        except np.linalg.LinAlgError:
+        except np.linalg.LinAlgError as e:
             # If SVD fails, keep previous components
+            logger.warning(
+                "PCA SVD failed (data shape=%s): %s. Retaining previous components.",
+                data.shape,
+                e,
+            )
             pass
 
     def _transform_to_pca(self, state: Float64Array) -> Float64Array:

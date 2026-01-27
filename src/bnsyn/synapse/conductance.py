@@ -73,6 +73,24 @@ def nmda_mg_block(V_mV: Float64Array, mg_mM: float) -> Float64Array:
     Float64Array
         Mg2+ block factor for each voltage value.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from bnsyn.synapse.conductance import nmda_mg_block
+    >>>
+    >>> # Voltage array from hyperpolarized to depolarized
+    >>> V = np.array([-80.0, -65.0, -40.0, 0.0])  # mV
+    >>>
+    >>> # Typical extracellular Mg concentration
+    >>> mg_mM = 1.0
+    >>>
+    >>> # Compute block factor
+    >>> block = nmda_mg_block(V, mg_mM)
+    >>> # Block is stronger at hyperpolarized potentials
+    >>> assert block[0] < block[-1]  # More block at -80mV than 0mV
+    >>> # At 0mV, block factor is approximately 0.96
+    >>> assert 0.9 < block[-1] < 1.0
+
     Notes
     -----
     Uses the Jahr-Stevens formulation: B(V)=1/(1+([Mg]/3.57)exp(-0.062 V)).
