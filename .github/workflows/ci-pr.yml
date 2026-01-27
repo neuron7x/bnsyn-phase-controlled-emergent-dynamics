@@ -32,6 +32,26 @@ jobs:
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
           python scripts/scan_tierS_misuse.py
+      - name: Validate Claims Coverage (BLOCKING)
+        id: claims-coverage
+        run: |
+          echo "## 📋 Claims Coverage Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python scripts/validate_claims_coverage.py --format markdown >> $GITHUB_STEP_SUMMARY
+          python scripts/validate_claims_coverage.py --format json > claims_coverage.json
+          
+          if ! python scripts/validate_claims_coverage.py; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Claims coverage <100% - PR BLOCKED" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+      - name: Upload Claims Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claims-coverage-report
+          path: claims_coverage.json
+          retention-days: 30
       - name: Generate summary
         if: always()
         run: |
@@ -47,6 +67,11 @@ jobs:
             echo "| TierS Misuse | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| SSOT Gates | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.claims-coverage.outcome }}" = "success" ]; then
+            echo "| Claims Coverage | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Claims Coverage | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
 
   dependency-consistency:

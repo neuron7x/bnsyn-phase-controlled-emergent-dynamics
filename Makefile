@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -41,6 +41,12 @@ ssot:
 	python scripts/validate_bibliography.py
 	python scripts/validate_claims.py
 	python scripts/scan_normative_tags.py
+
+validate-claims-coverage:
+	python scripts/validate_claims_coverage.py --format markdown
+
+docs-evidence:
+	python scripts/generate_evidence_coverage.py
 
 security:
 	gitleaks detect --redact --verbose --source=.
