@@ -26,13 +26,13 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 **Trigger:** Every push, every PR  
 **Runtime:** <10 minutes total  
 **Purpose:** Fast feedback, prevent obviously broken code  
-**Policy:** Must pass to merge
+**Policy:** Passing is mandatory for merge
 
 #### Included Tests
 
 1. **Smoke Suite** (`-m "not (validation or property)"`)
    - Unit tests, fast integration tests, edge cases
-   - ~85% code coverage required
+   - Target: ~85% code coverage
    - Runtime: ~5 minutes
 
 2. **SSOT Validation**
