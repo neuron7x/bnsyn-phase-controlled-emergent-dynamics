@@ -125,14 +125,7 @@ jobs:
             if [ -f coverage.json ]; then
               echo "**Coverage Hotspots (Lowest 5 Files):**" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              python -c "
-import json
-data = json.load(open('coverage.json'))
-files = [(k, v['summary']['percent_covered']) for k, v in data.get('files', {}).items()]
-files.sort(key=lambda x: x[1])
-for file, cov in files[:5]:
-    print(f'{file}: {cov:.1f}%')
-" >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Could not parse coverage" >> $GITHUB_STEP_SUMMARY
+              python -c 'import json; data = json.load(open("coverage.json")); files = [(k, v["summary"]["percent_covered"]) for k, v in data.get("files", {}).items()]; files.sort(key=lambda x: x[1]); [print(f"{file}: {cov:.1f}%") for file, cov in files[:5]]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Could not parse coverage" >> $GITHUB_STEP_SUMMARY
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
             fi
