@@ -18,7 +18,7 @@ from typing import Any
 import numpy as np
 
 try:
-    import plotly.graph_objects as go  # type: ignore[import-untyped]
+    import plotly.graph_objects as go
     import streamlit as st
 
     HAVE_STREAMLIT = True
@@ -287,7 +287,7 @@ def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go
     go.Figure
         Plotly figure with subplots
     """
-    from plotly.subplots import make_subplots  # type: ignore[import-untyped]
+    from plotly.subplots import make_subplots
 
     times = np.arange(len(metrics_history)) * dt_ms
     sigmas = [m.get("sigma", 0) for m in metrics_history]

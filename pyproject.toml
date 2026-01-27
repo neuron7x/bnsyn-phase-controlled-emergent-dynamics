@@ -115,6 +115,11 @@ warn_no_return = true
 warn_unused_configs = true
 plugins = ["pydantic.mypy"]
 
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
 [tool.pylint.main]
 recursive = true
 ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
