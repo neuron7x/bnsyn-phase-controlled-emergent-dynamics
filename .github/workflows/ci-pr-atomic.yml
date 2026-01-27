@@ -75,10 +75,10 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: pip install -e ".[dev]"
+      - run: pip install -e ".[dev,viz]"
       - run: |
           pytest \
-            -m "not validation" \
+            -m "not (validation or property)" \
             --cov=src/bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \

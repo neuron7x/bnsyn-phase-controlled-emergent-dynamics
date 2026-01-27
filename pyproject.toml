@@ -10,6 +10,8 @@ dependencies = [
   "numpy>=1.26",
   "pydantic>=2.7",
   "scipy>=1.10",
+  "jsonschema>=4.17.0",
+  "joblib>=1.3.0",
 ]
 
 [project.optional-dependencies]
@@ -37,6 +39,8 @@ dev = [
 viz = [
   "matplotlib>=3.7.0",
   "pillow>=10.0.0",
+  "streamlit>=1.28.0",
+  "plotly>=5.17.0",
 ]
 
 jax = [
@@ -71,7 +75,26 @@ markers = [
   "validation: slow statistical/large-N validation tests (excluded from CI by default)",
   "performance: performance regression tests with timing assertions",
   "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
 ]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
 
 [tool.ruff]
 line-length = 100
@@ -91,6 +114,11 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unused_configs = true
 plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
 
 [tool.pylint.main]
 recursive = true

@@ -143,6 +143,81 @@ print(f"Consolidation: {consolidator.stats()}")
 
 ---
 
+## 🚀 Interactive Demo
+
+BN-Syn now features a **real-time interactive dashboard** powered by Streamlit. Explore neural network dynamics with live parameter tuning and instant visualization.
+
+### Quick Start (60 seconds)
+
+```bash
+# Install with interactive features
+pip install -e ".[viz]"
+
+# Launch interactive dashboard
+bnsyn demo --interactive
+```
+
+This opens a browser with:
+- 🎛️ **Parameter controls**: Network size, duration, timestep, seed
+- 📊 **Raster plot**: Spike timing visualization  
+- ⚡ **Voltage traces**: Membrane potential dynamics
+- 📈 **Firing rates**: Population activity over time
+- 🎯 **Statistics**: Sigma, mean voltage, spike counts
+
+### Declarative Experiments
+
+Run experiments from YAML configurations with automatic schema validation:
+
+```bash
+# Run from config file
+bnsyn run examples/configs/quickstart.yaml
+
+# Save results to JSON
+bnsyn run examples/configs/quickstart.yaml -o results/my_experiment.json
+```
+
+**Example config** (`examples/configs/quickstart.yaml`):
+```yaml
+experiment:
+  name: quickstart
+  version: v1
+  seeds: [42, 43, 44]
+
+network:
+  size: 50
+
+simulation:
+  duration_ms: 500
+  dt_ms: 0.1
+```
+
+Schema validation catches errors before execution:
+```
+❌ Config validation failed: config.yaml
+Error at experiment.seeds: Expected array of integers
+```
+
+### Advanced Features
+
+**Property-Based Testing** with Hypothesis (1000+ auto-generated test cases):
+```bash
+pytest -m property
+```
+
+**Incremental Computation** with Joblib (10-100x speedup on cached runs):
+```python
+from bnsyn.incremental import cached
+
+@cached(depends_on="config.yaml")
+def expensive_analysis(config_path):
+    # Runs once per config, cached thereafter
+    return run_experiment(config_path)
+```
+
+**Full Documentation:** See [`docs/LEGENDARY_QUICKSTART.md`](docs/LEGENDARY_QUICKSTART.md) for complete guide.
+
+---
+
 ## Start here
 
 - **Documentation hub:** [`docs/INDEX.md`](docs/INDEX.md)

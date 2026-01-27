@@ -45,11 +45,37 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     Notes
     -----
     Calls the deterministic simulation harness with explicit dt and seed.
+    If --interactive flag is set, launches Streamlit dashboard instead.
 
     References
     ----------
     docs/SPEC.md#P2-11
+    docs/LEGENDARY_QUICKSTART.md
     """
+    if getattr(args, "interactive", False):
+        # Launch interactive Streamlit dashboard
+        import subprocess
+        import sys
+        from pathlib import Path
+
+        # Find the interactive.py script
+        script_path = Path(__file__).parent / "viz" / "interactive.py"
+        if not script_path.exists():
+            print(f"Error: Interactive dashboard not found at {script_path}")
+            return 1
+
+        print("🚀 Launching interactive dashboard...")
+        print("   Press Ctrl+C to stop")
+        try:
+            subprocess.run([sys.executable, "-m", "streamlit", "run", str(script_path)])
+            return 0
+        except KeyboardInterrupt:
+            print("\n✓ Dashboard stopped")
+            return 0
+        except Exception as e:
+            print(f"Error launching dashboard: {e}")
+            return 1
+
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
     return 0
@@ -82,6 +108,38 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
     out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
     print(json.dumps(out, indent=2, sort_keys=True))
     return 0
+
+
+def _cmd_run_experiment(args: argparse.Namespace) -> int:
+    """Run experiment from YAML configuration.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the run subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Loads YAML config, validates against schema, runs experiment.
+
+    References
+    ----------
+    docs/LEGENDARY_QUICKSTART.md
+    schemas/experiment.schema.json
+    """
+    from bnsyn.experiments.declarative import run_from_yaml
+
+    try:
+        run_from_yaml(args.config, args.output)
+        return 0
+    except Exception as e:
+        print(f"Error running experiment: {e}")
+        return 1
 
 
 def _cmd_sleep_stack(args: argparse.Namespace) -> int:
@@ -267,7 +325,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
 
     # Generate figure (optional, only if matplotlib available)
     try:
-        import matplotlib.pyplot as plt  # type: ignore[import-not-found]
+        import matplotlib.pyplot as plt
         from typing import Any as _Any
 
         fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
@@ -387,7 +445,13 @@ def main() -> None:
     demo.add_argument("--dt-ms", type=float, default=0.1)
     demo.add_argument("--seed", type=int, default=42)
     demo.add_argument("--N", type=int, default=200)
+    demo.add_argument("--interactive", action="store_true", help="Launch interactive dashboard")
     demo.set_defaults(func=_cmd_demo)
+
+    run_parser = sub.add_parser("run", help="Run experiment from YAML config")
+    run_parser.add_argument("config", help="Path to YAML configuration file")
+    run_parser.add_argument("-o", "--output", help="Output JSON path (default: stdout)")
+    run_parser.set_defaults(func=_cmd_run_experiment)
 
     dtc = sub.add_parser("dtcheck", help="Run dt vs dt/2 invariance harness")
     dtc.add_argument("--steps", type=int, default=2000)
