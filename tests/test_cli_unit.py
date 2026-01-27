@@ -56,29 +56,29 @@ def test_cmd_sleep_stack_direct() -> None:
     """Test _cmd_sleep_stack function directly."""
     with tempfile.TemporaryDirectory() as tmpdir:
         out_dir = Path(tmpdir) / "test_output"
-        
+
         args = argparse.Namespace(
             seed=123,
             steps_wake=50,
             steps_sleep=50,
             out=str(out_dir),
         )
-        
+
         result = _cmd_sleep_stack(args)
         assert result == 0
-        
+
         # Verify outputs
         manifest_path = out_dir / "manifest.json"
         metrics_path = out_dir / "metrics.json"
-        
+
         assert manifest_path.exists()
         assert metrics_path.exists()
-        
+
         with open(manifest_path) as f:
             manifest = json.load(f)
         assert manifest["seed"] == 123
         assert manifest["steps_wake"] == 50
-        
+
         with open(metrics_path) as f:
             metrics = json.load(f)
         assert "wake" in metrics
@@ -92,17 +92,17 @@ def test_cmd_sleep_stack_with_custom_sleep_duration() -> None:
     """Test _cmd_sleep_stack with non-default sleep duration."""
     with tempfile.TemporaryDirectory() as tmpdir:
         out_dir = Path(tmpdir) / "test_output2"
-        
+
         args = argparse.Namespace(
             seed=456,
             steps_wake=30,
             steps_sleep=300,  # Different from default 600
             out=str(out_dir),
         )
-        
+
         result = _cmd_sleep_stack(args)
         assert result == 0
-        
+
         # Verify that manifest records the correct steps
         manifest_path = out_dir / "manifest.json"
         with open(manifest_path) as f:

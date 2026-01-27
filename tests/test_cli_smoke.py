@@ -78,12 +78,13 @@ def test_cli_sleep_stack_runs() -> None:
     env["PYTHONPATH"] = (
         os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
     )
-    
+
     # Create temp output directory
     import tempfile
+
     with tempfile.TemporaryDirectory() as tmpdir:
         out_dir = Path(tmpdir) / "test_sleep_stack"
-        
+
         subprocess.run(
             [
                 sys.executable,
@@ -104,14 +105,14 @@ def test_cli_sleep_stack_runs() -> None:
             text=True,
             env=env,
         )
-        
+
         # Check that manifest and metrics were created
         manifest_path = out_dir / "manifest.json"
         metrics_path = out_dir / "metrics.json"
-        
+
         assert manifest_path.exists(), "manifest.json not created"
         assert metrics_path.exists(), "metrics.json not created"
-        
+
         # Verify manifest contents
         with open(manifest_path) as f:
             manifest = json.load(f)
@@ -119,7 +120,7 @@ def test_cli_sleep_stack_runs() -> None:
         assert manifest["seed"] == 42
         assert "steps_wake" in manifest
         assert "steps_sleep" in manifest
-        
+
         # Verify metrics contents
         with open(metrics_path) as f:
             metrics = json.load(f)
@@ -128,11 +129,11 @@ def test_cli_sleep_stack_runs() -> None:
         assert "transitions" in metrics
         assert "attractors" in metrics
         assert "consolidation" in metrics
-        
+
         # Check wake metrics
         assert "steps" in metrics["wake"]
         assert "memories_recorded" in metrics["wake"]
-        
+
         # Check consolidation stats
         assert "count" in metrics["consolidation"]
         assert "consolidated_count" in metrics["consolidation"]
