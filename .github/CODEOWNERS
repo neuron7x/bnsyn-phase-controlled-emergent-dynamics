@@ -1,5 +1,7 @@
-/scripts/ @bnsyn/maintainers
-/claims/ @bnsyn/maintainers
-/bibliography/ @bnsyn/maintainers
-/docs/SSOT* @bnsyn/maintainers
-/.github/workflows/ @bnsyn/maintainers
+* @neuron7x
+/src/bnsyn/neuron/ @neuron7x
+/src/bnsyn/synapse/ @neuron7x
+/claims/ @neuron7x
+/bibliography/ @neuron7x
+/.github/workflows/ @neuron7x
+/scripts/ @neuron7x

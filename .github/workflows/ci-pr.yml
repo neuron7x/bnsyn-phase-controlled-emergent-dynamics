@@ -5,6 +5,10 @@ on:
     branches: ["main"]
   pull_request:
 
+concurrency:
+  group: ci-pr-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ssot:
     runs-on: ubuntu-latest
@@ -21,12 +25,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - name: SSOT gates
+        id: ssot-gates
         run: |
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
           python scripts/scan_tierS_misuse.py
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 📋 SSOT Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.ssot-gates.outcome }}" = "success" ]; then
+            echo "| Bibliography | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Claims | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Governed Docs | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Normative Tags | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| TierS Misuse | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| SSOT Gates | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
 
   dependency-consistency:
     runs-on: ubuntu-latest
@@ -65,25 +86,11 @@ jobs:
           retention-days: 30
 
   quality:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
-      - name: Ruff format
-        run: ruff format --check .
-      - name: Ruff lint
-        run: ruff check .
-      - name: Mypy
-        run: mypy src
+    uses: ./.github/workflows/_reusable_quality.yml
+    with:
+      python-version: "3.11"
+      mypy-strict: true
+      pylint-threshold: 7.5
 
   build:
     runs-on: ubuntu-latest
@@ -101,9 +108,28 @@ jobs:
           pip install -e ".[dev]"
           pip install build
       - name: Build package
+        id: build
         run: python -m build
       - name: Import check
+        id: import
         run: python -c "import bnsyn"
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 📦 Build Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.build.outcome }}" = "success" ]; then
+            echo "| Package Build | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Package Build | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.import.outcome }}" = "success" ]; then
+            echo "| Import Check | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Import Check | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
 
   docs-build:
     runs-on: ubuntu-latest
@@ -123,23 +149,13 @@ jobs:
         run: sphinx-build docs docs/_build
 
   tests-smoke:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev,viz]"
-      - name: Spec implementation audit
-        run: python scripts/audit_spec_implementation.py
-      - name: Smoke tests
-        run: pytest -m "not (validation or property)"
+    uses: ./.github/workflows/_reusable_pytest.yml
+    with:
+      python-version: "3.11"
+      markers: "not (validation or property)"
+      coverage-threshold: 85
+      timeout-minutes: 10
+      upload-codecov: false
 
   tests-core-only:
     runs-on: ubuntu-latest
