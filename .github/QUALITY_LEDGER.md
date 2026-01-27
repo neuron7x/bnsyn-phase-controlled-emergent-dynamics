@@ -475,7 +475,7 @@ The viz optional dependency group includes Pillow for visualization features. Wh
 Immediate upgrade to patched version 11.3.0 eliminates the vulnerability.
 
 **Evidence:**
-- Commit SHA: `<PENDING_C10>`
+- Commit SHA: `76b3e2d`
 - Files modified: 1 (pyproject.toml)
 - Vulnerability: Write buffer overflow on BCn encoding
 - CVE Severity: High
