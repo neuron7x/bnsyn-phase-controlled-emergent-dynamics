@@ -391,8 +391,8 @@ Makes quality tracking **discoverable** and **transparent**:
 ## Summary Statistics
 
 **Ledger Period:** 2026-01-27 (Single PR)  
-**Total Entries:** 8  
-**Types:** Documentation (2), Infrastructure (2), CI/CD (3), Build (1), Security (2), Community (1)
+**Total Entries:** 9  
+**Types:** Documentation (2), Infrastructure (2), CI/CD (3), Build (2), Security (2), Community (1)
 
 **Axiom Impact:**
 - A1 (Determinism): 95% → 96% (+1%)
@@ -487,6 +487,44 @@ Immediate upgrade to patched version 11.3.0 eliminates the vulnerability.
 
 ---
 
+## Entry 009 — 2026-01-27 — Fix: Plotly Version Correction
+
+**Axioms Addressed:**
+- A1 (Determinism): 96% maintained ✅
+
+**Type:** Build Fix
+
+**Changes Made:**
+1. Updated `pyproject.toml`
+   - Changed `plotly==5.25.0` to `plotly==5.24.1`
+   - Fixed CI test failures in viz dependency installation
+   - Version 5.25.0 does not exist on PyPI (latest 5.x is 5.24.1)
+
+**Rationale:**
+CI tests were failing with error:
+```
+ERROR: Could not find a version that satisfies the requirement plotly==5.25.0
+ERROR: No matching distribution found for plotly==5.25.0
+```
+
+The version `plotly==5.25.0` was incorrectly specified during dependency pinning (Entry 002). The latest stable version in the 5.x series is 5.24.1. This fix ensures:
+- CI tests pass (`ci-pr / tests-smoke`, `ci-pr-atomic / tests-smoke`, `ci-smoke / tests-smoke`)
+- Deterministic builds maintained (A1: Determinism)
+- No functional impact (plotly is optional viz dependency)
+
+**Evidence:**
+- Commit SHA: `<PENDING_C11>`
+- Files modified: 1 (pyproject.toml)
+- Issue: CI test failures in 3 workflows
+- Fix: Correct plotly version to available PyPI version
+- Review: CI failure resolution by @copilot
+
+**Impact:**
+- **A1 (Determinism):** Maintained at 96% (correct version pinning)
+- **Overall Score:** Maintained at 87.4% (build fix, no score change)
+
+---
+
 ## Verification Commands
 
 ```bash
@@ -501,7 +539,7 @@ cat .github/QUALITY_LEDGER.md
 git log --oneline --grep="fractal quality" --grep="reusable workflow" --grep="dependency" -i
 
 # Count entries
-grep "^## Entry" .github/QUALITY_LEDGER.md | wc -l  # Should be 8
+grep "^## Entry" .github/QUALITY_LEDGER.md | wc -l  # Should be 9
 
 # Verify manifests exist
 ls -1 .github/{REPO_MANIFEST,WORKFLOW_CONTRACTS,QUALITY_LEDGER}.md
