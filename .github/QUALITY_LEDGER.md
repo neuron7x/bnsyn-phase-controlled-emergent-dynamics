@@ -513,7 +513,7 @@ The version `plotly==5.25.0` was incorrectly specified during dependency pinning
 - No functional impact (plotly is optional viz dependency)
 
 **Evidence:**
-- Commit SHA: `<PENDING_C11>`
+- Commit SHA: `96fe57d`
 - Files modified: 1 (pyproject.toml)
 - Issue: CI test failures in 3 workflows
 - Fix: Correct plotly version to available PyPI version
