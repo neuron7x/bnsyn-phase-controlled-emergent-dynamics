@@ -75,7 +75,7 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: pip install -e ".[dev]"
+      - run: pip install -e ".[dev,viz]"
       - run: |
           pytest \
             -m "not (validation or property)" \

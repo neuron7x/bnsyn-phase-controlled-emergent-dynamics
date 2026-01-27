@@ -86,6 +86,16 @@ max_examples = 200
 deadline = 10000
 print_blob = true
 
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

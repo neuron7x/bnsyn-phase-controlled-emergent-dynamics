@@ -4,12 +4,29 @@ import sys
 from pathlib import Path
 
 import pytest
+from hypothesis import settings
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+
+# Register Hypothesis profiles
+settings.register_profile(
+    "quick",
+    max_examples=100,
+    deadline=5000,
+    print_blob=True,
+    derandomize=True,
+)
+settings.register_profile(
+    "thorough",
+    max_examples=1000,
+    deadline=20000,
+    print_blob=True,
+    derandomize=True,
+)
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
