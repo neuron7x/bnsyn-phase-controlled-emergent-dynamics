@@ -152,7 +152,7 @@ jobs:
       
       - name: Upload coverage to Codecov
         if: inputs.upload-codecov && always()
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.json
