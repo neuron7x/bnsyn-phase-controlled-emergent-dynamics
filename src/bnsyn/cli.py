@@ -114,7 +114,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     from bnsyn.memory import MemoryConsolidator
     from bnsyn.rng import seed_all
     from bnsyn.sim.network import Network, NetworkParams
-    from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
     from bnsyn.temperature.schedule import TemperatureSchedule
 
     # Setup output directory
@@ -184,8 +184,18 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     # Scale durations if requested
     if args.steps_sleep != 600:
         scale = args.steps_sleep / 450
-        for stage in sleep_stages:
-            object.__setattr__(stage, "duration_steps", int(stage.duration_steps * scale))
+        sleep_stages = [
+            SleepStageConfig(
+                stage=stage.stage,
+                duration_steps=int(stage.duration_steps * scale),
+                temperature_range=stage.temperature_range,
+                plasticity_gate=stage.plasticity_gate,
+                consolidation_active=stage.consolidation_active,
+                replay_active=stage.replay_active,
+                replay_noise=stage.replay_noise,
+            )
+            for stage in sleep_stages
+        ]
 
     sleep_summary = sleep_cycle.sleep(sleep_stages)
 

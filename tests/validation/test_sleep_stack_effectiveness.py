@@ -27,7 +27,7 @@ from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, Temperatu
 from bnsyn.memory import MemoryConsolidator
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import Network, NetworkParams
-from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
 from bnsyn.temperature.schedule import TemperatureSchedule
 
 
@@ -93,10 +93,20 @@ def test_sleep_improves_consolidation() -> None:
                 sleep_cycle.record_memory(importance)
 
         # sleep phase with consolidation
-        sleep_stages = default_human_sleep_cycle()
+        sleep_stages_original = default_human_sleep_cycle()
         # scale down for faster validation
-        for stage in sleep_stages:
-            object.__setattr__(stage, "duration_steps", stage.duration_steps // 3)
+        sleep_stages = [
+            SleepStageConfig(
+                stage=stage.stage,
+                duration_steps=stage.duration_steps // 3,
+                temperature_range=stage.temperature_range,
+                plasticity_gate=stage.plasticity_gate,
+                consolidation_active=stage.consolidation_active,
+                replay_active=stage.replay_active,
+                replay_noise=stage.replay_noise,
+            )
+            for stage in sleep_stages_original
+        ]
 
         sleep_cycle.sleep(sleep_stages)
 
@@ -260,9 +270,19 @@ def test_determinism_across_sleep_runs() -> None:
                 sleep_cycle.record_memory(importance=0.5)
 
         # sleep
-        sleep_stages = default_human_sleep_cycle()
-        for stage in sleep_stages:
-            object.__setattr__(stage, "duration_steps", stage.duration_steps // 5)
+        sleep_stages_original = default_human_sleep_cycle()
+        sleep_stages = [
+            SleepStageConfig(
+                stage=stage.stage,
+                duration_steps=stage.duration_steps // 5,
+                temperature_range=stage.temperature_range,
+                plasticity_gate=stage.plasticity_gate,
+                consolidation_active=stage.consolidation_active,
+                replay_active=stage.replay_active,
+                replay_noise=stage.replay_noise,
+            )
+            for stage in sleep_stages_original
+        ]
         sleep_summary = sleep_cycle.sleep(sleep_stages)
 
         consolidator.consolidate(protein_level=0.8, temperature=0.5)
