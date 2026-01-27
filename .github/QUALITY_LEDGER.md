@@ -274,7 +274,7 @@ Fixes violations V2.1, V2.2, V2.3 from WORKFLOW_CONTRACTS.md:
 - **V2.3:** Weak determinism summary → Enhanced with detailed table
 
 **Evidence:**
-- Commit SHA: `<PENDING_C5>`
+- Commit SHA: `ea5f8ec`
 - Files modified: 1 (ci-pr-atomic.yml)
 - Lines changed: ~45
 - Jobs refactored: 2 (quality, tests-smoke)
