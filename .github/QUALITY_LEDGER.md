@@ -210,7 +210,7 @@ Fixes violations V1.1, V1.2, V1.3 from WORKFLOW_CONTRACTS.md:
 - **V1.3:** Missing summaries → Fixed, improves observability (A3)
 
 **Evidence:**
-- Commit SHA: `<PENDING_C4>`
+- Commit SHA: `7200ac4`
 - Files modified: 1 (ci-pr.yml)
 - Lines changed: ~40 (net reduction due to reuse)
 - Jobs refactored: 2 (quality, tests-smoke)

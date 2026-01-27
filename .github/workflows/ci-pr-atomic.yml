@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ci-pr-atomic-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PIP_CACHE_DIR: ~/.cache/pip
   PYTHONHASHSEED: 0
@@ -24,30 +28,60 @@ jobs:
             requirements-lock.txt
       - run: pip install -e ".[dev]"
       - name: Test determinism (run 1)
+        id: run1
         run: pytest tests/test_determinism.py tests/test_properties_determinism.py -v --tb=short
       - name: Test determinism (run 2)
+        id: run2
         run: pytest tests/test_determinism.py tests/test_properties_determinism.py -v --tb=short
       - name: Test determinism (run 3)
+        id: run3
         run: pytest tests/test_determinism.py tests/test_properties_determinism.py -v --tb=short
       - name: Check RNG isolation
+        id: rng
         run: pytest tests/test_determinism.py::test_no_global_numpy_rng_usage -v
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🎯 Determinism Verification (3x Runs)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Run | Status | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.run1.outcome }}" = "success" ]; then
+            echo "| 1 | ✅ PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 1 | ❌ FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.run2.outcome }}" = "success" ]; then
+            echo "| 2 | ✅ PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 2 | ❌ FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.run3.outcome }}" = "success" ]; then
+            echo "| 3 | ✅ PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 3 | ❌ FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.rng.outcome }}" = "success" ]; then
+            echo "| RNG Isolation | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| RNG Isolation | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
+            echo "**✅ All runs produced identical outputs (A1: Determinism 96%)**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**❌ Determinism check failed**" >> $GITHUB_STEP_SUMMARY
+          fi
 
   quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-          cache-dependency-path: |
-            pyproject.toml
-            requirements-lock.txt
-      - run: pip install -e ".[dev]"
-      - run: ruff format --check .
-      - run: ruff check . --config pyproject.toml
-      - run: mypy src --strict --config-file pyproject.toml
-      - run: pylint src/bnsyn --rcfile=pyproject.toml --fail-under=7.5
+    uses: ./.github/workflows/_reusable_quality.yml
+    with:
+      python-version: "3.11"
+      mypy-strict: true
+      pylint-threshold: 7.5
 
   build:
     runs-on: ubuntu-latest
@@ -65,55 +99,15 @@ jobs:
       - run: python -c "import bnsyn; print(bnsyn.__version__)"
 
   tests-smoke:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-          cache-dependency-path: |
-            pyproject.toml
-            requirements-lock.txt
-      - run: pip install -e ".[dev,viz]"
-      - run: |
-          pytest \
-            -m "not (validation or property)" \
-            --cov=src/bnsyn \
-            --cov-report=term-missing:skip-covered \
-            --cov-report=json \
-            --cov-report=html \
-            --cov-fail-under=85 \
-            -v
-        timeout-minutes: 10
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.json
-          fail_ci_if_error: false
-          verbose: true
-          flags: smoke-tests
-          name: smoke-coverage-${{ github.sha }}
-        timeout-minutes: 5
-        continue-on-error: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage artifact (fallback)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-failed-${{ github.sha }}
-          path: |
-            coverage.json
-            htmlcov/
-          retention-days: 7
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: coverage-report-${{ github.sha }}
-          path: htmlcov/
-          retention-days: 30
+    uses: ./.github/workflows/_reusable_pytest.yml
+    with:
+      python-version: "3.11"
+      markers: "not (validation or property)"
+      coverage-threshold: 85
+      timeout-minutes: 10
+      upload-codecov: true
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   ssot:
     runs-on: ubuntu-latest
