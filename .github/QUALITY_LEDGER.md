@@ -143,7 +143,7 @@ Reusable workflows solve:
 - **Maintainability:** Update once, applies to all callers
 
 **Evidence:**
-- Commit SHA: `<PENDING_C3>`
+- Commit SHA: `c44fd69`
 - Files created: 2
 - Jobs defined: 4 (3 in quality, 1 in pytest)
 - Reusable inputs: 9 total
