@@ -38,7 +38,7 @@ dev = [
 
 viz = [
   "matplotlib==3.10.0",
-  "pillow==11.2.1",
+  "pillow==11.3.0",
   "streamlit==1.42.1",
   "plotly==5.25.0",
 ]

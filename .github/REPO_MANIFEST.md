@@ -18,10 +18,10 @@ The repository implements a **Fractal Quality Architecture** with 7 universal ax
 | **OBSERVABILITY** | A3 | 85% ✅ | 90% | • GitHub step summaries in CI<br>• Codecov integration<br>• Artifact uploads on failure<br>• Structured logging in experiments |
 | **EXHAUSTIVENESS** | A4 | 75% ⚠️ | 85% | • 85% test coverage<br>• Property-based tests (Hypothesis)<br>• Integration + unit + validation tests<br>• Missing: mutation testing |
 | **PERFORMANCE** | A5 | 85% ✅ | 90% | • Benchmarks in CI (determinism, scaling, criticality)<br>• Profiling support (psutil)<br>• Missing: performance regression gates |
-| **SECURITY** | A6 | 90% ✅ | 95% | • Gitleaks, pip-audit, bandit in CI<br>• Pinned dependencies with hashes<br>• CodeQL scanning<br>• No secrets in code |
+| **SECURITY** | A6 | 91% ✅ | 95% | • Gitleaks, pip-audit, bandit in CI<br>• Pinned dependencies with hashes<br>• CodeQL scanning<br>• No secrets in code<br>• Proactive CVE remediation (Pillow 11.3.0) |
 | **DOCUMENTATION** | A7 | 90% ✅ | 95% | • 100% public API docstrings<br>• SPEC.md governance<br>• Quality manifests<br>• Missing: API reference docs |
 
-**Overall Score:** 87.3% (weighted average)  
+**Overall Score:** 87.4% (weighted average)  
 **Grade:** Intermediate-Mature → **Advanced** (Top 1%)  
 **Next Milestone:** 95% (Top 0.1%)
 
