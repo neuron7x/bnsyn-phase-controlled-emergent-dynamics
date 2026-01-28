@@ -79,6 +79,24 @@ def main() -> int:
     """Check mutation score against baseline."""
     # Load baseline
     baseline = load_baseline()
+    
+    # Check if baseline needs regeneration
+    status = baseline.get("status", "")
+    total_mutants = baseline.get("metrics", {}).get("total_mutants", 0)
+    
+    if status == "needs_regeneration" or total_mutants == 0:
+        print("⚠️  Mutation Baseline Not Initialized")
+        print("=" * 60)
+        print("The mutation baseline has not been populated with real data yet.")
+        print()
+        print("To generate the baseline, run:")
+        print("  make mutation-baseline")
+        print()
+        print("This will take approximately 30 minutes.")
+        print()
+        print("Skipping mutation score check (not blocking).")
+        return 0
+    
     baseline_score = baseline["baseline_score"]
     tolerance = baseline["tolerance_delta"]
     min_acceptable = baseline_score - tolerance
