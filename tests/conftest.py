@@ -39,8 +39,8 @@ settings.register_profile(
 
 # Load profile based on environment
 # Priority: explicit HYPOTHESIS_PROFILE env var, then CI mode, then default
-if os.getenv("HYPOTHESIS_PROFILE"):
-    profile_name = os.getenv("HYPOTHESIS_PROFILE")
+profile_name = os.getenv("HYPOTHESIS_PROFILE")
+if profile_name:
     settings.load_profile(profile_name)
     print(f"[Hypothesis] Loaded profile: {profile_name} (from HYPOTHESIS_PROFILE env var)")
 elif os.getenv("CI"):
