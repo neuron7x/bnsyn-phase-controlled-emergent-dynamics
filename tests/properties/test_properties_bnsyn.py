@@ -152,13 +152,21 @@ def test_different_seeds_produce_different_results(seed_a: int, seed_b: int) -> 
         seed_b: Second random seed (guaranteed different)
 
     This validates that seeding actually affects simulation behavior.
+    We inject external current to ensure the network produces activity,
+    allowing the random seed to affect spike timing and patterns.
     """
     N = 100
     steps = 200
     dt_ms = 0.1
+    # Inject external current to ensure network activity
+    # Without this, network may not spike due to weak default drive
+    # Use 300 pA to ensure sufficient activity for differentiation
+    external_current_pA = 300.0
 
-    m1 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_a, N=N)
-    m2 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_b, N=N)
+    m1 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_a, N=N, 
+                        external_current_pA=external_current_pA)
+    m2 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_b, N=N,
+                        external_current_pA=external_current_pA)
 
     # Should be different (with high probability)
     # We check they're not equal (exact match would be astronomically unlikely)
