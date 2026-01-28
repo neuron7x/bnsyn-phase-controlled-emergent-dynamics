@@ -58,6 +58,7 @@ jobs:
           
           # Generate results
           mutmut results > mutation_results.txt
+          # Note: || true is acceptable here as mutmut show may have no survivors
           mutmut show --status survived > survived_mutants.txt || true
           
           # Calculate score

@@ -192,9 +192,10 @@ class WorkflowLinter:
     def _check_run_step(self, run_command: str, location: str, workflow_name: str) -> None:
         """Check a run command for anti-patterns."""
         # Check for `|| true` after test/verification commands
+        # Exception: mutmut show --status may have no survivors (documented as acceptable)
         test_patterns = [
             r"pytest.*\|\|\s*true",
-            r"mutmut.*\|\|\s*true",
+            r"mutmut\s+run.*\|\|\s*true",  # Only flag mutmut run, not mutmut show
             r"make\s+test.*\|\|\s*true",
             r"make\s+check.*\|\|\s*true",
             r"coqc.*\|\|\s*true",

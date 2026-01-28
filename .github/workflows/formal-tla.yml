@@ -11,6 +11,9 @@ on:
         required: false
         default: '100'
 
+permissions:
+  contents: read
+
 concurrency:
   group: formal-tla-${{ github.ref }}
   cancel-in-progress: true
