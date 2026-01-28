@@ -490,15 +490,12 @@ def run_simulation(
     rates: list[float] = []
     
     # Prepare external current array if needed
-    I_ext: NDArray[np.float64] | None = None
-    if external_current_pA != 0.0:
-        I_ext = np.full(N, external_current_pA, dtype=np.float64)
+    injected_current: NDArray[np.float64] | None = None
+    if abs(external_current_pA) > 1e-9:  # Robust check for non-zero
+        injected_current = np.full(N, external_current_pA, dtype=np.float64)
     
     for _ in range(steps):
-        if I_ext is not None:
-            m = net.step(external_current_pA=I_ext)
-        else:
-            m = net.step()
+        m = net.step(external_current_pA=injected_current)
         sigmas.append(m["sigma"])
         rates.append(m["spike_rate_hz"])
 
