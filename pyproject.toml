@@ -76,6 +76,7 @@ markers = [
   "performance: performance regression tests with timing assertions",
   "integration: integration tests requiring multiple components",
   "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
 ]
 
 [tool.hypothesis]

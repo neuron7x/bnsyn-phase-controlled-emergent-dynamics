@@ -6,6 +6,9 @@ on:
     - cron: '0 1 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: formal-coq-${{ github.ref }}
   cancel-in-progress: true
@@ -36,8 +39,8 @@ jobs:
       - name: Verify Coq installation
         run: |
           eval $(opam env)
-          coqc --version
-          echo "✅ Coq installed successfully" >> $GITHUB_STEP_SUMMARY
+          coqc --version | tee coq_version.txt
+          echo "Coq installed: $(cat coq_version.txt)" >> $GITHUB_STEP_SUMMARY
       
       - name: Compile Coq proofs
         id: coq_compile
@@ -51,7 +54,7 @@ jobs:
           # Compile all .v files
           for vfile in *.v; do
             if [ -f "$vfile" ]; then
-              echo "Compiling $vfile..." >> $GITHUB_STEP_SUMMARY
+              echo "Compiling $vfile..." | tee -a coq_compile_log.txt
               if coqc "$vfile" 2>&1 | tee "coq_output_${vfile%.v}.txt"; then
                 echo "✅ $vfile compiled successfully" >> $GITHUB_STEP_SUMMARY
               else

@@ -1,13 +1,14 @@
 (* BNsyn Formal Proofs in Coq *)
-(* Minimal working proof for sigma bounds preservation *)
+(* Proof for criticality gain bounds preservation *)
+(* ALIGNED WITH: src/bnsyn/config.py:CriticalityParams (gain_min=0.2, gain_max=5.0) *)
 
 Require Import Coq.Reals.Reals.
 Require Import Coq.Reals.RIneq.
 Open Scope R_scope.
 
-(* Define sigma bounds *)
-Definition sigma_min : R := 0.8.
-Definition sigma_max : R := 1.2.
+(* Define gain bounds from actual code *)
+Definition gain_min : R := 0.2.
+Definition gain_max : R := 5.0.
 
 (* Clamp function: clamps a value to [min, max] *)
 Definition clamp (min max x : R) : R :=
@@ -49,33 +50,26 @@ Proof.
         exact n0.
 Qed.
 
-(* Theorem: Sigma clamping preserves bounds [sigma_min, sigma_max] *)
-Theorem sigma_clamp_preserves_bounds : forall (sigma : R),
-  sigma_min <= clamp sigma_min sigma_max sigma <= sigma_max.
+(* Theorem: Gain clamping preserves bounds [gain_min, gain_max] *)
+(* Maps to: src/bnsyn/criticality/* gain control logic with bounds from CriticalityParams *)
+Theorem gain_clamp_preserves_bounds : forall (gain : R),
+  gain_min <= clamp gain_min gain_max gain <= gain_max.
 Proof.
-  intro sigma.
+  intro gain.
   apply clamp_preserves_bounds.
-  unfold sigma_min, sigma_max.
-  (* Prove 0.8 <= 1.2 *)
-  apply Rle_trans with (r2 := 1).
-  - (* 0.8 <= 1 *)
-    apply Rlt_le.
-    apply (Rlt_trans 0.8 0.9 1).
-    + apply (Rlt_trans 0.8 0.85 0.9); lra.
-    + apply (Rlt_trans 0.9 0.95 1); lra.
-  - (* 1 <= 1.2 *)
-    apply Rlt_le.
-    lra.
+  unfold gain_min, gain_max.
+  (* Prove 0.2 <= 5.0 *)
+  lra.
 Qed.
 
-(* Corollary: Any sigma update using clamp stays in bounds *)
-Corollary sigma_update_bounded : forall (sigma sigma_update : R),
-  let sigma' := clamp sigma_min sigma_max sigma_update in
-  sigma_min <= sigma' <= sigma_max.
+(* Corollary: Any gain update using clamp stays in bounds *)
+Corollary gain_update_bounded : forall (gain gain_update : R),
+  let gain' := clamp gain_min gain_max gain_update in
+  gain_min <= gain' <= gain_max.
 Proof.
-  intros sigma sigma_update sigma'.
-  unfold sigma'.
-  apply sigma_clamp_preserves_bounds.
+  intros gain gain_update gain'.
+  unfold gain'.
+  apply gain_clamp_preserves_bounds.
 Qed.
 
 (* Additional lemma: clamp is idempotent *)
@@ -107,4 +101,5 @@ Proof.
 Qed.
 
 (* Print completion message *)
-(* Successfully defined and proved sigma bounds preservation *)
+(* Successfully defined and proved criticality gain bounds preservation *)
+(* Bounds: gain_min=0.2, gain_max=5.0 (from src/bnsyn/config.py:CriticalityParams) *)

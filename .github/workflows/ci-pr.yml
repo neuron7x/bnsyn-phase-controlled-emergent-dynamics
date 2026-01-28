@@ -5,6 +5,9 @@ on:
     branches: ["main"]
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-pr-${{ github.ref }}
   cancel-in-progress: true
@@ -24,14 +27,56 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+          pip install pyyaml  # For CI truthfulness linter
       - name: SSOT gates
         id: ssot-gates
         run: |
+          echo "## 📋 SSOT Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
           python scripts/scan_tierS_misuse.py
+      
+      - name: Governance Gates (NEW)
+        id: governance-gates
+        run: |
+          echo "## 🔒 Quality Governance Gates" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Verify formal constants match code
+          echo "### Formal Constants Verification" >> $GITHUB_STEP_SUMMARY
+          if python scripts/verify_formal_constants.py; then
+            echo "✅ All formal spec constants match code" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Formal spec constants mismatch detected" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Lint CI workflows for truthfulness
+          echo "### CI Truthfulness Lint" >> $GITHUB_STEP_SUMMARY
+          mkdir -p artifacts
+          if python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md; then
+            echo "✅ No critical CI truthfulness violations" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Critical CI truthfulness violations found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "See artifacts for details" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+      
+      - name: Upload Governance Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-reports
+          path: |
+            artifacts/ci_truthfulness.json
+            artifacts/ci_truthfulness.md
+          retention-days: 30
       - name: Validate Claims Coverage (BLOCKING)
         id: claims-coverage
         run: |
@@ -55,7 +100,7 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "## 📋 SSOT Validation" >> $GITHUB_STEP_SUMMARY
+          echo "## 📋 SSOT & Governance Validation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
@@ -67,6 +112,12 @@ jobs:
             echo "| TierS Misuse | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| SSOT Gates | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.governance-gates.outcome }}" = "success" ]; then
+            echo "| Formal Constants | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| CI Truthfulness | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Governance Gates | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           if [ "${{ steps.claims-coverage.outcome }}" = "success" ]; then
             echo "| Claims Coverage | ✅ PASS |" >> $GITHUB_STEP_SUMMARY

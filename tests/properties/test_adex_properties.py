@@ -28,7 +28,7 @@ from bnsyn.neuron.adex import AdExState, adex_step
     I_ext=st.floats(-1000, 1000, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.001, 1.0, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=500, deadline=None)
+@settings(deadline=None)
 def test_adex_outputs_finite(V: float, w: float, I_syn: float, I_ext: float, dt_ms: float) -> None:
     """Property: AdEx outputs are ALWAYS finite.
 
@@ -79,7 +79,7 @@ def test_adex_outputs_finite(V: float, w: float, I_syn: float, I_ext: float, dt_
     w=st.floats(0, 500, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=500, deadline=None)
+@settings(deadline=None)
 def test_adex_adaptation_nonnegative(V: float, w: float, dt_ms: float) -> None:
     """Property: Adaptation current w stays mostly non-negative.
 
@@ -125,7 +125,7 @@ def test_adex_adaptation_nonnegative(V: float, w: float, dt_ms: float) -> None:
     I_ext=st.floats(50, 500, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.01, 0.2, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=500, deadline=None)
+@settings(deadline=None)
 def test_adex_excitatory_input_increases_voltage(
     V: float, w: float, I_ext: float, dt_ms: float
 ) -> None:
@@ -180,7 +180,7 @@ def test_adex_excitatory_input_increases_voltage(
     N=st.integers(1, 100),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=300, deadline=None)
+@settings(deadline=None)
 def test_adex_vectorized_consistency(N: int, dt_ms: float) -> None:
     """Property: Vectorized step produces same results as individual steps.
 
@@ -252,7 +252,7 @@ def test_adex_vectorized_consistency(N: int, dt_ms: float) -> None:
     w=st.floats(0, 200, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=300, deadline=None)
+@settings(deadline=None)
 def test_adex_resting_state_stability(V: float, w: float, dt_ms: float) -> None:
     """Property: Near resting potential with no input, voltage stays bounded.
 
@@ -298,7 +298,7 @@ def test_adex_resting_state_stability(V: float, w: float, dt_ms: float) -> None:
     w=st.floats(0, 500, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=500, deadline=None)
+@settings(deadline=None)
 def test_adex_spike_reset(V: float, w: float, dt_ms: float) -> None:
     """Property: When spike occurs, voltage resets to Vreset.
 
@@ -350,7 +350,7 @@ def test_adex_spike_reset(V: float, w: float, dt_ms: float) -> None:
     I_ext=st.floats(0, 500, allow_nan=False, allow_infinity=False),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=500, deadline=None)
+@settings(deadline=None)
 def test_adex_adaptation_increases_on_spike(V: float, w: float, I_ext: float, dt_ms: float) -> None:
     """Property: Adaptation current increases when spike occurs.
 
@@ -401,7 +401,7 @@ def test_adex_adaptation_increases_on_spike(V: float, w: float, I_ext: float, dt
     steps=st.integers(1, 20),
     dt_ms=st.floats(0.01, 0.5, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=200, deadline=None)
+@settings(deadline=None)
 def test_adex_deterministic(N: int, steps: int, dt_ms: float) -> None:
     """Property: Same initial state and inputs produce identical outputs.
 
@@ -447,7 +447,7 @@ def test_adex_deterministic(N: int, steps: int, dt_ms: float) -> None:
     V=st.floats(-100, 50, allow_nan=False, allow_infinity=False),
     w=st.floats(-100, 1000, allow_nan=False, allow_infinity=False),  # Test negative w
 )
-@settings(max_examples=300, deadline=None)
+@settings(deadline=None)
 def test_adex_handles_edge_case_inputs(V: float, w: float) -> None:
     """Property: AdEx handles edge case inputs gracefully.
 
@@ -489,7 +489,7 @@ def test_adex_handles_edge_case_inputs(V: float, w: float) -> None:
     dt1=st.floats(0.01, 0.2, allow_nan=False, allow_infinity=False),
     dt2=st.floats(0.01, 0.2, allow_nan=False, allow_infinity=False),
 )
-@settings(max_examples=200, deadline=None)
+@settings(deadline=None)
 def test_adex_timestep_independence(dt1: float, dt2: float) -> None:
     """Property: Smaller timesteps produce similar results (within error bounds).
 

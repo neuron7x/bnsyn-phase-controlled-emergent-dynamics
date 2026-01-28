@@ -55,10 +55,11 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 **Runtime:** ~30 minutes  
 **Policy:** Informational only
 
-- **Validation Tests** (`-m validation`): 10 tests validating empirical claims
-- **Property Tests** (`-m property`): 8 Hypothesis tests (50 examples, ci-quick profile)
+- **Validation Tests** (`-m validation`): Tests validating empirical claims
+- **Property Tests** (`-m property`): Hypothesis tests with thorough profile (1000 examples)
+- **Chaos Tests** (`-m "validation and chaos"`): Fault injection resilience tests
 
-**Workflows:** `ci-validation-elite.yml`
+**Workflows:** `ci-validation-elite.yml`, `ci-property-tests.yml`, `chaos-validation.yml`
 
 ---
 
@@ -89,6 +90,7 @@ make docs-evidence             # Regenerate EVIDENCE_COVERAGE.md
 | Tier | Marker | Trigger | Runtime | Blocks PR | Workflow |
 |------|--------|---------|---------|-----------|----------|
 | **BLOCKING** | smoke | Every PR | ~8 min | ✅ YES | `ci-pr.yml` |
-| **VALIDATION** | `@pytest.mark.validation` | Daily 2 AM | ~20 min | ❌ NO | `ci-validation-elite.yml` |
-| **PROPERTY** | `@pytest.mark.property` | Daily 2 AM | ~10 min | ❌ NO | `ci-validation-elite.yml` |
+| **VALIDATION** | `@pytest.mark.validation` | Daily 2 AM | varies | ❌ NO | `ci-validation-elite.yml` |
+| **PROPERTY** | `@pytest.mark.property` | Daily 2:30 AM | ~10 min | ❌ NO | `ci-property-tests.yml` |
+| **CHAOS** | `@pytest.mark.chaos` | Daily 4 AM | ~20 min | ❌ NO | `chaos-validation.yml` |
 | **BENCHMARKS** | N/A | Weekly Sun 3 AM | ~20 min | ❌ NO | `ci-benchmarks-elite.yml` |

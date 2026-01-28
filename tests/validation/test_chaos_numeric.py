@@ -13,6 +13,7 @@ from bnsyn.testing import FaultConfig, clamp_numeric, inject_numeric_fault, vali
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_numeric_fault_injection_nan() -> None:
     """Test that NaN injection is detected and handled correctly."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -27,6 +28,7 @@ def test_numeric_fault_injection_nan() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_numeric_fault_injection_inf() -> None:
     """Test that inf injection is detected and handled correctly."""
     config = FaultConfig(enabled=True, seed=43, probability=1.0)
@@ -40,6 +42,7 @@ def test_numeric_fault_injection_inf() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_numeric_health_validation_detects_nan() -> None:
     """Test that numeric health validation catches NaN values."""
     arr_with_nan = np.array([1.0, 2.0, np.nan, 4.0])
@@ -49,6 +52,7 @@ def test_numeric_health_validation_detects_nan() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_numeric_health_validation_detects_inf() -> None:
     """Test that numeric health validation catches inf values."""
     arr_with_inf = np.array([1.0, 2.0, np.inf, 4.0])
@@ -58,6 +62,7 @@ def test_numeric_health_validation_detects_inf() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_numeric_health_validation_passes_clean() -> None:
     """Test that numeric health validation passes for clean arrays."""
     clean_arr = np.array([1.0, 2.0, 3.0, 4.0])
@@ -67,6 +72,7 @@ def test_numeric_health_validation_passes_clean() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_clamp_numeric_handles_nan() -> None:
     """Test that clamping replaces NaN values with minimum bound."""
     arr_with_nan = np.array([1.0, 2.0, np.nan, 4.0])
@@ -77,6 +83,7 @@ def test_clamp_numeric_handles_nan() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_clamp_numeric_handles_inf() -> None:
     """Test that clamping replaces inf values with maximum bound."""
     arr_with_inf = np.array([1.0, 2.0, np.inf, -np.inf, 4.0])
@@ -87,6 +94,7 @@ def test_clamp_numeric_handles_inf() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_fault_injection_deterministic() -> None:
     """Test that fault injection is deterministic with same seed."""
     config = FaultConfig(enabled=True, seed=100, probability=1.0)
@@ -108,6 +116,7 @@ def test_fault_injection_deterministic() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_fault_injection_disabled() -> None:
     """Test that fault injection can be disabled."""
     config = FaultConfig(enabled=False, seed=42, probability=1.0)
@@ -122,6 +131,7 @@ def test_fault_injection_disabled() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_fault_injection_probability() -> None:
     """Test that fault injection respects probability parameter."""
     # With probability 0, should never inject
