@@ -1,0 +1,155 @@
+name: chaos-validation
+
+on:
+  schedule:
+    # Run nightly at 4 AM UTC
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      test_subset:
+        description: 'Test subset to run (numeric, timing, stochastic, io, all)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: chaos-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chaos-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        fault-type: ${{ github.event.inputs.test_subset == 'all' && fromJSON('["numeric", "timing", "stochastic", "io"]') || github.event.inputs.test_subset == 'numeric' && fromJSON('["numeric"]') || github.event.inputs.test_subset == 'timing' && fromJSON('["timing"]') || github.event.inputs.test_subset == 'stochastic' && fromJSON('["stochastic"]') || github.event.inputs.test_subset == 'io' && fromJSON('["io"]') || fromJSON('["numeric", "timing", "stochastic", "io"]') }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      
+      - name: Run chaos tests for ${{ matrix.fault-type }}
+        id: chaos_test
+        run: |
+          echo "## 🌪️ Chaos Engineering: ${{ matrix.fault-type }} faults" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Run specific chaos test type
+          pytest tests/validation/test_chaos_${{ matrix.fault-type }}.py \
+            -v \
+            --tb=short \
+            --strict-markers \
+            -m validation \
+            2>&1 | tee chaos_output_${{ matrix.fault-type }}.txt
+          
+          # Extract test results
+          TOTAL=$(grep -E "passed|failed" chaos_output_${{ matrix.fault-type }}.txt | tail -1 || echo "0")
+          echo "| Result | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload chaos test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chaos-results-${{ matrix.fault-type }}-${{ github.sha }}
+          path: chaos_output_${{ matrix.fault-type }}.txt
+          retention-days: 30
+  
+  property-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      
+      - name: Run property-based tests
+        id: property_test
+        run: |
+          echo "## 🔬 Property-Based Testing" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Run property tests with extended examples
+          HYPOTHESIS_PROFILE=thorough pytest \
+            -m property \
+            -v \
+            --tb=short \
+            --strict-markers \
+            2>&1 | tee property_output.txt
+          
+          RESULT=$(grep -E "passed|failed" property_output.txt | tail -1 || echo "Unknown")
+          echo "| Result | $RESULT |" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload property test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: property-test-results-${{ github.sha }}
+          path: property_output.txt
+          retention-days: 30
+  
+  summary:
+    needs: [chaos-tests, property-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Generate summary report
+        run: |
+          echo "## 📊 Chaos & Property Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.chaos-tests.result }}" == "success" ]; then
+            echo "| Chaos Tests | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Chaos Tests | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.property-tests.result }}" == "success" ]; then
+            echo "| Property Tests | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Property Tests | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Key Insights" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Numeric Faults**: Tests system resilience to NaN/inf injection" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timing Faults**: Tests stability under dt jitter" >> $GITHUB_STEP_SUMMARY
+          echo "- **Stochastic Faults**: Tests determinism under RNG perturbation" >> $GITHUB_STEP_SUMMARY
+          echo "- **I/O Faults**: Tests graceful degradation on I/O failures" >> $GITHUB_STEP_SUMMARY
+          echo "- **Property Tests**: Tests invariants across wide input space" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Check overall status
+        run: |
+          if [ "${{ needs.chaos-tests.result }}" != "success" ] || [ "${{ needs.property-tests.result }}" != "success" ]; then
+            echo "❌ Some validation tests failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
