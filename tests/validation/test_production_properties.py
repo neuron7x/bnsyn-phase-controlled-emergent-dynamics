@@ -11,7 +11,7 @@ from bnsyn.rng import seed_all
 pytestmark = pytest.mark.validation
 
 
-@settings(deadline=None, max_examples=20)
+@settings(deadline=None)
 @given(
     n=st.integers(min_value=1, max_value=256),
     dt=st.floats(min_value=1e-5, max_value=5e-3, allow_nan=False, allow_infinity=False),
@@ -38,7 +38,7 @@ def test_adex_refractory_holds_reset():
     assert abs(float(V2[0]) - p.V_reset) < 1e-12
 
 
-@settings(deadline=None, max_examples=10)
+@settings(deadline=None)
 @given(
     n=st.integers(min_value=2, max_value=512),
     p=st.floats(min_value=0.0, max_value=0.25, allow_nan=False, allow_infinity=False),

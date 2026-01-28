@@ -31,7 +31,7 @@ from bnsyn.sim.network import run_simulation
     N=st.integers(10, 200),
     seed=st.integers(0, 100000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_determinism_property_universal(N: int, seed: int) -> None:
     """Property: Same seed always produces identical results, regardless of N.
 
@@ -58,7 +58,7 @@ def test_determinism_property_universal(N: int, seed: int) -> None:
     steps=st.integers(50, 500),
     seed=st.integers(0, 10000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_finite_outputs_property(N: int, steps: int, seed: int) -> None:
     """Property: All simulation outputs must be finite numbers.
 
@@ -91,7 +91,7 @@ def test_finite_outputs_property(N: int, steps: int, seed: int) -> None:
 @given(
     seed=st.integers(0, 10000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_network_size_monotonicity(seed: int) -> None:
     """Property: Larger networks have proportionally more potential spikes.
 
@@ -117,7 +117,7 @@ def test_network_size_monotonicity(seed: int) -> None:
     N=st.integers(30, 120),
     seed=st.integers(0, 10000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_bounded_spike_rates_property(N: int, seed: int) -> None:
     """Property: Spike rates should remain within biological bounds.
 
@@ -143,7 +143,7 @@ def test_bounded_spike_rates_property(N: int, seed: int) -> None:
     seed_a=st.integers(0, 5000),
     seed_b=st.integers(5001, 10000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_different_seeds_produce_different_results(seed_a: int, seed_b: int) -> None:
     """Property: Different seeds should produce different results.
 
@@ -178,7 +178,7 @@ def test_different_seeds_produce_different_results(seed_a: int, seed_b: int) -> 
     N=st.integers(40, 100),
     seed=st.integers(0, 10000),
 )
-@settings(max_examples=50, deadline=15000)
+@settings(deadline=15000)
 def test_reproducibility_across_runs(N: int, seed: int) -> None:
     """Property: Running 3 times with same parameters produces identical results.
 
@@ -209,7 +209,7 @@ def test_reproducibility_across_runs(N: int, seed: int) -> None:
     dt_ms=st.sampled_from([0.05, 0.1, 0.2, 0.5]),
     seed=st.integers(0, 10000),
 )
-@settings(max_examples=50, deadline=10000)
+@settings(deadline=10000)
 def test_dt_stability_property(N: int, dt_ms: float, seed: int) -> None:
     """Property: Different dt values maintain numerical stability.
 
