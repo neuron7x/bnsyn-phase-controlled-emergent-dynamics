@@ -1,0 +1,110 @@
+name: formal-coq
+
+on:
+  schedule:
+    # Run nightly at 1 AM UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: formal-coq-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coq-proof-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up OCaml and Coq
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: "4.14.x"
+          dune-cache: true
+          opam-pin: false
+          opam-depext: true
+      
+      - name: Install Coq
+        run: |
+          opam install -y coq.8.18.0
+          opam install -y coq-mathcomp-ssreflect.2.2.0
+          eval $(opam env)
+      
+      - name: Verify Coq installation
+        run: |
+          eval $(opam env)
+          coqc --version
+          echo "✅ Coq installed successfully" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Compile Coq proofs
+        id: coq_compile
+        run: |
+          eval $(opam env)
+          cd specs/coq
+          
+          echo "## 🔬 Coq Proof Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Compile all .v files
+          for vfile in *.v; do
+            if [ -f "$vfile" ]; then
+              echo "Compiling $vfile..." >> $GITHUB_STEP_SUMMARY
+              if coqc "$vfile" 2>&1 | tee "coq_output_${vfile%.v}.txt"; then
+                echo "✅ $vfile compiled successfully" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "❌ $vfile compilation failed" >> $GITHUB_STEP_SUMMARY
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All Coq proofs verified successfully!" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Generate proof summary
+        if: always()
+        run: |
+          eval $(opam env)
+          cd specs/coq
+          
+          cat > coq_summary.md << EOF
+          # Coq Proof Verification Summary
+          
+          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Coq Version:** $(coqc --version | head -1)
+          
+          ## Verified Proofs
+          
+          EOF
+          
+          for vfile in *.v; do
+            if [ -f "$vfile" ]; then
+              echo "- **$vfile**" >> coq_summary.md
+              if [ -f "coq_output_${vfile%.v}.txt" ]; then
+                grep -E "(Theorem|Lemma|Corollary|Definition)" "coq_output_${vfile%.v}.txt" || echo "  (compiled successfully)" >> coq_summary.md
+              fi
+            fi
+          done
+      
+      - name: Upload Coq artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coq-proof-verification-${{ github.sha }}
+          path: |
+            specs/coq/coq_output_*.txt
+            specs/coq/coq_summary.md
+            specs/coq/*.vo
+            specs/coq/*.glob
+          retention-days: 30
+      
+      - name: Check compilation status
+        if: always()
+        run: |
+          if [ "${{ steps.coq_compile.outcome }}" != "success" ]; then
+            echo "❌ Coq proof verification failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

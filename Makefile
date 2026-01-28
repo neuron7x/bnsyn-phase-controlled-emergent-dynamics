@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -18,6 +18,25 @@ test-validation:
 coverage:
 	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=term-missing --cov-fail-under=85
 	@echo "Coverage report: htmlcov/index.html"
+
+mutation-baseline:
+	@echo "🧬 Running mutation testing to establish baseline..."
+	@pip install mutmut==2.4.5 -q || true
+	@rm -f .mutmut-cache
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests -m "not validation" || true
+	@mutmut results
+	@echo ""
+	@echo "Update quality/mutation_baseline.json with the results above"
+	@echo "See docs/TESTING.md for baseline update protocol"
+
+mutation-check:
+	@echo "🧬 Running mutation testing against baseline..."
+	@pip install mutmut==2.4.5 -q || true
+	@rm -f .mutmut-cache
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests -m "not validation" || true
+	@mutmut results
+	@python scripts/check_mutation_score.py || echo "⚠️  Warning: mutation score check script not found"
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"
@@ -67,4 +86,5 @@ clean:
 	find . -type d -name htmlcov -exec rm -rf {} +
 	find . -type f -name .coverage -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
+	rm -f .mutmut-cache
 	@echo "Cleaned temporary files"

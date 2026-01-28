@@ -8,12 +8,13 @@ All fault injections are deterministic and seeded for reproducibility.
 
 from __future__ import annotations
 
-import random
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Callable, Iterator
 
 import numpy as np
+
+from bnsyn.rng import seed_all
 
 
 @dataclass
@@ -47,8 +48,9 @@ class FaultInjector:
             Fault injection configuration.
         """
         self.config = config
-        self.rng = random.Random(config.seed)
-        self.np_rng = np.random.RandomState(config.seed)
+        # Use bnsyn.rng for deterministic RNG (compliant with A1: Determinism)
+        rng_pack = seed_all(config.seed)
+        self.np_rng = rng_pack.np_rng
 
     def should_inject(self) -> bool:
         """Determine if a fault should be injected at this call.
@@ -60,7 +62,7 @@ class FaultInjector:
         """
         if not self.config.enabled:
             return False
-        return self.rng.random() < self.config.probability
+        return float(self.np_rng.random()) < self.config.probability
 
 
 @contextmanager
@@ -98,7 +100,7 @@ def inject_numeric_fault(
         arr_copy = arr.copy()
         # Pick a random index to corrupt
         if arr_copy.size > 0:
-            idx = injector.np_rng.randint(0, arr_copy.size)
+            idx = int(injector.np_rng.integers(0, arr_copy.size))
             flat = arr_copy.ravel()
             if fault_type == "nan":
                 flat[idx] = np.nan
@@ -143,7 +145,7 @@ def inject_timing_fault(
             return dt
 
         # Add random jitter within ±jitter_factor
-        jitter = injector.rng.uniform(-jitter_factor, jitter_factor)
+        jitter = float(injector.np_rng.uniform(-jitter_factor, jitter_factor))
         return dt * (1.0 + jitter)
 
     yield inject_fn
@@ -186,7 +188,7 @@ def inject_stochastic_fault(
             return None
 
         # Generate a different seed
-        new_seed = injector.rng.randint(0, 2**32 - 1)
+        new_seed = int(injector.np_rng.integers(0, 2**32 - 1))
         return new_seed
 
     yield reseed_fn

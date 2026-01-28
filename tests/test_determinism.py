@@ -22,13 +22,7 @@ def test_no_global_numpy_rng_usage() -> None:
                     continue
                 if rel_path.as_posix() == "src/bnsyn/rng.py":
                     continue
-                # Allow fault injection testing module to use RNG for chaos testing
-                if rel_path.as_posix() == "src/bnsyn/testing/faults.py":
-                    continue
                 offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
             if "random." in line or line.strip().startswith("import random"):
-                # Allow fault injection testing module to use random for chaos testing
-                if rel_path.as_posix() == "src/bnsyn/testing/faults.py":
-                    continue
                 offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
     assert offenders == []

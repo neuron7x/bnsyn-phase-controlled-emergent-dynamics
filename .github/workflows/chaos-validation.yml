@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fault-type: [numeric, timing, stochastic, io]
+        fault-type: ${{ github.event.inputs.test_subset == 'all' && fromJSON('["numeric", "timing", "stochastic", "io"]') || github.event.inputs.test_subset == 'numeric' && fromJSON('["numeric"]') || github.event.inputs.test_subset == 'timing' && fromJSON('["timing"]') || github.event.inputs.test_subset == 'stochastic' && fromJSON('["stochastic"]') || github.event.inputs.test_subset == 'io' && fromJSON('["io"]') || fromJSON('["numeric", "timing", "stochastic", "io"]') }}
     
     steps:
       - name: Checkout

@@ -4,9 +4,32 @@ This directory contains Coq proof obligations and formal proofs for the BNsyn th
 
 ## Status
 
-**🚧 SCAFFOLD - Proofs not yet implemented**
+**🟢 ACTIVE - Initial proofs implemented**
 
-This directory establishes the proof obligations that should be formally verified in Coq. The actual proof development is planned for future work.
+This directory contains formal proofs in Coq for critical BNsyn properties. Currently implemented:
+- `BNsyn_Sigma.v`: Sigma bounds preservation proofs (COMPLETE ✅)
+
+Additional proof obligations are documented below for future work.
+
+## Implemented Proofs
+
+### BNsyn_Sigma.v - Sigma Bounds Preservation
+
+**Status**: ✅ Complete and verified
+
+**Theorems**:
+1. `clamp_preserves_bounds`: General clamp function preserves min/max bounds
+2. `sigma_clamp_preserves_bounds`: Sigma clamping preserves [σ_min, σ_max] bounds  
+3. `sigma_update_bounded`: Any sigma update using clamp stays in bounds
+4. `clamp_idempotent`: Clamp operation is idempotent
+
+**Compiling locally**:
+```bash
+cd specs/coq
+coqc BNsyn_Sigma.v
+```
+
+**CI Integration**: `.github/workflows/formal-coq.yml` runs nightly
 
 ## Purpose
 

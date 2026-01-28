@@ -20,6 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     
+    env:
+      TLA2TOOLS_VERSION: "1.8.0"
+      TLA2TOOLS_SHA256: "a6ece2e543c87e6e7d90d1c6e0cc04d57b1f08e6e7f4f4db08ebafdd8b39c53e"
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,11 +34,57 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       
-      - name: Download TLA+ Tools
+      - name: Download and verify TLA+ Tools
         run: |
           cd specs/tla
-          wget -q https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
-          echo "TLA+ tools downloaded successfully"
+          wget -q "https://github.com/tlaplus/tlaplus/releases/download/v${TLA2TOOLS_VERSION}/tla2tools.jar"
+          
+          # Verify SHA256
+          echo "${TLA2TOOLS_SHA256}  tla2tools.jar" | sha256sum -c - || {
+            echo "❌ SHA256 verification failed for tla2tools.jar"
+            exit 1
+          }
+          
+          echo "✅ TLA+ tools v${TLA2TOOLS_VERSION} downloaded and verified"
+      
+      - name: Generate TLA+ configuration with max_steps
+        run: |
+          cd specs/tla
+          MAX_STEPS="${{ github.event.inputs.max_steps || '100' }}"
+          
+          # Generate config with dynamic MaxSteps
+          cat > BNsyn_runtime.cfg << EOF
+          SPECIFICATION Spec
+          
+          \* Constants configuration
+          CONSTANTS
+              T0 = 1.0
+              Tmin = 0.001
+              Alpha = 0.95
+              Tc = 0.1
+              GateTau = 0.02
+              SigmaMin = 0.8
+              SigmaMax = 1.2
+              MaxSteps = ${MAX_STEPS}
+          
+          \* Invariants to check
+          INVARIANTS
+              TypeOK
+              TempMonotone
+              GateSoundness
+              SigmaClamp
+              PhaseConsistency
+              GateTemperatureCorrelation
+          
+          \* Properties to check
+          PROPERTIES
+              EventuallyCooled
+          
+          \* Constraints for model checking
+          CONSTRAINT step <= MaxSteps
+          EOF
+          
+          echo "Generated BNsyn_runtime.cfg with MaxSteps=${MAX_STEPS}"
       
       - name: Verify TLA+ specification syntax
         id: syntax
@@ -46,33 +96,41 @@ jobs:
       
       - name: Run TLC model checker
         id: tlc
+        continue-on-error: true
         run: |
           cd specs/tla
           
           echo "## 🔍 TLA+ Model Checking Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          # Run TLC with configuration
+          # Run TLC with runtime configuration
           java -XX:+UseParallelGC -Xmx4g -jar tla2tools.jar \
-            -config BNsyn.cfg \
+            -config BNsyn_runtime.cfg \
             -workers auto \
             -coverage 1 \
             BNsyn.tla 2>&1 | tee tlc_output.txt
+      
+      - name: Analyze TLC results
+        if: always()
+        run: |
+          cd specs/tla
           
-          # Check for errors
-          if grep -q "Error:" tlc_output.txt; then
-            echo "❌ **Model checking FAILED**" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Invariant violations detected!" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          elif grep -q "Model checking completed. No error has been found." tlc_output.txt; then
+          # Determine overall status
+          if grep -q "Model checking completed. No error has been found." tlc_output.txt; then
+            echo "STATUS=PASS" >> $GITHUB_ENV
             echo "✅ **Model checking PASSED**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "All invariants verified successfully." >> $GITHUB_STEP_SUMMARY
+          elif grep -q "Error:" tlc_output.txt; then
+            echo "STATUS=FAIL" >> $GITHUB_ENV
+            echo "❌ **Model checking FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Invariant violations detected!" >> $GITHUB_STEP_SUMMARY
           else
+            echo "STATUS=INCOMPLETE" >> $GITHUB_ENV
             echo "⚠️ **Model checking INCOMPLETE**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Check artifacts for details." >> $GITHUB_STEP_SUMMARY
+            echo "Model checker did not complete successfully." >> $GITHUB_STEP_SUMMARY
           fi
       
       - name: Extract model checking statistics
@@ -93,49 +151,80 @@ jobs:
             echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
             echo "| States Checked | $STATES |" >> $GITHUB_STEP_SUMMARY
             echo "| State Graph Diameter | $DIAMETER |" >> $GITHUB_STEP_SUMMARY
+            echo "| Max Steps | ${{ github.event.inputs.max_steps || '100' }} |" >> $GITHUB_STEP_SUMMARY
           fi
       
-      - name: Generate invariant report
+      - name: Generate detailed invariant report
         if: always()
         run: |
           cd specs/tla
           
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Verified Invariants" >> $GITHUB_STEP_SUMMARY
+          echo "### Invariant Verification Status" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Invariant | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
           
-          # Check which invariants were verified
+          # Check each invariant individually with proper status
           for inv in "TypeOK" "TempMonotone" "GateSoundness" "SigmaClamp" "PhaseConsistency" "GateTemperatureCorrelation"; do
             if grep -q "Invariant $inv is violated" tlc_output.txt 2>/dev/null; then
               echo "| $inv | ❌ VIOLATED |" >> $GITHUB_STEP_SUMMARY
-            else
+            elif grep -q "Model checking completed. No error has been found." tlc_output.txt 2>/dev/null; then
               echo "| $inv | ✅ VERIFIED |" >> $GITHUB_STEP_SUMMARY
+            elif grep -q "Finished computing initial states" tlc_output.txt 2>/dev/null; then
+              # TLC started but didn't complete
+              echo "| $inv | ⚠️ NOT_PROVEN |" >> $GITHUB_STEP_SUMMARY
+            else
+              # TLC didn't run properly
+              echo "| $inv | ⚠️ NOT_CHECKED |" >> $GITHUB_STEP_SUMMARY
             fi
           done
       
-      - name: Upload TLC output
+      - name: Create summary report file
+        if: always()
+        run: |
+          cd specs/tla
+          
+          cat > tla_summary.md << EOF
+          # TLA+ Model Checking Summary
+          
+          **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Version:** ${TLA2TOOLS_VERSION}
+          **MaxSteps:** ${{ github.event.inputs.max_steps || '100' }}
+          **Status:** ${STATUS}
+          
+          ## Output
+          \`\`\`
+          $(cat tlc_output.txt)
+          \`\`\`
+          EOF
+      
+      - name: Upload TLC artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: tla-model-check-report-${{ github.sha }}
           path: |
             specs/tla/tlc_output.txt
+            specs/tla/tla_summary.md
+            specs/tla/BNsyn_runtime.cfg
             specs/tla/*.out
           retention-days: 30
       
-      - name: Check for violations
+      - name: Check for violations and fail if needed
         if: always()
         run: |
           cd specs/tla
           
-          if [ -f tlc_output.txt ] && grep -q "Error:" tlc_output.txt; then
+          if [ "${STATUS}" = "FAIL" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### ❌ Violation Details" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             grep -A 20 "Error:" tlc_output.txt >> $GITHUB_STEP_SUMMARY || true
             echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          elif [ "${STATUS}" = "INCOMPLETE" ]; then
+            echo "⚠️ Model checking incomplete - check artifacts" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
