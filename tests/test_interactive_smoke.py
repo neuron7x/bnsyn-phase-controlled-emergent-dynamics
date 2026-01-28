@@ -56,8 +56,8 @@ def test_interactive_helper_functions() -> None:
         fig = create_stats_plot(metrics_history, dt_ms=0.1)
         assert fig is not None
 
-    except ImportError as e:
-        if "streamlit" in str(e) or "plotly" in str(e):
+    except (ImportError, RuntimeError) as e:
+        if "streamlit" in str(e) or "plotly" in str(e) or "optional dependency" in str(e):
             pytest.skip("Streamlit/plotly not installed (optional dependency)")
         else:
             raise
