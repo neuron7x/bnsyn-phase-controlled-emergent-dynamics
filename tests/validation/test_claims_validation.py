@@ -118,9 +118,12 @@ def test_clm_006_criticality_branching_dynamics() -> None:
     # Run network simulation
     metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
 
-    # Should have some spiking activity
-    assert "final_n_spikes" in metrics or "mean_firing_rate" in metrics, \
-        "Network metrics should include spike counts"
+    # Validate returned metrics match actual API contract
+    assert "rate_mean_hz" in metrics, \
+        f"Network metrics should include rate_mean_hz. Available keys: {list(metrics.keys())}"
+    assert metrics["rate_mean_hz"] >= 0, \
+        f"rate_mean_hz should be non-negative, got {metrics['rate_mean_hz']}"
+
 
 
 @pytest.mark.validation
@@ -220,16 +223,17 @@ def test_criticality_sigma_tracking() -> None:
     - Sigma estimates are bounded [0, inf)
     - Estimator handles edge cases (no spikes, high activity)
     """
-    # Test with mock spike data
-    estimator = BranchingEstimator(history_bins=100)
-
-    # Add some activity
+    # Use deterministic generator
+    rng = np.random.default_rng(0)
+    est = BranchingEstimator(eps=1e-9, ema_alpha=0.05)
+    
+    # Add activity with consecutive time steps
     for _ in range(50):
-        spike_count = np.random.randint(0, 10)
-        estimator.update(spike_count)
+        A_t = float(rng.integers(1, 10))
+        A_t1 = float(rng.integers(1, 10))
+        sigma = est.update(A_t=A_t, A_t1=A_t1)
 
     # Should produce a finite sigma estimate
-    sigma = estimator.get_sigma()
     assert np.isfinite(sigma), f"Sigma estimate should be finite, got {sigma}"
     assert sigma >= 0.0, f"Sigma should be non-negative, got {sigma}"
 

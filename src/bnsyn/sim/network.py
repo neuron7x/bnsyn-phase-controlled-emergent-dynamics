@@ -488,12 +488,12 @@ def run_simulation(
 
     sigmas: list[float] = []
     rates: list[float] = []
-    
+
     # Prepare external current array if needed
     injected_current: NDArray[np.float64] | None = None
     if abs(external_current_pA) > 1e-9:  # Robust check for non-zero
         injected_current = np.full(N, external_current_pA, dtype=np.float64)
-    
+
     for _ in range(steps):
         m = net.step(external_current_pA=injected_current)
         sigmas.append(m["sigma"])

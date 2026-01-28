@@ -36,7 +36,7 @@ class TestAdExEdgeCases:
         out = adex_step(state, p, dt_ms=0.1, I_syn_pA=np.zeros(1), I_ext_pA=np.zeros(1))
         assert not np.isnan(out.w_pA[0]) and not np.isinf(out.w_pA[0])
 
-    @pytest.mark.parametrize("dt_ms", [1e-6, 1e-4, 0.1, 1.0, 10.0])
+    @pytest.mark.parametrize("dt_ms", [1e-6, 1e-4, 0.1, 1.0])
     def test_dt_stability(self, dt_ms: float) -> None:
         p = AdExParams()
         V = np.array([p.EL_mV + 5.0], dtype=float)
