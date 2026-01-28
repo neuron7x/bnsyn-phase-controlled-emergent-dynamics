@@ -434,6 +434,7 @@ def run_simulation(
     seed: int,
     N: int = 200,
     backend: Literal["reference", "accelerated"] = "reference",
+    external_current_pA: float = 0.0,
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 
@@ -449,6 +450,10 @@ def run_simulation(
         Number of neurons.
     backend : Literal["reference", "accelerated"], optional
         Backend mode: 'reference' (default) or 'accelerated'.
+    external_current_pA : float, optional
+        Constant external current injection per neuron in picoamps.
+        Default is 0.0 (no injection). Use positive values to increase
+        network excitability and ensure spiking activity.
 
     Returns
     -------
@@ -458,6 +463,7 @@ def run_simulation(
     Notes
     -----
     Uses explicit seeding and validation to satisfy the determinism contract.
+    External current injection can be used to ensure network activity for testing.
 
     References
     ----------
@@ -482,8 +488,14 @@ def run_simulation(
 
     sigmas: list[float] = []
     rates: list[float] = []
+    
+    # Prepare external current array if needed
+    injected_current: NDArray[np.float64] | None = None
+    if abs(external_current_pA) > 1e-9:  # Robust check for non-zero
+        injected_current = np.full(N, external_current_pA, dtype=np.float64)
+    
     for _ in range(steps):
-        m = net.step()
+        m = net.step(external_current_pA=injected_current)
         sigmas.append(m["sigma"])
         rates.append(m["spike_rate_hz"])
 
