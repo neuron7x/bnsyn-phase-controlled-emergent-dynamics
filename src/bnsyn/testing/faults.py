@@ -152,7 +152,7 @@ def inject_timing_fault(
 @contextmanager
 def inject_stochastic_fault(
     config: FaultConfig,
-) -> Iterator[Callable[[int], None]]:
+) -> Iterator[Callable[[Any], int | None]]:
     """Inject forced RNG reseeds to test determinism violations.
 
     Parameters
@@ -162,7 +162,7 @@ def inject_stochastic_fault(
 
     Yields
     ------
-    Callable[[int], None]
+    Callable[[Any], int | None]
         Function that forces RNG reseed with a new seed.
 
     Examples
@@ -284,4 +284,5 @@ def clamp_numeric(arr: np.ndarray, min_val: float, max_val: float) -> np.ndarray
     result[np.isinf(result) & (result > 0)] = max_val
     result[np.isinf(result) & (result < 0)] = min_val
     # Clamp to bounds
-    return np.clip(result, min_val, max_val)
+    clipped: np.ndarray = np.clip(result, min_val, max_val)
+    return clipped
