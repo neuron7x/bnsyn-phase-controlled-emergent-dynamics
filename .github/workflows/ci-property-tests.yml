@@ -28,7 +28,7 @@ jobs:
 
       - name: Run property-based tests
         run: |
-          pytest -m property -v --tb=short --hypothesis-show-statistics --hypothesis-profile=quick
+          pytest -m property -v --tb=short --hypothesis-show-statistics --hypothesis-profile=quick 2>&1 | tee property_output.txt
 
       - name: Upload test results
         if: always()
@@ -36,5 +36,6 @@ jobs:
         with:
           name: property-test-results
           path: |
+            property_output.txt
             .hypothesis/
             test-results/

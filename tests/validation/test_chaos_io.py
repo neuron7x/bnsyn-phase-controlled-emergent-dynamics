@@ -11,6 +11,7 @@ from bnsyn.testing import FaultConfig, inject_io_fault
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_injection_silent_fail() -> None:
     """Test that I/O silent failure is injected correctly."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -22,6 +23,7 @@ def test_io_fault_injection_silent_fail() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_injection_exception() -> None:
     """Test that I/O exception mode raises IOError."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -32,6 +34,7 @@ def test_io_fault_injection_exception() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_deterministic() -> None:
     """Test that I/O fault injection is deterministic with same seed."""
     config = FaultConfig(enabled=True, seed=100, probability=1.0)
@@ -49,6 +52,7 @@ def test_io_fault_deterministic() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_disabled() -> None:
     """Test that I/O fault injection can be disabled."""
     config = FaultConfig(enabled=False, seed=42, probability=1.0)
@@ -60,6 +64,7 @@ def test_io_fault_disabled() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_probability() -> None:
     """Test that I/O fault injection respects probability."""
     # With probability 0, should never inject fault
@@ -72,6 +77,7 @@ def test_io_fault_probability() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_io_fault_corrupt_mode() -> None:
     """Test that I/O corrupt mode returns False."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)

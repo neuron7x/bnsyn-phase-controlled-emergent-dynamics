@@ -1,3 +1,4 @@
+import pytest
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -5,12 +6,15 @@ from bnsyn.rng import seed_all
 from bnsyn.sim.network import run_simulation
 
 
+pytestmark = pytest.mark.property
+
+
 @given(
     n=st.integers(min_value=10, max_value=500),
     dt=st.floats(min_value=0.001, max_value=1.0, allow_nan=False, allow_infinity=False),
     seed=st.integers(min_value=0, max_value=2**31 - 1),
 )
-@settings(max_examples=50, deadline=None)
+@settings(deadline=None)
 def test_determinism_property_all_sizes(n: int, dt: float, seed: int) -> None:
     m1 = run_simulation(steps=100, dt_ms=dt, seed=seed, N=n)
     m2 = run_simulation(steps=100, dt_ms=dt, seed=seed, N=n)
@@ -18,7 +22,7 @@ def test_determinism_property_all_sizes(n: int, dt: float, seed: int) -> None:
 
 
 @given(seed=st.integers(min_value=0, max_value=2**31 - 2))
-@settings(max_examples=20, deadline=None)
+@settings(deadline=None)
 def test_seed_controls_rng_stream(seed: int) -> None:
     rng_a = seed_all(seed).np_rng
     rng_b = seed_all(seed + 1).np_rng

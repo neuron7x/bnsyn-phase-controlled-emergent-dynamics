@@ -1,15 +1,16 @@
 {
-  "version": "1.0.0",
-  "timestamp": "2026-01-28T01:25:00Z",
-  "baseline_score": 75.0,
+  "version": "1.1.0",
+  "timestamp": "2026-01-28T12:36:00Z",
+  "baseline_score": 0.0,
   "tolerance_delta": 5.0,
-  "description": "Mutation testing baseline for BNsyn critical modules",
+  "status": "needs_regeneration",
+  "description": "Mutation testing baseline for BNsyn critical modules. NOTE: Run 'make mutation-baseline' to populate with real data.",
   "config": {
     "tool": "mutmut",
     "tool_version": "2.4.5",
     "python_version": "3.11",
-    "commit_sha": "initial",
-    "test_command": "pytest -m 'not validation' -x --tb=short",
+    "commit_sha": "pending",
+    "test_command": "pytest -x -q -m 'not validation and not property'",
     "mutation_timeout": 10
   },
   "scope": {
@@ -19,51 +20,15 @@
       "src/bnsyn/plasticity/three_factor.py",
       "src/bnsyn/temperature/schedule.py"
     ],
-    "test_markers": "not validation"
+    "test_markers": "not validation and not property"
   },
-  "metrics_per_module": {
-    "src/bnsyn/neuron/adex.py": {
-      "total_mutants": 0,
-      "killed": 0,
-      "survived": 0,
-      "timeout": 0,
-      "score_percent": 0.0
-    },
-    "src/bnsyn/plasticity/stdp.py": {
-      "total_mutants": 0,
-      "killed": 0,
-      "survived": 0,
-      "timeout": 0,
-      "score_percent": 0.0
-    },
-    "src/bnsyn/plasticity/three_factor.py": {
-      "total_mutants": 0,
-      "killed": 0,
-      "survived": 0,
-      "timeout": 0,
-      "score_percent": 0.0
-    },
-    "src/bnsyn/temperature/schedule.py": {
-      "total_mutants": 0,
-      "killed": 0,
-      "survived": 0,
-      "timeout": 0,
-      "score_percent": 0.0
-    }
-  },
-  "history": [
-    {
-      "date": "2026-01-28",
-      "score": 75.0,
-      "commit": "initial",
-      "comment": "Initial baseline establishment"
-    }
-  ],
   "metrics": {
     "total_mutants": 0,
     "killed_mutants": 0,
     "survived_mutants": 0,
     "timeout_mutants": 0,
-    "score_percent": 75.0
-  }
+    "score_percent": 0.0,
+    "note": "Baseline not yet populated. Run 'make mutation-baseline' to generate real metrics."
+  },
+  "history": []
 }

@@ -11,6 +11,7 @@ from bnsyn.testing import FaultConfig, inject_stochastic_fault
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_stochastic_fault_injection() -> None:
     """Test that stochastic fault forces RNG reseed."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -23,6 +24,7 @@ def test_stochastic_fault_injection() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_stochastic_fault_deterministic() -> None:
     """Test that stochastic fault is deterministic with same seed."""
     config = FaultConfig(enabled=True, seed=100, probability=1.0)
@@ -40,6 +42,7 @@ def test_stochastic_fault_deterministic() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_stochastic_fault_disabled() -> None:
     """Test that stochastic fault can be disabled."""
     config = FaultConfig(enabled=False, seed=42, probability=1.0)
@@ -51,6 +54,7 @@ def test_stochastic_fault_disabled() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_stochastic_fault_probability() -> None:
     """Test that stochastic fault respects probability."""
     # With probability 0, should never inject
@@ -63,6 +67,7 @@ def test_stochastic_fault_probability() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_stochastic_fault_different_seeds() -> None:
     """Test that multiple stochastic faults produce different seeds."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)

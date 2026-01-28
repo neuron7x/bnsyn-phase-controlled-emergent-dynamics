@@ -89,13 +89,20 @@ jobs:
           echo "## 🔬 Property-Based Testing" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          # Run property tests with extended examples
+          # Run property tests with extended examples and capture statistics
           HYPOTHESIS_PROFILE=thorough pytest \
             -m property \
             -v \
             --tb=short \
             --strict-markers \
+            --hypothesis-show-statistics \
             2>&1 | tee property_output.txt
+          
+          # Extract and display statistics in summary
+          echo "### Hypothesis Statistics" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          grep -A 100 "Hypothesis Statistics" property_output.txt >> $GITHUB_STEP_SUMMARY || echo "No statistics found" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
           
           RESULT=$(grep -E "passed|failed" property_output.txt | tail -1 || echo "Unknown")
           echo "| Result | $RESULT |" >> $GITHUB_STEP_SUMMARY
@@ -105,7 +112,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: property-test-results-${{ github.sha }}
-          path: property_output.txt
+          path: |
+            property_output.txt
+            .hypothesis/
           retention-days: 30
   
   summary:

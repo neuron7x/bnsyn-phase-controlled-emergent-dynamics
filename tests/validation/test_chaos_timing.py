@@ -11,6 +11,7 @@ from bnsyn.testing import FaultConfig, inject_timing_fault
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_injection() -> None:
     """Test that timing jitter is injected into dt values."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -26,6 +27,7 @@ def test_timing_fault_injection() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_deterministic() -> None:
     """Test that timing fault injection is deterministic with same seed."""
     config = FaultConfig(enabled=True, seed=100, probability=1.0)
@@ -44,6 +46,7 @@ def test_timing_fault_deterministic() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_disabled() -> None:
     """Test that timing fault injection can be disabled."""
     config = FaultConfig(enabled=False, seed=42, probability=1.0)
@@ -57,6 +60,7 @@ def test_timing_fault_disabled() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_probability() -> None:
     """Test that timing fault injection respects probability."""
     # With probability 0, should never inject
@@ -70,6 +74,7 @@ def test_timing_fault_probability() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_jitter_bounds() -> None:
     """Test that jitter stays within specified bounds."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -84,6 +89,7 @@ def test_timing_fault_jitter_bounds() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_preserves_positivity() -> None:
     """Test that timing fault never produces negative dt."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
@@ -98,6 +104,7 @@ def test_timing_fault_preserves_positivity() -> None:
 
 
 @pytest.mark.validation
+@pytest.mark.chaos
 def test_timing_fault_multiple_injections() -> None:
     """Test that multiple injections produce different values (when enabled)."""
     config = FaultConfig(enabled=True, seed=42, probability=1.0)
