@@ -5,11 +5,9 @@ on:
     # Run nightly at 4 AM UTC
     - cron: '0 4 * * *'
   workflow_dispatch:
-    inputs:
-      test_subset:
-        description: 'Test subset to run (numeric, timing, stochastic, io, all)'
-        required: false
-        default: 'all'
+
+permissions:
+  contents: read
 
 concurrency:
   group: chaos-validation-${{ github.ref }}

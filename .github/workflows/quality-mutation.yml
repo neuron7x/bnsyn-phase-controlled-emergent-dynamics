@@ -5,11 +5,9 @@ on:
     # Run nightly at 3 AM UTC
     - cron: '0 3 * * *'
   workflow_dispatch:
-    inputs:
-      modules:
-        description: 'Specific modules to mutate (comma-separated)'
-        required: false
-        default: 'all'
+
+permissions:
+  contents: read
 
 concurrency:
   group: mutation-${{ github.ref }}
