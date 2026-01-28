@@ -23,6 +23,27 @@ def test_viz_module_imports_without_matplotlib() -> None:
     assert hasattr(bnsyn.viz, "EmergenceDashboard")
 
 
+def test_interactive_module_imports_without_streamlit() -> None:
+    """Test that bnsyn.viz.interactive can be imported even if streamlit/plotly not installed.
+
+    Notes
+    -----
+    This test ensures that importing the interactive module does not crash
+    when optional dependencies are missing. The module should only raise
+    an error when main() is actually called.
+    """
+    import bnsyn.viz.interactive
+
+    # Import should succeed
+    assert hasattr(bnsyn.viz.interactive, "main")
+    assert hasattr(bnsyn.viz.interactive, "HAVE_STREAMLIT")
+    
+    # If streamlit is not installed, calling main should raise RuntimeError
+    if not bnsyn.viz.interactive.HAVE_STREAMLIT:
+        with pytest.raises(RuntimeError, match=r"optional dependency"):
+            bnsyn.viz.interactive.main()
+
+
 def test_viz_runtime_error_when_matplotlib_missing() -> None:
     """Test that calling viz methods raises informative error when matplotlib is missing.
 

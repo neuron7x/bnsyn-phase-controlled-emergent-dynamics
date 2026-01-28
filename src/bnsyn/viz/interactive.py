@@ -17,16 +17,16 @@ from typing import Any
 
 import numpy as np
 
+HAVE_STREAMLIT = False
+_IMPORT_ERROR: ImportError | None = None
+
 try:
     import plotly.graph_objects as go
     import streamlit as st
 
     HAVE_STREAMLIT = True
 except ImportError as e:
-    HAVE_STREAMLIT = False
-    print(f"Error: Missing required dependency: {e}")
-    print('Install with: pip install -e ".[viz]"')
-    raise
+    _IMPORT_ERROR = e
 
 
 def main() -> None:
@@ -40,6 +40,11 @@ def main() -> None:
     -------
     None
 
+    Raises
+    ------
+    RuntimeError
+        If optional visualization dependencies are not installed.
+
     Examples
     --------
     Launch from command line::
@@ -50,6 +55,12 @@ def main() -> None:
 
         streamlit run src/bnsyn/viz/interactive.py
     """
+    if not HAVE_STREAMLIT:
+        raise RuntimeError(
+            f"Cannot run interactive dashboard: optional dependency missing ({_IMPORT_ERROR}). "
+            'Install with: pip install -e ".[viz]"'
+        )
+    
     st.set_page_config(page_title="BN-Syn Interactive", page_icon="🧠", layout="wide")
 
     st.title("🧠 BN-Syn Interactive Demo")
@@ -176,7 +187,18 @@ def create_raster_plot(
     -------
     go.Figure
         Plotly figure
+    
+    Raises
+    ------
+    RuntimeError
+        If optional visualization dependencies are not installed.
     """
+    if not HAVE_STREAMLIT:
+        raise RuntimeError(
+            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+            'Install with: pip install -e ".[viz]"'
+        )
+    
     times = []
     neurons = []
     for t, spikes in spike_trains:
@@ -218,7 +240,18 @@ def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.F
     -------
     go.Figure
         Plotly figure
+    
+    Raises
+    ------
+    RuntimeError
+        If optional visualization dependencies are not installed.
     """
+    if not HAVE_STREAMLIT:
+        raise RuntimeError(
+            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+            'Install with: pip install -e ".[viz]"'
+        )
+    
     voltage_array = np.array(voltage_history)
     times = np.arange(len(voltage_history)) * dt_ms
 
@@ -257,7 +290,18 @@ def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float)
     -------
     go.Figure
         Plotly figure
+    
+    Raises
+    ------
+    RuntimeError
+        If optional visualization dependencies are not installed.
     """
+    if not HAVE_STREAMLIT:
+        raise RuntimeError(
+            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+            'Install with: pip install -e ".[viz]"'
+        )
+    
     times = np.arange(len(metrics_history)) * dt_ms
     rates = [m.get("spike_rate_hz", 0) for m in metrics_history]
 
@@ -286,7 +330,18 @@ def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go
     -------
     go.Figure
         Plotly figure with subplots
+    
+    Raises
+    ------
+    RuntimeError
+        If optional visualization dependencies are not installed.
     """
+    if not HAVE_STREAMLIT:
+        raise RuntimeError(
+            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+            'Install with: pip install -e ".[viz]"'
+        )
+    
     from plotly.subplots import make_subplots
 
     times = np.arange(len(metrics_history)) * dt_ms

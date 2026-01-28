@@ -156,6 +156,15 @@ def adex_step(
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
+    if dt_ms > 1.0:
+        raise ValueError("dt_ms out of bounds: must be <= 1.0 ms")
+    
+    # Validate inputs are finite before any math
+    if not np.all(np.isfinite(I_syn_pA)):
+        raise ValueError("I_syn_pA contains non-finite values")
+    if not np.all(np.isfinite(I_ext_pA)):
+        raise ValueError("I_ext_pA contains non-finite values")
+    
     N = state.V_mV.shape[0]
     validate_state_vector(state.V_mV, N, name="V_mV")
     validate_state_vector(state.w_pA, N, name="w_pA")
