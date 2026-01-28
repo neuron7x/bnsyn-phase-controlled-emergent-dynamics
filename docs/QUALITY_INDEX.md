@@ -106,12 +106,12 @@ cat quality/mutation_baseline.json | jq '.metrics'
 
 ## Hypothesis Profiles
 
-Defined in `pyproject.toml`, controlled via `HYPOTHESIS_PROFILE` environment variable:
+Defined in `tests/conftest.py`, controlled via `HYPOTHESIS_PROFILE` environment variable:
 
 | Profile | Examples | Deadline | Use Case |
 |---------|----------|----------|----------|
-| `quick` | 100 | 5000ms | Local development, quick CI |
-| `ci` | 200 | 10000ms | CI property tests |
+| `quick` | 100 | 5000ms | Local development |
+| `ci` | 50 | 5000ms | CI property tests |
 | `thorough` | 1000 | 20000ms | Nightly deep testing |
 
 **IMPORTANT**: 

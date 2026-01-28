@@ -175,11 +175,18 @@ def main() -> int:
     print()
     
     # Build baseline JSON
+    # Determine status based on whether we have real data
+    if total_mutants > 0:
+        status = "active"
+    else:
+        status = "needs_regeneration"
+    
     baseline = {
         "version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "baseline_score": score,
         "tolerance_delta": 5.0,
+        "status": status,
         "description": "Mutation testing baseline for BNsyn critical modules",
         "config": {
             "tool": "mutmut",
