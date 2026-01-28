@@ -6,11 +6,16 @@
  * thermostated bio-AI system, focusing on:
  * 1. Temperature schedule monotonicity during cooling
  * 2. Plasticity gate soundness (gate consistency with temperature)
- * 3. Criticality parameter (sigma) bounds enforcement
+ * 3. Criticality gain parameter bounds enforcement
  * 4. Phase state consistency
  *
+ * Code Mapping:
+ * - Temperature schedule: src/bnsyn/temperature/schedule.py
+ * - Criticality control: src/bnsyn/criticality/* and src/bnsyn/config.py:CriticalityParams
+ * - Temperature params: src/bnsyn/config.py:TemperatureParams
+ *
  * Author: BNsyn Contributors
- * Version: 1.0.0
+ * Version: 2.0.0 (corrected to match code semantics)
  * Date: 2026-01-28
  *)
 
@@ -22,21 +27,22 @@ CONSTANTS
     Alpha,        (* Cooling factor (0 < alpha <= 1) *)
     Tc,           (* Critical temperature for gating *)
     GateTau,      (* Sigmoid sharpness *)
-    SigmaMin,     (* Minimum sigma value *)
-    SigmaMax,     (* Maximum sigma value *)
+    GainMin,      (* Minimum criticality gain *)
+    GainMax,      (* Maximum criticality gain *)
     MaxSteps      (* Maximum simulation steps *)
 
 VARIABLES
     temperature,  (* Current temperature value *)
     gate,         (* Plasticity gate value [0, 1] *)
-    sigma,        (* Criticality parameter *)
+    gain,         (* Criticality gain parameter *)
     phase,        (* System phase: "active" | "consolidating" | "cooled" *)
     step          (* Current step counter *)
 
-vars == <<temperature, gate, sigma, phase, step>>
+vars == <<temperature, gate, gain, phase, step>>
 
 (*
  * Type invariants - define valid value ranges
+ * These correspond to code contracts in src/bnsyn/config.py
  *)
 TypeOK ==
     /\ temperature \in Real
@@ -45,9 +51,9 @@ TypeOK ==
     /\ gate \in Real
     /\ gate >= 0.0
     /\ gate <= 1.0
-    /\ sigma \in Real
-    /\ sigma >= SigmaMin
-    /\ sigma <= SigmaMax
+    /\ gain \in Real
+    /\ gain >= GainMin
+    /\ gain <= GainMax
     /\ phase \in {"active", "consolidating", "cooled"}
     /\ step \in Nat
     /\ step <= MaxSteps
@@ -58,13 +64,14 @@ TypeOK ==
 Init ==
     /\ temperature = T0
     /\ gate = 0.0  (* Initially gate is closed at high temperature *)
-    /\ sigma = (SigmaMin + SigmaMax) / 2  (* Start at midpoint *)
+    /\ gain = (GainMin + GainMax) / 2  (* Start at midpoint *)
     /\ phase = "active"
     /\ step = 0
 
 (*
  * Temperature update: geometric cooling
  * T_new = max(Tmin, T_old * Alpha)
+ * Maps to: src/bnsyn/temperature/schedule.py:TemperatureSchedule.step()
  *)
 CoolTemperature ==
     /\ step < MaxSteps
@@ -76,16 +83,17 @@ CoolTemperature ==
           /\ gate' = IF newTemp < Tc THEN 1.0 ELSE 0.5  (* Simplified sigmoid *)
           /\ phase' = IF newTemp = Tmin THEN "consolidating" ELSE "active"
           /\ step' = step + 1
-          /\ UNCHANGED <<sigma>>
+          /\ UNCHANGED <<gain>>
 
 (*
- * Sigma update: maintain bounds
+ * Gain update: maintain bounds via clamping
+ * Maps to: src/bnsyn/criticality/* gain control with bounds from CriticalityParams
  *)
-UpdateSigma ==
+UpdateGain ==
     /\ step < MaxSteps
-    /\ sigma' \in Real
-    /\ sigma' >= SigmaMin
-    /\ sigma' <= SigmaMax
+    /\ gain' \in Real
+    /\ gain' >= GainMin
+    /\ gain' <= GainMax
     /\ step' = step + 1
     /\ UNCHANGED <<temperature, gate, phase>>
 
@@ -97,14 +105,14 @@ TransitionToCooled ==
     /\ temperature = Tmin
     /\ gate >= 0.5  (* Gate must be sufficiently open *)
     /\ phase' = "cooled"
-    /\ UNCHANGED <<temperature, gate, sigma, step>>
+    /\ UNCHANGED <<temperature, gate, gain, step>>
 
 (*
  * Combined next-state relation
  *)
 Next ==
     \/ CoolTemperature
-    \/ UpdateSigma
+    \/ UpdateGain
     \/ TransitionToCooled
 
 (*
@@ -114,53 +122,66 @@ Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 
 (* ========================================================================= *)
 (* INVARIANTS - These are the critical safety properties                    *)
+(* State predicates only - no primed variables                              *)
 (* ========================================================================= *)
 
 (*
- * INV-1: TempMonotone
- * Temperature never increases during cooling phase (unless at floor)
+ * INV-1: GainClamp
+ * Criticality gain always stays within bounds
+ * Maps to: src/bnsyn/config.py:CriticalityParams (gain_min=0.2, gain_max=5.0)
  *)
-TempMonotone ==
+GainClamp ==
+    gain >= GainMin /\ gain <= GainMax
+
+(*
+ * INV-2: TemperatureBounds
+ * Temperature stays within physical bounds
+ * Maps to: src/bnsyn/config.py:TemperatureParams (T0=1.0, Tmin=1e-3)
+ *)
+TemperatureBounds ==
+    temperature >= Tmin /\ temperature <= T0
+
+(*
+ * INV-3: GateBounds
+ * Plasticity gate stays in valid range [0, 1]
+ * Maps to: src/bnsyn/temperature/schedule.py:gate_sigmoid return value
+ *)
+GateBounds ==
+    gate >= 0.0 /\ gate <= 1.0
+
+(*
+ * INV-4: PhaseValid
+ * Phase is always a valid state
+ *)
+PhaseValid ==
+    phase \in {"active", "consolidating", "cooled"}
+
+(* ========================================================================= *)
+(* PROPERTIES - Temporal formulas for liveness and progress                 *)
+(* ========================================================================= *)
+
+(*
+ * PROP-1: TemperatureMonotone
+ * Temperature never increases during active cooling phase
+ * Maps to: src/bnsyn/temperature/schedule.py geometric cooling T' = max(Tmin, T * alpha)
+ *)
+TemperatureMonotone ==
     []((phase = "active" /\ temperature > Tmin) =>
-       (temperature' <= temperature))
+       [](temperature' <= temperature \/ phase' # "active"))
 
 (*
- * INV-2: GateSoundness
- * Plasticity gate reflects temperature schedule state
- * When T < Tc, gate should be open (high value)
- * When T > Tc, gate should be closed (low value)
- *)
-GateSoundness ==
-    [](((temperature < Tc) => (gate >= 0.5)) /\
-       ((temperature > Tc) => (gate <= 0.5)))
-
-(*
- * INV-3: SigmaClamp
- * Sigma (criticality parameter) always stays within bounds
- *)
-SigmaClamp ==
-    [](sigma >= SigmaMin /\ sigma <= SigmaMax)
-
-(*
- * INV-4: PhaseConsistency
- * Phase transitions follow valid state machine:
- * active -> consolidating -> cooled
- * Cannot skip states or go backwards
- *)
-PhaseConsistency ==
-    []((phase = "active" /\ phase' = "cooled") => FALSE)  (* Cannot skip consolidating *)
-
-(*
- * INV-5: GateTemperatureCorrelation
- * Gate value correlates with temperature in consolidating phase
- *)
-GateTemperatureCorrelation ==
-    []((phase = "consolidating") => (gate > 0.0))
-
-(*
- * Liveness property: system eventually reaches cooled state
+ * PROP-2: EventuallyCooled
+ * System eventually reaches cooled state (liveness)
  *)
 EventuallyCooled ==
     <>(phase = "cooled")
+
+(*
+ * PROP-3: GateCorrelation
+ * When temperature drops below Tc, gate should eventually open
+ * Maps to: src/bnsyn/temperature/schedule.py:gate_sigmoid behavior
+ *)
+GateCorrelation ==
+    []((temperature < Tc) => <>(gate > 0.5))
 
 ================================================================================

@@ -7,21 +7,33 @@ This directory contains Coq proof obligations and formal proofs for the BNsyn th
 **🟢 ACTIVE - Initial proofs implemented**
 
 This directory contains formal proofs in Coq for critical BNsyn properties. Currently implemented:
-- `BNsyn_Sigma.v`: Sigma bounds preservation proofs (COMPLETE ✅)
+- `BNsyn_Sigma.v`: Criticality gain bounds preservation proofs (COMPLETE ✅, ALIGNED WITH CODE)
 
-Additional proof obligations are documented below for future work.
+## Code Mapping
+
+| Coq Definition | Code Location | Value |
+|----------------|---------------|-------|
+| `gain_min` | `src/bnsyn/config.py:CriticalityParams.gain_min` | 0.2 |
+| `gain_max` | `src/bnsyn/config.py:CriticalityParams.gain_max` | 5.0 |
+| `clamp` function | Generic clamping pattern used in criticality control | N/A |
 
 ## Implemented Proofs
 
-### BNsyn_Sigma.v - Sigma Bounds Preservation
+### BNsyn_Sigma.v - Criticality Gain Bounds Preservation
 
-**Status**: ✅ Complete and verified
+**Status**: ✅ Complete, verified, and aligned with actual code constants
+
+**Code Contract**: `src/bnsyn/config.py:CriticalityParams` with `gain_min=0.2, gain_max=5.0`
 
 **Theorems**:
-1. `clamp_preserves_bounds`: General clamp function preserves min/max bounds
-2. `sigma_clamp_preserves_bounds`: Sigma clamping preserves [σ_min, σ_max] bounds  
-3. `sigma_update_bounded`: Any sigma update using clamp stays in bounds
-4. `clamp_idempotent`: Clamp operation is idempotent
+1. `clamp_preserves_bounds`: General clamp function preserves min/max bounds for any values
+2. `gain_clamp_preserves_bounds`: Gain clamping preserves [0.2, 5.0] bounds (actual code values)
+3. `gain_update_bounded`: Any gain update using clamp stays in bounds
+4. `clamp_idempotent`: Clamp operation is idempotent (clamp(clamp(x)) = clamp(x))
+
+**How Tested**:
+- Coq compilation in CI: `.github/workflows/formal-coq.yml`
+- Property tests validate gain bounds: `tests/properties/` and `tests/validation/test_criticality_validation.py`
 
 **Compiling locally**:
 ```bash
@@ -29,7 +41,7 @@ cd specs/coq
 coqc BNsyn_Sigma.v
 ```
 
-**CI Integration**: `.github/workflows/formal-coq.yml` runs nightly
+**CI Integration**: `.github/workflows/formal-coq.yml` runs on schedule with pinned Coq toolchain
 
 ## Purpose
 
@@ -38,7 +50,7 @@ While TLA+ model checking explores a finite state space to find invariant violat
 - **Functional correctness**: Prove that implementations match specifications
 - **Mathematical rigor**: Establish properties through constructive proofs
 
-## Proof Obligations
+## Proof Obligations (Future Work)
 
 The following properties should be formally proven in Coq:
 
@@ -65,6 +77,8 @@ Theorem temperature_monotone :
     temperature_at_step T0 alpha (S n) <= temperature_at_step T0 alpha n.
 ```
 
+**Code mapping**: `src/bnsyn/temperature/schedule.py:TemperatureSchedule.step()`
+
 ### PO-2: Plasticity Gate Bounds
 
 **Theorem**: The plasticity gate function always produces values in [0, 1].
@@ -76,52 +90,9 @@ Theorem gate_sigmoid_bounds :
     0 <= gate_sigmoid T Tc tau <= 1.
 ```
 
-**Theorem**: The gate is continuous and monotonically increasing with temperature.
+**Code mapping**: `src/bnsyn/temperature/schedule.py:gate_sigmoid()`
 
-```coq
-Theorem gate_sigmoid_monotone :
-  forall (T1 T2 Tc tau : R),
-    tau > 0 ->
-    T1 < T2 ->
-    gate_sigmoid T1 Tc tau < gate_sigmoid T2 Tc tau.
-```
-
-### PO-3: Sigma Bounds Preservation
-
-**Theorem**: If sigma starts in bounds and updates preserve bounds, it remains in bounds.
-
-```coq
-Theorem sigma_clamp_preservation :
-  forall (sigma sigma' sigma_min sigma_max : R),
-    sigma_min <= sigma <= sigma_max ->
-    sigma' = clamp sigma_min sigma_max (update_sigma sigma) ->
-    sigma_min <= sigma' <= sigma_max.
-```
-
-### PO-4: Phase State Machine Well-Formedness
-
-**Theorem**: Phase transitions form a valid state machine without invalid transitions.
-
-```coq
-Inductive Phase : Type :=
-  | Active : Phase
-  | Consolidating : Phase
-  | Cooled : Phase.
-
-Inductive valid_transition : Phase -> Phase -> Prop :=
-  | Active_to_Active : valid_transition Active Active
-  | Active_to_Consolidating : valid_transition Active Consolidating
-  | Consolidating_to_Consolidating : valid_transition Consolidating Consolidating
-  | Consolidating_to_Cooled : valid_transition Consolidating Cooled
-  | Cooled_to_Cooled : valid_transition Cooled Cooled.
-
-Theorem no_invalid_transitions :
-  forall (p1 p2 : Phase),
-    phase_step p1 p2 ->
-    valid_transition p1 p2.
-```
-
-### PO-5: Determinism
+### PO-3: Determinism
 
 **Theorem**: Given the same initial state and random seed, the system produces identical outputs.
 
@@ -132,51 +103,36 @@ Theorem simulation_deterministic :
     run_simulation state1 seed steps = run_simulation state2 seed steps.
 ```
 
-### PO-6: Energy Conservation
-
-**Theorem**: Total energy (kinetic + potential) is conserved in the absence of external input.
-
-```coq
-Theorem energy_conservation :
-  forall (state : NetworkState) (dt : R),
-    no_external_input state ->
-    abs (total_energy (step_network state dt) - total_energy state) < epsilon.
-```
-
-### PO-7: Numerical Stability
-
-**Theorem**: For sufficiently small dt, the numerical integration is stable (bounded error).
-
-```coq
-Theorem integration_stability :
-  forall (state : NeuronState) (dt : R),
-    0 < dt < dt_max ->
-    bounded (step_neuron state dt).
-```
+**Code mapping**: Core simulation loop, tested extensively in `tests/test_determinism.py`
 
 ## Implementation Roadmap
 
-### Phase 1: Setup
-- [ ] Define Coq environment and dependencies
-- [ ] Create base type definitions matching Python implementation
-- [ ] Establish equivalence between Coq and Python types
+### Phase 1: Setup ✅
+- [x] Define Coq environment and dependencies
+- [x] Create base type definitions (clamp function)
+- [x] Prove gain bounds preservation (aligned with actual code)
 
-### Phase 2: Core Proofs
-- [ ] Prove PO-1 (Temperature schedule correctness)
-- [ ] Prove PO-2 (Gate bounds)
-- [ ] Prove PO-3 (Sigma preservation)
+### Phase 2: Core Proofs (PLANNED)
+- [ ] Prove PO-1 (Temperature schedule correctness) - map to `TemperatureParams`
+- [ ] Prove PO-2 (Gate bounds) - map to `gate_sigmoid`
+- [ ] Update constants to match code exactly
 
-### Phase 3: System Properties
-- [ ] Prove PO-4 (State machine well-formedness)
-- [ ] Prove PO-5 (Determinism)
-
-### Phase 4: Advanced Properties
-- [ ] Prove PO-6 (Energy conservation)
-- [ ] Prove PO-7 (Numerical stability)
+### Phase 3: System Properties (PLANNED)
+- [ ] Prove PO-3 (Determinism)
+- [ ] Link proofs to validation test results
 
 ## Development Environment
 
-### Installing Coq
+### Using Pinned Container (Recommended for CI)
+
+The CI workflow uses a pinned Coq container to ensure reproducibility:
+
+```yaml
+container:
+  image: coqorg/coq:8.15-ocaml-4.14-flambda@sha256:<digest>
+```
+
+### Installing Coq Locally
 
 ```bash
 # Using opam (OCaml package manager)
@@ -189,7 +145,7 @@ brew install coq                  # macOS
 
 ### Recommended Coq Version
 
-- Coq 8.15 or later
+- Coq 8.15 or later (CI uses 8.15 with pinned container)
 - CoqIDE or Proof General for interactive development
 
 ### Required Libraries
@@ -221,24 +177,35 @@ opam install coq-coquelicot  # Real analysis
 
 When implementing proofs:
 
-1. Start with the simplest properties (PO-2: Gate bounds)
-2. Build up to compositional properties
+1. Start with the simplest properties (bounds preservation)
+2. **Always align constants with actual code** - check `src/bnsyn/config.py`
 3. Use Coq's standard library and mathcomp when possible
-4. Document proof structure and key lemmas
-5. Extract executable OCaml code to validate against Python implementation
+4. Document code mapping in proof comments
+5. Update this README with mappings
 
-## Future Work
+## Claims and Verification Status
 
-- Formalize the complete AdEx neuron dynamics
-- Prove convergence properties of STDP learning rules
-- Establish criticality theorems for branching ratio
-- Verify error bounds for numerical integration schemes
-- Prove safety properties for the consolidated memory system
+**Current Status**: 
+- ✅ Gain bounds preservation is formally proven and matches code
+- ⚠️ Temperature and gate properties are UNVERIFIED (proof obligations only)
+- ⚠️ Claims about "formal verification" are limited to gain bounds only
+
+**What is Verified**: Criticality gain clamping preserves [0.2, 5.0] bounds (maps to `CriticalityParams`)
+
+**What is NOT Verified**: Temperature dynamics, gate functions, phase transitions, numerical stability
 
 ## Integration with CI/CD
 
-Once proofs are implemented, add a workflow:
-- `.github/workflows/formal-coq.yml`
-- Compile all Coq files (`coqc *.v`)
-- Verify proofs pass
-- Extract and test generated OCaml code
+The `.github/workflows/formal-coq.yml` workflow:
+- Uses pinned Coq container for reproducibility
+- Compiles all `.v` files
+- Fails on compilation errors
+- Uploads compilation logs as artifacts
+
+## Future Work
+
+- Formalize the complete AdEx neuron dynamics with actual parameters
+- Prove temperature schedule convergence with `TemperatureParams` values
+- Establish gate bounds theorem for `gate_sigmoid` function
+- Verify error bounds for numerical integration schemes
+- Link all proofs to specific code locations

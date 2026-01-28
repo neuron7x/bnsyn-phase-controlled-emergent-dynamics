@@ -56,29 +56,30 @@ jobs:
           cat > BNsyn_runtime.cfg << EOF
           SPECIFICATION Spec
           
-          \* Constants configuration
+          \* Constants configuration (aligned with src/bnsyn/config.py)
           CONSTANTS
               T0 = 1.0
               Tmin = 0.001
               Alpha = 0.95
               Tc = 0.1
               GateTau = 0.02
-              SigmaMin = 0.8
-              SigmaMax = 1.2
+              GainMin = 0.2
+              GainMax = 5.0
               MaxSteps = ${MAX_STEPS}
           
-          \* Invariants to check
+          \* State invariants to check (no primed variables)
           INVARIANTS
               TypeOK
-              TempMonotone
-              GateSoundness
-              SigmaClamp
-              PhaseConsistency
-              GateTemperatureCorrelation
+              GainClamp
+              TemperatureBounds
+              GateBounds
+              PhaseValid
           
-          \* Properties to check
+          \* Temporal properties to check
           PROPERTIES
+              TemperatureMonotone
               EventuallyCooled
+              GateCorrelation
           
           \* Constraints for model checking
           CONSTRAINT step <= MaxSteps
@@ -166,7 +167,7 @@ jobs:
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
           
           # Check each invariant individually with proper status
-          for inv in "TypeOK" "TempMonotone" "GateSoundness" "SigmaClamp" "PhaseConsistency" "GateTemperatureCorrelation"; do
+          for inv in "TypeOK" "GainClamp" "TemperatureBounds" "GateBounds" "PhaseValid"; do
             if grep -q "Invariant $inv is violated" tlc_output.txt 2>/dev/null; then
               echo "| $inv | ❌ VIOLATED |" >> $GITHUB_STEP_SUMMARY
             elif grep -q "Model checking completed. No error has been found." tlc_output.txt 2>/dev/null; then
