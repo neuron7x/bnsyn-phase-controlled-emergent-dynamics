@@ -52,6 +52,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Compile all .v files
+          COMPILATION_FAILED=0
           for vfile in *.v; do
             if [ -f "$vfile" ]; then
               echo "Compiling $vfile..." | tee -a coq_compile_log.txt
@@ -59,13 +60,18 @@ jobs:
                 echo "✅ $vfile compiled successfully" >> $GITHUB_STEP_SUMMARY
               else
                 echo "❌ $vfile compilation failed" >> $GITHUB_STEP_SUMMARY
-                exit 1
+                COMPILATION_FAILED=1
               fi
             fi
           done
           
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "All Coq proofs verified successfully!" >> $GITHUB_STEP_SUMMARY
+          if [ "$COMPILATION_FAILED" -eq 1 ]; then
+            echo "❌ Some Coq proofs failed to compile" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ All Coq proofs verified successfully" >> $GITHUB_STEP_SUMMARY
+          fi
       
       - name: Generate proof summary
         if: always()
