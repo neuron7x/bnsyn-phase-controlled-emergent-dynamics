@@ -8,6 +8,25 @@ BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated 
 [![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
 [![ci-pr-atomic](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
 
+BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-controlled emergent dynamics with strict evidence and governance controls. This repository is the *single source of truth* for specifications, experiments, validation, and compliance artifacts.
+
+## Contents
+
+- [Quality Assurance](#quality-assurance)
+- [Validation & Testing Strategy](#validation--testing-strategy)
+- [Results: Temperature-Controlled Consolidation](#results-temperature-controlled-consolidation)
+- [Sleep–Emergence Stack](#sleepemergence-stack)
+- [Interactive Demo](#-interactive-demo)
+- [Start Here](#start-here)
+- [Repository Contract](#repository-contract)
+- [Quickstart](#quickstart)
+- [Development Workflow](#development-workflow)
+- [CI on Pull Requests](#ci-on-pull-requests)
+- [Architecture at a Glance](#architecture-at-a-glance)
+- [Evidence & Bibliography](#evidence--bibliography)
+- [How to Cite](#how-to-cite)
+- [License / Security / Contributing](#license--security--contributing)
+
 ## Quality Assurance
 
 This repository follows a **Fractal Quality Architecture** with 7 universal axioms applied at all scales (function → module → system → repository):
@@ -276,6 +295,8 @@ def expensive_analysis(config_path):
 
 ## Repository contract
 
+BN-Syn enforces deterministic execution, controlled randomness, and validation gates. These rules are *non-negotiable* invariants for all contributions:
+
 **Determinism rules (repo contract):**
 - All randomness flows through `numpy.random.Generator` created by `bnsyn.rng.seed_all(seed)`.
 - No hidden global RNGs inside modules.
@@ -294,8 +315,18 @@ def expensive_analysis(config_path):
 
 ## Quickstart
 
+**Prerequisites**
+- Python 3.11+
+- `pip` (recommended: virtual environment)
+
+**Install**
 ```bash
 python -m pip install -e ".[dev]"
+```
+
+**Verify installation**
+```bash
+python -m bnsyn --help
 ```
 
 ## PR Quality Standards
@@ -308,7 +339,9 @@ All PRs pass the following checks:
 - ✅ Security audits (gitleaks, pip-audit, bandit)
 - ✅ Branch protection rules (all enforced checks pass)
 
-## Local Development
+## Development Workflow
+
+**Local development**
 
 ```bash
 make dev-setup
@@ -317,7 +350,7 @@ make test
 make coverage
 ```
 
-## Testing in Docker
+**Testing in Docker**
 
 ```bash
 docker build -t bnsyn-dev .
@@ -325,6 +358,8 @@ docker run bnsyn-dev
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for full developer workflow.
+
+**Repository validation gates (SSOT)**
 
 ```bash
 python scripts/validate_bibliography.py
@@ -337,6 +372,7 @@ python scripts/scan_governed_docs.py
 pytest -m "not validation"
 ```
 
+**Validation suite**
 ```bash
 pytest -m validation
 ```
