@@ -22,8 +22,16 @@ This document describes the testing infrastructure and protocols for the BNsyn p
 - **Run with**: `pytest -m property`
 - **Profiles**: `quick` (100 examples), `thorough` (1000 examples), `ci-quick` (50 examples)
 - **Purpose**: Exhaustive property-based testing across parameter spaces
+- **Schedule**: Nightly at 2:30 AM UTC (non-blocking)
 
-### 4. Determinism Tests
+### 4. Chaos Tests (Fault Injection)
+- **Marker**: `@pytest.mark.chaos` (must also have `@pytest.mark.validation`)
+- **Run with**: `pytest -m "validation and chaos"`
+- **Purpose**: Test system resilience under fault injection (NaN, inf, timing jitter, I/O failures)
+- **Location**: `tests/validation/test_chaos_*.py`
+- **Schedule**: Nightly at 4 AM UTC (non-blocking)
+
+### 5. Determinism Tests
 - **Run with**: `make test-determinism`
 - **Purpose**: Verify all code paths use deterministic RNG via `bnsyn.rng.seed_all()`
 - **Critical**: A1 Axiom compliance
@@ -36,18 +44,27 @@ Mutation testing verifies that our test suite can detect intentional bugs (mutan
 
 ```bash
 # Establish baseline (first time or after major changes)
+# This runs mutmut and generates quality/mutation_baseline.json
 make mutation-baseline
 
 # Check against baseline
+# This runs mutmut and compares score to baseline
 make mutation-check
 ```
+
+### How It Works
+
+1. **Generate baseline**: `scripts/generate_mutation_baseline.py` runs mutmut, extracts real counts/scores, and writes factual `quality/mutation_baseline.json`
+2. **Check score**: `scripts/check_mutation_score.py` compares current mutation score against baseline with tolerance
+3. **CI enforcement**: `.github/workflows/quality-mutation.yml` runs nightly and fails if score drops below threshold
 
 ### Baseline Protocol
 
 The baseline is stored in `quality/mutation_baseline.json` and includes:
-- **baseline_score**: Target mutation score percentage (e.g., 75%)
-- **tolerance_delta**: Acceptable variance (e.g., ±5%)
+- **baseline_score**: Target mutation score percentage (derived from actual mutmut run)
+- **tolerance_delta**: Acceptable variance (default: ±5%)
 - **config**: Tool version, Python version, commit SHA, test command
+- **metrics**: Total mutants, killed, survived, timeout counts (all non-zero, factual)
 - **metrics_per_module**: Per-module mutation statistics
 - **history**: Historical scores for tracking trends
 
@@ -172,22 +189,32 @@ make check
 Configured in `tests/conftest.py`:
 
 - **quick**: 100 examples, 5s deadline (default for local)
-- **thorough**: 1000 examples, 20s deadline (nightly)
-- **ci-quick**: 50 examples, 5s deadline (PR CI)
+- **thorough**: 1000 examples, 20s deadline (nightly property tests)
+- **ci-quick**: 50 examples, 5s deadline (CI, if needed)
+
+**Priority**: Explicit `HYPOTHESIS_PROFILE` env var overrides CI mode.
 
 Set via environment variable:
 ```bash
+# Use thorough profile (1000 examples)
 HYPOTHESIS_PROFILE=thorough pytest -m property
+
+# CI mode (if HYPOTHESIS_PROFILE not set)
+CI=1 pytest -m property  # Uses ci-quick profile
 ```
+
+**Property test decorators**: Do NOT override `max_examples` in `@settings()` - let profiles control runtime.
 
 ## Best Practices
 
 1. **Always use `bnsyn.rng.seed_all()`** for any randomness
 2. **Mark validation tests** with `@pytest.mark.validation`
-3. **Keep unit tests fast** (<10 minutes total)
-4. **Write property tests** for universal invariants
-5. **Document mutation survivors** that are acceptable
-6. **Update baselines** only when tests improve
+3. **Mark chaos tests** with both `@pytest.mark.validation` and `@pytest.mark.chaos`
+4. **Keep unit tests fast** (<10 minutes total)
+5. **Write property tests** for universal invariants (no `max_examples` overrides)
+6. **Write chaos tests** that test real BN-Syn runtime, not just fault injectors
+7. **Document mutation survivors** that are acceptable
+8. **Update baselines** only after regenerating with `make mutation-baseline`
 7. **Review chaos test failures** carefully (may indicate real bugs)
 
 ## Troubleshooting
