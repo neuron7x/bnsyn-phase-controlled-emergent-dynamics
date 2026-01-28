@@ -29,7 +29,7 @@ settings.register_profile(
     derandomize=True,
 )
 settings.register_profile(
-    "ci-quick",
+    "ci",
     max_examples=50,
     deadline=5000,
     verbosity=Verbosity.verbose,
@@ -39,13 +39,13 @@ settings.register_profile(
 
 # Load profile based on environment
 # Priority: explicit HYPOTHESIS_PROFILE env var, then CI mode, then default
-if os.getenv("HYPOTHESIS_PROFILE"):
-    profile_name = os.getenv("HYPOTHESIS_PROFILE")
+profile_name = os.getenv("HYPOTHESIS_PROFILE")
+if profile_name:
     settings.load_profile(profile_name)
     print(f"[Hypothesis] Loaded profile: {profile_name} (from HYPOTHESIS_PROFILE env var)")
 elif os.getenv("CI"):
-    settings.load_profile("ci-quick")
-    print("[Hypothesis] Loaded profile: ci-quick (CI mode)")
+    settings.load_profile("ci")
+    print("[Hypothesis] Loaded profile: ci (CI mode)")
 else:
     print("[Hypothesis] Using default profile")
 

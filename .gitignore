@@ -27,3 +27,9 @@ benchmarks/baselines/
 # PR artifacts (should not be tracked)
 PR_DIFF.patch
 PR_SUMMARY.md
+
+# Mutation testing cache
+.mutmut-cache
+
+# Backup files
+*.bak

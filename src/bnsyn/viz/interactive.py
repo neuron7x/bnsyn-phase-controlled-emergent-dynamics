@@ -60,7 +60,7 @@ def main() -> None:
             f"Cannot run interactive dashboard: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
         )
-    
+
     st.set_page_config(page_title="BN-Syn Interactive", page_icon="🧠", layout="wide")
 
     st.title("🧠 BN-Syn Interactive Demo")
@@ -187,7 +187,7 @@ def create_raster_plot(
     -------
     go.Figure
         Plotly figure
-    
+
     Raises
     ------
     RuntimeError
@@ -198,7 +198,7 @@ def create_raster_plot(
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
         )
-    
+
     times = []
     neurons = []
     for t, spikes in spike_trains:
@@ -240,7 +240,7 @@ def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.F
     -------
     go.Figure
         Plotly figure
-    
+
     Raises
     ------
     RuntimeError
@@ -251,7 +251,7 @@ def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.F
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
         )
-    
+
     voltage_array = np.array(voltage_history)
     times = np.arange(len(voltage_history)) * dt_ms
 
@@ -290,7 +290,7 @@ def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float)
     -------
     go.Figure
         Plotly figure
-    
+
     Raises
     ------
     RuntimeError
@@ -301,7 +301,7 @@ def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float)
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
         )
-    
+
     times = np.arange(len(metrics_history)) * dt_ms
     rates = [m.get("spike_rate_hz", 0) for m in metrics_history]
 
@@ -330,7 +330,7 @@ def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go
     -------
     go.Figure
         Plotly figure with subplots
-    
+
     Raises
     ------
     RuntimeError
@@ -341,7 +341,7 @@ def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
         )
-    
+
     from plotly.subplots import make_subplots
 
     times = np.arange(len(metrics_history)) * dt_ms

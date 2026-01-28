@@ -86,11 +86,13 @@ def compare_benchmarks(
         # Find corresponding current result
         # This is simplified - real implementation would match by benchmark name
         # For now, skip detailed comparison and just validate structure
-        report["stable"].append({
-            "benchmark": bench_name,
-            "status": "not_compared",
-            "reason": "Benchmark comparison logic simplified for initial implementation",
-        })
+        report["stable"].append(
+            {
+                "benchmark": bench_name,
+                "status": "not_compared",
+                "reason": "Benchmark comparison logic simplified for initial implementation",
+            }
+        )
 
     return report
 
@@ -117,21 +119,25 @@ def format_markdown_report(report: dict[str, Any], baseline: dict[str, Any]) -> 
     ]
 
     policy = baseline.get("regression_policy", {})
-    lines.extend([
-        "## Policy",
-        f"- Warning threshold: ±{policy.get('warning_threshold_pct', 5)}%",
-        f"- Critical threshold: ±{policy.get('critical_threshold_pct', 20)}%",
-        f"- Fail on regression: {policy.get('fail_on_regression', False)}",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Policy",
+            f"- Warning threshold: ±{policy.get('warning_threshold_pct', 5)}%",
+            f"- Critical threshold: ±{policy.get('critical_threshold_pct', 20)}%",
+            f"- Fail on regression: {policy.get('fail_on_regression', False)}",
+            "",
+        ]
+    )
 
     if report["regressions"]:
-        lines.extend([
-            "## ⚠️ Regressions Detected",
-            "",
-            "| Benchmark | Current | Baseline | Change | Severity |",
-            "|-----------|---------|----------|--------|----------|",
-        ])
+        lines.extend(
+            [
+                "## ⚠️ Regressions Detected",
+                "",
+                "| Benchmark | Current | Baseline | Change | Severity |",
+                "|-----------|---------|----------|--------|----------|",
+            ]
+        )
         for reg in report["regressions"]:
             lines.append(
                 f"| {reg['benchmark']} | {reg['current']:.3f} | {reg['baseline']:.3f} | "
@@ -140,12 +146,14 @@ def format_markdown_report(report: dict[str, Any], baseline: dict[str, Any]) -> 
         lines.append("")
 
     if report["improvements"]:
-        lines.extend([
-            "## ✅ Improvements",
-            "",
-            "| Benchmark | Current | Baseline | Change |",
-            "|-----------|---------|----------|--------|",
-        ])
+        lines.extend(
+            [
+                "## ✅ Improvements",
+                "",
+                "| Benchmark | Current | Baseline | Change |",
+                "|-----------|---------|----------|--------|",
+            ]
+        )
         for imp in report["improvements"]:
             lines.append(
                 f"| {imp['benchmark']} | {imp['current']:.3f} | {imp['baseline']:.3f} | "
@@ -154,21 +162,21 @@ def format_markdown_report(report: dict[str, Any], baseline: dict[str, Any]) -> 
         lines.append("")
 
     if report["stable"]:
-        lines.extend([
-            "## 📊 Stable Benchmarks",
-            "",
-            f"{len(report['stable'])} benchmark(s) within tolerance",
-            "",
-        ])
+        lines.extend(
+            [
+                "## 📊 Stable Benchmarks",
+                "",
+                f"{len(report['stable'])} benchmark(s) within tolerance",
+                "",
+            ]
+        )
 
     return "\n".join(lines)
 
 
 def main() -> None:
     """Run benchmark comparison."""
-    parser = argparse.ArgumentParser(
-        description="Compare benchmarks against golden baseline"
-    )
+    parser = argparse.ArgumentParser(description="Compare benchmarks against golden baseline")
     parser.add_argument(
         "--baseline",
         type=Path,

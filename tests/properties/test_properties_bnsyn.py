@@ -22,7 +22,6 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from bnsyn.rng import seed_all
 from bnsyn.sim.network import run_simulation
 
 
@@ -130,7 +129,6 @@ def test_bounded_spike_rates_property(N: int, seed: int) -> None:
     """
     steps = 500
     dt_ms = 0.1
-    total_time_s = steps * dt_ms / 1000.0
 
     metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
 
@@ -163,10 +161,12 @@ def test_different_seeds_produce_different_results(seed_a: int, seed_b: int) -> 
     # Use 300 pA to ensure sufficient activity for differentiation
     external_current_pA = 300.0
 
-    m1 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_a, N=N, 
-                        external_current_pA=external_current_pA)
-    m2 = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed_b, N=N,
-                        external_current_pA=external_current_pA)
+    m1 = run_simulation(
+        steps=steps, dt_ms=dt_ms, seed=seed_a, N=N, external_current_pA=external_current_pA
+    )
+    m2 = run_simulation(
+        steps=steps, dt_ms=dt_ms, seed=seed_b, N=N, external_current_pA=external_current_pA
+    )
 
     # Should be different (with high probability)
     # We check they're not equal (exact match would be astronomically unlikely)
@@ -199,8 +199,9 @@ def test_reproducibility_across_runs(N: int, seed: int) -> None:
         results.append(m)
 
     # All three should be identical
-    assert results[0] == results[1] == results[2], \
+    assert results[0] == results[1] == results[2], (
         f"Triple-run reproducibility failed for N={N}, seed={seed}"
+    )
 
 
 @pytest.mark.property
