@@ -141,13 +141,23 @@ Critical modules under mutation coverage:
 
 ### Baseline Status
 
+**INVARIANT I4 (Mutation Integrity) Compliance**:
+
 The `quality/mutation_baseline.json` file tracks:
 - **Baseline score**: Target mutation score percentage
 - **Tolerance**: Acceptable deviation (±5%)
 - **Status**: `needs_regeneration` if not populated
 - **Metrics**: Total mutants, killed, survived, timeout
 
-If `total_mutants == 0`, the baseline has not been populated. Run `make mutation-baseline` to generate real metrics (~30 minutes).
+**Current Status**: The baseline is in `needs_regeneration` state with `total_mutants == 0`.
+
+**Invariant I4 Requirements**:
+- If `total_mutants == 0`: status MUST be "needs_regeneration", score MUST be 0.0 ✅
+- Otherwise: metrics MUST match real mutmut output ✅
+
+**To populate baseline**: Run `make mutation-baseline` to generate real metrics (~30 minutes).
+
+**Verification**: The baseline will be populated during scheduled nightly runs via `quality-mutation.yml`.
 
 ### Check Behavior
 
