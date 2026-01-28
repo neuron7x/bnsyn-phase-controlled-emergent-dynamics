@@ -37,7 +37,7 @@ def test_interactive_module_imports_without_streamlit() -> None:
     # Import should succeed
     assert hasattr(bnsyn.viz.interactive, "main")
     assert hasattr(bnsyn.viz.interactive, "HAVE_STREAMLIT")
-    
+
     # If streamlit is not installed, calling main should raise RuntimeError
     if not bnsyn.viz.interactive.HAVE_STREAMLIT:
         with pytest.raises(RuntimeError, match=r"optional dependency"):

@@ -119,11 +119,12 @@ def test_clm_006_criticality_branching_dynamics() -> None:
     metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
 
     # Validate returned metrics match actual API contract
-    assert "rate_mean_hz" in metrics, \
+    assert "rate_mean_hz" in metrics, (
         f"Network metrics should include rate_mean_hz. Available keys: {list(metrics.keys())}"
-    assert metrics["rate_mean_hz"] >= 0, \
+    )
+    assert metrics["rate_mean_hz"] >= 0, (
         f"rate_mean_hz should be non-negative, got {metrics['rate_mean_hz']}"
-
+    )
 
 
 @pytest.mark.validation
@@ -142,8 +143,9 @@ def test_clm_023_deterministic_rng_protocol() -> None:
     rand1 = pack1.np_rng.random(100)
     rand2 = pack2.np_rng.random(100)
 
-    np.testing.assert_array_equal(rand1, rand2,
-                                   err_msg="Same seed should produce identical random sequences")
+    np.testing.assert_array_equal(
+        rand1, rand2, err_msg="Same seed should produce identical random sequences"
+    )
 
     # Different seeds should produce different sequences
     pack3 = seed_all(54321)
@@ -226,7 +228,7 @@ def test_criticality_sigma_tracking() -> None:
     # Use deterministic generator
     rng = np.random.default_rng(0)
     est = BranchingEstimator(eps=1e-9, ema_alpha=0.05)
-    
+
     # Add activity with consecutive time steps
     for _ in range(50):
         A_t = float(rng.integers(1, 10))

@@ -13,7 +13,6 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from datetime import datetime
@@ -56,10 +55,10 @@ def get_mutmut_version() -> str:
 
 def parse_mutmut_results(results_output: str) -> dict[str, int]:
     """Parse mutmut results output to extract counts.
-    
+
     Args:
         results_output: Output from 'mutmut results' command
-        
+
     Returns:
         Dictionary with counts for each mutation status
     """
@@ -70,7 +69,7 @@ def parse_mutmut_results(results_output: str) -> dict[str, int]:
         "suspicious": 0,
         "skipped": 0,
     }
-    
+
     for line in results_output.splitlines():
         line = line.strip().lower()
         if line.startswith("killed:"):
@@ -83,25 +82,25 @@ def parse_mutmut_results(results_output: str) -> dict[str, int]:
             counts["suspicious"] = int(line.split(":")[1].strip())
         elif line.startswith("skipped:"):
             counts["skipped"] = int(line.split(":")[1].strip())
-    
+
     return counts
 
 
 def calculate_score(counts: dict[str, int]) -> float:
     """Calculate mutation score percentage.
-    
+
     Score = (killed + timeout) / (killed + survived + timeout + suspicious) * 100
-    
+
     Args:
         counts: Dictionary with mutation status counts
-        
+
     Returns:
         Mutation score as percentage (0-100)
     """
     total = counts["killed"] + counts["survived"] + counts["timeout"] + counts["suspicious"]
     if total == 0:
         return 0.0
-    
+
     killed_equivalent = counts["killed"] + counts["timeout"]
     return round(100.0 * killed_equivalent / total, 2)
 
@@ -110,7 +109,7 @@ def main() -> int:
     """Generate mutation baseline."""
     print("🧬 Generating mutation testing baseline...")
     print()
-    
+
     # Define modules to mutate
     modules = [
         "src/bnsyn/neuron/adex.py",
@@ -118,17 +117,17 @@ def main() -> int:
         "src/bnsyn/plasticity/three_factor.py",
         "src/bnsyn/temperature/schedule.py",
     ]
-    
+
     # Clean cache
     cache_file = Path(".mutmut-cache")
     if cache_file.exists():
         print(f"Removing existing cache: {cache_file}")
         cache_file.unlink()
-    
+
     # Run mutmut
     print("Running mutmut (this may take several minutes)...")
     paths_to_mutate = ",".join(modules)
-    
+
     try:
         subprocess.run(
             [
@@ -145,7 +144,7 @@ def main() -> int:
     except Exception as e:
         print(f"Error running mutmut: {e}", file=sys.stderr)
         return 1
-    
+
     # Get results
     print("Extracting results...")
     try:
@@ -160,12 +159,12 @@ def main() -> int:
     except subprocess.CalledProcessError as e:
         print(f"Error getting mutmut results: {e}", file=sys.stderr)
         return 1
-    
+
     # Parse results
     counts = parse_mutmut_results(results_output)
     score = calculate_score(counts)
     total_mutants = counts["killed"] + counts["survived"] + counts["timeout"] + counts["suspicious"]
-    
+
     print()
     print(f"Total mutants: {total_mutants}")
     print(f"Killed: {counts['killed']}")
@@ -173,14 +172,14 @@ def main() -> int:
     print(f"Timeout: {counts['timeout']}")
     print(f"Mutation score: {score}%")
     print()
-    
+
     # Build baseline JSON
     # Determine status based on whether we have real data
     if total_mutants > 0:
         status = "active"
     else:
         status = "needs_regeneration"
-    
+
     baseline = {
         "version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -209,9 +208,7 @@ def main() -> int:
             "score_percent": score,
         },
         "metrics_per_module": {
-            module: {
-                "note": "Per-module breakdown requires manual mutmut analysis"
-            }
+            module: {"note": "Per-module breakdown requires manual mutmut analysis"}
             for module in modules
         },
         "history": [
@@ -223,14 +220,14 @@ def main() -> int:
             }
         ],
     }
-    
+
     # Write to file
     output_path = Path("quality/mutation_baseline.json")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     with output_path.open("w") as f:
         json.dump(baseline, f, indent=2)
-    
+
     print(f"✅ Baseline written to: {output_path}")
     print()
     print("Baseline summary:")
@@ -239,7 +236,7 @@ def main() -> int:
     print(f"  - Commit: {get_git_commit()[:8]}")
     print(f"  - Mutmut version: {get_mutmut_version()}")
     print(f"  - Python version: {get_python_version()}")
-    
+
     return 0
 
 
