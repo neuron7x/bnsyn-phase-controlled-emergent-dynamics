@@ -124,7 +124,7 @@ def test_production_connectivity_paths() -> None:
 
 def test_jax_backend_import_error() -> None:
     """Test JAX backend import behavior based on JAX availability.
-
+    
     Contract:
     - If JAX is installed: import succeeds
     - If JAX is not installed: import raises ImportError
@@ -132,11 +132,10 @@ def test_jax_backend_import_error() -> None:
     # Check if JAX is available
     try:
         import jax  # noqa: F401
-
         jax_available = True
     except ImportError:
         jax_available = False
-
+    
     if jax_available:
         # JAX is installed, import should succeed
         try:
@@ -147,6 +146,7 @@ def test_jax_backend_import_error() -> None:
         # JAX is not installed, import should raise ImportError
         with pytest.raises(ImportError):
             importlib.import_module("bnsyn.production.jax_backend")
+
 
 
 def test_adex_error_tracking_and_adaptive() -> None:

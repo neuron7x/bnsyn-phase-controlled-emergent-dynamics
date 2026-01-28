@@ -30,7 +30,7 @@ from bnsyn.config import AdExParams
 from bnsyn.validation import validate_spike_array, validate_state_vector
 
 Float64Array = NDArray[np.float64]
-BoolArray = None
+BoolArray = NDArray[np.bool_]
 
 
 @dataclass

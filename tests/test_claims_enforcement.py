@@ -55,12 +55,10 @@ def test_clm_0011_normative_claims_have_complete_evidence() -> None:
             missing_fields.append("status")
 
         if missing_fields:
-            violations.append(
-                {
-                    "claim_id": claim.get("id", "UNKNOWN"),
-                    "missing_fields": missing_fields,
-                }
-            )
+            violations.append({
+                "claim_id": claim.get("id", "UNKNOWN"),
+                "missing_fields": missing_fields,
+            })
 
     # Assert no violations
     assert not violations, (

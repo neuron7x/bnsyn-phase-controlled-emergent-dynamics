@@ -55,7 +55,9 @@ def validate_claim(claim: dict[str, Any]) -> dict[str, Any]:
 
 def main() -> None:
     """Validate claims coverage and output report."""
-    parser = argparse.ArgumentParser(description="Validate claims→evidence coverage")
+    parser = argparse.ArgumentParser(
+        description="Validate claims→evidence coverage"
+    )
     parser.add_argument(
         "--format",
         choices=["json", "markdown"],

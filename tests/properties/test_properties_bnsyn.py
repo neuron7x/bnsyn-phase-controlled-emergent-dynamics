@@ -129,7 +129,6 @@ def test_bounded_spike_rates_property(N: int, seed: int) -> None:
     """
     steps = 500
     dt_ms = 0.1
-    steps * dt_ms / 1000.0
 
     metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
 
