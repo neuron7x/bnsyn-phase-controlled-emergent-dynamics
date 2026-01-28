@@ -10,8 +10,10 @@ Quick reference for running quality checks locally and understanding what each a
 | `make check` | Full quality (format, lint, mypy, coverage, ssot, security) | PR blocking |
 | `make coverage` | Coverage report with 85% threshold | PR blocking |
 | `make mutation-baseline` | Generate mutation baseline from scratch | Manual |
-| `make mutation-check` | Check mutation score against baseline | Nightly |
-| `pytest -m property --hypothesis-profile=quick` | Property tests (quick) | Nightly |
+| `make mutation-check` | Check mutation score against baseline (advisory mode) | Local/PR check |
+| `make mutation-check-strict` | Check mutation score against baseline (strict mode, fails if uninitialized) | Nightly |
+| `HYPOTHESIS_PROFILE=quick pytest -m property` | Property tests (quick, 100 examples) | Local dev |
+| `HYPOTHESIS_PROFILE=thorough pytest -m property` | Property tests (thorough, 1000 examples) | Nightly |
 | `pytest -m "validation and chaos"` | Chaos engineering tests | Nightly |
 
 ## Artifacts and What They Prove
@@ -104,15 +106,18 @@ cat quality/mutation_baseline.json | jq '.metrics'
 
 ## Hypothesis Profiles
 
-Defined in `pyproject.toml` and loaded via `conftest.py`:
+Defined in `pyproject.toml`, controlled via `HYPOTHESIS_PROFILE` environment variable:
 
 | Profile | Examples | Deadline | Use Case |
 |---------|----------|----------|----------|
-| `dev` | 10 | 200ms | Local development |
-| `quick` | 50 | 5000ms | CI quick checks |
-| `thorough` | 500 | None | Nightly deep testing |
+| `quick` | 100 | 5000ms | Local development, quick CI |
+| `ci` | 200 | 10000ms | CI property tests |
+| `thorough` | 1000 | 20000ms | Nightly deep testing |
 
-**IMPORTANT**: Property tests should NOT hard-code `max_examples` in `@settings()` decorators. The profile is the single source of truth.
+**IMPORTANT**: 
+- Property tests should NOT hard-code `max_examples` in `@settings()` decorators. The profile is the single source of truth.
+- Set profile via environment variable: `HYPOTHESIS_PROFILE=thorough pytest -m property`
+- Do NOT use `--hypothesis-profile` CLI flag; use env var for proper precedence.
 
 ## Test Markers
 
@@ -146,10 +151,17 @@ If `total_mutants == 0`, the baseline has not been populated. Run `make mutation
 
 ### Check Behavior
 
-`scripts/check_mutation_score.py`:
+`scripts/check_mutation_score.py` supports two modes:
+
+**Advisory Mode** (`--advisory` or default):
 - If `status == "needs_regeneration"` or `total_mutants == 0`: Print warning, exit 0 (non-blocking)
-- Otherwise: Compare current score to baseline ± tolerance
-- Fails if score drops below threshold
+- Otherwise: Compare current score to baseline ± tolerance, fail if below threshold
+- Use for PR checks and local development
+
+**Strict Mode** (`--strict`):
+- If `status == "needs_regeneration"` or `total_mutants == 0`: Print error, exit 1 (FAIL)
+- Otherwise: Compare current score to baseline ± tolerance, fail if below threshold
+- Use for nightly/scheduled CI runs to ensure baseline is always initialized
 
 ## CI Truthfulness Linting
 
