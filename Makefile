@@ -21,22 +21,17 @@ coverage:
 
 mutation-baseline:
 	@echo "🧬 Running mutation testing to establish baseline..."
-	@pip install mutmut==2.4.5 -q || true
-	@rm -f .mutmut-cache
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests -m "not validation" || true
-	@mutmut results
-	@echo ""
-	@echo "Update quality/mutation_baseline.json with the results above"
-	@echo "See docs/TESTING.md for baseline update protocol"
+	@pip install mutmut==2.4.5 -q
+	@python scripts/generate_mutation_baseline.py
 
 mutation-check:
 	@echo "🧬 Running mutation testing against baseline..."
-	@pip install mutmut==2.4.5 -q || true
-	@rm -f .mutmut-cache
+	@pip install mutmut==2.4.5 -q
+	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests -m "not validation" || true
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property'"
 	@mutmut results
-	@python scripts/check_mutation_score.py || echo "⚠️  Warning: mutation score check script not found"
+	@python scripts/check_mutation_score.py
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"

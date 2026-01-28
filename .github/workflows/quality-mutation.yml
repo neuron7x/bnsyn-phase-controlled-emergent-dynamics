@@ -43,16 +43,20 @@ jobs:
           TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
           echo "baseline_score=$BASELINE_SCORE" >> $GITHUB_OUTPUT
           echo "tolerance=$TOLERANCE" >> $GITHUB_OUTPUT
-          echo "min_acceptable=$(python -c "print($BASELINE_SCORE - $TOLERANCE)")" >> $GITHUB_OUTPUT
+          MIN_ACCEPTABLE=$(python -c "print($BASELINE_SCORE - $TOLERANCE)")
+          echo "min_acceptable=$MIN_ACCEPTABLE" >> $GITHUB_OUTPUT
       
       - name: Run mutation testing
         id: mutation
         run: |
           # Configure mutmut to test critical modules only
-          export MUTMUT_PATHS="src/bnsyn/neuron/adex.py src/bnsyn/plasticity/stdp.py src/bnsyn/plasticity/three_factor.py src/bnsyn/temperature/schedule.py"
+          export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
           
           # Run mutmut
-          mutmut run --paths-to-mutate="$MUTMUT_PATHS" --tests-dir=tests -m "not validation" || true
+          mutmut run \
+            --paths-to-mutate="$MUTMUT_PATHS" \
+            --tests-dir=tests \
+            --runner="pytest -x -q -m 'not validation and not property'"
           
           # Generate results
           mutmut results > mutation_results.txt

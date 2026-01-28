@@ -37,10 +37,8 @@ jobs:
         run: |
           echo "## 🔬 Scientific Validation Suite" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Running 10 validation tests to verify empirical claims..." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           
-          pytest -m validation -v --tb=short --junit-xml=validation-junit.xml > validation.log 2>&1 || true
+          pytest -m validation -v --tb=short --junit-xml=validation-junit.xml 2>&1 | tee validation.log
           
           # Show summary
           echo "### Results" >> $GITHUB_STEP_SUMMARY
@@ -85,10 +83,8 @@ jobs:
         run: |
           echo "## 🔍 Property-Based Invariants (Hypothesis)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Running 8 property tests with 50 examples each..." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           
-          pytest -m property -v --tb=short --junit-xml=property-junit.xml > property.log 2>&1 || true
+          pytest -m property -v --tb=short --hypothesis-show-statistics --junit-xml=property-junit.xml 2>&1 | tee property.log
           
           # Show summary
           echo "### Results" >> $GITHUB_STEP_SUMMARY

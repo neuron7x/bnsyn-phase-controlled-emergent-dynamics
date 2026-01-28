@@ -38,10 +38,16 @@ settings.register_profile(
 )
 
 # Load profile based on environment
-if os.getenv("CI"):
+# Priority: explicit HYPOTHESIS_PROFILE env var, then CI mode, then default
+if os.getenv("HYPOTHESIS_PROFILE"):
+    profile_name = os.getenv("HYPOTHESIS_PROFILE")
+    settings.load_profile(profile_name)
+    print(f"[Hypothesis] Loaded profile: {profile_name} (from HYPOTHESIS_PROFILE env var)")
+elif os.getenv("CI"):
     settings.load_profile("ci-quick")
-elif os.getenv("HYPOTHESIS_PROFILE"):
-    settings.load_profile(os.getenv("HYPOTHESIS_PROFILE"))
+    print("[Hypothesis] Loaded profile: ci-quick (CI mode)")
+else:
+    print("[Hypothesis] Using default profile")
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
