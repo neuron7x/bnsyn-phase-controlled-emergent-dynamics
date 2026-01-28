@@ -77,6 +77,22 @@ def parse_mutmut_results() -> tuple[float, int, int]:
 
 def main() -> int:
     """Check mutation score against baseline."""
+    # Parse command line arguments
+    import argparse
+    parser = argparse.ArgumentParser(description="Check mutation score against baseline")
+    parser.add_argument("--strict", action="store_true", 
+                        help="Fail if baseline is uninitialized (for CI/nightly)")
+    parser.add_argument("--advisory", action="store_true", 
+                        help="Warn but don't fail if baseline is uninitialized (for PR checks)")
+    parser.add_argument("current_score", nargs="?", type=float, 
+                        help="Current mutation score (optional, will run mutmut if not provided)")
+    args = parser.parse_args()
+    
+    # Default to advisory mode if neither specified
+    strict_mode = args.strict
+    if not args.strict and not args.advisory:
+        strict_mode = False  # Default to advisory
+    
     # Load baseline
     baseline = load_baseline()
     
@@ -94,8 +110,14 @@ def main() -> int:
         print()
         print("This will take approximately 30 minutes.")
         print()
-        print("Skipping mutation score check (not blocking).")
-        return 0
+        
+        if strict_mode:
+            print("❌ FAIL: Baseline is uninitialized (strict mode)")
+            print("   Nightly/scheduled runs MUST have a valid baseline.")
+            return 1
+        else:
+            print("Skipping mutation score check (advisory mode, not blocking).")
+            return 0
     
     baseline_score = baseline["baseline_score"]
     tolerance = baseline["tolerance_delta"]
@@ -109,15 +131,11 @@ def main() -> int:
     print()
     
     # Get current score
-    if len(sys.argv) > 1:
+    if args.current_score is not None:
         # Score provided as argument
-        try:
-            current_score = float(sys.argv[1])
-            total = 0
-            killed = 0
-        except ValueError:
-            print(f"❌ Error: Invalid score argument: {sys.argv[1]}", file=sys.stderr)
-            return 1
+        current_score = args.current_score
+        total = 0
+        killed = 0
     else:
         # Get score from mutmut results
         print("Reading current mutation results...")

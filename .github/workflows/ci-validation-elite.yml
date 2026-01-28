@@ -82,7 +82,7 @@ jobs:
       - name: Run property tests
         id: property
         env:
-          HYPOTHESIS_PROFILE: ci-quick
+          HYPOTHESIS_PROFILE: quick
         run: |
           echo "## 🔍 Property-Based Invariants (Hypothesis)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

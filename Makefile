@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -31,7 +31,16 @@ mutation-check:
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
 	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property'"
 	@mutmut results
-	@python scripts/check_mutation_score.py
+	@python scripts/check_mutation_score.py --advisory
+
+mutation-check-strict:
+	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
+	@pip install mutmut==2.4.5 -q
+	@rm -rf .mutmut-cache
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property'"
+	@mutmut results
+	@python scripts/check_mutation_score.py --strict
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"

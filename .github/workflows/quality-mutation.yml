@@ -37,11 +37,15 @@ jobs:
       - name: Load mutation baseline
         id: baseline
         run: |
+          # Check if baseline is initialized using the check script in strict mode
+          python scripts/check_mutation_score.py --strict --help > /dev/null 2>&1 || true
+          
+          # Load baseline values
           BASELINE_SCORE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['baseline_score'])")
           TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
           echo "baseline_score=$BASELINE_SCORE" >> $GITHUB_OUTPUT
           echo "tolerance=$TOLERANCE" >> $GITHUB_OUTPUT
-          MIN_ACCEPTABLE=$(python -c "print($BASELINE_SCORE - $TOLERANCE)")
+          MIN_ACCEPTABLE=$(python -c "print(float($BASELINE_SCORE) - float($TOLERANCE))")
           echo "min_acceptable=$MIN_ACCEPTABLE" >> $GITHUB_OUTPUT
       
       - name: Run mutation testing
@@ -99,17 +103,8 @@ jobs:
       - name: Check mutation score threshold
         if: always()
         run: |
-          SCORE="${{ steps.mutation.outputs.score }}"
-          MIN_ACCEPTABLE="${{ steps.baseline.outputs.min_acceptable }}"
-          
-          if (( $(echo "$SCORE < $MIN_ACCEPTABLE" | bc -l) )); then
-            echo "❌ Mutation score $SCORE% is below minimum acceptable threshold $MIN_ACCEPTABLE%" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Test quality has degraded. Review surviving mutants and improve test coverage." >> $GITHUB_STEP_SUMMARY
-            exit 1
-          else
-            echo "✅ Mutation score $SCORE% meets or exceeds threshold $MIN_ACCEPTABLE%" >> $GITHUB_STEP_SUMMARY
-          fi
+          # Use the check_mutation_score.py script in strict mode
+          python scripts/check_mutation_score.py --strict
       
       - name: Generate mutation report
         if: always()
