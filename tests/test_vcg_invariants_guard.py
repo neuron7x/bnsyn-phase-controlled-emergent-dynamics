@@ -110,7 +110,7 @@ class TestVCGInvariantI1_Determinism:
         # I1: Must be identical
         assert (
             support_trace_1 == support_trace_2
-        ), f"I1 violated: seeded stochastic replay not deterministic"
+        ), "I1 violated: seeded stochastic replay not deterministic"
 
 
 class TestVCGInvariantI2_MonotonicDecrease:
@@ -270,7 +270,7 @@ class TestVCGInvariantI4_SideEffectFree:
         # I4: External state must be unchanged
         assert (
             external_state == initial_state
-        ), f"I4 violated: VCG mutated external state"
+        ), "I4 violated: VCG mutated external state"
 
     def test_vcg_is_query_safe(
         self, default_vcg_params: VCGParams
@@ -420,7 +420,7 @@ class TestVCGAcceptanceCriteria:
             support = update_support_level(low_contrib, support, default_vcg_params)
             assert (
                 support < support_prev or support == 0.0
-            ), f"A2 violated: support not decreasing"
+            ), "A2 violated: support not decreasing"
 
     def test_A3_regain_support_to_one(
         self, default_vcg_params: VCGParams

@@ -59,22 +59,18 @@ class TestTLAInvariantINV1_GainClamp:
         initial_gain = (default_crit_params.gain_min + default_crit_params.gain_max) / 2
         assert default_crit_params.gain_min <= initial_gain <= default_crit_params.gain_max
 
-    def test_gain_clamp_extreme_values(
-        self, default_crit_params: CriticalityParams
-    ) -> None:
+    def test_gain_clamp_extreme_values(self, default_crit_params: CriticalityParams) -> None:
         """Test gain stays within bounds under extreme configurations."""
         # Test lower bound
         assert default_crit_params.gain_min >= 0.0, "INV-1: gain_min must be >= 0"
 
         # Test upper bound
-        assert (
-            default_crit_params.gain_max <= 100.0
-        ), "INV-1: gain_max must be reasonable"
+        assert default_crit_params.gain_max <= 100.0, "INV-1: gain_max must be reasonable"
 
         # Test ordering
-        assert (
-            default_crit_params.gain_min < default_crit_params.gain_max
-        ), "INV-1: gain_min < gain_max"
+        assert default_crit_params.gain_min < default_crit_params.gain_max, (
+            "INV-1: gain_min < gain_max"
+        )
 
     def test_gain_invariant_preserved_across_updates(
         self, default_crit_params: CriticalityParams
@@ -96,9 +92,9 @@ class TestTLAInvariantINV1_GainClamp:
             )
 
             # Verify INV-1
-            assert (
-                default_crit_params.gain_min <= gain_clamped <= default_crit_params.gain_max
-            ), f"INV-1 violated: gain={gain_clamped} not in [{default_crit_params.gain_min}, {default_crit_params.gain_max}]"
+            assert default_crit_params.gain_min <= gain_clamped <= default_crit_params.gain_max, (
+                f"INV-1 violated: gain={gain_clamped} not in [{default_crit_params.gain_min}, {default_crit_params.gain_max}]"
+            )
 
             gain = gain_clamped
 
@@ -126,9 +122,9 @@ class TestTLAInvariantINV2_TemperatureBounds:
 
         # Initial temperature must be within bounds
         T = schedule.T
-        assert (
-            default_temp_params.Tmin <= T <= default_temp_params.T0
-        ), f"INV-2 violated at initialization: T={T}"
+        assert default_temp_params.Tmin <= T <= default_temp_params.T0, (
+            f"INV-2 violated at initialization: T={T}"
+        )
 
         # Simulate 1000 cooling steps
         for _ in range(1000):
@@ -136,17 +132,15 @@ class TestTLAInvariantINV2_TemperatureBounds:
             T = schedule.T
 
             # Verify INV-2
-            assert (
-                default_temp_params.Tmin <= T <= default_temp_params.T0
-            ), f"INV-2 violated: T={T} not in [{default_temp_params.Tmin}, {default_temp_params.T0}]"
+            assert default_temp_params.Tmin <= T <= default_temp_params.T0, (
+                f"INV-2 violated: T={T} not in [{default_temp_params.Tmin}, {default_temp_params.T0}]"
+            )
 
             # Stop if fully cooled
             if T <= default_temp_params.Tmin:
                 break
 
-    def test_temperature_never_goes_negative(
-        self, default_temp_params: TemperatureParams
-    ) -> None:
+    def test_temperature_never_goes_negative(self, default_temp_params: TemperatureParams) -> None:
         """Temperature must remain positive (physical constraint)."""
         schedule = TemperatureSchedule(default_temp_params)
 
@@ -163,9 +157,7 @@ class TestTLAInvariantINV3_GateBounds:
     TLA+ spec: specs/tla/BNsyn.tla:149-150
     """
 
-    def test_gate_within_unit_interval(
-        self, default_temp_params: TemperatureParams
-    ) -> None:
+    def test_gate_within_unit_interval(self, default_temp_params: TemperatureParams) -> None:
         """Gate value must stay in [0, 1] throughout cooling."""
         schedule = TemperatureSchedule(default_temp_params)
 
@@ -173,9 +165,7 @@ class TestTLAInvariantINV3_GateBounds:
             gate = schedule.plasticity_gate()
 
             # Verify INV-3
-            assert (
-                0.0 <= gate <= 1.0
-            ), f"INV-3 violated: gate={gate} not in [0, 1]"
+            assert 0.0 <= gate <= 1.0, f"INV-3 violated: gate={gate} not in [0, 1]"
 
             schedule.step_geometric()
 
@@ -183,9 +173,7 @@ class TestTLAInvariantINV3_GateBounds:
             if schedule.T <= default_temp_params.Tmin:
                 break
 
-    def test_gate_sigmoid_boundary_conditions(
-        self, default_temp_params: TemperatureParams
-    ) -> None:
+    def test_gate_sigmoid_boundary_conditions(self, default_temp_params: TemperatureParams) -> None:
         """Gate sigmoid must be well-behaved at extreme temperatures."""
         schedule = TemperatureSchedule(default_temp_params)
 
@@ -221,9 +209,9 @@ class TestTLAInvariantComposite:
         for step in range(1000):
             # Check INV-2: TemperatureBounds
             T = schedule.T
-            assert (
-                default_temp_params.Tmin <= T <= default_temp_params.T0
-            ), f"Step {step}: INV-2 violated"
+            assert default_temp_params.Tmin <= T <= default_temp_params.T0, (
+                f"Step {step}: INV-2 violated"
+            )
 
             # Check INV-3: GateBounds
             gate = schedule.plasticity_gate()
@@ -236,9 +224,9 @@ class TestTLAInvariantComposite:
                 default_crit_params.gain_min,
                 default_crit_params.gain_max,
             )
-            assert (
-                default_crit_params.gain_min <= gain <= default_crit_params.gain_max
-            ), f"Step {step}: INV-1 violated"
+            assert default_crit_params.gain_min <= gain <= default_crit_params.gain_max, (
+                f"Step {step}: INV-1 violated"
+            )
 
             # Advance simulation
             schedule.step_geometric()
