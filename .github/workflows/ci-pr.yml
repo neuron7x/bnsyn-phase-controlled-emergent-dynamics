@@ -68,6 +68,14 @@ jobs:
             exit 1
           fi
       
+      - name: Append CI Truthfulness Report to Summary
+        if: always()
+        run: |
+          if [ -f artifacts/ci_truthfulness.md ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat artifacts/ci_truthfulness.md >> $GITHUB_STEP_SUMMARY
+          fi
+      
       - name: Upload Governance Reports
         if: always()
         uses: actions/upload-artifact@v4
