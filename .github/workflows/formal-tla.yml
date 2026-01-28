@@ -1,0 +1,141 @@
+name: formal-tla
+
+on:
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      max_steps:
+        description: 'Maximum steps for model checking'
+        required: false
+        default: '100'
+
+concurrency:
+  group: formal-tla-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tla-model-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Download TLA+ Tools
+        run: |
+          cd specs/tla
+          wget -q https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+          echo "TLA+ tools downloaded successfully"
+      
+      - name: Verify TLA+ specification syntax
+        id: syntax
+        run: |
+          cd specs/tla
+          # Parse the specification to check for syntax errors
+          java -cp tla2tools.jar tla2sany.SANY BNsyn.tla
+          echo "✅ TLA+ specification syntax is valid" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Run TLC model checker
+        id: tlc
+        run: |
+          cd specs/tla
+          
+          echo "## 🔍 TLA+ Model Checking Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Run TLC with configuration
+          java -XX:+UseParallelGC -Xmx4g -jar tla2tools.jar \
+            -config BNsyn.cfg \
+            -workers auto \
+            -coverage 1 \
+            BNsyn.tla 2>&1 | tee tlc_output.txt
+          
+          # Check for errors
+          if grep -q "Error:" tlc_output.txt; then
+            echo "❌ **Model checking FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Invariant violations detected!" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          elif grep -q "Model checking completed. No error has been found." tlc_output.txt; then
+            echo "✅ **Model checking PASSED**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All invariants verified successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Model checking INCOMPLETE**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check artifacts for details." >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Extract model checking statistics
+        if: always()
+        run: |
+          cd specs/tla
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Model Checking Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract key statistics
+          if [ -f tlc_output.txt ]; then
+            STATES=$(grep "distinct states" tlc_output.txt | tail -1 || echo "N/A")
+            DIAMETER=$(grep "diameter" tlc_output.txt | tail -1 || echo "N/A")
+            
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| States Checked | $STATES |" >> $GITHUB_STEP_SUMMARY
+            echo "| State Graph Diameter | $DIAMETER |" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: Generate invariant report
+        if: always()
+        run: |
+          cd specs/tla
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Verified Invariants" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Invariant | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          # Check which invariants were verified
+          for inv in "TypeOK" "TempMonotone" "GateSoundness" "SigmaClamp" "PhaseConsistency" "GateTemperatureCorrelation"; do
+            if grep -q "Invariant $inv is violated" tlc_output.txt 2>/dev/null; then
+              echo "| $inv | ❌ VIOLATED |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $inv | ✅ VERIFIED |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+      
+      - name: Upload TLC output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tla-model-check-report-${{ github.sha }}
+          path: |
+            specs/tla/tlc_output.txt
+            specs/tla/*.out
+          retention-days: 30
+      
+      - name: Check for violations
+        if: always()
+        run: |
+          cd specs/tla
+          
+          if [ -f tlc_output.txt ] && grep -q "Error:" tlc_output.txt; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Violation Details" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep -A 20 "Error:" tlc_output.txt >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

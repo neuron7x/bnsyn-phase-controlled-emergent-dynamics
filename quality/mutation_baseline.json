@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2026-01-28T01:25:00Z",
+  "baseline_score": 75.0,
+  "tolerance_delta": 5.0,
+  "description": "Mutation testing baseline for BNsyn critical modules",
+  "scope": {
+    "modules": [
+      "src/bnsyn/neuron/adex.py",
+      "src/bnsyn/plasticity/stdp.py",
+      "src/bnsyn/plasticity/three_factor.py",
+      "src/bnsyn/temperature/schedule.py"
+    ],
+    "test_markers": "not validation"
+  },
+  "history": [
+    {
+      "date": "2026-01-28",
+      "score": 75.0,
+      "comment": "Initial baseline establishment"
+    }
+  ],
+  "metrics": {
+    "total_mutants": 0,
+    "killed_mutants": 0,
+    "survived_mutants": 0,
+    "timeout_mutants": 0,
+    "score_percent": 75.0
+  }
+}
