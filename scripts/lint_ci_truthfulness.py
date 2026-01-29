@@ -214,7 +214,7 @@ class WorkflowLinter:
                         category="Masked Test Failure",
                         workflow=workflow_name,
                         location=location,
-                        message=f"Test command followed by '|| true' - this masks failures!",
+                        message="Test command followed by '|| true' - this masks failures!",
                         suggestion="Remove '|| true'. Use 'if: always()' on artifact upload steps instead.",
                     )
                 )
@@ -271,7 +271,7 @@ class WorkflowLinter:
                                 workflow=workflow_name,
                                 location=f"workflow_dispatch.inputs.{input_name}",
                                 message=f"Input '{input_name}' is declared but never used",
-                                suggestion=f"Either use the input or remove it from the workflow_dispatch configuration",
+                                suggestion="Either use the input or remove it from the workflow_dispatch configuration",
                             )
                         )
 
@@ -334,7 +334,7 @@ def main() -> int:
         print(f"Markdown report written to: {args.md}")
 
     # Print summary
-    print(f"\n📊 CI Truthfulness Lint Summary")
+    print("\n📊 CI Truthfulness Lint Summary")
     print(f"Files checked: {result.files_checked}")
     print(f"Violations: {len(result.violations)}")
     print(f"  Errors: {len([v for v in result.violations if v.severity == 'error'])}")

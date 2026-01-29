@@ -166,7 +166,7 @@ def main() -> int:
         elif delta < 0:
             print(f"   ({delta:.2f}% from baseline, within tolerance)")
         else:
-            print(f"   (matches baseline)")
+            print("   (matches baseline)")
 
         return 0
     else:
