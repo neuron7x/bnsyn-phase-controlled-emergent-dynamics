@@ -181,3 +181,21 @@ def test_ledger_with_dualweights() -> None:
     history = ledger.get_history()
     assert len(history) == 1
     assert history[0]["dw_protein"] == 0.75
+
+
+def test_ledger_validation_and_state() -> None:
+    ledger = ConsolidationLedger()
+    with pytest.raises(ValueError, match="gate must be in \\[0, 1\\]"):
+        ledger.record_event(gate=1.5, temperature=0.0, step=0)
+    with pytest.raises(ValueError, match="temperature must be non-negative"):
+        ledger.record_event(gate=0.5, temperature=-0.1, step=0)
+    with pytest.raises(ValueError, match="step must be non-negative"):
+        ledger.record_event(gate=0.5, temperature=0.0, step=-1)
+    with pytest.raises(ValueError, match="dw_protein must be in \\[0, 1\\]"):
+        ledger.record_event(gate=0.5, temperature=0.0, step=0, dw_protein=1.5)
+
+    ledger.record_event(gate=0.6, temperature=0.2, step=5)
+    state = ledger.get_state()
+    assert state["event_count"] == 1
+    assert isinstance(state["hash"], str)
+    assert len(state["hash"]) == 64
