@@ -280,7 +280,7 @@ paths = [
 1. **Upgrade dependency** in `pyproject.toml`
 2. **Exclude if not applicable:**
    ```bash
-   pip-audit --ignore-vuln GHSA-0000-0000-0000
+   pip-audit --ignore-vuln GHSA-2vj6-8h5x-3v7x
    ```
 3. **Open issue** to track mitigation
 
