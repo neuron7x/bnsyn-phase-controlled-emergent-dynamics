@@ -55,7 +55,7 @@ def main() -> None:
 
         streamlit run src/bnsyn/viz/interactive.py
     """
-    if not HAVE_STREAMLIT:
+    if (not HAVE_STREAMLIT) or (_IMPORT_ERROR is not None):
         raise RuntimeError(
             f"Cannot run interactive dashboard: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
@@ -193,7 +193,7 @@ def create_raster_plot(
     RuntimeError
         If optional visualization dependencies are not installed.
     """
-    if not HAVE_STREAMLIT:
+    if (not HAVE_STREAMLIT) or (_IMPORT_ERROR is not None):
         raise RuntimeError(
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
@@ -246,7 +246,7 @@ def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.F
     RuntimeError
         If optional visualization dependencies are not installed.
     """
-    if not HAVE_STREAMLIT:
+    if (not HAVE_STREAMLIT) or (_IMPORT_ERROR is not None):
         raise RuntimeError(
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
@@ -296,7 +296,7 @@ def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float)
     RuntimeError
         If optional visualization dependencies are not installed.
     """
-    if not HAVE_STREAMLIT:
+    if (not HAVE_STREAMLIT) or (_IMPORT_ERROR is not None):
         raise RuntimeError(
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
@@ -336,7 +336,7 @@ def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go
     RuntimeError
         If optional visualization dependencies are not installed.
     """
-    if not HAVE_STREAMLIT:
+    if (not HAVE_STREAMLIT) or (_IMPORT_ERROR is not None):
         raise RuntimeError(
             f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
             'Install with: pip install -e ".[viz]"'
