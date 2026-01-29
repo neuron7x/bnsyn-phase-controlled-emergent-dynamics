@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -63,6 +64,26 @@ def compute_file_hash(filepath: Path) -> str:
     return sha256.hexdigest()
 
 
+def _extract_spec_version(spec_path: Path) -> str:
+    """Extract spec version from header or fallback to hash."""
+    with open(spec_path, "r", encoding="utf-8") as f:
+        header = f.readline().strip()
+    match = re.search(r"\((v[^)]+)\)", header)
+    if match:
+        return match.group(1)
+    return compute_file_hash(spec_path)
+
+
+def _extract_hypothesis_version(hypothesis_path: Path) -> str:
+    """Extract hypothesis version from header or fallback to hash."""
+    with open(hypothesis_path, "r", encoding="utf-8") as f:
+        for line in f:
+            match = re.match(r"\*\*Version\*\*:\s*(.+)", line.strip())
+            if match:
+                return match.group(1).strip()
+    return compute_file_hash(hypothesis_path)
+
+
 def generate_manifest(
     output_dir: Path,
     experiment_name: str,
@@ -92,11 +113,19 @@ def generate_manifest(
         if result_file.name != "manifest.json":
             result_files[result_file.name] = compute_file_hash(result_file)
 
+    repo_root = Path(__file__).parent.parent
+    spec_path = repo_root / "docs" / "SPEC.md"
+    hypothesis_path = repo_root / "docs" / "HYPOTHESIS.md"
+
     manifest: dict[str, Any] = {
         "experiment": experiment_name,
         "version": "1.0",
         "git_commit": get_git_commit(),
         "python_version": sys.version,
+        "spec_version": _extract_spec_version(spec_path),
+        "hypothesis_version": _extract_hypothesis_version(hypothesis_path),
+        "spec_path": spec_path.relative_to(repo_root).as_posix(),
+        "hypothesis_path": hypothesis_path.relative_to(repo_root).as_posix(),
         "seeds": seeds,
         "steps": steps,
         "params": params,
