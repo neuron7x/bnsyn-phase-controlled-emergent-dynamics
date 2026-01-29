@@ -209,14 +209,14 @@ if not np.isfinite(data).all():
 
 ## SSOT Validation Failures
 
-### `bibliography_gate FAILED: bibkey 'missing_ref_2026' not found`
+### `bibliography_gate FAILED: bibkey 'missing_gref_2026' not found`
 
 **Cause:** Citation referenced in claims but not in bibliography.
 
 **Solution:**
 1. Add to `bibliography/bnsyn.bib`:
    ```bibtex
-   @article{missing_ref_2026,
+   @article{missing_gref_2026,
      author = {Example, Ada and Researcher, Lin},
      title = {Example Reference for Bibliography Troubleshooting},
      journal = {Journal of Example Systems},
