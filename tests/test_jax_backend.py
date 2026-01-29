@@ -20,26 +20,54 @@ def _load_module_with_jnp(fake_jnp: ModuleType) -> ModuleType:
     return importlib.import_module(module_name)
 
 
-def test_jax_backend_import_error_when_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+def _import_module_without_jax(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     module_name = "bnsyn.production.jax_backend"
-
+    original_find_spec = importlib.util.find_spec
     original_import = importlib.import_module
+
+    def fake_find_spec(name: str, *args: object, **kwargs: object) -> object | None:
+        if name == "jax.numpy":
+            return None
+        return original_find_spec(name, *args, **kwargs)
 
     def fake_import(name: str, *args: object, **kwargs: object) -> ModuleType:
         if name == "jax.numpy":
             raise ImportError("no jax")
         return original_import(name, *args, **kwargs)
 
+    monkeypatch.setattr(importlib.util, "find_spec", fake_find_spec)
     monkeypatch.setattr(importlib, "import_module", fake_import)
     sys.modules.pop(module_name, None)
     sys.modules.pop("jax.numpy", None)
     sys.modules.pop("jax", None)
+    return importlib.import_module(module_name)
 
-    spec = importlib.util.find_spec(module_name)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    with pytest.raises(ImportError, match="JAX is not installed"):
-        spec.loader.exec_module(module)
+
+def test_jax_backend_import_safe_without_jax(monkeypatch: pytest.MonkeyPatch) -> None:
+    module = _import_module_without_jax(monkeypatch)
+    assert module.JAX_AVAILABLE is False
+
+    V = np.array([-55.0, -40.0], dtype=float)
+    w = np.array([0.0, 0.0], dtype=float)
+    input_current = np.array([0.0, 500.0], dtype=float)
+
+    with pytest.raises(RuntimeError, match="JAX is required.*pip install jax jaxlib"):
+        module.adex_step_jax(
+            V,
+            w,
+            input_current,
+            C=200.0,
+            gL=10.0,
+            EL=-65.0,
+            VT=-50.0,
+            DeltaT=2.0,
+            tau_w=100.0,
+            a=2.0,
+            b=50.0,
+            V_reset=-65.0,
+            V_spike=-40.0,
+            dt=0.1,
+        )
 
 
 def test_adex_step_jax_with_numpy_shim(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -126,10 +126,9 @@ def test_jax_backend_import_error() -> None:
     """Test JAX backend import behavior based on JAX availability.
 
     Contract:
-    - If JAX is installed: import succeeds
-    - If JAX is not installed: import raises ImportError
+    - Importing the module never raises if JAX is missing.
+    - When JAX is missing, calling JAX-backed functions raises RuntimeError.
     """
-    # Check if JAX is available
     try:
         import jax  # noqa: F401
 
@@ -137,16 +136,27 @@ def test_jax_backend_import_error() -> None:
     except ImportError:
         jax_available = False
 
-    if jax_available:
-        # JAX is installed, import should succeed
-        try:
-            importlib.import_module("bnsyn.production.jax_backend")
-        except ImportError:
-            pytest.fail("JAX is installed but bnsyn.production.jax_backend raised ImportError")
-    else:
-        # JAX is not installed, import should raise ImportError
-        with pytest.raises(ImportError):
-            importlib.import_module("bnsyn.production.jax_backend")
+    module = importlib.import_module("bnsyn.production.jax_backend")
+    assert module.JAX_AVAILABLE is jax_available
+
+    if not jax_available:
+        with pytest.raises(RuntimeError, match="JAX is required"):
+            module.adex_step_jax(
+                np.array([-55.0], dtype=float),
+                np.array([0.0], dtype=float),
+                np.array([0.0], dtype=float),
+                C=200.0,
+                gL=10.0,
+                EL=-65.0,
+                VT=-50.0,
+                DeltaT=2.0,
+                tau_w=100.0,
+                a=2.0,
+                b=50.0,
+                V_reset=-65.0,
+                V_spike=-40.0,
+                dt=0.1,
+            )
 
 
 def test_adex_error_tracking_and_adaptive() -> None:
