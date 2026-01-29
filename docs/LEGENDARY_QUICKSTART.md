@@ -59,7 +59,22 @@ This runs 3 seeds with a 50-neuron network for 500ms and outputs:
         "V_mean_mV": -62.1
       }
     },
-    ...
+    {
+      "seed": 43,
+      "metrics": {
+        "sigma": 1.01,
+        "spike_rate_hz": 3.39,
+        "V_mean_mV": -62.3
+      }
+    },
+    {
+      "seed": 44,
+      "metrics": {
+        "sigma": 1.03,
+        "spike_rate_hz": 3.52,
+        "V_mean_mV": -61.9
+      }
+    }
   ]
 }
 ```
@@ -186,7 +201,7 @@ net.step(dt_ms=0.1)
 
 ## Next Steps
 
-- 📖 Read the [main README](../README.md) for scientific details
+- 📖 Read the <a href="../README.md">main README</a> for scientific details
 - 🧪 Run the flagship experiment: `python -m experiments.runner temp_ablation_v2`
 - 📊 Explore the [interactive dashboard](../src/bnsyn/viz/interactive.py)
 - 🔬 Write property tests for your own models

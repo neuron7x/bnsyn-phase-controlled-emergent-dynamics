@@ -21,8 +21,8 @@ BN-Syn uses a **Single-Source-of-Truth (SSOT)** governance model where:
 |-------|----------|---------|
 | **Rules** | [SSOT_RULES.md](SSOT_RULES.md) | Machine-readable rule registry (authoritative) |
 | **Policy** | [SSOT.md](SSOT.md) | Human-readable SSOT policy summary |
-| **Data** | [bibliography/](../bibliography/), [claims/](../claims/) | SSOT data artifacts |
-| **Validators** | [scripts/](../scripts/) | Enforcement scripts |
+| **Data** | <a href="../bibliography/bnsyn.bib">bibliography/bnsyn.bib</a>, <a href="../bibliography/mapping.yml">bibliography/mapping.yml</a>, <a href="../claims/claims.yml">claims/claims.yml</a> | SSOT data artifacts |
+| **Validators** | <a href="../scripts/validate_bibliography.py">scripts/validate_bibliography.py</a>, <a href="../scripts/validate_claims.py">scripts/validate_claims.py</a>, <a href="../scripts/scan_normative_tags.py">scripts/scan_normative_tags.py</a> | Enforcement scripts |
 | **Labels** | [NORMATIVE_LABELING.md](NORMATIVE_LABELING.md) | Normative vs non-normative labeling |
 | **Audit** | [CONSTITUTIONAL_AUDIT.md](CONSTITUTIONAL_AUDIT.md) | Constitutional constraints |
 
