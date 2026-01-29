@@ -83,34 +83,22 @@ class TestVCGInvariantI1_Determinism:
     def test_determinism_under_seed_control(
         self, default_vcg_params: VCGParams
     ) -> None:
-        """Determinism holds even with stochastic noise if seeded properly."""
-        import numpy as np
+        """Determinism holds for repeated deterministic inputs."""
+        contributions = [9.0, 10.0, 11.0, 9.5, 10.5, 10.0, 8.0, 12.0, 10.0, 9.0]
 
-        # Run 1 with fixed seed
-        np.random.seed(42)
         support = 1.0
         support_trace_1 = []
-        for _ in range(10):
-            # Add deterministic noise to contribution
-            noise = np.random.uniform(-1.0, 1.0)
-            contrib = 10.0 + noise
+        for contrib in contributions:
             support = update_support_level(contrib, support, default_vcg_params)
             support_trace_1.append(support)
 
-        # Run 2 with same seed
-        np.random.seed(42)
         support = 1.0
         support_trace_2 = []
-        for _ in range(10):
-            noise = np.random.uniform(-1.0, 1.0)
-            contrib = 10.0 + noise
+        for contrib in contributions:
             support = update_support_level(contrib, support, default_vcg_params)
             support_trace_2.append(support)
 
-        # I1: Must be identical
-        assert (
-            support_trace_1 == support_trace_2
-        ), "I1 violated: seeded stochastic replay not deterministic"
+        assert support_trace_1 == support_trace_2, "I1 violated: deterministic replay failed"
 
 
 class TestVCGInvariantI2_MonotonicDecrease:
@@ -249,33 +237,30 @@ class TestVCGInvariantI4_SideEffectFree:
     """
     I4: VCG remains side-effect free on the simulation core
     Reference: docs/VCG.md:50
+    NOTE: Production VCG is currently a pure utility module; tests verify purity only.
     """
 
     def test_vcg_does_not_mutate_external_state(
         self, default_vcg_params: VCGParams
     ) -> None:
-        """VCG updates do not modify any external state."""
-        # Create a mock external state
-        external_state = {"temperature": 1.0, "gain": 1.5, "phase": "active"}
+        """VCG functions are pure with respect to their inputs."""
+        support = 0.8
+        contrib = default_vcg_params.theta_c - 1.0
+        params_before = default_vcg_params
 
-        # Store initial state
-        initial_state = external_state.copy()
+        support_after = update_support_level(contrib, support, default_vcg_params)
+        support_after_repeat = update_support_level(contrib, support, default_vcg_params)
+        alloc = allocation_multiplier(support_after, default_vcg_params)
 
-        # Perform VCG updates
-        support = 1.0
-        for contrib in [5.0, 10.0, 15.0]:
-            support = update_support_level(contrib, support, default_vcg_params)
-            _ = allocation_multiplier(support, default_vcg_params)
-
-        # I4: External state must be unchanged
-        assert (
-            external_state == initial_state
-        ), "I4 violated: VCG mutated external state"
+        assert default_vcg_params is params_before
+        assert support == 0.8
+        assert support_after == support_after_repeat
+        assert 0.0 <= alloc <= 1.0
 
     def test_vcg_is_query_safe(
         self, default_vcg_params: VCGParams
     ) -> None:
-        """Querying VCG support does not change internal state."""
+        """Querying allocation multiplier does not change state."""
         # Update once
         support = update_support_level(10.0, 1.0, default_vcg_params)
 
@@ -292,29 +277,10 @@ class TestVCGInvariantI4_SideEffectFree:
     def test_vcg_disabling_preserves_core_simulation(
         self, default_vcg_params: VCGParams
     ) -> None:
-        """Disabling VCG (via multiplier=1.0) yields same simulation results."""
-        # This is a placeholder test demonstrating the I4 principle
-        # In a real scenario, you would run a full simulation with and without VCG
-        # and compare neuron/synapse states
-
-        # Simulate resource allocation
-        contributions = [10.0, 15.0, 5.0, 20.0]
-        allocations_with_vcg = []
-
+        """VCG disabled corresponds to identity allocation multiplier."""
         support = 1.0
-        for contrib in contributions:
-            support = update_support_level(contrib, support, default_vcg_params)
-            alloc = allocation_multiplier(support, default_vcg_params)
-            allocations_with_vcg.append(alloc)
-
-        # When VCG is "disabled" (support = 1.0 always), allocation = 1.0
-        allocations_disabled = [1.0] * len(contributions)
-
-        # I4: With VCG disabled, all allocations should be 1.0 (no gating)
-        # This demonstrates that VCG can be turned off without affecting core
-        assert all(
-            a == 1.0 for a in allocations_disabled
-        ), "I4 violated: disabled VCG should not gate"
+        alloc = allocation_multiplier(support, default_vcg_params)
+        assert alloc == 1.0, "I4 violated: disabled VCG should yield alloc=1.0"
 
 
 class TestVCGInvariantComposite:
@@ -386,7 +352,7 @@ class TestVCGAcceptanceCriteria:
     - A1: Replaying same event log yields identical S_i(t) traces (bitwise)
     - A2: Agent with C_i < θ_C for k consecutive windows shows strictly decreasing S_i
     - A3: Agent regains S_i → 1 after sustained C_i ≥ θ_C
-    - A4: Disabling VCG yields identical core simulation results
+    - A4: Disabling VCG yields allocation identity (core integration not present)
     """
 
     def test_A1_bitwise_replay(self, default_vcg_params: VCGParams) -> None:

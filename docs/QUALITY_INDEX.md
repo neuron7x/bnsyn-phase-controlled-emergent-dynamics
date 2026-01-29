@@ -49,6 +49,12 @@ cat quality/mutation_baseline.json | jq '.metrics'
 
 ## Understanding the Quality Stack
 
+### Guard Tests (Formal Invariants)
+
+- `tests/test_tla_invariants_guard.py` exercises production temperature schedule and criticality gain updates.
+- `tests/test_vcg_invariants_guard.py` exercises pure VCG update/allocation functions only.
+  - No core simulation integration exists in production for VCG; guard tests do **not** claim core side-effect proofs.
+
 ### Layer 1: Fast Feedback (PR Blocking)
 
 **Unit Tests** (`make test`)
