@@ -293,28 +293,12 @@ class TestVCGInvariantI4_SideEffectFree:
         self, default_vcg_params: VCGParams
     ) -> None:
         """Disabling VCG (via multiplier=1.0) yields same simulation results."""
-        # This is a placeholder test demonstrating the I4 principle
-        # In a real scenario, you would run a full simulation with and without VCG
-        # and compare neuron/synapse states
-
-        # Simulate resource allocation
-        contributions = [10.0, 15.0, 5.0, 20.0]
-        allocations_with_vcg = []
-
-        support = 1.0
-        for contrib in contributions:
-            support = update_support_level(contrib, support, default_vcg_params)
-            alloc = allocation_multiplier(support, default_vcg_params)
-            allocations_with_vcg.append(alloc)
-
-        # When VCG is "disabled" (support = 1.0 always), allocation = 1.0
-        allocations_disabled = [1.0] * len(contributions)
-
-        # I4: With VCG disabled, all allocations should be 1.0 (no gating)
-        # This demonstrates that VCG can be turned off without affecting core
-        assert all(
-            a == 1.0 for a in allocations_disabled
-        ), "I4 violated: disabled VCG should not gate"
+        pytest.fail(
+            "VCG integration into the simulation core is not observable via production APIs, "
+            "so invariant I4/A4 cannot be exercised. "
+            "Spec mapping: docs/VCG.md#7-claim-mapping (CLM-0015..CLM-0018) "
+            "and bibliography/mapping.yml."
+        )
 
 
 class TestVCGInvariantComposite:
