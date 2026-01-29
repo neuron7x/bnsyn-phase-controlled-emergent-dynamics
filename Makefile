@@ -16,7 +16,7 @@ test-validation:
 	pytest -m validation -v
 
 coverage:
-	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=term-missing --cov-fail-under=85
+	pytest -m "not validation" --cov=src/bnsyn --cov-report=html --cov-report=term-missing --cov-fail-under=95
 	@echo "Coverage report: htmlcov/index.html"
 
 mutation-baseline:
