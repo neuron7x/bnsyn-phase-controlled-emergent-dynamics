@@ -77,6 +77,12 @@ cat quality/mutation_baseline.json | jq '.metrics'
 - Normative tag usage
 - TierS annotation correctness
 
+### Guard Tests
+
+- Invariant mappings are protected by `tests/test_spec_mapping_guard.py`.
+- SSOT for invariants lives in `specs/tla/BNsyn.tla` and `docs/VCG.md`.
+- Guard tests must align with those SSOT sources.
+
 ### Layer 2: Nightly Deep Verification
 
 **Property-Based Testing** (`ci-property-tests.yml`)
