@@ -179,7 +179,7 @@ def test_check_mutation_score_logic() -> None:
 
 
 def test_mutation_baseline_factuality() -> None:
-    """Test that mutation baseline contains factual data (not placeholders)."""
+    """Test that mutation baseline contains factual data (not zeroed defaults)."""
     baseline_path = Path("quality/mutation_baseline.json")
 
     assert baseline_path.exists(), "Mutation baseline must exist"
@@ -188,7 +188,7 @@ def test_mutation_baseline_factuality() -> None:
         baseline = json.load(f)
 
     # Check that baseline has been generated at least once
-    # (metrics should not all be zero placeholders)
+    # (metrics should not all be zero defaults)
     metrics = baseline["metrics"]
 
     # At least one of these should be non-zero after first generation
@@ -199,7 +199,7 @@ def test_mutation_baseline_factuality() -> None:
     )
 
     # Note: This test might fail before first baseline generation
-    # That's acceptable - it ensures we don't commit placeholder baselines
+    # That's acceptable - it ensures we don't commit zeroed baselines
     if not has_data:
         pytest.skip("Baseline not yet generated - run 'make mutation-baseline' first")
 

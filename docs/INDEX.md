@@ -102,5 +102,5 @@ Use this index to find any document, specification, or governance artifact.
 
 1. **Single source**: Each concept has exactly one authoritative document.
 2. **Links over duplication**: Documents link to sources rather than duplicating content.
-3. **Claim traceability**: Normative statements bind to `CLM-XXXX` identifiers in `claims/claims.yml`.
+3. **Claim traceability**: Normative statements bind to identifiers such as `CLM-0001` in `claims/claims.yml`.
 4. **Governed vs non-governed**: See [INVENTORY.md](INVENTORY.md) for path classification.

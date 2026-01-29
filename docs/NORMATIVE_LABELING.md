@@ -13,7 +13,7 @@ Define labeling rules for requirements and claims tied to SSOT evidence.
 - Tier-B/Tier-C: non-normative only.
 
 ## Claim binding
-- NORMATIVE quantitative statements include a `CLM-XXXX` identifier.
+- NORMATIVE quantitative statements include an identifier such as `CLM-0001`.
 - Claim IDs are authoritative in `claims/claims.yml` and map in `bibliography/mapping.yml`.
 
 ## Authority
