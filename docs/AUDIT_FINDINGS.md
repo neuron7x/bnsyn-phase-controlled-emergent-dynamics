@@ -27,7 +27,7 @@ Baseline validation run performed on: 2026-01-23
 - **Symptom:** `pytest -m "not validation"` fails during test collection with `ModuleNotFoundError: No module named 'bnsyn'` across multiple tests.
 - **Root cause:** Python package not installed or import path not configured for tests.
 - **Anchors:** `tests/test_*` imports, e.g., `tests/test_adex_smoke.py:2`.
-- **Fix:** Install package via `pip install -e ".[dev]"` before running tests. CI workflows already do this.
+- **Fix:** Install package via `pip install -e ".[dev,test]"` before running tests. CI workflows already do this.
 - **Status:** ✅ Resolved — tests collect and run without import errors.
 
 ### FND-0003 (RESOLVED)

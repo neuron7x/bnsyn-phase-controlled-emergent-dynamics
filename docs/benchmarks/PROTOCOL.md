@@ -27,7 +27,7 @@ Notes:
 
 Install exact versions:
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
 ```
 
 Core dependencies (from `pyproject.toml`):

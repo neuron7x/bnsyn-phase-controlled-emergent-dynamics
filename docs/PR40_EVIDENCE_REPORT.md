@@ -22,7 +22,7 @@ Commit:         4a76619d1187b1ca6a9a49a6ffba251b751061af
 Python:         3.12.3
 pip:            24.0
 OS:             Linux 6.11.0-1018-azure x86_64
-Install:        pip install -e ".[dev,viz]"
+Install:        pip install -e ".[dev,test,viz]"
 ```
 
 ---

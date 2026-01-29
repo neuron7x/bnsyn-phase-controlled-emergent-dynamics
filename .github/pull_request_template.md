@@ -93,7 +93,7 @@ cd bnsyn-phase-controlled-emergent-dynamics
 git checkout <YOUR_BRANCH>
 
 # Install dependencies
-pip install -e ".[dev,viz]"
+pip install -e ".[dev,test,viz]"
 
 # Run specific tests
 pytest tests/... -v

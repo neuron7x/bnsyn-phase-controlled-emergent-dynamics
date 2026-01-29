@@ -86,7 +86,7 @@ Stability metrics are computed across the `seeds` trials for each condition:
 ### Installation
 
 ```bash
-pip install -e ".[dev,viz]"
+pip install -e ".[dev,test,viz]"
 ```
 
 ### Run flagship experiment (v2)

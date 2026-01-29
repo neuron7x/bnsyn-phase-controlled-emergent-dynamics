@@ -8,7 +8,7 @@ Run from repository root:
 
 ```bash
 python -m pip install --upgrade pip
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
 ```
 
 Expected output includes installation of `bnsyn` and development dependencies.

@@ -14,7 +14,7 @@ This guide covers common issues and their solutions when working with BN-Syn.
 pip install -e .
 
 # Or with dev dependencies
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
 
 # Verify installation
 python -c "import bnsyn; print(bnsyn.__version__)"

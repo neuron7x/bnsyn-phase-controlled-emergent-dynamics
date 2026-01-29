@@ -2,7 +2,7 @@
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
-	pip install -e ".[dev]"
+	pip install -e ".[dev,test]"
 	pre-commit install
 	pre-commit autoupdate
 
