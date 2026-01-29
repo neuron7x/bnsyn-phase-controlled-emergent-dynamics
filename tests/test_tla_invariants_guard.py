@@ -55,9 +55,12 @@ class TestTLAInvariantINV1_GainClamp:
         """Gain parameters must satisfy bounds at initialization."""
         assert default_crit_params.gain_min >= 0.0
         assert default_crit_params.gain_max > default_crit_params.gain_min
-        # Initial gain would be somewhere in the valid range
-        initial_gain = (default_crit_params.gain_min + default_crit_params.gain_max) / 2
-        assert default_crit_params.gain_min <= initial_gain <= default_crit_params.gain_max
+        controller = SigmaController(
+            params=default_crit_params,
+            gain=default_crit_params.gain_max * 10.0,
+        )
+        adjusted_gain = controller.step(default_crit_params.sigma_target)
+        assert default_crit_params.gain_min <= adjusted_gain <= default_crit_params.gain_max
 
     def test_gain_clamp_extreme_values(self, default_crit_params: CriticalityParams) -> None:
         """Gain updates must clamp to bounds via SigmaController."""
