@@ -20,6 +20,7 @@ docs/features/memory.md
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from bnsyn.memory import ConsolidationLedger, MemoryTrace
 
@@ -36,6 +37,23 @@ def test_memory_trace_basic() -> None:
     state = trace.get_state()
     assert state["count"] == 1
     assert len(trace.patterns) == 1
+
+
+def test_memory_trace_invalid_capacity() -> None:
+    """Test invalid capacity rejection."""
+    with pytest.raises(ValueError, match="capacity must be positive"):
+        MemoryTrace(capacity=0)
+
+
+def test_memory_tag_validation() -> None:
+    """Test validation in MemoryTrace.tag."""
+    trace = MemoryTrace(capacity=2)
+
+    with pytest.raises(ValueError, match="pattern must be 1D array"):
+        trace.tag(np.zeros((2, 2)), importance=0.1)
+
+    with pytest.raises(ValueError, match="importance must be non-negative"):
+        trace.tag(np.zeros(2), importance=-0.1)
 
 
 def test_memory_capacity() -> None:
@@ -62,6 +80,37 @@ def test_memory_recall() -> None:
     assert len(recalled) > 0
 
 
+def test_memory_recall_validation() -> None:
+    """Test recall validation and edge cases."""
+    trace = MemoryTrace(capacity=3)
+
+    with pytest.raises(ValueError, match="cue must be 1D array"):
+        trace.recall(np.zeros((1, 2)), threshold=0.0)
+
+    with pytest.raises(ValueError, match="cue must have non-zero norm"):
+        trace.recall(np.zeros(2), threshold=0.0)
+
+    with pytest.raises(ValueError, match="threshold must be in"):
+        trace.recall(np.ones(2), threshold=2.0)
+
+    assert trace.recall(np.ones(2), threshold=0.0) == []
+
+
+def test_memory_recall_shape_mismatch_and_zero_norm() -> None:
+    """Test recall behavior with shape mismatch and zero-norm patterns."""
+    trace = MemoryTrace(capacity=5)
+    trace.tag(np.array([1.0, 0.0]), importance=0.5)
+    trace.tag(np.array([0.0, 0.0]), importance=0.2)
+    trace.tag(np.array([1.0, 0.0, 0.0]), importance=0.3)
+
+    indices = trace.recall(np.array([1.0, 0.0]), threshold=0.5)
+
+    assert indices == [0]
+    assert trace.recall_counters[0] == 1.0
+    assert trace.recall_counters[1] == 0.0
+    assert trace.recall_counters[2] == 0.0
+
+
 def test_memory_consolidation() -> None:
     """Test consolidation."""
     trace = MemoryTrace(capacity=10)
@@ -75,6 +124,20 @@ def test_memory_consolidation() -> None:
     state = trace.get_state()
     # importance should increase
     assert state["importance"][0] > 0.5
+
+
+def test_memory_consolidation_validation() -> None:
+    """Test consolidation parameter validation."""
+    trace = MemoryTrace(capacity=3)
+
+    with pytest.raises(ValueError, match="protein_level must be in"):
+        trace.consolidate(protein_level=1.5, temperature=0.0)
+
+    with pytest.raises(ValueError, match="temperature must be non-negative"):
+        trace.consolidate(protein_level=0.2, temperature=-1.0)
+
+    trace.consolidate(protein_level=0.2, temperature=0.0)
+    assert trace.get_state()["count"] == 0
 
 
 def test_ledger_basic() -> None:

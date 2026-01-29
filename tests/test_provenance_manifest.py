@@ -20,7 +20,9 @@ docs/features/provenance_manifest.md
 from __future__ import annotations
 
 import json
+import subprocess
 
+import pytest
 
 from bnsyn.provenance import RunManifest
 
@@ -78,6 +80,41 @@ def test_manifest_round_trip() -> None:
     assert manifest2.config["param"] == 123
 
 
+def test_manifest_type_validation() -> None:
+    """Test RunManifest type validation."""
+    with pytest.raises(TypeError, match="seed must be int"):
+        RunManifest(seed="42", config={})  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="config must be dict"):
+        RunManifest(seed=42, config="bad")  # type: ignore[arg-type]
+
+
+def test_manifest_capture_git_sha_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test git SHA capture warning path."""
+    def _raise_error(*_args: object, **_kwargs: object) -> None:
+        raise subprocess.CalledProcessError(returncode=1, cmd=["git"])
+
+    monkeypatch.setattr("bnsyn.provenance.manifest.subprocess.run", _raise_error)
+
+    with pytest.warns(UserWarning, match="Failed to capture git SHA"):
+        manifest = RunManifest(seed=1, config={})
+
+    assert manifest.git_sha is None
+
+
+def test_manifest_capture_dependencies_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test dependency capture warning path."""
+    def _raise_error() -> None:
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr("bnsyn.provenance.manifest.distributions", _raise_error)
+
+    with pytest.warns(UserWarning, match="Failed to capture dependencies"):
+        manifest = RunManifest(seed=1, config={})
+
+    assert manifest.dependencies == {}
+
+
 def test_output_hash() -> None:
     """Test adding output hashes."""
     manifest = RunManifest(seed=42, config={})
@@ -86,3 +123,23 @@ def test_output_hash() -> None:
     d = manifest.to_dict()
     assert "output_hashes" in d
     assert "weights" in d["output_hashes"]
+
+
+def test_output_hash_type_validation() -> None:
+    """Test output hash type validation."""
+    manifest = RunManifest(seed=42, config={})
+
+    with pytest.raises(TypeError, match="name must be str"):
+        manifest.add_output_hash(123, b"data")  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="data must be bytes"):
+        manifest.add_output_hash("weights", "data")  # type: ignore[arg-type]
+
+
+def test_manifest_from_dict_type_validation() -> None:
+    """Test from_dict type validation."""
+    with pytest.raises(TypeError, match="seed must be int"):
+        RunManifest.from_dict({"seed": "1", "config": {}})  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError, match="config must be dict"):
+        RunManifest.from_dict({"seed": 1, "config": "bad"})  # type: ignore[arg-type]
