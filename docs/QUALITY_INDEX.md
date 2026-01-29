@@ -26,6 +26,12 @@ Quick reference for running quality checks locally and understanding what each a
 | `tlc_output.txt` | CI artifacts | TLA+ model checking results |
 | `claims_coverage.json` | CI artifacts | All claims have test evidence |
 
+## Guard Tests (Spec Invariant Alignment)
+
+- **TLA invariants guard** (`tests/test_tla_invariants_guard.py`) exercises production `SigmaController` and `TemperatureSchedule` to validate INV-1/2/3 bounds against `CriticalityParams`/`TemperatureParams` (SSOT in `src/bnsyn/config.py`).
+- **VCG invariants guard** (`tests/test_vcg_invariants_guard.py`) validates deterministic, side-effect-free behavior of VCG pure functions (`update_support_level`, `allocation_multiplier`, `update_support_vector`). There is no production integration point with the simulation core, so VCG integration invariants (e.g., side-effect-free on core state) are not directly enforceable until such integration exists.
+- **Spec mapping guard** (`tests/test_spec_mapping_guard.py`) asserts that TLA spec files (`specs/tla/README.md`, `specs/tla/BNsyn.tla`) still contain the invariant identifiers and names used by the guard tests.
+
 ## Workflow Schedule
 
 | Workflow | Trigger | Purpose |
