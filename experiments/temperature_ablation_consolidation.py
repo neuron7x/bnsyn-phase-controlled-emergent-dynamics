@@ -275,7 +275,7 @@ def run_temperature_ablation_experiment(
         # v1 uses standard cooling_geometric
         conditions = ["cooling_geometric", "fixed_high", "fixed_low", "random_T"]
 
-    condition_results = {}
+    condition_results: dict[str, dict[str, Any]] = {}
     for condition in conditions:
         print(f"Running condition: {condition}")
         result = run_condition(
@@ -292,7 +292,46 @@ def run_temperature_ablation_experiment(
         )
         condition_results[condition] = result
 
-        # Save condition results
+    fixed_high_agg = condition_results["fixed_high"]["aggregates"]
+    fixed_high_w_total_var = fixed_high_agg["stability_w_total_var_end"]
+    fixed_high_w_cons_var = fixed_high_agg["stability_w_cons_var_end"]
+
+    w_total_vars = [
+        result["aggregates"]["stability_w_total_var_end"]
+        for result in condition_results.values()
+    ]
+    w_total_var_min = min(w_total_vars)
+    w_total_var_max = max(w_total_vars)
+    w_total_var_range = w_total_var_max - w_total_var_min
+
+    for result in condition_results.values():
+        aggregates = result["aggregates"]
+        w_total_var = aggregates["stability_w_total_var_end"]
+        w_cons_var = aggregates["stability_w_cons_var_end"]
+
+        w_total_reduction_pct = (
+            ((fixed_high_w_total_var - w_total_var) / fixed_high_w_total_var) * 100.0
+            if fixed_high_w_total_var > 0
+            else 0.0
+        )
+        w_cons_reduction_pct = (
+            ((fixed_high_w_cons_var - w_cons_var) / fixed_high_w_cons_var) * 100.0
+            if fixed_high_w_cons_var > 0
+            else 0.0
+        )
+        w_total_var_minmax = (
+            (w_total_var - w_total_var_min) / w_total_var_range
+            if w_total_var_range > 0
+            else 0.0
+        )
+
+        aggregates["normalized"] = {
+            "w_total_reduction_pct": float(w_total_reduction_pct),
+            "w_cons_reduction_pct": float(w_cons_reduction_pct),
+            "stability_w_total_var_end_minmax": float(w_total_var_minmax),
+        }
+
+    for condition, result in condition_results.items():
         condition_file = output_dir / f"{condition}.json"
         with open(condition_file, "w", encoding="utf-8") as f:
             json.dump(result, f, indent=2)

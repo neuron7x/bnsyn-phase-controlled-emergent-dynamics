@@ -1,8 +1,29 @@
 """Tests for hypothesis verification with v2 results."""
 
+import json
 from pathlib import Path
 
 import pytest
+
+
+def assert_condition_normalized_blocks(results_dir: Path) -> None:
+    """Assert normalized aggregates exist in condition JSON files."""
+    for condition_file in results_dir.glob("*.json"):
+        if condition_file.stem == "manifest":
+            continue
+        payload = json.loads(condition_file.read_text(encoding="utf-8"))
+        aggregates = payload["aggregates"]
+        assert "normalized" in aggregates, f"Missing normalized block in {condition_file}"
+        normalized = aggregates["normalized"]
+        assert "w_total_reduction_pct" in normalized, (
+            f"Missing w_total_reduction_pct in {condition_file}"
+        )
+        assert "w_cons_reduction_pct" in normalized, (
+            f"Missing w_cons_reduction_pct in {condition_file}"
+        )
+        assert "stability_w_total_var_end_minmax" in normalized, (
+            f"Missing stability_w_total_var_end_minmax in {condition_file}"
+        )
 
 
 def test_verify_hypothesis_v2_bundled_results() -> None:
@@ -18,6 +39,7 @@ def test_verify_hypothesis_v2_bundled_results() -> None:
 
     # H1 should be supported
     assert supported, "Bundled v2 results should support H1"
+    assert_condition_normalized_blocks(results_dir)
 
     # Check consolidation gates pass
     assert verification["consolidation_gates_pass"], "Consolidation gates should pass"
@@ -49,3 +71,4 @@ def test_verify_hypothesis_v1_bundled_results() -> None:
     # The logic will detect cooling_geometric and not apply strict gates
     # Just check it runs without error
     assert "supported" in verification
+    assert_condition_normalized_blocks(results_dir)
