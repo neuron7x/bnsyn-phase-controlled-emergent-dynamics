@@ -1,0 +1,23 @@
+........................................................................ [ 19%]
+........................................................................ [ 39%]
+...........................................................s....ss...... [ 58%]
+....................s................................................... [ 78%]
+........................................................................ [ 97%]
+.........                                                                [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.12-final-0 _______________
+
+Name    Stmts   Miss  Cover   Missing
+-------------------------------------
+TOTAL    2407      0   100%
+
+63 files skipped due to complete coverage.
+Coverage JSON written to file artifacts/coverage.json

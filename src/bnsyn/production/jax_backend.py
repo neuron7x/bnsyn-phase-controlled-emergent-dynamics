@@ -21,12 +21,28 @@ from __future__ import annotations
 
 from typing import Any
 
-try:
-    import jax.numpy as jnp
-except Exception as e:  # pragma: no cover
-    raise ImportError(
-        "JAX is not installed. Install an appropriate jax/jaxlib build to use this module."
-    ) from e
+import importlib
+import importlib.util
+
+
+def _jax_available() -> bool:
+    try:
+        spec = importlib.util.find_spec("jax.numpy")
+    except (ModuleNotFoundError, ValueError):
+        return False
+    return spec is not None
+
+
+JAX_AVAILABLE = _jax_available()
+
+
+def _require_jax_numpy() -> Any:
+    try:
+        return importlib.import_module("jax.numpy")
+    except Exception as exc:
+        raise RuntimeError(
+            "JAX is required for the JAX backend. Install with: pip install jax jaxlib"
+        ) from exc
 
 
 def adex_step_jax(
@@ -92,6 +108,7 @@ def adex_step_jax(
     ----------
     docs/SPEC.md#P0-1
     """
+    jnp = _require_jax_numpy()
     exp_term = gL * DeltaT * jnp.exp((V - VT) / DeltaT)
     dV = (-(gL * (V - EL)) + exp_term - w + input_current) / C
     dw = (a * (V - EL) - w) / tau_w
