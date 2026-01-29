@@ -22,6 +22,7 @@ pytest --cov=src/bnsyn --cov-fail-under=85 -q || { echo "❌ Coverage below 85%"
 echo "6️⃣  SSOT gates..."
 python scripts/validate_bibliography.py || { echo "❌ Bibliography validation failed"; exit 1; }
 python scripts/validate_claims.py || { echo "❌ Claims validation failed"; exit 1; }
+python scripts/validate_results_schema.py || { echo "❌ Results schema validation failed"; exit 1; }
 python scripts/scan_normative_tags.py || { echo "❌ Normative tag scan failed"; exit 1; }
 
 echo "7️⃣  Security audit..."

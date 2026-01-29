@@ -126,6 +126,7 @@ jobs:
       - run: pip install -e ".[dev,test]"
       - run: python scripts/validate_bibliography.py
       - run: python scripts/validate_claims.py
+      - run: python scripts/validate_results_schema.py
       - run: python scripts/scan_governed_docs.py
       - run: python scripts/scan_normative_tags.py
 

@@ -63,6 +63,7 @@ mypy:
 ssot:
 	python scripts/validate_bibliography.py
 	python scripts/validate_claims.py
+	python scripts/validate_results_schema.py
 	python scripts/scan_normative_tags.py
 
 validate-claims-coverage:

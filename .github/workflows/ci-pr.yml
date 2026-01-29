@@ -36,6 +36,7 @@ jobs:
           
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
+          python scripts/validate_results_schema.py
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
           python scripts/scan_tierS_misuse.py
@@ -115,6 +116,7 @@ jobs:
           if [ "${{ steps.ssot-gates.outcome }}" = "success" ]; then
             echo "| Bibliography | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
             echo "| Claims | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Results Schema | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
             echo "| Governed Docs | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
             echo "| Normative Tags | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
             echo "| TierS Misuse | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
