@@ -29,7 +29,12 @@
     "w_total_mean_final": -0.0003161039092848995,
     "w_cons_mean_final": 0.0,
     "tag_activity_mean": 0.007108910891089111,
-    "protein_mean_end": 0.0
+    "protein_mean_end": 0.0,
+    "normalized": {
+      "w_total_reduction_pct": 99.99595030938946,
+      "w_cons_reduction_pct": 100.0,
+      "stability_w_total_var_end_minmax": 2.2109816260892758e-05
+    }
   },
   "trials": [
     {
