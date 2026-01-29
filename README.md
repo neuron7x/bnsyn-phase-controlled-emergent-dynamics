@@ -306,6 +306,7 @@ BN-Syn enforces deterministic execution, controlled randomness, and validation g
 **Test partition:**
 - Smoke tests: `pytest -m "not validation"`
 - Validation tests: `pytest -m validation`
+- Guard tests: `pytest tests/test_tla_invariants_guard.py tests/test_vcg_invariants_guard.py -v`
 
 **SSOT gates:**
 - `python scripts/validate_bibliography.py`

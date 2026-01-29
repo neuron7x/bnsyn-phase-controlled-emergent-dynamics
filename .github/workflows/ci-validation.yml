@@ -44,5 +44,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+      - name: Guard tests (repeat 3x)
+        run: |
+          pytest tests/test_tla_invariants_guard.py tests/test_vcg_invariants_guard.py -v
+          pytest tests/test_tla_invariants_guard.py tests/test_vcg_invariants_guard.py -v
+          pytest tests/test_tla_invariants_guard.py tests/test_vcg_invariants_guard.py -v
       - name: Validation tests
         run: pytest -m validation
