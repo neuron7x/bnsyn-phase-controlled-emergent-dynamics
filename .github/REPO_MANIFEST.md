@@ -172,7 +172,7 @@ grep -E '==' pyproject.toml | wc -l  # Should be >0
 head requirements-lock.txt | grep "sha256"  # Should show hashes
 
 # Run quality checks
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
 make check  # Runs ruff, mypy, pylint
 
 # Run determinism tests (3x)
