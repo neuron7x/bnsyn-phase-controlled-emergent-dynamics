@@ -9,7 +9,7 @@ Use this index to find any document, specification, or governance artifact.
 
 | Purpose | Document |
 |---------|----------|
-| **What is BN-Syn** | [README.md](../README.md) |
+| **What is BN-Syn** | <a href="../README.md">README.md</a> |
 | **Formal Specification** | [SPEC.md](SPEC.md) |
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | **Reproducibility** | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
@@ -18,7 +18,7 @@ Use this index to find any document, specification, or governance artifact.
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |
 | **Experimental Hypothesis** | [HYPOTHESIS.md](HYPOTHESIS.md) (NON-NORMATIVE) |
 | **Troubleshooting** | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
-| **Contributing** | [CONTRIBUTING.md](../CONTRIBUTING.md) |
+| **Contributing** | <a href="../CONTRIBUTING.md">CONTRIBUTING.md</a> |
 
 ---
 
