@@ -162,9 +162,8 @@ def run_physics_benchmark(
         spike_history.append(float(metrics["A_t1"]))
         sigma_history.append(float(metrics["sigma"]))
         gain_history.append(float(metrics["gain"]))
-        # NOTE: Temperature tracking placeholder - temperature gating is implicit in gain
-        # for this baseline. Full temperature schedule tracking requires temperature module
-        # integration, which is outside the scope of the throughput scaling framework.
+        # NOTE: Temperature schedule is constant in this baseline; explicit
+        # temperature-module integration is out of scope for this benchmark.
         temperature_history.append(1.0)
 
     wall_time = time.perf_counter() - start_time

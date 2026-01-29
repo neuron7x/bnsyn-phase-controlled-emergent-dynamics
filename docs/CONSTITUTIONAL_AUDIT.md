@@ -12,7 +12,7 @@ Use explicit tags:
 - **NON‑NORMATIVE** — illustrative, optional, or example-only
 
 ## Claim binding
-Every **NORMATIVE** quantitative claim includes a `CLM-XXXX` identifier, e.g.:
+Every **NORMATIVE** quantitative claim includes a `CLM-0001`-style identifier, e.g.:
 > [NORMATIVE][CLM-0003] NMDA Mg²⁺ block uses canonical coefficients ...
 
 The authoritative claim record lives in `claims/claims.yml`.

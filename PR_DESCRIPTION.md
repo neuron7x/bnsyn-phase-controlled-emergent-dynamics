@@ -45,7 +45,7 @@ This PR fixes **all critical defects** identified in the BN-Syn quality infrastr
   - Created `check_mutation_score.py` to compare scores with tolerance
   - Updated Makefile targets to use scripts
   - Baseline will be factual after first run
-- **Impact**: Mutation gate based on real data, not placeholders
+- **Impact**: Mutation gate based on real data, not default stubs
 
 ### B6: Fix Mutation Workflow ✅
 - **Files**: `.github/workflows/quality-mutation.yml`

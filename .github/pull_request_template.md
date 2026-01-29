@@ -90,7 +90,7 @@ Provide exact commands to reproduce your changes:
 # Clone and setup
 git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git
 cd bnsyn-phase-controlled-emergent-dynamics
-git checkout <YOUR_BRANCH>
+git checkout <branch-name>
 
 # Install dependencies
 pip install -e ".[dev,test,viz]"

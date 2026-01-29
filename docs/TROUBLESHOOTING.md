@@ -209,19 +209,19 @@ if not np.isfinite(data).all():
 
 ## SSOT Validation Failures
 
-### `bibliography_gate FAILED: bibkey 'FooBar2024' not found`
+### `bibliography_gate FAILED: bibkey 'missing_ref_2026' not found`
 
 **Cause:** Citation referenced in claims but not in bibliography.
 
 **Solution:**
 1. Add to `bibliography/bnsyn.bib`:
    ```bibtex
-   @article{FooBar2024,
-     author = {Foo, Bar},
-     title = {Title},
-     journal = {Journal},
-     year = {2024},
-     doi = {10.1234/example}
+   @article{missing_ref_2026,
+     author = {Example, Ada and Researcher, Lin},
+     title = {Example Reference for Bibliography Troubleshooting},
+     journal = {Journal of Example Systems},
+     year = {2026},
+     doi = {10.0000/example}
    }
    ```
 
@@ -230,7 +230,7 @@ if not np.isfinite(data).all():
    python scripts/validate_bibliography.py
    ```
 
-### `claims_gate FAILED: Claim CLM-XXXX references missing bibkey`
+### `claims_gate FAILED: Claim CLM-0001 references missing bibkey`
 
 **Cause:** Claim in `claims/claims.yml` references non-existent citation.
 
@@ -242,7 +242,7 @@ if not np.isfinite(data).all():
    python scripts/validate_claims.py
    ```
 
-### `normative_gate FAILED: File docs/FOO.md contains [CLM-XXXX] but not marked normative`
+### `normative_gate FAILED: File docs/example_doc.md contains [CLM-0001] but not marked normative`
 
 **Cause:** Document uses claim ID but lacks normative marker.
 
@@ -280,7 +280,7 @@ paths = [
 1. **Upgrade dependency** in `pyproject.toml`
 2. **Exclude if not applicable:**
    ```bash
-   pip-audit --ignore-vuln GHSA-xxxx-yyyy-zzzz
+   pip-audit --ignore-vuln GHSA-0000-0000-0000
    ```
 3. **Open issue** to track mitigation
 

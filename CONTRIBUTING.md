@@ -138,7 +138,7 @@ make coverage    # Test with coverage report
 
 2. Register claim in `claims/claims.yml`:
    ```yaml
-   CLM-XXXX:
+   CLM-0001:
      statement: "Your scientific claim here"
      status: claimed  # or supported
      normative: true  # if this is a core design constraint

@@ -41,7 +41,7 @@ BN-Syn uses a **Single-Source-of-Truth (SSOT)** governance model where:
 
 ### Claim Binding
 
-- Normative quantitative statements include a `CLM-XXXX` identifier
+- Normative quantitative statements include identifiers such as `CLM-0001`
 - Claim IDs are authoritative in [claims/claims.yml](../claims/claims.yml)
 - Mappings are defined in [bibliography/mapping.yml](../bibliography/mapping.yml)
 
