@@ -205,6 +205,25 @@ def test_crystallizer_growth_phase_for_small_attractor_counts() -> None:
     assert crystallizer._current_phase == Phase.GROWTH
 
 
+def test_crystallizer_nucleation_phase_transition_callback() -> None:
+    crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2)
+    crystallizer._attractors = [
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=0.1,
+            stability=0.9,
+            formation_step=0,
+            crystallization=1.0,
+        )
+    ]
+    transitions: list[tuple[Phase, Phase]] = []
+    crystallizer.on_phase_transition(lambda old, new: transitions.append((old, new)))
+    crystallizer._current_phase = Phase.FLUID
+    crystallizer._update_phase()
+    assert crystallizer._current_phase == Phase.NUCLEATION
+    assert transitions == [(Phase.FLUID, Phase.NUCLEATION)]
+
+
 def test_crystallizer_growth_phase_when_not_crystallized() -> None:
     crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2, cluster_eps=0.5)
     crystallizer._attractors = [
