@@ -1,31 +1,19 @@
-# `bnsyn` Package
-
-```{eval-rst}
-.. automodule:: bnsyn
-   :members:
-```
-
-## Submodules
-
-```{eval-rst}
-.. currentmodule:: bnsyn
-
-.. autosummary::
-   :toctree: generated
-   :recursive:
-
-   cli
-   config
-   control
-   neurons
-   rng
-   simulation
-   sim.network
-   neuron.adex
-   synapses
-   synapse.conductance
-   plasticity.three_factor
-   criticality.branching
-   temperature.schedule
-   connectivity.sparse
-```
+{
+  "schema": "schemas/document_contract.schema.json",
+  "document": "docs/api/api_bnsyn.md",
+  "definition": {
+    "terms": []
+  },
+  "formal_contract": {
+    "inputs": [],
+    "outputs": [],
+    "invariants": []
+  },
+  "implementation_links": [],
+  "tests": [],
+  "verification_commands": [],
+  "mapping_table": [],
+  "drift_guards": [
+    "python scripts/validate_document_contracts.py"
+  ]
+}

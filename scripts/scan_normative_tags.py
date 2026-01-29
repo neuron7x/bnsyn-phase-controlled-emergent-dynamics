@@ -1,36 +1,35 @@
-"""Scan governed docs for normative tags and claim compliance."""
+"""Scan governed docs for claim bindings."""
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+import sys
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.doc_contracts import extract_data, load_contract  # noqa: E402
 CLAIMS = ROOT / "claims" / "claims.yml"
 INVENTORY = ROOT / "docs" / "INVENTORY.md"
 
-CLM_RE = re.compile(r"\bCLM-\d{4}\b")
-NORM_RE = re.compile(r"\[NORMATIVE\]")
-
 
 def load_governed_docs() -> list[Path]:
-    text = INVENTORY.read_text(encoding="utf-8")
-    yaml_blocks = text.split("```yaml")
-    for block in yaml_blocks[1:]:
-        yaml_block = block.split("```", 1)[0]
-        data = yaml.safe_load(yaml_block)
-        if isinstance(data, dict) and "governed_docs" in data:
-            docs = data["governed_docs"]
-            if not isinstance(docs, list) or not docs:
-                raise SystemExit("INVENTORY.md governed_docs list is empty")
-            return [ROOT / str(p) for p in docs]
-    raise SystemExit("INVENTORY.md missing governed_docs YAML block")
+    data = extract_data(load_contract(INVENTORY))
+    docs = data.get("governed_docs")
+    if not isinstance(docs, list) or not docs:
+        raise SystemExit("INVENTORY.md governed_docs list is empty")
+    return [ROOT / str(p) for p in docs]
 
 
 def load_claims() -> dict[str, dict[str, str | bool]]:
     data = yaml.safe_load(CLAIMS.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return {}
+    if "schema" in data and "data" in data and isinstance(data["data"], dict):
+        data = data["data"]
     claims = data.get("claims", [])
     out: dict[str, dict[str, str | bool]] = {}
     for c in claims:
@@ -58,48 +57,40 @@ def main() -> int:
         if not f.exists():
             continue
         rf = rel(f)
-        in_code_block = False
-        for ln, line in enumerate(
-            f.read_text(encoding="utf-8", errors="replace").splitlines(), start=1
-        ):
-            stripped = line.strip()
-            if stripped.startswith("```"):
-                in_code_block = not in_code_block
+        data = extract_data(load_contract(f))
+        normative_ids = data.get("normative_claim_ids", [])
+        if not normative_ids:
+            continue
+        if not isinstance(normative_ids, list):
+            malformed.append((rf, 0, "normative_claim_ids must be a list"))
+            continue
+        for cid in normative_ids:
+            claim = claim_map.get(str(cid))
+            if not claim:
+                missing.append((rf, 0, str(cid)))
                 continue
-            if in_code_block:
-                continue
-
-            if NORM_RE.search(line):
-                ids = CLM_RE.findall(line)
-                if not ids:
-                    malformed.append((rf, ln, line))
-                for cid in ids:
-                    claim = claim_map.get(cid)
-                    if not claim:
-                        missing.append((rf, ln, cid))
-                        continue
-                    if claim["tier"] != "Tier-A" or not claim["normative"]:
-                        invalid_tier.append((rf, ln, cid, claim["tier"], claim["normative"]))
+            if claim["tier"] != "Tier-A" or not claim["normative"]:
+                invalid_tier.append((rf, 0, str(cid), claim["tier"], claim["normative"]))
 
     if malformed:
-        print("ERROR: [NORMATIVE] lines missing Claim ID:")
+        print("ERROR: malformed normative claim bindings:")
         for rf, ln, line in malformed[:50]:
             print(f"  {rf}:{ln}: {line}")
         return 2
 
     if missing:
-        print("ERROR: [NORMATIVE] references missing Claim IDs:")
+        print("ERROR: normative claim bindings missing Claim IDs:")
         for rf, ln, cid in missing[:50]:
             print(f"  {rf}:{ln}: {cid}")
         return 3
 
     if invalid_tier:
-        print("ERROR: [NORMATIVE] references must point to Tier-A normative claims:")
+        print("ERROR: normative claim bindings must point to Tier-A normative claims:")
         for rf, ln, cid, tier, normative in invalid_tier[:50]:
             print(f"  {rf}:{ln}: {cid} (tier={tier}, normative={normative})")
         return 4
 
-    print("OK: normative tag scan passed.")
+    print("OK: normative claim binding scan passed.")
     return 0
 
 

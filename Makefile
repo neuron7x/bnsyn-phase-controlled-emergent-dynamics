@@ -64,6 +64,7 @@ ssot:
 	python scripts/validate_bibliography.py
 	python scripts/validate_claims.py
 	python scripts/scan_normative_tags.py
+	python scripts/validate_document_contracts.py
 
 validate-claims-coverage:
 	python scripts/validate_claims_coverage.py --format markdown
@@ -80,8 +81,8 @@ check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
 
 docs:
-	sphinx-build docs docs/_build
-	@echo "Docs built at docs/_build"
+	python scripts/validate_document_contracts.py
+	@echo "Docs contracts validated"
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

@@ -1,13 +1,19 @@
-API Modules
-===========
-
-.. autosummary::
-   :toctree: api/generated
-   :recursive:
-
-   bnsyn.neurons
-   bnsyn.synapses
-   bnsyn.plasticity
-   bnsyn.control
-   bnsyn.simulation
-   bnsyn.cli
+{
+  "schema": "schemas/document_contract.schema.json",
+  "document": "docs/modules.rst",
+  "definition": {
+    "terms": []
+  },
+  "formal_contract": {
+    "inputs": [],
+    "outputs": [],
+    "invariants": []
+  },
+  "implementation_links": [],
+  "tests": [],
+  "verification_commands": [],
+  "mapping_table": [],
+  "drift_guards": [
+    "python scripts/validate_document_contracts.py"
+  ]
+}

@@ -82,6 +82,8 @@ def main() -> int:
     data = yaml.safe_load(ledger.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         fail("claims.yml must be a YAML mapping")
+    if "schema" in data and "data" in data and isinstance(data["data"], dict):
+        data = data["data"]
 
     missing = REQUIRED_TOP_KEYS - set(data.keys())
     if missing:

@@ -1,25 +1,31 @@
 from __future__ import annotations
 
 import pathlib
-import re
+import sys
 from typing import Iterable
 
-import yaml
-
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.doc_contracts import extract_data, load_contract  # noqa: E402
 SPEC_PATH = ROOT / "docs" / "SPEC.md"
 MAP_PATH = ROOT / "docs" / "spec_to_code.yml"
 
-COMPONENT_RE = re.compile(r"^##\s+(P\d-\d+):\s*(.+)$")
 
-
-def _read_spec_components(lines: Iterable[str]) -> list[tuple[str, str]]:
-    components: list[tuple[str, str]] = []
-    for line in lines:
-        match = COMPONENT_RE.match(line.strip())
-        if match:
-            components.append((match.group(1), match.group(2).strip()))
-    return components
+def _read_spec_components(contract: dict[str, object]) -> list[tuple[str, str]]:
+    data = extract_data(contract)
+    components = data.get("components", [])
+    if not isinstance(components, list):
+        return []
+    parsed: list[tuple[str, str]] = []
+    for entry in components:
+        if isinstance(entry, dict):
+            cid = entry.get("id")
+            name = entry.get("name")
+            if isinstance(cid, str) and isinstance(name, str):
+                parsed.append((cid, name))
+    return parsed
 
 
 def _has_validation_marker(text: str) -> bool:
@@ -34,16 +40,17 @@ def main() -> int:
         print(f"Missing spec_to_code map: {MAP_PATH}")
         return 1
 
-    spec_components = _read_spec_components(SPEC_PATH.read_text().splitlines())
+    spec_components = _read_spec_components(load_contract(SPEC_PATH))
     if len(spec_components) != 12:
         print(f"Expected 12 spec components, found {len(spec_components)}")
         for cid, name in spec_components:
             print(f"  - {cid}: {name}")
         return 1
 
-    components = yaml.safe_load(MAP_PATH.read_text()) or {}
+    components_contract = load_contract(MAP_PATH)
+    components = extract_data(components_contract)
     if not isinstance(components, dict):
-        print("spec_to_code.yml must be a mapping of component IDs")
+        print("spec_to_code.yml must provide data mapping of component IDs")
         return 1
 
     errors: list[str] = []

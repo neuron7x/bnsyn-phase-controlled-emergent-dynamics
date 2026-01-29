@@ -1,21 +1,19 @@
-﻿bnsyn.neuron.adex
-=================
-
-.. automodule:: bnsyn.neuron.adex
-
-   
-   .. rubric:: Functions
-
-   .. autosummary::
-   
-      adex_step
-      adex_step_adaptive
-      adex_step_with_error_tracking
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      AdExState
-      IntegrationMetrics
-   
+{
+  "schema": "schemas/document_contract.schema.json",
+  "document": "docs/api/generated/bnsyn.neuron.adex.rst",
+  "definition": {
+    "terms": []
+  },
+  "formal_contract": {
+    "inputs": [],
+    "outputs": [],
+    "invariants": []
+  },
+  "implementation_links": [],
+  "tests": [],
+  "verification_commands": [],
+  "mapping_table": [],
+  "drift_guards": [
+    "python scripts/validate_document_contracts.py"
+  ]
+}

@@ -1,12 +1,19 @@
-BN-Syn Documentation
-====================
-
-The BN-Syn documentation provides an API reference and system overview for
-deterministic neural dynamics and control loops.
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents
-
-   api/index
-   modules
+{
+  "schema": "schemas/document_contract.schema.json",
+  "document": "docs/index.rst",
+  "definition": {
+    "terms": []
+  },
+  "formal_contract": {
+    "inputs": [],
+    "outputs": [],
+    "invariants": []
+  },
+  "implementation_links": [],
+  "tests": [],
+  "verification_commands": [],
+  "mapping_table": [],
+  "drift_guards": [
+    "python scripts/validate_document_contracts.py"
+  ]
+}

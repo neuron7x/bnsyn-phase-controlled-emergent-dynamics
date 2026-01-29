@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DocumentContract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "document",
+    "definition",
+    "formal_contract",
+    "implementation_links",
+    "tests",
+    "verification_commands",
+    "mapping_table",
+    "drift_guards"
+  ],
+  "properties": {
+    "schema": {
+      "const": "schemas/document_contract.schema.json"
+    },
+    "document": {
+      "type": "string",
+      "minLength": 1
+    },
+    "definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terms"
+      ],
+      "properties": {
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "term",
+              "schema"
+            ],
+            "properties": {
+              "term": {
+                "type": "string",
+                "minLength": 1
+              },
+              "schema": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "formal_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs",
+        "outputs",
+        "invariants"
+      ],
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "implementation_links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mapping_table": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "doc_section",
+          "code",
+          "test",
+          "spec",
+          "ci_job"
+        ],
+        "properties": {
+          "doc_section": {
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "test": {
+            "type": "string",
+            "minLength": 1
+          },
+          "spec": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ci_job": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "drift_guards": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "data": {}
+  }
+}
