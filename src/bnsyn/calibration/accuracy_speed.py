@@ -20,7 +20,6 @@ docs/SPEC.md
 
 from __future__ import annotations
 
-import math
 import time
 from dataclasses import dataclass
 from typing import Callable, Iterable
@@ -77,10 +76,6 @@ def _decay_rhs(tau_ms: float) -> Callable[[Float64Array], Float64Array]:
     return rhs
 
 
-def _analytic_decay(initial: Float64Array, t_ms: float, tau_ms: float) -> Float64Array:
-    return initial * math.exp(-t_ms / tau_ms)
-
-
 def _run_integrator(
     name: str,
     stepper: IntegratorFn,
@@ -92,14 +87,15 @@ def _run_integrator(
 ) -> IntegratorCalibrationResult:
     state = initial.copy()
     rhs = _decay_rhs(tau_ms)
+    decay_factor = float(np.exp(-dt_ms / tau_ms))
+    target = initial.copy()
     sum_abs_error = 0.0
     max_abs_error = 0.0
 
     start = time.perf_counter()
-    for idx in range(steps):
+    for _ in range(steps):
         state = stepper(state, dt_ms, rhs)
-        t_ms = (idx + 1) * dt_ms
-        target = _analytic_decay(initial, t_ms, tau_ms)
+        target *= decay_factor
         errors = np.abs(state - target)
         step_max = float(np.max(errors))
         max_abs_error = max(max_abs_error, step_max)
