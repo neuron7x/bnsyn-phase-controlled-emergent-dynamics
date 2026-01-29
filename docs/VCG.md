@@ -47,7 +47,7 @@ Parameters: `θ_C` (minimum contribution), `α_down` (decrease rate), `α_up` (r
 - I1: `S_i` is deterministic given the same observable log + parameters.
 - I2: `S_i` is monotonic non-increasing while `C_i < θ_C` persists.
 - I3: Recovery is possible (no permanent exclusion) if `C_i ≥ θ_C`.
-- I4: VCG remains side-effect free on the simulation core: no coupling into neuron/synapse state.
+- I4: Proven invariants apply to the pure VCG function only; no claim is made about integration with simulation-core neuron/synapse state.
 
 ### 5) Failure envelopes & mitigations
 - **False-negative contribution** (measurement misses real value) → require *verifiable* contribution signals; keep `α_down` conservative.
@@ -59,7 +59,7 @@ Parameters: `θ_C` (minimum contribution), `α_down` (decrease rate), `α_up` (r
 - A1: Replaying the same event log yields identical `S_i(t)` traces (bitwise).
 - A2: An agent with `C_i < θ_C` for `k` consecutive windows shows strictly decreasing `S_i` until floor.
 - A3: An agent regains `S_i → 1` after sustained `C_i ≥ θ_C`.
-- A4: Disabling VCG yields identical core simulation results (golden tests).
+- A4: Acceptance proofs cover the pure VCG function only; no verified simulation-core integration is asserted.
 
 ### 7) Claim mapping
 Normative claims in this module map to:
