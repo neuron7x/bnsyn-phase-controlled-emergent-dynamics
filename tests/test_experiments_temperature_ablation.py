@@ -1,6 +1,7 @@
 """Smoke tests for temperature ablation experiment."""
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -142,6 +143,13 @@ def test_experiment_runner_cli_smoke(tmp_path: Path) -> None:
     import subprocess
     import sys
 
+    root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    pythonpath = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
+    )
+
     # Run the CLI with minimal seeds
     result = subprocess.run(
         [
@@ -157,6 +165,7 @@ def test_experiment_runner_cli_smoke(tmp_path: Path) -> None:
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
 
     assert result.returncode == 0, f"CLI failed: {result.stderr}"
@@ -248,6 +257,13 @@ def test_experiment_runner_cli_v2_smoke(tmp_path: Path) -> None:
     import subprocess
     import sys
 
+    root = Path(__file__).resolve().parents[1]
+    env = dict(os.environ)
+    pythonpath = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = (
+        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
+    )
+
     # Run the CLI with minimal seeds
     result = subprocess.run(
         [
@@ -263,6 +279,7 @@ def test_experiment_runner_cli_v2_smoke(tmp_path: Path) -> None:
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
 
     assert result.returncode == 0, f"CLI failed: {result.stderr}"

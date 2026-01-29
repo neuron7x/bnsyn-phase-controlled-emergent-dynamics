@@ -38,14 +38,14 @@ def test_dashboard_attach_and_update() -> None:
     assert dashboard._sleep_cycle is mock_sleep_cycle
     assert dashboard._consolidator is mock_consolidator
 
-    # Test update with various metrics
+    # Test update with various metrics (deterministic)
     metrics = {
         "sigma": 1.05,
         "temperature": 1.2,
         "sleep_stage": "NREM2",
         "consolidation": 0.75,
         "avalanche_size": 15,
-        "attractor_point": np.random.randn(10),
+        "attractor_point": np.linspace(0.0, 1.0, num=10),
     }
     dashboard.update(metrics)
 
@@ -98,10 +98,10 @@ def test_dashboard_full_cycle_mocked() -> None:
         # Create dashboard
         dashboard = EmergenceDashboard(figsize=(12, 8))
 
-        # Create mock components with get_attractors method
+        # Create mock components with get_attractors method (deterministic attractors)
         mock_crystallizer = MagicMock()
         mock_attractor = MagicMock()
-        mock_attractor.center = np.random.randn(10)
+        mock_attractor.center = np.linspace(-1.0, 1.0, num=10)
         mock_crystallizer.get_attractors.return_value = [mock_attractor]
 
         dashboard.attach(MagicMock(), mock_crystallizer, MagicMock(), MagicMock())
@@ -113,8 +113,8 @@ def test_dashboard_full_cycle_mocked() -> None:
                 "temperature": 1.0 + 0.2 * np.cos(i * 0.3),
                 "sleep_stage": ["WAKE", "NREM1", "NREM2", "NREM3", "REM"][i % 5],
                 "consolidation": 0.5 + 0.2 * (i / 50.0),
-                "avalanche_size": max(1, int(10 * np.random.rand())),
-                "attractor_point": np.random.randn(10),
+                "avalanche_size": (i % 10) + 1,
+                "attractor_point": np.linspace(0.0, 1.0, num=10),
             }
             dashboard.update(metrics)
 

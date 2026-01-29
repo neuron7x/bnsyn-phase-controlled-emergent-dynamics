@@ -34,9 +34,7 @@ class TestVCGInvariantI1_Determinism:
     Reference: docs/VCG.md:47
     """
 
-    def test_deterministic_replay_identical_logs(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_deterministic_replay_identical_logs(self, default_vcg_params: VCGParams) -> None:
         """Replaying same event log yields identical support score traces."""
         # Define a deterministic event log
         contributions = [5.0, 8.0, 12.0, 3.0, 15.0, 20.0, 7.0, 11.0]
@@ -56,9 +54,9 @@ class TestVCGInvariantI1_Determinism:
             support_trace_2.append(support)
 
         # I1: Traces must be bitwise identical
-        assert (
-            support_trace_1 == support_trace_2
-        ), f"I1 violated: determinism failed\nTrace1: {support_trace_1}\nTrace2: {support_trace_2}"
+        assert support_trace_1 == support_trace_2, (
+            f"I1 violated: determinism failed\nTrace1: {support_trace_1}\nTrace2: {support_trace_2}"
+        )
 
     def test_deterministic_with_different_initial_states(
         self, default_vcg_params: VCGParams
@@ -80,9 +78,7 @@ class TestVCGInvariantI1_Determinism:
         assert support1 > 0.95, f"I1: Support1 did not recover properly: {support1}"
         assert support2 > 0.5, f"I1: Support2 did not recover properly: {support2}"
 
-    def test_determinism_under_seed_control(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_determinism_under_seed_control(self, default_vcg_params: VCGParams) -> None:
         """Determinism holds for repeated deterministic inputs."""
         contributions = [9.0, 10.0, 11.0, 9.5, 10.5, 10.0, 8.0, 12.0, 10.0, 9.0]
 
@@ -107,9 +103,7 @@ class TestVCGInvariantI2_MonotonicDecrease:
     Reference: docs/VCG.md:48
     """
 
-    def test_monotonic_decrease_below_threshold(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_monotonic_decrease_below_threshold(self, default_vcg_params: VCGParams) -> None:
         """Support decreases monotonically when contribution < theta_c."""
         low_contrib = default_vcg_params.theta_c - 1.0  # Below threshold
 
@@ -123,13 +117,11 @@ class TestVCGInvariantI2_MonotonicDecrease:
 
         # I2: Support must be monotonically non-increasing
         for i in range(len(support_history) - 1):
-            assert (
-                support_history[i + 1] <= support_history[i]
-            ), f"I2 violated: support increased at step {i}: {support_history[i]} -> {support_history[i+1]}"
+            assert support_history[i + 1] <= support_history[i], (
+                f"I2 violated: support increased at step {i}: {support_history[i]} -> {support_history[i + 1]}"
+            )
 
-    def test_no_decrease_at_floor(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_no_decrease_at_floor(self, default_vcg_params: VCGParams) -> None:
         """Support stops decreasing at epsilon floor."""
         low_contrib = default_vcg_params.theta_c - 1.0
 
@@ -139,16 +131,12 @@ class TestVCGInvariantI2_MonotonicDecrease:
             support = update_support_level(low_contrib, support, default_vcg_params)
 
         # I2: Support should be at or near floor
-        assert (
-            support >= 0.0
-        ), f"I2 violated: support went negative: {support}"
-        assert (
-            support <= default_vcg_params.epsilon + 0.01
-        ), f"I2 violated: support did not reach floor: {support}"
+        assert support >= 0.0, f"I2 violated: support went negative: {support}"
+        assert support <= default_vcg_params.epsilon + 0.01, (
+            f"I2 violated: support did not reach floor: {support}"
+        )
 
-    def test_strict_decrease_away_from_floor(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_strict_decrease_away_from_floor(self, default_vcg_params: VCGParams) -> None:
         """Support strictly decreases when above floor and contrib < threshold."""
         low_contrib = default_vcg_params.theta_c - 5.0
 
@@ -158,9 +146,9 @@ class TestVCGInvariantI2_MonotonicDecrease:
         support_new = update_support_level(low_contrib, support_prev, default_vcg_params)
 
         # I2: Must decrease (not just non-increase)
-        assert (
-            support_new < support_prev
-        ), f"I2 violated: support did not decrease: {support_prev} -> {support_new}"
+        assert support_new < support_prev, (
+            f"I2 violated: support did not decrease: {support_prev} -> {support_new}"
+        )
 
 
 class TestVCGInvariantI3_RecoveryPossible:
@@ -169,14 +157,14 @@ class TestVCGInvariantI3_RecoveryPossible:
     Reference: docs/VCG.md:49
     """
 
-    def test_recovery_from_low_support(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_recovery_from_low_support(self, default_vcg_params: VCGParams) -> None:
         """Agent can recover from low support by sustained high contribution."""
         # Drive support to floor
         support = 1.0
         for _ in range(50):
-            support = update_support_level(default_vcg_params.theta_c - 5.0, support, default_vcg_params)
+            support = update_support_level(
+                default_vcg_params.theta_c - 5.0, support, default_vcg_params
+            )
 
         support_at_floor = support
         assert support_at_floor < 0.5, "Setup: support should be low"
@@ -189,16 +177,12 @@ class TestVCGInvariantI3_RecoveryPossible:
         support_recovered = support
 
         # I3: Support should have recovered significantly
-        assert (
-            support_recovered > support_at_floor
-        ), f"I3 violated: no recovery after high contribution: {support_at_floor} -> {support_recovered}"
-        assert (
-            support_recovered > 0.7
-        ), f"I3 violated: recovery insufficient: {support_recovered}"
+        assert support_recovered > support_at_floor, (
+            f"I3 violated: no recovery after high contribution: {support_at_floor} -> {support_recovered}"
+        )
+        assert support_recovered > 0.7, f"I3 violated: recovery insufficient: {support_recovered}"
 
-    def test_no_permanent_exclusion(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_no_permanent_exclusion(self, default_vcg_params: VCGParams) -> None:
         """No agent is permanently excluded; recovery always possible."""
         support = 0.0  # Start at floor
 
@@ -208,13 +192,9 @@ class TestVCGInvariantI3_RecoveryPossible:
             support = update_support_level(high_contrib, support, default_vcg_params)
 
         # I3: Agent must be able to recover to near-maximum support
-        assert (
-            support >= 0.8
-        ), f"I3 violated: permanent exclusion detected, support={support}"
+        assert support >= 0.8, f"I3 violated: permanent exclusion detected, support={support}"
 
-    def test_recovery_is_gradual(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_recovery_is_gradual(self, default_vcg_params: VCGParams) -> None:
         """Recovery rate is bounded by alpha_up (gradual increase)."""
         # Drive to floor
         support = 1.0
@@ -224,13 +204,15 @@ class TestVCGInvariantI3_RecoveryPossible:
         support_start = support
 
         # Apply one high contribution update
-        support_after = update_support_level(default_vcg_params.theta_c + 10.0, support_start, default_vcg_params)
+        support_after = update_support_level(
+            default_vcg_params.theta_c + 10.0, support_start, default_vcg_params
+        )
 
         # I3: Increase should be bounded by alpha_up
         increase = support_after - support_start
-        assert (
-            0.0 <= increase <= default_vcg_params.alpha_up + 0.01
-        ), f"I3 violated: recovery rate exceeded alpha_up: {increase} > {default_vcg_params.alpha_up}"
+        assert 0.0 <= increase <= default_vcg_params.alpha_up + 0.01, (
+            f"I3 violated: recovery rate exceeded alpha_up: {increase} > {default_vcg_params.alpha_up}"
+        )
 
 
 class TestVCGInvariantI4_SideEffectFree:
@@ -240,9 +222,7 @@ class TestVCGInvariantI4_SideEffectFree:
     NOTE: Production VCG is currently a pure utility module; tests verify purity only.
     """
 
-    def test_vcg_does_not_mutate_external_state(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_vcg_does_not_mutate_external_state(self, default_vcg_params: VCGParams) -> None:
         """VCG functions are pure with respect to their inputs."""
         support = 0.8
         contrib = default_vcg_params.theta_c - 1.0
@@ -257,9 +237,7 @@ class TestVCGInvariantI4_SideEffectFree:
         assert support_after == support_after_repeat
         assert 0.0 <= alloc <= 1.0
 
-    def test_vcg_is_query_safe(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_vcg_is_query_safe(self, default_vcg_params: VCGParams) -> None:
         """Querying allocation multiplier does not change state."""
         # Update once
         support = update_support_level(10.0, 1.0, default_vcg_params)
@@ -270,13 +248,11 @@ class TestVCGInvariantI4_SideEffectFree:
         support3 = allocation_multiplier(support, default_vcg_params)
 
         # I4: Queries should not alter state
-        assert (
-            support1 == support2 == support3
-        ), f"I4 violated: query changed state {support1}, {support2}, {support3}"
+        assert support1 == support2 == support3, (
+            f"I4 violated: query changed state {support1}, {support2}, {support3}"
+        )
 
-    def test_vcg_disabling_preserves_core_simulation(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_vcg_disabling_preserves_core_simulation(self, default_vcg_params: VCGParams) -> None:
         """VCG disabled corresponds to identity allocation multiplier."""
         support = 1.0
         alloc = allocation_multiplier(support, default_vcg_params)
@@ -288,9 +264,7 @@ class TestVCGInvariantComposite:
     Test that all four VCG invariants hold simultaneously.
     """
 
-    def test_all_vcg_invariants_hold_simultaneously(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_all_vcg_invariants_hold_simultaneously(self, default_vcg_params: VCGParams) -> None:
         """All four VCG invariants must hold throughout simulation."""
         support = 1.0
 
@@ -320,16 +294,14 @@ class TestVCGInvariantComposite:
 
             # I2: Check monotonicity when contrib < threshold
             if contrib < default_vcg_params.theta_c:
-                assert (
-                    support <= support_before
-                ), f"Step {i}: I2 violated (contrib={contrib} < {default_vcg_params.theta_c})"
+                assert support <= support_before, (
+                    f"Step {i}: I2 violated (contrib={contrib} < {default_vcg_params.theta_c})"
+                )
 
             # I3: Check recovery is possible
             if contrib >= default_vcg_params.theta_c:
                 # Support should not decrease (recovery or stable)
-                assert (
-                    support >= support_before - 0.01
-                ), f"Step {i}: I3 violated (no recovery)"
+                assert support >= support_before - 0.01, f"Step {i}: I3 violated (no recovery)"
 
             # I4: VCG should not affect this test's external variables
             # (implicitly tested by not mutating contrib or theta_c)
@@ -341,9 +313,9 @@ class TestVCGInvariantComposite:
             support_replay = update_support_level(contrib, support_replay, default_vcg_params)
             support_trace_replay.append(support_replay)
 
-        assert (
-            support_trace == support_trace_replay
-        ), "I1 violated: determinism failed in composite test"
+        assert support_trace == support_trace_replay, (
+            "I1 violated: determinism failed in composite test"
+        )
 
 
 class TestVCGAcceptanceCriteria:
@@ -373,9 +345,7 @@ class TestVCGAcceptanceCriteria:
 
         assert trace1 == trace2, "A1 violated: bitwise replay failed"
 
-    def test_A2_strictly_decreasing_below_threshold(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_A2_strictly_decreasing_below_threshold(self, default_vcg_params: VCGParams) -> None:
         """A2: Agent with C_i < θ_C for k windows shows strictly decreasing S_i."""
         low_contrib = default_vcg_params.theta_c - 2.0
         support = 1.0
@@ -384,13 +354,9 @@ class TestVCGAcceptanceCriteria:
         for _ in range(5):
             support_prev = support
             support = update_support_level(low_contrib, support, default_vcg_params)
-            assert (
-                support < support_prev or support == 0.0
-            ), "A2 violated: support not decreasing"
+            assert support < support_prev or support == 0.0, "A2 violated: support not decreasing"
 
-    def test_A3_regain_support_to_one(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_A3_regain_support_to_one(self, default_vcg_params: VCGParams) -> None:
         """A3: Agent regains S_i → 1 after sustained high contribution."""
         high_contrib = default_vcg_params.theta_c + 10.0
 
@@ -399,13 +365,9 @@ class TestVCGAcceptanceCriteria:
         for _ in range(100):
             support = update_support_level(high_contrib, support, default_vcg_params)
 
-        assert (
-            support >= 0.95
-        ), f"A3 violated: failed to regain S_i → 1, got {support}"
+        assert support >= 0.95, f"A3 violated: failed to regain S_i → 1, got {support}"
 
-    def test_A4_disabling_vcg_yields_identity(
-        self, default_vcg_params: VCGParams
-    ) -> None:
+    def test_A4_disabling_vcg_yields_identity(self, default_vcg_params: VCGParams) -> None:
         """A4: Disabling VCG (support=1.0 always) yields unmodified allocation."""
         # Simulate "disabled" VCG where support is always 1.0
 

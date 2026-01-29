@@ -72,16 +72,8 @@ def compare_benchmarks(
         "missing": [],
     }
 
-    policy = baseline.get("regression_policy", {})
-    warning_threshold = policy.get("warning_threshold_pct", 5)
-    critical_threshold = policy.get("critical_threshold_pct", 20)
-
-    # Convert current results to lookup dict by metric name
-    current_by_metric = {r.get("metric_name"): r for r in current if isinstance(r, dict)}
-
     for bench in baseline.get("benchmarks", []):
         bench_name = bench["name"]
-        metrics = bench.get("metrics", {})
 
         # Find corresponding current result
         # This is simplified - real implementation would match by benchmark name
