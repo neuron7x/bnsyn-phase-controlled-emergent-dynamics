@@ -11,10 +11,10 @@ Reference: specs/tla/BNsyn.tla:124-157
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
 
 from bnsyn.config import CriticalityParams, TemperatureParams
+from bnsyn.criticality.branching import SigmaController
 from bnsyn.temperature.schedule import TemperatureSchedule
 
 
@@ -60,43 +60,33 @@ class TestTLAInvariantINV1_GainClamp:
         assert default_crit_params.gain_min <= initial_gain <= default_crit_params.gain_max
 
     def test_gain_clamp_extreme_values(self, default_crit_params: CriticalityParams) -> None:
-        """Test gain stays within bounds under extreme configurations."""
-        # Test lower bound
-        assert default_crit_params.gain_min >= 0.0, "INV-1: gain_min must be >= 0"
+        """Gain updates must clamp to bounds via SigmaController."""
+        controller = SigmaController(params=default_crit_params, gain=1.0)
 
-        # Test upper bound
-        assert default_crit_params.gain_max <= 100.0, "INV-1: gain_max must be reasonable"
+        gain_min = default_crit_params.gain_min
+        gain_max = default_crit_params.gain_max
 
-        # Test ordering
-        assert default_crit_params.gain_min < default_crit_params.gain_max, (
-            "INV-1: gain_min < gain_max"
-        )
+        gain_low = controller.step(default_crit_params.sigma_target + 1e6)
+        assert gain_low == gain_min
+
+        gain_high = controller.step(default_crit_params.sigma_target - 1e6)
+        assert gain_high == gain_max
 
     def test_gain_invariant_preserved_across_updates(
         self, default_crit_params: CriticalityParams
     ) -> None:
-        """Simulate gain updates and verify bounds are maintained."""
-        # Start at midpoint
-        gain = (default_crit_params.gain_min + default_crit_params.gain_max) / 2
-        gain_step = 0.1  # Fixed step size for testing
+        """SigmaController updates must maintain gain bounds."""
+        controller = SigmaController(
+            params=default_crit_params,
+            gain=(default_crit_params.gain_min + default_crit_params.gain_max) / 2.0,
+        )
+        sigma_sequence = [0.5, 1.0, 2.0, 0.0, 3.0, 1.5]
 
-        # Simulate 100 random gain updates
-        for _ in range(100):
-            # Random perturbation
-            delta = np.random.uniform(-gain_step, gain_step)
-            gain_new = gain + delta
-
-            # Clamp to bounds (as implementation should do)
-            gain_clamped = np.clip(
-                gain_new, default_crit_params.gain_min, default_crit_params.gain_max
+        for sigma in sigma_sequence:
+            gain = controller.step(sigma)
+            assert default_crit_params.gain_min <= gain <= default_crit_params.gain_max, (
+                f"INV-1 violated: gain={gain} not in [{default_crit_params.gain_min}, {default_crit_params.gain_max}]"
             )
-
-            # Verify INV-1
-            assert default_crit_params.gain_min <= gain_clamped <= default_crit_params.gain_max, (
-                f"INV-1 violated: gain={gain_clamped} not in [{default_crit_params.gain_min}, {default_crit_params.gain_max}]"
-            )
-
-            gain = gain_clamped
 
 
 class TestTLAInvariantINV2_TemperatureBounds:
@@ -203,8 +193,11 @@ class TestTLAInvariantComposite:
     ) -> None:
         """All three invariants must hold at every step of the simulation."""
         schedule = TemperatureSchedule(default_temp_params)
-        gain = (default_crit_params.gain_min + default_crit_params.gain_max) / 2
-        gain_step = 0.1  # Fixed step for testing
+        controller = SigmaController(
+            params=default_crit_params,
+            gain=(default_crit_params.gain_min + default_crit_params.gain_max) / 2.0,
+        )
+        sigma_sequence = [0.8, 1.2, 0.9, 1.5, 0.7]
 
         for step in range(1000):
             # Check INV-2: TemperatureBounds
@@ -217,13 +210,9 @@ class TestTLAInvariantComposite:
             gate = schedule.plasticity_gate()
             assert 0.0 <= gate <= 1.0, f"Step {step}: INV-3 violated"
 
-            # Check INV-1: GainClamp (simulated update)
-            gain_delta = np.random.uniform(-gain_step, gain_step)
-            gain = np.clip(
-                gain + gain_delta,
-                default_crit_params.gain_min,
-                default_crit_params.gain_max,
-            )
+            # Check INV-1: GainClamp via SigmaController
+            sigma = sigma_sequence[step % len(sigma_sequence)]
+            gain = controller.step(sigma)
             assert default_crit_params.gain_min <= gain <= default_crit_params.gain_max, (
                 f"Step {step}: INV-1 violated"
             )
