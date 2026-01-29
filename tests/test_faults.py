@@ -58,6 +58,19 @@ def test_inject_timing_fault_bounds() -> None:
     assert 0.08 <= jittered <= 0.12
 
 
+def test_inject_faults_disabled_paths_return_inputs() -> None:
+    config = FaultConfig(enabled=True, seed=10, probability=0.0)
+    arr = np.array([1.0, 2.0, 3.0])
+    with inject_numeric_fault(config, "nan") as inject:
+        returned = inject(arr)
+    assert returned is arr
+
+    with inject_timing_fault(config, jitter_factor=0.2) as inject:
+        dt = 0.1
+        returned_dt = inject(dt)
+    assert returned_dt == dt
+
+
 def test_inject_stochastic_fault_behavior() -> None:
     config = FaultConfig(enabled=True, seed=4, probability=1.0)
     with inject_stochastic_fault(config) as reseed:

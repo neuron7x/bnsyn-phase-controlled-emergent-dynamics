@@ -55,7 +55,9 @@ class _DummyTorch(types.SimpleNamespace):
         return f"device:{name}"
 
     @staticmethod
-    def as_tensor(data: np.ndarray, dtype: object | None = None, device: object | None = None) -> _DummyTensor:
+    def as_tensor(
+        data: np.ndarray, dtype: object | None = None, device: object | None = None
+    ) -> _DummyTensor:
         return _DummyTensor(np.asarray(data, dtype=float))
 
     @staticmethod
@@ -137,10 +139,34 @@ def test_crystallizer_edges_and_callbacks() -> None:
     phase_transitions: list[tuple[Phase, Phase]] = []
     crystallizer.on_phase_transition(lambda old, new: phase_transitions.append((old, new)))
     crystallizer._attractors = [
-        Attractor(center=np.array([0.0, 0.0]), basin_radius=1.0, stability=0.2, formation_step=0, crystallization=0.2),
-        Attractor(center=np.array([0.0, 0.0]), basin_radius=1.0, stability=0.5, formation_step=0, crystallization=0.5),
-        Attractor(center=np.array([0.0, 0.0]), basin_radius=1.0, stability=0.7, formation_step=0, crystallization=0.7),
-        Attractor(center=np.array([0.0, 0.0]), basin_radius=1.0, stability=0.9, formation_step=0, crystallization=0.9),
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=1.0,
+            stability=0.2,
+            formation_step=0,
+            crystallization=0.2,
+        ),
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=1.0,
+            stability=0.5,
+            formation_step=0,
+            crystallization=0.5,
+        ),
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=1.0,
+            stability=0.7,
+            formation_step=0,
+            crystallization=0.7,
+        ),
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=1.0,
+            stability=0.9,
+            formation_step=0,
+            crystallization=0.9,
+        ),
     ]
     crystallizer._current_phase = Phase.GROWTH
     crystallizer._update_phase()
@@ -205,7 +231,9 @@ def test_adex_validation_and_spike_reset() -> None:
         adex_step(state, params, dt_ms=0.1, I_syn_pA=np.array([np.nan]), I_ext_pA=np.array([0.0]))
 
     with pytest.raises(ValueError):
-        adex_step_adaptive(state, params, dt_ms=0.0, I_syn_pA=np.array([0.0]), I_ext_pA=np.array([0.0]))
+        adex_step_adaptive(
+            state, params, dt_ms=0.0, I_syn_pA=np.array([0.0]), I_ext_pA=np.array([0.0])
+        )
 
     spike_state = AdExState(
         V_mV=np.array([params.Vpeak_mV + 5.0], dtype=float),
@@ -270,7 +298,9 @@ def test_network_torch_paths(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("BNSYN_USE_TORCH", "1")
 
     rng = np.random.default_rng(0)
-    net = Network(NetworkParams(N=4), AdExParams(), SynapseParams(), CriticalityParams(), dt_ms=0.1, rng=rng)
+    net = Network(
+        NetworkParams(N=4), AdExParams(), SynapseParams(), CriticalityParams(), dt_ms=0.1, rng=rng
+    )
     assert net._use_torch
 
     net.step()
@@ -286,7 +316,14 @@ def test_network_torch_paths(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def _make_sleep_cycle(seed: int = 1, n: int = 4) -> SleepCycle:
     pack = seed_all(seed)
-    net = Network(NetworkParams(N=n), AdExParams(), SynapseParams(), CriticalityParams(), dt_ms=0.1, rng=pack.np_rng)
+    net = Network(
+        NetworkParams(N=n),
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.1,
+        rng=pack.np_rng,
+    )
     schedule = TemperatureSchedule(TemperatureParams())
     return SleepCycle(net, schedule, max_memories=5)
 
@@ -294,7 +331,14 @@ def _make_sleep_cycle(seed: int = 1, n: int = 4) -> SleepCycle:
 def test_sleep_cycle_validation_and_callbacks() -> None:
     with pytest.raises(ValueError):
         _ = SleepCycle(
-            Network(NetworkParams(N=4), AdExParams(), SynapseParams(), CriticalityParams(), dt_ms=0.1, rng=np.random.default_rng(0)),
+            Network(
+                NetworkParams(N=4),
+                AdExParams(),
+                SynapseParams(),
+                CriticalityParams(),
+                dt_ms=0.1,
+                rng=np.random.default_rng(0),
+            ),
             TemperatureSchedule(TemperatureParams()),
             max_memories=0,
         )

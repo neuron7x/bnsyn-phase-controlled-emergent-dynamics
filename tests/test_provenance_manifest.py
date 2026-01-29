@@ -91,6 +91,7 @@ def test_manifest_type_validation() -> None:
 
 def test_manifest_capture_git_sha_warning(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test git SHA capture warning path."""
+
     def _raise_error(*_args: object, **_kwargs: object) -> None:
         raise subprocess.CalledProcessError(returncode=1, cmd=["git"])
 
@@ -104,6 +105,7 @@ def test_manifest_capture_git_sha_warning(monkeypatch: pytest.MonkeyPatch) -> No
 
 def test_manifest_capture_dependencies_warning(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test dependency capture warning path."""
+
     def _raise_error() -> None:
         raise RuntimeError("boom")
 

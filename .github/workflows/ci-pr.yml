@@ -237,7 +237,7 @@ jobs:
     with:
       python-version: "3.11"
       markers: "not (validation or property)"
-      coverage-threshold: 85
+      coverage-threshold: 95
       timeout-minutes: 10
       upload-codecov: false
 

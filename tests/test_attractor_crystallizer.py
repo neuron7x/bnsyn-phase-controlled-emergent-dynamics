@@ -23,6 +23,7 @@ import numpy as np
 import pytest
 
 from bnsyn.emergence import (
+    Attractor,
     AttractorCrystallizer,
     Phase,
 )
@@ -179,3 +180,109 @@ def test_ring_buffer_wraparound() -> None:
     # buffer should have wrapped - check state is accessible
     state = crystallizer.get_crystallization_state()
     assert state is not None
+
+
+def test_crystallizer_growth_phase_for_small_attractor_counts() -> None:
+    crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2)
+    crystallizer._attractors = [
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=0.1,
+            stability=0.4,
+            formation_step=0,
+            crystallization=0.8,
+        ),
+        Attractor(
+            center=np.array([1.0, 1.0]),
+            basin_radius=0.1,
+            stability=0.6,
+            formation_step=0,
+            crystallization=1.0,
+        ),
+    ]
+    crystallizer._current_phase = Phase.FLUID
+    crystallizer._update_phase()
+    assert crystallizer._current_phase == Phase.GROWTH
+
+
+def test_crystallizer_growth_phase_when_not_crystallized() -> None:
+    crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2, cluster_eps=0.5)
+    crystallizer._attractors = [
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=0.1,
+            stability=0.2,
+            formation_step=0,
+            crystallization=0.4,
+        ),
+        Attractor(
+            center=np.array([1.0, 1.0]),
+            basin_radius=0.1,
+            stability=0.3,
+            formation_step=0,
+            crystallization=0.6,
+        ),
+        Attractor(
+            center=np.array([2.0, 2.0]),
+            basin_radius=0.1,
+            stability=0.4,
+            formation_step=0,
+            crystallization=0.8,
+        ),
+        Attractor(
+            center=np.array([3.0, 3.0]),
+            basin_radius=0.1,
+            stability=0.7,
+            formation_step=0,
+            crystallization=1.0,
+        ),
+    ]
+    crystallizer._current_phase = Phase.NUCLEATION
+    crystallizer._update_phase()
+    assert crystallizer._current_phase == Phase.GROWTH
+
+
+def test_crystallizer_rejects_duplicate_attractors_within_eps() -> None:
+    crystallizer = AttractorCrystallizer(
+        state_dim=2,
+        snapshot_dim=2,
+        max_buffer_size=4,
+        pca_update_interval=1,
+        cluster_eps=0.5,
+        cluster_min_samples=2,
+    )
+    crystallizer._attractors = [
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=0.0,
+            stability=1.0,
+            formation_step=0,
+            crystallization=1.0,
+        )
+    ]
+    crystallizer.observe(np.array([0.0, 0.0]), temperature=1.0)
+    crystallizer.observe(np.array([0.0, 0.0]), temperature=1.0)
+    assert len(crystallizer.get_attractors()) == 1
+
+
+def test_crystallization_progress_and_state_snapshot() -> None:
+    crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2)
+    crystallizer._attractors = [
+        Attractor(
+            center=np.array([0.0, 0.0]),
+            basin_radius=0.1,
+            stability=0.6,
+            formation_step=0,
+            crystallization=1.0,
+        ),
+        Attractor(
+            center=np.array([1.0, 1.0]),
+            basin_radius=0.1,
+            stability=0.7,
+            formation_step=0,
+            crystallization=1.0,
+        ),
+    ]
+    assert crystallizer.crystallization_progress() == 1.0
+    state = crystallizer.get_crystallization_state()
+    assert state.dominant_attractor == 1
