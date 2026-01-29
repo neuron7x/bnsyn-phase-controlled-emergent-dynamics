@@ -381,5 +381,14 @@ def test_viz_interactive_optional_dependency_errors(monkeypatch: pytest.MonkeyPa
     with pytest.raises(RuntimeError):
         viz_interactive.create_stats_plot([{"sigma": 1.0, "V_mean_mV": -60.0}], dt_ms=0.1)
 
+    real_import = builtins.__import__
+
+    def fake_import(name: str, globals=None, locals=None, fromlist=(), level=0):
+        if name.startswith("streamlit") or name.startswith("plotly"):
+            raise ImportError("forced")
+        return real_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
     with pytest.raises(RuntimeError):
         runpy.run_module("bnsyn.viz.interactive", run_name="__main__")
