@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -21,24 +21,27 @@ coverage:
 
 mutation-baseline:
 	@echo "🧬 Running mutation testing to establish baseline..."
+	@pip install -e ".[test]" -q
 	@pip install mutmut==2.4.5 -q
 	@python scripts/generate_mutation_baseline.py
 
 mutation-check:
 	@echo "🧬 Running mutation testing against baseline..."
+	@pip install -e ".[test]" -q
 	@pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property'"
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
 	@mutmut results
 	@python scripts/check_mutation_score.py --advisory
 
 mutation-check-strict:
 	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
+	@pip install -e ".[test]" -q
 	@pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property'"
+	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
 	@mutmut results
 	@python scripts/check_mutation_score.py --strict
 
@@ -82,6 +85,9 @@ check: format lint mypy coverage ssot security
 docs:
 	sphinx-build docs docs/_build
 	@echo "Docs built at docs/_build"
+
+release-readiness:
+	python scripts/release_readiness.py
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

@@ -16,6 +16,7 @@ Use this index to find any document, specification, or governance artifact.
 | **Governance** | [GOVERNANCE.md](GOVERNANCE.md) |
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |
+| **Release Readiness** | [RELEASE_READINESS.md](RELEASE_READINESS.md) |
 | **Experimental Hypothesis** | [HYPOTHESIS.md](HYPOTHESIS.md) (NON-NORMATIVE) |
 | **Troubleshooting** | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
 | **Contributing** | <a href="../CONTRIBUTING.md">CONTRIBUTING.md</a> |

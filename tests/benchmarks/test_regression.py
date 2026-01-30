@@ -19,6 +19,7 @@ TOLERANCES: dict[str, tuple[float, float]] = {
 }
 
 
+@pytest.mark.benchmark
 @pytest.mark.parametrize("scenario_name", ["small_network", "medium_network", "large_network"])
 def test_benchmark_regression(scenario_name: str) -> None:
     scenario = get_scenario_by_name(scenario_name)

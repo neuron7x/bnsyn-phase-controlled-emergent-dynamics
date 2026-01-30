@@ -52,6 +52,11 @@ make mutation-baseline
 make mutation-check
 ```
 
+`make mutation-baseline` and `make mutation-check` install the test extras
+(`.[test]`) alongside `mutmut==2.4.5` to ensure the test suite runs cleanly.
+Mutation runs exclude tests marked `benchmark` to keep baseline generation
+bounded and deterministic.
+
 ### How It Works
 
 1. **Generate baseline**: `scripts/generate_mutation_baseline.py` runs mutmut, extracts real counts/scores, and writes factual `quality/mutation_baseline.json`

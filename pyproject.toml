@@ -40,6 +40,8 @@ test = [
   "hypothesis==6.150.3",
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "psutil==7.2.1",
 ]
 
 viz = [
@@ -79,6 +81,7 @@ testpaths = ["tests"]
 markers = [
   "smoke: fast critical-path tests",
   "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
   "performance: performance regression tests with timing assertions",
   "integration: integration tests requiring multiple components",
   "property: property-based tests using Hypothesis",
