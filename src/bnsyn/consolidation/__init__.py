@@ -10,11 +10,11 @@ None
 
 Notes
 -----
-Exports the dual-weight consolidation model used in SPEC P1-3.
+Exports the dual-weight consolidation model used in SPEC P1-6.
 
 References
 ----------
-docs/SPEC.md#P1-3
+docs/SPEC.md#P1-6
 """
 
 from .dual_weight import DualWeights as DualWeights

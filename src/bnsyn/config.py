@@ -236,11 +236,11 @@ class DualWeightParams(BaseModel):
 
     Notes
     -----
-    Parameters implement the SPEC P1-3 dual-weight consolidation dynamics.
+    Parameters implement the SPEC P1-6 dual-weight consolidation dynamics.
 
     References
     ----------
-    docs/SPEC.md#P1-3
+    docs/SPEC.md#P1-6
     """
 
     tau_f_s: PositiveFloat = 1800.0  # 30 min
