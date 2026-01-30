@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Iterable
 
 from benchmarks.scenarios.base import BenchmarkScenario
+from benchmarks.scenarios.ci_smoke import SCENARIOS as CI_SMOKE_SCENARIOS
 from benchmarks.scenarios.criticality_sweep import SCENARIOS as CRITICALITY_SCENARIOS
 from benchmarks.scenarios.dt_sweep import SCENARIOS as DT_SCENARIOS
 from benchmarks.scenarios.large_network import SCENARIOS as LARGE_SCENARIOS
@@ -23,6 +24,7 @@ def _merge(*groups: Iterable[BenchmarkScenario]) -> list[BenchmarkScenario]:
 
 
 SCENARIO_SETS: dict[str, list[BenchmarkScenario]] = {
+    "ci_smoke": _merge(CI_SMOKE_SCENARIOS),
     "small_network": _merge(SMALL_SCENARIOS),
     "medium_network": _merge(MEDIUM_SCENARIOS),
     "large_network": _merge(LARGE_SCENARIOS),
