@@ -13,6 +13,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Verify dependency graph enabled
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: repo } = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const status = repo?.security_and_analysis?.dependency_graph?.status;
+            if (status !== "enabled") {
+              core.setFailed(
+                `Dependency graph is ${status ?? "unknown"}. Enable it in Settings > Security & analysis.`
+              );
+            }
       - name: Dependency review
         uses: actions/dependency-review-action@v4
         with:

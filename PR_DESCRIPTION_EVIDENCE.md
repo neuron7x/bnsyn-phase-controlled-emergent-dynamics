@@ -33,6 +33,7 @@ Log: `artifacts/security/make_check.txt`
 - Dependency review workflow: `.github/workflows/dependency-review.yml`
 - Action allowlist enforcement: `scripts/verify_actions_supply_chain.py`
 - PR gate wiring: `.github/workflows/ci-pr.yml` (actions-supply-chain job)
+- Dependency graph precheck with actionable failure message
 
 Verification:
 
