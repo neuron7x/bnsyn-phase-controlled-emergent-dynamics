@@ -57,20 +57,16 @@ def test_adex_outputs_finite(V: float, w: float, I_syn: float, I_ext: float, dt_
         spiked=np.array([False]),
     )
 
-    try:
-        new_state = adex_step(
-            state,
-            params,
-            dt_ms,
-            np.array([I_syn], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
+    new_state = adex_step(
+        state,
+        params,
+        dt_ms,
+        np.array([I_syn], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
 
-        assert np.isfinite(new_state.V_mV[0]), f"V is not finite: {new_state.V_mV[0]}"
-        assert np.isfinite(new_state.w_pA[0]), f"w is not finite: {new_state.w_pA[0]}"
-    except ValueError:
-        # Some inputs may trigger validation errors, which is fine
-        pass
+    assert np.isfinite(new_state.V_mV[0]), f"V is not finite: {new_state.V_mV[0]}"
+    assert np.isfinite(new_state.w_pA[0]), f"w is not finite: {new_state.w_pA[0]}"
 
 
 @pytest.mark.property
@@ -104,18 +100,15 @@ def test_adex_adaptation_nonnegative(V: float, w: float, dt_ms: float) -> None:
         spiked=np.array([False]),
     )
 
-    try:
-        new_state = adex_step(
-            state,
-            params,
-            dt_ms,
-            np.array([0.0], dtype=np.float64),
-            np.array([0.0], dtype=np.float64),
-        )
-        # Allow small numerical errors (up to 1 pA)
-        assert new_state.w_pA[0] >= -1.0, f"w became negative: {new_state.w_pA[0]}"
-    except ValueError:
-        pass
+    new_state = adex_step(
+        state,
+        params,
+        dt_ms,
+        np.array([0.0], dtype=np.float64),
+        np.array([0.0], dtype=np.float64),
+    )
+    # Allow small numerical errors (up to 1 pA)
+    assert new_state.w_pA[0] >= -1.0, f"w became negative: {new_state.w_pA[0]}"
 
 
 @pytest.mark.property
@@ -156,23 +149,22 @@ def test_adex_excitatory_input_increases_voltage(
         spiked=np.array([False]),
     )
 
-    try:
-        new_state = adex_step(
-            state,
-            params,
-            dt_ms,
-            np.array([0.0], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
+    new_state = adex_step(
+        state,
+        params,
+        dt_ms,
+        np.array([0.0], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
 
-        # If spike occurred, voltage resets (expected)
-        # If no spike, voltage should increase with strong excitatory input
-        if not new_state.spiked[0]:
-            # With strong enough input, voltage should increase
-            # (allowing small tolerance for numerical effects)
-            pass  # Just check it doesn't crash
-    except ValueError:
-        pass
+    # If spike occurred, voltage resets (expected)
+    # If no spike, voltage should increase with strong excitatory input
+    if not new_state.spiked[0]:
+        # With strong enough input, voltage should increase
+        # (allowing small tolerance for numerical effects)
+        assert new_state.V_mV[0] >= state.V_mV[0] - 1e-6, (
+            f"Voltage did not increase: {state.V_mV[0]} -> {new_state.V_mV[0]}"
+        )
 
 
 @pytest.mark.property
@@ -278,18 +270,15 @@ def test_adex_resting_state_stability(V: float, w: float, dt_ms: float) -> None:
 
     # Run 10 steps
     for _ in range(10):
-        try:
-            state = adex_step(
-                state,
-                params,
-                dt_ms,
-                np.array([0.0], dtype=np.float64),
-                np.array([0.0], dtype=np.float64),
-            )
-            # Voltage should stay in reasonable bounds
-            assert -100 <= state.V_mV[0] <= 50, f"Voltage out of bounds: {state.V_mV[0]}"
-        except ValueError:
-            break
+        state = adex_step(
+            state,
+            params,
+            dt_ms,
+            np.array([0.0], dtype=np.float64),
+            np.array([0.0], dtype=np.float64),
+        )
+        # Voltage should stay in reasonable bounds
+        assert -100 <= state.V_mV[0] <= 50, f"Voltage out of bounds: {state.V_mV[0]}"
 
 
 @pytest.mark.property
@@ -325,22 +314,19 @@ def test_adex_spike_reset(V: float, w: float, dt_ms: float) -> None:
     # Large excitatory input to trigger spike
     I_ext = 500.0
 
-    try:
-        new_state = adex_step(
-            state,
-            params,
-            dt_ms,
-            np.array([0.0], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
+    new_state = adex_step(
+        state,
+        params,
+        dt_ms,
+        np.array([0.0], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
 
-        if new_state.spiked[0]:
-            # Voltage should be reset
-            assert abs(new_state.V_mV[0] - params.Vreset_mV) < 1e-6, (
-                f"Spike occurred but V={new_state.V_mV[0]}, expected {params.Vreset_mV}"
-            )
-    except ValueError:
-        pass
+    if new_state.spiked[0]:
+        # Voltage should be reset
+        assert abs(new_state.V_mV[0] - params.Vreset_mV) < 1e-6, (
+            f"Spike occurred but V={new_state.V_mV[0]}, expected {params.Vreset_mV}"
+        )
 
 
 @pytest.mark.property
@@ -376,23 +362,20 @@ def test_adex_adaptation_increases_on_spike(V: float, w: float, I_ext: float, dt
         spiked=np.array([False]),
     )
 
-    try:
-        new_state = adex_step(
-            state,
-            params,
-            dt_ms,
-            np.array([0.0], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
+    new_state = adex_step(
+        state,
+        params,
+        dt_ms,
+        np.array([0.0], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
 
-        if new_state.spiked[0]:
-            # Adaptation should have increased (minus any decay)
-            # w_new = w + dt*(...) + b, so w_new >= w + b - decay
-            assert new_state.w_pA[0] > state.w_pA[0], (
-                f"Adaptation did not increase on spike: {state.w_pA[0]} -> {new_state.w_pA[0]}"
-            )
-    except ValueError:
-        pass
+    if new_state.spiked[0]:
+        # Adaptation should have increased (minus any decay)
+        # w_new = w + dt*(...) + b, so w_new >= w + b - decay
+        assert new_state.w_pA[0] > state.w_pA[0], (
+            f"Adaptation did not increase on spike: {state.w_pA[0]} -> {new_state.w_pA[0]}"
+        )
 
 
 @pytest.mark.property
@@ -460,8 +443,7 @@ def test_adex_handles_edge_case_inputs(V: float, w: float) -> None:
 
     Notes
     -----
-    Tests that AdEx doesn't crash on unusual inputs.
-    May raise ValueError for invalid inputs, but should not crash.
+    Tests that AdEx doesn't crash on unusual inputs and stays finite.
     """
     params = AdExParams()
     state = AdExState(
@@ -470,18 +452,13 @@ def test_adex_handles_edge_case_inputs(V: float, w: float) -> None:
         spiked=np.array([False]),
     )
 
-    try:
-        # This may raise ValueError for invalid inputs
-        new_state = adex_step(
-            state, params, 0.1, np.array([0.0], dtype=np.float64), np.array([0.0], dtype=np.float64)
-        )
+    new_state = adex_step(
+        state, params, 0.1, np.array([0.0], dtype=np.float64), np.array([0.0], dtype=np.float64)
+    )
 
-        # If it succeeds, outputs should be finite
-        assert np.isfinite(new_state.V_mV[0])
-        assert np.isfinite(new_state.w_pA[0])
-    except ValueError:
-        # Invalid inputs are rejected - this is acceptable behavior
-        pass
+    # Outputs should be finite
+    assert np.isfinite(new_state.V_mV[0])
+    assert np.isfinite(new_state.w_pA[0])
 
 
 @pytest.mark.property
@@ -522,26 +499,23 @@ def test_adex_timestep_independence(dt1: float, dt2: float) -> None:
         spiked=np.array([False]),
     )
 
-    try:
-        result1 = adex_step(
-            state1,
-            params,
-            dt1,
-            np.array([0.0], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
-        result2 = adex_step(
-            state2,
-            params,
-            dt2,
-            np.array([0.0], dtype=np.float64),
-            np.array([I_ext], dtype=np.float64),
-        )
+    result1 = adex_step(
+        state1,
+        params,
+        dt1,
+        np.array([0.0], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
+    result2 = adex_step(
+        state2,
+        params,
+        dt2,
+        np.array([0.0], dtype=np.float64),
+        np.array([I_ext], dtype=np.float64),
+    )
 
-        # Both should be finite
-        assert np.isfinite(result1.V_mV[0])
-        assert np.isfinite(result2.V_mV[0])
-        assert np.isfinite(result1.w_pA[0])
-        assert np.isfinite(result2.w_pA[0])
-    except ValueError:
-        pass
+    # Both should be finite
+    assert np.isfinite(result1.V_mV[0])
+    assert np.isfinite(result2.V_mV[0])
+    assert np.isfinite(result1.w_pA[0])
+    assert np.isfinite(result2.w_pA[0])

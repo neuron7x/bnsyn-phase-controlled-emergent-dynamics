@@ -1,7 +1,7 @@
 """Fault injection framework for chaos engineering tests.
 
 This module provides context managers and utilities for injecting controlled
-faults into the BNsyn system to test resilience and error handling.
+faults into the BN-Syn system to test resilience and error handling.
 
 All fault injections are deterministic and seeded for reproducibility.
 """
