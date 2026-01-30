@@ -178,7 +178,10 @@ def render_report(results: list[MetricComparison]) -> str:
 
 
 def render_markdown(results: list[MetricComparison]) -> str:
-    lines = ["| Metric | Baseline | Current | Change | Direction | Status | Note |", "| --- | --- | --- | --- | --- | --- | --- |"]
+    lines = [
+        "| Metric | Baseline | Current | Change | Direction | Status | Note |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
     for result in results:
         direction = "higher" if result.higher_is_better else "lower"
         status = result.status
