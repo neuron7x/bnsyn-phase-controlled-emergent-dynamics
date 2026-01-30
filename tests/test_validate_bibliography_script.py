@@ -31,12 +31,7 @@ def test_parse_bibtex_extracts_url_from_howpublished(tmp_path: Path) -> None:
 
 
 def test_load_mapping_rejects_unknown_tier(tmp_path: Path) -> None:
-    mapping = (
-        "CLM-0001:\n"
-        "  bibkey: Example2024\n"
-        "  tier: Tier-Z\n"
-        "  section: 1.2\n"
-    )
+    mapping = "CLM-0001:\n  bibkey: Example2024\n  tier: Tier-Z\n  section: 1.2\n"
     path = tmp_path / "mapping.yml"
     path.write_text(mapping, encoding="utf-8")
 

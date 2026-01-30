@@ -58,7 +58,9 @@ def check_mutation_baseline(path: Path) -> CheckResult:
         return CheckResult(
             name="Mutation baseline",
             status="fail",
-            details="Baseline not active or missing factual counts (" + ", ".join(detail_parts) + ")",
+            details="Baseline not active or missing factual counts ("
+            + ", ".join(detail_parts)
+            + ")",
             blocking=True,
         )
     return CheckResult(
@@ -139,7 +141,9 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     checks.append(version_check)
     checks.append(check_mutation_baseline(repo_root / "quality" / "mutation_baseline.json"))
 
-    blocking_failures = [check.name for check in checks if check.blocking and check.status != "pass"]
+    blocking_failures = [
+        check.name for check in checks if check.blocking and check.status != "pass"
+    ]
     release_ready = len(blocking_failures) == 0
 
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

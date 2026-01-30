@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-01-30T22:00:38.630841Z",
+  "release_ready": false,
+  "version": "0.2.0",
+  "blocking_failures": [
+    "Mutation baseline"
+  ],
+  "checks": [
+    {
+      "name": "Core repository files",
+      "status": "pass",
+      "blocking": true,
+      "details": "All files present"
+    },
+    {
+      "name": "Governance evidence",
+      "status": "pass",
+      "blocking": true,
+      "details": "All files present"
+    },
+    {
+      "name": "Quality documentation",
+      "status": "pass",
+      "blocking": true,
+      "details": "All files present"
+    },
+    {
+      "name": "Quality scripts",
+      "status": "pass",
+      "blocking": true,
+      "details": "All files present"
+    },
+    {
+      "name": "Project version",
+      "status": "pass",
+      "blocking": true,
+      "details": "version=0.2.0"
+    },
+    {
+      "name": "Mutation baseline",
+      "status": "fail",
+      "blocking": true,
+      "details": "Baseline not active or missing factual counts (status='needs_regeneration', total_mutants=0)"
+    }
+  ]
+}

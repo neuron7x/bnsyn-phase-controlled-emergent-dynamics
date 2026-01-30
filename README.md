@@ -20,6 +20,8 @@ BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-co
 - [Start Here](#start-here)
 - [Repository Contract](#repository-contract)
 - [Quickstart](#quickstart)
+- [Demo Runbook](#demo-runbook)
+- [Release Notes](#release-notes)
 - [Development Workflow](#development-workflow)
 - [CI on Pull Requests](#ci-on-pull-requests)
 - [Architecture at a Glance](#architecture-at-a-glance)
@@ -328,6 +330,28 @@ python -m pip install -e ".[dev]"
 ```bash
 python -m bnsyn --help
 ```
+
+**Run the deterministic demo**
+```bash
+bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc
+```
+
+**Run the default PR test suite**
+```bash
+make test
+```
+
+**Determinism note**
+- All random state is seeded via `bnsyn.rng.seed_all(seed)`.
+- Use explicit `--seed` for CLI demos and reproducibility.
+
+## Demo Runbook
+
+Deterministic offline demo steps live in [`docs/DEMO.md`](docs/DEMO.md).
+
+## Release Notes
+
+Release notes for the current candidate are in [`docs/RELEASE_NOTES.md`](docs/RELEASE_NOTES.md).
 
 ## PR Quality Standards
 

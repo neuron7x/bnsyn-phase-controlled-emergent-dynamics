@@ -1,0 +1,87 @@
+........................................................................ [ 14%]
+........................................................................ [ 29%]
+.............................................................s....ss.... [ 44%]
+........................s............................................... [ 59%]
+........................................................................ [ 74%]
+........................................................................ [ 89%]
+..............................................ss.                        [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.12-final-0 _______________
+
+Name                                        Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------
+src/bnsyn/__init__.py                           5      0   100%
+src/bnsyn/calibration/__init__.py               3      0   100%
+src/bnsyn/calibration/accuracy_speed.py        60      0   100%
+src/bnsyn/calibration/fit.py                   22      0   100%
+src/bnsyn/cli.py                              183      0   100%
+src/bnsyn/config.py                            54      0   100%
+src/bnsyn/connectivity/__init__.py              3      0   100%
+src/bnsyn/connectivity/sparse.py               71      0   100%
+src/bnsyn/consolidation/__init__.py             2      0   100%
+src/bnsyn/consolidation/dual_weight.py         32      0   100%
+src/bnsyn/control.py                            5      0   100%
+src/bnsyn/criticality/__init__.py               4      0   100%
+src/bnsyn/criticality/analysis.py              40      0   100%
+src/bnsyn/criticality/branching.py             24      0   100%
+src/bnsyn/criticality/phase_transition.py      83      0   100%
+src/bnsyn/emergence/__init__.py                 2      0   100%
+src/bnsyn/emergence/crystallizer.py           198      0   100%
+src/bnsyn/energy/__init__.py                    2      0   100%
+src/bnsyn/energy/regularization.py             11      0   100%
+src/bnsyn/experiments/__init__.py               3      0   100%
+src/bnsyn/experiments/declarative.py           43      0   100%
+src/bnsyn/incremental.py                       33      0   100%
+src/bnsyn/memory/__init__.py                    4      0   100%
+src/bnsyn/memory/consolidator.py               93      0   100%
+src/bnsyn/memory/ledger.py                     47      0   100%
+src/bnsyn/memory/trace.py                      69      0   100%
+src/bnsyn/neuron/__init__.py                    2      0   100%
+src/bnsyn/neuron/adex.py                      104      0   100%
+src/bnsyn/neurons.py                            3      0   100%
+src/bnsyn/numerics/__init__.py                  2      0   100%
+src/bnsyn/numerics/integrators.py              19      0   100%
+src/bnsyn/plasticity/__init__.py                3      0   100%
+src/bnsyn/plasticity/stdp.py                    9      0   100%
+src/bnsyn/plasticity/three_factor.py           35      0   100%
+src/bnsyn/production/__init__.py                3      0   100%
+src/bnsyn/production/adex.py                   52      0   100%
+src/bnsyn/production/connectivity.py           18      0   100%
+src/bnsyn/production/jax_backend.py            27      0   100%
+src/bnsyn/provenance/__init__.py                2      0   100%
+src/bnsyn/provenance/manifest.py               75      0   100%
+src/bnsyn/provenance/manifest_builder.py       49      4    92%   41-42, 60, 70
+src/bnsyn/rng.py                               21      0   100%
+src/bnsyn/schemas/__init__.py                   3      0   100%
+src/bnsyn/schemas/experiment.py                26      0   100%
+src/bnsyn/sim/__init__.py                       2      0   100%
+src/bnsyn/sim/network.py                      186      0   100%
+src/bnsyn/simulation.py                         3      0   100%
+src/bnsyn/sleep/__init__.py                     3      0   100%
+src/bnsyn/sleep/cycle.py                      124      0   100%
+src/bnsyn/sleep/replay.py                      29      0   100%
+src/bnsyn/sleep/stages.py                      24      0   100%
+src/bnsyn/synapse/__init__.py                   2      0   100%
+src/bnsyn/synapse/conductance.py               53      0   100%
+src/bnsyn/synapses.py                           3      0   100%
+src/bnsyn/temperature/__init__.py               2      0   100%
+src/bnsyn/temperature/schedule.py              22      0   100%
+src/bnsyn/testing/__init__.py                   2      0   100%
+src/bnsyn/testing/faults.py                    80      0   100%
+src/bnsyn/validation/__init__.py                3      0   100%
+src/bnsyn/validation/inputs.py                 47      0   100%
+src/bnsyn/vcg.py                               31      0   100%
+src/bnsyn/viz/__init__.py                       2      0   100%
+src/bnsyn/viz/dashboard.py                    166      0   100%
+src/bnsyn/viz/interactive.py                  125      0   100%
+-------------------------------------------------------------------------
+TOTAL                                        2458      4    99%
+Coverage JSON written to file artifacts/release_rc/coverage.json
