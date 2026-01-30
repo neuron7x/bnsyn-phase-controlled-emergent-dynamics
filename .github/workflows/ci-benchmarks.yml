@@ -121,6 +121,20 @@ jobs:
         run: |
           python scripts/run_benchmarks.py --suite ci
 
+      - name: Run performance baselines
+        run: |
+          python scripts/benchmark_physics.py --output benchmarks/physics_current.json
+          python scripts/profile_kernels.py --steps 100 --output benchmarks/kernel_profile_current.json
+
+      - name: Check benchmark regressions
+        run: |
+          python scripts/check_benchmark_regressions.py \
+            --physics-baseline benchmarks/baselines/physics_baseline.json \
+            --physics-current benchmarks/physics_current.json \
+            --kernel-baseline benchmarks/baselines/kernel_profile.json \
+            --kernel-current benchmarks/kernel_profile_current.json \
+            --threshold 0.10
+
       - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -128,4 +142,6 @@ jobs:
           path: |
             benchmarks/results.json
             benchmarks/summary.json
+            benchmarks/physics_current.json
+            benchmarks/kernel_profile_current.json
           retention-days: 7
