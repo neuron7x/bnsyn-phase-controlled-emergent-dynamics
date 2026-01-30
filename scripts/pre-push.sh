@@ -26,7 +26,8 @@ python scripts/scan_normative_tags.py || { echo "❌ Normative tag scan failed";
 
 echo "7️⃣  Security audit..."
 gitleaks detect --redact --source=. || { echo "❌ Gitleaks failed"; exit 1; }
-pip-audit || { echo "⚠️  Pip audit issues (non-blocking)"; }
+mkdir -p artifacts
+pip-audit --desc --format json --output artifacts/pip-audit.json || { echo "❌ Pip audit failed"; exit 1; }
 bandit -r src/ -ll || { echo "❌ Bandit security check failed"; exit 1; }
 
 echo ""
