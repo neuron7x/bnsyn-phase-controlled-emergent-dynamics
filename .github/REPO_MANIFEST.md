@@ -143,8 +143,12 @@ bnsyn-phase-controlled-emergent-dynamics/
 - Criticality detection: < 500ms per analysis
 
 **Regression Gates:**
-- ❌ Not yet implemented (target: Q1 2026)
-- Planned: Store baselines in Git, fail CI if >10% slowdown
+- ✅ Implemented: committed baselines + CI regression gate
+- Baselines:
+  - `benchmarks/baselines/physics_baseline.json`
+  - `benchmarks/baselines/kernel_profile.json`
+- Gate: `scripts/check_benchmark_regressions.py` fails CI if any metric regresses by >10%
+- PR blocking: enforced in `.github/workflows/ci-benchmarks.yml` for pull requests
 
 ---
 
