@@ -299,24 +299,15 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     print(f"Metrics written to {metrics_path}")
 
     # Generate manifest
-    manifest = {
-        "seed": args.seed,
-        "steps_wake": args.steps_wake,
-        "steps_sleep": args.steps_sleep,
-        "N": N,
-        "package_version": "0.2.0",  # From pyproject.toml
-    }
+    from bnsyn.provenance.manifest_builder import build_cli_manifest
 
-    # Try to get git SHA
-    try:
-        import subprocess
-
-        sha = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=Path(__file__).parent.parent, text=True
-        ).strip()
-        manifest["git_sha"] = sha
-    except Exception:
-        pass
+    manifest = build_cli_manifest(
+        seed=args.seed,
+        steps_wake=args.steps_wake,
+        steps_sleep=args.steps_sleep,
+        network_size=N,
+        package_version="0.2.0",  # From pyproject.toml
+    )
 
     manifest_path = out_dir / "manifest.json"
     with open(manifest_path, "w") as f:
