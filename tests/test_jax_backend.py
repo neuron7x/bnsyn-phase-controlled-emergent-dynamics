@@ -43,6 +43,20 @@ def _import_module_without_jax(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     return importlib.import_module(module_name)
 
 
+def _import_module_with_find_spec_error(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
+    module_name = "bnsyn.production.jax_backend"
+    original_find_spec = importlib.util.find_spec
+
+    def fake_find_spec(name: str, *args: object, **kwargs: object) -> object | None:
+        if name == "jax.numpy":
+            raise ValueError("invalid spec")
+        return original_find_spec(name, *args, **kwargs)
+
+    monkeypatch.setattr(importlib.util, "find_spec", fake_find_spec)
+    sys.modules.pop(module_name, None)
+    return importlib.import_module(module_name)
+
+
 def test_jax_backend_import_safe_without_jax(monkeypatch: pytest.MonkeyPatch) -> None:
     module = _import_module_without_jax(monkeypatch)
     assert module.JAX_AVAILABLE is False
@@ -108,3 +122,10 @@ def test_adex_step_jax_with_numpy_shim(monkeypatch: pytest.MonkeyPatch) -> None:
     sys.modules.pop("bnsyn.production.jax_backend", None)
     sys.modules.pop("jax.numpy", None)
     sys.modules.pop("jax", None)
+
+
+def test_jax_backend_handles_find_spec_value_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    module = _import_module_with_find_spec_error(monkeypatch)
+    assert module.JAX_AVAILABLE is False
