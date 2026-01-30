@@ -77,6 +77,10 @@ cat quality/mutation_baseline.json | jq '.metrics'
 - Normative tag usage
 - TierS annotation correctness
 
+**Security Summary (A6: CI Safety)**
+- PR gates block on gitleaks, pip-audit, and bandit findings.
+- pip-audit outputs `artifacts/pip-audit.json` for traceability across CI runs.
+
 ### Guard Tests
 
 - Invariant mappings are protected by `tests/test_spec_mapping_guard.py`.

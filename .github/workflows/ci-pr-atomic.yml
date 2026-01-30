@@ -149,14 +149,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
       - name: pip-audit
-        run: pip-audit --desc --format json --output pip-audit-report.json
+        run: |
+          mkdir -p artifacts
+          pip-audit --desc --format json --output artifacts/pip-audit.json
       - name: bandit
         run: bandit -r src/ -ll
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: security-report-${{ github.sha }}
-          path: pip-audit-report.json
+          path: artifacts/pip-audit.json
           retention-days: 30
 
   finalize:
