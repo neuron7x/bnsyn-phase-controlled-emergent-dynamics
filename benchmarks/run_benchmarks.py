@@ -49,6 +49,8 @@ def get_python_version() -> str:
 
 def run_scenario_subprocess(scenario_dict: dict[str, Any]) -> dict[str, Any] | None:
     """Run a benchmark scenario in a subprocess for isolation."""
+    repo_root = Path.cwd()
+    repo_src = repo_root / "src"
     script = f"""
 import atexit
 import shutil
@@ -56,7 +58,8 @@ import tempfile
 import resource
 import sys
 import json
-sys.path.insert(0, {repr(str(Path.cwd()))})
+sys.path.insert(0, {repr(str(repo_root))})
+sys.path.insert(0, {repr(str(repo_src))})
 
 from benchmarks.metrics import metrics_to_dict, run_benchmark
 from benchmarks.scenarios.base import BenchmarkScenario
@@ -140,6 +143,7 @@ def run_benchmarks(
     scenario_set: str,
     repeats: int,
     output_json: str | None,
+    output_csv: str | None,
     warmup: int,
 ) -> list[dict[str, Any]]:
     """Run benchmark scenarios and return results."""
@@ -246,6 +250,18 @@ def run_benchmarks(
             json.dump(_sanitize_for_json(all_results), f, indent=2, allow_nan=False)
         logging.info("Wrote JSON: %s", output_json)
 
+    if output_csv and all_results:
+        import csv
+
+        Path(output_csv).parent.mkdir(parents=True, exist_ok=True)
+        fieldnames = list(all_results[0].keys())
+        with open(output_csv, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in _sanitize_for_json(all_results):
+                writer.writerow(row)
+        logging.info("Wrote CSV: %s", output_csv)
+
     if bottleneck is not None and device is not None and device.type == "cuda":
         bottleneck()
 
@@ -258,6 +274,7 @@ def main() -> int:
         "--scenario",
         default="small_network",
         choices=[
+            "ci_smoke",
             "small_network",
             "medium_network",
             "large_network",
@@ -271,6 +288,7 @@ def main() -> int:
     parser.add_argument("--repeats", type=int, default=3, help="Number of repeats per scenario")
     parser.add_argument("--warmup", type=int, default=1, help="Warmup runs per scenario")
     parser.add_argument("--json", help="Output JSON file path")
+    parser.add_argument("--csv", help="Output CSV file path")
 
     args = parser.parse_args()
 
@@ -283,6 +301,7 @@ def main() -> int:
         scenario_set=args.scenario,
         repeats=args.repeats,
         output_json=args.json,
+        output_csv=args.csv,
         warmup=args.warmup,
     )
 
