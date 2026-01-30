@@ -30,7 +30,7 @@ CLAIMS = ROOT / "claims" / "claims.yml"
 DOI_RE = re.compile(r"doi\s*=\s*\{([^}]+)\}", re.IGNORECASE)
 KEY_RE = re.compile(r"@\w+\{([^,]+),")
 FIELD_RE = re.compile(r"(?im)^\s*(\w+)\s*=\s*[\{\"]([^\"}]+)[\}\"]\s*,?")
-URL_IN_HOWPUBLISHED_RE = re.compile(r"\\url\{([^}]+)\}")
+URL_IN_HOWPUBLISHED_RE = re.compile(r"\\url\{([^}]+)\}?")
 HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED_TIERS = {"Tier-A", "Tier-S", "Tier-B", "Tier-C"}
 
