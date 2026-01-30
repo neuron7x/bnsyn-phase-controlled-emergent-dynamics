@@ -12,76 +12,14 @@ python -m experiments.runner temp_ablation_v1 --seeds 5 --out results/_smoke
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import re
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
+from bnsyn.provenance.manifest_builder import build_experiment_manifest
 from experiments.registry import get_experiment_config
 from experiments.temperature_ablation_consolidation import run_temperature_ablation_experiment
-
-
-def get_git_commit() -> str | None:
-    """Get current git commit hash.
-
-    Returns
-    -------
-    str | None
-        Commit hash or None if not in git repo.
-    """
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=Path(__file__).parent.parent,
-        )
-        return result.stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return None
-
-
-def compute_file_hash(filepath: Path) -> str:
-    """Compute SHA256 hash of a file.
-
-    Parameters
-    ----------
-    filepath : Path
-        Path to file.
-
-    Returns
-    -------
-    str
-        Hex digest of SHA256 hash.
-    """
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
-        sha256.update(f.read())
-    return sha256.hexdigest()
-
-
-def _extract_spec_version(spec_path: Path) -> str:
-    """Extract spec version from header or fallback to hash."""
-    with open(spec_path, "r", encoding="utf-8") as f:
-        header = f.readline().strip()
-    match = re.search(r"\((v[^)]+)\)", header)
-    if match:
-        return match.group(1)
-    return compute_file_hash(spec_path)
-
-
-def _extract_hypothesis_version(hypothesis_path: Path) -> str:
-    """Extract hypothesis version from header or fallback to hash."""
-    with open(hypothesis_path, "r", encoding="utf-8") as f:
-        for line in f:
-            match = re.match(r"\*\*Version\*\*:\s*(.+)", line.strip())
-            if match:
-                return match.group(1).strip()
-    return compute_file_hash(hypothesis_path)
 
 
 def generate_manifest(
@@ -106,31 +44,14 @@ def generate_manifest(
     params : dict[str, Any]
         Experiment parameters.
     """
-    result_files: dict[str, str] = {}
-
-    # Compute hashes for all result files
-    for result_file in output_dir.glob("*.json"):
-        if result_file.name != "manifest.json":
-            result_files[result_file.name] = compute_file_hash(result_file)
-
-    repo_root = Path(__file__).parent.parent
-    spec_path = repo_root / "docs" / "SPEC.md"
-    hypothesis_path = repo_root / "docs" / "HYPOTHESIS.md"
-
-    manifest: dict[str, Any] = {
-        "experiment": experiment_name,
-        "version": "1.0",
-        "git_commit": get_git_commit(),
-        "python_version": sys.version,
-        "spec_version": _extract_spec_version(spec_path),
-        "hypothesis_version": _extract_hypothesis_version(hypothesis_path),
-        "spec_path": spec_path.relative_to(repo_root).as_posix(),
-        "hypothesis_path": hypothesis_path.relative_to(repo_root).as_posix(),
-        "seeds": seeds,
-        "steps": steps,
-        "params": params,
-        "result_files": result_files,
-    }
+    manifest = build_experiment_manifest(
+        output_dir=output_dir,
+        experiment_name=experiment_name,
+        seeds=seeds,
+        steps=steps,
+        params=params,
+        repo_root=Path(__file__).parent.parent,
+    )
 
     manifest_path = output_dir / "manifest.json"
     with open(manifest_path, "w", encoding="utf-8") as f:
