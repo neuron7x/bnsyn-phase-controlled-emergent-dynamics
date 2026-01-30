@@ -1,4 +1,4 @@
-"""Testing utilities for BNsyn chaos engineering and fault injection."""
+"""Testing utilities for BN-Syn chaos engineering and fault injection."""
 
 from bnsyn.testing.faults import (
     FaultConfig,

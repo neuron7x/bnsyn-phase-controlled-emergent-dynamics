@@ -1,1 +1,1 @@
-"""Chaos engineering tests for BNsyn resilience validation."""
+"""Chaos engineering tests for BN-Syn resilience validation."""
