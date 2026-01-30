@@ -418,7 +418,7 @@ def main() -> None:
 
     Run sleep-stack demo::
 
-        $ bnsyn demo sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600
+        $ bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600
 
     Output format (demo)::
 

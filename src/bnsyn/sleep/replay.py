@@ -58,11 +58,18 @@ def weighted_pattern_selection(
     """
     if not patterns:
         raise ValueError("patterns list is empty")
-    if len(importance) != len(patterns):
+    importance_arr = np.asarray(importance, dtype=np.float64)
+    if importance_arr.ndim != 1:
+        raise ValueError("importance must be a 1D array")
+    if len(importance_arr) != len(patterns):
         raise ValueError("importance length must match patterns length")
+    if not np.all(np.isfinite(importance_arr)):
+        raise ValueError("importance must be finite")
+    if np.any(importance_arr < 0):
+        raise ValueError("importance must be non-negative")
 
     # Normalize weights
-    weights = importance.copy()
+    weights = importance_arr.copy()
     if float(np.sum(weights)) == 0:
         weights = np.ones_like(weights)
     weights = weights / float(np.sum(weights))
