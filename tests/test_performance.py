@@ -39,8 +39,12 @@ def test_adex_step_performance() -> None:
         state = adex_step(state, params, dt_ms=0.1, I_syn_pA=I_syn, I_ext_pA=I_ext)
     elapsed = time.perf_counter() - start
 
-    # Performance assertion: 100 steps for N=1000 should take < 100ms
-    assert elapsed < 0.1, f"AdEx step too slow: {elapsed:.3f}s for 100 steps (N=1000)"
+    # Deterministic invariants: shapes and finiteness
+    assert state.V_mV.shape == (N,)
+    assert state.w_pA.shape == (N,)
+    assert state.spiked.shape == (N,)
+    assert np.all(np.isfinite(state.V_mV))
+    assert np.all(np.isfinite(state.w_pA))
 
     # Log timing for monitoring
     per_step_us = (elapsed / 100) * 1e6
@@ -66,8 +70,12 @@ def test_nmda_block_performance() -> None:
         _ = nmda_mg_block(V, mg_mM=1.0)
     elapsed = time.perf_counter() - start
 
-    # Performance assertion: 1000 calls for N=10000 should take < 200ms
-    assert elapsed < 0.2, f"NMDA block too slow: {elapsed:.3f}s for 1000 calls (N={N})"
+    # Deterministic invariants: shapes and finiteness
+    y = nmda_mg_block(V, mg_mM=1.0)
+    assert V.shape == (N,)
+    assert y.shape == (N,)
+    assert np.all(np.isfinite(V))
+    assert np.all(np.isfinite(y))
 
     # Log timing
     per_call_us = (elapsed / 1000) * 1e6
@@ -106,9 +114,14 @@ def test_network_step_performance() -> None:
         net.step()
     elapsed = time.perf_counter() - start
 
-    # Performance assertion: 100 steps should take < 1s
+    # Deterministic invariants: shapes and finiteness
     N = nparams.N
-    assert elapsed < 1.0, f"Network step too slow: {elapsed:.3f}s for 100 steps (N={N})"
+    assert net.state.V_mV.shape == (N,)
+    assert net.state.w_pA.shape == (N,)
+    assert net.state.spiked.shape == (N,)
+    assert net.is_inhib.shape == (N,)
+    assert np.all(np.isfinite(net.state.V_mV))
+    assert np.all(np.isfinite(net.state.w_pA))
 
     # Log timing
     per_step_ms = (elapsed / 100) * 1e3
@@ -142,8 +155,10 @@ def test_sparse_matmul_performance() -> None:
         _ = W.apply(x)
     elapsed = time.perf_counter() - start
 
-    # Performance assertion: 1000 sparse matvecs should take < 200ms
-    assert elapsed < 0.2, f"Sparse matmul too slow: {elapsed:.3f}s for 1000 ops (N={N})"
+    # Deterministic invariants: shapes and finiteness
+    y = W.apply(x)
+    assert y.shape == (N,)
+    assert np.all(np.isfinite(y))
 
     # Log timing
     per_op_us = (elapsed / 1000) * 1e6

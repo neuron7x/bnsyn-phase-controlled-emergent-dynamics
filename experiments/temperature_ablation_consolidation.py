@@ -297,8 +297,7 @@ def run_temperature_ablation_experiment(
     fixed_high_w_cons_var = fixed_high_agg["stability_w_cons_var_end"]
 
     w_total_vars = [
-        result["aggregates"]["stability_w_total_var_end"]
-        for result in condition_results.values()
+        result["aggregates"]["stability_w_total_var_end"] for result in condition_results.values()
     ]
     w_total_var_min = min(w_total_vars)
     w_total_var_max = max(w_total_vars)
@@ -320,9 +319,7 @@ def run_temperature_ablation_experiment(
             else 0.0
         )
         w_total_var_minmax = (
-            (w_total_var - w_total_var_min) / w_total_var_range
-            if w_total_var_range > 0
-            else 0.0
+            (w_total_var - w_total_var_min) / w_total_var_range if w_total_var_range > 0 else 0.0
         )
 
         aggregates["normalized"] = {
