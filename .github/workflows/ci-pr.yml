@@ -169,6 +169,39 @@ jobs:
           path: artifacts/pip-audit.json
           retention-days: 30
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -e ".[dev,test]"
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+      - name: pip-audit
+        run: |
+          mkdir -p artifacts
+          pip-audit --desc --format json --output artifacts/pip-audit.json
+      - name: bandit
+        run: bandit -r src/ -ll
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-${{ github.sha }}
+          path: artifacts/pip-audit.json
+          retention-days: 30
+
   quality:
     uses: ./.github/workflows/_reusable_quality.yml
     with:

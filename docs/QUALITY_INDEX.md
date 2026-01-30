@@ -2,6 +2,10 @@
 
 Quick reference for running quality checks locally and understanding what each artifact proves.
 
+## Recent Updates
+
+- Security enforcement aligned: gitleaks, pip-audit, and bandit now block in both `ci-pr.yml` and `ci-pr-atomic.yml`, with pip-audit JSON artifacts retained for audit trails.
+
 ## Local Commands
 
 | Command | What it does | Blocking? |

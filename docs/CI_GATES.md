@@ -44,6 +44,7 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 4. **Build & Import** - Package build + import checks
 5. **Quality Gates** - Ruff, Pylint, Mypy
 6. **Security Scans** - Gitleaks, pip-audit, Bandit
+   - Enforced in both `ci-pr.yml` and `ci-pr-atomic.yml` as blocking gates
    - pip-audit runs with `--desc --format json` and stores `artifacts/pip-audit.json` for traceability
 
 **Total Runtime:** ~8-10 minutes

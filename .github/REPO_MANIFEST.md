@@ -18,7 +18,7 @@ The repository implements a **Fractal Quality Architecture** with 7 universal ax
 | **OBSERVABILITY** | A3 | 90% ✅ | 90% | • GitHub step summaries in all workflows<br>• Elite validation workflows<br>• Artifact uploads (logs, reports)<br>• Structured logging in experiments |
 | **EXHAUSTIVENESS** | A4 | 90% ✅ | 85% | • 85% test coverage<br>• 10 validation tests (scientific claims)<br>• 8 property tests (Hypothesis)<br>• Claims coverage enforcement (CLM-0011)<br>• Integration + unit + validation tests |
 | **PERFORMANCE** | A5 | 92% ✅ | 90% | • Golden baseline (8 benchmarks)<br>• Regression detection (weekly)<br>• Benchmarks in CI (determinism, scaling, criticality)<br>• Profiling support (psutil) |
-| **SECURITY** | A6 | 91% ✅ | 95% | • Gitleaks, pip-audit, bandit in CI<br>• Pinned dependencies with hashes<br>• CodeQL scanning<br>• No secrets in code<br>• Proactive CVE remediation |
+| **SECURITY** | A6 | 91% ✅ | 95% | • Gitleaks, pip-audit, bandit enforced in ci-pr + ci-pr-atomic<br>• Pinned dependencies with hashes<br>• CodeQL scanning<br>• No secrets in code<br>• Proactive CVE remediation |
 | **DOCUMENTATION** | A7 | 95% ✅ | 95% | • 100% public API docstrings<br>• CI_GATES.md, ACTIONS_TEST_PROTOCOL.md<br>• Evidence coverage matrix<br>• Quality manifests<br>• SPEC.md governance |
 
 **Overall Score:** 91.4% (weighted average)  
@@ -85,6 +85,7 @@ bnsyn-phase-controlled-emergent-dynamics/
 - ✅ ci-pr / quality
 - ✅ ci-pr / build
 - ✅ ci-pr / tests-smoke
+- ✅ ci-pr / security
 - ✅ ci-pr-atomic / determinism (3x runs)
 - ✅ ci-pr-atomic / quality
 - ✅ ci-pr-atomic / tests-smoke (≥85% coverage)
@@ -97,9 +98,9 @@ bnsyn-phase-controlled-emergent-dynamics/
 - Branch up-to-date with main
 
 **Security Gates:**
-- Gitleaks (no secrets)
-- pip-audit (no vulnerabilities)
-- bandit (no high/medium severity issues)
+- Gitleaks (no secrets) in ci-pr + ci-pr-atomic
+- pip-audit (no vulnerabilities) in ci-pr + ci-pr-atomic
+- bandit (no high/medium severity issues) in ci-pr + ci-pr-atomic
 - CodeQL (weekly scans)
 
 ---
@@ -193,7 +194,8 @@ python scripts/validate_claims.py
 python scripts/scan_governed_docs.py
 
 # Security audit
-pip-audit
+gitleaks detect --redact --source=. --config .gitleaks.toml
+pip-audit --desc --format json --output artifacts/pip-audit.json
 bandit -r src/ -ll
 ```
 
