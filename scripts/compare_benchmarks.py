@@ -10,7 +10,7 @@ Exit codes:
 
 Usage:
     python scripts/compare_benchmarks.py --baseline benchmarks/baselines/golden_baseline.yml \\
-                                         --current benchmarks/baseline.json \\
+                                         --current benchmarks/baselines/baseline.json \\
                                          --format markdown
 """
 
@@ -178,7 +178,7 @@ def main() -> None:
     parser.add_argument(
         "--current",
         type=Path,
-        default=Path("benchmarks/baseline.json"),
+        default=Path("benchmarks/baselines/baseline.json"),
         help="Path to current benchmark results JSON",
     )
     parser.add_argument(

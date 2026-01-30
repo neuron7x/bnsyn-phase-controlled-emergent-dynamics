@@ -9,7 +9,7 @@ Parameters
 --backend : str
     Execution backend: 'reference' (default) or 'accelerated'
 --output : str
-    Path to output JSON file (default: benchmarks/physics_baseline.json)
+    Path to output JSON file (default: benchmarks/baselines/physics_baseline.json)
 --seed : int
     Random seed for deterministic reproduction (default: 42)
 --neurons : int
@@ -255,8 +255,8 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=str,
-        default="benchmarks/physics_baseline.json",
-        help="Output JSON path (default: benchmarks/physics_baseline.json)",
+        default="benchmarks/baselines/physics_baseline.json",
+        help="Output JSON path (default: benchmarks/baselines/physics_baseline.json)",
     )
     parser.add_argument(
         "--seed",

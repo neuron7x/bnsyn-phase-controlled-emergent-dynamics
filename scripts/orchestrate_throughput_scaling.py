@@ -117,6 +117,8 @@ def main() -> None:
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    baselines_dir = output_dir / "baselines"
+    baselines_dir.mkdir(parents=True, exist_ok=True)
 
     print("\n" + "=" * 60)
     print("🧬 BN-Syn Throughput Scaling Orchestrator")
@@ -130,7 +132,7 @@ def main() -> None:
     exit_codes = []
 
     # STEP 1: Ground-truth baseline (reference backend)
-    ref_json = str(output_dir / "physics_baseline.json")
+    ref_json = str(baselines_dir / "physics_baseline.json")
     exit_codes.append(
         run_command(
             [
@@ -150,7 +152,7 @@ def main() -> None:
     )
 
     # STEP 2: Kernel profiling
-    profile_json = str(output_dir / "kernel_profile.json")
+    profile_json = str(baselines_dir / "kernel_profile.json")
     exit_codes.append(
         run_command(
             [

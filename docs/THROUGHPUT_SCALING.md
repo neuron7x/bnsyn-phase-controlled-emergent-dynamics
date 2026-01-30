@@ -19,7 +19,7 @@ All 7 steps of the physics-preserving optimization framework have been successfu
 **Implementation**:
 - Created `scripts/benchmark_physics.py`
 - Measures: spikes, updates/sec, wall time, σ, gain, attractor metrics
-- Outputs: `benchmarks/physics_baseline.json`
+- Outputs: `benchmarks/baselines/physics_baseline.json`
 
 **Results**:
 - Reference throughput: 19.1M updates/sec
@@ -35,7 +35,7 @@ All 7 steps of the physics-preserving optimization framework have been successfu
 **Implementation**:
 - Created `scripts/profile_kernels.py`
 - Instruments: AdEx, conductance, synapse propagation, criticality
-- Outputs: `benchmarks/kernel_profile.json`
+- Outputs: `benchmarks/baselines/kernel_profile.json`
 
 **Key Findings**:
 1. `full_step`: Primary cost (integrated)
@@ -217,9 +217,9 @@ All physics constraints from the problem statement are maintained:
 5. `scripts/orchestrate_throughput_scaling.py` - Master orchestrator
 
 ### Benchmarks
-1. `benchmarks/physics_baseline.json` - Reference backend metrics
+1. `benchmarks/baselines/physics_baseline.json` - Reference backend metrics
 2. `benchmarks/physics_accelerated.json` - Accelerated backend metrics
-3. `benchmarks/kernel_profile.json` - Performance Jacobian
+3. `benchmarks/baselines/kernel_profile.json` - Performance Jacobian
 4. `benchmarks/scaling_plan.md` - Optimization roadmap
 5. `benchmarks/equivalence_report.md` - Physics validation report
 6. `benchmarks/throughput_gain.json` - Performance improvements
@@ -253,12 +253,12 @@ python scripts/benchmark_physics.py --backend accelerated
 
 # STEP 5: Verify equivalence
 python scripts/verify_equivalence.py \
-  --reference benchmarks/physics_baseline.json \
+  --reference benchmarks/baselines/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json
 
 # STEP 6: Calculate gains
 python scripts/calculate_throughput_gain.py \
-  --reference benchmarks/physics_baseline.json \
+  --reference benchmarks/baselines/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json
 ```
 

@@ -7,7 +7,7 @@ bottlenecks and scaling surfaces for optimization.
 Parameters
 ----------
 --output : str
-    Path to output JSON file (default: benchmarks/kernel_profile.json)
+    Path to output JSON file (default: benchmarks/baselines/kernel_profile.json)
 --seed : int
     Random seed for deterministic reproduction (default: 42)
 --neurons : int
@@ -269,8 +269,8 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=str,
-        default="benchmarks/kernel_profile.json",
-        help="Output JSON path (default: benchmarks/kernel_profile.json)",
+        default="benchmarks/baselines/kernel_profile.json",
+        help="Output JSON path (default: benchmarks/baselines/kernel_profile.json)",
     )
     parser.add_argument(
         "--seed",

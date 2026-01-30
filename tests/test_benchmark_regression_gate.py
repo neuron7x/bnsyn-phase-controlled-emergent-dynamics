@@ -71,3 +71,65 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
     assert has_regression
     regression_metrics = [result for result in results if result.status == "regression"]
     assert any("performance.updates_per_sec" == result.name for result in regression_metrics)
+
+
+def test_regression_gate_allows_within_threshold(tmp_path: Path) -> None:
+    physics_baseline = {
+        "performance": {
+            "updates_per_sec": 100.0,
+            "spikes_per_sec": 10.0,
+            "energy_cost": 110.0,
+            "wall_time_sec": 1.0,
+        }
+    }
+    physics_current = {
+        "performance": {
+            "updates_per_sec": 95.0,
+            "spikes_per_sec": 10.0,
+            "energy_cost": 111.0,
+            "wall_time_sec": 1.05,
+        }
+    }
+    kernel_baseline = {
+        "kernels": {
+            "full_step": {
+                "total_time_sec": 1.0,
+                "avg_time_sec": 0.01,
+                "max_time_sec": 0.02,
+                "min_time_sec": 0.005,
+                "avg_memory_mb": 1.0,
+            }
+        }
+    }
+    kernel_current = {
+        "kernels": {
+            "full_step": {
+                "total_time_sec": 1.03,
+                "avg_time_sec": 0.0103,
+                "max_time_sec": 0.02,
+                "min_time_sec": 0.005,
+                "avg_memory_mb": 1.0,
+            }
+        }
+    }
+
+    physics_base_path = tmp_path / "physics_baseline.json"
+    physics_curr_path = tmp_path / "physics_current.json"
+    kernel_base_path = tmp_path / "kernel_baseline.json"
+    kernel_curr_path = tmp_path / "kernel_current.json"
+
+    _write_json(physics_base_path, physics_baseline)
+    _write_json(physics_curr_path, physics_current)
+    _write_json(kernel_base_path, kernel_baseline)
+    _write_json(kernel_curr_path, kernel_current)
+
+    results, has_regression = compare_benchmarks(
+        physics_baseline=physics_base_path,
+        physics_current=physics_curr_path,
+        kernel_baseline=kernel_base_path,
+        kernel_current=kernel_curr_path,
+        threshold=0.10,
+    )
+
+    assert not has_regression
+    assert all(result.status in {"ok", "skipped"} for result in results)

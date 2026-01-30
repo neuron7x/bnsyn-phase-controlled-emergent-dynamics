@@ -72,7 +72,7 @@ Weekly performance regression detection:
 - `benchmarks` - Run all benchmarks + compare to golden baseline
 
 **Schedule:** Weekly Sunday at 3 AM UTC  
-**Artifacts:** `baseline.json`, `benchmark_report.json`
+**Artifacts:** `benchmarks/baselines/baseline.json`, `benchmark_report.json`
 
 **Policy:** Non-blocking, manual review of regressions
 

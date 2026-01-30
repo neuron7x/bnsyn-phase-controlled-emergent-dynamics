@@ -64,7 +64,7 @@ jobs:
         with:
           name: benchmark-results-${{ github.sha }}
           path: |
-            benchmarks/baseline.json
+            benchmarks/baselines/baseline.json
             benchmark_report.json
           retention-days: 90
           

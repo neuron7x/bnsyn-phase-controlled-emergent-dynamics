@@ -9,7 +9,7 @@ transformations to scale biophysical throughput while maintaining exact emergent
 
 ---
 
-## Kernel Analysis (from kernel_profile.json)
+## Kernel Analysis (from benchmarks/baselines/kernel_profile.json)
 
 ### Top Time Consumers
 

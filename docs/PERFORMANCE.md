@@ -62,13 +62,15 @@ python benchmarks/benchmark_plasticity.py
 
 ## Performance baselines and regression gate
 
-Baselines for the physics benchmark and kernel profiling live in:
+Baselines for CI performance gates live in `benchmarks/baselines/`, including:
 
 * `benchmarks/baselines/physics_baseline.json`
 * `benchmarks/baselines/kernel_profile.json`
+* `benchmarks/baselines/baseline.json` (micro-benchmark suite)
 
 CI executes the benchmarks and blocks PRs when regressions exceed 10% relative
-to the baselines. The regression gate is enforced via:
+to the baselines. The regression gate is enforced as a required check in
+`.github/workflows/ci-benchmarks.yml` via:
 
 ```bash
 python scripts/benchmark_physics.py --output benchmarks/physics_current.json

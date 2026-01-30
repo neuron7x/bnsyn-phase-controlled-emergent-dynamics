@@ -42,7 +42,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", type=Path, default=Path("benchmarks/results.json"))
     parser.add_argument("--summary", type=Path, default=Path("benchmarks/summary.json"))
-    parser.add_argument("--baseline", type=Path, default=Path("benchmarks/baseline.json"))
+    parser.add_argument("--baseline", type=Path, default=Path("benchmarks/baselines/baseline.json"))
     parser.add_argument("--write-baseline", action="store_true")
     return parser.parse_args()
 

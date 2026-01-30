@@ -34,13 +34,13 @@ This executes all 7 steps and generates comprehensive reports in `benchmarks/`.
 
 #### STEP 1: Ground-Truth Baseline
 ```bash
-python scripts/benchmark_physics.py --backend reference --output benchmarks/physics_baseline.json
+python scripts/benchmark_physics.py --backend reference --output benchmarks/baselines/physics_baseline.json
 ```
 Establishes the reference physics manifold that all optimizations must preserve.
 
 #### STEP 2: Kernel Profiling
 ```bash
-python scripts/profile_kernels.py --output benchmarks/kernel_profile.json
+python scripts/profile_kernels.py --output benchmarks/baselines/kernel_profile.json
 ```
 Creates the "Performance Jacobian" - identifies computational bottlenecks.
 
@@ -56,7 +56,7 @@ Runs the optimized backend (sparse synapse propagation, vectorization).
 #### STEP 5: Physics Equivalence Verification
 ```bash
 python scripts/verify_equivalence.py \
-  --reference benchmarks/physics_baseline.json \
+  --reference benchmarks/baselines/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json \
   --output benchmarks/equivalence_report.md
 ```
@@ -65,7 +65,7 @@ Validates that accelerated backend preserves all physics within tolerance.
 #### STEP 6: Throughput Gains
 ```bash
 python scripts/calculate_throughput_gain.py \
-  --reference benchmarks/physics_baseline.json \
+  --reference benchmarks/baselines/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json \
   --output benchmarks/throughput_gain.json
 ```
@@ -77,9 +77,9 @@ physics preservation on every PR.
 
 ### Key Files
 
-- `physics_baseline.json` - Ground-truth reference backend metrics
+- `benchmarks/baselines/physics_baseline.json` - Ground-truth reference backend metrics
 - `physics_accelerated.json` - Optimized backend metrics
-- `kernel_profile.json` - Performance Jacobian (kernel timings)
+- `benchmarks/baselines/kernel_profile.json` - Performance Jacobian (kernel timings)
 - `scaling_plan.md` - Optimization roadmap and analysis
 - `equivalence_report.md` - Physics validation report
 - `throughput_gain.json` - Performance improvements

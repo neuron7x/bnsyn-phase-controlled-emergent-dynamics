@@ -250,7 +250,7 @@ def main() -> None:
     parser.add_argument(
         "--physics-current",
         type=Path,
-        default=Path("benchmarks/physics_baseline.json"),
+        default=Path("benchmarks/physics_current.json"),
     )
     parser.add_argument(
         "--kernel-baseline",
@@ -260,7 +260,7 @@ def main() -> None:
     parser.add_argument(
         "--kernel-current",
         type=Path,
-        default=Path("benchmarks/kernel_profile.json"),
+        default=Path("benchmarks/kernel_profile_current.json"),
     )
     parser.add_argument(
         "--threshold",

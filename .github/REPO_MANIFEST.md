@@ -147,8 +147,9 @@ bnsyn-phase-controlled-emergent-dynamics/
 - Baselines:
   - `benchmarks/baselines/physics_baseline.json`
   - `benchmarks/baselines/kernel_profile.json`
+  - `benchmarks/baselines/baseline.json`
 - Gate: `scripts/check_benchmark_regressions.py` fails CI if any metric regresses by >10%
-- PR blocking: enforced in `.github/workflows/ci-benchmarks.yml` for pull requests
+- PR blocking: enforced as a required check in `.github/workflows/ci-benchmarks.yml` for pull requests
 
 ---
 
