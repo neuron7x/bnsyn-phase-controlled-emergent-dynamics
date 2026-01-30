@@ -133,6 +133,23 @@ jobs:
             echo "| Claims Coverage | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
 
+  actions-supply-chain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install verifier dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml==6.0.3
+      - name: Verify workflow action sources
+        run: python scripts/verify_actions_supply_chain.py
+
   dependency-consistency:
     runs-on: ubuntu-latest
     steps:

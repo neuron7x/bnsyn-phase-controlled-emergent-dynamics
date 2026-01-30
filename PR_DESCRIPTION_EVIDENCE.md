@@ -1,3 +1,54 @@
+# PR #63: Security Posture Hardening (Supply Chain + CI + Container)
+
+## Summary
+
+This PR adds PR-time dependency review, enforces a vetted GitHub Actions allowlist, hardens
+the Dockerfile to use hash-locked installs and a non-root user, and operationalizes security
+documentation with a focused threat model and runbook updates.
+
+## Evidence
+
+### Security Gate Runs
+
+```bash
+PATH="/tmp:$PATH" make security
+```
+
+Log: `artifacts/security/make_security.txt`
+
+```bash
+make test
+```
+
+Log: `artifacts/security/make_test.txt`
+
+```bash
+PATH="/tmp:$PATH" make check
+```
+
+Log: `artifacts/security/make_check.txt`
+
+### Supply-Chain Controls
+
+- Dependency review workflow: `.github/workflows/dependency-review.yml`
+- Action allowlist enforcement: `scripts/verify_actions_supply_chain.py`
+- PR gate wiring: `.github/workflows/ci-pr.yml` (actions-supply-chain job)
+
+Verification:
+
+```bash
+python scripts/verify_actions_supply_chain.py
+```
+
+Log: `artifacts/security/verify_actions_supply_chain.txt`
+
+### Container Hardening
+
+- Dockerfile now installs dependencies from `requirements-lock.txt` with hashes and runs as
+  a non-root user.
+
+---
+
 # PR #62: Quality Infrastructure Audit & SSOT Compliance Fixes
 
 ## Summary
