@@ -10,11 +10,11 @@ None
 
 Notes
 -----
-Implements the SPEC P1-3 dual-weight consolidation rule with tags and protein.
+Implements the SPEC P1-6 dual-weight consolidation rule with tags and protein.
 
 References
 ----------
-docs/SPEC.md#P1-3
+docs/SPEC.md#P1-6
 docs/SSOT.md
 """
 
@@ -53,7 +53,7 @@ class DualWeights:
 
     References
     ----------
-    docs/SPEC.md#P1-3
+    docs/SPEC.md#P1-6
     """
 
     w_fast: np.ndarray
@@ -118,7 +118,7 @@ class DualWeights:
 
         References
         ----------
-        docs/SPEC.md#P1-3
+        docs/SPEC.md#P1-6
         """
         if dt_s <= 0:
             raise ValueError("dt_s must be positive")
