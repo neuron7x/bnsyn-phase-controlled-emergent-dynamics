@@ -34,6 +34,7 @@ Log: `artifacts/security/make_check.txt`
 - Action allowlist enforcement: `scripts/verify_actions_supply_chain.py`
 - PR gate wiring: `.github/workflows/ci-pr.yml` (actions-supply-chain job)
 - Dependency graph precheck with actionable failure message
+- Local composite actions are recursively scanned for non-allowlisted `uses`
 
 Verification:
 
