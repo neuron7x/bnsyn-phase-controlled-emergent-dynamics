@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -87,6 +88,32 @@ def parse_mutmut_results(results_output: str) -> dict[str, int]:
     return counts
 
 
+def get_mutmut_result_ids(status: str) -> list[str]:
+    """Get mutmut result IDs for a given status."""
+    try:
+        result = subprocess.run(
+            ["mutmut", "result-ids", status],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except subprocess.CalledProcessError:
+        return []
+    output = result.stdout.strip()
+    if not output:
+        return []
+    return output.split()
+
+
+def get_counts_from_result_ids() -> dict[str, int]:
+    """Get mutation counts using mutmut result-ids."""
+    statuses = ["killed", "survived", "timeout", "suspicious", "skipped", "untested"]
+    counts: dict[str, int] = {status: 0 for status in statuses}
+    for status in statuses:
+        counts[status] = len(get_mutmut_result_ids(status))
+    return counts
+
+
 def calculate_score(counts: dict[str, int]) -> float:
     """Calculate mutation score percentage.
 
@@ -110,6 +137,7 @@ def main() -> int:
     """Generate mutation baseline."""
     print("🧬 Generating mutation testing baseline...")
     print()
+    skip_run = os.getenv("MUTMUT_SKIP_RUN") not in (None, "", "0")
 
     # Define modules to mutate
     modules = [
@@ -121,35 +149,38 @@ def main() -> int:
 
     # Clean cache
     cache_file = Path(".mutmut-cache")
-    if cache_file.exists():
+    if cache_file.exists() and not skip_run:
         print(f"Removing existing cache: {cache_file}")
         cache_file.unlink()
 
     # Run mutmut
-    print("Running mutmut (this may take several minutes)...")
-    paths_to_mutate = ",".join(modules)
+    if skip_run:
+        print("Skipping mutmut run (MUTMUT_SKIP_RUN set).")
+    else:
+        print("Running mutmut (this may take several minutes)...")
+        paths_to_mutate = ",".join(modules)
 
-    try:
-        run_result = subprocess.run(
-            [
-                "mutmut",
-                "run",
-                f"--paths-to-mutate={paths_to_mutate}",
-                "--tests-dir=tests",
-                "--runner=pytest -x -q -m 'not validation and not property and not benchmark'",
-            ],
-            check=False,  # mutmut returns non-zero when mutants survive
-            capture_output=True,
-            text=True,
-        )
-    except Exception as e:
-        print(f"Error running mutmut: {e}", file=sys.stderr)
-        return 1
-    run_output = f"{run_result.stdout}\n{run_result.stderr}".strip()
-    if "RuntimeError: Tests don't run cleanly without mutations" in run_output:
-        print("❌ Mutmut failed because the test suite did not run cleanly.", file=sys.stderr)
-        print(run_output, file=sys.stderr)
-        return 1
+        try:
+            run_result = subprocess.run(
+                [
+                    "mutmut",
+                    "run",
+                    f"--paths-to-mutate={paths_to_mutate}",
+                    "--tests-dir=tests",
+                    "--runner=pytest -x -q -m 'not validation and not property and not benchmark'",
+                ],
+                check=False,  # mutmut returns non-zero when mutants survive
+                capture_output=True,
+                text=True,
+            )
+        except Exception as e:
+            print(f"Error running mutmut: {e}", file=sys.stderr)
+            return 1
+        run_output = f"{run_result.stdout}\n{run_result.stderr}".strip()
+        if "RuntimeError: Tests don't run cleanly without mutations" in run_output:
+            print("❌ Mutmut failed because the test suite did not run cleanly.", file=sys.stderr)
+            print(run_output, file=sys.stderr)
+            return 1
 
     # Get results
     print("Extracting results...")
@@ -167,14 +198,13 @@ def main() -> int:
         return 1
 
     # Parse results
-    if not any(
-        token in results_output.lower()
-        for token in ("killed:", "survived:", "timeout:", "suspicious:", "skipped:")
-    ):
+    counts = parse_mutmut_results(results_output)
+    if not any(counts.values()):
+        counts = get_counts_from_result_ids()
+    if not any(counts.values()):
         print("❌ Mutmut results returned no mutation counts.", file=sys.stderr)
         print(results_output, file=sys.stderr)
         return 1
-    counts = parse_mutmut_results(results_output)
     score = calculate_score(counts)
     total_mutants = counts["killed"] + counts["survived"] + counts["timeout"] + counts["suspicious"]
 
@@ -195,7 +225,7 @@ def main() -> int:
 
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     baseline = {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "timestamp": timestamp,
         "baseline_score": score,
         "tolerance_delta": 5.0,
