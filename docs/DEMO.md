@@ -3,6 +3,20 @@
 This demo runs fully offline and deterministically using a fixed seed. It produces
 reproducible artifacts under `results/` without network access.
 
+For full conference preparation (release readiness + backup plan), see
+[`docs/CONFERENCE_RUNBOOK.md`](CONFERENCE_RUNBOOK.md).
+
+## Release Readiness (Blocking)
+
+```bash
+python scripts/release_readiness.py
+```
+
+**Expected output:**
+- `artifacts/release_readiness.json`
+- `artifacts/release_readiness.md`
+- Terminal message: `Release readiness: READY`
+
 ## Quick Demo (Recommended)
 
 ```bash
