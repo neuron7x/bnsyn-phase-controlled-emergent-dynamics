@@ -347,7 +347,9 @@ make test
 
 ## Demo Runbook
 
-Deterministic offline demo steps live in [`docs/DEMO.md`](docs/DEMO.md).
+Deterministic offline demo steps live in [`docs/DEMO.md`](docs/DEMO.md). For conference-ready prep,
+use the release runbook in [`docs/CONFERENCE_RUNBOOK.md`](docs/CONFERENCE_RUNBOOK.md), which
+includes the release readiness report and deterministic demo checklist.
 
 ## Release Notes
 
