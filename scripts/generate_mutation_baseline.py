@@ -17,6 +17,8 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+import argparse
+import re
 
 
 def get_git_commit() -> str:
@@ -71,18 +73,23 @@ def parse_mutmut_results(results_output: str) -> dict[str, int]:
         "skipped": 0,
     }
 
+    pattern = re.compile(
+        r"^(killed|survived|timeout|suspicious|skipped)[:\s].*?(\d+)\)?$", re.IGNORECASE
+    )
+
     for line in results_output.splitlines():
-        line = line.strip().lower()
-        if line.startswith("killed:"):
-            counts["killed"] = int(line.split(":")[1].strip())
-        elif line.startswith("survived:"):
-            counts["survived"] = int(line.split(":")[1].strip())
-        elif line.startswith("timeout:"):
-            counts["timeout"] = int(line.split(":")[1].strip())
-        elif line.startswith("suspicious:"):
-            counts["suspicious"] = int(line.split(":")[1].strip())
-        elif line.startswith("skipped:"):
-            counts["skipped"] = int(line.split(":")[1].strip())
+        line = line.strip()
+        if not line:
+            continue
+        lowered = line.lower()
+        if lowered.startswith(("killed:", "survived:", "timeout:", "suspicious:", "skipped:")):
+            key, value = lowered.split(":", 1)
+            counts[key] = int(value.strip())
+            continue
+        match = pattern.match(line)
+        if match:
+            key = match.group(1).lower()
+            counts[key] = int(match.group(2))
 
     return counts
 
@@ -108,6 +115,14 @@ def calculate_score(counts: dict[str, int]) -> float:
 
 def main() -> int:
     """Generate mutation baseline."""
+    parser = argparse.ArgumentParser(description="Generate mutation testing baseline.")
+    parser.add_argument(
+        "--reuse-cache",
+        action="store_true",
+        help="Reuse existing mutmut cache/results without re-running mutmut.",
+    )
+    args = parser.parse_args()
+
     print("🧬 Generating mutation testing baseline...")
     print()
 
@@ -119,36 +134,42 @@ def main() -> int:
         "src/bnsyn/temperature/schedule.py",
     ]
 
-    # Clean cache
     cache_file = Path(".mutmut-cache")
-    if cache_file.exists():
-        print(f"Removing existing cache: {cache_file}")
-        cache_file.unlink()
+    if not args.reuse_cache:
+        if cache_file.exists():
+            print(f"Removing existing cache: {cache_file}")
+            cache_file.unlink()
 
-    # Run mutmut
-    print("Running mutmut (this may take several minutes)...")
-    paths_to_mutate = ",".join(modules)
+        # Run mutmut
+        print("Running mutmut (this may take several minutes)...")
+        paths_to_mutate = ",".join(modules)
 
-    try:
-        run_result = subprocess.run(
-            [
-                "mutmut",
-                "run",
-                f"--paths-to-mutate={paths_to_mutate}",
-                "--tests-dir=tests",
-                "--runner=pytest -x -q -m 'not validation and not property and not benchmark'",
-            ],
-            check=False,  # mutmut returns non-zero when mutants survive
-            capture_output=True,
-            text=True,
+        try:
+            run_result = subprocess.run(
+                [
+                    "mutmut",
+                    "run",
+                    f"--paths-to-mutate={paths_to_mutate}",
+                    "--tests-dir=tests",
+                    "--runner=pytest -x -q -m 'not validation and not property and not benchmark'",
+                ],
+                check=False,  # mutmut returns non-zero when mutants survive
+                capture_output=True,
+                text=True,
+            )
+        except Exception as e:
+            print(f"Error running mutmut: {e}", file=sys.stderr)
+            return 1
+        run_output = f"{run_result.stdout}\n{run_result.stderr}".strip()
+        if "RuntimeError: Tests don't run cleanly without mutations" in run_output:
+            print("❌ Mutmut failed because the test suite did not run cleanly.", file=sys.stderr)
+            print(run_output, file=sys.stderr)
+            return 1
+    elif not cache_file.exists():
+        print(
+            "❌ Mutmut cache not found; run without --reuse-cache to generate results.",
+            file=sys.stderr,
         )
-    except Exception as e:
-        print(f"Error running mutmut: {e}", file=sys.stderr)
-        return 1
-    run_output = f"{run_result.stdout}\n{run_result.stderr}".strip()
-    if "RuntimeError: Tests don't run cleanly without mutations" in run_output:
-        print("❌ Mutmut failed because the test suite did not run cleanly.", file=sys.stderr)
-        print(run_output, file=sys.stderr)
         return 1
 
     # Get results
@@ -167,9 +188,8 @@ def main() -> int:
         return 1
 
     # Parse results
-    if not any(
-        token in results_output.lower()
-        for token in ("killed:", "survived:", "timeout:", "suspicious:", "skipped:")
+    if not re.search(
+        r"(killed|survived|timeout|suspicious|skipped)[\s:]", results_output, re.IGNORECASE
     ):
         print("❌ Mutmut results returned no mutation counts.", file=sys.stderr)
         print(results_output, file=sys.stderr)

@@ -1,10 +1,8 @@
 {
-  "timestamp": "2026-01-30T22:00:38.630841Z",
-  "release_ready": false,
+  "timestamp": "2026-01-31T01:35:10.895394Z",
+  "release_ready": true,
   "version": "0.2.0",
-  "blocking_failures": [
-    "Mutation baseline"
-  ],
+  "blocking_failures": [],
   "checks": [
     {
       "name": "Core repository files",
@@ -38,9 +36,9 @@
     },
     {
       "name": "Mutation baseline",
-      "status": "fail",
+      "status": "pass",
       "blocking": true,
-      "details": "Baseline not active or missing factual counts (status='needs_regeneration', total_mutants=0)"
+      "details": "status=active, total_mutants=103"
     }
   ]
 }
