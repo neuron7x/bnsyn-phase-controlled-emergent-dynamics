@@ -1,0 +1,12 @@
+Running wake phase (60 steps)...
+Running sleep phase (40 steps)...
+Metrics written to results/demo_smoke/metrics.json
+Manifest written to results/demo_smoke/manifest.json
+Matplotlib not installed; skipping figure generation. Install with: pip install -e ".[viz]"
+
+=== Sleep-Stack Demo Complete ===
+Wake: 60 steps, 3 memories
+Sleep: 38 steps
+Transitions: 0
+Attractors: 0
+Consolidation: 0/3 patterns

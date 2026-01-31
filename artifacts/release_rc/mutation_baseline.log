@@ -1,0 +1,59 @@
+🧬 Running mutation testing to establish baseline...
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+❌ Mutmut results returned no mutation counts.
+To apply a mutant on disk:
+    mutmut apply <id>
+
+To show a mutant:
+    mutmut show <id>
+
+
+Survived 🙁 (103)
+
+---- src/bnsyn/neuron/adex.py (76) ----
+
+1-2, 4, 8, 11, 13, 15, 18-22, 27, 29, 31, 36, 38-39, 54, 59-61, 63, 66, 69, 71-72, 74-75, 77, 79, 81-82, 84-85, 87, 89, 93, 95, 97, 99-103, 105, 107-109, 112-113, 116, 119-123, 131-132, 134, 136-137, 139-141, 143-146, 148-151, 161, 164-165
+
+---- src/bnsyn/plasticity/stdp.py (6) ----
+
+167-170, 174-175
+
+---- src/bnsyn/plasticity/three_factor.py (19) ----
+
+177-178, 181-183, 186, 188, 191, 194, 197, 199-200, 202, 204-205, 207, 209-211
+
+---- src/bnsyn/temperature/schedule.py (2) ----
+
+220, 222
+
+🧬 Generating mutation testing baseline...
+
+Running mutmut (this may take several minutes)...
+Extracting results...
+To apply a mutant on disk:
+    mutmut apply <id>
+
+To show a mutant:
+    mutmut show <id>
+
+
+Survived 🙁 (103)
+
+---- src/bnsyn/neuron/adex.py (76) ----
+
+1-2, 4, 8, 11, 13, 15, 18-22, 27, 29, 31, 36, 38-39, 54, 59-61, 63, 66, 69, 71-72, 74-75, 77, 79, 81-82, 84-85, 87, 89, 93, 95, 97, 99-103, 105, 107-109, 112-113, 116, 119-123, 131-132, 134, 136-137, 139-141, 143-146, 148-151, 161, 164-165
+
+---- src/bnsyn/plasticity/stdp.py (6) ----
+
+167-170, 174-175
+
+---- src/bnsyn/plasticity/three_factor.py (19) ----
+
+177-178, 181-183, 186, 188, 191, 194, 197, 199-200, 202, 204-205, 207, 209-211
+
+---- src/bnsyn/temperature/schedule.py (2) ----
+
+220, 222
+
+make: *** [Makefile:26: mutation-baseline] Error 1

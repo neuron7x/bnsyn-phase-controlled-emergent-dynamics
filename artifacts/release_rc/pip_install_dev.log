@@ -175,9 +175,9 @@ Collecting soupsieve>=1.6.1 (from beautifulsoup4->furo==2025.12.19->bnsyn==0.2.0
 Downloading bandit-1.8.0-py3-none-any.whl (127 kB)
 Downloading furo-2025.12.19-py3-none-any.whl (339 kB)
 Downloading sphinx-9.0.4-py3-none-any.whl (3.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.9/3.9 MB 27.9 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.9/3.9 MB 17.7 MB/s  0:00:00
 Downloading hypothesis-6.150.3-py3-none-any.whl (542 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 543.0/543.0 kB 14.5 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 543.0/543.0 kB 5.2 MB/s  0:00:00
 Downloading myst_parser-5.0.0-py3-none-any.whl (84 kB)
 Downloading pip_audit-2.10.0-py3-none-any.whl (61 kB)
 Downloading pre_commit-4.5.1-py2.py3-none-any.whl (226 kB)
@@ -186,16 +186,16 @@ Downloading pydocstyle-6.3.0-py3-none-any.whl (38 kB)
 Downloading pylint-3.3.5-py3-none-any.whl (522 kB)
 Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
 Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 51.2 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 35.9 MB/s  0:00:00
 Downloading ruff-0.14.14-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 32.0 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 28.1 MB/s  0:00:00
 Downloading sphinx_autodoc_typehints-3.6.1-py3-none-any.whl (20 kB)
 Downloading sphinx_copybutton-0.5.2-py3-none-any.whl (13 kB)
 Downloading validate_pyproject-0.24-py3-none-any.whl (53 kB)
 Downloading astroid-3.3.11-py3-none-any.whl (275 kB)
 Downloading cyclonedx_python_lib-11.6.0-py3-none-any.whl (511 kB)
 Downloading docutils-0.22.4-py3-none-any.whl (633 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 633.2/633.2 kB 39.6 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 633.2/633.2 kB 20.0 MB/s  0:00:00
 Downloading fastjsonschema-2.21.2-py3-none-any.whl (24 kB)
 Downloading isort-6.1.0-py3-none-any.whl (94 kB)
 Downloading license_expression-30.4.4-py3-none-any.whl (120 kB)
@@ -208,10 +208,10 @@ Downloading py_serializable-2.1.0-py3-none-any.whl (23 kB)
 Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
 Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
 Downloading accessible_pygments-0.0.5-py3-none-any.whl (1.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 14.0 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 26.7 MB/s  0:00:00
 Downloading alabaster-1.0.0-py3-none-any.whl (13 kB)
 Downloading babel-2.17.0-py3-none-any.whl (10.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 36.0 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 18.2 MB/s  0:00:00
 Downloading boolean_py-5.0-py3-none-any.whl (26 kB)
 Downloading cachecontrol-0.14.4-py3-none-any.whl (22 kB)
 Downloading msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (427 kB)
@@ -245,7 +245,7 @@ Downloading tomli-2.4.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.m
 Downloading tomli_w-1.2.0-py3-none-any.whl (6.7 kB)
 Downloading tomlkit-0.14.0-py3-none-any.whl (39 kB)
 Downloading virtualenv-20.36.1-py3-none-any.whl (6.0 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.0/6.0 MB 30.4 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.0/6.0 MB 17.5 MB/s  0:00:00
 Downloading distlib-0.4.0-py2.py3-none-any.whl (469 kB)
 Downloading beautifulsoup4-4.14.3-py3-none-any.whl (107 kB)
 Downloading soupsieve-2.8.3-py3-none-any.whl (37 kB)
@@ -253,8 +253,8 @@ Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
 Building wheels for collected packages: bnsyn
   Building editable for bnsyn (pyproject.toml): started
   Building editable for bnsyn (pyproject.toml): finished with status 'done'
-  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=9093 sha256=96c21b5cf332c2930734de5db6950bccca70d46caf18e8ad4158748cbcfba8ad
-  Stored in directory: /tmp/pip-ephem-wheel-cache-dngr5iow/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=9364 sha256=7f2a3cdadf0318b649f2410909e7f3a7fc6c1bdd79e1df107e5d70e366c1efda
+  Stored in directory: /tmp/pip-ephem-wheel-cache-4zdj1inu/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
 Successfully built bnsyn
 Installing collected packages: sortedcontainers, fastjsonschema, distlib, boolean.py, validate-pyproject, urllib3, tomlkit, tomli-w, tomli, stevedore, sphinxcontrib-serializinghtml, sphinxcontrib-qthelp, sphinxcontrib-jsmath, sphinxcontrib-htmlhelp, sphinxcontrib-devhelp, sphinxcontrib-applehelp, soupsieve, snowballstemmer, ruff, roman-numerals, pyyaml, pyparsing, psutil, pip-api, packageurl-python, msgpack, mdurl, mccabe, MarkupSafe, license-expression, isort, imagesize, idna, identify, hypothesis, filelock, docutils, dill, defusedxml, coverage, charset_normalizer, cfgv, certifi, babel, astroid, alabaster, accessible-pygments, virtualenv, requests, pylint, pydocstyle, py-serializable, pip-requirements-parser, markdown-it-py, Jinja2, beautifulsoup4, sphinx, rich, pytest-cov, pre-commit, mdit-py-plugins, cyclonedx-python-lib, CacheControl, sphinx-copybutton, sphinx-basic-ng, sphinx-autodoc-typehints, myst-parser, bnsyn, bandit, pip-audit, furo
   Attempting uninstall: ruff
@@ -267,3 +267,4 @@ Installing collected packages: sortedcontainers, fastjsonschema, distlib, boolea
       Successfully uninstalled isort-7.0.0
 
 Successfully installed CacheControl-0.14.4 Jinja2-3.1.6 MarkupSafe-3.0.3 accessible-pygments-0.0.5 alabaster-1.0.0 astroid-3.3.11 babel-2.17.0 bandit-1.8.0 beautifulsoup4-4.14.3 bnsyn-0.2.0 boolean.py-5.0 certifi-2026.1.4 cfgv-3.5.0 charset_normalizer-3.4.4 coverage-7.13.2 cyclonedx-python-lib-11.6.0 defusedxml-0.7.1 dill-0.4.1 distlib-0.4.0 docutils-0.22.4 fastjsonschema-2.21.2 filelock-3.20.3 furo-2025.12.19 hypothesis-6.150.3 identify-2.6.16 idna-3.11 imagesize-1.4.1 isort-6.1.0 license-expression-30.4.4 markdown-it-py-4.0.0 mccabe-0.7.0 mdit-py-plugins-0.5.0 mdurl-0.1.2 msgpack-1.1.2 myst-parser-5.0.0 packageurl-python-0.17.6 pip-api-0.0.34 pip-audit-2.10.0 pip-requirements-parser-32.0.1 pre-commit-4.5.1 psutil-7.2.1 py-serializable-2.1.0 pydocstyle-6.3.0 pylint-3.3.5 pyparsing-3.3.2 pytest-cov-7.0.0 pyyaml-6.0.3 requests-2.32.5 rich-14.3.1 roman-numerals-4.1.0 ruff-0.14.14 snowballstemmer-3.0.1 sortedcontainers-2.4.0 soupsieve-2.8.3 sphinx-9.0.4 sphinx-autodoc-typehints-3.6.1 sphinx-basic-ng-1.0.0b2 sphinx-copybutton-0.5.2 sphinxcontrib-applehelp-2.0.0 sphinxcontrib-devhelp-2.0.0 sphinxcontrib-htmlhelp-2.1.0 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-qthelp-2.0.0 sphinxcontrib-serializinghtml-2.0.0 stevedore-5.6.0 tomli-2.4.0 tomli-w-1.2.0 tomlkit-0.14.0 urllib3-2.6.3 validate-pyproject-0.24 virtualenv-20.36.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
