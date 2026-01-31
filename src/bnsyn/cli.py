@@ -22,12 +22,36 @@ docs/SPEC.md#P2-12
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
+import tomllib
 from pathlib import Path
 from typing import Any
 
 from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
 from bnsyn.sim.network import run_simulation
+
+
+def _get_package_version() -> str:
+    """Return the installed package version with a safe fallback."""
+    try:
+        return importlib.metadata.version("bnsyn")
+    except importlib.metadata.PackageNotFoundError:
+        pass
+    except Exception:
+        pass
+
+    pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    if pyproject_path.exists():
+        try:
+            data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        except (OSError, tomllib.TOMLDecodeError):
+            return "unknown"
+        version = data.get("project", {}).get("version")
+        if isinstance(version, str) and version:
+            return version
+
+    return "unknown"
 
 
 def _cmd_demo(args: argparse.Namespace) -> int:
@@ -305,7 +329,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
         steps_wake=args.steps_wake,
         steps_sleep=args.steps_sleep,
         N=N,
-        package_version="0.2.0",  # From pyproject.toml
+        package_version=_get_package_version(),
         repo_root=Path(__file__).parent.parent,
     )
 
