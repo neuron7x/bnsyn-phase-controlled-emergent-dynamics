@@ -205,6 +205,21 @@ print(f"Consolidation: {consolidator.stats()}")
 - [`docs/sleep_stack.md`](docs/sleep_stack.md): Sleep cycle and consolidation details
 - [`docs/emergence_tracking.md`](docs/emergence_tracking.md): Attractor detection and phase transitions
 
+**Manifest tooling (API docs assets):**
+- Purpose: maintain deterministic inventories for Sphinx API asset directories.
+- Commands:
+  - Generate: `python docs/api/_static/tools/update_manifest.py`
+  - Validate: `python docs/api/_static/tools/update_manifest.py --check`
+  - Generate: `python docs/api/_templates/tools/update_manifest.py`
+  - Validate: `python docs/api/_templates/tools/update_manifest.py --check`
+- Parameters:
+  - `--seed` (default `42`): deterministic seed recorded in `manifest.json`.
+  - `--check`: validate without writing; exits `1` if entries or metadata drift.
+- Failure behavior:
+  - Missing/invalid manifest or mismatched entries returns exit code `1` with a message.
+  - Symlinks are rejected to prevent unstable inventories.
+  - Files without read permissions are rejected deterministically.
+
 ---
 
 ## 🚀 Interactive Demo
