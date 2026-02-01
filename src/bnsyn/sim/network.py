@@ -21,6 +21,7 @@ docs/SSOT.md
 from __future__ import annotations
 
 from dataclasses import dataclass
+from numbers import Integral
 from typing import Any, Literal
 
 import os
@@ -470,6 +471,11 @@ def run_simulation(
     docs/REPRODUCIBILITY.md
     """
     from bnsyn.rng import seed_all
+
+    if not isinstance(steps, Integral):
+        raise TypeError("steps must be a positive integer")
+    if steps <= 0:
+        raise ValueError("steps must be greater than 0")
 
     _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
     pack = seed_all(seed)

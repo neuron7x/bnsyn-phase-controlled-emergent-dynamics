@@ -100,7 +100,6 @@ jobs:
       
       - name: Run TLC model checker
         id: tlc
-        continue-on-error: true
         run: |
           cd specs/tla
           

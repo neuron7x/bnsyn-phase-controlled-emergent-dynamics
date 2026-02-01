@@ -46,14 +46,12 @@ jobs:
         run: |
           ruff format --check . 2>&1 | tee ruff-format.log
           echo "FORMAT_RESULT=$?" >> $GITHUB_ENV
-        continue-on-error: true
       
       - name: Ruff lint
         id: lint
         run: |
           ruff check . 2>&1 | tee ruff-lint.log
           echo "LINT_RESULT=$?" >> $GITHUB_ENV
-        continue-on-error: true
       
       - name: Generate summary
         if: always()
@@ -122,7 +120,6 @@ jobs:
             mypy src --config-file pyproject.toml 2>&1 | tee mypy.log
           fi
           echo "MYPY_RESULT=$?" >> $GITHUB_ENV
-        continue-on-error: true
       
       - name: Generate summary
         if: always()
@@ -178,7 +175,6 @@ jobs:
         run: |
           pylint src/bnsyn --rcfile=pyproject.toml --fail-under=${{ inputs.pylint-threshold }} 2>&1 | tee pylint.log
           echo "PYLINT_RESULT=$?" >> $GITHUB_ENV
-        continue-on-error: true
       
       - name: Generate summary
         if: always()

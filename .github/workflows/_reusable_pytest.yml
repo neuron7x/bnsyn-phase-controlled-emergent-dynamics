@@ -67,7 +67,6 @@ jobs:
           echo "PYTEST_RESULT=$PYTEST_EXIT" >> $GITHUB_ENV
           echo "DURATION=$DURATION" >> $GITHUB_ENV
           exit $PYTEST_EXIT
-        continue-on-error: true
       
       - name: Parse coverage
         if: always()
@@ -161,7 +160,6 @@ jobs:
           flags: pytest-${{ inputs.markers }}
           name: pytest-coverage-${{ github.sha }}
         timeout-minutes: 5
-        continue-on-error: true
       
       - name: Upload artifacts on failure
         if: failure()
