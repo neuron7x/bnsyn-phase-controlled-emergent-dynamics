@@ -304,11 +304,7 @@ class Network:
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
         # safety bounds
-        if (
-            float(np.min(self.state.V_mV)) < self.np.V_min_mV
-            or float(np.max(self.state.V_mV)) > self.np.V_max_mV
-        ):
-            raise RuntimeError("Voltage bounds violation (numerical instability)")
+        self._raise_if_voltage_out_of_bounds()
 
         # criticality estimation from population activity
         A_t = float(np.sum(spikes))
@@ -406,11 +402,7 @@ class Network:
             rtol=rtol,
         )
 
-        if (
-            float(np.min(self.state.V_mV)) < self.np.V_min_mV
-            or float(np.max(self.state.V_mV)) > self.np.V_max_mV
-        ):
-            raise RuntimeError("Voltage bounds violation (numerical instability)")
+        self._raise_if_voltage_out_of_bounds()
 
         A_t = float(np.sum(spikes))
         A_t1 = float(np.sum(self.state.spiked))
@@ -426,6 +418,13 @@ class Network:
             "gain": float(self.gain),
             "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
         }
+
+    def _raise_if_voltage_out_of_bounds(self) -> None:
+        if (
+            float(np.min(self.state.V_mV)) < self.np.V_min_mV
+            or float(np.max(self.state.V_mV)) > self.np.V_max_mV
+        ):
+            raise RuntimeError("Voltage bounds violation (numerical instability)")
 
 
 def run_simulation(
