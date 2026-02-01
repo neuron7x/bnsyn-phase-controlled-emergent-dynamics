@@ -33,4 +33,13 @@ make test
 
 ---
 
+## Directory Completion Notes (Non-Executable)
+
+This report records structural completeness changes without claiming test results:
+
+- API Sphinx static assets contract and manifest tooling: `docs/api/_static/README.md`,
+  `docs/api/_static/manifest.json`, `docs/api/_static/tools/update_manifest.py`.
+- API Sphinx template overrides contract and manifest tooling: `docs/api/_templates/README.md`,
+  `docs/api/_templates/manifest.json`, `docs/api/_templates/tools/update_manifest.py`.
+
 **Policy**: This repository must not contain evergreen certification claims.

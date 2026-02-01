@@ -1,0 +1,23 @@
+{
+  "entries": [
+    {
+      "path": "README.md",
+      "reproducibility_command_or_na": "python tools/update_manifest.py",
+      "role": "contract",
+      "sha256": "0658ebcb1d01cd76aef527020e5c8f225c33864672489bbd194279384808513d"
+    },
+    {
+      "path": "tools/update_manifest.py",
+      "reproducibility_command_or_na": "python tools/update_manifest.py",
+      "role": "tool",
+      "sha256": "7364bdf50446bf8d252a0cb1a7001f46444855e50a466ed48b3535b99a545d52"
+    }
+  ],
+  "generated_by": "tools/update_manifest.py",
+  "provenance": {
+    "repo_ref": "b5a70e420f2c24b99b3f2fa77e40de39c570c471",
+    "seed": 42,
+    "timestamp_utc": "2026-02-01T14:46:11+00:00"
+  },
+  "schema_version": "1.0"
+}
