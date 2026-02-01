@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import os
+import stat
 from pathlib import Path
 from types import ModuleType
 
@@ -103,3 +104,21 @@ def test_manifest_rejects_symlinks(tmp_path: Path, tool_path: Path) -> None:
 
     with pytest.raises(module.ManifestError):
         module._build_manifest(seed=42)
+
+
+@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+def test_manifest_rejects_unreadable_file(tmp_path: Path, tool_path: Path) -> None:
+    module = _load_module(tool_path)
+    root = tmp_path / "root"
+    _prepare_root(root)
+    _configure_module(module, root)
+
+    unreadable = root / "unreadable.txt"
+    unreadable.write_text("secret", encoding="utf-8")
+    unreadable.chmod(0)
+
+    try:
+        with pytest.raises(module.ManifestError):
+            module._build_manifest(seed=42)
+    finally:
+        unreadable.chmod(stat.S_IWUSR | stat.S_IRUSR)

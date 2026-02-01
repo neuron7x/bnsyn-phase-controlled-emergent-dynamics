@@ -218,6 +218,7 @@ print(f"Consolidation: {consolidator.stats()}")
 - Failure behavior:
   - Missing/invalid manifest or mismatched entries returns exit code `1` with a message.
   - Symlinks are rejected to prevent unstable inventories.
+  - Files without read permissions are rejected deterministically.
 
 ---
 

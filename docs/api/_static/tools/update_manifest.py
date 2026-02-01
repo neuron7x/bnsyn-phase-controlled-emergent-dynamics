@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import random
+import stat
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -22,6 +23,9 @@ class ManifestError(RuntimeError):
 
 def _sha256(path: Path) -> str:
     """Return the SHA-256 digest for a file."""
+    mode = path.stat().st_mode
+    if mode & (stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH) == 0:
+        raise ManifestError(f"file is not readable: {path}")
     digest = hashlib.sha256()
     try:
         with path.open("rb") as handle:
