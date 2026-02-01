@@ -99,3 +99,52 @@ Minimum end-to-end checks:
 ```
 python -m bnsyn.cli run examples/configs/quickstart.yaml -o results/quickstart_v1.json
 ```
+
+## Evidence Ledger
+
+- CLI entrypoint and subcommands: `bnsyn.cli` (`demo`, `run`, `dtcheck`, `sleep-stack`). Evidence: `src/bnsyn/cli.py`.
+- Declarative runner and YAML loader: `bnsyn.experiments.declarative` (`load_config`, `run_experiment`, `run_from_yaml`). Evidence: `src/bnsyn/experiments/declarative.py`.
+- Experiment schema: `schemas/experiment.schema.json` (JSON Schema draft-07). Evidence: `schemas/experiment.schema.json`.
+- Deterministic simulation API: `run_simulation` in `bnsyn.sim.network`. Evidence: `src/bnsyn/sim/network.py`.
+- Example config used for local reproduction: `examples/configs/quickstart.yaml`. Evidence: `examples/configs/quickstart.yaml`.
+- Existing CLI tests: `tests/test_cli_interactive.py`. Evidence: `tests/test_cli_interactive.py`.
+
+## Decisions
+
+- Integration profile: PROFILE_MIN (single runtime, in-process modular integration).
+- Rationale: All components are Python modules in one package, with direct call boundaries
+  and explicit schema validation. No external services or deployment orchestration exist
+  in this integration path.
+
+## Changeset
+
+- Added this document to define integration contracts, composition, and gates.
+- Added an end-to-end integration test in `tests/test_integration_experiment_flow.py`.
+
+## Local Reproduction (Integration Gate)
+
+```
+pytest -q tests/test_integration_experiment_flow.py
+```
+
+## Acceptance Checklist
+
+- [ ] CLI `run` path validates YAML against schema.
+- [ ] `run_experiment` invokes deterministic `run_simulation` per seed.
+- [ ] Output JSON contains config metadata and per-seed metrics.
+- [ ] Integration test is deterministic and passes locally with dependencies installed.
+- [ ] Integration flow is observable via CLI stdout and JSON output.
+
+## Risks & Mitigations
+
+- Risk: Missing optional test dependency (`hypothesis`) blocks running tests in some
+  environments. Mitigation: ensure dev/test dependencies are installed per repo
+  guidance before running pytest.
+- Risk: YAML config invalid or missing fields. Mitigation: strict schema validation in
+  `load_config` with explicit error messages.
+
+## Rollback Plan
+
+- Revert the commit that added `docs/INTEGRATION.md` and
+  `tests/test_integration_experiment_flow.py`.
+- No runtime behavior changes; rollback removes documentation/test only.
