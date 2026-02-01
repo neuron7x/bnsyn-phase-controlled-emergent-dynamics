@@ -79,20 +79,26 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     """
     if getattr(args, "interactive", False):
         # Launch interactive Streamlit dashboard
+        import importlib.util
         import subprocess
         import sys
-        from pathlib import Path
 
         # Find the interactive.py script
         script_path = Path(__file__).parent / "viz" / "interactive.py"
         if not script_path.exists():
             print(f"Error: Interactive dashboard not found at {script_path}")
             return 1
+        if importlib.util.find_spec("streamlit") is None:
+            print('Error: Streamlit is not installed. Install with: pip install -e ".[viz]"')
+            return 1
 
         print("🚀 Launching interactive dashboard...")
         print("   Press Ctrl+C to stop")
         try:
-            subprocess.run([sys.executable, "-m", "streamlit", "run", str(script_path)])
+            result = subprocess.run([sys.executable, "-m", "streamlit", "run", str(script_path)])
+            if result.returncode != 0:
+                print(f"Error: Dashboard exited with code {result.returncode}")
+                return 1
             return 0
         except KeyboardInterrupt:
             print("\n✓ Dashboard stopped")

@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Update or validate the template overrides manifest for Sphinx API docs."""
+
+from __future__ import annotations
 
 import argparse
 import hashlib

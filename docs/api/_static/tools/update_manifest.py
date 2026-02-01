@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Update or validate the static assets manifest for Sphinx API docs."""
+
+from __future__ import annotations
 
 import argparse
 import hashlib

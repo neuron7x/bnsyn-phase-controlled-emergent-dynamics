@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 from pathlib import Path
 import runpy
 import subprocess
@@ -17,7 +18,8 @@ import bnsyn.cli as cli
 
 def test_cmd_demo_interactive_launch(monkeypatch: pytest.MonkeyPatch) -> None:
     args = argparse.Namespace(interactive=True)
-    run_mock = MagicMock()
+    run_mock = MagicMock(return_value=subprocess.CompletedProcess(["streamlit"], returncode=0))
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: object())
     monkeypatch.setattr(subprocess, "run", run_mock)
 
     result = cli._cmd_demo(args)
@@ -31,6 +33,7 @@ def test_cmd_demo_interactive_keyboard_interrupt(monkeypatch: pytest.MonkeyPatch
     def raise_interrupt(*_: object, **__: object) -> None:
         raise KeyboardInterrupt
 
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: object())
     monkeypatch.setattr(subprocess, "run", raise_interrupt)
     result = cli._cmd_demo(args)
     assert result == 0
@@ -42,7 +45,29 @@ def test_cmd_demo_interactive_missing_script(monkeypatch: pytest.MonkeyPatch) ->
     def fake_exists(self: Path) -> bool:
         return False
 
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: object())
     monkeypatch.setattr(Path, "exists", fake_exists)
+    result = cli._cmd_demo(args)
+    assert result == 1
+
+
+def test_cmd_demo_interactive_missing_streamlit(monkeypatch: pytest.MonkeyPatch) -> None:
+    args = argparse.Namespace(interactive=True)
+
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: None)
+    result = cli._cmd_demo(args)
+    assert result == 1
+
+
+def test_cmd_demo_interactive_nonzero_returncode(monkeypatch: pytest.MonkeyPatch) -> None:
+    args = argparse.Namespace(interactive=True)
+
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: object())
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *_args, **_kwargs: subprocess.CompletedProcess(_args, returncode=2),
+    )
     result = cli._cmd_demo(args)
     assert result == 1
 
@@ -53,6 +78,7 @@ def test_cmd_demo_interactive_exception(monkeypatch: pytest.MonkeyPatch) -> None
     def raise_error(*_: object, **__: object) -> None:
         raise RuntimeError("boom")
 
+    monkeypatch.setattr(importlib.util, "find_spec", lambda *_: object())
     monkeypatch.setattr(subprocess, "run", raise_error)
     result = cli._cmd_demo(args)
     assert result == 1
