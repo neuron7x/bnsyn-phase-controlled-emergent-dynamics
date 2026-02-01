@@ -15,6 +15,7 @@ Use this index to find any document, specification, or governance artifact.
 | **Reproducibility** | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
 | **Governance** | [GOVERNANCE.md](GOVERNANCE.md) |
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
+| **Documentation Formalization** | [DOCUMENTATION_FORMALIZATION.md](DOCUMENTATION_FORMALIZATION.md) |
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |
 | **Release Readiness** | [RELEASE_READINESS.md](RELEASE_READINESS.md) |
 | **Demo Runbook** | [DEMO.md](DEMO.md) |
