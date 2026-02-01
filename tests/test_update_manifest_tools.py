@@ -87,6 +87,24 @@ def test_manifest_unreadable_file(tmp_path: Path, tool_path: Path) -> None:
 
 
 @pytest.mark.parametrize("tool_path", TOOL_PATHS)
+def test_manifest_validation_detects_stale_entries(tmp_path: Path, tool_path: Path) -> None:
+    module = _load_tool(tool_path, f"manifest_tool_stale_{tool_path.stem}")
+    module.ROOT_DIR = tmp_path
+    module.MANIFEST_PATH = tmp_path / "manifest.json"
+    _freeze_time(module)
+
+    target = tmp_path / "data.txt"
+    target.write_text("alpha", encoding="utf-8")
+
+    manifest = module._build_manifest(seed=5)
+    module._write_manifest(manifest)
+
+    target.write_text("beta", encoding="utf-8")
+
+    assert module._check_manifest(seed=5) == 1
+
+
+@pytest.mark.parametrize("tool_path", TOOL_PATHS)
 def test_manifest_ordering_stability(tmp_path: Path, tool_path: Path) -> None:
     module = _load_tool(tool_path, f"manifest_tool_order_{tool_path.stem}")
     module.ROOT_DIR = tmp_path
