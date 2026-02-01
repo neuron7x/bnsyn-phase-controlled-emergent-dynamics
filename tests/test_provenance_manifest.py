@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from importlib import metadata
 
 import pytest
 
@@ -97,10 +98,17 @@ def test_manifest_capture_git_sha_warning(monkeypatch: pytest.MonkeyPatch) -> No
 
     monkeypatch.setattr("bnsyn.provenance.manifest.subprocess.run", _raise_error)
 
-    with pytest.warns(UserWarning, match="Failed to capture git SHA"):
+    with pytest.warns(UserWarning) as warnings_record:
         manifest = RunManifest(seed=1, config={})
 
-    assert manifest.git_sha is None
+    warning_messages = [str(warning.message) for warning in warnings_record]
+    assert any("Failed to capture git SHA" in message for message in warning_messages)
+    assert any("Using fallback git identifier" in message for message in warning_messages)
+    try:
+        version = metadata.version("bnsyn")
+    except metadata.PackageNotFoundError:
+        version = "0.0.0"
+    assert manifest.git_sha == f"release-{version}"
 
 
 def test_manifest_capture_dependencies_warning(monkeypatch: pytest.MonkeyPatch) -> None:

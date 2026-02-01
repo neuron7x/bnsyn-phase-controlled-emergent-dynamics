@@ -24,9 +24,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
+import shutil
+# subprocess used for fixed git metadata capture (no shell).
+import subprocess  # nosec B404
 import sys
 import warnings
+from importlib import metadata
 from typing import Any
 
 try:
@@ -51,8 +54,8 @@ class RunManifest:
         Deterministic seed used for the run.
     config : dict[str, Any]
         User-provided configuration dictionary.
-    git_sha : str | None
-        Git commit SHA (best-effort, None if unavailable).
+    git_sha : str
+        Git commit SHA (best-effort, fallback identifier if unavailable).
     python_version : str
         Python version string (e.g., "3.11.5").
     dependencies : dict[str, str]
@@ -105,18 +108,18 @@ class RunManifest:
 
         self.seed: int = seed
         self.config: dict[str, Any] = config
-        self.git_sha: str | None = self._capture_git_sha()
+        self.git_sha: str = self._capture_git_sha()
         self.python_version: str = self._capture_python_version()
         self.dependencies: dict[str, str] = self._capture_dependencies()
         self.output_hashes: dict[str, str] = {}
 
-    def _capture_git_sha(self) -> str | None:
+    def _capture_git_sha(self) -> str:
         """Capture git SHA of current repository HEAD (best-effort).
 
         Returns
         -------
-        str | None
-            Git commit SHA, or None if unavailable.
+        str
+            Git commit SHA or fallback release identifier if unavailable.
 
         Notes
         -----
@@ -124,17 +127,33 @@ class RunManifest:
         available or command fails, returns None and logs a warning.
         """
         try:
-            result = subprocess.run(
-                ["git", "rev-parse", "HEAD"],
+            git_path = shutil.which("git")
+            if not git_path:
+                raise FileNotFoundError("git executable not found")
+            # Fixed git command without shell; inputs are constant.
+            result = subprocess.run(  # nosec B603
+                [git_path, "rev-parse", "HEAD"],
                 capture_output=True,
                 text=True,
                 check=True,
                 timeout=5,
             )
-            return result.stdout.strip()
+            sha = result.stdout.strip()
+            if sha:
+                return sha
         except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired) as e:
             warnings.warn(f"Failed to capture git SHA: {e}", stacklevel=2)
-            return None
+        fallback = self._fallback_git_id()
+        warnings.warn(f"Using fallback git identifier: {fallback}", stacklevel=2)
+        return fallback
+
+    def _fallback_git_id(self) -> str:
+        """Return a release-based fallback git identifier."""
+        try:
+            version = metadata.version("bnsyn")
+        except metadata.PackageNotFoundError:
+            version = "0.0.0"
+        return f"release-{version}"
 
     def _capture_python_version(self) -> str:
         """Capture Python version string.
@@ -324,7 +343,7 @@ class RunManifest:
         obj = cls.__new__(cls)
         obj.seed = seed
         obj.config = config
-        obj.git_sha = d.get("git_sha")
+        obj.git_sha = d.get("git_sha") or obj._fallback_git_id()
         obj.python_version = d.get("python_version", "unknown")
         obj.dependencies = d.get("dependencies", {})
         obj.output_hashes = d.get("output_hashes", {})
