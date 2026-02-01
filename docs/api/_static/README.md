@@ -8,6 +8,7 @@ This directory holds static assets that Sphinx copies into the API documentation
 - Only place static assets or documentation-only tooling here.
 - No runtime code or behavior changes may originate from this directory.
 - Keep filenames deterministic and content reproducible.
+- Symlinks are not supported to avoid unstable inventories.
 
 ## Contents
 - `manifest.json`: Deterministic file inventory with SHA-256 hashes.

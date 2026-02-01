@@ -8,6 +8,7 @@ static template assets or documentation-only tooling.
 - Only add Sphinx template overrides or supporting docs tooling.
 - Do not introduce runtime code or behavior changes.
 - Keep assets deterministic and reproducible.
+- Symlinks are not supported to avoid unstable inventories.
 
 ## Contents
 - `manifest.json`: Deterministic file inventory with SHA-256 hashes.

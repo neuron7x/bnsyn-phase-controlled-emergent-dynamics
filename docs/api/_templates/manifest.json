@@ -4,20 +4,20 @@
       "path": "README.md",
       "reproducibility_command_or_na": "python tools/update_manifest.py",
       "role": "contract",
-      "sha256": "0658ebcb1d01cd76aef527020e5c8f225c33864672489bbd194279384808513d"
+      "sha256": "09c00be7ec4d8339cf43956e87d8cff223ff8ff9b4d60191c1de5ffbfd06b0b6"
     },
     {
       "path": "tools/update_manifest.py",
       "reproducibility_command_or_na": "python tools/update_manifest.py",
       "role": "tool",
-      "sha256": "7364bdf50446bf8d252a0cb1a7001f46444855e50a466ed48b3535b99a545d52"
+      "sha256": "4b7fb8cb993b9eb98a7afc514a156f368e2dc0a678b919d060cecc512f12c9d5"
     }
   ],
   "generated_by": "tools/update_manifest.py",
   "provenance": {
-    "repo_ref": "b5a70e420f2c24b99b3f2fa77e40de39c570c471",
+    "repo_ref": "f9ada4aca6eb11b960dc6ce651309f9a701c537c",
     "seed": 42,
-    "timestamp_utc": "2026-02-01T14:46:11+00:00"
+    "timestamp_utc": "2026-02-01T16:01:06+00:00"
   },
   "schema_version": "1.0"
 }
