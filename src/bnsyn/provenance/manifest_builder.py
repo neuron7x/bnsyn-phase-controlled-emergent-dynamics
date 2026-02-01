@@ -14,6 +14,7 @@ import shutil
 # subprocess used for fixed git metadata capture (no shell).
 import subprocess  # nosec B404
 import sys
+import tomllib
 import warnings
 from importlib import metadata
 from pathlib import Path
@@ -65,6 +66,25 @@ def _fallback_git_id(package_version: str | None) -> str:
     return f"release-{version}"
 
 
+def _resolve_package_version(repo_root: Path) -> str:
+    try:
+        return metadata.version("bnsyn")
+    except metadata.PackageNotFoundError:
+        pass
+
+    pyproject_path = repo_root / "pyproject.toml"
+    if pyproject_path.exists():
+        try:
+            data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        except (OSError, tomllib.TOMLDecodeError):
+            return "0.0.0"
+        version = data.get("project", {}).get("version")
+        if isinstance(version, str) and version:
+            return version
+
+    return "0.0.0"
+
+
 def _compute_file_hash(filepath: Path) -> str:
     """Compute SHA256 hash of a file."""
     sha256 = hashlib.sha256()
@@ -99,6 +119,7 @@ def build_experiment_manifest(
     seeds: list[int],
     steps: int,
     params: dict[str, Any],
+    package_version: str | None = None,
     repo_root: Path | None = None,
 ) -> dict[str, Any]:
     """Build the experiment manifest without writing it to disk."""
@@ -111,11 +132,12 @@ def build_experiment_manifest(
     resolved_root = repo_root or Path(__file__).resolve().parents[3]
     spec_path = resolved_root / "docs" / "SPEC.md"
     hypothesis_path = resolved_root / "docs" / "HYPOTHESIS.md"
+    resolved_version = package_version or _resolve_package_version(resolved_root)
 
     manifest: dict[str, Any] = {
         "experiment": experiment_name,
         "version": "1.0",
-        "git_commit": _get_git_commit(resolved_root),
+        "git_commit": _get_git_commit(resolved_root, resolved_version),
         "python_version": sys.version,
         "spec_version": _extract_spec_version(spec_path),
         "hypothesis_version": _extract_hypothesis_version(hypothesis_path),
