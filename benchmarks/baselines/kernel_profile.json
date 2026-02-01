@@ -18,71 +18,73 @@
   "kernels": {
     "adex_update": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 4.270863000101599e-05,
+      "avg_time_sec": 6.394219984940718e-05,
       "call_count": 100,
-      "max_time_sec": 9.274300009565195e-05,
-      "min_time_sec": 4.025500004445348e-05,
-      "total_time_sec": 0.004270863000101599
+      "max_time_sec": 0.00015538900333922356,
+      "min_time_sec": 4.8521000280743465e-05,
+      "total_time_sec": 0.006394219984940719
     },
     "conductance_decay": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 5.030059992350289e-06,
+      "avg_time_sec": 5.492259915627073e-06,
       "call_count": 100,
-      "max_time_sec": 1.8024000041805266e-05,
-      "min_time_sec": 4.4779999370803125e-06,
-      "total_time_sec": 0.0005030059992350289
+      "max_time_sec": 1.3166998542146757e-05,
+      "min_time_sec": 4.146000719629228e-06,
+      "total_time_sec": 0.0005492259915627073
     },
     "criticality_estimation": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 9.421590001466028e-06,
+      "avg_time_sec": 1.3483519906003494e-05,
       "call_count": 100,
-      "max_time_sec": 2.615899995817017e-05,
-      "min_time_sec": 8.665999985169037e-06,
-      "total_time_sec": 0.0009421590001466029
+      "max_time_sec": 5.105599848320708e-05,
+      "min_time_sec": 9.506002243142575e-06,
+      "total_time_sec": 0.0013483519906003494
     },
     "full_step": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 0.0001111761100048625,
+      "avg_time_sec": 0.0001476627197553171,
       "call_count": 100,
-      "max_time_sec": 0.00018663900004867173,
-      "min_time_sec": 0.00010424499998862302,
-      "total_time_sec": 0.01111761100048625
+      "max_time_sec": 0.0003097749977314379,
+      "min_time_sec": 0.00011187700147274882,
+      "total_time_sec": 0.014766271975531708
     },
     "network_setup": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 0.00114528300002803,
+      "avg_time_sec": 0.001904314001876628,
       "call_count": 1,
-      "max_time_sec": 0.00114528300002803,
-      "min_time_sec": 0.00114528300002803,
-      "total_time_sec": 0.00114528300002803
+      "max_time_sec": 0.001904314001876628,
+      "min_time_sec": 0.001904314001876628,
+      "total_time_sec": 0.001904314001876628
     },
     "nmda_mg_block": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 6.603270002187855e-06,
+      "avg_time_sec": 7.69658996432554e-06,
       "call_count": 100,
-      "max_time_sec": 1.7311999954472412e-05,
-      "min_time_sec": 6.072000019230472e-06,
-      "total_time_sec": 0.0006603270002187855
+      "max_time_sec": 9.438099732506089e-05,
+      "min_time_sec": 4.992998583475128e-06,
+      "total_time_sec": 0.000769658996432554
     },
     "poisson_input": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 4.6108500077934875e-06,
+      "avg_time_sec": 5.6974900508066636e-06,
       "call_count": 100,
-      "max_time_sec": 1.8504000081520644e-05,
-      "min_time_sec": 3.796999976657389e-06,
-      "total_time_sec": 0.0004610850007793488
+      "max_time_sec": 1.1847998393932357e-05,
+      "min_time_sec": 4.253997758496553e-06,
+      "total_time_sec": 0.0005697490050806664
     },
     "synapse_propagation": {
       "avg_memory_mb": 0.0,
-      "avg_time_sec": 1.8160929990926888e-05,
+      "avg_time_sec": 1.620570990780834e-05,
       "call_count": 100,
-      "max_time_sec": 8.962800006884208e-05,
-      "min_time_sec": 1.6109999933178187e-05,
-      "total_time_sec": 0.0018160929990926888
+      "max_time_sec": 0.0001057010013028048,
+      "min_time_sec": 1.0348998330300674e-05,
+      "total_time_sec": 0.0016205709907808341
     }
   },
   "metadata": {
     "description": "Performance Jacobian - gradient of cost w.r.t. kernels",
-    "note": "Use this to identify O(N\u00b2) operations and optimization surfaces"
+    "note": "Use this to identify O(N\u00b2) operations and optimization surfaces",
+    "platform": "Linux-6.12.13-x86_64-with-glibc2.39",
+    "python_version": "3.12.12"
   }
 }

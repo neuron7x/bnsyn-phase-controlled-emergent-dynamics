@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from numbers import Integral
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import os
 import numpy as np
@@ -266,11 +266,19 @@ class Network:
         if self._use_torch:
             if torch is None:
                 raise RuntimeError("PyTorch not available. Install with: pip install torch")
-            assert torch is not None  # Type narrowing for mypy
-            spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
-            spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
-            incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
-            incoming_inh = torch.matmul(self._W_inh_t, spikes_I_t).cpu().numpy()
+            torch_module = cast(Any, torch)
+            spikes_E_t = torch_module.as_tensor(
+                spikes_E,
+                dtype=torch_module.float64,
+                device=self._torch_device,
+            )
+            spikes_I_t = torch_module.as_tensor(
+                spikes_I,
+                dtype=torch_module.float64,
+                device=self._torch_device,
+            )
+            incoming_exc = torch_module.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
+            incoming_inh = torch_module.matmul(self._W_inh_t, spikes_I_t).cpu().numpy()
         else:
             incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
@@ -365,11 +373,19 @@ class Network:
         if self._use_torch:
             if torch is None:
                 raise RuntimeError("PyTorch not available. Install with: pip install torch")
-            assert torch is not None  # Type narrowing for mypy
-            spikes_E_t = torch.as_tensor(spikes_E, dtype=torch.float64, device=self._torch_device)
-            spikes_I_t = torch.as_tensor(spikes_I, dtype=torch.float64, device=self._torch_device)
-            incoming_exc = torch.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
-            incoming_inh = torch.matmul(self._W_inh_t, spikes_I_t).cpu().numpy()
+            torch_module = cast(Any, torch)
+            spikes_E_t = torch_module.as_tensor(
+                spikes_E,
+                dtype=torch_module.float64,
+                device=self._torch_device,
+            )
+            spikes_I_t = torch_module.as_tensor(
+                spikes_I,
+                dtype=torch_module.float64,
+                device=self._torch_device,
+            )
+            incoming_exc = torch_module.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
+            incoming_inh = torch_module.matmul(self._W_inh_t, spikes_I_t).cpu().numpy()
         else:
             incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))
             incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))

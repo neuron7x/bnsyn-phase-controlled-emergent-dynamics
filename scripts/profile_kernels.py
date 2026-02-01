@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -253,6 +254,8 @@ def profile_network_kernels(
         "metadata": {
             "description": "Performance Jacobian - gradient of cost w.r.t. kernels",
             "note": "Use this to identify O(N²) operations and optimization surfaces",
+            "python_version": platform.python_version(),
+            "platform": platform.platform(),
         },
     }
 

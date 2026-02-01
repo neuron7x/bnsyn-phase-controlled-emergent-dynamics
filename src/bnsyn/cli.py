@@ -25,6 +25,7 @@ import argparse
 import importlib.metadata
 import json
 import tomllib
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -34,12 +35,17 @@ from bnsyn.sim.network import run_simulation
 
 def _get_package_version() -> str:
     """Return the installed package version with a safe fallback."""
+    version: str | None = None
     try:
-        return importlib.metadata.version("bnsyn")
+        version = importlib.metadata.version("bnsyn")
     except importlib.metadata.PackageNotFoundError:
-        pass
-    except Exception:
-        pass
+        version = None
+    except Exception as exc:
+        warnings.warn(f"Failed to read package version: {exc}", stacklevel=2)
+        version = None
+
+    if version:
+        return version
 
     pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
     if pyproject_path.exists():
@@ -80,7 +86,8 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     if getattr(args, "interactive", False):
         # Launch interactive Streamlit dashboard
         import importlib.util
-        import subprocess
+        # subprocess used for controlled dashboard launch (no shell).
+        import subprocess  # nosec B404
         import sys
 
         # Find the interactive.py script
@@ -95,7 +102,10 @@ def _cmd_demo(args: argparse.Namespace) -> int:
         print("🚀 Launching interactive dashboard...")
         print("   Press Ctrl+C to stop")
         try:
-            result = subprocess.run([sys.executable, "-m", "streamlit", "run", str(script_path)])
+            # Fixed module invocation without shell; inputs are local paths only.
+            result = subprocess.run(  # nosec B603
+                [sys.executable, "-m", "streamlit", "run", str(script_path)]
+            )
             if result.returncode != 0:
                 print(f"Error: Dashboard exited with code {result.returncode}")
                 return 1

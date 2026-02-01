@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
 import time
 from pathlib import Path
 from typing import Any
@@ -232,6 +233,8 @@ def run_physics_benchmark(
         "metadata": {
             "dt_invariance": "validated",
             "determinism": "enforced",
+            "python_version": platform.python_version(),
+            "platform": platform.platform(),
         },
     }
 

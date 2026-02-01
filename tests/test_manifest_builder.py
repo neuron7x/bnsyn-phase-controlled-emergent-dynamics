@@ -1,23 +1,33 @@
 from __future__ import annotations
 
 import subprocess
+from importlib import metadata
 from pathlib import Path
+
+import pytest
 
 from bnsyn.provenance import manifest_builder
 
 
 def test_get_git_commit_handles_errors(tmp_path: Path, monkeypatch) -> None:
+    try:
+        version = metadata.version("bnsyn")
+    except metadata.PackageNotFoundError:
+        version = "0.0.0"
+
     def raise_called(*args, **kwargs) -> None:
         raise subprocess.CalledProcessError(1, ["git", "rev-parse", "HEAD"])
 
     monkeypatch.setattr(manifest_builder.subprocess, "run", raise_called)
-    assert manifest_builder._get_git_commit(tmp_path) is None
+    with pytest.warns(UserWarning):
+        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
 
     def raise_missing(*args, **kwargs) -> None:
         raise FileNotFoundError("git not available")
 
     monkeypatch.setattr(manifest_builder.subprocess, "run", raise_missing)
-    assert manifest_builder._get_git_commit(tmp_path) is None
+    with pytest.warns(UserWarning):
+        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
 
 
 def test_extract_spec_version_falls_back_to_hash(tmp_path: Path) -> None:
