@@ -57,13 +57,16 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## Experiment Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Flagship experiment completed. Artifacts uploaded." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f results/ci_run/manifest.json ]; then
-            echo "### Manifest" >> $GITHUB_STEP_SUMMARY
-            echo '```json' >> $GITHUB_STEP_SUMMARY
-            cat results/ci_run/manifest.json >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Experiment Results"
+            echo ""
+            echo "Flagship experiment completed. Artifacts uploaded."
+            echo ""
+            if [ -f results/ci_run/manifest.json ]; then
+              echo "### Manifest"
+              echo '```json'
+              cat results/ci_run/manifest.json
+              echo '```'
+            fi
+          } >> "$summary_file"

@@ -5,6 +5,12 @@ on:
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
+  workflow_call:
+    secrets:
+      BENCHMARK_GPG_PASSPHRASE:
+        required: false
+      SLACK_WEBHOOK_URL:
+        required: false
 
 permissions:
   contents: write
@@ -15,12 +21,18 @@ permissions:
   packages: read
   pull-requests: read
   security-events: write
-  artifacts: write
 
 jobs:
   nightly-benchmarks:
     if: ${{ github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
+      BENCHMARK_GPG_PASSPHRASE: ${{ secrets.BENCHMARK_GPG_PASSPHRASE }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     strategy:
       matrix:
         scenario: [small_network, medium_network, large_network]
@@ -64,9 +76,9 @@ jobs:
             --json "artifacts/bench_${{ matrix.scenario }}.json"
 
       - name: Encrypt artifacts
-        if: ${{ secrets.BENCHMARK_GPG_PASSPHRASE != '' }}
+        if: ${{ env.BENCHMARK_GPG_PASSPHRASE != '' }}
         env:
-          GPG_PASSPHRASE: ${{ secrets.BENCHMARK_GPG_PASSPHRASE }}
+          GPG_PASSPHRASE: ${{ env.BENCHMARK_GPG_PASSPHRASE }}
         run: |
           for f in artifacts/*.json; do
             echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --symmetric --cipher-algo AES256 "$f"
@@ -87,7 +99,7 @@ jobs:
           retention-days: 90
 
       - name: Notify on failure
-        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL != '' }}
+        if: ${{ failure() && env.SLACK_WEBHOOK_URL != '' }}
         uses: slackapi/slack-github-action@v2.1.1
         with:
           payload: |
@@ -95,12 +107,17 @@ jobs:
               "text": "BN-Syn benchmarks failed for scenario ${{ matrix.scenario }} (run ${{ github.run_id }})."
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
 
   micro-benchmarks:
     if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      NUMEXPR_NUM_THREADS: "1"
 
     steps:
       - name: Checkout
@@ -124,14 +141,14 @@ jobs:
       - name: Run performance baselines
         run: |
           python scripts/benchmark_physics.py --output benchmarks/physics_current.json
-          python scripts/profile_kernels.py --steps 100 --output benchmarks/kernel_profile_current.json
+          python scripts/profile_kernels.py --steps 100 --warmup 2 --repeats 5 --output benchmarks/kernel_profile_current.json
 
       - name: Check benchmark regressions
         run: |
           python scripts/check_benchmark_regressions.py \
-            --physics-baseline benchmarks/baselines/physics_baseline.json \
+            --physics-baseline benchmarks/baselines/physics_baseline_alloc_v2.json \
             --physics-current benchmarks/physics_current.json \
-            --kernel-baseline benchmarks/baselines/kernel_profile.json \
+            --kernel-baseline benchmarks/baselines/kernel_profile_alloc_v2.json \
             --kernel-current benchmarks/kernel_profile_current.json \
             --threshold 0.10
 

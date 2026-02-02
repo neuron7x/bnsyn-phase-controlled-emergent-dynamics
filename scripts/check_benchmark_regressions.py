@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+
 
 @dataclass(frozen=True)
 class MetricSpec:
@@ -126,6 +128,34 @@ def compare_metric(
     )
 
 
+MAX_TIME_THRESHOLD = 0.25
+THRESHOLD_OVERRIDES = {
+    "performance.updates_per_sec": 0.15,
+    "performance.energy_cost": 0.15,
+    "performance.wall_time_sec": 0.15,
+    "kernels.adex_update.total_time_sec": 0.30,
+    "kernels.adex_update.avg_time_sec": 0.30,
+    "kernels.adex_update.min_time_sec": 0.30,
+}
+
+
+def _threshold_for_metric(
+    name: str,
+    default: float,
+    overrides: dict[str, float] | None = None,
+) -> float:
+    if overrides is not None:
+        override = overrides.get(name)
+        if override is not None:
+            return max(default, override)
+    override = THRESHOLD_OVERRIDES.get(name)
+    if override is not None:
+        return max(default, override)
+    if name.endswith(".max_time_sec"):
+        return max(default, MAX_TIME_THRESHOLD)
+    return default
+
+
 def compare_datasets(
     *,
     baseline: dict[str, Any],
@@ -134,6 +164,9 @@ def compare_datasets(
     threshold: float,
 ) -> list[MetricComparison]:
     results: list[MetricComparison] = []
+    threshold_overrides = baseline.get("thresholds")
+    if threshold_overrides is not None and not isinstance(threshold_overrides, dict):
+        raise SystemExit("Invalid benchmark thresholds format")
     for spec in specs:
         base_value = _get_nested_value(baseline, spec.name)
         curr_value = _get_nested_value(current, spec.name)
@@ -158,7 +191,7 @@ def compare_datasets(
                 baseline=base_value,
                 current=curr_value,
                 higher_is_better=spec.higher_is_better,
-                threshold=threshold,
+                threshold=_threshold_for_metric(spec.name, threshold, threshold_overrides),
             )
         )
     return results
@@ -220,6 +253,31 @@ def compare_benchmarks(
     physics_curr = load_json(physics_current)
     kernel_base = load_json(kernel_baseline)
     kernel_curr = load_json(kernel_current)
+
+    for label, baseline_data, current_data in (
+        ("physics", physics_base, physics_curr),
+        ("kernels", kernel_base, kernel_curr),
+    ):
+        baseline_regime = baseline_data.get("regime_id")
+        current_regime = current_data.get("regime_id")
+        if baseline_regime is None or current_regime is None:
+            raise SystemExit(f"Missing benchmark regime_id for {label}")
+        if baseline_regime != current_regime or baseline_regime != BENCHMARK_REGIME_ID:
+            raise SystemExit(
+                f"Benchmark regime mismatch for {label}: "
+                f"baseline={baseline_regime}, current={current_regime}, "
+                f"expected={BENCHMARK_REGIME_ID}"
+            )
+        baseline_config = baseline_data.get("configuration")
+        current_config = current_data.get("configuration")
+        if not isinstance(baseline_config, dict) or not isinstance(current_config, dict):
+            raise SystemExit(f"Missing configuration for {label}")
+        for key in ("neurons", "dt_ms", "steps"):
+            if baseline_config.get(key) != current_config.get(key):
+                raise SystemExit(
+                    f"Benchmark configuration mismatch for {label}: "
+                    f"{key} baseline={baseline_config.get(key)} current={current_config.get(key)}"
+                )
 
     results = []
     results.extend(

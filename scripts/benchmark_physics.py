@@ -46,6 +46,7 @@ from typing import Any
 
 import numpy as np
 
+from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import Network, NetworkParams
@@ -207,6 +208,7 @@ def run_physics_benchmark(
 
     # Build manifest
     manifest = {
+        "regime_id": BENCHMARK_REGIME_ID,
         "backend": backend,
         "seed": seed,
         "configuration": {

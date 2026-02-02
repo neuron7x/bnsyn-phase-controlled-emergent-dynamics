@@ -5,6 +5,17 @@ on:
     # Run nightly at 4 AM UTC
     - cron: '0 4 * * *'
   workflow_dispatch:
+    inputs:
+      test_subset:
+        description: 'Chaos test subset to run'
+        type: choice
+        default: all
+        options:
+          - all
+          - numeric
+          - timing
+          - stochastic
+          - io
 
 permissions:
   contents: read
@@ -41,9 +52,6 @@ jobs:
       - name: Run chaos tests for ${{ matrix.fault-type }}
         id: chaos_test
         run: |
-          echo "##  Chaos Engineering: ${{ matrix.fault-type }} faults" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           # Run specific chaos test type with chaos marker
           pytest tests/validation/test_chaos_${{ matrix.fault-type }}.py \
             -v \
@@ -54,7 +62,12 @@ jobs:
           
           # Extract test results
           TOTAL=$(grep -E "passed|failed" chaos_output_${{ matrix.fault-type }}.txt | tail -1 || echo "0")
-          echo "| Result | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Chaos Engineering: ${{ matrix.fault-type }} faults"
+            echo ""
+            echo "| Result | $TOTAL |"
+          } >> "$summary_file"
       
       - name: Upload chaos test results
         if: always()
@@ -86,9 +99,6 @@ jobs:
       - name: Run property-based tests
         id: property_test
         run: |
-          echo "##  Property-Based Testing" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           # Run property tests with extended examples and capture statistics
           HYPOTHESIS_PROFILE=thorough pytest \
             -m property \
@@ -99,13 +109,21 @@ jobs:
             2>&1 | tee property_output.txt
           
           # Extract and display statistics in summary
-          echo "### Hypothesis Statistics" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          grep -A 100 "Hypothesis Statistics" property_output.txt >> $GITHUB_STEP_SUMMARY || echo "No statistics found" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          
           RESULT=$(grep -E "passed|failed" property_output.txt | tail -1 || echo "Unknown")
-          echo "| Result | $RESULT |" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Property-Based Testing"
+            echo ""
+            echo "### Hypothesis Statistics"
+            echo '```'
+            if grep -A 100 "Hypothesis Statistics" property_output.txt; then
+              true
+            else
+              echo "No statistics found"
+            fi
+            echo '```'
+            echo "| Result | $RESULT |"
+          } >> "$summary_file"
       
       - name: Upload property test results
         if: always()
@@ -128,35 +146,35 @@ jobs:
       
       - name: Generate summary report
         run: |
-          echo "##  Chaos & Property Testing Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ needs.chaos-tests.result }}" == "success" ]; then
-            echo "| Chaos Tests |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Chaos Tests |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [ "${{ needs.property-tests.result }}" == "success" ]; then
-            echo "| Property Tests |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Property Tests |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Key Insights" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Numeric Faults**: Tests system resilience to NaN/inf injection" >> $GITHUB_STEP_SUMMARY
-          echo "- **Timing Faults**: Tests stability under dt jitter" >> $GITHUB_STEP_SUMMARY
-          echo "- **Stochastic Faults**: Tests determinism under RNG perturbation" >> $GITHUB_STEP_SUMMARY
-          echo "- **I/O Faults**: Tests graceful degradation on I/O failures" >> $GITHUB_STEP_SUMMARY
-          echo "- **Property Tests**: Tests invariants across wide input space" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Chaos & Property Testing Summary"
+            echo ""
+            echo "| Test Suite | Status |"
+            echo "|------------|--------|"
+            if [ "${{ needs.chaos-tests.result }}" = "success" ]; then
+              echo "| Chaos Tests |  PASS |"
+            else
+              echo "| Chaos Tests |  FAIL |"
+            fi
+            if [ "${{ needs.property-tests.result }}" = "success" ]; then
+              echo "| Property Tests |  PASS |"
+            else
+              echo "| Property Tests |  FAIL |"
+            fi
+            echo ""
+            echo "### Key Insights"
+            echo ""
+            echo "- **Numeric Faults**: Tests system resilience to NaN/inf injection"
+            echo "- **Timing Faults**: Tests stability under dt jitter"
+            echo "- **Stochastic Faults**: Tests determinism under RNG perturbation"
+            echo "- **I/O Faults**: Tests graceful degradation on I/O failures"
+            echo "- **Property Tests**: Tests invariants across wide input space"
+          } >> "$summary_file"
       
       - name: Check overall status
         run: |
           if [ "${{ needs.chaos-tests.result }}" != "success" ] || [ "${{ needs.property-tests.result }}" != "success" ]; then
-            echo " Some validation tests failed" >> $GITHUB_STEP_SUMMARY
+            echo " Some validation tests failed" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi

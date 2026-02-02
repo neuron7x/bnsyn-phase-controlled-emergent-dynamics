@@ -192,6 +192,7 @@ class Network:
         self.g_ampa = np.zeros(N, dtype=np.float64)
         self.g_nmda = np.zeros(N, dtype=np.float64)
         self.g_gabaa = np.zeros(N, dtype=np.float64)
+        self._I_ext_buffer = np.zeros(N, dtype=np.float64)
 
         # criticality tracking
         self.branch = BranchingEstimator()
@@ -303,12 +304,13 @@ class Network:
         )
 
         # gain: multiplies external current (proxy for global excitability)
-        I_ext = np.zeros(N, dtype=np.float64)
+        I_ext = self._I_ext_buffer
+        I_ext.fill(0.0)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
 
         # add optional external current injection
         if external_current_pA is not None:
-            I_ext = np.asarray(I_ext + external_current_pA, dtype=np.float64)
+            I_ext += external_current_pA
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
@@ -331,7 +333,13 @@ class Network:
             "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
         }
 
-    def step_adaptive(self, *, atol: float = 1e-8, rtol: float = 1e-6) -> dict[str, float]:
+    def step_adaptive(
+        self,
+        *,
+        atol: float = 1e-8,
+        rtol: float = 1e-6,
+        external_current_pA: NDArray[np.float64] | None = None,
+    ) -> dict[str, float]:
         """Advance the network by one timestep using adaptive AdEx integration.
 
         Parameters
@@ -341,6 +349,10 @@ class Network:
         rtol : float, optional
             Relative tolerance for adaptive AdEx integration.
 
+        external_current_pA : NDArray[np.float64] | None, optional
+            External current injection per neuron in pA. Shape must be (N,).
+            If None, no external current injection is applied (default behavior).
+
         Returns
         -------
         dict[str, float]
@@ -348,6 +360,8 @@ class Network:
 
         Raises
         ------
+        ValueError
+            If external_current_pA shape does not match number of neurons.
         RuntimeError
             If voltage bounds are violated (numerical instability).
 
@@ -361,6 +375,13 @@ class Network:
         """
         N = self.np.N
         dt = self.dt_ms
+
+        if external_current_pA is not None:
+            if external_current_pA.shape != (N,):
+                raise ValueError(
+                    f"external_current_pA shape {external_current_pA.shape} "
+                    f"does not match number of neurons ({N},)"
+                )
 
         lam = self.np.ext_rate_hz * (dt / 1000.0)
         ext_spikes = self.rng.random(N) < lam
@@ -406,8 +427,12 @@ class Network:
             + self.g_gabaa * (V - self.syn.E_GABAA_mV)
         )
 
-        I_ext = np.zeros(N, dtype=np.float64)
+        I_ext = self._I_ext_buffer
+        I_ext.fill(0.0)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
+
+        if external_current_pA is not None:
+            I_ext += external_current_pA
 
         self.state = adex_step_adaptive(
             self.state,

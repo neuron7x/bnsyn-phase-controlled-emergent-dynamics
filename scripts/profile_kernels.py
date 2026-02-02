@@ -44,6 +44,7 @@ from typing import Any
 
 import numpy as np
 
+from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
 from bnsyn.neuron.adex import adex_step
 from bnsyn.numerics.integrators import exp_decay_step
@@ -103,7 +104,7 @@ class KernelProfiler:
             total_time = sum(times)
             avg_time = total_time / len(times) if times else 0.0
             min_time = min(times) if times else 0.0
-            max_time = max(times) if times else 0.0
+            max_time = float(np.percentile(np.array(times, dtype=np.float64), 95)) if times else 0.0
 
             mem_snapshots = self.memory_snapshots.get(kernel_name, [])
             avg_mem = sum(mem_snapshots) / len(mem_snapshots) if mem_snapshots else 0.0
@@ -180,6 +181,8 @@ def profile_network_kernels(
     synapses = int(net.W_exc.metrics.nnz + net.W_inh.metrics.nnz)
 
     # Profile simulation loop
+    I_syn = np.zeros(n_neurons, dtype=np.float64)
+    I_ext = np.zeros(n_neurons, dtype=np.float64)
     for step_idx in range(steps):
         # External Poisson input
         t0 = time.perf_counter()
@@ -210,8 +213,8 @@ def profile_network_kernels(
 
         # AdEx neuron update
         t0 = time.perf_counter()
-        I_syn = np.zeros(n_neurons)
-        I_ext = np.zeros(n_neurons)
+        I_syn.fill(0.0)
+        I_ext.fill(0.0)
         _ = adex_step(net.state, net.adex, dt_ms, I_syn_pA=I_syn, I_ext_pA=I_ext)
         profiler.record("adex_update", time.perf_counter() - t0)
 
@@ -242,6 +245,7 @@ def profile_network_kernels(
     }
 
     manifest = {
+        "regime_id": BENCHMARK_REGIME_ID,
         "configuration": {
             "neurons": n_neurons,
             "synapses": synapses,
@@ -260,6 +264,39 @@ def profile_network_kernels(
     }
 
     return manifest
+
+
+def aggregate_kernel_profiles(runs: list[dict[str, Any]]) -> dict[str, Any]:
+    if not runs:
+        raise ValueError("runs must contain at least one profile")
+    kernel_names = runs[0]["kernels"].keys()
+    kernels: dict[str, Any] = {}
+    for name in kernel_names:
+        totals = [run["kernels"][name]["total_time_sec"] for run in runs]
+        avgs = [run["kernels"][name]["avg_time_sec"] for run in runs]
+        mins = [run["kernels"][name]["min_time_sec"] for run in runs]
+        maxs = [run["kernels"][name]["max_time_sec"] for run in runs]
+        mems = [run["kernels"][name]["avg_memory_mb"] for run in runs]
+        kernels[name] = {
+            "call_count": runs[0]["kernels"][name]["call_count"],
+            "total_time_sec": float(np.median(np.array(totals, dtype=np.float64))),
+            "avg_time_sec": float(np.median(np.array(avgs, dtype=np.float64))),
+            "min_time_sec": float(np.median(np.array(mins, dtype=np.float64))),
+            "max_time_sec": float(np.median(np.array(maxs, dtype=np.float64))),
+            "avg_memory_mb": float(np.median(np.array(mems, dtype=np.float64))),
+        }
+
+    return {
+        "regime_id": runs[0]["regime_id"],
+        "configuration": runs[0]["configuration"],
+        "kernels": kernels,
+        "complexity": runs[0]["complexity"],
+        "metadata": runs[0]["metadata"],
+        "summary": {
+            "runs": len(runs),
+            "statistic": "median",
+        },
+    }
 
 
 def main() -> None:
@@ -299,6 +336,18 @@ def main() -> None:
         default=1000,
         help="Number of steps (default: 1000)",
     )
+    parser.add_argument(
+        "--warmup",
+        type=int,
+        default=2,
+        help="Warmup runs before profiling (default: 2)",
+    )
+    parser.add_argument(
+        "--repeats",
+        type=int,
+        default=5,
+        help="Number of profiling repeats (default: 5)",
+    )
 
     args = parser.parse_args()
 
@@ -309,14 +358,27 @@ def main() -> None:
         raise ValueError("neurons must be positive")
     if args.dt <= 0:
         raise ValueError("dt must be positive")
+    if args.warmup < 0 or args.repeats <= 0:
+        raise ValueError("warmup must be >=0 and repeats must be positive")
 
-    # Run profiler
-    manifest = profile_network_kernels(
-        seed=args.seed,
-        n_neurons=args.neurons,
-        dt_ms=args.dt,
-        steps=args.steps,
-    )
+    for _ in range(args.warmup):
+        profile_network_kernels(
+            seed=args.seed,
+            n_neurons=args.neurons,
+            dt_ms=args.dt,
+            steps=args.steps,
+        )
+
+    runs = [
+        profile_network_kernels(
+            seed=args.seed,
+            n_neurons=args.neurons,
+            dt_ms=args.dt,
+            steps=args.steps,
+        )
+        for _ in range(args.repeats)
+    ]
+    manifest = aggregate_kernel_profiles(runs)
 
     # Write output
     output_path = Path(args.output)

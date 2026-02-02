@@ -31,9 +31,11 @@ jobs:
       - name: SSOT gates
         id: ssot-gates
         run: |
-          echo "##  SSOT Validation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  SSOT Validation"
+            echo ""
+          } >> "$summary_file"
           python scripts/validate_bibliography.py
           python scripts/validate_claims.py
           python scripts/scan_governed_docs.py
@@ -43,37 +45,36 @@ jobs:
       - name: Governance Gates (NEW)
         id: governance-gates
         run: |
-          echo "##  Quality Governance Gates" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Verify formal constants match code
-          echo "### Formal Constants Verification" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          summary_lines="##  Quality Governance Gates\n\n"
+          summary_lines="${summary_lines}### Formal Constants Verification\n"
           if python scripts/verify_formal_constants.py; then
-            echo " All formal spec constants match code" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines} All formal spec constants match code\n"
           else
-            echo " Formal spec constants mismatch detected" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines} Formal spec constants mismatch detected\n"
+            printf '%b' "$summary_lines" >> "$summary_file"
             exit 1
           fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          # Lint CI workflows for truthfulness
-          echo "### CI Truthfulness Lint" >> $GITHUB_STEP_SUMMARY
+          summary_lines="${summary_lines}\n### CI Truthfulness Lint\n"
           mkdir -p artifacts
           if python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md; then
-            echo " No critical CI truthfulness violations" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines} No critical CI truthfulness violations\n"
           else
-            echo " Critical CI truthfulness violations found" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "See artifacts for details" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines} Critical CI truthfulness violations found\n\nSee artifacts for details\n"
+            printf '%b' "$summary_lines" >> "$summary_file"
             exit 1
           fi
+          printf '%b' "$summary_lines" >> "$summary_file"
       
       - name: Append CI Truthfulness Report to Summary
         if: always()
         run: |
           if [ -f artifacts/ci_truthfulness.md ]; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            cat artifacts/ci_truthfulness.md >> $GITHUB_STEP_SUMMARY
+            summary_file="$GITHUB_STEP_SUMMARY"
+            {
+              echo ""
+              cat artifacts/ci_truthfulness.md
+            } >> "$summary_file"
           fi
       
       - name: Upload Governance Reports
@@ -88,14 +89,19 @@ jobs:
       - name: Validate Claims Coverage (BLOCKING)
         id: claims-coverage
         run: |
-          echo "##  Claims Coverage Validation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          python scripts/validate_claims_coverage.py --format markdown >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Claims Coverage Validation"
+            echo ""
+            python scripts/validate_claims_coverage.py --format markdown
+          } >> "$summary_file"
           python scripts/validate_claims_coverage.py --format json > claims_coverage.json
           
           if ! python scripts/validate_claims_coverage.py; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo " Claims coverage <100% - PR BLOCKED" >> $GITHUB_STEP_SUMMARY
+            {
+              echo ""
+              echo " Claims coverage <100% - PR BLOCKED"
+            } >> "$summary_file"
             exit 1
           fi
       - name: Upload Claims Coverage Report
@@ -108,30 +114,33 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "##  SSOT & Governance Validation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.ssot-gates.outcome }}" = "success" ]; then
-            echo "| Bibliography |  PASS |" >> $GITHUB_STEP_SUMMARY
-            echo "| Claims |  PASS |" >> $GITHUB_STEP_SUMMARY
-            echo "| Governed Docs |  PASS |" >> $GITHUB_STEP_SUMMARY
-            echo "| Normative Tags |  PASS |" >> $GITHUB_STEP_SUMMARY
-            echo "| TierS Misuse |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| SSOT Gates |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ steps.governance-gates.outcome }}" = "success" ]; then
-            echo "| Formal Constants |  PASS |" >> $GITHUB_STEP_SUMMARY
-            echo "| CI Truthfulness |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Governance Gates |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ steps.claims-coverage.outcome }}" = "success" ]; then
-            echo "| Claims Coverage |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Claims Coverage |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  SSOT & Governance Validation"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ steps.ssot-gates.outcome }}" = "success" ]; then
+              echo "| Bibliography |  PASS |"
+              echo "| Claims |  PASS |"
+              echo "| Governed Docs |  PASS |"
+              echo "| Normative Tags |  PASS |"
+              echo "| TierS Misuse |  PASS |"
+            else
+              echo "| SSOT Gates |  FAIL |"
+            fi
+            if [ "${{ steps.governance-gates.outcome }}" = "success" ]; then
+              echo "| Formal Constants |  PASS |"
+              echo "| CI Truthfulness |  PASS |"
+            else
+              echo "| Governance Gates |  FAIL |"
+            fi
+            if [ "${{ steps.claims-coverage.outcome }}" = "success" ]; then
+              echo "| Claims Coverage |  PASS |"
+            else
+              echo "| Claims Coverage |  FAIL |"
+            fi
+          } >> "$summary_file"
 
   dependency-consistency:
     runs-on: ubuntu-latest
@@ -221,20 +230,23 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "##  Build Verification" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.build.outcome }}" = "success" ]; then
-            echo "| Package Build |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Package Build |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ steps.import.outcome }}" = "success" ]; then
-            echo "| Import Check |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Import Check |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Build Verification"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ steps.build.outcome }}" = "success" ]; then
+              echo "| Package Build |  PASS |"
+            else
+              echo "| Package Build |  FAIL |"
+            fi
+            if [ "${{ steps.import.outcome }}" = "success" ]; then
+              echo "| Import Check |  PASS |"
+            else
+              echo "| Import Check |  FAIL |"
+            fi
+          } >> "$summary_file"
 
   docs-build:
     runs-on: ubuntu-latest
