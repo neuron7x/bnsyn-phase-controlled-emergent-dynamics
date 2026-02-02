@@ -184,6 +184,33 @@ def _validate_schema(data: dict[str, Any], schema: dict[str, Any], name: str) ->
     return errors
 
 
+def _validate_iso_date(value: str, context: str) -> list[str]:
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return [f"{context}: last_reviewed must be YYYY-MM-DD"]
+    return []
+
+
+def _validate_enforced_fields(
+    status: str,
+    enforcement: list[Any],
+    tests: list[Any],
+    gates: list[Any],
+    verification: list[Any],
+    context: str,
+) -> list[str]:
+    errors: list[str] = []
+    if status in {"enforced", "partially_mitigated"}:
+        if not enforcement:
+            errors.append(f"{context}: enforcement required for status {status}")
+        if not tests:
+            errors.append(f"{context}: tests required for status {status}")
+        if not gates:
+            errors.append(f"{context}: gates required for status {status}")
+        if not verification:
+            errors.append(f"{context}: verification required for status {status}")
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
 
@@ -225,6 +252,24 @@ def main() -> int:
             if isinstance(sc, str) and sc not in stpa_ids.constraints:
                 errors.append(f"hazard_log: SC {sc} not found in stpa.md")
 
+        if isinstance(hazard.get("last_reviewed"), str):
+            errors.extend(
+                _validate_iso_date(
+                    hazard["last_reviewed"], f"hazard_log:{hid}:last_reviewed"
+                )
+            )
+
+        errors.extend(
+            _validate_enforced_fields(
+                hazard.get("status", ""),
+                hazard.get("enforcement", []),
+                hazard.get("tests", []),
+                hazard.get("gates", []),
+                hazard.get("verification", []),
+                f"hazard_log:{hid}",
+            )
+        )
+
         errors.extend(
             _validate_paths(
                 _extract_paths(hazard.get("enforcement", []), "code"),
@@ -253,6 +298,24 @@ def main() -> int:
         for sc in requirement.get("safety_constraints", []):
             if isinstance(sc, str) and sc not in stpa_ids.constraints:
                 errors.append(f"traceability:{rid}: SC {sc} not found in stpa.md")
+
+        if isinstance(requirement.get("last_reviewed"), str):
+            errors.extend(
+                _validate_iso_date(
+                    requirement["last_reviewed"], f"traceability:{rid}:last_reviewed"
+                )
+            )
+
+        errors.extend(
+            _validate_enforced_fields(
+                requirement.get("status", ""),
+                requirement.get("enforcement", []),
+                requirement.get("tests", []),
+                requirement.get("gates", []),
+                requirement.get("verification", []),
+                f"traceability:{rid}",
+            )
+        )
 
         errors.extend(
             _validate_paths(
