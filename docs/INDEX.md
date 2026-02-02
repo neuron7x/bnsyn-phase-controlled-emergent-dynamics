@@ -49,6 +49,17 @@ Use this index to find any document, specification, or governance artifact.
 
 ---
 
+## Safety Engineering
+
+| Document | Purpose |
+|----------|---------|
+| [safety/stpa.md](safety/stpa.md) | System-theoretic process analysis (losses, hazards, constraints) |
+| [safety/hazard_log.yml](safety/hazard_log.yml) | Machine-readable hazard log |
+| [safety/traceability.yml](safety/traceability.yml) | Requirement → hazard → constraint → test traceability |
+| [safety/followups.md](safety/followups.md) | Safety follow-up actions |
+
+---
+
 ## Evidence & Bibliography
 
 | Artifact | Purpose |

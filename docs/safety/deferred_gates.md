@@ -1,12 +1,6 @@
-# Deferred Gates
+# Safety Gates Status
 
-## actionlint (workflow lint)
-
-**Status**: DEFERRED  
-**Reason**: `actionlint` is not available in the current environment (`command not found`).  
-**Reproduction**:
-```bash
-actionlint -verbose
-```
-**Next step**: Add a tooling PR to install `actionlint` in the developer/CI environment
-and run it as part of workflow validation.
+| gate_id | tool | where it runs | status | reproduction command | owner | follow-up link |
+| --- | --- | --- | --- | --- | --- | --- |
+| SAFETY-ARTIFACTS | `tools/safety/check_safety_artifacts.py` | `.github/workflows/workflow-integrity.yml` | enforced | `python tools/safety/check_safety_artifacts.py` | Safety Engineering | N/A |
+| WORKFLOW-ACTIONLINT | `actionlint` + `shellcheck` | `.github/workflows/workflow-integrity.yml` | enforced | `actionlint -verbose` | Release Engineering | N/A |
