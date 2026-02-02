@@ -20,6 +20,7 @@ All benchmarks are deterministic given fixed environment and seeds:
 Notes:
 - Subprocess teardown releases Python and (if enabled) GPU allocations.
 - OS-level caches are not explicitly flushed; performance metrics should be interpreted with this in mind.
+- Hot-path current buffers are preallocated; per-step allocations inside `Network.step()` are not permitted for benchmark stability.
 
 ## Environment Requirements
 

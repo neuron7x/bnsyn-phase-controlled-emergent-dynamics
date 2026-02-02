@@ -180,6 +180,8 @@ def profile_network_kernels(
     synapses = int(net.W_exc.metrics.nnz + net.W_inh.metrics.nnz)
 
     # Profile simulation loop
+    I_syn = np.zeros(n_neurons, dtype=np.float64)
+    I_ext = np.zeros(n_neurons, dtype=np.float64)
     for step_idx in range(steps):
         # External Poisson input
         t0 = time.perf_counter()
@@ -210,8 +212,8 @@ def profile_network_kernels(
 
         # AdEx neuron update
         t0 = time.perf_counter()
-        I_syn = np.zeros(n_neurons)
-        I_ext = np.zeros(n_neurons)
+        I_syn.fill(0.0)
+        I_ext.fill(0.0)
         _ = adex_step(net.state, net.adex, dt_ms, I_syn_pA=I_syn, I_ext_pA=I_ext)
         profiler.record("adex_update", time.perf_counter() - t0)
 

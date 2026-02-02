@@ -192,6 +192,7 @@ class Network:
         self.g_ampa = np.zeros(N, dtype=np.float64)
         self.g_nmda = np.zeros(N, dtype=np.float64)
         self.g_gabaa = np.zeros(N, dtype=np.float64)
+        self._I_ext_buffer = np.zeros(N, dtype=np.float64)
 
         # criticality tracking
         self.branch = BranchingEstimator()
@@ -303,12 +304,13 @@ class Network:
         )
 
         # gain: multiplies external current (proxy for global excitability)
-        I_ext = np.zeros(N, dtype=np.float64)
+        I_ext = self._I_ext_buffer
+        I_ext.fill(0.0)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
 
         # add optional external current injection
         if external_current_pA is not None:
-            I_ext = np.asarray(I_ext + external_current_pA, dtype=np.float64)
+            I_ext += external_current_pA
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
@@ -406,7 +408,8 @@ class Network:
             + self.g_gabaa * (V - self.syn.E_GABAA_mV)
         )
 
-        I_ext = np.zeros(N, dtype=np.float64)
+        I_ext = self._I_ext_buffer
+        I_ext.fill(0.0)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
 
         self.state = adex_step_adaptive(
