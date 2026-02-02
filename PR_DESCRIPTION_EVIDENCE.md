@@ -322,3 +322,56 @@ jobs:
       - name: Analyze
         uses: github/codeql-action/analyze@v3
 ```
+
+---
+
+# PR #134: Restore CodeQL PR Scans + Workflow Integrity Gate
+
+## Summary
+
+This PR restores CodeQL pull_request scanning, enforces ASCII-only workflow integrity, and adds actionlint-based validation to fail closed on workflow defects.
+
+## Baseline Evidence (BEFORE)
+
+**Current branch workflow trigger state (local):**
+```yaml
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+```
+
+**Missing evidence:**
+- PR #134 diff against main (not available in this environment).
+- GitHub UI invalid workflow parse errors or bidi warnings (not available in this environment).
+
+## Fix Evidence (AFTER)
+
+**CodeQL triggers (local):**
+```yaml
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+```
+
+**Workflow integrity gate (local):**
+- ASCII-only byte scan with byte offsets.
+- Bidi/control codepoint scan with byte offsets.
+- actionlint validation (pinned v1.7.1).
+
+## Verification (NEEDS_EVIDENCE)
+
+- CodeQL PR run URL (analyze reached): NEEDS_EVIDENCE
+- Workflow integrity gate PR run URL: NEEDS_EVIDENCE
+- GitHub UI confirmation of no invalid workflow parse errors: NEEDS_EVIDENCE
+
+## Risks & Rollback
+
+Rollback by reverting this PR commit to restore previous workflow behavior.
