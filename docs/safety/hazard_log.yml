@@ -1,0 +1,38 @@
+hazards:
+  - id: H1
+    title: Invalid external arrays enter system state
+    loss_refs:
+      - L1
+      - L2
+      - L3
+    unsafe_control_actions:
+      - UCA1
+    safety_constraints:
+      - SC-1
+    status: enforced
+    enforcement:
+      - code: src/bnsyn/validation/inputs.py
+        description: Validate dtype, shape, and NaN for state, spikes, and connectivity.
+    tests:
+      - tests/test_validation_inputs.py
+    gate:
+      - pytest -q
+  - id: H2
+    title: Invalid network configuration or external current shape at runtime
+    loss_refs:
+      - L1
+      - L2
+    unsafe_control_actions:
+      - UCA2
+      - UCA3
+    safety_constraints:
+      - SC-2
+    status: enforced
+    enforcement:
+      - code: src/bnsyn/sim/network.py
+        description: Validate network parameters and external current shape.
+    tests:
+      - tests/test_network_validation_edges.py
+      - tests/test_network_external_input.py
+    gate:
+      - pytest -q

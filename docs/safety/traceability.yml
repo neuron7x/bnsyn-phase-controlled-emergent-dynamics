@@ -1,0 +1,28 @@
+requirements:
+  - id: REQ-INPUT-VALIDATION
+    description: Validate external arrays at API boundaries to prevent invalid state.
+    hazards:
+      - H1
+    safety_constraints:
+      - SC-1
+    enforcement:
+      - code: src/bnsyn/validation/inputs.py
+        notes: dtype/shape/NaN checks for state, spikes, and connectivity.
+    tests:
+      - tests/test_validation_inputs.py
+    gates:
+      - pytest -q
+  - id: REQ-NETWORK-BOUNDS
+    description: Reject invalid network parameters and external current shapes early.
+    hazards:
+      - H2
+    safety_constraints:
+      - SC-2
+    enforcement:
+      - code: src/bnsyn/sim/network.py
+        notes: parameter checks in __init__ and shape checks in step/step_adaptive.
+    tests:
+      - tests/test_network_validation_edges.py
+      - tests/test_network_external_input.py
+    gates:
+      - pytest -q
