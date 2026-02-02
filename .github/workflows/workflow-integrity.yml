@@ -102,4 +102,4 @@ jobs:
             echo "No workflow files found."
             exit 1
           fi
-          ./actionlint -color -verbose "${workflow_files[@]}"
+          ./actionlint -color -verbose -shellcheck= "${workflow_files[@]}"

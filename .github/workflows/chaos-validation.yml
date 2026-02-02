@@ -5,6 +5,13 @@ on:
     # Run nightly at 4 AM UTC
     - cron: '0 4 * * *'
   workflow_dispatch:
+    inputs:
+      test_subset:
+        description: "Subset of chaos tests"
+        type: choice
+        required: false
+        default: all
+        options: [all, numeric, timing, stochastic, io]
 
 permissions:
   contents: read
