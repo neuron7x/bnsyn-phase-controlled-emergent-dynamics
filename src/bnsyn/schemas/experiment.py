@@ -10,7 +10,9 @@ docs/LEGENDARY_QUICKSTART.md
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, field_validator
+from math import isclose
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class ExperimentConfig(BaseModel):
@@ -79,6 +81,18 @@ class SimulationConfig(BaseModel):
         if v not in allowed_values:
             raise ValueError(f"dt_ms must be one of {allowed_values}, got {v}")
         return v
+
+    @model_validator(mode="after")
+    def validate_duration_multiple(self) -> "SimulationConfig":
+        """Validate that duration_ms is an integer multiple of dt_ms."""
+        ratio = self.duration_ms / self.dt_ms
+        nearest = round(ratio)
+        if not isclose(ratio, nearest, rel_tol=0.0, abs_tol=1e-6):
+            raise ValueError(
+                "duration_ms must be an integer multiple of dt_ms within tolerance; "
+                f"got duration_ms={self.duration_ms}, dt_ms={self.dt_ms}"
+            )
+        return self
 
     model_config = {"extra": "forbid"}
 
