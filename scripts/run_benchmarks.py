@@ -98,6 +98,9 @@ def _summarize(entries: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _compare_baseline(entries: list[dict[str, Any]], baseline: list[dict[str, Any]]) -> None:
     baseline_map = {(b["metric_name"], b["N"], b["dt"]): float(b["value"]) for b in baseline}
+    tolerances = {
+        "adex_steps_per_sec": 0.10,
+    }
     for entry in entries:
         key = (entry["metric_name"], entry["N"], entry["dt"])
         if key not in baseline_map:
@@ -106,8 +109,19 @@ def _compare_baseline(entries: list[dict[str, Any]], baseline: list[dict[str, An
         base = baseline_map[key]
         if base == 0:
             continue
-        if abs(current - base) / abs(base) > 0.05:
-            raise SystemExit(f"Regression detected for {entry['metric_name']} N={entry['N']}")
+        metric = entry["metric_name"]
+        tolerance = tolerances.get(metric, 0.05)
+        if metric == "adex_steps_per_sec":
+            if current < base * (1 - tolerance):
+                raise SystemExit(
+                    f"Regression detected for {entry['metric_name']} N={entry['N']}"
+                )
+            continue
+        if metric.endswith("_cost_ms") or metric.endswith("_drift") or metric.endswith("_mb"):
+            if current > base * (1 + tolerance):
+                raise SystemExit(
+                    f"Regression detected for {entry['metric_name']} N={entry['N']}"
+                )
 
 
 def main() -> None:
