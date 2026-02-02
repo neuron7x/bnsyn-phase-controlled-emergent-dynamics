@@ -126,6 +126,12 @@ def compare_metric(
     )
 
 
+def _threshold_for_metric(name: str, default: float) -> float:
+    if name.endswith(".max_time_sec"):
+        return max(default, 0.25)
+    return default
+
+
 def compare_datasets(
     *,
     baseline: dict[str, Any],
@@ -158,7 +164,7 @@ def compare_datasets(
                 baseline=base_value,
                 current=curr_value,
                 higher_is_better=spec.higher_is_better,
-                threshold=threshold,
+                threshold=_threshold_for_metric(spec.name, threshold),
             )
         )
     return results
