@@ -10,6 +10,7 @@ on:
 permissions:
   actions: read
   contents: read
+  pull-requests: write
   security-events: write
 
 concurrency:
@@ -32,3 +33,5 @@ jobs:
         uses: github/codeql-action/autobuild@v3
       - name: Analyze
         uses: github/codeql-action/analyze@v3
+      - name: Autofix
+        uses: github/codeql-action/autofix@v3
