@@ -1049,9 +1049,9 @@ requests==2.32.5 \
     #   cachecontrol
     #   pip-audit
     #   sphinx
-rich==14.3.0 \
-    --hash=sha256:0b8c1e368c1125b9e993c2d2f1342802525f4853fc6dac2e8e9e88bac0f45bce \
-    --hash=sha256:b75e54d3abbcc49137e83e4db54dc86c5e47687eebc95aa0305363231a36e699
+rich==14.3.2 \
+    --hash=sha256:08e67c3e90884651da3239ea668222d19bea7b589149d8014a21c633420dbb69 \
+    --hash=sha256:e712f11c1a562a11843306f5ed999475f09ac31ffb64281f73ab29ffdda8b3b8
     # via
     #   bandit
     #   pip-audit
