@@ -68,8 +68,8 @@ jobs:
           mutmut show --status survived > survived_mutants.txt || true
           
           # Calculate score
-          TOTAL=$(grep -Ec "^(Survived|Killed|Timeout)" mutation_results.txt || echo "0")
-          KILLED=$(grep -c "^Killed" mutation_results.txt || echo "0")
+          TOTAL=$(awk '/^(Survived|Killed|Timeout)/{count++} END{print count+0}' mutation_results.txt)
+          KILLED=$(awk '/^Killed/{count++} END{print count+0}' mutation_results.txt)
           
           if [ "$TOTAL" -gt 0 ]; then
             SCORE=$(python -c "print(round(100.0 * $KILLED / $TOTAL, 2))")
