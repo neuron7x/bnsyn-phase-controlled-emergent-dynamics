@@ -27,6 +27,11 @@ def test_validate_state_vector_shape_and_nan() -> None:
     with pytest.raises(ValueError, match="contains NaN"):
         validate_state_vector(np.array([0.0, np.nan], dtype=np.float64), n_neurons=2, name="state")
 
+    with pytest.raises(ValueError, match="contains inf"):
+        validate_state_vector(
+            np.array([0.0, np.inf], dtype=np.float64), n_neurons=2, name="state"
+        )
+
 
 def test_validate_spike_array_dtype_and_shape() -> None:
     with pytest.raises(ValueError, match="expected dtype bool"):
@@ -50,4 +55,9 @@ def test_validate_connectivity_matrix_dtype_shape_nan() -> None:
     with pytest.raises(ValueError, match="contains NaN"):
         validate_connectivity_matrix(
             np.array([[np.nan]], dtype=np.float64), shape=(1, 1), name="conn"
+        )
+
+    with pytest.raises(ValueError, match="contains inf"):
+        validate_connectivity_matrix(
+            np.array([[np.inf]], dtype=np.float64), shape=(1, 1), name="conn"
         )

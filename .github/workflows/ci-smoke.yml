@@ -29,6 +29,10 @@ jobs:
           python scripts/validate_claims.py
           python scripts/scan_governed_docs.py
           python scripts/scan_normative_tags.py
+      - name: Safety schema validation
+        run: make validate-safety
+      - name: Docs link check
+        run: python tools/check_docs_links.py docs
 
   tests-smoke:
     runs-on: ubuntu-latest

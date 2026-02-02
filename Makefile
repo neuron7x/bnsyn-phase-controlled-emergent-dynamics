@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup check test test-determinism test-validation coverage quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness validate-safety
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -67,6 +67,10 @@ ssot:
 	python scripts/validate_bibliography.py
 	python scripts/validate_claims.py
 	python scripts/scan_normative_tags.py
+
+validate-safety:
+	python tools/validate_yaml_schema.py docs/safety/hazard_log.yml docs/safety/schemas/hazard_log.schema.json
+	python tools/validate_yaml_schema.py docs/safety/traceability.yml docs/safety/schemas/traceability.schema.json
 
 validate-claims-coverage:
 	python scripts/validate_claims_coverage.py --format markdown

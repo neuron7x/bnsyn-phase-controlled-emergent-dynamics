@@ -1,0 +1,25 @@
+version: "1.0"
+traceability:
+  - hazard_id: "H-001"
+    safety_constraints:
+      - id: "SC-001"
+        description: "Reject non-finite state vectors and connectivity matrices at API boundaries."
+        enforced_by:
+          - "bnsyn.validation.inputs.validate_state_vector"
+          - "bnsyn.validation.inputs.validate_connectivity_matrix"
+        tests:
+          - "tests/test_validation_inputs.py::test_validate_state_vector_shape_and_nan"
+          - "tests/test_validation_inputs.py::test_validate_connectivity_matrix_dtype_shape_nan"
+        docs:
+          - "docs/architecture/contracts.md#input-validation-invariants"
+  - hazard_id: "H-002"
+    safety_constraints:
+      - id: "SC-002"
+        description: "Require deterministic seeding for stochastic simulation paths."
+        enforced_by:
+          - "bnsyn.rng.seed_all"
+          - "bnsyn.sim.network.run_simulation"
+        tests:
+          - "tests/test_simulation_regression_deterministic.py::test_run_simulation_regression_metrics"
+        docs:
+          - "docs/architecture/contracts.md#determinism-and-seeding"

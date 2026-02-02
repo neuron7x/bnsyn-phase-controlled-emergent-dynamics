@@ -28,6 +28,9 @@ governed_docs:
   - README_CLAIMS_GATE.md
   - docs/API_CONTRACT.md
   - docs/ARCHITECTURE.md
+  - docs/architecture/overview.md
+  - docs/architecture/contracts.md
+  - docs/architecture/ci_gates.md
   - docs/AUDIT_LEDGER.md
   - docs/AUDIT_FINDINGS.md
   - docs/BENCHMARK_MAP.md
@@ -52,6 +55,9 @@ governed_docs:
   - docs/SSOT.md
   - docs/SSOT_RULES.md
   - docs/VCG.md
+  - docs/safety/stpa.md
+  - docs/safety/hazard_log.yml
+  - docs/safety/traceability.yml
   - docs/api/api_bnsyn.md
   - docs/api/index.md
   - docs/api/modules.md

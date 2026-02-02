@@ -124,7 +124,7 @@ def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "stat
     Raises
     ------
     ValueError
-        If dtype, shape, or NaN constraints are violated.
+        If dtype, shape, or NaN/Inf constraints are violated.
     """
     arr = _ensure_ndarray(state, name)
     if arr.dtype != np.float64:
@@ -133,6 +133,8 @@ def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "stat
         raise ValueError(f"{name}: expected shape ({n_neurons},), got {arr.shape}")
     if np.any(np.isnan(arr)):
         raise ValueError(f"{name}: contains NaN")
+    if np.any(np.isinf(arr)):
+        raise ValueError(f"{name}: contains inf")
 
 
 def validate_spike_array(spikes: BoolArray, n_neurons: int, name: str = "spikes") -> None:
@@ -186,7 +188,7 @@ def validate_connectivity_matrix(
     Raises
     ------
     ValueError
-        If dtype, shape, or NaN constraints are violated.
+        If dtype, shape, or NaN/Inf constraints are violated.
     """
     arr = _ensure_ndarray(matrix, name)
     if arr.dtype != np.float64:
@@ -195,3 +197,5 @@ def validate_connectivity_matrix(
         raise ValueError(f"{name}: expected shape {shape}, got {arr.shape}")
     if np.any(np.isnan(arr)):
         raise ValueError(f"{name}: contains NaN")
+    if np.any(np.isinf(arr)):
+        raise ValueError(f"{name}: contains inf")

@@ -1,0 +1,34 @@
+version: "1.0"
+system: "BN-Syn MLSDM"
+hazards:
+  - id: "H-001"
+    title: "Non-finite state propagates into simulation"
+    description: "NaN or infinite values in state vectors or connectivity matrices cause unstable or invalid dynamics."
+    severity: "high"
+    losses:
+      - "L-001"
+    unsafe_control_actions:
+      - "Advance simulation with NaN/Inf state or connectivity inputs."
+    safety_constraints:
+      - "SC-001"
+    mitigations:
+      - "bnsyn.validation.inputs.validate_state_vector"
+      - "bnsyn.validation.inputs.validate_connectivity_matrix"
+    verification:
+      - "tests/test_validation_inputs.py::test_validate_state_vector_shape_and_nan"
+      - "tests/test_validation_inputs.py::test_validate_connectivity_matrix_dtype_shape_nan"
+  - id: "H-002"
+    title: "Unseeded RNG causes nondeterministic results"
+    description: "Simulation runs without explicit seeding violate determinism contracts and reproducibility guarantees."
+    severity: "medium"
+    losses:
+      - "L-002"
+    unsafe_control_actions:
+      - "Invoke stochastic simulation paths without deterministic seeding."
+    safety_constraints:
+      - "SC-002"
+    mitigations:
+      - "bnsyn.rng.seed_all"
+      - "bnsyn.sim.network.run_simulation"
+    verification:
+      - "tests/test_simulation_regression_deterministic.py::test_run_simulation_regression_metrics"

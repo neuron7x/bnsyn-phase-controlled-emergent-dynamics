@@ -32,6 +32,9 @@ Use this index to find any document, specification, or governance artifact.
 |----------|---------|
 | [SPEC.md](SPEC.md) | 12-component formal specification: equations, calibration, failure envelopes |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Architecture ↔ evidence crosswalk (component → claim mapping) |
+| [architecture/overview.md](architecture/overview.md) | Module map, boundaries, public API surface |
+| [architecture/contracts.md](architecture/contracts.md) | Runtime invariants and failure behavior |
+| [architecture/ci_gates.md](architecture/ci_gates.md) | CI gate inventory and local commands |
 | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | Determinism protocol, environment setup, test commands |
 
 ---
@@ -59,6 +62,18 @@ Use this index to find any document, specification, or governance artifact.
 | [claims/claims.yml](../claims/claims.yml) | Evidence ledger with claim definitions |
 | [BIBLIOGRAPHY.md](BIBLIOGRAPHY.md) | Human-readable bibliography summary |
 | [EVIDENCE_COVERAGE.md](EVIDENCE_COVERAGE.md) | Evidence coverage table |
+
+---
+
+## Safety & STPA
+
+| Artifact | Purpose |
+|---------|---------|
+| [safety/stpa.md](safety/stpa.md) | STPA narrative and safety constraints |
+| [safety/hazard_log.yml](safety/hazard_log.yml) | Machine-checkable hazard log |
+| [safety/traceability.yml](safety/traceability.yml) | Safety constraint traceability |
+| [safety/schemas/hazard_log.schema.json](safety/schemas/hazard_log.schema.json) | Hazard log schema |
+| [safety/schemas/traceability.schema.json](safety/schemas/traceability.schema.json) | Traceability schema |
 
 ---
 

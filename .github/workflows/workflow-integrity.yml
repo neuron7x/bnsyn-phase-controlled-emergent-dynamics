@@ -17,6 +17,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install actionlint
+        shell: bash
+        run: |
+          curl -sSLo actionlint.tar.gz https://github.com/rhysd/actionlint/releases/download/v1.6.27/actionlint_1.6.27_linux_amd64.tar.gz
+          tar -xzf actionlint.tar.gz
+          sudo mv actionlint /usr/local/bin/actionlint
+          actionlint --version
+      - name: Run actionlint
+        run: actionlint -color
       - name: Scan workflow files for tabs or non-ASCII
         shell: bash
         run: |
