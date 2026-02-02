@@ -67,7 +67,8 @@ def parse_mutmut_results() -> tuple[float, int, int]:
 
     total = counts["killed"] + counts["survived"] + counts["timeout"] + counts["suspicious"]
     if total == 0:
-        return 0.0, 0, 0
+        print("❌ No mutants reported by mutmut results.", file=sys.stderr)
+        sys.exit(1)
 
     killed_equivalent = counts["killed"] + counts["timeout"]
     score = round(100.0 * killed_equivalent / total, 2)

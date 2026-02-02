@@ -86,6 +86,7 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     if getattr(args, "interactive", False):
         # Launch interactive Streamlit dashboard
         import importlib.util
+
         # subprocess used for controlled dashboard launch (no shell).
         import subprocess  # nosec B404
         import sys

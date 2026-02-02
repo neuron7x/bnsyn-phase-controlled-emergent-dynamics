@@ -206,12 +206,13 @@ def main() -> int:
     print(f"Mutation score: {score}%")
     print()
 
+    if total_mutants <= 0:
+        print("❌ No mutants reported; baseline cannot be generated.", file=sys.stderr)
+        return 1
+
     # Build baseline JSON
     # Determine status based on whether we have real data
-    if total_mutants > 0:
-        status = "active"
-    else:
-        status = "needs_regeneration"
+    status = "active"
 
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     baseline = {

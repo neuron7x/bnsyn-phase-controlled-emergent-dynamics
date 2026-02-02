@@ -33,6 +33,8 @@ jobs:
     name: Pytest (Coverage ${{ inputs.coverage-threshold }}%)
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout-minutes }}
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,7 +68,7 @@ jobs:
           DURATION=$((END_TIME - START_TIME))
           echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
-          exit "$PYTEST_EXIT"
+          exit "${PYTEST_EXIT:-1}"
       
       - name: Parse coverage
         if: always()
@@ -78,7 +80,7 @@ jobs:
             
             # Count tests
             if [ -f junit.xml ]; then
-              TEST_COUNT=$(grep -c '<testcase' junit.xml || echo "0")
+              TEST_COUNT=$(grep -c '<testcase' junit.xml || true)
               echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
             fi
           else
@@ -161,10 +163,10 @@ jobs:
           } >> "$summary_file"
       
       - name: Upload coverage to Codecov
-        if: inputs.upload-codecov && always()
+        if: inputs.upload-codecov && env.CODECOV_TOKEN != '' && always()
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ env.CODECOV_TOKEN }}
           files: ./coverage.json
           fail_ci_if_error: false
           verbose: true

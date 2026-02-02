@@ -37,4 +37,7 @@ jobs:
       - name: Security advisories
         run: |
           pip install -e ".[dev,test]"
-          pip-audit --desc --format markdown >> "$GITHUB_STEP_SUMMARY"
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            pip-audit --desc --format markdown
+          } >> "$summary_file"

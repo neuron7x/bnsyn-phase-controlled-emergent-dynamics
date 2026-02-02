@@ -96,7 +96,10 @@ jobs:
           cd specs/tla
           # Parse the specification to check for syntax errors
           java -cp tla2tools.jar tla2sany.SANY BNsyn.tla
-          echo " TLA+ specification syntax is valid" >> "$GITHUB_STEP_SUMMARY"
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo " TLA+ specification syntax is valid"
+          } >> "$summary_file"
       
       - name: Run TLC model checker
         id: tlc
@@ -132,7 +135,8 @@ jobs:
             SUMMARY_LINES=" **Model checking INCOMPLETE**\n\nModel checker did not complete successfully.\n"
           fi
           echo "STATUS=$STATUS" >> "$GITHUB_ENV"
-          printf '%b' "$SUMMARY_LINES" >> "$GITHUB_STEP_SUMMARY"
+          summary_file="$GITHUB_STEP_SUMMARY"
+          printf '%b' "$SUMMARY_LINES" >> "$summary_file"
       
       - name: Extract model checking statistics
         if: always()
@@ -149,7 +153,8 @@ jobs:
             summary_lines="${summary_lines}| States Checked | $STATES |\n"
             summary_lines="${summary_lines}| State Graph Diameter | $DIAMETER |\n"
             summary_lines="${summary_lines}| Max Steps | ${{ github.event.inputs.max_steps || '100' }} |\n"
-            printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            printf '%b' "$summary_lines" >> "$summary_file"
           fi
       
       - name: Generate detailed invariant report
@@ -174,7 +179,8 @@ jobs:
               summary_lines="${summary_lines}| $inv |  NOT_CHECKED |\n"
             fi
           done
-          printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
+          summary_file="$GITHUB_STEP_SUMMARY"
+          printf '%b' "$summary_lines" >> "$summary_file"
       
       - name: Create summary report file
         if: always()
@@ -221,9 +227,12 @@ jobs:
               echo '```'
               grep -A 20 "Error:" tlc_output.txt || true
               echo '```'
-            } >> "$summary_file"
+          } >> "$summary_file"
             exit 1
           elif [ "${STATUS}" = "INCOMPLETE" ]; then
-            echo " Model checking incomplete - check artifacts" >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            {
+              echo " Model checking incomplete - check artifacts"
+            } >> "$summary_file"
             exit 1
           fi

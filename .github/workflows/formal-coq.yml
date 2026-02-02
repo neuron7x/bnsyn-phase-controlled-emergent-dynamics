@@ -40,7 +40,10 @@ jobs:
         run: |
           eval "$(opam env)"
           coqc --version | tee coq_version.txt
-          echo "Coq installed: $(cat coq_version.txt)" >> "$GITHUB_STEP_SUMMARY"
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "Coq installed: $(cat coq_version.txt)"
+          } >> "$summary_file"
       
       - name: Compile Coq proofs
         id: coq_compile
@@ -65,11 +68,13 @@ jobs:
           
           if [ "$COMPILATION_FAILED" -eq 1 ]; then
             summary_lines="${summary_lines}\n Some Coq proofs failed to compile\n"
-            printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            printf '%b' "$summary_lines" >> "$summary_file"
             exit 1
           else
             summary_lines="${summary_lines}\n All Coq proofs verified successfully\n"
-            printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            printf '%b' "$summary_lines" >> "$summary_file"
           fi
       
       - name: Generate proof summary
@@ -113,6 +118,9 @@ jobs:
         if: always()
         run: |
           if [ "${{ steps.coq_compile.outcome }}" != "success" ]; then
-            echo " Coq proof verification failed" >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            {
+              echo " Coq proof verification failed"
+            } >> "$summary_file"
             exit 1
           fi

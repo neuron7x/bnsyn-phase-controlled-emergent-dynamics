@@ -107,7 +107,7 @@ benchmarks:
 
 # Regression thresholds
 regression_policy:
-  fail_on_regression: false  # Non-blocking (conservative)
+  fail_on_regression: true  # Block regressions to preserve benchmark integrity
   warning_threshold_pct: 5   # Warn if >5% slower
   critical_threshold_pct: 20  # Flag as critical if >20% slower
   require_improvement: false  # Don't require speedups (stability focus)

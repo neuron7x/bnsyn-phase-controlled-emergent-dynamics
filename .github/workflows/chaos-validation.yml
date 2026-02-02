@@ -10,6 +10,7 @@ on:
         description: 'Chaos test subset to run'
         type: choice
         default: all
+        required: false
         options:
           - all
           - numeric
@@ -174,7 +175,10 @@ jobs:
       
       - name: Check overall status
         run: |
+          summary_file="$GITHUB_STEP_SUMMARY"
           if [ "${{ needs.chaos-tests.result }}" != "success" ] || [ "${{ needs.property-tests.result }}" != "success" ]; then
-            echo " Some validation tests failed" >> "$GITHUB_STEP_SUMMARY"
+            {
+              echo " Some validation tests failed"
+            } >> "$summary_file"
             exit 1
           fi

@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+
 # subprocess used for fixed git metadata capture (no shell).
 import subprocess  # nosec B404
 import sys

@@ -5,20 +5,20 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
 from pathlib import Path
-import sys
 from typing import Any
 
 import numpy as np
 
 from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
-from scripts.benchmark_physics import run_physics_benchmark
-from scripts.profile_kernels import aggregate_kernel_profiles, profile_network_kernels
+benchmark_physics = importlib.import_module("scripts.benchmark_physics")
+profile_kernels = importlib.import_module("scripts.profile_kernels")
+run_physics_benchmark = benchmark_physics.run_physics_benchmark
+aggregate_kernel_profiles = profile_kernels.aggregate_kernel_profiles
+profile_network_kernels = profile_kernels.profile_network_kernels
 
 
 def _median(values: list[float]) -> float:
@@ -99,9 +99,7 @@ def _aggregate_kernels(runs: list[dict[str, Any]]) -> dict[str, Any]:
 
     thresholds = _derive_thresholds(
         {
-            f"kernels.{name}.{key}": [
-                run["kernels"][name][key] for run in runs
-            ]
+            f"kernels.{name}.{key}": [run["kernels"][name][key] for run in runs]
             for name in kernel_names
             for key in (
                 "total_time_sec",
@@ -191,8 +189,12 @@ def main() -> None:
                 steps=args.kernel_steps,
             )
         )
-        _write_json(args.raw_dir / f"physics_run_{idx + 1}_{BENCHMARK_REGIME_ID}.json", physics_runs[-1])
-        _write_json(args.raw_dir / f"kernel_run_{idx + 1}_{BENCHMARK_REGIME_ID}.json", kernel_runs[-1])
+        _write_json(
+            args.raw_dir / f"physics_run_{idx + 1}_{BENCHMARK_REGIME_ID}.json", physics_runs[-1]
+        )
+        _write_json(
+            args.raw_dir / f"kernel_run_{idx + 1}_{BENCHMARK_REGIME_ID}.json", kernel_runs[-1]
+        )
 
     physics_baseline = _aggregate_physics(physics_runs)
     kernels_baseline = aggregate_kernel_profiles(kernel_runs)

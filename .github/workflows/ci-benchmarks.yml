@@ -14,13 +14,6 @@ on:
 
 permissions:
   contents: write
-  actions: read
-  checks: read
-  statuses: read
-  id-token: none
-  packages: read
-  pull-requests: read
-  security-events: write
 
 jobs:
   nightly-benchmarks:
@@ -33,6 +26,7 @@ jobs:
       NUMEXPR_NUM_THREADS: "1"
       BENCHMARK_GPG_PASSPHRASE: ${{ secrets.BENCHMARK_GPG_PASSPHRASE }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         scenario: [small_network, medium_network, large_network]
@@ -80,13 +74,15 @@ jobs:
         env:
           GPG_PASSPHRASE: ${{ env.BENCHMARK_GPG_PASSPHRASE }}
         run: |
+          if [ -z "$GPG_PASSPHRASE" ]; then
+            echo "No GPG passphrase available; skipping encryption."
+            exit 0
+          fi
           for f in artifacts/*.json; do
             echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --symmetric --cipher-algo AES256 "$f"
           done
 
       - name: Publish baseline artifacts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release view nightly >/dev/null 2>&1 || gh release create nightly --notes "Nightly benchmark baselines"
           gh release upload nightly artifacts/*.json* --clobber

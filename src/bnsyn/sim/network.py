@@ -22,9 +22,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from numbers import Integral
-from typing import Any, Literal, cast
-
 import os
+from typing import Any, Literal, Optional, Tuple, cast
+import warnings
 import numpy as np
 from numpy.typing import NDArray
 
@@ -246,71 +246,7 @@ class Network:
         N = self.np.N
         dt = self.dt_ms
 
-        # validate external current if provided
-        if external_current_pA is not None:
-            if external_current_pA.shape != (N,):
-                raise ValueError(
-                    f"external_current_pA shape {external_current_pA.shape} "
-                    f"does not match number of neurons ({N},)"
-                )
-
-        # external Poisson spikes (rate per neuron)
-        lam = self.np.ext_rate_hz * (dt / 1000.0)
-        ext_spikes = self.rng.random(N) < lam
-        incoming_ext = ext_spikes.astype(float) * self.np.ext_w_nS
-
-        # recurrent contributions from last step spikes
-        spikes = self.state.spiked
-        spikes_E = spikes[: self.nE].astype(float)
-        spikes_I = spikes[self.nE :].astype(float)
-
-        if self._use_torch:
-            if torch is None:
-                raise RuntimeError("PyTorch not available. Install with: pip install torch")
-            torch_module = cast(Any, torch)
-            spikes_E_t = torch_module.as_tensor(
-                spikes_E,
-                dtype=torch_module.float64,
-                device=self._torch_device,
-            )
-            spikes_I_t = torch_module.as_tensor(
-                spikes_I,
-                dtype=torch_module.float64,
-                device=self._torch_device,
-            )
-            incoming_exc = torch_module.matmul(self._W_exc_t, spikes_E_t).cpu().numpy()
-            incoming_inh = torch_module.matmul(self._W_inh_t, spikes_I_t).cpu().numpy()
-        else:
-            incoming_exc = self.W_exc.apply(np.asarray(spikes_E, dtype=np.float64))
-            incoming_inh = self.W_inh.apply(np.asarray(spikes_I, dtype=np.float64))
-
-        # apply increments (split E into AMPA/NMDA)
-        self.g_ampa += AMPA_FRACTION * incoming_exc + AMPA_FRACTION * incoming_ext
-        self.g_nmda += NMDA_FRACTION * incoming_exc + NMDA_FRACTION * incoming_ext
-        self.g_gabaa += incoming_inh
-
-        # decay (exponential, dt-invariant)
-        self.g_ampa = exp_decay_step(self.g_ampa, dt, self.syn.tau_AMPA_ms)
-        self.g_nmda = exp_decay_step(self.g_nmda, dt, self.syn.tau_NMDA_ms)
-        self.g_gabaa = exp_decay_step(self.g_gabaa, dt, self.syn.tau_GABAA_ms)
-
-        # compute synaptic current (pA), then scale excitability by gain (criticality controller)
-        V = self.state.V_mV
-        B = nmda_mg_block(V, self.syn.mg_mM)
-        I_syn = (
-            self.g_ampa * (V - self.syn.E_AMPA_mV)
-            + self.g_nmda * B * (V - self.syn.E_NMDA_mV)
-            + self.g_gabaa * (V - self.syn.E_GABAA_mV)
-        )
-
-        # gain: multiplies external current (proxy for global excitability)
-        I_ext = self._I_ext_buffer
-        I_ext.fill(0.0)
-        I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)  # pA offset
-
-        # add optional external current injection
-        if external_current_pA is not None:
-            I_ext += external_current_pA
+        I_syn, I_ext, spikes = self._compute_currents(external_current_pA)
 
         self.state = adex_step(self.state, self.adex, dt, I_syn_pA=I_syn, I_ext_pA=I_ext)
 
@@ -376,20 +312,58 @@ class Network:
         N = self.np.N
         dt = self.dt_ms
 
+        I_syn, I_ext, spikes = self._compute_currents(external_current_pA)
+
+        self.state = adex_step_adaptive(
+            self.state,
+            self.adex,
+            dt,
+            I_syn_pA=I_syn,
+            I_ext_pA=I_ext,
+            atol=atol,
+            rtol=rtol,
+        )
+
+        self._raise_if_voltage_out_of_bounds()
+
+        A_t = float(np.sum(spikes))
+        A_t1 = float(np.sum(self.state.spiked))
+        sigma = self.branch.update(A_t=max(A_t, 1.0), A_t1=max(A_t1, 1.0))
+        self.gain = self.sigma_ctl.step(sigma)
+
+        self._A_prev = A_t1
+
+        return {
+            "A_t": A_t,
+            "A_t1": A_t1,
+            "sigma": float(sigma),
+            "gain": float(self.gain),
+            "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
+        }
+
+    def _compute_currents(
+        self,
+        external_current_pA: Optional[NDArray[np.float64]] = None,
+    ) -> Tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.bool_]]:
+        N = self.np.N
+        dt = self.dt_ms
+
         if external_current_pA is not None:
             if external_current_pA.shape != (N,):
                 raise ValueError(
                     f"external_current_pA shape {external_current_pA.shape} "
                     f"does not match number of neurons ({N},)"
                 )
+            if not np.all(np.isfinite(external_current_pA)):
+                raise ValueError("external_current_pA contains non-finite values")
 
         lam = self.np.ext_rate_hz * (dt / 1000.0)
         ext_spikes = self.rng.random(N) < lam
-        incoming_ext = ext_spikes.astype(float) * self.np.ext_w_nS
+        incoming_ext = ext_spikes.astype(np.float64) * self.np.ext_w_nS
 
         spikes = self.state.spiked
-        spikes_E = spikes[: self.nE].astype(float)
-        spikes_I = spikes[self.nE :].astype(float)
+        spikes_E = spikes[: self.nE].astype(np.float64)
+        spikes_I = spikes[self.nE :].astype(np.float64)
 
         if self._use_torch:
             if torch is None:
@@ -432,34 +406,22 @@ class Network:
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
 
         if external_current_pA is not None:
-            I_ext += external_current_pA
+            np.add(I_ext, external_current_pA, out=I_ext)
 
-        self.state = adex_step_adaptive(
-            self.state,
-            self.adex,
-            dt,
-            I_syn_pA=I_syn,
-            I_ext_pA=I_ext,
-            atol=atol,
-            rtol=rtol,
-        )
+        if not np.all(np.isfinite(I_syn)):
+            raise ValueError("I_syn contains non-finite values")
+        if not np.all(np.isfinite(I_ext)):
+            raise ValueError("I_ext contains non-finite values")
 
-        self._raise_if_voltage_out_of_bounds()
+        if np.any(I_ext < -1000.0) or np.any(I_ext > 1000.0):
+            warnings.warn(
+                "I_ext out of bounds; clipping to [-1000, 1000] pA",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            np.clip(I_ext, -1000.0, 1000.0, out=I_ext)
 
-        A_t = float(np.sum(spikes))
-        A_t1 = float(np.sum(self.state.spiked))
-        sigma = self.branch.update(A_t=max(A_t, 1.0), A_t1=max(A_t1, 1.0))
-        self.gain = self.sigma_ctl.step(sigma)
-
-        self._A_prev = A_t1
-
-        return {
-            "A_t": A_t,
-            "A_t1": A_t1,
-            "sigma": float(sigma),
-            "gain": float(self.gain),
-            "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
-        }
+        return I_syn, I_ext, spikes
 
     def _raise_if_voltage_out_of_bounds(self) -> None:
         if (
@@ -476,6 +438,7 @@ def run_simulation(
     N: int = 200,
     backend: Literal["reference", "accelerated"] = "reference",
     external_current_pA: float = 0.0,
+    adaptive: bool = False,
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 
@@ -495,6 +458,8 @@ def run_simulation(
         Constant external current injection per neuron in picoamps.
         Default is 0.0 (no injection). Use positive values to increase
         network excitability and ensure spiking activity.
+    adaptive : bool, optional
+        If True, uses adaptive AdEx integration for each step.
 
     Returns
     -------
@@ -517,6 +482,10 @@ def run_simulation(
         raise TypeError("steps must be a positive integer")
     if steps <= 0:
         raise ValueError("steps must be greater than 0")
+    if backend not in ("reference", "accelerated"):
+        raise ValueError("backend must be 'reference' or 'accelerated'")
+    if adaptive and abs(external_current_pA) > 1000.0:
+        raise ValueError("adaptive external_current_pA exceeds safety bounds (±1000 pA)")
 
     _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
     pack = seed_all(seed)
@@ -541,7 +510,10 @@ def run_simulation(
         injected_current = np.full(N, external_current_pA, dtype=np.float64)
 
     for _ in range(steps):
-        m = net.step(external_current_pA=injected_current)
+        if adaptive:
+            m = net.step_adaptive(external_current_pA=injected_current)
+        else:
+            m = net.step(external_current_pA=injected_current)
         sigmas.append(m["sigma"])
         rates.append(m["spike_rate_hz"])
 

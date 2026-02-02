@@ -11,6 +11,8 @@ permissions:
 jobs:
   health:
     runs-on: ubuntu-latest
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Check Codecov API availability
         run: |
@@ -21,8 +23,6 @@ jobs:
           fi
           echo " Codecov API is healthy"
       - name: Verify token validity
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           if [ -z "$CODECOV_TOKEN" ]; then
             echo " CODECOV_TOKEN secret not configured"

@@ -68,13 +68,17 @@ jobs:
           mutmut show --status survived > survived_mutants.txt || true
           
           # Calculate score
-          TOTAL=$(awk '/^(Survived|Killed|Timeout)/{count++} END{print count+0}' mutation_results.txt)
-          KILLED=$(awk '/^Killed/{count++} END{print count+0}' mutation_results.txt)
+          KILLED=$(grep -c "^Killed" mutation_results.txt || true)
+          SURVIVED=$(grep -c "^Survived" mutation_results.txt || true)
+          TIMEOUT=$(grep -c "^Timeout" mutation_results.txt || true)
+          SUSPICIOUS=$(grep -c "^Suspicious" mutation_results.txt || true)
+          TOTAL=$((KILLED + SURVIVED + TIMEOUT + SUSPICIOUS))
           
           if [ "$TOTAL" -gt 0 ]; then
             SCORE=$(python -c "print(round(100.0 * $KILLED / $TOTAL, 2))")
           else
-            SCORE="0.0"
+            echo "No mutants reported by mutmut results." >&2
+            exit 1
           fi
           
           {

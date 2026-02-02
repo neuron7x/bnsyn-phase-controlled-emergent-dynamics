@@ -56,9 +56,7 @@ def test_interactive_helper_functions() -> None:
     assert fig is not None
 
     # Test stats plot creation
-    metrics_history = [
-        {"sigma": 1.0 + 0.01 * i, "V_mean_mV": -60.0 - 0.1 * i} for i in range(100)
-    ]
+    metrics_history = [{"sigma": 1.0 + 0.01 * i, "V_mean_mV": -60.0 - 0.1 * i} for i in range(100)]
     fig = create_stats_plot(metrics_history, dt_ms=0.1)
     assert fig is not None
 

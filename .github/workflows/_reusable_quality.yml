@@ -141,7 +141,7 @@ jobs:
             echo "| Python | ${{ inputs.python-version }} |"
             echo ""
             if [ -f mypy.log ]; then
-              ERROR_COUNT=$(grep -c "error:" mypy.log || echo "0")
+              ERROR_COUNT=$(grep -c "error:" mypy.log || true)
               echo "**Errors found:** $ERROR_COUNT"
             fi
           } >> "$summary_file"
