@@ -191,12 +191,21 @@ class SleepCycle:
         ValueError
             If duration_steps is not positive.
         ValueError
-            If record_interval is not positive when recording memories.
+            If record_interval is not a positive integer when recording memories.
         """
         if duration_steps <= 0:
             raise ValueError("duration_steps must be positive")
-        if record_memories and record_interval <= 0:
-            raise ValueError("record_interval must be positive when recording memories")
+        if record_memories:
+            if not isinstance(record_interval, (int, np.integer)):
+                raise ValueError(
+                    "record_interval must be a positive integer, got"
+                    f" {record_interval!r}"
+                )
+            if record_interval <= 0:
+                raise ValueError(
+                    "record_interval must be a positive integer, got"
+                    f" {record_interval!r}"
+                )
 
         old_stage = self.current_stage
         self.current_stage = SleepStage.WAKE

@@ -2,7 +2,8 @@
 
 ## Summary
 
-This PR fixes **all critical defects** identified in the BN-Syn quality infrastructure review report (SRES-BNSYN). The current quality systems (mutation testing, formal verification, chaos engineering, property testing) are now **truthful, policy-consistent, and evidence-backed**. The corrected variance ratio is **24,693×**, not 12,683×.
+This PR fixes **all critical defects** identified in the BN-Syn quality infrastructure review report (SRES-BNSYN). The current quality systems (mutation testing, formal verification, chaos engineering, property testing) are now **truthful, policy-consistent, and evidence-backed**. The corrected variance ratio is **24,693×**.
+Reporting typo corrected (ref: PR40).
 
 ## What Was Broken (Fatal Flaws)
 
