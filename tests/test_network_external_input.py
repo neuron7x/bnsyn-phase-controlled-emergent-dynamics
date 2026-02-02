@@ -263,13 +263,33 @@ def test_external_input_nonzero_changes_dynamics_adaptive() -> None:
         dt_ms=0.5,
         rng=pack2.np_rng,
     )
-    I_ext = np.full(N, 200.0, dtype=np.float64)
+    I_ext = np.full(N, 50.0, dtype=np.float64)
     spikes2 = 0
     for _ in range(steps):
         m = net2.step_adaptive(external_current_pA=I_ext)
         spikes2 += m["A_t1"]
 
     assert spikes2 > spikes1, "External input should increase adaptive spike count"
+
+
+def test_step_adaptive_external_current_overdrive_raises() -> None:
+    seed = 7
+    N = 40
+
+    pack = seed_all(seed)
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack.np_rng,
+    )
+    I_ext = np.full(N, 200.0, dtype=np.float64)
+
+    with pytest.raises(RuntimeError, match="Voltage bounds violation"):
+        net.step_adaptive(external_current_pA=I_ext)
 
 
 def test_compute_currents_determinism_ks() -> None:
