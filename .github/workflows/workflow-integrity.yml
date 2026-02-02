@@ -97,7 +97,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t workflow_files < <(find .github/workflows -type f \\( -name '*.yml' -o -name '*.yaml' \\) | sort)
+          mapfile -t workflow_files < <(find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
           if [ "${#workflow_files[@]}" -eq 0 ]; then
             echo "No workflow files found."
             exit 1
