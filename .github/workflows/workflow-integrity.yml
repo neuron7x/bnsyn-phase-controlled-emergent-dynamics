@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck
       - name: Lint workflows with actionlint
-        uses: rhysd/actionlint@v1
+        uses: rhysd/actionlint@v1.7.7
         with:
           shellcheck: shellcheck
           verbose: true
