@@ -29,9 +29,6 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: "python"
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+          build-mode: none
       - name: Analyze
         uses: github/codeql-action/analyze@v3
-      - name: Autofix
-        uses: github/codeql-action/autofix@v3
