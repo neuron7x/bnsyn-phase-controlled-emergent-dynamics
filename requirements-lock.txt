@@ -30,9 +30,9 @@ babel==2.17.0 \
     --hash=sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d \
     --hash=sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2
     # via sphinx
-bandit==1.8.0 \
-    --hash=sha256:b1a61d829c0968aed625381e426aa378904b996529d048f8d908fa28f6b13e38 \
-    --hash=sha256:b5bfe55a095abd9fe20099178a7c6c060f844bfd4fe4c76d28e35e4c52b9d31e
+bandit==1.9.3 \
+    --hash=sha256:4745917c88d2246def79748bde5e08b9d5e9b92f877863d43fab70cd8814ce6a \
+    --hash=sha256:ade4b9b7786f89ef6fc7344a52b34558caec5da74cb90373aed01de88472f774
     # via bnsyn (pyproject.toml)
 beautifulsoup4==4.14.3 \
     --hash=sha256:0918bfe44902e6ad8d57732ba310582e98da931428d231a5ecb9e7c703a735bb \
