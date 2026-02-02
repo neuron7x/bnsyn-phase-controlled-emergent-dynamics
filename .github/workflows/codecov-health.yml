@@ -16,16 +16,16 @@ jobs:
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://codecov.io/upload/v4)
           if [ "$STATUS" != "400" ] && [ "$STATUS" != "405" ]; then
-            echo "⚠️ Codecov API may be unavailable (HTTP $STATUS)"
+            echo " Codecov API may be unavailable (HTTP $STATUS)"
             exit 1
           fi
-          echo "✅ Codecov API is healthy"
+          echo " Codecov API is healthy"
       - name: Verify token validity
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           if [ -z "$CODECOV_TOKEN" ]; then
-            echo "❌ CODECOV_TOKEN secret not configured"
+            echo " CODECOV_TOKEN secret not configured"
             exit 1
           fi
-          echo "✅ CODECOV_TOKEN secret is configured"
+          echo " CODECOV_TOKEN secret is configured"

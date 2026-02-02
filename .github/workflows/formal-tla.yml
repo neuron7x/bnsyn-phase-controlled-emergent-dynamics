@@ -44,11 +44,11 @@ jobs:
           
           # Verify SHA256
           echo "${TLA2TOOLS_SHA256}  tla2tools.jar" | sha256sum -c - || {
-            echo "❌ SHA256 verification failed for tla2tools.jar"
+            echo " SHA256 verification failed for tla2tools.jar"
             exit 1
           }
           
-          echo "✅ TLA+ tools v${TLA2TOOLS_VERSION} downloaded and verified"
+          echo " TLA+ tools v${TLA2TOOLS_VERSION} downloaded and verified"
       
       - name: Generate TLA+ configuration with max_steps
         run: |
@@ -96,14 +96,14 @@ jobs:
           cd specs/tla
           # Parse the specification to check for syntax errors
           java -cp tla2tools.jar tla2sany.SANY BNsyn.tla
-          echo "✅ TLA+ specification syntax is valid" >> $GITHUB_STEP_SUMMARY
+          echo " TLA+ specification syntax is valid" >> $GITHUB_STEP_SUMMARY
       
       - name: Run TLC model checker
         id: tlc
         run: |
           cd specs/tla
           
-          echo "## 🔍 TLA+ Model Checking Results" >> $GITHUB_STEP_SUMMARY
+          echo "##  TLA+ Model Checking Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Run TLC with runtime configuration
@@ -121,17 +121,17 @@ jobs:
           # Determine overall status
           if grep -q "Model checking completed. No error has been found." tlc_output.txt; then
             echo "STATUS=PASS" >> $GITHUB_ENV
-            echo "✅ **Model checking PASSED**" >> $GITHUB_STEP_SUMMARY
+            echo " **Model checking PASSED**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "All invariants verified successfully." >> $GITHUB_STEP_SUMMARY
           elif grep -q "Error:" tlc_output.txt; then
             echo "STATUS=FAIL" >> $GITHUB_ENV
-            echo "❌ **Model checking FAILED**" >> $GITHUB_STEP_SUMMARY
+            echo " **Model checking FAILED**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Invariant violations detected!" >> $GITHUB_STEP_SUMMARY
           else
             echo "STATUS=INCOMPLETE" >> $GITHUB_ENV
-            echo "⚠️ **Model checking INCOMPLETE**" >> $GITHUB_STEP_SUMMARY
+            echo " **Model checking INCOMPLETE**" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Model checker did not complete successfully." >> $GITHUB_STEP_SUMMARY
           fi
@@ -171,15 +171,15 @@ jobs:
           # Check each invariant individually with proper status
           for inv in "TypeOK" "GainClamp" "TemperatureBounds" "GateBounds" "PhaseValid"; do
             if grep -q "Invariant $inv is violated" tlc_output.txt 2>/dev/null; then
-              echo "| $inv | ❌ VIOLATED |" >> $GITHUB_STEP_SUMMARY
+              echo "| $inv |  VIOLATED |" >> $GITHUB_STEP_SUMMARY
             elif grep -q "Model checking completed. No error has been found." tlc_output.txt 2>/dev/null; then
-              echo "| $inv | ✅ VERIFIED |" >> $GITHUB_STEP_SUMMARY
+              echo "| $inv |  VERIFIED |" >> $GITHUB_STEP_SUMMARY
             elif grep -q "Finished computing initial states" tlc_output.txt 2>/dev/null; then
               # TLC started but didn't complete
-              echo "| $inv | ⚠️ NOT_PROVEN |" >> $GITHUB_STEP_SUMMARY
+              echo "| $inv |  NOT_PROVEN |" >> $GITHUB_STEP_SUMMARY
             else
               # TLC didn't run properly
-              echo "| $inv | ⚠️ NOT_CHECKED |" >> $GITHUB_STEP_SUMMARY
+              echo "| $inv |  NOT_CHECKED |" >> $GITHUB_STEP_SUMMARY
             fi
           done
       
@@ -221,13 +221,13 @@ jobs:
           
           if [ "${STATUS}" = "FAIL" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### ❌ Violation Details" >> $GITHUB_STEP_SUMMARY
+            echo "###  Violation Details" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             grep -A 20 "Error:" tlc_output.txt >> $GITHUB_STEP_SUMMARY || true
             echo '```' >> $GITHUB_STEP_SUMMARY
             exit 1
           elif [ "${STATUS}" = "INCOMPLETE" ]; then
-            echo "⚠️ Model checking incomplete - check artifacts" >> $GITHUB_STEP_SUMMARY
+            echo " Model checking incomplete - check artifacts" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi

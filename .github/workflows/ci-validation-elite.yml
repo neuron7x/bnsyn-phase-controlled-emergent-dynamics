@@ -38,7 +38,7 @@ jobs:
       - name: Run validation tests
         id: validation
         run: |
-          echo "## 🔬 Scientific Validation Suite" >> $GITHUB_STEP_SUMMARY
+          echo "##  Scientific Validation Suite" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           pytest -m validation -v --tb=short --junit-xml=validation-junit.xml 2>&1 | tee validation.log
@@ -84,7 +84,7 @@ jobs:
         env:
           HYPOTHESIS_PROFILE: quick
         run: |
-          echo "## 🔍 Property-Based Invariants (Hypothesis)" >> $GITHUB_STEP_SUMMARY
+          echo "##  Property-Based Invariants (Hypothesis)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           pytest -m property -v --tb=short --hypothesis-show-statistics --junit-xml=property-junit.xml 2>&1 | tee property.log
@@ -114,12 +114,12 @@ jobs:
     steps:
       - name: Summary
         run: |
-          echo "## 📊 Validation Suite Summary" >> $GITHUB_STEP_SUMMARY
+          echo "##  Validation Suite Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Suite | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Validation Tests | ${{ needs.validation.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Property Tests | ${{ needs.property-tests.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "ℹ️ **Note:** This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
+          echo " **Note:** This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
           echo "It runs on a schedule to verify scientific claims and system invariants." >> $GITHUB_STEP_SUMMARY

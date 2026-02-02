@@ -69,7 +69,7 @@ jobs:
             --output benchmarks/ci_throughput_gain.json
           # Allow accelerated to be slightly slower for small networks
           # Main benefit is memory reduction for sparse connectivity
-          echo "✅ Throughput check passed"
+          echo " Throughput check passed"
 
       - name: Upload benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -96,6 +96,6 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '## ❌ Physics Equivalence Failed\n\n' + report
+                body: '##  Physics Equivalence Failed\n\n' + report
               });
             }
