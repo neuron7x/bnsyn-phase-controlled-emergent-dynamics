@@ -70,9 +70,12 @@ jobs:
       - name: Summary
         run: |
           SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
-          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Scenario:** $SCENARIO" >> $GITHUB_STEP_SUMMARY
-          echo "**Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          cat "artifacts/bench_${SCENARIO}_report.md" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Benchmark Results"
+            echo ""
+            echo "**Scenario:** $SCENARIO"
+            echo "**Run ID:** ${{ github.run_id }}"
+            echo ""
+            cat "artifacts/bench_${SCENARIO}_report.md"
+          } >> "$summary_file"

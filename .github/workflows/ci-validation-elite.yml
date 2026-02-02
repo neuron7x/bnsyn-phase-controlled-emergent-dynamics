@@ -38,16 +38,18 @@ jobs:
       - name: Run validation tests
         id: validation
         run: |
-          echo "##  Scientific Validation Suite" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           pytest -m validation -v --tb=short --junit-xml=validation-junit.xml 2>&1 | tee validation.log
           
           # Show summary
-          echo "### Results" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -20 validation.log >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Scientific Validation Suite"
+            echo ""
+            echo "### Results"
+            echo '```'
+            tail -20 validation.log
+            echo '```'
+          } >> "$summary_file"
           
       - name: Upload validation logs
         uses: actions/upload-artifact@v4
@@ -84,16 +86,18 @@ jobs:
         env:
           HYPOTHESIS_PROFILE: quick
         run: |
-          echo "##  Property-Based Invariants (Hypothesis)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           pytest -m property -v --tb=short --hypothesis-show-statistics --junit-xml=property-junit.xml 2>&1 | tee property.log
           
           # Show summary
-          echo "### Results" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -20 property.log >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Property-Based Invariants (Hypothesis)"
+            echo ""
+            echo "### Results"
+            echo '```'
+            tail -20 property.log
+            echo '```'
+          } >> "$summary_file"
           
       - name: Upload property test logs
         uses: actions/upload-artifact@v4
@@ -114,12 +118,15 @@ jobs:
     steps:
       - name: Summary
         run: |
-          echo "##  Validation Suite Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Suite | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Validation Tests | ${{ needs.validation.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Property Tests | ${{ needs.property-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo " **Note:** This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
-          echo "It runs on a schedule to verify scientific claims and system invariants." >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Validation Suite Summary"
+            echo ""
+            echo "| Suite | Status |"
+            echo "|-------|--------|"
+            echo "| Validation Tests | ${{ needs.validation.result }} |"
+            echo "| Property Tests | ${{ needs.property-tests.result }} |"
+            echo ""
+            echo " **Note:** This workflow is NON-BLOCKING and does not affect PR merge status."
+            echo "It runs on a schedule to verify scientific claims and system invariants."
+          } >> "$summary_file"

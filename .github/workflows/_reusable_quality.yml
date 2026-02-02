@@ -45,33 +45,36 @@ jobs:
         id: format
         run: |
           ruff format --check . 2>&1 | tee ruff-format.log
-          echo "FORMAT_RESULT=$?" >> $GITHUB_ENV
+          echo "FORMAT_RESULT=$?" >> "$GITHUB_ENV"
       
       - name: Ruff lint
         id: lint
         run: |
           ruff check . 2>&1 | tee ruff-lint.log
-          echo "LINT_RESULT=$?" >> $GITHUB_ENV
+          echo "LINT_RESULT=$?" >> "$GITHUB_ENV"
       
       - name: Generate summary
         if: always()
         run: |
-          echo "##  Ruff Quality Check" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.FORMAT_RESULT }}" = "0" ]; then
-            echo "| Format |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Format |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ env.LINT_RESULT }}" = "0" ]; then
-            echo "| Lint |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Lint |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Python Version:** ${{ inputs.python-version }}" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Ruff Quality Check"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ env.FORMAT_RESULT }}" = "0" ]; then
+              echo "| Format |  PASS |"
+            else
+              echo "| Format |  FAIL |"
+            fi
+            if [ "${{ env.LINT_RESULT }}" = "0" ]; then
+              echo "| Lint |  PASS |"
+            else
+              echo "| Lint |  FAIL |"
+            fi
+            echo ""
+            echo "**Python Version:** ${{ inputs.python-version }}"
+          } >> "$summary_file"
       
       - name: Upload logs on failure
         if: failure()
@@ -119,26 +122,29 @@ jobs:
           else
             mypy src --config-file pyproject.toml 2>&1 | tee mypy.log
           fi
-          echo "MYPY_RESULT=$?" >> $GITHUB_ENV
+          echo "MYPY_RESULT=$?" >> "$GITHUB_ENV"
       
       - name: Generate summary
         if: always()
         run: |
-          echo "##  Mypy Type Check" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.MYPY_RESULT }}" = "0" ]; then
-            echo "| Status |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Status |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Strict Mode | ${{ inputs.mypy-strict }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Python | ${{ inputs.python-version }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f mypy.log ]; then
-            ERROR_COUNT=$(grep -c "error:" mypy.log || echo "0")
-            echo "**Errors found:** $ERROR_COUNT" >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Mypy Type Check"
+            echo ""
+            if [ "${{ env.MYPY_RESULT }}" = "0" ]; then
+              echo "| Status |  PASS |"
+            else
+              echo "| Status |  FAIL |"
+            fi
+            echo "|--------|---------|"
+            echo "| Strict Mode | ${{ inputs.mypy-strict }} |"
+            echo "| Python | ${{ inputs.python-version }} |"
+            echo ""
+            if [ -f mypy.log ]; then
+              ERROR_COUNT=$(grep -c "error:" mypy.log || echo "0")
+              echo "**Errors found:** $ERROR_COUNT"
+            fi
+          } >> "$summary_file"
       
       - name: Upload logs on failure
         if: failure()
@@ -173,27 +179,30 @@ jobs:
       - name: Pylint check
         id: pylint
         run: |
-          pylint src/bnsyn --rcfile=pyproject.toml --fail-under=${{ inputs.pylint-threshold }} 2>&1 | tee pylint.log
-          echo "PYLINT_RESULT=$?" >> $GITHUB_ENV
+          pylint src/bnsyn --rcfile=pyproject.toml --fail-under="${{ inputs.pylint-threshold }}" 2>&1 | tee pylint.log
+          echo "PYLINT_RESULT=$?" >> "$GITHUB_ENV"
       
       - name: Generate summary
         if: always()
         run: |
-          echo "##  Pylint Code Quality" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.PYLINT_RESULT }}" = "0" ]; then
-            echo "| Status |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Status |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Threshold | ${{ inputs.pylint-threshold }}/10.0 |" >> $GITHUB_STEP_SUMMARY
-          echo "| Python | ${{ inputs.python-version }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f pylint.log ]; then
-            SCORE=$(grep "Your code has been rated at" pylint.log | sed 's/.*rated at \([0-9.]*\).*/\1/' || echo "N/A")
-            echo "**Score:** $SCORE/10.0" >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Pylint Code Quality"
+            echo ""
+            if [ "${{ env.PYLINT_RESULT }}" = "0" ]; then
+              echo "| Status |  PASS |"
+            else
+              echo "| Status |  FAIL |"
+            fi
+            echo "|--------|---------|"
+            echo "| Threshold | ${{ inputs.pylint-threshold }}/10.0 |"
+            echo "| Python | ${{ inputs.python-version }} |"
+            echo ""
+            if [ -f pylint.log ]; then
+              SCORE=$(grep "Your code has been rated at" pylint.log | sed 's/.*rated at \([0-9.]*\).*/\1/' || echo "N/A")
+              echo "**Score:** $SCORE/10.0"
+            fi
+          } >> "$summary_file"
       
       - name: Upload logs on failure
         if: failure()

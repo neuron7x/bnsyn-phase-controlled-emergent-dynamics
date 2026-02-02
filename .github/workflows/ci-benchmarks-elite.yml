@@ -37,9 +37,6 @@ jobs:
       - name: Run benchmarks
         id: run-benchmarks
         run: |
-          echo "##  Running Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
           # Run each benchmark and collect results
           python benchmarks/bench_adex.py || echo "AdEx benchmark failed"
           python benchmarks/bench_synapses.py || echo "Synapse benchmark failed"
@@ -47,15 +44,22 @@ jobs:
           python benchmarks/bench_criticality.py || echo "Criticality benchmark failed"
           python benchmarks/bench_dt_invariance.py || echo "dt-invariance benchmark failed"
           
-          echo "Benchmarks completed" >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Running Performance Benchmarks"
+            echo ""
+            echo "Benchmarks completed"
+          } >> "$summary_file"
           
       - name: Compare against golden baseline
         id: compare
         run: |
-          echo "##  Benchmark Regression Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          python scripts/compare_benchmarks.py --format markdown >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Benchmark Regression Analysis"
+            echo ""
+            python scripts/compare_benchmarks.py --format markdown
+          } >> "$summary_file"
           python scripts/compare_benchmarks.py --format json > benchmark_report.json
           
       - name: Upload benchmark results
@@ -79,11 +83,14 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ${{ steps.run-benchmarks.outcome }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Comparison:** ${{ steps.compare.outcome }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo " This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
-          echo "Review benchmark reports manually for performance insights." >> $GITHUB_STEP_SUMMARY
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo ""
+            echo "---"
+            echo ""
+            echo "**Status:** ${{ steps.run-benchmarks.outcome }}"
+            echo "**Comparison:** ${{ steps.compare.outcome }}"
+            echo ""
+            echo " This workflow is NON-BLOCKING and does not affect PR merge status."
+            echo "Review benchmark reports manually for performance insights."
+          } >> "$summary_file"

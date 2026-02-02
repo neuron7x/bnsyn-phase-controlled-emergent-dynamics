@@ -45,39 +45,42 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "##  Determinism Verification (3x Runs)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Run | Status | Result |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|--------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.run1.outcome }}" = "success" ]; then
-            echo "| 1 |  PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| 1 |  FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ steps.run2.outcome }}" = "success" ]; then
-            echo "| 2 |  PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| 2 |  FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
-          fi
-          if [ "${{ steps.run3.outcome }}" = "success" ]; then
-            echo "| 3 |  PASS | Identical outputs |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| 3 |  FAIL | Non-deterministic |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.rng.outcome }}" = "success" ]; then
-            echo "| RNG Isolation |  PASS |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| RNG Isolation |  FAIL |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
-            echo "** All runs produced identical outputs (A1: Determinism 96%)**" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "** Determinism check failed**" >> $GITHUB_STEP_SUMMARY
-          fi
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Determinism Verification (3x Runs)"
+            echo ""
+            echo "| Run | Status | Result |"
+            echo "|-----|--------|--------|"
+            if [ "${{ steps.run1.outcome }}" = "success" ]; then
+              echo "| 1 |  PASS | Identical outputs |"
+            else
+              echo "| 1 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run2.outcome }}" = "success" ]; then
+              echo "| 2 |  PASS | Identical outputs |"
+            else
+              echo "| 2 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "| 3 |  PASS | Identical outputs |"
+            else
+              echo "| 3 |  FAIL | Non-deterministic |"
+            fi
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ steps.rng.outcome }}" = "success" ]; then
+              echo "| RNG Isolation |  PASS |"
+            else
+              echo "| RNG Isolation |  FAIL |"
+            fi
+            echo ""
+            if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "** All runs produced identical outputs (A1: Determinism 96%)**"
+            else
+              echo "** Determinism check failed**"
+            fi
+          } >> "$summary_file"
 
   quality:
     uses: ./.github/workflows/_reusable_quality.yml

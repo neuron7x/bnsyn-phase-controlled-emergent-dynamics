@@ -34,49 +34,48 @@ jobs:
         run: |
           opam install -y coq.8.18.0
           opam install -y coq-mathcomp-ssreflect.2.2.0
-          eval $(opam env)
+          eval "$(opam env)"
       
       - name: Verify Coq installation
         run: |
-          eval $(opam env)
+          eval "$(opam env)"
           coqc --version | tee coq_version.txt
-          echo "Coq installed: $(cat coq_version.txt)" >> $GITHUB_STEP_SUMMARY
+          echo "Coq installed: $(cat coq_version.txt)" >> "$GITHUB_STEP_SUMMARY"
       
       - name: Compile Coq proofs
         id: coq_compile
         run: |
-          eval $(opam env)
+          eval "$(opam env)"
           cd specs/coq
-          
-          echo "##  Coq Proof Verification" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           
           # Compile all .v files
           COMPILATION_FAILED=0
+          summary_lines="##  Coq Proof Verification\n\n"
           for vfile in *.v; do
             if [ -f "$vfile" ]; then
               echo "Compiling $vfile..." | tee -a coq_compile_log.txt
               if coqc "$vfile" 2>&1 | tee "coq_output_${vfile%.v}.txt"; then
-                echo " $vfile compiled successfully" >> $GITHUB_STEP_SUMMARY
+                summary_lines="${summary_lines} $vfile compiled successfully\n"
               else
-                echo " $vfile compilation failed" >> $GITHUB_STEP_SUMMARY
+                summary_lines="${summary_lines} $vfile compilation failed\n"
                 COMPILATION_FAILED=1
               fi
             fi
           done
           
-          echo "" >> $GITHUB_STEP_SUMMARY
           if [ "$COMPILATION_FAILED" -eq 1 ]; then
-            echo " Some Coq proofs failed to compile" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines}\n Some Coq proofs failed to compile\n"
+            printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           else
-            echo " All Coq proofs verified successfully" >> $GITHUB_STEP_SUMMARY
+            summary_lines="${summary_lines}\n All Coq proofs verified successfully\n"
+            printf '%b' "$summary_lines" >> "$GITHUB_STEP_SUMMARY"
           fi
       
       - name: Generate proof summary
         if: always()
         run: |
-          eval $(opam env)
+          eval "$(opam env)"
           cd specs/coq
           
           cat > coq_summary.md << EOF
@@ -114,6 +113,6 @@ jobs:
         if: always()
         run: |
           if [ "${{ steps.coq_compile.outcome }}" != "success" ]; then
-            echo " Coq proof verification failed" >> $GITHUB_STEP_SUMMARY
+            echo " Coq proof verification failed" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi

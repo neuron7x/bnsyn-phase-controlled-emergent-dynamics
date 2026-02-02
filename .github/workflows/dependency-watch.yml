@@ -25,10 +25,13 @@ jobs:
           pip-compile --upgrade pyproject.toml --dry-run --output-file=- > /tmp/latest.txt
           pip-compile pyproject.toml --output-file=- > /tmp/current.txt
           if ! diff -u /tmp/current.txt /tmp/latest.txt > /tmp/diff.txt; then
-            echo "##  Dependency Updates Available" >> "$GITHUB_STEP_SUMMARY"
-            echo '```diff' >> "$GITHUB_STEP_SUMMARY"
-            cat /tmp/diff.txt >> "$GITHUB_STEP_SUMMARY"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            summary_file="$GITHUB_STEP_SUMMARY"
+            {
+              echo "##  Dependency Updates Available"
+              echo '```diff'
+              cat /tmp/diff.txt
+              echo '```'
+            } >> "$summary_file"
           fi
 
       - name: Security advisories
