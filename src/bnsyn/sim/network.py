@@ -333,7 +333,13 @@ class Network:
             "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
         }
 
-    def step_adaptive(self, *, atol: float = 1e-8, rtol: float = 1e-6) -> dict[str, float]:
+    def step_adaptive(
+        self,
+        *,
+        atol: float = 1e-8,
+        rtol: float = 1e-6,
+        external_current_pA: NDArray[np.float64] | None = None,
+    ) -> dict[str, float]:
         """Advance the network by one timestep using adaptive AdEx integration.
 
         Parameters
@@ -343,6 +349,10 @@ class Network:
         rtol : float, optional
             Relative tolerance for adaptive AdEx integration.
 
+        external_current_pA : NDArray[np.float64] | None, optional
+            External current injection per neuron in pA. Shape must be (N,).
+            If None, no external current injection is applied (default behavior).
+
         Returns
         -------
         dict[str, float]
@@ -350,6 +360,8 @@ class Network:
 
         Raises
         ------
+        ValueError
+            If external_current_pA shape does not match number of neurons.
         RuntimeError
             If voltage bounds are violated (numerical instability).
 
@@ -363,6 +375,13 @@ class Network:
         """
         N = self.np.N
         dt = self.dt_ms
+
+        if external_current_pA is not None:
+            if external_current_pA.shape != (N,):
+                raise ValueError(
+                    f"external_current_pA shape {external_current_pA.shape} "
+                    f"does not match number of neurons ({N},)"
+                )
 
         lam = self.np.ext_rate_hz * (dt / 1000.0)
         ext_spikes = self.rng.random(N) < lam
@@ -411,6 +430,9 @@ class Network:
         I_ext = self._I_ext_buffer
         I_ext.fill(0.0)
         I_ext += GAIN_CURRENT_SCALE_PA * (self.gain - 1.0)
+
+        if external_current_pA is not None:
+            I_ext += external_current_pA
 
         self.state = adex_step_adaptive(
             self.state,

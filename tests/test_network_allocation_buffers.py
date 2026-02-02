@@ -53,6 +53,10 @@ def test_i_ext_buffer_reuse_and_reset() -> None:
 def test_i_ext_buffer_step_adaptive_resets() -> None:
     net = _build_network()
     buffer_id = id(net._I_ext_buffer)
+    external = np.full(net.np.N, 5.0, dtype=np.float64)
+
+    net.step_adaptive(external_current_pA=external)
+    assert id(net._I_ext_buffer) == buffer_id
 
     net.step_adaptive()
     assert id(net._I_ext_buffer) == buffer_id

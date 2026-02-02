@@ -10,6 +10,8 @@ from pathlib import Path
 import sys
 from typing import Any, Callable
 
+from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 
@@ -144,6 +146,8 @@ def main() -> None:
                 entries.extend(
                     bench(seed=args.seed, n_neurons=n, dt_ms=dt_ms, steps=steps, repeats=repeats)
                 )
+    for entry in entries:
+        entry["regime_id"] = BENCHMARK_REGIME_ID
 
     _validate_metrics(entries)
     _enforce_monotonic(entries)

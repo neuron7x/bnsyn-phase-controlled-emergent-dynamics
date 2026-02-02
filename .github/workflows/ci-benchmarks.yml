@@ -141,14 +141,14 @@ jobs:
       - name: Run performance baselines
         run: |
           python scripts/benchmark_physics.py --output benchmarks/physics_current.json
-          python scripts/profile_kernels.py --steps 100 --output benchmarks/kernel_profile_current.json
+          python scripts/profile_kernels.py --steps 100 --warmup 2 --repeats 5 --output benchmarks/kernel_profile_current.json
 
       - name: Check benchmark regressions
         run: |
           python scripts/check_benchmark_regressions.py \
-            --physics-baseline benchmarks/baselines/physics_baseline.json \
+            --physics-baseline benchmarks/baselines/physics_baseline_alloc_v2.json \
             --physics-current benchmarks/physics_current.json \
-            --kernel-baseline benchmarks/baselines/kernel_profile.json \
+            --kernel-baseline benchmarks/baselines/kernel_profile_alloc_v2.json \
             --kernel-current benchmarks/kernel_profile_current.json \
             --threshold 0.10
 

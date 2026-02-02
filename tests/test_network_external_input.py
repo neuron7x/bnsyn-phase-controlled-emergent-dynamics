@@ -72,6 +72,48 @@ def test_external_input_zero_matches_default() -> None:
         assert metrics1[i]["gain"] == pytest.approx(metrics2[i]["gain"])
 
 
+def test_external_input_zero_matches_default_adaptive() -> None:
+    """Test that zero external current matches default behavior for adaptive steps."""
+    seed = 42
+    steps = 5
+    N = 25
+
+    pack1 = seed_all(seed)
+    nparams = NetworkParams(N=N)
+    net1 = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack1.np_rng,
+    )
+    metrics1 = []
+    for _ in range(steps):
+        metrics1.append(net1.step_adaptive())
+
+    pack2 = seed_all(seed)
+    net2 = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack2.np_rng,
+    )
+    metrics2 = []
+    for _ in range(steps):
+        metrics2.append(
+            net2.step_adaptive(external_current_pA=np.zeros(N, dtype=np.float64))
+        )
+
+    for i in range(steps):
+        assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
+        assert metrics1[i]["A_t1"] == metrics2[i]["A_t1"]
+        assert metrics1[i]["sigma"] == pytest.approx(metrics2[i]["sigma"])
+        assert metrics1[i]["gain"] == pytest.approx(metrics2[i]["gain"])
+
+
 def test_external_input_shape_validation() -> None:
     """Test that shape mismatch raises ValueError."""
     seed = 42
@@ -94,6 +136,12 @@ def test_external_input_shape_validation() -> None:
 
     with pytest.raises(ValueError, match="does not match number of neurons"):
         net.step(external_current_pA=np.zeros((N, 2), dtype=np.float64))
+
+    with pytest.raises(ValueError, match="does not match number of neurons"):
+        net.step_adaptive(external_current_pA=np.zeros(N + 1, dtype=np.float64))
+
+    with pytest.raises(ValueError, match="does not match number of neurons"):
+        net.step_adaptive(external_current_pA=np.zeros((N, 2), dtype=np.float64))
 
 
 def test_external_input_nonzero_changes_dynamics() -> None:
