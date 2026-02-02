@@ -83,7 +83,15 @@ def seed_all(seed: int) -> RNGPack:
     if seed < 0 or seed > 2**32 - 1:
         raise ValueError("seed must be in [0, 2**32-1]")
 
-    os.environ["PYTHONHASHSEED"] = str(seed)
+    expected_seed = str(seed)
+    env_seed = os.environ.get("PYTHONHASHSEED")
+    if env_seed is None or env_seed != expected_seed:
+        raise RuntimeError(
+            "PYTHONHASHSEED must be set to match the RNG seed. "
+            f"Run Python with PYTHONHASHSEED={expected_seed}."
+        )
+
+    os.environ["PYTHONHASHSEED"] = expected_seed
     np_rng = np.random.default_rng(seed)
     return RNGPack(seed=seed, np_rng=np_rng)
 

@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import os
 import tomllib
 import warnings
 from pathlib import Path
@@ -60,6 +61,17 @@ def _get_package_version() -> str:
     return "unknown"
 
 
+def _check_pythonhashseed(seed: int) -> str | None:
+    env_seed = os.environ.get("PYTHONHASHSEED")
+    expected_seed = str(seed)
+    if env_seed is None or env_seed != expected_seed:
+        return (
+            "PYTHONHASHSEED must be set to match the RNG seed. "
+            f"Run Python with PYTHONHASHSEED={expected_seed}."
+        )
+    return None
+
+
 def _cmd_demo(args: argparse.Namespace) -> int:
     """Run a deterministic demo simulation and print metrics.
 
@@ -83,6 +95,11 @@ def _cmd_demo(args: argparse.Namespace) -> int:
     docs/SPEC.md#P2-11
     docs/LEGENDARY_QUICKSTART.md
     """
+    err = _check_pythonhashseed(args.seed)
+    if err is not None:
+        print(f"Error: {err}")
+        return 1
+
     if getattr(args, "interactive", False):
         # Launch interactive Streamlit dashboard
         import importlib.util
@@ -143,6 +160,11 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
     ----------
     docs/SPEC.md#P2-12
     """
+    err = _check_pythonhashseed(args.seed)
+    if err is not None:
+        print(f"Error: {err}")
+        return 1
+
     m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
     # compare mean rates and sigma; dt2 should be close
@@ -215,6 +237,11 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     from bnsyn.sim.network import Network, NetworkParams
     from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
     from bnsyn.temperature.schedule import TemperatureSchedule
+
+    err = _check_pythonhashseed(args.seed)
+    if err is not None:
+        print(f"Error: {err}")
+        return 1
 
     # Setup output directory
     out_dir = Path(args.out)
