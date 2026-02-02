@@ -37,7 +37,7 @@ jobs:
       - name: Run benchmarks
         id: run-benchmarks
         run: |
-          echo "## 🏃 Running Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
+          echo "##  Running Performance Benchmarks" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Run each benchmark and collect results
@@ -52,7 +52,7 @@ jobs:
       - name: Compare against golden baseline
         id: compare
         run: |
-          echo "## 📊 Benchmark Regression Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "##  Benchmark Regression Analysis" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           python scripts/compare_benchmarks.py --format markdown >> $GITHUB_STEP_SUMMARY
@@ -85,5 +85,5 @@ jobs:
           echo "**Status:** ${{ steps.run-benchmarks.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "**Comparison:** ${{ steps.compare.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "ℹ️ This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
+          echo " This workflow is NON-BLOCKING and does not affect PR merge status." >> $GITHUB_STEP_SUMMARY
           echo "Review benchmark reports manually for performance insights." >> $GITHUB_STEP_SUMMARY

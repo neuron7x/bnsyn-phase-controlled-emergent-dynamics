@@ -1,0 +1,51 @@
+name: Workflow Integrity
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflows:
+    name: Validate workflow files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Scan workflow files for tabs or non-ASCII
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import unicodedata
+
+          workflow_dir = Path('.github/workflows')
+          offenders = []
+
+          for path in sorted(workflow_dir.glob('*.yml')):
+              text = path.read_text(encoding='utf-8', errors='replace')
+              for line_no, line in enumerate(text.splitlines(), 1):
+                  if '\t' in line:
+                      offenders.append((path, line_no, 'TAB'))
+                  for ch in line:
+                      codepoint = ord(ch)
+                      if codepoint > 0x7F:
+                          offenders.append((path, line_no, f'NON_ASCII U+{codepoint:04X}'))
+                      category = unicodedata.category(ch)
+                      if category in {'Cf', 'Cc'} and ch not in {'\n', '\r'}:
+                          offenders.append((path, line_no, f'CONTROL_OR_BIDI {category} U+{codepoint:04X}'))
+
+          if offenders:
+              for path, line_no, detail in offenders:
+                  print(f'{path}:{line_no}:{detail}')
+              raise SystemExit(1)
+
+          print('Workflow integrity checks passed.')
+          PY

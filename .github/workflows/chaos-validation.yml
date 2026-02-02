@@ -41,7 +41,7 @@ jobs:
       - name: Run chaos tests for ${{ matrix.fault-type }}
         id: chaos_test
         run: |
-          echo "## 🌪️ Chaos Engineering: ${{ matrix.fault-type }} faults" >> $GITHUB_STEP_SUMMARY
+          echo "##  Chaos Engineering: ${{ matrix.fault-type }} faults" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Run specific chaos test type with chaos marker
@@ -86,7 +86,7 @@ jobs:
       - name: Run property-based tests
         id: property_test
         run: |
-          echo "## 🔬 Property-Based Testing" >> $GITHUB_STEP_SUMMARY
+          echo "##  Property-Based Testing" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Run property tests with extended examples and capture statistics
@@ -128,21 +128,21 @@ jobs:
       
       - name: Generate summary report
         run: |
-          echo "## 📊 Chaos & Property Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "##  Chaos & Property Testing Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
           
           if [ "${{ needs.chaos-tests.result }}" == "success" ]; then
-            echo "| Chaos Tests | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Chaos Tests |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Chaos Tests | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Chaos Tests |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ "${{ needs.property-tests.result }}" == "success" ]; then
-            echo "| Property Tests | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Property Tests |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Property Tests | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Property Tests |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -157,6 +157,6 @@ jobs:
       - name: Check overall status
         run: |
           if [ "${{ needs.chaos-tests.result }}" != "success" ] || [ "${{ needs.property-tests.result }}" != "success" ]; then
-            echo "❌ Some validation tests failed" >> $GITHUB_STEP_SUMMARY
+            echo " Some validation tests failed" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi

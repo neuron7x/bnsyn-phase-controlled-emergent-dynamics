@@ -89,14 +89,14 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "## 🧪 Pytest Results" >> $GITHUB_STEP_SUMMARY
+          echo "##  Pytest Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
-            echo "| Status | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Status | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "| Tests Run | ${{ env.TEST_COUNT }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Coverage | ${{ env.COVERAGE }}% |" >> $GITHUB_STEP_SUMMARY
@@ -108,7 +108,7 @@ jobs:
           
           # Show failure details if tests failed
           if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
-            echo "### ❌ Failure Details" >> $GITHUB_STEP_SUMMARY
+            echo "###  Failure Details" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
             # Extract failed tests
@@ -130,7 +130,7 @@ jobs:
             fi
             
             # Reproduction commands
-            echo "### 🔄 Reproduction Commands" >> $GITHUB_STEP_SUMMARY
+            echo "###  Reproduction Commands" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
             echo "# Clone and setup" >> $GITHUB_STEP_SUMMARY

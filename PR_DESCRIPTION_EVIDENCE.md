@@ -288,3 +288,37 @@ After merge:
 1. Monitor first nightly mutation run - if baseline uninitialized, generate with `make mutation-baseline` (~30 min)
 2. Monitor property tests to verify profiles are working correctly
 3. If any workflow issues arise, use rollback instructions above
+
+## CodeQL Workflow Evidence (Current Default-Branch State)
+
+### codeql.yml (pre-fix snapshot)
+```yaml
+name: codeql
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  schedule:
+    - cron: "0 4 * * 0"
+
+jobs:
+  analyze:
+    name: analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ["python"]
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+```

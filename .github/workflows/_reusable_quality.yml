@@ -56,19 +56,19 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "## 🔍 Ruff Quality Check" >> $GITHUB_STEP_SUMMARY
+          echo "##  Ruff Quality Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.FORMAT_RESULT }}" = "0" ]; then
-            echo "| Format | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Format |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Format | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Format |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           if [ "${{ env.LINT_RESULT }}" = "0" ]; then
-            echo "| Lint | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Lint |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Lint | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Lint |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Python Version:** ${{ inputs.python-version }}" >> $GITHUB_STEP_SUMMARY
@@ -124,12 +124,12 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "## 🔍 Mypy Type Check" >> $GITHUB_STEP_SUMMARY
+          echo "##  Mypy Type Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.MYPY_RESULT }}" = "0" ]; then
-            echo "| Status | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Status | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
           echo "| Strict Mode | ${{ inputs.mypy-strict }} |" >> $GITHUB_STEP_SUMMARY
@@ -179,12 +179,12 @@ jobs:
       - name: Generate summary
         if: always()
         run: |
-          echo "## 🔍 Pylint Code Quality" >> $GITHUB_STEP_SUMMARY
+          echo "##  Pylint Code Quality" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ env.PYLINT_RESULT }}" = "0" ]; then
-            echo "| Status | ✅ PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  PASS |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Status | ❌ FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "| Status |  FAIL |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "|--------|---------|" >> $GITHUB_STEP_SUMMARY
           echo "| Threshold | ${{ inputs.pylint-threshold }}/10.0 |" >> $GITHUB_STEP_SUMMARY
