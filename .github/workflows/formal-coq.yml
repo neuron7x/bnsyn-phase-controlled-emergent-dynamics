@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Set up OCaml and Coq
-        uses: ocaml/setup-ocaml@v2
+        uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: "4.14.x"
           dune-cache: true
