@@ -21,7 +21,7 @@ Notes:
 - Subprocess teardown releases Python and (if enabled) GPU allocations.
 - OS-level caches are not explicitly flushed; performance metrics should be interpreted with this in mind.
 - Hot-path current buffers are preallocated; per-step allocations inside `Network.step()` are not permitted for benchmark stability.
-- Benchmarks are tagged with a regime ID (`alloc_v2`) and baselines must match the same regime.
+- Benchmarks are tagged with a regime ID (`alloc_v2`); CI comparisons use baselines from the same regime.
 - Kernel `max_time_sec` uses a p95 estimate to reduce sensitivity to outliers.
 
 ## Environment Requirements

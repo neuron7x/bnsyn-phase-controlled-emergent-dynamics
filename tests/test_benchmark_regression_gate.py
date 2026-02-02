@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
 from scripts.check_benchmark_regressions import compare_benchmarks
 
 
@@ -11,7 +12,10 @@ def _write_json(path: Path, payload: dict) -> None:
 
 
 def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
+    config = {"neurons": 100, "dt_ms": 0.1, "steps": 100}
     physics_baseline = {
+        "regime_id": BENCHMARK_REGIME_ID,
+        "configuration": config,
         "performance": {
             "updates_per_sec": 100.0,
             "spikes_per_sec": 10.0,
@@ -20,6 +24,8 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
         }
     }
     physics_current = {
+        "regime_id": BENCHMARK_REGIME_ID,
+        "configuration": config,
         "performance": {
             "updates_per_sec": 80.0,
             "spikes_per_sec": 10.0,
@@ -28,6 +34,8 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
         }
     }
     kernel_baseline = {
+        "regime_id": BENCHMARK_REGIME_ID,
+        "configuration": config,
         "kernels": {
             "full_step": {
                 "total_time_sec": 1.0,
@@ -39,6 +47,8 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
         }
     }
     kernel_current = {
+        "regime_id": BENCHMARK_REGIME_ID,
+        "configuration": config,
         "kernels": {
             "full_step": {
                 "total_time_sec": 1.05,
