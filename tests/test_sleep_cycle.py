@@ -161,6 +161,27 @@ def test_wake_phase_determinism() -> None:
         assert metrics1[i]["sigma"] == pytest.approx(metrics2[i]["sigma"])
 
 
+@pytest.mark.parametrize("record_interval", [0, -5])
+def test_wake_rejects_non_positive_record_interval(record_interval: int) -> None:
+    """Test wake rejects non-positive record_interval values."""
+    seed = 42
+    pack = seed_all(seed)
+    nparams = NetworkParams(N=10)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack.np_rng,
+    )
+    temp_schedule = TemperatureSchedule(TemperatureParams())
+    cycle = SleepCycle(net, temp_schedule)
+
+    with pytest.raises(ValueError, match="record_interval must be > 0"):
+        cycle.wake(duration_steps=1, record_memories=True, record_interval=record_interval)
+
+
 def test_sleep_stages_progression() -> None:
     """Test sleep stage progression."""
     seed = 42

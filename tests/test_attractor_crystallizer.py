@@ -14,7 +14,7 @@ Tests attractor detection and crystallization tracking.
 
 References
 ----------
-docs/features/emergence_crystallizer.md
+docs/emergence_tracking.md
 """
 
 from __future__ import annotations

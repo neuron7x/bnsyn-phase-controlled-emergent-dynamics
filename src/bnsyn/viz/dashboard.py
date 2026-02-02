@@ -8,7 +8,7 @@ are lazy to avoid requiring viz dependencies unless actually used.
 
 References
 ----------
-docs/features/viz_dashboard.md
+docs/LEGENDARY_QUICKSTART.md
 """
 
 from __future__ import annotations
@@ -104,7 +104,7 @@ class EmergenceDashboard:
 
     References
     ----------
-    docs/features/viz_dashboard.md
+    docs/LEGENDARY_QUICKSTART.md
     """
 
     def __init__(self, figsize: tuple[int, int] = (15, 10)) -> None:

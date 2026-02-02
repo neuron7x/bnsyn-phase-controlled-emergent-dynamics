@@ -8,7 +8,7 @@ memory consolidation dynamics.
 
 References
 ----------
-docs/features/viz_dashboard.md
+docs/LEGENDARY_QUICKSTART.md
 """
 
 from .dashboard import EmergenceDashboard

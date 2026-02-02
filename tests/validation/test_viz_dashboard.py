@@ -7,7 +7,7 @@ functionality works correctly without requiring display.
 
 References
 ----------
-docs/features/viz_dashboard.md
+docs/LEGENDARY_QUICKSTART.md
 """
 
 from __future__ import annotations

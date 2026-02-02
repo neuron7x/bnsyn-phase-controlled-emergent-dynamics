@@ -14,7 +14,7 @@ Tests RunManifest for reproducibility tracking.
 
 References
 ----------
-docs/features/provenance_manifest.md
+docs/REPRODUCIBILITY.md
 """
 
 from __future__ import annotations

@@ -353,9 +353,9 @@ def test_sleep_cycle_validation_and_callbacks() -> None:
 
     with pytest.raises(ValueError):
         cycle.wake(duration_steps=0)
-    with pytest.raises(ValueError, match=r"record_interval.*0"):
+    with pytest.raises(ValueError, match=r"record_interval must be > 0"):
         cycle.wake(duration_steps=1, record_interval=0)
-    with pytest.raises(ValueError, match=r"record_interval.*-1"):
+    with pytest.raises(ValueError, match=r"record_interval must be > 0"):
         cycle.wake(duration_steps=1, record_interval=-1)
 
     stage_calls: list[tuple[SleepStage, SleepStage]] = []

@@ -14,7 +14,7 @@ Tests memory tagging, recall, consolidation, and ledger.
 
 References
 ----------
-docs/features/memory.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations

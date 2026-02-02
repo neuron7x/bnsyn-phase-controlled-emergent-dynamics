@@ -14,7 +14,7 @@ Longer validation tests marked with @pytest.mark.validation.
 
 References
 ----------
-docs/features/emergence_crystallizer.md
+docs/emergence_tracking.md
 """
 
 from __future__ import annotations

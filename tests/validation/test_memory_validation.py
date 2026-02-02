@@ -14,7 +14,7 @@ Longer validation tests marked with @pytest.mark.validation.
 
 References
 ----------
-docs/features/memory.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations
