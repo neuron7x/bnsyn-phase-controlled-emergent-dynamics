@@ -97,4 +97,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ./actionlint -color -verbose .github/workflows
+          mapfile -t workflow_files < <(find .github/workflows -type f \\( -name '*.yml' -o -name '*.yaml' \\) | sort)
+          if [ "${#workflow_files[@]}" -eq 0 ]; then
+            echo "No workflow files found."
+            exit 1
+          fi
+          ./actionlint -color -verbose "${workflow_files[@]}"
