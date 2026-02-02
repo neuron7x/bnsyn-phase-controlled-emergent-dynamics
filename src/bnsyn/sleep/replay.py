@@ -14,7 +14,7 @@ Provides replay pattern generation and importance weighting for sleep cycles.
 
 References
 ----------
-docs/features/sleep_cycle.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations

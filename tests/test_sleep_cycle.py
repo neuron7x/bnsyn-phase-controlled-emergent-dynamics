@@ -14,7 +14,7 @@ Tests sleep stages, memory recording, and replay functionality.
 
 References
 ----------
-docs/features/sleep_cycle.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations

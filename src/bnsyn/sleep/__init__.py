@@ -14,7 +14,7 @@ Implements sleep stages, cycles, memory recording, and replay functionality.
 
 References
 ----------
-docs/features/sleep_cycle.md
+docs/sleep_stack.md
 """
 
 from .cycle import MemorySnapshot, SleepCycle, default_human_sleep_cycle

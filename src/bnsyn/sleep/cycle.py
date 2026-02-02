@@ -14,7 +14,7 @@ Implements SleepCycle class for managing wake/sleep transitions, memory recordin
 
 References
 ----------
-docs/features/sleep_cycle.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations
@@ -72,7 +72,7 @@ class SleepCycle:
 
     References
     ----------
-    docs/features/sleep_cycle.md
+    docs/sleep_stack.md
     """
 
     def __init__(
@@ -190,9 +190,22 @@ class SleepCycle:
         ------
         ValueError
             If duration_steps is not positive.
+        ValueError
+            If record_interval is not a positive integer when recording memories.
         """
         if duration_steps <= 0:
             raise ValueError("duration_steps must be positive")
+        if record_memories:
+            if not isinstance(record_interval, (int, np.integer)):
+                raise ValueError(
+                    "record_interval must be a positive integer, got"
+                    f" {record_interval!r}"
+                )
+            if record_interval <= 0:
+                raise ValueError(
+                    "record_interval must be a positive integer, got"
+                    f" {record_interval!r}"
+                )
 
         old_stage = self.current_stage
         self.current_stage = SleepStage.WAKE
@@ -239,7 +252,8 @@ class SleepCycle:
 
         Notes
         -----
-        Each stage is executed in sequence. Temperature and plasticity are adjusted.
+        Each stage is executed in sequence. Temperature is adjusted; plasticity gate
+        values remain available via the stage configuration but are not applied here.
         """
         if not stages:
             raise ValueError("stages list cannot be empty")
@@ -402,7 +416,7 @@ def default_human_sleep_cycle() -> list[SleepStageConfig]:
 
     References
     ----------
-    docs/features/sleep_cycle.md
+    docs/sleep_stack.md
     """
     return [
         SleepStageConfig(

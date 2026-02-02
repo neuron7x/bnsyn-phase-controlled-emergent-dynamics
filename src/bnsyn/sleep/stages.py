@@ -14,7 +14,7 @@ Defines sleep stages (WAKE, LIGHT_SLEEP, DEEP_SLEEP, REM) and their configuratio
 
 References
 ----------
-docs/features/sleep_cycle.md
+docs/sleep_stack.md
 """
 
 from __future__ import annotations
