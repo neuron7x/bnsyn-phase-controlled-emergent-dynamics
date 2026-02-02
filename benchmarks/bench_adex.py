@@ -43,11 +43,21 @@ def run_benchmark(
         timings.append(elapsed)
         rss_mb = max(rss_mb, peak_rss_mb())
     median_elapsed = statistics.median(timings) if timings else 0.0
+    timing_cv = 0.0
+    if len(timings) > 1 and median_elapsed > 0:
+        timing_cv = statistics.pstdev(timings) / median_elapsed
     steps_per_sec = steps / median_elapsed if median_elapsed > 0 else 0.0
     mem_per_neuron = rss_mb / max(1, n_neurons)
 
     results: list[dict[str, object]] = [
-        metric_payload(ctx, "adex_steps_per_sec", steps_per_sec, "steps/sec", "bench_adex"),
+        metric_payload(
+            ctx,
+            "adex_steps_per_sec",
+            steps_per_sec,
+            "steps/sec",
+            "bench_adex",
+            extra={"timing_cv": timing_cv},
+        ),
         metric_payload(
             ctx,
             "memory_per_neuron_mb",

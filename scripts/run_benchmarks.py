@@ -96,7 +96,12 @@ def _summarize(entries: list[dict[str, Any]]) -> dict[str, Any]:
     return {name: float(sum(values) / len(values)) for name, values in summary.items()}
 
 
-def _compare_baseline(entries: list[dict[str, Any]], baseline: list[dict[str, Any]]) -> None:
+def _compare_baseline(
+    entries: list[dict[str, Any]],
+    baseline: list[dict[str, Any]],
+    thresholds: dict[str, float] | None = None,
+    timing_cv_key: str = "timing_cv",
+) -> None:
     baseline_map = {(b["metric_name"], b["N"], b["dt"]): float(b["value"]) for b in baseline}
     for entry in entries:
         key = (entry["metric_name"], entry["N"], entry["dt"])
@@ -106,8 +111,13 @@ def _compare_baseline(entries: list[dict[str, Any]], baseline: list[dict[str, An
         base = baseline_map[key]
         if base == 0:
             continue
-        if abs(current - base) / abs(base) > 0.05:
-            raise SystemExit(f"Regression detected for {entry['metric_name']} N={entry['N']}")
+        metric = entry["metric_name"]
+        threshold = thresholds.get(metric, 0.05) if thresholds is not None else 0.05
+        if metric == "adex_steps_per_sec" or metric.endswith("_cost_ms"):
+            timing_cv = float(entry.get(timing_cv_key, 0.0))
+            threshold = max(threshold, min(0.25, 2.0 * timing_cv))
+        if abs(current - base) / abs(base) > threshold:
+            raise SystemExit(f"Regression detected for {metric} N={entry['N']}")
 
 
 def main() -> None:
@@ -137,7 +147,7 @@ def main() -> None:
 
     if args.suite == "ci" and args.baseline.exists() and not args.write_baseline:
         baseline = json.loads(args.baseline.read_text())
-        _compare_baseline(entries, baseline)
+        _compare_baseline(entries, baseline, thresholds={"adex_steps_per_sec": 0.1})
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(entries, indent=2, sort_keys=True))

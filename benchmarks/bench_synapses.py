@@ -36,6 +36,9 @@ def run_benchmark(
         elapsed = time.perf_counter() - start
         timings.append(elapsed)
     median_elapsed = statistics.median(timings) if timings else 0.0
+    timing_cv = 0.0
+    if len(timings) > 1 and median_elapsed > 0:
+        timing_cv = statistics.pstdev(timings) / median_elapsed
     per_step_ms = (median_elapsed * 1000.0 / steps) if steps > 0 else 0.0
 
     return [
@@ -45,5 +48,6 @@ def run_benchmark(
             per_step_ms,
             "ms/step",
             "bench_synapses",
+            extra={"timing_cv": timing_cv},
         )
     ]
