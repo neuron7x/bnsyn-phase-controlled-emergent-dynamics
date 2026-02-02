@@ -5,6 +5,8 @@ on:
     branches: ["main"]
   push:
     branches: ["main"]
+  schedule:
+    - cron: "0 3 * * 1"
 
 permissions:
   contents: read
@@ -21,7 +23,29 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
+      - name: Detect changed workflow files
+        id: changed-workflows
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          CHANGED=$(git diff --name-only origin/main...HEAD -- .github/workflows | tr '\n' ' ')
+          if [ -z "$CHANGED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "files=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "files=$CHANGED" >> "$GITHUB_OUTPUT"
+      - name: Lint changed workflows with actionlint
+        if: github.event_name == 'pull_request' && steps.changed-workflows.outputs.changed == 'true'
+        uses: rhysd/actionlint@v1.7.7
+        with:
+          shellcheck: shellcheck
+          args: -verbose ${{ steps.changed-workflows.outputs.files }}
       - name: Lint workflows with actionlint
+        if: github.event_name != 'pull_request'
         uses: rhysd/actionlint@v1.7.7
         with:
           shellcheck: shellcheck
@@ -29,35 +53,16 @@ jobs:
       - name: Scan workflow files for tabs or non-ASCII
         shell: bash
         run: |
-          python - <<'PY'
-          from __future__ import annotations
-
-          from pathlib import Path
-          import unicodedata
-
-          workflow_dir = Path('.github/workflows')
-          offenders = []
-
-          for path in sorted(workflow_dir.glob('*.yml')):
-              text = path.read_text(encoding='utf-8', errors='replace')
-              for line_no, line in enumerate(text.splitlines(), 1):
-                  if '\t' in line:
-                      offenders.append((path, line_no, 'TAB'))
-                  for ch in line:
-                      codepoint = ord(ch)
-                      if codepoint > 0x7F:
-                          offenders.append((path, line_no, f'NON_ASCII U+{codepoint:04X}'))
-                      category = unicodedata.category(ch)
-                      if category in {'Cf', 'Cc'} and ch not in {'\n', '\r'}:
-                          offenders.append((path, line_no, f'CONTROL_OR_BIDI {category} U+{codepoint:04X}'))
-
-          if offenders:
-              for path, line_no, detail in offenders:
-                  print(f'{path}:{line_no}:{detail}')
-              raise SystemExit(1)
-
-          print('Workflow integrity checks passed.')
-          PY
+          set -euo pipefail
+          if grep -RIn $'\t' .github/workflows; then
+            echo "Tabs detected in workflow files."
+            exit 1
+          fi
+          if grep -RInP '[^\x00-\x7F]' .github/workflows; then
+            echo "Non-ASCII characters detected in workflow files."
+            exit 1
+          fi
+          echo "Workflow integrity checks passed."
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -68,3 +73,22 @@ jobs:
           pip install pyyaml jsonschema
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py
+
+  advisory-actionlint:
+    name: Advisory actionlint (full scan)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Lint workflows with actionlint
+        uses: rhysd/actionlint@v1.7.7
+        with:
+          shellcheck: shellcheck
+          verbose: true

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import argparse
 import re
 import sys
 from typing import Any, Iterable
@@ -13,17 +14,18 @@ import yaml
 from jsonschema import Draft202012Validator
 
 
-ROOT = Path(__file__).resolve().parents[2]
-SAFETY_DIR = ROOT / "docs" / "safety"
-STPA_PATH = SAFETY_DIR / "stpa.md"
-HAZARD_LOG_PATH = SAFETY_DIR / "hazard_log.yml"
-TRACEABILITY_PATH = SAFETY_DIR / "traceability.yml"
+DEFAULT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_SAFETY_DIR = Path("docs") / "safety"
+SCHEMA_VERSION = 1
+FOLLOW_UP_PATTERN = r"^docs/safety/followups\.md#FUP-\d{3}$"
+FOLLOW_UP_REQUIRED_STATUSES = {"unmitigated", "deferred", "planned"}
 
 
 HAZARD_LOG_SCHEMA: dict[str, Any] = {
     "type": "object",
-    "required": ["hazards"],
+    "required": ["schema_version", "hazards"],
     "properties": {
+        "schema_version": {"type": "integer", "enum": [SCHEMA_VERSION]},
         "hazards": {
             "type": "array",
             "items": {
@@ -57,17 +59,34 @@ HAZARD_LOG_SCHEMA: dict[str, Any] = {
                     "detectability": {"type": "string", "enum": ["low", "medium", "high"]},
                     "status": {
                         "type": "string",
-                        "enum": ["enforced", "partially_mitigated", "unmitigated"],
+                        "enum": [
+                            "enforced",
+                            "partially_mitigated",
+                            "unmitigated",
+                            "deferred",
+                            "planned",
+                        ],
                     },
                     "status_reason": {"type": "string"},
                     "enforcement": {"type": "array"},
                     "tests": {"type": "array"},
                     "verification": {"type": "array", "items": {"type": "string"}},
                     "gates": {"type": "array"},
-                    "follow_up": {"type": "string"},
+                    "follow_up": {"type": "string", "pattern": FOLLOW_UP_PATTERN},
                     "owner": {"type": "string"},
                     "last_reviewed": {"type": "string"},
                 },
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": {
+                                "status": {"enum": sorted(FOLLOW_UP_REQUIRED_STATUSES)}
+                            },
+                            "required": ["status"],
+                        },
+                        "then": {"required": ["follow_up"]},
+                    }
+                ],
                 "additionalProperties": False,
             },
         },
@@ -78,8 +97,9 @@ HAZARD_LOG_SCHEMA: dict[str, Any] = {
 
 TRACEABILITY_SCHEMA: dict[str, Any] = {
     "type": "object",
-    "required": ["requirements"],
+    "required": ["schema_version", "requirements"],
     "properties": {
+        "schema_version": {"type": "integer", "enum": [SCHEMA_VERSION]},
         "requirements": {
             "type": "array",
             "items": {
@@ -105,17 +125,34 @@ TRACEABILITY_SCHEMA: dict[str, Any] = {
                     "safety_constraints": {"type": "array", "items": {"type": "string"}},
                     "status": {
                         "type": "string",
-                        "enum": ["enforced", "partially_mitigated", "unmitigated"],
+                        "enum": [
+                            "enforced",
+                            "partially_mitigated",
+                            "unmitigated",
+                            "deferred",
+                            "planned",
+                        ],
                     },
                     "status_reason": {"type": "string"},
                     "enforcement": {"type": "array"},
                     "tests": {"type": "array"},
                     "verification": {"type": "array", "items": {"type": "string"}},
                     "gates": {"type": "array"},
-                    "follow_up": {"type": "string"},
+                    "follow_up": {"type": "string", "pattern": FOLLOW_UP_PATTERN},
                     "owner": {"type": "string"},
                     "last_reviewed": {"type": "string"},
                 },
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": {
+                                "status": {"enum": sorted(FOLLOW_UP_REQUIRED_STATUSES)}
+                            },
+                            "required": ["status"],
+                        },
+                        "then": {"required": ["follow_up"]},
+                    }
+                ],
                 "additionalProperties": False,
             },
         }
@@ -140,18 +177,46 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
-def _parse_stpa_ids(text: str) -> StpaIds:
-    return StpaIds(
-        losses=set(re.findall(r"\bL\d+\b", text)),
-        hazards=set(re.findall(r"\bH\d+\b", text)),
-        ucas=set(re.findall(r"\bUCA\d+\b", text)),
-        constraints=set(re.findall(r"\bSC-\d+\b", text)),
+def _parse_stpa_ids(text: str) -> tuple[StpaIds, list[str]]:
+    errors: list[str] = []
+    canonical_pattern = re.compile(
+        r"(?<![A-Z0-9-])(L\d+|H\d+|UCA\d+|SC-\d+|REQ-[A-Z0-9-]+)(?![A-Z0-9-])"
     )
+    losses: set[str] = set()
+    hazards: set[str] = set()
+    ucas: set[str] = set()
+    constraints: set[str] = set()
+
+    for match in canonical_pattern.findall(text):
+        if match.startswith("L"):
+            losses.add(match)
+        elif match.startswith("H"):
+            hazards.add(match)
+        elif match.startswith("UCA"):
+            ucas.add(match)
+        elif match.startswith("SC-"):
+            constraints.add(match)
+
+    invalid_patterns = {
+        "loss": re.compile(r"\bL-\d+\b"),
+        "hazard": re.compile(r"\bH-\d+\b"),
+        "uca": re.compile(r"\bUCA-\d+\b"),
+        "constraint": re.compile(r"\bSC\d+\b"),
+    }
+    for label, pattern in invalid_patterns.items():
+        for match in pattern.findall(text):
+            errors.append(
+                f"stpa.md: invalid {label} id format {match}; use canonical IDs"
+            )
+
+    return StpaIds(losses=losses, hazards=hazards, ucas=ucas, constraints=constraints), errors
 
 
 def _strip_line_suffix(path: str) -> str:
     if ":L" in path:
         return path.split(":L", 1)[0]
+    if "#" in path:
+        return path.split("#", 1)[0]
     return path
 
 
@@ -167,11 +232,11 @@ def _extract_paths(items: Iterable[Any], key: str) -> list[str]:
     return paths
 
 
-def _validate_paths(paths: Iterable[str], context: str) -> list[str]:
+def _validate_paths(paths: Iterable[str], context: str, root: Path) -> list[str]:
     errors: list[str] = []
     for path_entry in paths:
         path = _strip_line_suffix(path_entry)
-        if path and not (ROOT / path).exists():
+        if path and not (root / path).exists():
             errors.append(f"{context}: missing path {path}")
     return errors
 
@@ -211,14 +276,29 @@ def _validate_enforced_fields(
     return errors
 
 
-def main() -> int:
+def validate_safety_artifacts(root: Path, safety_dir: Path) -> list[str]:
     errors: list[str] = []
 
-    stpa_text = STPA_PATH.read_text(encoding="utf-8")
-    stpa_ids = _parse_stpa_ids(stpa_text)
+    stpa_path = safety_dir / "stpa.md"
+    hazard_log_path = safety_dir / "hazard_log.yml"
+    traceability_path = safety_dir / "traceability.yml"
 
-    hazard_log = _load_yaml(HAZARD_LOG_PATH)
-    traceability = _load_yaml(TRACEABILITY_PATH)
+    if not stpa_path.exists():
+        errors.append(f"stpa.md missing at {stpa_path}")
+        return errors
+    if not hazard_log_path.exists():
+        errors.append(f"hazard_log.yml missing at {hazard_log_path}")
+        return errors
+    if not traceability_path.exists():
+        errors.append(f"traceability.yml missing at {traceability_path}")
+        return errors
+
+    stpa_text = stpa_path.read_text(encoding="utf-8")
+    stpa_ids, stpa_errors = _parse_stpa_ids(stpa_text)
+    errors.extend(stpa_errors)
+
+    hazard_log = _load_yaml(hazard_log_path)
+    traceability = _load_yaml(traceability_path)
 
     errors.extend(_validate_schema(hazard_log, HAZARD_LOG_SCHEMA, "hazard_log"))
     errors.extend(_validate_schema(traceability, TRACEABILITY_SCHEMA, "traceability"))
@@ -274,18 +354,29 @@ def main() -> int:
             _validate_paths(
                 _extract_paths(hazard.get("enforcement", []), "code"),
                 f"hazard_log:{hid}:enforcement",
+                root,
             )
         )
         errors.extend(
             _validate_paths(
                 _extract_paths(hazard.get("tests", []), "path"),
                 f"hazard_log:{hid}:tests",
+                root,
             )
         )
+        follow_up = hazard.get("follow_up")
+        if isinstance(follow_up, str):
+            errors.extend(
+                _validate_paths(
+                    [follow_up],
+                    f"hazard_log:{hid}:follow_up",
+                    root,
+                )
+            )
         for gate in hazard.get("gates", []):
             if isinstance(gate, dict):
                 workflow = gate.get("workflow")
-                if isinstance(workflow, str) and not (ROOT / workflow).exists():
+                if isinstance(workflow, str) and not (root / workflow).exists():
                     errors.append(f"hazard_log:{hid}:gate missing workflow {workflow}")
 
     for requirement in requirement_items:
@@ -321,19 +412,62 @@ def main() -> int:
             _validate_paths(
                 _extract_paths(requirement.get("enforcement", []), "code"),
                 f"traceability:{rid}:enforcement",
+                root,
             )
         )
         errors.extend(
             _validate_paths(
                 _extract_paths(requirement.get("tests", []), "path"),
                 f"traceability:{rid}:tests",
+                root,
             )
         )
+        follow_up = requirement.get("follow_up")
+        if isinstance(follow_up, str):
+            errors.extend(
+                _validate_paths(
+                    [follow_up],
+                    f"traceability:{rid}:follow_up",
+                    root,
+                )
+            )
         for gate in requirement.get("gates", []):
             if isinstance(gate, dict):
                 workflow = gate.get("workflow")
-                if isinstance(workflow, str) and not (ROOT / workflow).exists():
+                if isinstance(workflow, str) and not (root / workflow).exists():
                     errors.append(f"traceability:{rid}:gate missing workflow {workflow}")
+
+    return errors
+
+
+def _resolve_safety_dir(root: Path, safety_dir: str) -> Path:
+    candidate = Path(safety_dir)
+    if candidate.is_absolute():
+        return candidate
+    return root / candidate
+
+
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=DEFAULT_ROOT,
+        help="Repository root (default: auto-detected).",
+    )
+    parser.add_argument(
+        "--safety-dir",
+        default=str(DEFAULT_SAFETY_DIR),
+        help="Safety artifacts directory relative to root (default: docs/safety).",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
+    root = args.root.resolve()
+    safety_dir = _resolve_safety_dir(root, args.safety_dir)
+    errors = validate_safety_artifacts(root, safety_dir)
 
     if errors:
         for error in errors:

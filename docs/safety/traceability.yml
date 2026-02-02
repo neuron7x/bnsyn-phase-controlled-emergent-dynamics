@@ -1,3 +1,4 @@
+schema_version: 1
 requirements:
   - id: REQ-INPUT-VALIDATION
     description: Validate external arrays at API boundaries to prevent invalid state.

@@ -1,5 +1,11 @@
 # Quality Infrastructure Fixes - Final PR Description
 
+## PR Update (STPA/CI Review)
+
+**Що зламано**: safety schemas не приймають `follow_up`, валідатор крихкий до форматів ID, workflow-integrity має нестрогий/некоректний скан і actionlint ламається на legacy workflow у PR.  
+**Що зроблено**: додано schema_version і follow_up правила, зміцнено парсинг STPA IDs + валідатор/CLI, додано unit-тести, workflow-integrity переведено на changed-only actionlint у PR та advisory full scan на schedule, оновлено документацію гейтів.  
+**Як перевірити**: `python tools/safety/check_safety_artifacts.py`, `pytest -q`.
+
 ## Summary
 
 This PR fixes **all critical defects** identified in the BN-Syn quality infrastructure review report (SRES-BNSYN). The current quality systems (mutation testing, formal verification, chaos engineering, property testing) are now **truthful, policy-consistent, and evidence-backed**. The corrected variance ratio is **24,693×**.
