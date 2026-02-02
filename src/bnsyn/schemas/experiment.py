@@ -30,6 +30,16 @@ class ExperimentConfig(BaseModel):
     version: str = Field(..., pattern=r"^v[0-9]+$")
     seeds: list[int] = Field(..., min_length=1, max_length=100)
 
+    @field_validator("seeds")
+    @classmethod
+    def validate_seeds(cls, v: list[int]) -> list[int]:
+        """Validate that seeds are unique positive integers."""
+        if any(not isinstance(seed, int) or isinstance(seed, bool) or seed <= 0 for seed in v):
+            raise ValueError("seeds must contain only positive integers")
+        if len(set(v)) != len(v):
+            raise ValueError("seeds must be unique positive integers")
+        return v
+
     model_config = {"extra": "forbid"}
 
 
