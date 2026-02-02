@@ -126,19 +126,23 @@ def compare_metric(
     )
 
 
+MAX_TIME_THRESHOLD = 0.25
+THRESHOLD_OVERRIDES = {
+    "performance.updates_per_sec": 0.15,
+    "performance.energy_cost": 0.15,
+    "performance.wall_time_sec": 0.15,
+    "kernels.adex_update.total_time_sec": 0.30,
+    "kernels.adex_update.avg_time_sec": 0.30,
+    "kernels.adex_update.min_time_sec": 0.30,
+}
+
+
 def _threshold_for_metric(name: str, default: float) -> float:
-    overrides = {
-        "performance.updates_per_sec": 0.15,
-        "performance.energy_cost": 0.15,
-        "performance.wall_time_sec": 0.15,
-        "kernels.adex_update.total_time_sec": 0.30,
-        "kernels.adex_update.avg_time_sec": 0.30,
-        "kernels.adex_update.min_time_sec": 0.30,
-    }
-    if name in overrides:
-        return max(default, overrides[name])
+    override = THRESHOLD_OVERRIDES.get(name)
+    if override is not None:
+        return max(default, override)
     if name.endswith(".max_time_sec"):
-        return max(default, 0.25)
+        return max(default, MAX_TIME_THRESHOLD)
     return default
 
 
