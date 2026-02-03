@@ -1,0 +1,34 @@
+name: Reusable SSOT Gates
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to use'
+        type: string
+        default: '3.11'
+
+permissions:
+  contents: read
+
+jobs:
+  ssot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs['python-version'] }}
+          cache: 'pip'
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Install dependencies
+        run: python -m pip install -e ".[dev,test]"
+      - name: SSOT gates
+        run: |
+          python scripts/validate_bibliography.py
+          python scripts/validate_claims.py
+          python scripts/scan_governed_docs.py
+          python scripts/scan_normative_tags.py

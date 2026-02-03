@@ -237,8 +237,8 @@ coqc BNsyn_Sigma.v
 
 ### Chaos Engineering (Non-Blocking, Nightly)
 
-**Workflow**: `.github/workflows/chaos-validation.yml`
-**Trigger**: Nightly at 4 AM UTC, manual dispatch
+**Workflow**: `.github/workflows/ci-validation.yml` (mode: `chaos`)
+**Trigger**: Nightly at 4 AM UTC, manual dispatch (mode: `chaos`)
 **Timeout**: 60 minutes
 
 **Fault Types Tested**:
@@ -267,8 +267,8 @@ pytest tests/validation/test_chaos_integration.py -v
 
 ### Validation Tests (Non-Blocking, Nightly)
 
-**Workflow**: `.github/workflows/ci-validation-elite.yml`
-**Trigger**: Nightly at 2 AM UTC, manual dispatch
+**Workflow**: `.github/workflows/ci-validation.yml` (mode: `elite`)
+**Trigger**: Nightly at 2 AM UTC, manual dispatch (mode: `elite`)
 **Timeout**: 30 minutes
 
 **Tests Run**:

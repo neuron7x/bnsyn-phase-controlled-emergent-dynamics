@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ inputs['python-version'] }}
           cache: 'pip'
       
       - name: Pin pip
@@ -74,7 +74,7 @@ jobs:
               echo "| Lint |  FAIL |"
             fi
             echo ""
-            echo "**Python Version:** ${{ inputs.python-version }}"
+            echo "**Python Version:** ${{ inputs['python-version'] }}"
           } >> "$summary_file"
       
       - name: Upload logs on failure
@@ -101,7 +101,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ inputs['python-version'] }}
           cache: 'pip'
       
       - name: Pin pip
@@ -114,12 +114,12 @@ jobs:
         uses: actions/cache@v5
         with:
           path: .mypy_cache
-          key: mypy-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('src/**/*.py', 'pyproject.toml') }}
+          key: mypy-${{ runner.os }}-${{ inputs['python-version'] }}-${{ hashFiles('src/**/*.py', 'pyproject.toml') }}
       
       - name: Mypy type check
         id: mypy
         run: |
-          if [ "${{ inputs.mypy-strict }}" = "true" ]; then
+          if [ "${{ inputs['mypy-strict'] }}" = "true" ]; then
             mypy src --strict --config-file pyproject.toml 2>&1 | tee mypy.log
           else
             mypy src --config-file pyproject.toml 2>&1 | tee mypy.log
@@ -139,8 +139,8 @@ jobs:
               echo "| Status |  FAIL |"
             fi
             echo "|--------|---------|"
-            echo "| Strict Mode | ${{ inputs.mypy-strict }} |"
-            echo "| Python | ${{ inputs.python-version }} |"
+            echo "| Strict Mode | ${{ inputs['mypy-strict'] }} |"
+            echo "| Python | ${{ inputs['python-version'] }} |"
             echo ""
             if [ -f mypy.log ]; then
               ERROR_COUNT=$(grep -c "error:" mypy.log || echo "0")
@@ -170,7 +170,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ inputs['python-version'] }}
           cache: 'pip'
       
       - name: Pin pip
@@ -182,7 +182,7 @@ jobs:
       - name: Pylint check
         id: pylint
         run: |
-          pylint src/bnsyn --rcfile=pyproject.toml --fail-under="${{ inputs.pylint-threshold }}" 2>&1 | tee pylint.log
+          pylint src/bnsyn --rcfile=pyproject.toml --fail-under="${{ inputs['pylint-threshold'] }}" 2>&1 | tee pylint.log
           echo "PYLINT_RESULT=$?" >> "$GITHUB_ENV"
       
       - name: Generate summary
@@ -198,8 +198,8 @@ jobs:
               echo "| Status |  FAIL |"
             fi
             echo "|--------|---------|"
-            echo "| Threshold | ${{ inputs.pylint-threshold }}/10.0 |"
-            echo "| Python | ${{ inputs.python-version }} |"
+            echo "| Threshold | ${{ inputs['pylint-threshold'] }}/10.0 |"
+            echo "| Python | ${{ inputs['python-version'] }} |"
             echo ""
             if [ -f pylint.log ]; then
               SCORE=$(grep "Your code has been rated at" pylint.log | sed 's/.*rated at \([0-9.]*\).*/\1/' || echo "N/A")

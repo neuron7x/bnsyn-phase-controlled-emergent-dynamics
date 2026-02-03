@@ -50,7 +50,7 @@ Primary PR validation workflow with 10 blocking jobs:
 **Timeout:** 30 minutes per job  
 **Failure Policy:** Informational, manual review
 
-#### ci-validation-elite.yml (NEW)
+#### ci-validation.yml (mode: `elite`)
 
 Daily validation of scientific claims and invariants:
 
@@ -104,8 +104,8 @@ All workflows are **fork-safe** by design:
 | Artifact Type | Retention | Workflow | Purpose |
 |---------------|-----------|----------|---------|
 | Claims Coverage | 30 days | ci-pr.yml | Evidence traceability |
-| Validation Logs | 30 days | ci-validation-elite.yml | Scientific validation |
-| Property Logs | 30 days | ci-validation-elite.yml | Invariant verification |
+| Validation Logs | 30 days | ci-validation.yml (elite mode) | Scientific validation |
+| Property Logs | 30 days | ci-validation.yml (elite mode) | Invariant verification |
 | Benchmark Results | 90 days | benchmarks.yml (elite schedule) | Performance tracking |
 | Dependency Audit | 30 days | ci-pr.yml | Security compliance |
 
@@ -252,7 +252,7 @@ HYPOTHESIS_PROFILE=thorough pytest -m property -v
 1. Create test in `tests/validation/`
 2. **Must** mark with `@pytest.mark.validation`
 3. Runtime budget: ~2 minutes per test (10 tests = 20 min total)
-4. Runs in `ci-validation-elite.yml`, NOT in PR gates
+4. Runs in `ci-validation.yml` (mode: `elite`), NOT in PR gates
 
 ### Adding New Property Test
 
@@ -260,7 +260,7 @@ HYPOTHESIS_PROFILE=thorough pytest -m property -v
 2. **Must** mark with `@pytest.mark.property`
 3. Use Hypothesis `@given` decorator
 4. Budget: 50 examples × 5s deadline = ~4 min max per test
-5. Runs in `ci-validation-elite.yml`, NOT in PR gates
+5. Runs in `ci-validation.yml` (mode: `elite`), NOT in PR gates
 
 ---
 
