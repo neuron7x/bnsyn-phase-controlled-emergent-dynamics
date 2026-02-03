@@ -140,7 +140,7 @@
 
 **Trigger(s):**
 
-* `workflow_call` with inputs (`tier`, `profile`, `scenario`) and optional secrets (`BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`).
+* `workflow_call` with inputs (`tier`, `profile`, `scenario`, `publish_baseline`) and optional secrets (`BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`).
 
 **Timeout(s):**
 
@@ -176,22 +176,14 @@
 **Trigger(s):**
 
 * `workflow_dispatch` with tier/profile/scenario inputs.
-* `pull_request`.
-* `schedule` (daily standard baseline, weekly scenario, weekly elite).
 
 **Timeout(s):**
 
-* `benchmarks-pr`: Not set
-* `benchmarks-standard`: Not set
-* `benchmarks-weekly-scenario`: Not set
-* `benchmarks-elite`: Not set
+* `benchmarks-dispatch`: Not set
 
 **Jobs:**
 
-* `benchmarks-pr` — Delegates micro benchmarks to `ci-benchmarks.yml`.
-* `benchmarks-standard` — Delegates daily baseline to `ci-benchmarks.yml`.
-* `benchmarks-weekly-scenario` — Delegates weekly scenario to `ci-benchmarks.yml`.
-* `benchmarks-elite` — Delegates elite baseline to `ci-benchmarks.yml`.
+* `benchmarks-dispatch` — Delegates workflow_dispatch inputs to `ci-benchmarks.yml`.
 
 **Evidence:**
 
@@ -251,7 +243,6 @@
 
 **Trigger(s):**
 
-* `schedule` (weekly Sunday 03:00 UTC).
 * `workflow_dispatch`.
 
 **Timeout(s):**
@@ -286,7 +277,7 @@
 * `pull_request`.
 * `schedule` (daily 02:00 UTC, weekly Sunday 03:00 UTC).
 * `workflow_dispatch`.
-* `workflow_call` with secrets `BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`.
+* `workflow_call` with inputs (`tier`, `profile`, `scenario`, `publish_baseline`) and secrets `BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`.
 
 **Timeout(s):**
 

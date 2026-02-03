@@ -16,6 +16,11 @@ on:
         required: false
         type: string
         default: ci_smoke
+      publish_baseline:
+        description: "Publish baseline artifacts (standard baseline/full only)"
+        required: false
+        type: boolean
+        default: false
     secrets:
       BENCHMARK_GPG_PASSPHRASE:
         required: false
@@ -87,8 +92,6 @@ jobs:
   nightly-benchmarks:
     if: ${{ inputs.tier == 'standard' && (inputs.profile == 'baseline' || inputs.profile == 'full') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     env:
       OMP_NUM_THREADS: "1"
@@ -150,6 +153,7 @@ jobs:
           done
 
       - name: Publish baseline artifacts
+        if: ${{ inputs.publish_baseline }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

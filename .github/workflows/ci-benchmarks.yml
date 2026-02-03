@@ -49,6 +49,11 @@ on:
         required: false
         type: string
         default: ci_smoke
+      publish_baseline:
+        description: "Publish baseline artifacts (standard baseline/full only)"
+        required: false
+        type: boolean
+        default: false
     secrets:
       BENCHMARK_GPG_PASSPHRASE:
         required: false
@@ -59,13 +64,7 @@ on:
     - cron: '0 3 * * 0'
 
 permissions:
-  contents: write
-  actions: read
-  checks: read
-  statuses: read
-  pull-requests: read
-  security-events: write
-  packages: read
+  contents: read
 
 jobs:
   benchmarks-pr:
@@ -84,6 +83,7 @@ jobs:
       tier: ${{ inputs.tier }}
       profile: ${{ inputs.profile }}
       scenario: ${{ inputs.scenario }}
+      publish_baseline: false
     secrets: inherit
 
   benchmarks-call:
@@ -93,15 +93,19 @@ jobs:
       tier: ${{ inputs.tier }}
       profile: ${{ inputs.profile }}
       scenario: ${{ inputs.scenario }}
+      publish_baseline: ${{ inputs.publish_baseline }}
     secrets: inherit
 
   benchmarks-standard:
     if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' }}
+    permissions:
+      contents: write
     uses: ./.github/workflows/_reusable_benchmarks.yml
     with:
       tier: standard
       profile: baseline
       scenario: ci_smoke
+      publish_baseline: true
     secrets: inherit
 
   benchmarks-elite:
@@ -111,4 +115,5 @@ jobs:
       tier: elite
       profile: baseline
       scenario: ci_smoke
+      publish_baseline: false
     secrets: inherit

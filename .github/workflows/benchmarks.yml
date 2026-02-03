@@ -2,7 +2,6 @@
 name: benchmarks
 
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       tier:
@@ -35,24 +34,11 @@ on:
           - steps_sweep
           - conn_sweep
           - dt_sweep
-  schedule:
-    - cron: '0 2 * * *'
-    - cron: '0 0 * * 1'
-    - cron: '0 3 * * 0'
 
 permissions:
   contents: read
 
 jobs:
-  benchmarks-pr:
-    if: ${{ github.event_name == 'pull_request' }}
-    uses: ./.github/workflows/ci-benchmarks.yml
-    with:
-      tier: standard
-      profile: micro
-      scenario: ci_smoke
-    secrets: inherit
-
   benchmarks-dispatch:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/ci-benchmarks.yml
@@ -60,31 +46,4 @@ jobs:
       tier: ${{ inputs.tier }}
       profile: ${{ inputs.profile }}
       scenario: ${{ inputs.scenario }}
-    secrets: inherit
-
-  benchmarks-standard:
-    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' }}
-    uses: ./.github/workflows/ci-benchmarks.yml
-    with:
-      tier: standard
-      profile: baseline
-      scenario: ci_smoke
-    secrets: inherit
-
-  benchmarks-weekly-scenario:
-    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 0 * * 1' }}
-    uses: ./.github/workflows/ci-benchmarks.yml
-    with:
-      tier: standard
-      profile: custom
-      scenario: ci_smoke
-    secrets: inherit
-
-  benchmarks-elite:
-    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 3 * * 0' }}
-    uses: ./.github/workflows/ci-benchmarks.yml
-    with:
-      tier: elite
-      profile: baseline
-      scenario: ci_smoke
     secrets: inherit

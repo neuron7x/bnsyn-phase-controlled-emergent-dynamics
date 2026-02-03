@@ -2,17 +2,10 @@
 name: ci-benchmarks-elite
 
 on:
-  schedule:
-    # Weekly on Sunday at 3 AM UTC
-    - cron: '0 3 * * 0'
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ci-benchmarks-elite-${{ github.ref }}
-  cancel-in-progress: false
 
 jobs:
   benchmarks:
