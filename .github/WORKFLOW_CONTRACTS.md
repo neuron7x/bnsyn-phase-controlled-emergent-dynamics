@@ -1,764 +1,824 @@
 # CI/CD Workflow Contracts
 
-**Version:** 1.0  
-**Date:** 2026-01-27  
-**Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics  
-**Total Workflows:** 20 primary + 2 reusable
+## Workflow Inventory Index
+
+* Count: 22 workflows
+* Files (lexicographic):
+  * _reusable_pytest.yml
+  * _reusable_quality.yml
+  * benchmarks.yml
+  * chaos-validation.yml
+  * ci-benchmarks-elite.yml
+  * ci-benchmarks.yml
+  * ci-pr-atomic.yml
+  * ci-pr.yml
+  * ci-property-tests.yml
+  * ci-smoke.yml
+  * ci-validation-elite.yml
+  * ci-validation.yml
+  * codecov-health.yml
+  * codeql.yml
+  * dependency-watch.yml
+  * docs.yml
+  * formal-coq.yml
+  * formal-tla.yml
+  * physics-equivalence.yml
+  * quality-mutation.yml
+  * science.yml
+  * workflow-integrity.yml
 
 ---
 
-## Workflow Inventory (Full)
+## `_reusable_pytest.yml`
 
-| # | Workflow | Trigger | Timeout | Jobs | Axiom Focus | Status |
-|---|----------|---------|---------|------|-------------|--------|
-| 1 | ci-pr.yml | PR, push(main) | Not set (tests-smoke input 10m) | 12 | A1, A2, A3, A6 | ✅ Active |
-| 2 | ci-pr-atomic.yml | PR, push(main) | Not set (tests-smoke input 10m) | 7 | A1, A2, A3, A6 | ✅ Active |
-| 3 | ci-smoke.yml | PR, push(main) | Not set | 2 | A4 | ⚠️ Redundant (see consolidation) |
-| 4 | ci-validation.yml | Schedule weekly (Sun 03:00 UTC), manual | Not set | 2 | A4 | ⚠️ Redundant (see consolidation) |
-| 5 | ci-validation-elite.yml | Schedule daily (02:00 UTC), manual | Job-level: 30m/30m | 3 | A1, A4 | ✅ Active |
-| 6 | ci-property-tests.yml | Schedule nightly (02:30 UTC), manual | 15m | 1 | A1, A4 | ⚠️ Redundant (see consolidation) |
-| 7 | chaos-validation.yml | Schedule nightly (04:00 UTC), manual w/ inputs | Job-level: 60m/45m | 3 | A1, A4 | ✅ Active |
-| 8 | ci-benchmarks.yml | PR, schedule daily (02:00 UTC), manual, callable | Job-level: 10m (micro-benchmarks) | 2 | A5, A6 | ✅ Active |
-| 9 | ci-benchmarks-elite.yml | Schedule weekly (Sun 03:00 UTC), manual | 30m | 1 | A5 | ⚠️ Redundant (see consolidation) |
-| 10 | benchmarks.yml | Schedule weekly (Mon 00:00 UTC), manual w/ inputs | Not set | 1 | A5 | ⚠️ Redundant (see consolidation) |
-| 11 | codeql.yml | Push(main), schedule weekly (Sun 04:00 UTC), manual | 15m | 1 | A6 | ✅ Active |
-| 12 | codecov-health.yml | Schedule every 6h, manual | Not set | 1 | A3 | ✅ Active |
-| 13 | dependency-watch.yml | Schedule weekly (Mon 08:00 UTC), manual | Not set | 1 | A6 | ✅ Active |
-| 14 | docs.yml | PR, manual | Not set | 1 | A7 | ✅ Active |
-| 15 | science.yml | Manual, schedule weekly (Sun 00:00 UTC) | 30m | 1 | A1, A4 | ✅ Active |
-| 16 | physics-equivalence.yml | PR(path), push(main), manual | 15m | 1 | A1, A4 | ✅ Active |
-| 17 | formal-coq.yml | Schedule nightly (01:00 UTC), manual | 20m | 1 | A1, A4 | ✅ Active |
-| 18 | formal-tla.yml | Schedule nightly (02:00 UTC), manual w/ inputs | 30m | 1 | A1, A4 | ✅ Active |
-| 19 | quality-mutation.yml | Schedule nightly (03:00 UTC), manual | 120m | 1 | A2, A4 | ✅ Active |
-| 20 | workflow-integrity.yml | PR(main), push(main) | 5m | 1 | A3, A6 | ✅ Active |
-| R1 | _reusable_quality.yml | workflow_call | Not set | 3 | A2, A3 | ✅ Active |
-| R2 | _reusable_pytest.yml | workflow_call | Input-driven | 1 | A2, A3, A4 | ✅ Active |
+**Path:** `.github/workflows/_reusable_pytest.yml`
+**Status:** Active
 
-**Legend:**
-- A1: Determinism
-- A2: Composability
-- A3: Observability
-- A4: Exhaustiveness
-- A5: Performance
-- A6: Security
-- A7: Documentation
+**Intent (1–2 sentences):**
+
+* Provide a reusable pytest job with coverage enforcement and optional Codecov uploads for caller workflows.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `markers`, `coverage-threshold`, `timeout-minutes`, `upload-codecov`) and optional secret `CODECOV_TOKEN`. `file:.github/workflows/_reusable_pytest.yml:L3-L29`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `pytest`: `${{ inputs.timeout-minutes }}`. `file:.github/workflows/_reusable_pytest.yml:L31-L36`
+
+**Jobs:**
+
+* `pytest` — Runs pytest with coverage thresholds, generates summaries, and uploads artifacts/Codecov if configured. `file:.github/workflows/_reusable_pytest.yml:L31-L198`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `pytest` with coverage, summary generation, `codecov/codecov-action@v5`, `actions/upload-artifact@v4`. `file:.github/workflows/_reusable_pytest.yml:L37-L191`
+  * Notes: timeout is controlled by input; coverage artifacts uploaded on success/failure. `file:.github/workflows/_reusable_pytest.yml:L35-L195`
 
 ---
 
-## 1. ci-pr.yml
+## `_reusable_quality.yml`
 
-### Purpose
-Primary PR validation workflow (smoke tests + SSOT + security).
+**Path:** `.github/workflows/_reusable_quality.yml`
+**Status:** Active
 
-### Contract Definition
-```yaml
-Triggers: [pull_request, push(main)]
-Timeout: Not set (tests-smoke input 10 minutes)
-Required: Yes (branch protection)
-Jobs: 12 (ssot, dependency-consistency, quality, manifest-verification, build,
-         docs-build, tests-smoke, tests-core-only, ci-benchmarks, gitleaks,
-         pip-audit, bandit)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A1 (Determinism):** 90% ✅ (SSOT gates, reproducible builds)
-- **A2 (Composability):** 70% → 85% ⚠️ (after refactor with reusable workflows)
-- **A3 (Observability):** 70% → 85% ⚠️ (after adding step summaries)
-- **A6 (Security):** 90% ✅ (gitleaks, pip-audit)
+* Provide reusable lint/type/quality checks (ruff, mypy, pylint) for CI callers.
 
-### Current Implementation
-- ✅ Comprehensive SSOT validation (bibliography, claims, normative tags)
-- ✅ Dependency audit with artifact upload
-- ✅ Quality checks (ruff, mypy)
-- ✅ Build + docs verification
-- ✅ Smoke tests (85% coverage)
-- ❌ No concurrency cancellation (wastes CI minutes)
-- ❌ No step summaries (poor observability)
-- ❌ Duplicates quality logic from ci-pr-atomic.yml
+**Axiom focus:**
 
-### Violations Identified
-1. **V1.1:** Quality job duplicates code (violates A2: Composability)
-2. **V1.2:** No concurrency group (wastes resources on force-push)
-3. **V1.3:** Missing step summaries (violates A3: Observability)
+* A6 — Quality / Mutation / Adversarial Testing
+* A2 — CI Correctness & Regression Safety
 
-### Proposed Refactor (C4)
-```yaml
-# Add concurrency cancellation
-concurrency:
-  group: ci-pr-${{ github.ref }}
-  cancel-in-progress: true
+**Trigger(s):**
 
-# Replace quality job with reusable workflow
-quality:
-  uses: ./.github/workflows/_reusable_quality.yml
-  with:
-    python-version: "3.11"
-    mypy-strict: true
-    pylint-threshold: 7.5
+* `workflow_call` with inputs (`python-version`, `mypy-strict`, `pylint-threshold`). `file:.github/workflows/_reusable_quality.yml:L3-L17`
 
-# Replace tests-smoke with reusable workflow
-tests-smoke:
-  uses: ./.github/workflows/_reusable_pytest.yml
-  with:
-    python-version: "3.11"
-    markers: "not (validation or property)"
-    coverage-threshold: 85
-    timeout-minutes: 10
-    upload-codecov: false
+**Timeout(s):**
 
-# Add summaries to ssot and build jobs
-```
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `ruff`: UNSET. `file:.github/workflows/_reusable_quality.yml:L19-L92`
+  * `mypy`: UNSET. `file:.github/workflows/_reusable_quality.yml:L94-L161`
+  * `pylint`: UNSET. `file:.github/workflows/_reusable_quality.yml:L163-L220`
 
-**Impact:** A2: 70%→85%, A3: 70%→85%
+**Jobs:**
+
+* `ruff` — Enforces formatting and lint rules with summary and artifacts on failure. `file:.github/workflows/_reusable_quality.yml:L19-L92`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `ruff format`, `ruff check`, `actions/upload-artifact@v4`. `file:.github/workflows/_reusable_quality.yml:L24-L89`
+* `mypy` — Runs mypy in strict or non-strict mode with summary and logs. `file:.github/workflows/_reusable_quality.yml:L94-L161`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `mypy`, `actions/upload-artifact@v4`. `file:.github/workflows/_reusable_quality.yml:L98-L157`
+* `pylint` — Enforces pylint score threshold with summary and logs. `file:.github/workflows/_reusable_quality.yml:L163-L220`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `pylint`, `actions/upload-artifact@v4`. `file:.github/workflows/_reusable_quality.yml:L167-L217`
 
 ---
 
-## 2. ci-pr-atomic.yml
+## `benchmarks.yml`
 
-### Purpose
-Atomic PR validation with enhanced determinism checks and security scanning.
+**Path:** `.github/workflows/benchmarks.yml`
+**Status:** Candidate for consolidation
 
-### Contract Definition
-```yaml
-Triggers: [pull_request, push(main)]
-Timeout: Not set (tests-smoke input 10 minutes)
-Required: Yes (branch protection)
-Jobs: 7 (determinism, quality, build, tests-smoke, ssot, security, finalize)
-Env: PYTHONHASHSEED=0, PYTHONDONTWRITEBYTECODE=1
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A1 (Determinism):** 95% ✅ (3x test runs, RNG isolation)
-- **A2 (Composability):** 75% → 85% ⚠️ (after refactor)
-- **A3 (Observability):** 75% → 85% ⚠️ (after enhanced summaries)
-- **A6 (Security):** 90% ✅ (gitleaks, pip-audit, bandit)
+* Run benchmark scenarios on a weekly schedule or on-demand with scenario selection.
 
-### Current Implementation
-- ✅ 3x determinism test runs (verifies reproducibility)
-- ✅ RNG isolation check
-- ✅ Quality checks (ruff, mypy, pylint)
-- ✅ Codecov upload with fallback
-- ✅ Security audit (gitleaks, pip-audit, bandit)
-- ❌ No concurrency cancellation
-- ❌ Determinism summary shows pass/fail but not comparison details
-- ❌ Duplicates quality logic
+**Axiom focus:**
 
-### Security Enforcement Note
-- **pip-audit is blocking.** Known vulnerabilities will fail the `security` job (exit 1) and halt `finalize` until dependencies are remediated.
+* A4 — Performance & Benchmark Fidelity
 
-### Violations Identified
-1. **V2.1:** Quality job duplicates code (violates A2: Composability)
-2. **V2.2:** No concurrency group
-3. **V2.3:** Determinism summary lacks detail (violates A3: Observability)
+**Trigger(s):**
 
-### Proposed Refactor (C5)
-```yaml
-# Add concurrency cancellation
-concurrency:
-  group: ci-pr-atomic-${{ github.ref }}
-  cancel-in-progress: true
+* `workflow_dispatch` with `scenario` input (choice). `file:.github/workflows/benchmarks.yml:L3-L18`
+* `schedule` (weekly, Monday 00:00 UTC). `file:.github/workflows/benchmarks.yml:L18-L20`
 
-# Enhance determinism job summary
-determinism:
-  steps:
-    # ... existing steps ...
-    - name: Summary
-      run: |
-        echo "## Determinism Verification ✅" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "| Run | Status | Tests Passed |" >> $GITHUB_STEP_SUMMARY
-        echo "|-----|--------|--------------|" >> $GITHUB_STEP_SUMMARY
-        echo "| 1 | ✅ | 3/3 |" >> $GITHUB_STEP_SUMMARY
-        echo "| 2 | ✅ | 3/3 |" >> $GITHUB_STEP_SUMMARY
-        echo "| 3 | ✅ | 3/3 |" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Result:** All runs produced identical outputs (A1: 95%)" >> $GITHUB_STEP_SUMMARY
+**Timeout(s):**
 
-# Replace quality and tests-smoke with reusable workflows (same as ci-pr.yml)
-```
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `benchmark`: UNSET. `file:.github/workflows/benchmarks.yml:L25-L82`
 
-**Impact:** A2: 75%→85%, A3: 75%→85%
+**Jobs:**
+
+* `benchmark` — Runs selected benchmark scenario, generates report, uploads artifacts. `file:.github/workflows/benchmarks.yml:L25-L82`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `benchmarks/run_benchmarks.py`, `benchmarks/report.py`, `actions/upload-artifact@v4`. `file:.github/workflows/benchmarks.yml:L30-L69`
 
 ---
 
-## 3. ci-smoke.yml
+## `chaos-validation.yml`
 
-### Purpose
-Fast smoke tests for rapid feedback.
+**Path:** `.github/workflows/chaos-validation.yml`
+**Status:** Active
 
-### Contract Definition
-```yaml
-Triggers: [pull_request, push(main)]
-Timeout: Not set
-Required: No (optional fast feedback)
-Jobs: 2 (ssot, tests-smoke)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A4 (Exhaustiveness):** 75% ✅ (smoke tests only, not comprehensive)
-- **A5 (Performance):** 90% ✅ (fast execution <10 min)
+* Execute chaos fault-injection tests and extended property tests to validate resilience and invariants under stress.
 
-### Current Implementation
-- ✅ Fast execution (<10 min)
-- ✅ Focused on critical-path tests
-- ✅ No coverage overhead
+**Axiom focus:**
 
-### Violations Identified
-None. This workflow is fit-for-purpose.
+* A5 — Chaos / Robustness / Fault Injection
+* A2 — CI Correctness & Regression Safety
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `schedule` (nightly 04:00 UTC). `file:.github/workflows/chaos-validation.yml:L3-L6`
+* `workflow_dispatch` with `test_subset` input. `file:.github/workflows/chaos-validation.yml:L7-L18`
 
-## 4. ci-validation.yml
+**Timeout(s):**
 
-### Purpose
-Slow statistical validation tests (large N, many seeds).
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `chaos-tests`: 60. `file:.github/workflows/chaos-validation.yml:L27-L35`
+  * `property-tests`: 45. `file:.github/workflows/chaos-validation.yml:L82-L85`
+  * `summary`: UNSET. `file:.github/workflows/chaos-validation.yml:L142-L177`
 
-### Contract Definition
-```yaml
-Triggers: [schedule(weekly), workflow_dispatch]
-Timeout: Not set
-Required: No (slow validation)
-Jobs: 2 (ssot, tests-validation)
-```
+**Jobs:**
 
-### Axiom Scores
-- **A4 (Exhaustiveness):** 85% ✅ (comprehensive statistical tests)
-- **A5 (Performance):** 60% ⚠️ (intentionally slow, trade-off accepted)
-
-### Current Implementation
-- ✅ Weekly schedule (reduces CI load)
-- ✅ Manual dispatch option
-- ✅ Comprehensive validation tests
-
-### Violations Identified
-None. Trade-off between A4 and A5 is intentional.
-
-### Proposed Changes
-No changes required (stable).
+* `chaos-tests` — Runs matrixed chaos tests for fault types with summary and artifacts. `file:.github/workflows/chaos-validation.yml:L28-L81`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `pytest tests/validation/test_chaos_*`, `actions/upload-artifact@v4`. `file:.github/workflows/chaos-validation.yml:L37-L80`
+  * Notes: matrix over fault types; fail-fast false. `file:.github/workflows/chaos-validation.yml:L32-L35`
+* `property-tests` — Runs Hypothesis property tests with statistics and artifacts. `file:.github/workflows/chaos-validation.yml:L82-L140`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `pytest -m property`, `actions/upload-artifact@v4`. `file:.github/workflows/chaos-validation.yml:L86-L139`
+* `summary` — Aggregates chaos/property outcomes and fails if either suite failed. `file:.github/workflows/chaos-validation.yml:L142-L184`
+  * Key steps: summary generation, status check. `file:.github/workflows/chaos-validation.yml:L151-L183`
 
 ---
 
-## 5. ci-property-tests.yml
+## `ci-benchmarks-elite.yml`
 
-### Purpose
-Property-based tests using Hypothesis.
+**Path:** `.github/workflows/ci-benchmarks-elite.yml`
+**Status:** Candidate for consolidation
 
-### Contract Definition
-```yaml
-Triggers: [schedule(nightly), workflow_dispatch]
-Timeout: 15 minutes
-Required: No (supplemental)
-Jobs: 1 (property-tests)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A1 (Determinism):** 95% ✅ (Hypothesis derandomize=true)
-- **A4 (Exhaustiveness):** 80% ✅ (property-based testing)
+* Run a weekly benchmark suite with baseline comparison for performance regression awareness.
 
-### Current Implementation
-- ✅ Hypothesis derandomize mode
-- ✅ Multiple profiles (quick, ci, thorough)
-- ✅ Deterministic seed generation
+**Axiom focus:**
 
-### Violations Identified
-None. Follows Hypothesis best practices.
+* A4 — Performance & Benchmark Fidelity
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `schedule` (weekly Sunday 03:00 UTC). `file:.github/workflows/ci-benchmarks-elite.yml:L3-L7`
+* `workflow_dispatch`. `file:.github/workflows/ci-benchmarks-elite.yml:L7-L9`
 
-## 6. ci-benchmarks.yml
+**Timeout(s):**
 
-### Purpose
-Performance regression detection.
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `benchmarks`: 30. `file:.github/workflows/ci-benchmarks-elite.yml:L17-L21`
 
-### Contract Definition
-```yaml
-Triggers: [pull_request, schedule(daily), workflow_dispatch, workflow_call]
-Timeout: Job-level 10 minutes (micro-benchmarks)
-Required: No (performance monitoring)
-Jobs: 2 (nightly-benchmarks, micro-benchmarks)
-```
+**Jobs:**
 
-### Axiom Scores
-- **A5 (Performance):** 85% ✅ (benchmarks present, no regression gates)
-
-### Current Implementation
-- ✅ Three benchmark types (determinism, scaling, criticality)
-- ✅ Automated execution
-- ❌ No baseline comparison (missing regression detection)
-
-### Violations Identified
-1. **V6.1:** No performance regression gates (violates A5 at target level)
-
-### Proposed Changes
-Future enhancement (not in this PR): Add baseline storage + comparison.
+* `benchmarks` — Runs multiple benchmark scripts, compares against baseline, uploads reports. `file:.github/workflows/ci-benchmarks-elite.yml:L17-L97`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `bench_*.py`, `scripts/compare_benchmarks.py`, `actions/upload-artifact@v4`. `file:.github/workflows/ci-benchmarks-elite.yml:L23-L82`
+  * Notes: concurrency configured to allow completion. `file:.github/workflows/ci-benchmarks-elite.yml:L13-L16`
 
 ---
 
-## 7. codeql.yml
+## `ci-benchmarks.yml`
 
-### Purpose
-Security scanning with GitHub CodeQL.
+**Path:** `.github/workflows/ci-benchmarks.yml`
+**Status:** Active
 
-### Contract Definition
-```yaml
-Triggers: [push(main), schedule(weekly), workflow_dispatch]
-Timeout: 15 minutes (job-level)
-Required: Yes (security)
-Jobs: 1 (analyze)
-Languages: [python]
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A6 (Security):** 95% ✅ (weekly scans, auto-fix PRs)
+* Run scheduled benchmark baselines and on-demand micro-benchmarks for regression monitoring.
 
-### Current Implementation
-- ✅ Weekly scheduled scans
-- ✅ Python language analysis
-- ✅ Auto-fix PR generation
+**Axiom focus:**
 
-### Violations Identified
-None. Follows GitHub best practices.
+* A4 — Performance & Benchmark Fidelity
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `pull_request`. `file:.github/workflows/ci-benchmarks.yml:L3-L5`
+* `schedule` (daily 02:00 UTC). `file:.github/workflows/ci-benchmarks.yml:L5-L7`
+* `workflow_dispatch`. `file:.github/workflows/ci-benchmarks.yml:L7-L8`
+* `workflow_call` with secrets `BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`. `file:.github/workflows/ci-benchmarks.yml:L8-L13`
 
-## 8. codecov-health.yml
+**Timeout(s):**
 
-### Purpose
-Monitor Codecov integration health.
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `nightly-benchmarks`: UNSET. `file:.github/workflows/ci-benchmarks.yml:L26-L112`
+  * `micro-benchmarks`: 10. `file:.github/workflows/ci-benchmarks.yml:L113-L166`
 
-### Contract Definition
-```yaml
-Triggers: [schedule(every 6h), workflow_dispatch]
-Timeout: Not set
-Required: No (monitoring)
-Jobs: 1 (health-check)
-```
+**Jobs:**
 
-### Axiom Scores
-- **A3 (Observability):** 85% ✅ (proactive health monitoring)
+* `nightly-benchmarks` — Scheduled baseline benchmarks with artifact publication and optional Slack notification. `file:.github/workflows/ci-benchmarks.yml:L26-L112`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `benchmarks/run_benchmarks.py`, `gh release upload`, `actions/upload-artifact@v4`, `slackapi/slack-github-action@v2.1.1`. `file:.github/workflows/ci-benchmarks.yml:L41-L112`
+  * Notes: uses secrets for GPG/Slack; permissions include contents write. `file:.github/workflows/ci-benchmarks.yml:L15-L23`
+* `micro-benchmarks` — PR/dispatch benchmarks with regression checks and artifact upload. `file:.github/workflows/ci-benchmarks.yml:L113-L166`
+  * Key steps: `scripts/run_benchmarks.py`, `scripts/check_benchmark_regressions.py`, `actions/upload-artifact@v4`. `file:.github/workflows/ci-benchmarks.yml:L139-L165`
 
-### Current Implementation
-- ✅ Health checks every 6 hours
-- ✅ Alerts on upload failures
+**Notes / Risk flags (optional but recommended):**
 
-### Violations Identified
-None.
-
-### Proposed Changes
-No changes required (stable).
+* Elevated permissions (contents: write, security-events: write) and release publishing in scheduled job. `file:.github/workflows/ci-benchmarks.yml:L15-L23`
 
 ---
 
-## 9. dependency-watch.yml
+## `ci-pr-atomic.yml`
 
-### Purpose
-Monitor dependency vulnerabilities.
+**Path:** `.github/workflows/ci-pr-atomic.yml`
+**Status:** Active
 
-### Contract Definition
-```yaml
-Triggers: [schedule(weekly), workflow_dispatch]
-Timeout: Not set
-Required: No (monitoring)
-Jobs: 1 (audit)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A6 (Security):** 90% ✅ (weekly audits)
+* Provide an atomic PR gate that enforces determinism, quality, build integrity, tests, SSOT, and security checks.
 
-### Current Implementation
-- ✅ Weekly pip-audit scans
-- ✅ Artifact upload for reports
+**Axiom focus:**
 
-### Violations Identified
-None.
+* A1 — Determinism & Toolchain Pinning
+* A2 — CI Correctness & Regression Safety
+* A9 — Security & Permissions Hygiene
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `pull_request`. `file:.github/workflows/ci-pr-atomic.yml:L3-L5`
+* `push` (branches: `main`). `file:.github/workflows/ci-pr-atomic.yml:L5-L6`
+* `workflow_dispatch`. `file:.github/workflows/ci-pr-atomic.yml:L6-L8`
 
-## 10. docs.yml
+**Timeout(s):**
 
-### Purpose
-Build and validate Sphinx documentation.
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `determinism`: UNSET. `file:.github/workflows/ci-pr-atomic.yml:L22-L87`
+  * `quality`: UNSET (delegated to reusable workflow). `file:.github/workflows/ci-pr-atomic.yml:L88-L93`
+  * `build`: UNSET. `file:.github/workflows/ci-pr-atomic.yml:L95-L111`
+  * `tests-smoke`: 10 (via reusable input + reusable job timeout). `file:.github/workflows/ci-pr-atomic.yml:L112-L120` and `file:.github/workflows/_reusable_pytest.yml:L31-L36`
+  * `ssot`: UNSET. `file:.github/workflows/ci-pr-atomic.yml:L123-L140`
+  * `security`: UNSET. `file:.github/workflows/ci-pr-atomic.yml:L142-L175`
+  * `finalize`: UNSET. `file:.github/workflows/ci-pr-atomic.yml:L176-L191`
 
-### Contract Definition
-```yaml
-Triggers: [pull_request, workflow_dispatch]
-Timeout: Not set
-Required: Yes (docs validation)
-Jobs: 1 (build-docs)
-```
+**Jobs:**
 
-### Axiom Scores
-- **A7 (Documentation):** 90% ✅ (automated docs builds)
-
-### Current Implementation
-- ✅ Sphinx build verification
-- ✅ Fails on warnings
-- ✅ Link checking
-
-### Violations Identified
-None.
-
-### Proposed Changes
-No changes required (stable).
+* `determinism` — Runs determinism tests 3x and checks RNG isolation. `file:.github/workflows/ci-pr-atomic.yml:L22-L87`
+  * Key steps: `pytest tests/test_determinism.py`, summary generation. `file:.github/workflows/ci-pr-atomic.yml:L36-L86`
+* `quality` — Reuses quality workflow for lint/type checks. `file:.github/workflows/ci-pr-atomic.yml:L88-L93`
+  * Key steps: `.github/workflows/_reusable_quality.yml`. `file:.github/workflows/ci-pr-atomic.yml:L88-L93`
+* `build` — Builds package and verifies import. `file:.github/workflows/ci-pr-atomic.yml:L95-L111`
+  * Key steps: `python -m build`, import check. `file:.github/workflows/ci-pr-atomic.yml:L108-L111`
+* `tests-smoke` — Runs smoke tests via reusable pytest workflow with Codecov upload. `file:.github/workflows/ci-pr-atomic.yml:L112-L121`
+  * Key steps: `.github/workflows/_reusable_pytest.yml` with coverage threshold 95. `file:.github/workflows/ci-pr-atomic.yml:L112-L121`
+* `ssot` — Validates bibliography/claims/governed docs/normative tags. `file:.github/workflows/ci-pr-atomic.yml:L123-L140`
+* `security` — Runs gitleaks, pip-audit, bandit and uploads report. `file:.github/workflows/ci-pr-atomic.yml:L142-L174`
+* `finalize` — Emits pass gate message when all checks succeed. `file:.github/workflows/ci-pr-atomic.yml:L176-L191`
 
 ---
 
-## 11. science.yml
+## `ci-pr.yml`
 
-### Purpose
-Long-running scientific validation experiments.
+**Path:** `.github/workflows/ci-pr.yml`
+**Status:** Active
 
-### Contract Definition
-```yaml
-Triggers: [workflow_dispatch, schedule(weekly)]
-Timeout: 30 minutes
-Required: No (manual validation)
-Jobs: 1 (science-tests)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A1 (Determinism):** 95% ✅ (seed-based reproducibility)
-- **A4 (Exhaustiveness):** 90% ✅ (comprehensive experiments)
+* Provide comprehensive PR validation including SSOT governance, build, tests, benchmarks, and security scans.
 
-### Current Implementation
-- ✅ Manual dispatch + weekly schedule
-- ✅ 30-minute timeout aligned to experiment scope
-- ✅ Artifact upload for results
+**Axiom focus:**
 
-### Violations Identified
-None. Intentionally manual.
+* A2 — CI Correctness & Regression Safety
+* A9 — Security & Permissions Hygiene
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `push` (branches: `main`). `file:.github/workflows/ci-pr.yml:L3-L6`
+* `pull_request`. `file:.github/workflows/ci-pr.yml:L6-L7`
+* `workflow_dispatch`. `file:.github/workflows/ci-pr.yml:L7-L8`
 
-## 12. physics-equivalence.yml
+**Timeout(s):**
 
-### Purpose
-Verify numerical equivalence of physics simulations.
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `ssot`: UNSET. `file:.github/workflows/ci-pr.yml:L17-L146`
+  * `dependency-consistency`: UNSET. `file:.github/workflows/ci-pr.yml:L147-L182`
+  * `quality`: UNSET (delegated to reusable workflow). `file:.github/workflows/ci-pr.yml:L184-L189`
+  * `manifest-verification`: UNSET. `file:.github/workflows/ci-pr.yml:L191-L211`
+  * `build`: UNSET. `file:.github/workflows/ci-pr.yml:L212-L254`
+  * `docs-build`: UNSET. `file:.github/workflows/ci-pr.yml:L255-L270`
+  * `tests-smoke`: 10 (via reusable input + reusable job timeout). `file:.github/workflows/ci-pr.yml:L272-L279` and `file:.github/workflows/_reusable_pytest.yml:L31-L36`
+  * `tests-core-only`: UNSET. `file:.github/workflows/ci-pr.yml:L281-L296`
+  * `ci-benchmarks`: UNSET. `file:.github/workflows/ci-pr.yml:L298-L318`
+  * `gitleaks`: UNSET. `file:.github/workflows/ci-pr.yml:L319-L334`
+  * `pip-audit`: UNSET. `file:.github/workflows/ci-pr.yml:L335-L360`
+  * `bandit`: UNSET. `file:.github/workflows/ci-pr.yml:L362-L377`
 
-### Contract Definition
-```yaml
-Triggers: [pull_request(paths), push(main), workflow_dispatch]
-Timeout: 15 minutes
-Required: No (validation)
-Jobs: 1 (equivalence-tests)
-```
+**Jobs:**
 
-### Axiom Scores
-- **A1 (Determinism):** 95% ✅ (numerical reproducibility)
-
-### Current Implementation
-- ✅ PR/push/manual triggers for physics regressions
-- ✅ Validates AdEx equations
-- ✅ dt-invariance checks
-
-### Violations Identified
-None.
-
-### Proposed Changes
-No changes required (stable).
+* `ssot` — Enforces SSOT, governance gates, and claims coverage checks. `file:.github/workflows/ci-pr.yml:L17-L146`
+  * Key steps: `validate_bibliography.py`, `validate_claims.py`, `verify_formal_constants.py`, `lint_ci_truthfulness.py`, `validate_claims_coverage.py`. `file:.github/workflows/ci-pr.yml:L33-L115`
+* `dependency-consistency` — Validates dependency SSOT and audits. `file:.github/workflows/ci-pr.yml:L147-L182`
+  * Key steps: `validate-pyproject`, dry-run resolution, `pip-audit`. `file:.github/workflows/ci-pr.yml:L165-L176`
+* `quality` — Reuses quality workflow for lint/type checks. `file:.github/workflows/ci-pr.yml:L184-L189`
+* `manifest-verification` — Ensures API manifest inventories are consistent. `file:.github/workflows/ci-pr.yml:L191-L211`
+* `build` — Builds package, verifies import, and summarizes. `file:.github/workflows/ci-pr.yml:L212-L254`
+* `docs-build` — Builds Sphinx docs. `file:.github/workflows/ci-pr.yml:L255-L270`
+* `tests-smoke` — Runs smoke tests via reusable pytest workflow. `file:.github/workflows/ci-pr.yml:L272-L279`
+* `tests-core-only` — Runs core tests without visualization dependencies. `file:.github/workflows/ci-pr.yml:L281-L296`
+* `ci-benchmarks` — Runs core benchmarks for determinism/scaling/criticality. `file:.github/workflows/ci-pr.yml:L298-L318`
+* `gitleaks` — Scans for secrets. `file:.github/workflows/ci-pr.yml:L319-L334`
+* `pip-audit` — Scans dependencies for vulnerabilities. `file:.github/workflows/ci-pr.yml:L335-L360`
+* `bandit` — Runs Python security linter. `file:.github/workflows/ci-pr.yml:L362-L377`
 
 ---
 
-## 13. benchmarks.yml
+## `ci-property-tests.yml`
 
-### Purpose
-Manual benchmark execution for profiling.
+**Path:** `.github/workflows/ci-property-tests.yml`
+**Status:** Candidate for consolidation
 
-### Contract Definition
-```yaml
-Triggers: [workflow_dispatch, schedule(weekly)]
-Timeout: Not set
-Required: No (manual profiling)
-Jobs: 1 (benchmarks)
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A5 (Performance):** 85% ✅ (profiling support)
+* Run nightly property-based tests using Hypothesis for invariant checking.
 
-### Current Implementation
-- ✅ Manual dispatch
-- ✅ Artifact upload for results
+**Axiom focus:**
 
-### Violations Identified
-None.
+* A2 — CI Correctness & Regression Safety
 
-### Proposed Changes
-No changes required (stable).
+**Trigger(s):**
 
----
+* `schedule` (nightly 02:30 UTC). `file:.github/workflows/ci-property-tests.yml:L3-L7`
+* `workflow_dispatch`. `file:.github/workflows/ci-property-tests.yml:L7-L8`
 
-## R1. _reusable_quality.yml (NEW)
+**Timeout(s):**
 
-### Purpose
-Composable quality checks (ruff, mypy, pylint).
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `property-tests`: 15. `file:.github/workflows/ci-property-tests.yml:L9-L12`
 
-### Contract Definition
-```yaml
-Type: Reusable workflow
-Inputs: python-version, mypy-strict, pylint-threshold
-Jobs: 3 (ruff, mypy, pylint)
-Outputs: Summaries, artifacts on failure
-```
+**Jobs:**
 
-### Axiom Scores
-- **A2 (Composability):** 95% ✅ (reusable across workflows)
-- **A3 (Observability):** 90% ✅ (step summaries + artifacts)
-
-### Implementation (C3)
-```yaml
-on:
-  workflow_call:
-    inputs:
-      python-version: { type: string, default: "3.11" }
-      mypy-strict: { type: boolean, default: true }
-      pylint-threshold: { type: number, default: 7.5 }
-
-jobs:
-  ruff:
-    # Format + lint with summary
-  mypy:
-    # Type checking with summary
-  pylint:
-    # Code quality with summary
-```
-
-**Impact:** Enables A2: 70%→85% in ci-pr.yml and ci-pr-atomic.yml.
+* `property-tests` — Runs Hypothesis property tests and uploads artifacts. `file:.github/workflows/ci-property-tests.yml:L10-L43`
+  * Key steps: `actions/checkout@v4`, `actions/setup-python@v5`, `pytest -m property`, `actions/upload-artifact@v4`. `file:.github/workflows/ci-property-tests.yml:L17-L43`
 
 ---
 
-## R2. _reusable_pytest.yml (NEW)
+## `ci-smoke.yml`
 
-### Purpose
-Composable pytest with coverage tracking.
+**Path:** `.github/workflows/ci-smoke.yml`
+**Status:** Candidate for consolidation
 
-### Contract Definition
-```yaml
-Type: Reusable workflow
-Inputs: python-version, markers, coverage-threshold, timeout-minutes, upload-codecov
-Jobs: 1 (pytest)
-Outputs: Summaries, artifacts on failure
-```
+**Intent (1–2 sentences):**
 
-### Axiom Scores
-- **A2 (Composability):** 95% ✅ (reusable across workflows)
-- **A3 (Observability):** 90% ✅ (detailed summaries)
-- **A4 (Exhaustiveness):** 85% ✅ (configurable coverage)
+* Provide quick SSOT and smoke-test feedback for PRs and main branch changes.
 
-### Implementation (C3)
-```yaml
-on:
-  workflow_call:
-    inputs:
-      python-version: { type: string, default: "3.11" }
-      markers: { type: string, default: "not (validation or property)" }
-      coverage-threshold: { type: number, default: 85 }
-      timeout-minutes: { type: number, default: 10 }
-      upload-codecov: { type: boolean, default: false }
+**Axiom focus:**
 
-jobs:
-  pytest:
-    # Run tests with coverage
-    # Generate summary (test count, coverage %, duration)
-    # Show failed tests + coverage hotspots on failure
-    # Include reproduction commands
-```
+* A2 — CI Correctness & Regression Safety
 
-**Impact:** Enables A2: 70%→85%, A3: 70%→85% in workflows.
+**Trigger(s):**
+
+* `push` (branches: `main`). `file:.github/workflows/ci-smoke.yml:L3-L6`
+* `pull_request`. `file:.github/workflows/ci-smoke.yml:L6-L7`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `ssot`: UNSET. `file:.github/workflows/ci-smoke.yml:L11-L32`
+  * `tests-smoke`: UNSET. `file:.github/workflows/ci-smoke.yml:L33-L48`
+
+**Jobs:**
+
+* `ssot` — Validates bibliography/claims/governed docs/normative tags. `file:.github/workflows/ci-smoke.yml:L12-L32`
+* `tests-smoke` — Runs smoke tests without validation/property markers. `file:.github/workflows/ci-smoke.yml:L33-L48`
 
 ---
 
-## 14. chaos-validation.yml
+## `ci-validation-elite.yml`
 
-### Contract Definition
-```yaml
-Triggers: [schedule(nightly), workflow_dispatch(inputs)]
-Timeout: Job-level 60 minutes (chaos-tests), 45 minutes (property-tests)
-Required: No (resilience/chaos validation)
-Jobs: 3 (chaos-tests, property-tests, summary)
-```
+**Path:** `.github/workflows/ci-validation-elite.yml`
+**Status:** Active
 
-### Axiom Focus
-- **A1 (Determinism):** Chaos scenarios cover RNG perturbations
-- **A4 (Exhaustiveness):** Expanded fault injection + property tests
+**Intent (1–2 sentences):**
 
----
+* Execute daily scientific validation and property tests with artifacted summaries.
 
-## 15. ci-validation-elite.yml
+**Axiom focus:**
 
-### Contract Definition
-```yaml
-Triggers: [schedule(daily), workflow_dispatch]
-Timeout: Job-level 30 minutes (validation), 30 minutes (property-tests)
-Required: No (non-blocking scientific validation)
-Jobs: 3 (validation, property-tests, summary)
-```
+* A2 — CI Correctness & Regression Safety
 
-### Axiom Focus
-- **A1 (Determinism):** Property tests with Hypothesis profiles
-- **A4 (Exhaustiveness):** Full validation suite + property coverage
+**Trigger(s):**
 
----
+* `schedule` (daily 02:00 UTC). `file:.github/workflows/ci-validation-elite.yml:L3-L7`
+* `workflow_dispatch`. `file:.github/workflows/ci-validation-elite.yml:L7-L9`
 
-## 16. ci-benchmarks-elite.yml
+**Timeout(s):**
 
-### Contract Definition
-```yaml
-Triggers: [schedule(weekly), workflow_dispatch]
-Timeout: 30 minutes
-Required: No (non-blocking performance validation)
-Jobs: 1 (benchmarks)
-```
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `validation`: 30. `file:.github/workflows/ci-validation-elite.yml:L18-L64`
+  * `property-tests`: 30. `file:.github/workflows/ci-validation-elite.yml:L65-L112`
+  * `summary`: UNSET. `file:.github/workflows/ci-validation-elite.yml:L114-L133`
 
-### Axiom Focus
-- **A5 (Performance):** Benchmark regression analysis
+**Jobs:**
+
+* `validation` — Runs validation test suite with logs and artifacts. `file:.github/workflows/ci-validation-elite.yml:L18-L64`
+* `property-tests` — Runs Hypothesis property tests with logs and artifacts. `file:.github/workflows/ci-validation-elite.yml:L65-L112`
+* `summary` — Generates aggregate summary and notes non-blocking status. `file:.github/workflows/ci-validation-elite.yml:L114-L133`
 
 ---
 
-## 17. workflow-integrity.yml
+## `ci-validation.yml`
 
-### Contract Definition
-```yaml
-Triggers: [pull_request(main), push(main)]
-Timeout: 5 minutes
-Required: Yes (workflow safety)
-Jobs: 1 (validate-workflows)
-```
+**Path:** `.github/workflows/ci-validation.yml`
+**Status:** Candidate for consolidation
 
-### Axiom Focus
-- **A3 (Observability):** Linting and artifact validation
-- **A6 (Security):** Actionlint + safety artifact checks
+**Intent (1–2 sentences):**
 
----
+* Run weekly SSOT checks and validation tests on schedule or manual dispatch.
 
-## 18. quality-mutation.yml
+**Axiom focus:**
 
-### Contract Definition
-```yaml
-Triggers: [schedule(nightly), workflow_dispatch]
-Timeout: 120 minutes
-Required: No (mutation testing)
-Jobs: 1 (mutation-testing)
-```
+* A2 — CI Correctness & Regression Safety
 
-### Axiom Focus
-- **A2 (Composability):** Mutation score enforces quality baselines
-- **A4 (Exhaustiveness):** Mutation testing across critical modules
+**Trigger(s):**
 
----
+* `workflow_dispatch`. `file:.github/workflows/ci-validation.yml:L3-L6`
+* `schedule` (weekly Sunday 03:00 UTC). `file:.github/workflows/ci-validation.yml:L5-L6`
 
-## 19. formal-coq.yml
+**Timeout(s):**
 
-### Contract Definition
-```yaml
-Triggers: [schedule(nightly), workflow_dispatch]
-Timeout: 20 minutes
-Required: No (formal proof verification)
-Jobs: 1 (coq-proof-check)
-```
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `ssot`: UNSET. `file:.github/workflows/ci-validation.yml:L11-L32`
+  * `tests-validation`: UNSET. `file:.github/workflows/ci-validation.yml:L33-L48`
 
-### Axiom Focus
-- **A1 (Determinism):** Proof compilation is deterministic
-- **A4 (Exhaustiveness):** Formal proof coverage
+**Jobs:**
+
+* `ssot` — Validates bibliography/claims/governed docs/normative tags. `file:.github/workflows/ci-validation.yml:L12-L32`
+* `tests-validation` — Runs validation tests. `file:.github/workflows/ci-validation.yml:L33-L48`
 
 ---
 
-## 20. formal-tla.yml
+## `codecov-health.yml`
 
-### Contract Definition
-```yaml
-Triggers: [schedule(nightly), workflow_dispatch(inputs)]
-Timeout: 30 minutes
-Required: No (model checking)
-Jobs: 1 (tla-model-check)
-```
+**Path:** `.github/workflows/codecov-health.yml`
+**Status:** Active
 
-### Axiom Focus
-- **A1 (Determinism):** TLC configuration and deterministic checks
-- **A4 (Exhaustiveness):** State-space and invariant verification
+**Intent (1–2 sentences):**
 
----
+* Monitor Codecov availability and token configuration to keep coverage reporting functional.
 
-## Summary of Violations
+**Axiom focus:**
 
-| Workflow | Violation | Axiom | Severity | Fix in PR |
-|----------|-----------|-------|----------|-----------|
-| ci-pr.yml | V1.1: Quality code duplication | A2 | Medium | C4 ✅ |
-| ci-pr.yml | V1.2: No concurrency group | A5 | Low | C4 ✅ |
-| ci-pr.yml | V1.3: Missing summaries | A3 | Medium | C4 ✅ |
-| ci-pr-atomic.yml | V2.1: Quality code duplication | A2 | Medium | C5 ✅ |
-| ci-pr-atomic.yml | V2.2: No concurrency group | A5 | Low | C5 ✅ |
-| ci-pr-atomic.yml | V2.3: Weak determinism summary | A3 | Low | C5 ✅ |
-| ci-benchmarks.yml | V6.1: No regression gates | A5 | Medium | Future |
+* A3 — Workflow Integrity & Provenance
 
-**Total Violations:** 7  
-**Addressed in This PR:** 6  
-**Deferred:** 1 (V6.1 requires baseline storage architecture)
+**Trigger(s):**
+
+* `schedule` (every 6 hours). `file:.github/workflows/codecov-health.yml:L3-L6`
+* `workflow_dispatch`. `file:.github/workflows/codecov-health.yml:L5-L7`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `health`: UNSET. `file:.github/workflows/codecov-health.yml:L11-L31`
+
+**Jobs:**
+
+* `health` — Checks Codecov API responsiveness and secret configuration. `file:.github/workflows/codecov-health.yml:L11-L31`
+  * Key steps: `curl` API check, token check. `file:.github/workflows/codecov-health.yml:L15-L30`
 
 ---
 
-## Redundancy & Consolidation Candidates
+## `codeql.yml`
 
-1. **ci-smoke.yml → consolidate into ci-pr.yml / ci-pr-atomic.yml**
-   - **Rationale:** ci-smoke runs SSOT + smoke tests on PR/push(main), which are already covered by ci-pr.yml and ci-pr-atomic.yml. This duplicates CI minutes without adding new coverage. Replace with a workflow_call reusable or remove after confirming branch protection does not require it.
+**Path:** `.github/workflows/codeql.yml`
+**Status:** Active
 
-2. **ci-validation.yml → consolidate into ci-validation-elite.yml**
-   - **Rationale:** Both run scheduled validation suites. ci-validation-elite already runs validation + property tests on a daily schedule; ci-validation repeats a subset weekly with separate SSOT checks. Either add SSOT to ci-validation-elite or call a shared SSOT reusable job, then remove ci-validation.yml.
+**Intent (1–2 sentences):**
 
-3. **ci-property-tests.yml → consolidate into chaos-validation.yml or ci-validation-elite.yml**
-   - **Rationale:** Property tests run nightly in ci-property-tests but are also executed in chaos-validation (nightly) and ci-validation-elite (daily). Keep a single scheduled property-test source of truth to avoid inconsistent Hypothesis profiles.
+* Perform CodeQL security analysis on main branch and weekly schedule.
 
-4. **ci-benchmarks-elite.yml + benchmarks.yml → consolidate into ci-benchmarks.yml**
-   - **Rationale:** All three workflows run performance benchmarks on schedule or manual dispatch. ci-benchmarks.yml already supports PR, schedule, manual, and workflow_call. Fold the elite/manual variants into ci-benchmarks.yml with scenario inputs and remove redundant schedules.
+**Axiom focus:**
 
----
+* A9 — Security & Permissions Hygiene
 
-## Compliance Verification
+**Trigger(s):**
 
-### How to Verify Contracts
+* `push` (branches: `main`). `file:.github/workflows/codeql.yml:L3-L6`
+* `schedule` (weekly Sunday 04:00 UTC). `file:.github/workflows/codeql.yml:L6-L7`
+* `workflow_dispatch`. `file:.github/workflows/codeql.yml:L7-L8`
 
-```bash
-# List all workflows
-ls -1 .github/workflows/*.yml
+**Timeout(s):**
 
-# Count workflows (should be 20 primary + 2 reusable)
-ls -1 .github/workflows/*.yml | wc -l
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `analyze`: 15. `file:.github/workflows/codeql.yml:L20-L24`
 
-# Verify reusable workflows exist
-ls .github/workflows/_reusable_*.yml
+**Jobs:**
 
-# Check for concurrency groups in refactored workflows
-grep -A1 "concurrency:" .github/workflows/ci-pr.yml
-grep -A1 "concurrency:" .github/workflows/ci-pr-atomic.yml
-
-# Verify workflow_call syntax in reusable workflows
-grep "workflow_call" .github/workflows/_reusable_*.yml
-```
+* `analyze` — Runs CodeQL init/analyze for Python. `file:.github/workflows/codeql.yml:L20-L34`
+  * Key steps: `github/codeql-action/init@v3`, `github/codeql-action/analyze@v3`. `file:.github/workflows/codeql.yml:L28-L34`
 
 ---
 
-## Revision History
+## `dependency-watch.yml`
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2026-01-27 | Initial contracts (C1 of Fractal Quality PR) | @neuron7x |
+**Path:** `.github/workflows/dependency-watch.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Detect outdated dependencies and security advisories on a weekly cadence.
+
+**Axiom focus:**
+
+* A9 — Security & Permissions Hygiene
+
+**Trigger(s):**
+
+* `schedule` (weekly Monday 08:00 UTC). `file:.github/workflows/dependency-watch.yml:L3-L6`
+* `workflow_dispatch`. `file:.github/workflows/dependency-watch.yml:L6-L7`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `check-outdated`: UNSET. `file:.github/workflows/dependency-watch.yml:L11-L42`
+
+**Jobs:**
+
+* `check-outdated` — Compares dependency lock output and runs pip-audit advisories. `file:.github/workflows/dependency-watch.yml:L11-L42`
+  * Key steps: `pip-compile --upgrade`, `pip-audit`. `file:.github/workflows/dependency-watch.yml:L25-L42`
 
 ---
 
-**Next Review:** 2026-04-27 (Q2 2026)  
-**Maintained by:** @neuron7x  
-**Questions?** See [CONTRIBUTING.md](../CONTRIBUTING.md)
+## `docs.yml`
+
+**Path:** `.github/workflows/docs.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Build documentation for PR verification and manual checks.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `pull_request`. `file:.github/workflows/docs.yml:L3-L5`
+* `workflow_dispatch`. `file:.github/workflows/docs.yml:L5-L6`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `build-docs`: UNSET. `file:.github/workflows/docs.yml:L10-L40`
+
+**Jobs:**
+
+* `build-docs` — Builds docs and uploads HTML artifacts. `file:.github/workflows/docs.yml:L11-L40`
+  * Key steps: `make docs`, `actions/upload-artifact@v4`. `file:.github/workflows/docs.yml:L32-L39`
+
+---
+
+## `formal-coq.yml`
+
+**Path:** `.github/workflows/formal-coq.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Compile and verify Coq proofs for formal specifications.
+
+**Axiom focus:**
+
+* A7 — Formal Verification – Proof Assistants (e.g., Coq)
+
+**Trigger(s):**
+
+* `schedule` (nightly 01:00 UTC). `file:.github/workflows/formal-coq.yml:L3-L7`
+* `workflow_dispatch`. `file:.github/workflows/formal-coq.yml:L7-L8`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `coq-proof-check`: 20. `file:.github/workflows/formal-coq.yml:L16-L20`
+
+**Jobs:**
+
+* `coq-proof-check` — Installs Coq and compiles proof files with artifacted outputs. `file:.github/workflows/formal-coq.yml:L17-L118`
+  * Key steps: `ocaml/setup-ocaml@v3`, `opam install coq`, `coqc *.v`, `actions/upload-artifact@v4`. `file:.github/workflows/formal-coq.yml:L25-L110`
+
+---
+
+## `formal-tla.yml`
+
+**Path:** `.github/workflows/formal-tla.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Run nightly TLA+ model checking with configurable MaxSteps and artifacted reports.
+
+**Axiom focus:**
+
+* A8 — Formal Verification – Temporal Logic / Model Checking (e.g., TLA)
+
+**Trigger(s):**
+
+* `schedule` (nightly 02:00 UTC). `file:.github/workflows/formal-tla.yml:L3-L7`
+* `workflow_dispatch` with `max_steps` input. `file:.github/workflows/formal-tla.yml:L7-L13`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `tla-model-check`: 30. `file:.github/workflows/formal-tla.yml:L21-L24`
+
+**Jobs:**
+
+* `tla-model-check` — Downloads TLA+ tools, generates config, runs TLC, and uploads reports. `file:.github/workflows/formal-tla.yml:L21-L229`
+  * Key steps: `actions/setup-java@v5`, download/sha verify, `tla2sany.SANY`, TLC run, `actions/upload-artifact@v4`. `file:.github/workflows/formal-tla.yml:L34-L208`
+
+---
+
+## `physics-equivalence.yml`
+
+**Path:** `.github/workflows/physics-equivalence.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Validate physics-preserving transformations between reference and accelerated backends.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `pull_request` with path filters. `file:.github/workflows/physics-equivalence.yml:L3-L10`
+* `push` (branches: `main`). `file:.github/workflows/physics-equivalence.yml:L10-L12`
+* `workflow_dispatch`. `file:.github/workflows/physics-equivalence.yml:L12-L13`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `validate-physics`: 15. `file:.github/workflows/physics-equivalence.yml:L19-L24`
+
+**Jobs:**
+
+* `validate-physics` — Runs reference/accelerated benchmarks, verifies equivalence, and uploads artifacts. `file:.github/workflows/physics-equivalence.yml:L20-L101`
+  * Key steps: `benchmark_physics.py`, `verify_equivalence.py`, `calculate_throughput_gain.py`, `actions/upload-artifact@v4`. `file:.github/workflows/physics-equivalence.yml:L41-L86`
+  * Notes: PR comment on failure. `file:.github/workflows/physics-equivalence.yml:L87-L101`
+
+---
+
+## `quality-mutation.yml`
+
+**Path:** `.github/workflows/quality-mutation.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Run mutation testing against critical modules and enforce mutation score baseline.
+
+**Axiom focus:**
+
+* A6 — Quality / Mutation / Adversarial Testing
+
+**Trigger(s):**
+
+* `schedule` (nightly 03:00 UTC). `file:.github/workflows/quality-mutation.yml:L3-L7`
+* `workflow_dispatch`. `file:.github/workflows/quality-mutation.yml:L6-L8`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `mutation-testing`: 120. `file:.github/workflows/quality-mutation.yml:L16-L20`
+
+**Jobs:**
+
+* `mutation-testing` — Runs mutmut, computes score, enforces baseline, uploads artifacts. `file:.github/workflows/quality-mutation.yml:L17-L132`
+  * Key steps: `mutmut run`, `check_mutation_score.py`, `actions/upload-artifact@v4`. `file:.github/workflows/quality-mutation.yml:L55-L117`
+
+---
+
+## `science.yml`
+
+**Path:** `.github/workflows/science.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Execute a flagship experiment workflow to validate scientific hypotheses with artifacts.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_dispatch`. `file:.github/workflows/science.yml:L3-L5`
+* `schedule` (weekly Sunday 00:00 UTC). `file:.github/workflows/science.yml:L5-L7`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `flagship-experiment`: 30. `file:.github/workflows/science.yml:L12-L16`
+
+**Jobs:**
+
+* `flagship-experiment` — Runs experiment, visualizes results, verifies hypothesis, uploads artifacts. `file:.github/workflows/science.yml:L13-L73`
+  * Key steps: `experiments.runner`, `visualize_experiment.py`, `verify_hypothesis`, `actions/upload-artifact@v4`. `file:.github/workflows/science.yml:L32-L56`
+
+---
+
+## `workflow-integrity.yml`
+
+**Path:** `.github/workflows/workflow-integrity.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Lint and validate workflow files for integrity, encoding safety, and safety artifacts.
+
+**Axiom focus:**
+
+* A3 — Workflow Integrity & Provenance
+* A9 — Security & Permissions Hygiene
+
+**Trigger(s):**
+
+* `pull_request` (branches: `main`). `file:.github/workflows/workflow-integrity.yml:L3-L6`
+* `push` (branches: `main`). `file:.github/workflows/workflow-integrity.yml:L6-L7`
+
+**Timeout(s):**
+
+* Workflow-level: N/A (GitHub has no workflow-level timeout key)
+* Job-level:
+  * `validate-workflows`: 5. `file:.github/workflows/workflow-integrity.yml:L12-L16`
+
+**Jobs:**
+
+* `validate-workflows` — Runs actionlint, scans for encoding violations, and validates safety artifacts. `file:.github/workflows/workflow-integrity.yml:L12-L70`
+  * Key steps: `rhysd/actionlint@v1.7.7`, Python integrity scan, `tools/safety/check_safety_artifacts.py`. `file:.github/workflows/workflow-integrity.yml:L24-L70`
+
+---
+
+## Redundancy & Consolidation
+
+1. **ci-smoke.yml vs ci-pr.yml** (Candidate for consolidation)
+   * Rationale (R1, R2, R3): `ci-smoke.yml` and `ci-pr.yml` share identical trigger types for `push` (main) and `pull_request`, and `ci-smoke` job set (`ssot`, `tests-smoke`) overlaps with `ci-pr` which already runs SSOT and smoke tests via reusable workflow. Axiom focus aligns on CI correctness without differentiating constraints. `file:.github/workflows/ci-smoke.yml:L3-L48`, `file:.github/workflows/ci-pr.yml:L3-L279`
+   * Proposed consolidation target: Merge/replace `ci-smoke.yml` into `ci-pr.yml` by making smoke checks a required subset, then remove `ci-smoke.yml` after confirming branch protection rules. 
+   * Why safe: `ci-pr.yml` already includes SSOT and smoke tests; removing duplicate should not reduce coverage. `file:.github/workflows/ci-pr.yml:L17-L279`
+   * What could break: Any external branch protection explicitly requiring `ci-smoke.yml` might need updates.
+
+2. **ci-validation.yml vs ci-validation-elite.yml** (Candidate for consolidation)
+   * Rationale (R1, R2, R3): Both use schedule + workflow_dispatch triggers and run validation suites; `ci-validation-elite` includes validation and property tests and a summary job, while `ci-validation` runs SSOT + validation. Overlapping validation domain with similar triggers and axiom focus. `file:.github/workflows/ci-validation.yml:L3-L48`, `file:.github/workflows/ci-validation-elite.yml:L3-L133`
+   * Proposed consolidation target: Fold SSOT checks into `ci-validation-elite.yml` or make `ci-validation.yml` call a reusable SSOT job, then remove `ci-validation.yml` after parity. 
+   * Why safe: `ci-validation-elite` already exercises validation and property tests daily; adding SSOT would cover the remaining job. `file:.github/workflows/ci-validation-elite.yml:L18-L112`
+   * What could break: Weekly cadence expectations or SSOT-only reporting would move to daily unless explicitly scheduled.
+
+3. **ci-property-tests.yml vs chaos-validation.yml** (Candidate for consolidation)
+   * Rationale (R1, R2): Both run on schedule + workflow_dispatch; `chaos-validation` includes a `property-tests` job running Hypothesis tests, overlapping purpose with `ci-property-tests`. `file:.github/workflows/ci-property-tests.yml:L3-L43`, `file:.github/workflows/chaos-validation.yml:L3-L140`
+   * Proposed consolidation target: Keep `chaos-validation.yml` as the nightly property-test source of truth and remove `ci-property-tests.yml` after confirming profiles align. 
+   * Why safe: Property tests already run in `chaos-validation` with artifacts and summaries. `file:.github/workflows/chaos-validation.yml:L82-L140`
+   * What could break: Profile differences (`ci` vs `thorough`) may change coverage/time; align profiles before removal.
+
+4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Candidate for consolidation)
+   * Rationale (R1, R2, R3): All three workflows run benchmark suites via schedule + workflow_dispatch with overlapping performance intent. `ci-benchmarks.yml` already supports schedule, manual, PR, and workflow_call with benchmark execution. `file:.github/workflows/benchmarks.yml:L3-L82`, `file:.github/workflows/ci-benchmarks-elite.yml:L3-L97`, `file:.github/workflows/ci-benchmarks.yml:L3-L166`
+   * Proposed consolidation target: Use `ci-benchmarks.yml` as the single benchmark workflow, moving `benchmarks.yml` scenarios and elite baseline comparisons into it, then remove the redundant workflows. 
+   * Why safe: `ci-benchmarks.yml` already covers scheduled runs and PR-triggered micro-benchmarks; consolidating reduces duplication. `file:.github/workflows/ci-benchmarks.yml:L3-L166`
+   * What could break: Scenario selection inputs and baseline comparison steps must be preserved to avoid losing reports.
+
+---
+
+## Completeness Check
+
+* Inventory count: 22
+* Contract blocks count: 22
+* Missing: []
+* Mandatory named workflows present: YES (chaos-validation.yml, ci-validation-elite.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)
