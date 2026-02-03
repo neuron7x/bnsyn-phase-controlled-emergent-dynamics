@@ -2,165 +2,118 @@ name: ci-benchmarks
 
 on:
   pull_request:
-  schedule:
-    - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      tier:
+        description: "Benchmark tier to run"
+        required: true
+        type: choice
+        default: standard
+        options:
+          - standard
+          - elite
+      profile:
+        description: "Benchmark profile to run"
+        required: true
+        type: choice
+        default: baseline
+        options:
+          - micro
+          - baseline
+          - full
+          - custom
+      scenario:
+        description: "Benchmark scenario to run (custom profile only)"
+        required: false
+        default: ci_smoke
+        type: choice
+        options:
+          - ci_smoke
+          - quick
+          - n_sweep
+          - steps_sweep
+          - conn_sweep
+          - dt_sweep
   workflow_call:
+    inputs:
+      tier:
+        description: "Benchmark tier to run (standard|elite)"
+        required: true
+        type: string
+      profile:
+        description: "Benchmark profile to run (micro|baseline|full|custom)"
+        required: true
+        type: string
+      scenario:
+        description: "Benchmark scenario to run (custom profile only)"
+        required: false
+        type: string
+        default: ci_smoke
+      publish_baseline:
+        description: "Publish baseline artifacts (standard baseline/full only)"
+        required: false
+        type: boolean
+        default: false
     secrets:
       BENCHMARK_GPG_PASSPHRASE:
         required: false
       SLACK_WEBHOOK_URL:
         required: false
+  schedule:
+    - cron: '0 2 * * *'
+    - cron: '0 3 * * 0'
 
 permissions:
-  contents: write
-  actions: read
-  checks: read
-  statuses: read
-  id-token: none
-  packages: read
-  pull-requests: read
-  security-events: write
+  contents: read
 
 jobs:
-  nightly-benchmarks:
-    if: ${{ github.event_name == 'schedule' }}
-    runs-on: ubuntu-latest
-    env:
-      OMP_NUM_THREADS: "1"
-      MKL_NUM_THREADS: "1"
-      OPENBLAS_NUM_THREADS: "1"
-      NUMEXPR_NUM_THREADS: "1"
-      BENCHMARK_GPG_PASSPHRASE: ${{ secrets.BENCHMARK_GPG_PASSPHRASE }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-    strategy:
-      matrix:
-        scenario: [small_network, medium_network, large_network]
+  benchmarks-pr:
+    if: ${{ github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/_reusable_benchmarks.yml
+    with:
+      tier: standard
+      profile: micro
+      scenario: ci_smoke
+    secrets: inherit
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  benchmarks-dispatch:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    uses: ./.github/workflows/_reusable_benchmarks.yml
+    with:
+      tier: ${{ inputs.tier }}
+      profile: ${{ inputs.profile }}
+      scenario: ${{ inputs.scenario }}
+      publish_baseline: false
+    secrets: inherit
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
+  benchmarks-call:
+    if: ${{ github.event_name == 'workflow_call' }}
+    uses: ./.github/workflows/_reusable_benchmarks.yml
+    with:
+      tier: ${{ inputs.tier }}
+      profile: ${{ inputs.profile }}
+      scenario: ${{ inputs.scenario }}
+      publish_baseline: ${{ inputs.publish_baseline }}
+    secrets: inherit
 
-      - name: Cache pip
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'requirements-lock.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+  benchmarks-standard:
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/_reusable_benchmarks.yml
+    with:
+      tier: standard
+      profile: baseline
+      scenario: ci_smoke
+      publish_baseline: true
+    secrets: inherit
 
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-
-      - name: Dependency audit
-        run: |
-          mkdir -p artifacts
-          pip-audit --desc --format json --output artifacts/pip-audit.json
-          dependency-check --scan . --format JSON --out artifacts/dependency-check-report.json
-
-      - name: Run benchmark suite
-        run: |
-          python benchmarks/run_benchmarks.py \
-            --scenario "${{ matrix.scenario }}" \
-            --repeats 5 \
-            --json "artifacts/bench_${{ matrix.scenario }}.json"
-
-      - name: Encrypt artifacts
-        if: ${{ env.BENCHMARK_GPG_PASSPHRASE != '' }}
-        env:
-          GPG_PASSPHRASE: ${{ env.BENCHMARK_GPG_PASSPHRASE }}
-        run: |
-          for f in artifacts/*.json; do
-            echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --symmetric --cipher-algo AES256 "$f"
-          done
-
-      - name: Publish baseline artifacts
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release view nightly >/dev/null 2>&1 || gh release create nightly --notes "Nightly benchmark baselines"
-          gh release upload nightly artifacts/*.json* --clobber
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: nightly-benchmark-results-${{ matrix.scenario }}-${{ github.run_id }}
-          path: artifacts/
-          retention-days: 90
-
-      - name: Notify on failure
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL != '' }}
-        uses: slackapi/slack-github-action@v2.1.1
-        with:
-          payload: |
-            {
-              "text": "BN-Syn benchmarks failed for scenario ${{ matrix.scenario }} (run ${{ github.run_id }})."
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
-
-  micro-benchmarks:
-    if: ${{ github.event_name != 'schedule' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      OMP_NUM_THREADS: "1"
-      MKL_NUM_THREADS: "1"
-      OPENBLAS_NUM_THREADS: "1"
-      NUMEXPR_NUM_THREADS: "1"
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-
-      - name: Run benchmarks
-        run: |
-          python scripts/run_benchmarks.py --suite ci
-
-      - name: Run performance baselines
-        run: |
-          python scripts/benchmark_physics.py --output benchmarks/physics_current.json
-          python scripts/profile_kernels.py --steps 100 --warmup 2 --repeats 5 --output benchmarks/kernel_profile_current.json
-
-      - name: Check benchmark regressions
-        run: |
-          python scripts/check_benchmark_regressions.py \
-            --physics-baseline benchmarks/baselines/physics_baseline_alloc_v2.json \
-            --physics-current benchmarks/physics_current.json \
-            --kernel-baseline benchmarks/baselines/kernel_profile_alloc_v2.json \
-            --kernel-current benchmarks/kernel_profile_current.json \
-            --threshold 0.10
-
-      - name: Upload benchmark artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-results-${{ github.run_id }}
-          path: |
-            benchmarks/results.json
-            benchmarks/summary.json
-            benchmarks/physics_current.json
-            benchmarks/kernel_profile_current.json
-          retention-days: 7
+  benchmarks-elite:
+    if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 3 * * 0' }}
+    uses: ./.github/workflows/_reusable_benchmarks.yml
+    with:
+      tier: elite
+      profile: baseline
+      scenario: ci_smoke
+      publish_baseline: false
+    secrets: inherit

@@ -29,5 +29,5 @@ This document defines the reproducibility guarantees enforced by BN-Syn benchmar
 
 ## CI Verification
 
-The `ci-benchmarks` job in `.github/workflows/ci-pr.yml` enforces determinism, Δt-invariance,
+The `benchmarks.yml` workflow (standard tier, `ci` profile) enforces determinism, Δt-invariance,
 criticality thresholds, and rejects regressions outside the envelope.

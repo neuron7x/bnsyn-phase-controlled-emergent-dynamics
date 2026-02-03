@@ -177,4 +177,4 @@ See [`docs/benchmarks/PROTOCOL.md`](../docs/benchmarks/PROTOCOL.md) for:
 
 ## CI Integration
 
-Nightly benchmarks are run via `.github/workflows/ci-benchmarks.yml` and upload artifacts.
+Nightly benchmarks are run via `.github/workflows/benchmarks.yml` (standard tier, nightly profile) and upload artifacts.

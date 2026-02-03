@@ -61,5 +61,5 @@ python benchmarks/scalability.py
 
 ## CI Enforcement
 
-The `ci-benchmarks` job runs determinism, Δt-invariance, and criticality benchmarks on every PR.
-See `.github/workflows/ci-pr.yml` for details.
+The `benchmarks.yml` workflow runs determinism, Δt-invariance, and criticality benchmarks on every PR
+using the standard tier and `ci` profile. See `.github/workflows/benchmarks.yml` for details.

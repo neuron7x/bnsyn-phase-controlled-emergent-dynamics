@@ -22,7 +22,7 @@
 ### 2. CI Truthfulness Lint
 ```
 📊 CI Truthfulness Lint Summary
-Files checked: 19
+Files checked: 21
 Violations: 1
   Errors: 0
   Warnings: 1
@@ -39,17 +39,16 @@ Violations: 1
 
 ### Permissions Coverage
 
-**Total Workflows**: 19 (excluding 2 reusable workflows)
-**With Explicit Permissions**: 17 at workflow level, 2 at job level
+**Total Workflows**: 18 (excluding 3 reusable workflows)
+**With Explicit Permissions**: 16 at workflow level, 2 at job level
 **Coverage**: 100%
 
-**Workflows with Workflow-Level Permissions** (17):
+**Workflows with Workflow-Level Permissions** (16):
 - ci-validation-elite.yml
 - quality-mutation.yml
 - chaos-validation.yml
 - ci-pr.yml
 - benchmarks.yml
-- ci-benchmarks-elite.yml
 - ci-smoke.yml
 - ci-pr-atomic.yml
 - ci-validation.yml
@@ -59,14 +58,15 @@ Violations: 1
 - science.yml
 - formal-tla.yml
 - formal-coq.yml
-- ci-benchmarks.yml
 - physics-equivalence.yml
+- workflow-integrity.yml
 
 **Workflows with Job-Level Permissions** (2):
 - ci-property-tests.yml (contents: read)
 - codeql.yml (actions: read, contents: read, security-events: write - appropriate for security scanning)
 
-**Reusable Workflows** (2, inherit from caller):
+**Reusable Workflows** (3, inherit from caller):
+- _reusable_benchmarks.yml
 - _reusable_pytest.yml
 - _reusable_quality.yml
 

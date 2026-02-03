@@ -195,7 +195,7 @@ All PRs must pass:
 - **build**: package build + import check
 - **docs-build**: Sphinx documentation build
 - **tests-smoke**: pytest -m "not validation" with ≥85% coverage
-- **ci-benchmarks**: determinism, dt-invariance, criticality benchmarks
+- **benchmarks.yml** (tier=standard, profile=ci): determinism, dt-invariance, criticality benchmarks
 - **gitleaks**: secret scanning
 - **pip-audit**: dependency vulnerability scanning
 

@@ -1,12 +1,31 @@
+# DEPRECATED: compatibility shim; remove after protection update
 name: benchmarks
 
 on:
   workflow_dispatch:
     inputs:
+      tier:
+        description: "Benchmark tier to run"
+        required: true
+        type: choice
+        default: standard
+        options:
+          - standard
+          - elite
+      profile:
+        description: "Benchmark profile to run"
+        required: true
+        type: choice
+        default: baseline
+        options:
+          - micro
+          - baseline
+          - full
+          - custom
       scenario:
-        description: 'Benchmark scenario to run'
+        description: "Benchmark scenario to run (custom profile only)"
         required: false
-        default: 'ci_smoke'
+        default: ci_smoke
         type: choice
         options:
           - ci_smoke
@@ -15,68 +34,16 @@ on:
           - steps_sweep
           - conn_sweep
           - dt_sweep
-  schedule:
-    # Weekly on Monday at 00:00 UTC
-    - cron: '0 0 * * 1'
 
 permissions:
   contents: read
 
 jobs:
-  benchmark:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-      
-      - name: Run benchmark
-        run: |
-          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
-          echo "Running benchmark scenario: $SCENARIO"
-          python benchmarks/run_benchmarks.py \
-            --scenario "$SCENARIO" \
-            --repeats 3 \
-            --out "artifacts/bench_${SCENARIO}.csv" \
-            --json "artifacts/bench_${SCENARIO}.json"
-      
-      - name: Generate report
-        run: |
-          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
-          python benchmarks/report.py \
-            --input "artifacts/bench_${SCENARIO}.csv" \
-            --output "artifacts/bench_${SCENARIO}_report.md"
-      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-results-${{ github.run_id }}
-          path: artifacts/
-          retention-days: 90
-      
-      - name: Summary
-        run: |
-          SCENARIO="${{ github.event.inputs.scenario || 'ci_smoke' }}"
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "## Benchmark Results"
-            echo ""
-            echo "**Scenario:** $SCENARIO"
-            echo "**Run ID:** ${{ github.run_id }}"
-            echo ""
-            cat "artifacts/bench_${SCENARIO}_report.md"
-          } >> "$summary_file"
+  benchmarks-dispatch:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    uses: ./.github/workflows/ci-benchmarks.yml
+    with:
+      tier: ${{ inputs.tier }}
+      profile: ${{ inputs.profile }}
+      scenario: ${{ inputs.scenario }}
+    secrets: inherit

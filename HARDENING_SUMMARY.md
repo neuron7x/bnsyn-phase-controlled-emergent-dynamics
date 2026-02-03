@@ -16,7 +16,7 @@ Created two new automated governance gates that run on every PR:
 - Finds unused workflow inputs
 - Checks for missing/improper permissions
 - Outputs JSON + Markdown reports
-- **Result**: 19 workflows checked, 0 critical violations
+- **Result**: 21 workflows checked, 0 critical violations
 
 **`scripts/verify_formal_constants.py`** - Formal Spec Validator
 - Extracts constants from `src/bnsyn/config.py`
@@ -29,14 +29,14 @@ Created two new automated governance gates that run on every PR:
 
 ### 2. Workflow Hardening ✅
 
-**Permissions**: Added explicit `permissions: contents: read` to ALL 19 workflows
+**Permissions**: Added explicit `permissions` blocks to ALL 21 workflows
 - ci-validation-elite.yml
 - ci-property-tests.yml  
 - quality-mutation.yml
 - chaos-validation.yml
 - ci-pr.yml
 - benchmarks.yml
-- ci-benchmarks-elite.yml
+- _reusable_benchmarks.yml
 - ci-smoke.yml
 - ci-pr-atomic.yml
 - ci-validation.yml
