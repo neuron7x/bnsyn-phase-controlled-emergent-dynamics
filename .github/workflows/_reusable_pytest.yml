@@ -43,10 +43,11 @@ jobs:
           python-version: ${{ inputs.python-version }}
           cache: 'pip'
       
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev,test,viz]"
+        run: python -m pip install -e ".[dev,test,viz]"
       
       - name: Run pytest
         id: pytest
