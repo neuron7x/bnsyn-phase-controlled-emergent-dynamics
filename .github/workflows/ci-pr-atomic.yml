@@ -5,6 +5,42 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      pytest-markers:
+        type: string
+        default: "not (validation or property)"
+      coverage-threshold:
+        type: string
+        default: "95"
+      pytest-timeout-minutes:
+        type: string
+        default: "10"
+      upload-codecov:
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      pytest-markers:
+        type: string
+        default: "not (validation or property)"
+      coverage-threshold:
+        type: string
+        default: "95"
+      pytest-timeout-minutes:
+        type: string
+        default: "10"
+      upload-codecov:
+        type: boolean
+        default: true
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 permissions:
   contents: read
@@ -25,7 +61,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ inputs.python-version || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
@@ -88,7 +124,7 @@ jobs:
   quality:
     uses: ./.github/workflows/_reusable_quality.yml
     with:
-      python-version: "3.11"
+      python-version: ${{ inputs.python-version || '3.11' }}
       mypy-strict: true
       pylint-threshold: 7.5
 
@@ -98,7 +134,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ inputs.python-version || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
@@ -112,11 +148,11 @@ jobs:
   tests-smoke:
     uses: ./.github/workflows/_reusable_pytest.yml
     with:
-      python-version: "3.11"
-      markers: "not (validation or property)"
-      coverage-threshold: 95
-      timeout-minutes: 10
-      upload-codecov: true
+      python-version: ${{ inputs.python-version || '3.11' }}
+      markers: ${{ inputs.pytest-markers || 'not (validation or property)' }}
+      coverage-threshold: ${{ fromJSON(inputs.coverage-threshold || '95') }}
+      timeout-minutes: ${{ fromJSON(inputs.pytest-timeout-minutes || '10') }}
+      upload-codecov: ${{ inputs.upload-codecov || true }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -126,7 +162,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ inputs.python-version || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
@@ -147,7 +183,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ inputs.python-version || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
