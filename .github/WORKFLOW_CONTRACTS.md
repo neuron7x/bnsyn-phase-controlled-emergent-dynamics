@@ -3,29 +3,36 @@
 **Version:** 1.0  
 **Date:** 2026-01-27  
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics  
-**Total Workflows:** 13 primary + 2 reusable
+**Total Workflows:** 20 primary + 2 reusable
 
 ---
 
-## Workflow Inventory
+## Workflow Inventory (Full)
 
 | # | Workflow | Trigger | Timeout | Jobs | Axiom Focus | Status |
 |---|----------|---------|---------|------|-------------|--------|
-| 1 | ci-pr.yml | PR, push(main) | 30m | 9 | A1, A3, A6 | ✅ Active |
-| 2 | ci-pr-atomic.yml | PR, push(main) | 20m | 6 | A1, A2, A3 | ✅ Active |
-| 3 | ci-smoke.yml | PR | 10m | 1 | A4 | ✅ Active |
-| 4 | ci-validation.yml | Schedule, manual | 60m | 1 | A4 | ✅ Active |
-| 5 | ci-property-tests.yml | PR, schedule | 30m | 1 | A1, A4 | ✅ Active |
-| 6 | ci-benchmarks.yml | PR, schedule | 20m | 1 | A5 | ✅ Active |
-| 7 | codeql.yml | Push, schedule | 15m | 1 | A6 | ✅ Active |
-| 8 | codecov-health.yml | Schedule | 5m | 1 | A3 | ✅ Active |
-| 9 | dependency-watch.yml | Schedule | 10m | 1 | A6 | ✅ Active |
-| 10 | docs.yml | PR, push(main) | 15m | 1 | A7 | ✅ Active |
-| 11 | science.yml | Manual | 120m | 1 | A1, A4 | ✅ Active |
-| 12 | physics-equivalence.yml | Manual | 60m | 1 | A1 | ✅ Active |
-| 13 | benchmarks.yml | Manual | 30m | 1 | A5 | ✅ Active |
-| R1 | _reusable_quality.yml | Called | 15m | 3 | A2, A3 | ✅ New |
-| R2 | _reusable_pytest.yml | Called | 20m | 1 | A2, A3, A4 | ✅ New |
+| 1 | ci-pr.yml | PR, push(main) | Not set (tests-smoke input 10m) | 12 | A1, A2, A3, A6 | ✅ Active |
+| 2 | ci-pr-atomic.yml | PR, push(main) | Not set (tests-smoke input 10m) | 7 | A1, A2, A3, A6 | ✅ Active |
+| 3 | ci-smoke.yml | PR, push(main) | Not set | 2 | A4 | ⚠️ Redundant (see consolidation) |
+| 4 | ci-validation.yml | Schedule weekly (Sun 03:00 UTC), manual | Not set | 2 | A4 | ⚠️ Redundant (see consolidation) |
+| 5 | ci-validation-elite.yml | Schedule daily (02:00 UTC), manual | Job-level: 30m/30m | 3 | A1, A4 | ✅ Active |
+| 6 | ci-property-tests.yml | Schedule nightly (02:30 UTC), manual | 15m | 1 | A1, A4 | ⚠️ Redundant (see consolidation) |
+| 7 | chaos-validation.yml | Schedule nightly (04:00 UTC), manual w/ inputs | Job-level: 60m/45m | 3 | A1, A4 | ✅ Active |
+| 8 | ci-benchmarks.yml | PR, schedule daily (02:00 UTC), manual, callable | Job-level: 10m (micro-benchmarks) | 2 | A5, A6 | ✅ Active |
+| 9 | ci-benchmarks-elite.yml | Schedule weekly (Sun 03:00 UTC), manual | 30m | 1 | A5 | ⚠️ Redundant (see consolidation) |
+| 10 | benchmarks.yml | Schedule weekly (Mon 00:00 UTC), manual w/ inputs | Not set | 1 | A5 | ⚠️ Redundant (see consolidation) |
+| 11 | codeql.yml | Push(main), schedule weekly (Sun 04:00 UTC), manual | 15m | 1 | A6 | ✅ Active |
+| 12 | codecov-health.yml | Schedule every 6h, manual | Not set | 1 | A3 | ✅ Active |
+| 13 | dependency-watch.yml | Schedule weekly (Mon 08:00 UTC), manual | Not set | 1 | A6 | ✅ Active |
+| 14 | docs.yml | PR, manual | Not set | 1 | A7 | ✅ Active |
+| 15 | science.yml | Manual, schedule weekly (Sun 00:00 UTC) | 30m | 1 | A1, A4 | ✅ Active |
+| 16 | physics-equivalence.yml | PR(path), push(main), manual | 15m | 1 | A1, A4 | ✅ Active |
+| 17 | formal-coq.yml | Schedule nightly (01:00 UTC), manual | 20m | 1 | A1, A4 | ✅ Active |
+| 18 | formal-tla.yml | Schedule nightly (02:00 UTC), manual w/ inputs | 30m | 1 | A1, A4 | ✅ Active |
+| 19 | quality-mutation.yml | Schedule nightly (03:00 UTC), manual | 120m | 1 | A2, A4 | ✅ Active |
+| 20 | workflow-integrity.yml | PR(main), push(main) | 5m | 1 | A3, A6 | ✅ Active |
+| R1 | _reusable_quality.yml | workflow_call | Not set | 3 | A2, A3 | ✅ Active |
+| R2 | _reusable_pytest.yml | workflow_call | Input-driven | 1 | A2, A3, A4 | ✅ Active |
 
 **Legend:**
 - A1: Determinism
@@ -46,10 +53,11 @@ Primary PR validation workflow (smoke tests + SSOT + security).
 ### Contract Definition
 ```yaml
 Triggers: [pull_request, push(main)]
-Timeout: 30 minutes
+Timeout: Not set (tests-smoke input 10 minutes)
 Required: Yes (branch protection)
-Jobs: 9 (ssot, dependency-consistency, quality, build, docs-build, 
-         tests-smoke, tests-core-only, ci-benchmarks, gitleaks, pip-audit)
+Jobs: 12 (ssot, dependency-consistency, quality, manifest-verification, build,
+         docs-build, tests-smoke, tests-core-only, ci-benchmarks, gitleaks,
+         pip-audit, bandit)
 ```
 
 ### Axiom Scores
@@ -113,9 +121,9 @@ Atomic PR validation with enhanced determinism checks and security scanning.
 ### Contract Definition
 ```yaml
 Triggers: [pull_request, push(main)]
-Timeout: 20 minutes
+Timeout: Not set (tests-smoke input 10 minutes)
 Required: Yes (branch protection)
-Jobs: 6 (determinism, quality, build, tests-smoke, ssot, security)
+Jobs: 7 (determinism, quality, build, tests-smoke, ssot, security, finalize)
 Env: PYTHONHASHSEED=0, PYTHONDONTWRITEBYTECODE=1
 ```
 
@@ -134,6 +142,9 @@ Env: PYTHONHASHSEED=0, PYTHONDONTWRITEBYTECODE=1
 - ❌ No concurrency cancellation
 - ❌ Determinism summary shows pass/fail but not comparison details
 - ❌ Duplicates quality logic
+
+### Security Enforcement Note
+- **pip-audit is blocking.** Known vulnerabilities will fail the `security` job (exit 1) and halt `finalize` until dependencies are remediated.
 
 ### Violations Identified
 1. **V2.1:** Quality job duplicates code (violates A2: Composability)
@@ -177,10 +188,10 @@ Fast smoke tests for rapid feedback.
 
 ### Contract Definition
 ```yaml
-Triggers: [pull_request]
-Timeout: 10 minutes
+Triggers: [pull_request, push(main)]
+Timeout: Not set
 Required: No (optional fast feedback)
-Jobs: 1 (smoke-tests)
+Jobs: 2 (ssot, tests-smoke)
 ```
 
 ### Axiom Scores
@@ -208,9 +219,9 @@ Slow statistical validation tests (large N, many seeds).
 ### Contract Definition
 ```yaml
 Triggers: [schedule(weekly), workflow_dispatch]
-Timeout: 60 minutes
+Timeout: Not set
 Required: No (slow validation)
-Jobs: 1 (validation-tests)
+Jobs: 2 (ssot, tests-validation)
 ```
 
 ### Axiom Scores
@@ -237,8 +248,8 @@ Property-based tests using Hypothesis.
 
 ### Contract Definition
 ```yaml
-Triggers: [pull_request, schedule(weekly)]
-Timeout: 30 minutes
+Triggers: [schedule(nightly), workflow_dispatch]
+Timeout: 15 minutes
 Required: No (supplemental)
 Jobs: 1 (property-tests)
 ```
@@ -267,10 +278,10 @@ Performance regression detection.
 
 ### Contract Definition
 ```yaml
-Triggers: [pull_request, schedule(weekly)]
-Timeout: 20 minutes
+Triggers: [pull_request, schedule(daily), workflow_dispatch, workflow_call]
+Timeout: Job-level 10 minutes (micro-benchmarks)
 Required: No (performance monitoring)
-Jobs: 1 (benchmarks)
+Jobs: 2 (nightly-benchmarks, micro-benchmarks)
 ```
 
 ### Axiom Scores
@@ -296,8 +307,8 @@ Security scanning with GitHub CodeQL.
 
 ### Contract Definition
 ```yaml
-Triggers: [push, schedule(weekly)]
-Timeout: 15 minutes
+Triggers: [push(main), schedule(weekly), workflow_dispatch]
+Timeout: 15 minutes (job-level)
 Required: Yes (security)
 Jobs: 1 (analyze)
 Languages: [python]
@@ -326,8 +337,8 @@ Monitor Codecov integration health.
 
 ### Contract Definition
 ```yaml
-Triggers: [schedule(daily)]
-Timeout: 5 minutes
+Triggers: [schedule(every 6h), workflow_dispatch]
+Timeout: Not set
 Required: No (monitoring)
 Jobs: 1 (health-check)
 ```
@@ -336,7 +347,7 @@ Jobs: 1 (health-check)
 - **A3 (Observability):** 85% ✅ (proactive health monitoring)
 
 ### Current Implementation
-- ✅ Daily health checks
+- ✅ Health checks every 6 hours
 - ✅ Alerts on upload failures
 
 ### Violations Identified
@@ -354,8 +365,8 @@ Monitor dependency vulnerabilities.
 
 ### Contract Definition
 ```yaml
-Triggers: [schedule(weekly)]
-Timeout: 10 minutes
+Triggers: [schedule(weekly), workflow_dispatch]
+Timeout: Not set
 Required: No (monitoring)
 Jobs: 1 (audit)
 ```
@@ -382,8 +393,8 @@ Build and validate Sphinx documentation.
 
 ### Contract Definition
 ```yaml
-Triggers: [pull_request, push(main)]
-Timeout: 15 minutes
+Triggers: [pull_request, workflow_dispatch]
+Timeout: Not set
 Required: Yes (docs validation)
 Jobs: 1 (build-docs)
 ```
@@ -411,8 +422,8 @@ Long-running scientific validation experiments.
 
 ### Contract Definition
 ```yaml
-Triggers: [workflow_dispatch]
-Timeout: 120 minutes
+Triggers: [workflow_dispatch, schedule(weekly)]
+Timeout: 30 minutes
 Required: No (manual validation)
 Jobs: 1 (science-tests)
 ```
@@ -422,8 +433,8 @@ Jobs: 1 (science-tests)
 - **A4 (Exhaustiveness):** 90% ✅ (comprehensive experiments)
 
 ### Current Implementation
-- ✅ Manual dispatch only (prevents accidental runs)
-- ✅ Long timeout (2 hours)
+- ✅ Manual dispatch + weekly schedule
+- ✅ 30-minute timeout aligned to experiment scope
 - ✅ Artifact upload for results
 
 ### Violations Identified
@@ -441,8 +452,8 @@ Verify numerical equivalence of physics simulations.
 
 ### Contract Definition
 ```yaml
-Triggers: [workflow_dispatch]
-Timeout: 60 minutes
+Triggers: [pull_request(paths), push(main), workflow_dispatch]
+Timeout: 15 minutes
 Required: No (validation)
 Jobs: 1 (equivalence-tests)
 ```
@@ -451,7 +462,7 @@ Jobs: 1 (equivalence-tests)
 - **A1 (Determinism):** 95% ✅ (numerical reproducibility)
 
 ### Current Implementation
-- ✅ Manual dispatch
+- ✅ PR/push/manual triggers for physics regressions
 - ✅ Validates AdEx equations
 - ✅ dt-invariance checks
 
@@ -470,8 +481,8 @@ Manual benchmark execution for profiling.
 
 ### Contract Definition
 ```yaml
-Triggers: [workflow_dispatch]
-Timeout: 30 minutes
+Triggers: [workflow_dispatch, schedule(weekly)]
+Timeout: Not set
 Required: No (manual profiling)
 Jobs: 1 (benchmarks)
 ```
@@ -571,6 +582,117 @@ jobs:
 
 ---
 
+## 14. chaos-validation.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(nightly), workflow_dispatch(inputs)]
+Timeout: Job-level 60 minutes (chaos-tests), 45 minutes (property-tests)
+Required: No (resilience/chaos validation)
+Jobs: 3 (chaos-tests, property-tests, summary)
+```
+
+### Axiom Focus
+- **A1 (Determinism):** Chaos scenarios cover RNG perturbations
+- **A4 (Exhaustiveness):** Expanded fault injection + property tests
+
+---
+
+## 15. ci-validation-elite.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(daily), workflow_dispatch]
+Timeout: Job-level 30 minutes (validation), 30 minutes (property-tests)
+Required: No (non-blocking scientific validation)
+Jobs: 3 (validation, property-tests, summary)
+```
+
+### Axiom Focus
+- **A1 (Determinism):** Property tests with Hypothesis profiles
+- **A4 (Exhaustiveness):** Full validation suite + property coverage
+
+---
+
+## 16. ci-benchmarks-elite.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(weekly), workflow_dispatch]
+Timeout: 30 minutes
+Required: No (non-blocking performance validation)
+Jobs: 1 (benchmarks)
+```
+
+### Axiom Focus
+- **A5 (Performance):** Benchmark regression analysis
+
+---
+
+## 17. workflow-integrity.yml
+
+### Contract Definition
+```yaml
+Triggers: [pull_request(main), push(main)]
+Timeout: 5 minutes
+Required: Yes (workflow safety)
+Jobs: 1 (validate-workflows)
+```
+
+### Axiom Focus
+- **A3 (Observability):** Linting and artifact validation
+- **A6 (Security):** Actionlint + safety artifact checks
+
+---
+
+## 18. quality-mutation.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(nightly), workflow_dispatch]
+Timeout: 120 minutes
+Required: No (mutation testing)
+Jobs: 1 (mutation-testing)
+```
+
+### Axiom Focus
+- **A2 (Composability):** Mutation score enforces quality baselines
+- **A4 (Exhaustiveness):** Mutation testing across critical modules
+
+---
+
+## 19. formal-coq.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(nightly), workflow_dispatch]
+Timeout: 20 minutes
+Required: No (formal proof verification)
+Jobs: 1 (coq-proof-check)
+```
+
+### Axiom Focus
+- **A1 (Determinism):** Proof compilation is deterministic
+- **A4 (Exhaustiveness):** Formal proof coverage
+
+---
+
+## 20. formal-tla.yml
+
+### Contract Definition
+```yaml
+Triggers: [schedule(nightly), workflow_dispatch(inputs)]
+Timeout: 30 minutes
+Required: No (model checking)
+Jobs: 1 (tla-model-check)
+```
+
+### Axiom Focus
+- **A1 (Determinism):** TLC configuration and deterministic checks
+- **A4 (Exhaustiveness):** State-space and invariant verification
+
+---
+
 ## Summary of Violations
 
 | Workflow | Violation | Axiom | Severity | Fix in PR |
@@ -589,6 +711,22 @@ jobs:
 
 ---
 
+## Redundancy & Consolidation Candidates
+
+1. **ci-smoke.yml → consolidate into ci-pr.yml / ci-pr-atomic.yml**
+   - **Rationale:** ci-smoke runs SSOT + smoke tests on PR/push(main), which are already covered by ci-pr.yml and ci-pr-atomic.yml. This duplicates CI minutes without adding new coverage. Replace with a workflow_call reusable or remove after confirming branch protection does not require it.
+
+2. **ci-validation.yml → consolidate into ci-validation-elite.yml**
+   - **Rationale:** Both run scheduled validation suites. ci-validation-elite already runs validation + property tests on a daily schedule; ci-validation repeats a subset weekly with separate SSOT checks. Either add SSOT to ci-validation-elite or call a shared SSOT reusable job, then remove ci-validation.yml.
+
+3. **ci-property-tests.yml → consolidate into chaos-validation.yml or ci-validation-elite.yml**
+   - **Rationale:** Property tests run nightly in ci-property-tests but are also executed in chaos-validation (nightly) and ci-validation-elite (daily). Keep a single scheduled property-test source of truth to avoid inconsistent Hypothesis profiles.
+
+4. **ci-benchmarks-elite.yml + benchmarks.yml → consolidate into ci-benchmarks.yml**
+   - **Rationale:** All three workflows run performance benchmarks on schedule or manual dispatch. ci-benchmarks.yml already supports PR, schedule, manual, and workflow_call. Fold the elite/manual variants into ci-benchmarks.yml with scenario inputs and remove redundant schedules.
+
+---
+
 ## Compliance Verification
 
 ### How to Verify Contracts
@@ -597,7 +735,7 @@ jobs:
 # List all workflows
 ls -1 .github/workflows/*.yml
 
-# Count workflows (should be 13 primary + 2 reusable)
+# Count workflows (should be 20 primary + 2 reusable)
 ls -1 .github/workflows/*.yml | wc -l
 
 # Verify reusable workflows exist
