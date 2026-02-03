@@ -62,9 +62,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
       - name: Install safety checker dependencies
-        run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install pyyaml jsonschema
+        run: python -m pip install pyyaml jsonschema
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py

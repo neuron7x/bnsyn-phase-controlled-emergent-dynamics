@@ -29,11 +29,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-          
+
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]"
+        run: python -m pip install -e ".[dev,test]"
           
       - name: Run validation tests
         id: validation
@@ -75,11 +76,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-          
+
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]"
+        run: python -m pip install -e ".[dev,test]"
           
       - name: Run property tests
         id: property

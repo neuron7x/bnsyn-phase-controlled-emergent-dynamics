@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,9 +30,9 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
       - name: Test determinism (run 1)
         id: run1
         run: pytest tests/test_determinism.py tests/test_properties_determinism.py -v --tb=short
@@ -102,9 +103,9 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]" build
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]" build
       - run: python -m build
       - run: python -c "import bnsyn; print(bnsyn.__version__)"
 
@@ -130,9 +131,9 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
       - run: python scripts/validate_bibliography.py
       - run: python scripts/validate_claims.py
       - run: python scripts/scan_governed_docs.py
@@ -151,9 +152,9 @@ jobs:
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
-      - run: |
-          python -m pip install --upgrade "pip==26.0"
-          pip install -e ".[dev,test]"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
       - name: gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
