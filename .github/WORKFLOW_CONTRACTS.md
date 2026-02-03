@@ -143,6 +143,9 @@ Env: PYTHONHASHSEED=0, PYTHONDONTWRITEBYTECODE=1
 - ❌ Determinism summary shows pass/fail but not comparison details
 - ❌ Duplicates quality logic
 
+### Security Enforcement Note
+- **pip-audit is blocking.** Known vulnerabilities will fail the `security` job (exit 1) and halt `finalize` until dependencies are remediated.
+
 ### Violations Identified
 1. **V2.1:** Quality job duplicates code (violates A2: Composability)
 2. **V2.2:** No concurrency group
