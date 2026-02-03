@@ -280,6 +280,7 @@
 * `pull_request`.
 * `push` (branches: `main`).
 * `workflow_dispatch`.
+* `workflow_call`.
 
 **Timeout(s):**
 
@@ -314,7 +315,7 @@
 
 **Intent (1–2 sentences):**
 
-* Provide comprehensive PR validation including SSOT governance, build, tests, benchmarks, and security scans.
+* Provide a thin wrapper entry point that delegates to `ci-pr-atomic.yml`.
 
 **Axiom focus:**
 
@@ -323,39 +324,12 @@
 
 **Trigger(s):**
 
-* `push` (branches: `main`).
-* `pull_request`.
 * `workflow_dispatch`.
-
-**Timeout(s):**
-
-* `ssot`: Not set
-* `dependency-consistency`: Not set
-* `quality`: Not set
-* `manifest-verification`: Not set
-* `build`: Not set
-* `docs-build`: Not set
-* `tests-smoke`: 10
-* `tests-core-only`: Not set
-* `ci-benchmarks`: Not set
-* `gitleaks`: Not set
-* `pip-audit`: Not set
-* `bandit`: Not set
+* `workflow_call`.
 
 **Jobs:**
 
-* `ssot` — Enforces SSOT, governance gates, and claims coverage checks.
-* `dependency-consistency` — Validates dependency SSOT and audits.
-* `quality` — Reuses quality workflow for lint/type checks.
-* `manifest-verification` — Ensures API manifest inventories are consistent.
-* `build` — Builds package, verifies import, and summarizes.
-* `docs-build` — Builds Sphinx docs.
-* `tests-smoke` — Runs smoke tests via reusable pytest workflow.
-* `tests-core-only` — Runs core tests without visualization dependencies.
-* `ci-benchmarks` — Runs core benchmarks for determinism/scaling/criticality.
-* `gitleaks` — Scans for secrets.
-* `pip-audit` — Scans dependencies for vulnerabilities.
-* `bandit` — Runs Python security linter.
+* `ci-pr-atomic` — Delegates to the canonical `ci-pr-atomic.yml` workflow.
 
 **Evidence:**
 
@@ -824,15 +798,15 @@
 
 ## Redundancy & Consolidation
 
-1. **ci-smoke.yml vs ci-pr.yml** (Candidate for consolidation)
-   * Rationale: `ci-smoke.yml` and `ci-pr.yml` share `push` (main) and `pull_request` triggers, and `ci-smoke` job set (`ssot`, `tests-smoke`) overlaps with `ci-pr` which already runs SSOT and smoke tests via reusable workflow.
-   * Safe target: `ci-pr.yml` as SSOT.
+1. **ci-smoke.yml vs ci-pr-atomic.yml** (Candidate for consolidation)
+   * Rationale: `ci-smoke.yml` and `ci-pr-atomic.yml` share `push` (main) and `pull_request` triggers, and `ci-smoke` job set (`ssot`, `tests-smoke`) overlaps with `ci-pr-atomic` which already runs SSOT and smoke tests via reusable workflow. `ci-pr.yml` is now a wrapper and no longer a target for consolidation.
+   * Safe target: `ci-pr-atomic.yml` as SSOT.
    * Removal criteria:
-     * [ ] Branch protection updated to remove `ci-smoke.yml` requirements.
-     * [ ] `ci-pr.yml` smoke + SSOT checks verified equivalent for at least 2 weeks.
-     * [ ] No downstream integrations rely on `ci-smoke.yml` status checks.
+    * [ ] Branch protection updated to remove `ci-smoke.yml` requirements.
+    * [ ] `ci-pr-atomic.yml` smoke + SSOT checks verified equivalent for at least 2 weeks.
+    * [ ] No downstream integrations rely on `ci-smoke.yml` status checks.
    * Risks: Branch protection or external status check dependencies could block merges; mitigate by updating protection rules and notifying integrators.
-   * Evidence: `./workflows/ci-smoke.yml`, `./workflows/ci-pr.yml`
+   * Evidence: `./workflows/ci-smoke.yml`, `./workflows/ci-pr-atomic.yml`
 
 2. **ci-validation.yml vs ci-validation-elite.yml** (Candidate for consolidation)
    * Rationale: Both use `schedule` + `workflow_dispatch` and run validation suites; `ci-validation-elite` includes validation + property tests, while `ci-validation` runs SSOT + validation.

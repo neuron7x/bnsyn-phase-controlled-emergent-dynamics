@@ -1,10 +1,43 @@
 name: ci-pr
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      pytest-markers:
+        type: string
+        default: "not (validation or property)"
+      coverage-threshold:
+        type: string
+        default: "95"
+      pytest-timeout-minutes:
+        type: string
+        default: "10"
+      upload-codecov:
+        type: string
+        default: "true"
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      pytest-markers:
+        type: string
+        default: "not (validation or property)"
+      coverage-threshold:
+        type: string
+        default: "95"
+      pytest-timeout-minutes:
+        type: string
+        default: "10"
+      upload-codecov:
+        type: string
+        default: "true"
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 permissions:
   contents: read
@@ -14,364 +47,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ssot:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: |
-          python -m pip install -e ".[dev,test]"
-          python -m pip install pyyaml  # For CI truthfulness linter
-      - name: SSOT gates
-        id: ssot-gates
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "##  SSOT Validation"
-            echo ""
-          } >> "$summary_file"
-          python scripts/validate_bibliography.py
-          python scripts/validate_claims.py
-          python scripts/scan_governed_docs.py
-          python scripts/scan_normative_tags.py
-          python scripts/scan_tierS_misuse.py
-      
-      - name: Governance Gates (NEW)
-        id: governance-gates
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          summary_lines="##  Quality Governance Gates\n\n"
-          summary_lines="${summary_lines}### Formal Constants Verification\n"
-          if python scripts/verify_formal_constants.py; then
-            summary_lines="${summary_lines} All formal spec constants match code\n"
-          else
-            summary_lines="${summary_lines} Formal spec constants mismatch detected\n"
-            printf '%b' "$summary_lines" >> "$summary_file"
-            exit 1
-          fi
-          summary_lines="${summary_lines}\n### CI Truthfulness Lint\n"
-          mkdir -p artifacts
-          if python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md; then
-            summary_lines="${summary_lines} No critical CI truthfulness violations\n"
-          else
-            summary_lines="${summary_lines} Critical CI truthfulness violations found\n\nSee artifacts for details\n"
-            printf '%b' "$summary_lines" >> "$summary_file"
-            exit 1
-          fi
-          printf '%b' "$summary_lines" >> "$summary_file"
-      
-      - name: Append CI Truthfulness Report to Summary
-        if: always()
-        run: |
-          if [ -f artifacts/ci_truthfulness.md ]; then
-            summary_file="$GITHUB_STEP_SUMMARY"
-            {
-              echo ""
-              cat artifacts/ci_truthfulness.md
-            } >> "$summary_file"
-          fi
-      
-      - name: Upload Governance Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: governance-reports
-          path: |
-            artifacts/ci_truthfulness.json
-            artifacts/ci_truthfulness.md
-          retention-days: 30
-      - name: Validate Claims Coverage (BLOCKING)
-        id: claims-coverage
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "##  Claims Coverage Validation"
-            echo ""
-            python scripts/validate_claims_coverage.py --format markdown
-          } >> "$summary_file"
-          python scripts/validate_claims_coverage.py --format json > claims_coverage.json
-          
-          if ! python scripts/validate_claims_coverage.py; then
-            {
-              echo ""
-              echo " Claims coverage <100% - PR BLOCKED"
-            } >> "$summary_file"
-            exit 1
-          fi
-      - name: Upload Claims Coverage Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: claims-coverage-report
-          path: claims_coverage.json
-          retention-days: 30
-      - name: Generate summary
-        if: always()
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "##  SSOT & Governance Validation"
-            echo ""
-            echo "| Check | Status |"
-            echo "|-------|--------|"
-            if [ "${{ steps.ssot-gates.outcome }}" = "success" ]; then
-              echo "| Bibliography |  PASS |"
-              echo "| Claims |  PASS |"
-              echo "| Governed Docs |  PASS |"
-              echo "| Normative Tags |  PASS |"
-              echo "| TierS Misuse |  PASS |"
-            else
-              echo "| SSOT Gates |  FAIL |"
-            fi
-            if [ "${{ steps.governance-gates.outcome }}" = "success" ]; then
-              echo "| Formal Constants |  PASS |"
-              echo "| CI Truthfulness |  PASS |"
-            else
-              echo "| Governance Gates |  FAIL |"
-            fi
-            if [ "${{ steps.claims-coverage.outcome }}" = "success" ]; then
-              echo "| Claims Coverage |  PASS |"
-            else
-              echo "| Claims Coverage |  FAIL |"
-            fi
-          } >> "$summary_file"
-
-  dependency-consistency:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Verify requirements.txt is absent
-        run: |
-          if [ -f requirements.txt ]; then
-            echo "ERROR: requirements.txt detected. Use pyproject.toml as the SSOT."
-            exit 1
-          fi
-      - name: Validate pyproject.toml
-        run: |
-          python -m pip install build validate-pyproject
-          validate-pyproject pyproject.toml
-      - name: Check dependency resolution
-        run: |
-          python -m pip install -e ".[dev,test]" --dry-run --report /tmp/dep-report.json
-      - name: Audit dependencies
-        run: |
-          python -m pip install -e ".[dev,test]"
-          mkdir -p artifacts
-          pip-audit --desc --format json --output artifacts/pip-audit.json
-      - name: Upload audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-audit-${{ github.sha }}
-          path: artifacts/pip-audit.json
-          retention-days: 30
-
-  quality:
-    uses: ./.github/workflows/_reusable_quality.yml
+  ci-pr-atomic:
+    uses: ./.github/workflows/ci-pr-atomic.yml
     with:
-      python-version: "3.11"
-      mypy-strict: true
-      pylint-threshold: 7.5
-
-  manifest-verification:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-      - name: Manifest tool tests
-        run: pytest tests/test_manifest_tools.py
-      - name: Verify API manifest inventories
-        run: |
-          python docs/api/_static/tools/update_manifest.py --check
-          python docs/api/_templates/tools/update_manifest.py --check
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: |
-          python -m pip install -e ".[dev,test]"
-          python -m pip install build
-      - name: Build package
-        id: build
-        run: python -m build
-      - name: Import check
-        id: import
-        run: python -c "import bnsyn"
-      - name: Generate summary
-        if: always()
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "##  Build Verification"
-            echo ""
-            echo "| Check | Status |"
-            echo "|-------|--------|"
-            if [ "${{ steps.build.outcome }}" = "success" ]; then
-              echo "| Package Build |  PASS |"
-            else
-              echo "| Package Build |  FAIL |"
-            fi
-            if [ "${{ steps.import.outcome }}" = "success" ]; then
-              echo "| Import Check |  PASS |"
-            else
-              echo "| Import Check |  FAIL |"
-            fi
-          } >> "$summary_file"
-
-  docs-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-      - name: Build docs
-        run: sphinx-build docs docs/_build
-
-  tests-smoke:
-    uses: ./.github/workflows/_reusable_pytest.yml
-    with:
-      python-version: "3.11"
-      markers: "not (validation or property)"
-      coverage-threshold: 95
-      timeout-minutes: 10
-      upload-codecov: false
-
-  tests-core-only:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install core dependencies only
-        run: python -m pip install -e ".[dev,test]"
-      - name: Core tests (no viz)
-        run: pytest -m "not (validation or property)" --no-cov
-
-  ci-benchmarks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-      - name: Determinism benchmark
-        run: python benchmarks/determinism.py
-      - name: dt-invariance benchmark
-        run: python benchmarks/scaling.py
-      - name: Criticality benchmark
-        run: python benchmarks/criticality.py
-
-  gitleaks:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Gitleaks scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
-
-  pip-audit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: |
-          python -m pip install -e ".[dev,test]"
-          python -m pip install pip-audit
-      - name: pip-audit
-        run: |
-          mkdir -p artifacts
-          pip-audit --desc --format json --output artifacts/pip-audit.json
-      - name: Upload pip-audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: pip-audit-${{ github.sha }}
-          path: artifacts/pip-audit.json
-          retention-days: 30
-
-  bandit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test]"
-      - name: bandit
-        run: bandit -r src/ -ll
+      python-version: ${{ inputs.python-version }}
+      pytest-markers: ${{ inputs.pytest-markers }}
+      coverage-threshold: ${{ fromJSON(inputs.coverage-threshold) }}
+      pytest-timeout-minutes: ${{ fromJSON(inputs.pytest-timeout-minutes) }}
+      upload-codecov: ${{ fromJSON(inputs.upload-codecov) }}
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
