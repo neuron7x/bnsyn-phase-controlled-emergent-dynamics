@@ -71,7 +71,7 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 **Policy:** Non-blocking
 
 - 8 benchmark comparisons against golden baseline
-- **Workflow:** `ci-benchmarks-elite.yml`
+- **Workflow:** `benchmarks.yml` (tier=elite)
 
 ---
 
@@ -94,4 +94,4 @@ make docs-evidence             # Regenerate EVIDENCE_COVERAGE.md
 | **VALIDATION** | `@pytest.mark.validation` | Daily 2 AM | varies | ❌ NO | `ci-validation-elite.yml` |
 | **PROPERTY** | `@pytest.mark.property` | Daily 2:30 AM | ~10 min | ❌ NO | `ci-property-tests.yml` |
 | **CHAOS** | `@pytest.mark.chaos` | Daily 4 AM | ~20 min | ❌ NO | `chaos-validation.yml` |
-| **BENCHMARKS** | N/A | Weekly Sun 3 AM | ~20 min | ❌ NO | `ci-benchmarks-elite.yml` |
+| **BENCHMARKS** | N/A | Weekly Sun 3 AM | ~20 min | ❌ NO | `benchmarks.yml` (tier=elite) |

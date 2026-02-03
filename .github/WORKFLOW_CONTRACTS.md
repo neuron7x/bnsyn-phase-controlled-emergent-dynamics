@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 22
-**Breakdown:** 20 primary + 2 reusable
+**Total workflows:** 23
+**Breakdown:** 20 primary + 3 reusable
 
 ## Axiom Dictionary
 
@@ -29,8 +29,9 @@
 
 ## Workflow Inventory Index
 
-* Count: 22 workflows
+* Count: 23 workflows
 * Files (lexicographic):
+  * _reusable_benchmarks.yml
   * _reusable_pytest.yml
   * _reusable_quality.yml
   * benchmarks.yml
@@ -123,14 +124,50 @@
 
 ---
 
-## benchmarks.yml
+## _reusable_benchmarks.yml
 
-**Path:** `.github/workflows/benchmarks.yml`
-**Status:** Candidate for consolidation
+**Path:** `.github/workflows/_reusable_benchmarks.yml`
+**Status:** Active
 
 **Intent (1–2 sentences):**
 
-* Run benchmark scenarios on a weekly schedule or on-demand with scenario selection.
+* Execute benchmark suites based on tier/profile inputs and upload performance artifacts for regression tracking.
+
+**Axiom focus:**
+
+* A4 — Performance & Benchmark Fidelity
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`tier`, `profile`, `scenario`) and optional secrets (`BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`).
+
+**Timeout(s):**
+
+* `micro-benchmarks`: 10
+* `elite-benchmarks`: 30
+
+**Jobs:**
+
+* `micro-benchmarks` — PR/dispatch micro benchmarks with regression checks and artifacts.
+* `nightly-benchmarks` — Baseline suite with dependency audit and artifact publication.
+* `scenario-benchmarks` — Scenario runner with report generation.
+* `elite-benchmarks` — Full benchmark suite with baseline comparison.
+
+**Evidence:**
+
+* `./workflows/_reusable_benchmarks.yml`
+
+---
+
+## benchmarks.yml
+
+**Path:** `.github/workflows/benchmarks.yml`
+**Status:** Deprecated shim (delegates to `ci-benchmarks.yml`)
+
+**Intent (1–2 sentences):**
+
+* Preserve legacy entrypoints and schedules while delegating execution to `ci-benchmarks.yml`.
 
 **Axiom focus:**
 
@@ -138,16 +175,23 @@
 
 **Trigger(s):**
 
-* `workflow_dispatch` with `scenario` input (choice).
-* `schedule` (weekly Monday 00:00 UTC).
+* `workflow_dispatch` with tier/profile/scenario inputs.
+* `pull_request`.
+* `schedule` (daily standard baseline, weekly scenario, weekly elite).
 
 **Timeout(s):**
 
-* `benchmark`: Not set
+* `benchmarks-pr`: Not set
+* `benchmarks-standard`: Not set
+* `benchmarks-weekly-scenario`: Not set
+* `benchmarks-elite`: Not set
 
 **Jobs:**
 
-* `benchmark` — Runs selected benchmark scenario, generates report, uploads artifacts.
+* `benchmarks-pr` — Delegates micro benchmarks to `ci-benchmarks.yml`.
+* `benchmarks-standard` — Delegates daily baseline to `ci-benchmarks.yml`.
+* `benchmarks-weekly-scenario` — Delegates weekly scenario to `ci-benchmarks.yml`.
+* `benchmarks-elite` — Delegates elite baseline to `ci-benchmarks.yml`.
 
 **Evidence:**
 
@@ -195,11 +239,11 @@
 ## ci-benchmarks-elite.yml
 
 **Path:** `.github/workflows/ci-benchmarks-elite.yml`
-**Status:** Candidate for consolidation
+**Status:** Deprecated shim (delegates to `ci-benchmarks.yml`)
 
 **Intent (1–2 sentences):**
 
-* Run a weekly benchmark suite with baseline comparison for performance regression awareness.
+* Preserve the legacy elite benchmark schedule while delegating execution to `ci-benchmarks.yml`.
 
 **Axiom focus:**
 
@@ -212,11 +256,11 @@
 
 **Timeout(s):**
 
-* `benchmarks`: 30
+* `benchmarks`: Not set (delegated to reusable workflow)
 
 **Jobs:**
 
-* `benchmarks` — Runs benchmark scripts, compares against baseline, uploads reports.
+* `benchmarks` — Delegates elite baseline to `ci-benchmarks.yml`.
 
 **Evidence:**
 
@@ -231,7 +275,7 @@
 
 **Intent (1–2 sentences):**
 
-* Run scheduled benchmark baselines and on-demand micro-benchmarks for regression monitoring.
+* Canonical benchmark entrypoint that routes tier/profile inputs to the reusable benchmark executor.
 
 **Axiom focus:**
 
@@ -240,19 +284,23 @@
 **Trigger(s):**
 
 * `pull_request`.
-* `schedule` (daily 02:00 UTC).
+* `schedule` (daily 02:00 UTC, weekly Sunday 03:00 UTC).
 * `workflow_dispatch`.
 * `workflow_call` with secrets `BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`.
 
 **Timeout(s):**
 
-* `nightly-benchmarks`: Not set
-* `micro-benchmarks`: 10
+* `benchmarks-pr`: Not set
+* `benchmarks-standard`: Not set
+* `benchmarks-elite`: Not set
 
 **Jobs:**
 
-* `nightly-benchmarks` — Scheduled baselines with artifact publication and optional Slack notification.
-* `micro-benchmarks` — PR/dispatch benchmarks with regression checks and artifact upload.
+* `benchmarks-pr` — Delegates micro benchmarks to `_reusable_benchmarks.yml`.
+* `benchmarks-dispatch` — Delegates user-selected tier/profile to `_reusable_benchmarks.yml`.
+* `benchmarks-call` — Delegates workflow callers to `_reusable_benchmarks.yml`.
+* `benchmarks-standard` — Delegates daily baseline to `_reusable_benchmarks.yml`.
+* `benchmarks-elite` — Delegates elite baseline to `_reusable_benchmarks.yml`.
 
 **Evidence:**
 
@@ -828,22 +876,20 @@
    * Risks: Profile differences may change coverage or runtime; mitigate by aligning profiles before removal.
    * Evidence: `./workflows/ci-property-tests.yml`, `./workflows/chaos-validation.yml`
 
-4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Candidate for consolidation)
-   * Rationale: All run benchmark suites via schedule + workflow_dispatch with overlapping performance intent; `ci-benchmarks.yml` already supports schedule, manual, PR, and workflow_call.
-   * Safe target: `ci-benchmarks.yml` as SSOT.
+4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Consolidation in progress)
+   * Rationale: Benchmark execution is centralized in `_reusable_benchmarks.yml`, with `ci-benchmarks.yml` as the canonical entrypoint.
+   * Current state: `benchmarks.yml` and `ci-benchmarks-elite.yml` are compatibility shims delegating to `ci-benchmarks.yml`.
    * Removal criteria:
-     * [ ] Scenario selection inputs from `benchmarks.yml` migrated.
-     * [ ] Baseline comparison steps from `ci-benchmarks-elite.yml` migrated.
-     * [ ] Scheduled cadence preserved and verified for at least 2 weeks.
      * [ ] Branch protection and downstream dependencies updated.
-   * Risks: Losing benchmark scenarios or baseline regression reporting; mitigate by migration and overlap period.
-   * Evidence: `./workflows/benchmarks.yml`, `./workflows/ci-benchmarks-elite.yml`, `./workflows/ci-benchmarks.yml`
+     * [ ] Legacy schedules retired or migrated without duplicate runs.
+   * Risks: Duplicate benchmark runs while shims remain; mitigate by removing shims after protection verification.
+   * Evidence: `./workflows/_reusable_benchmarks.yml`, `./workflows/benchmarks.yml`, `./workflows/ci-benchmarks-elite.yml`, `./workflows/ci-benchmarks.yml`
 
 ---
 
 ## Completeness & Consistency
 
-* Inventory count: 22
-* Contract blocks count: 22
+* Inventory count: 23
+* Contract blocks count: 23
 * Missing: []
 * Mandatory named workflows present: YES (chaos-validation.yml, ci-validation-elite.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)

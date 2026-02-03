@@ -218,7 +218,7 @@ To establish a baseline for regression tracking:
 
 ## CI Integration
 
-The optional `benchmarks.yml` workflow:
+The `benchmarks.yml` workflow (standard tier, scenario profile):
 - Runs `ci_smoke` scenario (N=50, steps=100)
 - Uploads CSV/JSON artifacts
 - Does NOT block PR merges by default

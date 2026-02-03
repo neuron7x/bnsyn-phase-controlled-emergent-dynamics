@@ -32,7 +32,7 @@ Primary PR validation workflow with 10 blocking jobs:
 - `docs-build` - Sphinx documentation build
 - `tests-smoke` - Smoke test suite (reusable, 85% coverage)
 - `tests-core-only` - Core tests without optional deps
-- `ci-benchmarks` - Fast smoke benchmarks
+- `benchmarks.yml` (tier=standard, profile=ci) - Fast smoke benchmarks
 - `gitleaks` - Secret scanning
 - `pip-audit` - Dependency vulnerability scan
 
@@ -64,7 +64,7 @@ Daily validation of scientific claims and invariants:
 
 **Never Triggered On:** `pull_request` or `push` (isolated from PR gates)
 
-#### ci-benchmarks-elite.yml (NEW)
+#### benchmarks.yml (tier=elite, profile=elite)
 
 Weekly performance regression detection:
 
@@ -106,7 +106,7 @@ All workflows are **fork-safe** by design:
 | Claims Coverage | 30 days | ci-pr.yml | Evidence traceability |
 | Validation Logs | 30 days | ci-validation-elite.yml | Scientific validation |
 | Property Logs | 30 days | ci-validation-elite.yml | Invariant verification |
-| Benchmark Results | 90 days | ci-benchmarks-elite.yml | Performance tracking |
+| Benchmark Results | 90 days | benchmarks.yml (elite schedule) | Performance tracking |
 | Dependency Audit | 30 days | ci-pr.yml | Security compliance |
 
 ### Artifact Naming
