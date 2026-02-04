@@ -1,7 +1,7 @@
 name: ci-benchmarks
+# Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       tier:
@@ -34,31 +34,6 @@ on:
           - steps_sweep
           - conn_sweep
           - dt_sweep
-  workflow_call:
-    inputs:
-      tier:
-        description: "Benchmark tier to run (standard|elite)"
-        required: true
-        type: string
-      profile:
-        description: "Benchmark profile to run (micro|baseline|full|custom)"
-        required: true
-        type: string
-      scenario:
-        description: "Benchmark scenario to run (custom profile only)"
-        required: false
-        type: string
-        default: ci_smoke
-      publish_baseline:
-        description: "Publish baseline artifacts (standard baseline/full only)"
-        required: false
-        type: boolean
-        default: false
-    secrets:
-      BENCHMARK_GPG_PASSPHRASE:
-        required: false
-      SLACK_WEBHOOK_URL:
-        required: false
   schedule:
     - cron: '0 2 * * *'
     - cron: '0 3 * * 0'
@@ -67,15 +42,6 @@ permissions:
   contents: read
 
 jobs:
-  benchmarks-pr:
-    if: ${{ github.event_name == 'pull_request' }}
-    uses: ./.github/workflows/_reusable_benchmarks.yml
-    with:
-      tier: standard
-      profile: micro
-      scenario: ci_smoke
-    secrets: inherit
-
   benchmarks-dispatch:
     if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/_reusable_benchmarks.yml
@@ -84,16 +50,6 @@ jobs:
       profile: ${{ inputs.profile }}
       scenario: ${{ inputs.scenario }}
       publish_baseline: false
-    secrets: inherit
-
-  benchmarks-call:
-    if: ${{ github.event_name == 'workflow_call' }}
-    uses: ./.github/workflows/_reusable_benchmarks.yml
-    with:
-      tier: ${{ inputs.tier }}
-      profile: ${{ inputs.profile }}
-      scenario: ${{ inputs.scenario }}
-      publish_baseline: ${{ inputs.publish_baseline }}
     secrets: inherit
 
   benchmarks-standard:

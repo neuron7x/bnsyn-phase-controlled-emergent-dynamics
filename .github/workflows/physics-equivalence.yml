@@ -1,15 +1,7 @@
 name: physics-equivalence
+# Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
-  pull_request:
-    paths:
-      - 'src/bnsyn/**'
-      - 'scripts/benchmark_physics.py'
-      - 'scripts/verify_equivalence.py'
-      - '.github/workflows/physics-equivalence.yml'
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:

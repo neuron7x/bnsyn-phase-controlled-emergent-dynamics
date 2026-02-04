@@ -1,4 +1,5 @@
 name: ci-validation
+# Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
   workflow_dispatch:
@@ -27,17 +28,6 @@ on:
     - cron: "0 2 * * *"
     - cron: "0 4 * * *"
     - cron: "30 2 * * *"
-  workflow_call:
-    inputs:
-      mode:
-        description: 'Validation mode'
-        type: string
-        default: standard
-      chaos_subset:
-        description: 'Chaos test subset to run (chaos mode only)'
-        type: string
-        default: all
-
 permissions:
   contents: read
 
