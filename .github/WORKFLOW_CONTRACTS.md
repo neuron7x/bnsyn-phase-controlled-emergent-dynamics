@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 23
-**Breakdown:** 20 primary + 3 reusable
+**Total workflows:** 24
+**Breakdown:** 17 primary + 7 reusable
 
 ## Axiom Dictionary
 
@@ -29,20 +29,21 @@
 
 ## Workflow Inventory Index
 
-* Count: 23 workflows
+* Count: 24 workflows
 * Files (lexicographic):
   * _reusable_benchmarks.yml
+  * _reusable_chaos_tests.yml
+  * _reusable_property_tests.yml
   * _reusable_pytest.yml
   * _reusable_quality.yml
+  * _reusable_ssot.yml
+  * _reusable_validation_tests.yml
   * benchmarks.yml
-  * chaos-validation.yml
   * ci-benchmarks-elite.yml
   * ci-benchmarks.yml
   * ci-pr-atomic.yml
   * ci-pr.yml
-  * ci-property-tests.yml
   * ci-smoke.yml
-  * ci-validation-elite.yml
   * ci-validation.yml
   * codecov-health.yml
   * codeql.yml
@@ -124,6 +125,131 @@
 
 ---
 
+## _reusable_chaos_tests.yml
+
+**Path:** `.github/workflows/_reusable_chaos_tests.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable chaos test matrix job with fault-type fan-out and artifact capture.
+
+**Axiom focus:**
+
+* A5 — Chaos / Robustness / Fault Injection
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `test-subset`, `timeout-minutes`, `upload-artifacts`).
+
+**Timeout(s):**
+
+* `chaos-tests`: `${{ inputs['timeout-minutes'] }}`
+
+**Jobs:**
+
+* `chaos-tests` — Runs chaos tests per fault type with summaries and optional artifacts.
+
+**Evidence:**
+
+* `./workflows/_reusable_chaos_tests.yml`
+
+---
+
+## _reusable_property_tests.yml
+
+**Path:** `.github/workflows/_reusable_property_tests.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable property-based test job with optional Hypothesis profiles and artifact capture.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `markers`, `extra-args`, `hypothesis-profile`, `log-file`, `junit-file`, `junit-enabled`, `summary-title`, `upload-artifacts`, `upload-hypothesis-cache`, `artifact-name`, `timeout-minutes`).
+
+**Timeout(s):**
+
+* `property-tests`: `${{ inputs['timeout-minutes'] }}`
+
+**Jobs:**
+
+* `property-tests` — Runs property tests, writes summaries, and uploads artifacts if configured.
+
+**Evidence:**
+
+* `./workflows/_reusable_property_tests.yml`
+
+---
+
+## _reusable_ssot.yml
+
+**Path:** `.github/workflows/_reusable_ssot.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Provide reusable SSOT validation gates for bibliography, claims, and governance scans.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`).
+
+**Timeout(s):**
+
+* `ssot`: Not set
+
+**Jobs:**
+
+* `ssot` — Runs SSOT validation scripts.
+
+**Evidence:**
+
+* `./workflows/_reusable_ssot.yml`
+
+---
+
+## _reusable_validation_tests.yml
+
+**Path:** `.github/workflows/_reusable_validation_tests.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable validation test job with optional artifacts and summaries.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `markers`, `extra-args`, `log-file`, `junit-file`, `junit-enabled`, `summary-title`, `upload-artifacts`, `artifact-name`, `timeout-minutes`).
+
+**Timeout(s):**
+
+* `validation-tests`: `${{ inputs['timeout-minutes'] }}`
+
+**Jobs:**
+
+* `validation-tests` — Runs validation tests, writes summaries, and uploads artifacts if configured.
+
+**Evidence:**
+
+* `./workflows/_reusable_validation_tests.yml`
+
+---
+
 ## _reusable_benchmarks.yml
 
 **Path:** `.github/workflows/_reusable_benchmarks.yml`
@@ -188,43 +314,6 @@
 **Evidence:**
 
 * `./workflows/benchmarks.yml`
-
----
-
-## chaos-validation.yml
-
-**Path:** `.github/workflows/chaos-validation.yml`
-**Status:** Active
-
-**Intent (1–2 sentences):**
-
-* Execute chaos fault-injection tests and extended property tests to validate resilience and invariants under stress.
-
-**Axiom focus:**
-
-* A5 — Chaos / Robustness / Fault Injection
-* A2 — CI Correctness & Regression Safety
-
-**Trigger(s):**
-
-* `schedule` (nightly 04:00 UTC).
-* `workflow_dispatch` with `test_subset` input.
-
-**Timeout(s):**
-
-* `chaos-tests`: 60
-* `property-tests`: 45
-* `summary`: Not set
-
-**Jobs:**
-
-* `chaos-tests` — Matrixed chaos tests per fault type.
-* `property-tests` — Hypothesis property tests with statistics.
-* `summary` — Aggregates outcomes and fails on suite failure.
-
-**Evidence:**
-
-* `./workflows/chaos-validation.yml`
 
 ---
 
@@ -376,38 +465,6 @@
 
 ---
 
-## ci-property-tests.yml
-
-**Path:** `.github/workflows/ci-property-tests.yml`
-**Status:** Candidate for consolidation
-
-**Intent (1–2 sentences):**
-
-* Run nightly property-based tests using Hypothesis for invariant checking.
-
-**Axiom focus:**
-
-* A2 — CI Correctness & Regression Safety
-
-**Trigger(s):**
-
-* `schedule` (nightly 02:30 UTC).
-* `workflow_dispatch`.
-
-**Timeout(s):**
-
-* `property-tests`: 15
-
-**Jobs:**
-
-* `property-tests` — Runs Hypothesis property tests and uploads artifacts.
-
-**Evidence:**
-
-* `./workflows/ci-property-tests.yml`
-
----
-
 ## ci-smoke.yml
 
 **Path:** `.github/workflows/ci-smoke.yml`
@@ -442,14 +499,14 @@
 
 ---
 
-## ci-validation-elite.yml
+## ci-validation.yml
 
-**Path:** `.github/workflows/ci-validation-elite.yml`
+**Path:** `.github/workflows/ci-validation.yml`
 **Status:** Active
 
 **Intent (1–2 sentences):**
 
-* Execute daily scientific validation and property tests with artifacted summaries.
+* Orchestrate scheduled and manual validation modes (standard/elite/chaos) with SSOT, validation, property, and chaos suites.
 
 **Axiom focus:**
 
@@ -457,54 +514,25 @@
 
 **Trigger(s):**
 
-* `schedule` (daily 02:00 UTC).
-* `workflow_dispatch`.
-
-**Timeout(s):**
-
-* `validation`: 30
-* `property-tests`: 30
-* `summary`: Not set
-
-**Jobs:**
-
-* `validation` — Runs validation test suite with logs and artifacts.
-* `property-tests` — Runs Hypothesis property tests with logs and artifacts.
-* `summary` — Generates aggregate summary and notes non-blocking status.
-
-**Evidence:**
-
-* `./workflows/ci-validation-elite.yml`
-
----
-
-## ci-validation.yml
-
-**Path:** `.github/workflows/ci-validation.yml`
-**Status:** Candidate for consolidation
-
-**Intent (1–2 sentences):**
-
-* Run weekly SSOT checks and validation tests on schedule or manual dispatch.
-
-**Axiom focus:**
-
-* A2 — CI Correctness & Regression Safety
-
-**Trigger(s):**
-
-* `workflow_dispatch`.
-* `schedule` (weekly Sunday 03:00 UTC).
+* `workflow_dispatch` with `mode` and `chaos_subset` inputs.
+* `schedule` (weekly Sunday 03:00 UTC, daily 02:00 UTC, daily 02:30 UTC, daily 04:00 UTC).
 
 **Timeout(s):**
 
 * `ssot`: Not set
-* `tests-validation`: Not set
+* `validation-tests`: 30
+* `property-tests`: 30
+* `chaos-tests`: 60
 
 **Jobs:**
 
-* `ssot` — Validates bibliography/claims/governed docs/normative tags.
-* `tests-validation` — Runs validation tests.
+* `determine` — Resolves scheduled/manual mode inputs.
+* `ssot` — Runs SSOT checks (standard mode).
+* `validation-tests` — Runs validation tests (standard/elite).
+* `property-tests` — Runs property tests (elite/chaos).
+* `chaos-tests` — Runs chaos matrix tests (chaos).
+* `elite-summary` — Aggregates validation + property results (elite).
+* `chaos-summary` — Aggregates chaos + property results and fails on suite failure (chaos).
 
 **Evidence:**
 
@@ -847,25 +875,20 @@
    * Risks: Branch protection or external status check dependencies could block merges; mitigate by updating protection rules and notifying integrators.
    * Evidence: `./workflows/ci-smoke.yml`, `./workflows/ci-pr-atomic.yml`
 
-2. **ci-validation.yml vs ci-validation-elite.yml** (Candidate for consolidation)
-   * Rationale: Both use `schedule` + `workflow_dispatch` and run validation suites; `ci-validation-elite` includes validation + property tests, while `ci-validation` runs SSOT + validation.
-   * Safe target: `ci-validation-elite.yml` as SSOT after adding SSOT coverage or calling a reusable SSOT job.
-   * Removal criteria:
-     * [ ] SSOT checks added to `ci-validation-elite.yml` or provided via reusable job.
-     * [ ] Parity validation run confirms equivalent validation outputs.
-     * [ ] Weekly cadence requirements documented or rescheduled in `ci-validation-elite.yml`.
-   * Risks: Losing weekly-only reporting or SSOT visibility; mitigate by maintaining schedule parity or adding reporting artifacts.
-   * Evidence: `./workflows/ci-validation.yml`, `./workflows/ci-validation-elite.yml`
+2. **ci-validation.yml (mode orchestration)** (Consolidation completed)
+   * Rationale: Validation, property, and chaos suites are orchestrated via a single workflow with mode routing.
+   * Current state: `ci-validation.yml` routes standard/elite/chaos schedules and dispatch inputs to reusable jobs.
+   * Follow-up criteria:
+     * [ ] Confirm branch protection expects `ci-validation`.
+     * [ ] Confirm scheduled cadence matches prior weekly/daily runs.
+   * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_ssot.yml`, `./workflows/_reusable_validation_tests.yml`, `./workflows/_reusable_property_tests.yml`, `./workflows/_reusable_chaos_tests.yml`
 
-3. **ci-property-tests.yml vs chaos-validation.yml** (Candidate for consolidation)
-   * Rationale: Both run `schedule` + `workflow_dispatch` and execute property tests; `chaos-validation` already includes a `property-tests` job.
-   * Safe target: `chaos-validation.yml` as SSOT for property tests.
-   * Removal criteria:
-     * [ ] Hypothesis profile parity confirmed (`ci` vs `thorough`).
-     * [ ] Runtime/cadence impact documented and accepted.
-     * [ ] Branch protection or required checks updated if needed.
-   * Risks: Profile differences may change coverage or runtime; mitigate by aligning profiles before removal.
-   * Evidence: `./workflows/ci-property-tests.yml`, `./workflows/chaos-validation.yml`
+3. **ci-validation.yml (property mode)** (Consolidation completed)
+   * Rationale: Property tests are now scheduled and dispatched via `ci-validation.yml` with a dedicated `property` mode.
+   * Current state: `ci-validation.yml` owns the 02:30 UTC property schedule and `workflow_dispatch` supports `mode=property`.
+   * Follow-up criteria:
+     * [ ] Confirm property mode cadence and profile alignment with `ci` expectations.
+   * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_property_tests.yml`
 
 4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Consolidation in progress)
    * Rationale: Benchmark execution is centralized in `_reusable_benchmarks.yml`, with `ci-benchmarks.yml` as the canonical entrypoint.
@@ -880,7 +903,7 @@
 
 ## Completeness & Consistency
 
-* Inventory count: 23
-* Contract blocks count: 23
+* Inventory count: 24
+* Contract blocks count: 24
 * Missing: []
-* Mandatory named workflows present: YES (chaos-validation.yml, ci-validation-elite.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)
+* Mandatory named workflows present: YES (ci-validation.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)

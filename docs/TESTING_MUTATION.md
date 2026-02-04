@@ -132,9 +132,9 @@ All chaos tests are:
 
 ### Chaos Workflow
 
-The `.github/workflows/chaos-validation.yml` workflow:
+The `.github/workflows/ci-validation.yml` workflow (mode: `chaos`):
 - Runs nightly at 4 AM UTC
-- Can run specific fault types via `test_subset` input
+- Can run specific fault types via `chaos_subset` input
 - Includes property-based tests with thorough profile (1000 examples)
 
 ## Formal Verification

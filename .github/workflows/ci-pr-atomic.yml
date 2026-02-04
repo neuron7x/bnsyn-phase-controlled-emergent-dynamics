@@ -61,13 +61,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version || '3.11' }}
+          python-version: ${{ inputs['python-version'] || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - name: Test determinism (run 1)
         id: run1
@@ -124,7 +126,7 @@ jobs:
   quality:
     uses: ./.github/workflows/_reusable_quality.yml
     with:
-      python-version: ${{ inputs.python-version || '3.11' }}
+      python-version: ${{ inputs['python-version'] || '3.11' }}
       mypy-strict: true
       pylint-threshold: 7.5
 
@@ -134,13 +136,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version || '3.11' }}
+          python-version: ${{ inputs['python-version'] || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]" build
       - run: python -m build
       - run: python -c "import bnsyn; print(bnsyn.__version__)"
@@ -148,11 +152,11 @@ jobs:
   tests-smoke:
     uses: ./.github/workflows/_reusable_pytest.yml
     with:
-      python-version: ${{ inputs.python-version || '3.11' }}
-      markers: ${{ inputs.pytest-markers || 'not (validation or property)' }}
-      coverage-threshold: ${{ fromJSON(inputs.coverage-threshold || '95') }}
-      timeout-minutes: ${{ fromJSON(inputs.pytest-timeout-minutes || '10') }}
-      upload-codecov: ${{ inputs.upload-codecov || true }}
+      python-version: ${{ inputs['python-version'] || '3.11' }}
+      markers: ${{ inputs['pytest-markers'] || 'not (validation or property)' }}
+      coverage-threshold: ${{ fromJSON(inputs['coverage-threshold'] || '95') }}
+      timeout-minutes: ${{ fromJSON(inputs['pytest-timeout-minutes'] || '10') }}
+      upload-codecov: ${{ inputs['upload-codecov'] || true }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -162,13 +166,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version || '3.11' }}
+          python-version: ${{ inputs['python-version'] || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - run: python scripts/validate_bibliography.py
       - run: python scripts/validate_claims.py
@@ -183,13 +189,15 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version || '3.11' }}
+          python-version: ${{ inputs['python-version'] || '3.11' }}
           cache: "pip"
           cache-dependency-path: |
             pyproject.toml
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - name: gitleaks
         uses: gitleaks/gitleaks-action@v2
@@ -207,6 +215,7 @@ jobs:
         with:
           name: security-report-${{ github.sha }}
           path: artifacts/pip-audit.json
+          if-no-files-found: ignore
           retention-days: 30
 
   finalize:

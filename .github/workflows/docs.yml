@@ -26,6 +26,9 @@ jobs:
       - name: Pin pip
         uses: ./.github/actions/pin-pip
 
+      - name: Log pip version
+        run: python -m pip --version
+
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test]"
 
@@ -37,4 +40,5 @@ jobs:
         with:
           name: docs-html-${{ github.sha }}
           path: docs/_build/html
+          if-no-files-found: ignore
           retention-days: 7

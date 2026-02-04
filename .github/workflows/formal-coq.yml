@@ -107,6 +107,7 @@ jobs:
             specs/coq/coq_summary.md
             specs/coq/*.vo
             specs/coq/*.glob
+          if-no-files-found: ignore
           retention-days: 30
       
       - name: Check compilation status

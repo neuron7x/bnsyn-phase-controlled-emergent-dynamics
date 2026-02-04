@@ -50,10 +50,10 @@ jobs:
   ci-pr-atomic:
     uses: ./.github/workflows/ci-pr-atomic.yml
     with:
-      python-version: ${{ inputs.python-version }}
-      pytest-markers: ${{ inputs.pytest-markers }}
-      coverage-threshold: ${{ fromJSON(inputs.coverage-threshold) }}
-      pytest-timeout-minutes: ${{ fromJSON(inputs.pytest-timeout-minutes) }}
-      upload-codecov: ${{ fromJSON(inputs.upload-codecov) }}
+      python-version: ${{ inputs['python-version'] }}
+      pytest-markers: ${{ inputs['pytest-markers'] }}
+      coverage-threshold: ${{ fromJSON(inputs['coverage-threshold']) }}
+      pytest-timeout-minutes: ${{ fromJSON(inputs['pytest-timeout-minutes']) }}
+      upload-codecov: ${{ fromJSON(inputs['upload-codecov']) }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

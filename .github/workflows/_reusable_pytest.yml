@@ -28,11 +28,14 @@ on:
         description: 'Codecov token (required if upload-codecov is true)'
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   pytest:
-    name: Pytest (Coverage ${{ inputs.coverage-threshold }}%)
+    name: Pytest (Coverage ${{ inputs['coverage-threshold'] }}%)
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout-minutes }}
+    timeout-minutes: ${{ inputs['timeout-minutes'] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,11 +43,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ inputs['python-version'] }}
           cache: 'pip'
       
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
 
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test,viz]"
@@ -59,7 +65,7 @@ jobs:
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
             --cov-report=html \
-            --cov-fail-under="${{ inputs.coverage-threshold }}" \
+            --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
             --junit-xml=junit.xml \
             -v 2>&1 | tee pytest.log
           PYTEST_EXIT=$?
@@ -103,10 +109,10 @@ jobs:
             fi
             echo "| Tests Run | ${{ env.TEST_COUNT }} |"
             echo "| Coverage | ${{ env.COVERAGE }}% |"
-            echo "| Threshold | ${{ inputs.coverage-threshold }}% |"
+            echo "| Threshold | ${{ inputs['coverage-threshold'] }}% |"
             echo "| Duration | ${{ env.DURATION }}s |"
             echo "| Markers | \`${{ inputs.markers }}\` |"
-            echo "| Python | ${{ inputs.python-version }} |"
+            echo "| Python | ${{ inputs['python-version'] }} |"
             echo ""
             
             # Show failure details if tests failed
@@ -150,19 +156,19 @@ jobs:
               echo "git checkout ${{ github.sha }}"
               echo ""
               echo "# Install dependencies"
-              echo "python${{ inputs.python-version }} -m pip install -e \".[dev,viz]\""
+              echo "python${{ inputs['python-version'] }} -m pip install -e \".[dev,viz]\""
               echo ""
               echo "# Run tests"
               echo "pytest -m \"${{ inputs.markers }}\" \\"
               echo "  --cov=src/bnsyn \\"
-              echo "  --cov-fail-under=${{ inputs.coverage-threshold }} \\"
+              echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
               echo "  -v"
               echo "\`\`\`"
             fi
           } >> "$summary_file"
       
       - name: Upload coverage to Codecov
-        if: inputs.upload-codecov && always()
+        if: inputs['upload-codecov'] && always()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -183,6 +189,7 @@ jobs:
             junit.xml
             htmlcov/
             coverage.json
+          if-no-files-found: ignore
           retention-days: 7
       
       - name: Upload coverage artifact on success
@@ -191,6 +198,7 @@ jobs:
         with:
           name: coverage-report-${{ github.sha }}
           path: htmlcov/
+          if-no-files-found: ignore
           retention-days: 30
       
       - name: Fail if tests failed
