@@ -41,7 +41,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 
 | Workflow File | Workflow Name | Job IDs (must pass on PRs) |
 | --- | --- | --- |
-| `ci-pr-atomic.yml` | `ci-pr-atomic` | `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
 
 ## Gate Class Policy (Normative)
@@ -53,7 +53,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 
 ## Workflow Inventory Index
 
-* Count: 25 workflows
+* Count: 26 workflows
 * Files (lexicographic):
   * _reusable_benchmarks.yml
   * _reusable_chaos_tests.yml
