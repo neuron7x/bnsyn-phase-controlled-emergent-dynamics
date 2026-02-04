@@ -1,0 +1,17 @@
+version: "1"
+required_pr_gates:
+  - workflow_file: "ci-pr-atomic.yml"
+    workflow_name: "ci-pr-atomic"
+    required_job_ids:
+      - gate-profile
+      - determinism
+      - quality
+      - build
+      - tests-smoke
+      - ssot
+      - security
+      - finalize
+  - workflow_file: "workflow-integrity.yml"
+    workflow_name: "Workflow Integrity"
+    required_job_ids:
+      - validate-workflows
