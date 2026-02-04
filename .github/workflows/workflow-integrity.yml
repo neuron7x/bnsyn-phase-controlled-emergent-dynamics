@@ -23,31 +23,51 @@ jobs:
           set -euo pipefail
           guard_line="# Guard: non-PR-gate workflow; must remain off PRs."
           mapfile -t files < <(
-            rg -l --fixed-strings "$guard_line" .github/workflows/*.yml || true
+            grep -rlF --include='*.yml' -- "$guard_line" \
+              .github/workflows || true
           )
           if [ "${#files[@]}" -eq 0 ]; then
             echo "Guard line not found in any workflow."
+            echo "Either add the guard line to intended non-PR workflows"
+            echo "or remove this policy step."
             exit 1
           fi
           violations=0
           for file in "${files[@]}"; do
             awk '
-              /^on:/ {in_on=1; next}
+              BEGIN { in_on=0; found=0 }
+
+              /^on:[[:space:]]*\[/ {
+                if ($0 ~ /pull_request/ || $0 ~ /push/ ||
+                    $0 ~ /workflow_call/) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+                next
+              }
+
+              /^on:[[:space:]]*$/ { in_on=1; next }
+
               in_on {
                 if ($0 ~ /^[^[:space:]]/) { exit }
-                if ($0 ~ /^[[:space:]]*(pull_request|push|workflow_call):/) {
+                pattern = "^[[:space:]]*(pull_request|push|workflow_call)"
+                pattern = pattern "[[:space:]]*:"
+                if ($0 ~ pattern) {
                   print FILENAME ":" NR ":" $0
                   found=1
                 }
               }
+
               END { if (found) exit 2 }
             ' "$file" || violations=1
           done
           if [ "$violations" -ne 0 ]; then
             echo "Non-PR workflow trigger violations detected."
-            echo "Remove pull_request/push/workflow_call from on: blocks."
+            echo "Guarded workflows MUST NOT declare pull_request/push/"
+            echo "workflow_call under on:."
             exit 1
           fi
+          echo "Guarded workflows: trigger policy OK."
       - name: Install shellcheck
         run: |
           sudo apt-get update
@@ -56,6 +76,14 @@ jobs:
         uses: rhysd/actionlint@v1.7.7
         with:
           args: -shellcheck=shellcheck -verbose
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - name: Scan workflow files for tabs or non-ASCII
         shell: bash
         run: |
@@ -93,14 +121,6 @@ jobs:
 
           print('Workflow integrity checks passed.')
           PY
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-      - name: Log pip version
-        run: python -m pip --version
       - name: Install safety checker dependencies
         run: python -m pip install pyyaml jsonschema
       - name: Validate safety artifacts
