@@ -78,12 +78,10 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
 | `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
-| `ci-smoke.yml` | `ci-smoke` | PR-gate | `push` | NO |
-EXCEPTION: ci-smoke.yml - PR-gate without pull_request; non-blocking smoke signal.
+| `ci-smoke.yml` | `ci-smoke` | long-running | `workflow_dispatch` | NO |
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
-| `codeql.yml` | `CodeQL` | PR-gate | `push, schedule, workflow_dispatch` | NO |
-EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push/schedule.
+| `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
 | `docs.yml` | `docs` | long-running | `workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
@@ -565,7 +563,7 @@ EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push
 **Path:** `.github/workflows/ci-pr-atomic.yml`
 **Status:** Active
 
-**Gate Class:** PR-gate
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -654,11 +652,11 @@ EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push
 **Path:** `.github/workflows/ci-smoke.yml`
 **Status:** Candidate for consolidation
 
-**Gate Class:** PR-gate
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
-* Provides optional A2 smoke/SSOT signal, classified as PR-gate for trigger policy alignment while `ci-pr-atomic.yml` remains the required PR gate.
+* Provides optional A2 smoke/SSOT signal as a non-blocking long-running workflow.
 
 **Intent (1–2 sentences):**
 
@@ -670,7 +668,7 @@ EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push
 
 **Trigger(s):**
 
-* `push` (branches: `main`).
+* `workflow_dispatch`.
 
 **Timeout(s):**
 
@@ -778,11 +776,11 @@ EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push
 **Path:** `.github/workflows/codeql.yml`
 **Status:** Active
 
-**Gate Class:** PR-gate
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
-* Scheduled/push CodeQL analysis supports A9 security hygiene as a non-blocking PR-gate classification.
+* Scheduled CodeQL analysis supports A9 security hygiene as a non-blocking long-running check.
 
 **Intent (1–2 sentences):**
 
@@ -794,7 +792,6 @@ EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push
 
 **Trigger(s):**
 
-* `push` (branches: `main`).
 * `schedule` (weekly Sunday 04:00 UTC).
 * `workflow_dispatch`.
 
