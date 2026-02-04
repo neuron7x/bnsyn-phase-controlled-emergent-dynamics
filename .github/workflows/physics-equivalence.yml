@@ -1,6 +1,6 @@
-# NON-PR-GATE: long-running workflow; must not run on pull_request/push.
-# Guard: non-PR-gate workflow; must remain off PRs.
 name: physics-equivalence
+# Guard: non-PR-gate workflow; must remain off PRs.
+# NON-PR-GATE: long-running workflow; must not run on pull_request/push.
 
 on:
   workflow_dispatch:
