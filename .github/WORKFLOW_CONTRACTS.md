@@ -390,7 +390,7 @@
 ## benchmarks.yml
 
 **Path:** `.github/workflows/benchmarks.yml`
-**Status:** Deprecated shim (delegates to `ci-benchmarks.yml`)
+**Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
 
 **Gate Class:** Long-running
 
@@ -400,7 +400,7 @@
 
 **Intent (1–2 sentences):**
 
-* Preserve legacy entrypoints and schedules while delegating execution to `ci-benchmarks.yml`.
+* Preserve legacy entrypoints while delegating execution to `_reusable_benchmarks.yml`.
 
 **Axiom focus:**
 
@@ -416,7 +416,7 @@
 
 **Jobs:**
 
-* `benchmarks-dispatch` — Delegates workflow_dispatch inputs to `ci-benchmarks.yml`.
+* `benchmarks-dispatch` — Delegates workflow_dispatch inputs to `_reusable_benchmarks.yml`.
 
 **Evidence:**
 
@@ -427,7 +427,7 @@
 ## ci-benchmarks-elite.yml
 
 **Path:** `.github/workflows/ci-benchmarks-elite.yml`
-**Status:** Deprecated shim (delegates to `ci-benchmarks.yml`)
+**Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
 
 **Gate Class:** Long-running
 
@@ -437,7 +437,7 @@
 
 **Intent (1–2 sentences):**
 
-* Preserve the legacy elite benchmark schedule while delegating execution to `ci-benchmarks.yml`.
+* Preserve the legacy elite benchmark dispatch while delegating execution to `_reusable_benchmarks.yml`.
 
 **Axiom focus:**
 
@@ -453,7 +453,7 @@
 
 **Jobs:**
 
-* `benchmarks` — Delegates elite baseline to `ci-benchmarks.yml`.
+* `benchmarks` — Delegates elite baseline to `_reusable_benchmarks.yml`.
 
 **Evidence:**
 
@@ -482,22 +482,17 @@
 
 **Trigger(s):**
 
-* `pull_request`.
 * `schedule` (daily 02:00 UTC, weekly Sunday 03:00 UTC).
 * `workflow_dispatch`.
-* `workflow_call` with inputs (`tier`, `profile`, `scenario`, `publish_baseline`) and secrets `BENCHMARK_GPG_PASSPHRASE`, `SLACK_WEBHOOK_URL`.
 
 **Timeout(s):**
 
-* `benchmarks-pr`: Not set
 * `benchmarks-standard`: Not set
 * `benchmarks-elite`: Not set
 
 **Jobs:**
 
-* `benchmarks-pr` — Delegates micro benchmarks to `_reusable_benchmarks.yml`.
 * `benchmarks-dispatch` — Delegates user-selected tier/profile to `_reusable_benchmarks.yml`.
-* `benchmarks-call` — Delegates workflow callers to `_reusable_benchmarks.yml`.
 * `benchmarks-standard` — Delegates daily baseline to `_reusable_benchmarks.yml`.
 * `benchmarks-elite` — Delegates elite baseline to `_reusable_benchmarks.yml`.
 
@@ -1085,7 +1080,7 @@
 
 **Jobs:**
 
-* `validate-workflows` — Runs actionlint, scans for encoding violations, and validates safety artifacts.
+* `validate-workflows` — Enforces non-PR workflow trigger policy, runs actionlint, scans workflows/docs for control or tab characters (and non-ASCII in workflow YAML), validates safety artifacts, and checks inventory drift.
 
 **Evidence:**
 
@@ -1116,7 +1111,7 @@
 
 4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Consolidation in progress)
    * Rationale: Benchmark execution is centralized in `_reusable_benchmarks.yml`, with `ci-benchmarks.yml` as the canonical entrypoint.
-   * Current state: `benchmarks.yml` and `ci-benchmarks-elite.yml` are compatibility shims delegating to `ci-benchmarks.yml`.
+   * Current state: `benchmarks.yml` and `ci-benchmarks-elite.yml` are compatibility shims delegating directly to `_reusable_benchmarks.yml`.
    * Removal criteria: REQUIRES branch protection to require only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and downstream dependencies updated; REQUIRES legacy schedules to be retired or migrated without duplicate runs.
    * Risks: Duplicate benchmark runs while shims remain; mitigate by removing shims after protection verification.
    * Evidence: `./workflows/_reusable_benchmarks.yml`, `./workflows/benchmarks.yml`, `./workflows/ci-benchmarks-elite.yml`, `./workflows/ci-benchmarks.yml`

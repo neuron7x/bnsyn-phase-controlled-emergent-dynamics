@@ -1,4 +1,5 @@
 name: science
+# Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
   workflow_dispatch:

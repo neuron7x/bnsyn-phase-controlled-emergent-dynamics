@@ -1,4 +1,5 @@
 # DEPRECATED: compatibility shim; remove after protection update
+# Guard: non-PR-gate workflow; must remain off PRs.
 name: benchmarks
 
 on:
@@ -41,9 +42,10 @@ permissions:
 jobs:
   benchmarks-dispatch:
     if: ${{ github.event_name == 'workflow_dispatch' }}
-    uses: ./.github/workflows/ci-benchmarks.yml
+    uses: ./.github/workflows/_reusable_benchmarks.yml
     with:
       tier: ${{ inputs.tier }}
       profile: ${{ inputs.profile }}
       scenario: ${{ inputs.scenario }}
+      publish_baseline: false
     secrets: inherit
