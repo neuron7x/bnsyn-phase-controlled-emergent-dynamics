@@ -58,6 +58,7 @@ The workflows below are the required PR gates that must pass on pull requests.
   * _reusable_benchmarks.yml
   * _reusable_chaos_tests.yml
   * _reusable_formal_science.yml
+  * _reusable_gate_profile.yml
   * _reusable_property_tests.yml
   * _reusable_pytest.yml
   * _reusable_quality.yml
@@ -393,6 +394,43 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Evidence:**
 
 * `./workflows/_reusable_formal_science.yml`
+
+---
+
+## _reusable_gate_profile.yml
+
+**Path:** `.github/workflows/_reusable_gate_profile.yml`
+**Status:** Active
+
+**Gate Class:** Manual-only
+
+**Gate Rationale:**
+
+* Centralizes deterministic gate criteria for caller workflows without serving as a standalone PR gate.
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable gate-profile selector that outputs standardized test markers, timeouts, and coverage thresholds for PR and long-running workflows.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with input (`profile`) returning normalized outputs for gate criteria.
+
+**Timeout(s):**
+
+* `profile`: Not set
+
+**Jobs:**
+
+* `profile` — Resolves the requested profile into explicit marker, timeout, and coverage outputs.
+
+**Evidence:**
+
+* `./workflows/_reusable_gate_profile.yml`
 
 ---
 

@@ -6,15 +6,6 @@ on:
       python-version:
         type: string
         default: "3.11"
-      pytest-markers:
-        type: string
-        default: "not (validation or property)"
-      coverage-threshold:
-        type: string
-        default: "95"
-      pytest-timeout-minutes:
-        type: string
-        default: "10"
       upload-codecov:
         type: string
         default: "true"
@@ -23,15 +14,6 @@ on:
       python-version:
         type: string
         default: "3.11"
-      pytest-markers:
-        type: string
-        default: "not (validation or property)"
-      coverage-threshold:
-        type: string
-        default: "95"
-      pytest-timeout-minutes:
-        type: string
-        default: "10"
       upload-codecov:
         type: string
         default: "true"
@@ -51,9 +33,6 @@ jobs:
     uses: ./.github/workflows/ci-pr-atomic.yml
     with:
       python-version: ${{ inputs['python-version'] }}
-      pytest-markers: ${{ inputs['pytest-markers'] }}
-      coverage-threshold: ${{ fromJSON(inputs['coverage-threshold']) }}
-      pytest-timeout-minutes: ${{ fromJSON(inputs['pytest-timeout-minutes']) }}
       upload-codecov: ${{ fromJSON(inputs['upload-codecov']) }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
