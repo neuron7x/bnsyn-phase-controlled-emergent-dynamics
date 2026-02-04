@@ -1,4 +1,5 @@
 {
+  "_generated_by": "python tools/generate_inventory.py",
   "paths": [
     "src",
     "tests",

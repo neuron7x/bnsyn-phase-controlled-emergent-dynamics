@@ -17,6 +17,44 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Enforce non-PR workflow triggers
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            ".github/workflows/benchmarks.yml"
+            ".github/workflows/ci-benchmarks.yml"
+            ".github/workflows/ci-benchmarks-elite.yml"
+            ".github/workflows/ci-validation.yml"
+            ".github/workflows/formal-coq.yml"
+            ".github/workflows/formal-tla.yml"
+            ".github/workflows/physics-equivalence.yml"
+            ".github/workflows/science.yml"
+          )
+          violations=0
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Missing expected workflow file: $file"
+              violations=1
+              continue
+            fi
+            awk '
+              /^on:/ {in_on=1; next}
+              in_on {
+                if ($0 ~ /^[^[:space:]]/) { exit }
+                if ($0 ~ /^[[:space:]]*(pull_request|push|workflow_call):/) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+              }
+              END { if (found) exit 2 }
+            ' "$file" || violations=1
+          done
+          if [ "$violations" -ne 0 ]; then
+            echo "Non-PR workflow trigger violations detected."
+            echo "Remove pull_request/push/workflow_call from on: blocks."
+            exit 1
+          fi
       - name: Install shellcheck
         run: |
           sudo apt-get update
@@ -45,10 +83,12 @@ jobs:
                   for ch in line:
                       codepoint = ord(ch)
                       if codepoint > 0x7F:
-                          offenders.append((path, line_no, f'NON_ASCII U+{codepoint:04X}'))
+                          detail = f'NON_ASCII U+{codepoint:04X}'
+                          offenders.append((path, line_no, detail))
                       category = unicodedata.category(ch)
                       if category in {'Cf', 'Cc'} and ch not in {'\n', '\r'}:
-                          offenders.append((path, line_no, f'CONTROL_OR_BIDI {category} U+{codepoint:04X}'))
+                          detail = f'CONTROL_OR_BIDI {category} U+{codepoint:04X}'
+                          offenders.append((path, line_no, detail))
 
           if offenders:
               for path, line_no, detail in offenders:
