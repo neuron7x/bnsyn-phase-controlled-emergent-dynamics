@@ -78,9 +78,11 @@ def test_long_running_pull_request_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[pull_request] forbidden=[pull_request]",
+        "reusable=NO triggers=[pull_request] forbidden=[pull_request] "
+        "diff=missing=[] extra=[pull_request]",
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[pull_request] expected=[schedule,workflow_dispatch]",
+        "reusable=NO triggers=[pull_request] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[schedule,workflow_dispatch] extra=[pull_request]",
     ]
 
 
@@ -100,9 +102,10 @@ def test_long_running_push_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[push] forbidden=[push]",
+        "reusable=NO triggers=[push] forbidden=[push] diff=missing=[] extra=[push]",
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch]",
+        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[schedule,workflow_dispatch] extra=[push]",
     ]
 
 
@@ -122,9 +125,11 @@ def test_long_running_combined_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[pull_request,push] forbidden=[pull_request,push]",
+        "reusable=NO triggers=[pull_request,push] forbidden=[pull_request,push] "
+        "diff=missing=[] extra=[pull_request,push]",
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[pull_request,push] expected=[schedule,workflow_dispatch]",
+        "reusable=NO triggers=[pull_request,push] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[schedule,workflow_dispatch] extra=[pull_request,push]",
     ]
 
 
@@ -144,7 +149,8 @@ def test_long_running_missing_schedule_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[workflow_dispatch] expected=[schedule,workflow_dispatch]"
+        "reusable=NO triggers=[workflow_dispatch] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[schedule] extra=[]"
     ]
 
 
@@ -164,7 +170,8 @@ def test_long_running_missing_workflow_dispatch_violation(tmp_path: Path) -> Non
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[schedule] expected=[schedule,workflow_dispatch]"
+        "reusable=NO triggers=[schedule] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[workflow_dispatch] extra=[]"
     ]
 
 
@@ -189,7 +196,30 @@ def test_long_running_extra_trigger_violation(tmp_path: Path) -> None:
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
         "reusable=NO triggers=[schedule,workflow_call,workflow_dispatch] "
-        "expected=[schedule,workflow_dispatch]"
+        "expected=[schedule,workflow_dispatch] diff=missing=[] extra=[workflow_call]"
+    ]
+
+
+def test_long_running_non_reusable_ok(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "long.yml",
+                "gate_class": "long-running",
+            }
+        ],
+    )
+    write_workflow(
+        tmp_path,
+        "long.yml",
+        {"schedule": None, "workflow_dispatch": None},
+    )
+    result = run_check(tmp_path)
+    assert result.exit_code == 0
+    assert result.output_lines == [
+        "OK: long_running_trigger_policy workflows=1 violations=0"
     ]
 
 
@@ -213,9 +243,10 @@ def test_reusable_long_running_schedule_violation(tmp_path: Path) -> None:
     result = run_check(tmp_path)
     assert result.exit_code == 2
     assert result.output_lines == [
-        "VIOLATION: LONG_RUNNING_TRIGGER_SET reusable.yml class=long-running "
+        "VIOLATION: LONG_RUNNING_REUSABLE_TRIGGER_SET reusable.yml class=long-running "
         "reusable=YES triggers=[schedule,workflow_call] "
-        "allowed=[workflow_call] or [workflow_call,workflow_dispatch]"
+        "expected=[workflow_call,workflow_dispatch] required=[workflow_call] "
+        "diff=missing=[] extra=[schedule]"
     ]
 
 
@@ -263,6 +294,75 @@ def test_reusable_long_running_allows_dispatch(tmp_path: Path) -> None:
     ]
 
 
+def test_reusable_long_running_missing_workflow_call(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "reusable.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "reusable.yml", "workflow_dispatch")
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: LONG_RUNNING_REUSABLE_TRIGGER_SET reusable.yml class=long-running "
+        "reusable=YES triggers=[workflow_dispatch] "
+        "expected=[workflow_call,workflow_dispatch] required=[workflow_call] "
+        "diff=missing=[workflow_call] extra=[]"
+    ]
+
+
+def test_reusable_prefix_workflow_dispatch_violation(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "_reusable_alpha.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(
+        tmp_path,
+        "_reusable_alpha.yml",
+        {"workflow_call": None, "workflow_dispatch": None},
+    )
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: REUSABLE_PREFIX_TRIGGER_SET _reusable_alpha.yml class=long-running "
+        "reusable=YES triggers=[workflow_call,workflow_dispatch] "
+        "expected=[workflow_call] diff=missing=[] extra=[workflow_dispatch]"
+    ]
+
+
+def test_reusable_prefix_ok(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "_reusable_alpha.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "_reusable_alpha.yml", "workflow_call")
+    result = run_check(tmp_path)
+    assert result.exit_code == 0
+    assert result.output_lines == [
+        "OK: long_running_trigger_policy workflows=1 violations=0"
+    ]
+
+
 def test_pr_gate_allows_push_and_pull_request(tmp_path: Path) -> None:
     write_pyproject(tmp_path)
     write_contracts(
@@ -282,6 +382,27 @@ def test_pr_gate_allows_push_and_pull_request(tmp_path: Path) -> None:
     ]
 
 
+def test_pr_gate_requires_pull_request_without_exception(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "gate.yml",
+                "gate_class": "PR-gate",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "gate.yml", "workflow_dispatch")
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: PR_GATE_MISSING_PULL_REQUEST gate.yml class=PR-gate "
+        "reusable=NO triggers=[workflow_dispatch] required=[pull_request] "
+        "diff=missing=[pull_request] extra=[workflow_dispatch]"
+    ]
+
+
 def test_missing_inventory_row(tmp_path: Path) -> None:
     write_pyproject(tmp_path)
     write_contracts(
@@ -293,7 +414,7 @@ def test_missing_inventory_row(tmp_path: Path) -> None:
             }
         ],
     )
-    write_workflow(tmp_path, "present.yml", "workflow_dispatch")
+    write_workflow(tmp_path, "present.yml", "pull_request")
     write_workflow(tmp_path, "missing.yml", "workflow_dispatch")
     result = run_check(tmp_path)
     assert result.exit_code == 2
@@ -317,7 +438,7 @@ def test_extra_inventory_row(tmp_path: Path) -> None:
             },
         ],
     )
-    write_workflow(tmp_path, "present.yml", "workflow_dispatch")
+    write_workflow(tmp_path, "present.yml", "pull_request")
     result = run_check(tmp_path)
     assert result.exit_code == 2
     assert result.output_lines == [
@@ -354,9 +475,9 @@ def test_on_section_forms(tmp_path: Path) -> None:
             {"workflow_file": "dict.yml", "gate_class": "PR-gate"},
         ],
     )
-    write_workflow(tmp_path, "str.yml", "workflow_dispatch")
-    write_workflow(tmp_path, "list.yml", ["workflow_dispatch", "push"])
-    write_workflow(tmp_path, "dict.yml", {"workflow_dispatch": None})
+    write_workflow(tmp_path, "str.yml", "pull_request")
+    write_workflow(tmp_path, "list.yml", ["workflow_dispatch", "pull_request"])
+    write_workflow(tmp_path, "dict.yml", {"pull_request": None})
     result = run_check(tmp_path)
     assert result.exit_code == 0
     assert result.output_lines == [
@@ -455,7 +576,7 @@ def test_duplicate_inventory_rows(tmp_path: Path) -> None:
             },
         ],
     )
-    write_workflow(tmp_path, "dup.yml", "workflow_dispatch")
+    write_workflow(tmp_path, "dup.yml", "pull_request")
     result = run_check(tmp_path)
     assert result.exit_code == 2
     assert result.output_lines == [
@@ -499,9 +620,10 @@ def test_dry_run_masks_violations(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[push] forbidden=[push]",
+        "reusable=NO triggers=[push] forbidden=[push] diff=missing=[] extra=[push]",
         "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
-        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch]",
+        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch] "
+        "diff=missing=[schedule,workflow_dispatch] extra=[push]",
     ]
 
 

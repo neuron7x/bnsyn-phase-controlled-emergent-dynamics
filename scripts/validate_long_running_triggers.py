@@ -28,6 +28,12 @@ class InventoryRow:
 
 
 @dataclass(frozen=True)
+class InventoryException:
+    workflow_file: str
+    reason: str
+
+
+@dataclass(frozen=True)
 class PolicyResult:
     exit_code: int
     output_lines: list[str]
@@ -180,7 +186,9 @@ def normalize_triggers(on_section: object) -> tuple[str, ...]:
     return tuple(sorted(triggers))
 
 
-def parse_inventory_table(text: str) -> tuple[dict[str, InventoryRow], list[str]]:
+def parse_inventory_table(
+    text: str,
+) -> tuple[dict[str, InventoryRow], list[str], dict[str, InventoryException]]:
     lines = text.splitlines()
     try:
         header_index = next(i for i, line in enumerate(lines) if line.strip() == BEGIN_MARKER)
@@ -189,6 +197,7 @@ def parse_inventory_table(text: str) -> tuple[dict[str, InventoryRow], list[str]
 
     rows: dict[str, InventoryRow] = {}
     duplicates: list[str] = []
+    exceptions: dict[str, InventoryException] = {}
     for line in lines[header_index + 1 :]:
         stripped = line.strip()
         if stripped.startswith("## "):
@@ -196,6 +205,19 @@ def parse_inventory_table(text: str) -> tuple[dict[str, InventoryRow], list[str]
         if not stripped or stripped == "---":
             continue
         if stripped.startswith("EXCEPTION:") or stripped.startswith("> EXCEPTION:"):
+            exception_text = stripped.split("EXCEPTION:", 1)[1].strip()
+            if " - " not in exception_text:
+                raise PolicyParseError("WORKFLOW_INVENTORY_EXCEPTION_INVALID")
+            workflow_part, reason = exception_text.split(" - ", 1)
+            workflow_file = workflow_part.strip("` ").strip()
+            if not workflow_file.endswith(".yml"):
+                raise PolicyParseError(
+                    f"WORKFLOW_INVENTORY_EXCEPTION_INVALID workflow={workflow_file}"
+                )
+            exceptions[workflow_file] = InventoryException(
+                workflow_file=workflow_file,
+                reason=reason.strip(),
+            )
             continue
         if not stripped.startswith("|"):
             continue
@@ -223,7 +245,7 @@ def parse_inventory_table(text: str) -> tuple[dict[str, InventoryRow], list[str]
         )
     if not rows:
         raise PolicyParseError("WORKFLOW_INVENTORY_TABLE_EMPTY")
-    return rows, duplicates
+    return rows, duplicates, exceptions
 
 
 def load_workflows(workflows_dir: Path) -> dict[str, tuple[str, ...]]:
@@ -248,6 +270,14 @@ def format_trigger_list(triggers: Iterable[str]) -> str:
     return f"[{','.join(ordered)}]"
 
 
+def format_diff(expected: Iterable[str], actual: Iterable[str]) -> str:
+    expected_set = set(expected)
+    actual_set = set(actual)
+    missing = sorted(expected_set - actual_set)
+    extra = sorted(actual_set - expected_set)
+    return f"missing={format_trigger_list(missing)} extra={format_trigger_list(extra)}"
+
+
 def format_allowed_sets(allowed_sets: Iterable[set[str]]) -> str:
     return " or ".join(format_trigger_list(item) for item in allowed_sets)
 
@@ -259,7 +289,7 @@ def evaluate_policy(
     validate_python_version(project_root, runtime_version)
     contracts_path = project_root / ".github/WORKFLOW_CONTRACTS.md"
     workflows_dir = project_root / ".github/workflows"
-    rows, duplicates = parse_inventory_table(
+    rows, duplicates, exceptions = parse_inventory_table(
         contracts_path.read_text(encoding="utf-8")
     )
     workflows = load_workflows(workflows_dir)
@@ -277,29 +307,52 @@ def evaluate_policy(
 
     for workflow_file in sorted(actual_files & expected_files):
         row = rows[workflow_file]
-        if row.gate_class != "long-running":
-            continue
         triggers = workflows[workflow_file]
         trigger_set = set(triggers)
+        if workflow_file.startswith("_reusable_"):
+            expected = {"workflow_call"}
+            if trigger_set != expected:
+                violations.append(
+                    "VIOLATION: REUSABLE_PREFIX_TRIGGER_SET "
+                    f"{workflow_file} class={row.gate_class} "
+                    f"reusable={row.reusable} triggers={format_trigger_list(trigger_set)} "
+                    f"expected={format_trigger_list(expected)} "
+                    f"diff={format_diff(expected, trigger_set)}"
+                )
+        if row.gate_class != "long-running":
+            if row.gate_class == "PR-gate":
+                if "pull_request" not in trigger_set and workflow_file not in exceptions:
+                    violations.append(
+                        "VIOLATION: PR_GATE_MISSING_PULL_REQUEST "
+                        f"{workflow_file} class={row.gate_class} "
+                        f"reusable={row.reusable} triggers={format_trigger_list(trigger_set)} "
+                        "required=[pull_request] "
+                        f"diff={format_diff(['pull_request'], trigger_set)}"
+                    )
+            continue
         forbidden = sorted(trigger_set & FORBIDDEN_TRIGGERS)
         if forbidden:
             violations.append(
                 "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER "
                 f"{workflow_file} class=long-running "
-                f"triggers={format_trigger_list(trigger_set)} "
-                f"forbidden={format_trigger_list(forbidden)}"
+                f"reusable={row.reusable} triggers={format_trigger_list(trigger_set)} "
+                f"forbidden={format_trigger_list(forbidden)} "
+                f"diff={format_diff([], forbidden)}"
             )
         if row.reusable == "YES":
-            allowed_sets = [
-                {"workflow_call"},
-                {"workflow_call", "workflow_dispatch"},
-            ]
-            if trigger_set not in allowed_sets:
+            allowed = {"workflow_call", "workflow_dispatch"}
+            required = {"workflow_call"}
+            missing_required = sorted(required - trigger_set)
+            extra_triggers = sorted(trigger_set - allowed)
+            if missing_required or extra_triggers:
                 violations.append(
-                    "VIOLATION: LONG_RUNNING_TRIGGER_SET "
+                    "VIOLATION: LONG_RUNNING_REUSABLE_TRIGGER_SET "
                     f"{workflow_file} class=long-running reusable=YES "
                     f"triggers={format_trigger_list(trigger_set)} "
-                    f"allowed={format_allowed_sets(allowed_sets)}"
+                    f"expected={format_trigger_list(allowed)} "
+                    f"required={format_trigger_list(required)} "
+                    f"diff=missing={format_trigger_list(missing_required)} "
+                    f"extra={format_trigger_list(extra_triggers)}"
                 )
         else:
             expected = {"schedule", "workflow_dispatch"}
@@ -308,7 +361,8 @@ def evaluate_policy(
                     "VIOLATION: LONG_RUNNING_TRIGGER_SET "
                     f"{workflow_file} class=long-running reusable=NO "
                     f"triggers={format_trigger_list(trigger_set)} "
-                    f"expected={format_trigger_list(expected)}"
+                    f"expected={format_trigger_list(expected)} "
+                    f"diff={format_diff(expected, trigger_set)}"
                 )
 
     return sorted(violations), len(workflows)
