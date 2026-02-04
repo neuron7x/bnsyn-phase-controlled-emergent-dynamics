@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 25
-**Breakdown:** 17 primary + 8 reusable
+**Total workflows:** 26
+**Breakdown:** 15 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -39,48 +39,48 @@
 
 The workflows below are the required PR gates that must pass on pull requests.
 
-| Workflow File | Workflow Name | Job IDs (must pass on PRs) |
-| --- | --- | --- |
-| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
-| `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
+| Workflow File | Workflow Name | Gate Class | Job IDs (must pass on PRs) |
+| --- | --- | --- | --- |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `gate-profile`, `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
+| `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `validate-workflows` |
 
 ## Gate Class Policy (Normative)
 
 * PR-gate workflows MAY be required checks.
 * Long-running workflows MUST NOT be required checks and MUST NOT block merge.
-* Manual-only workflows MUST NOT be required checks.
 * If a workflow is not explicitly labeled PR-gate, it MUST NOT be required in branch protection.
+* EXCEPTION format (only when a PR-gate lacks `pull_request`): `EXCEPTION: <workflow file> - <reason>` on the line immediately following the workflow row in the inventory table.
 
-## Workflow Inventory Index
+## Workflow Inventory Table (Authoritative)
 
-* Count: 26 workflows
-* Files (lexicographic):
-  * _reusable_benchmarks.yml
-  * _reusable_chaos_tests.yml
-  * _reusable_formal_science.yml
-  * _reusable_gate_profile.yml
-  * _reusable_property_tests.yml
-  * _reusable_pytest.yml
-  * _reusable_quality.yml
-  * _reusable_ssot.yml
-  * _reusable_validation_tests.yml
-  * benchmarks.yml
-  * ci-benchmarks-elite.yml
-  * ci-benchmarks.yml
-  * ci-pr-atomic.yml
-  * ci-pr.yml
-  * ci-smoke.yml
-  * ci-validation.yml
-  * codecov-health.yml
-  * codeql.yml
-  * dependency-watch.yml
-  * docs.yml
-  * formal-coq.yml
-  * formal-tla.yml
-  * physics-equivalence.yml
-  * quality-mutation.yml
-  * science.yml
-  * workflow-integrity.yml
+| Workflow file | Workflow name | Gate Class | Trigger set | Reusable? |
+| --- | --- | --- | --- | --- |
+| `_reusable_benchmarks.yml` | `reusable-benchmarks` | long-running | `workflow_call` | YES |
+| `_reusable_chaos_tests.yml` | `Reusable Chaos Tests` | long-running | `workflow_call` | YES |
+| `_reusable_formal_science.yml` | `_reusable_formal_science` | long-running | `workflow_call` | YES |
+| `_reusable_gate_profile.yml` | `Reusable Gate Profile` | long-running | `workflow_call` | YES |
+| `_reusable_property_tests.yml` | `Reusable Property Tests` | long-running | `workflow_call` | YES |
+| `_reusable_pytest.yml` | `Reusable Pytest` | long-running | `workflow_call` | YES |
+| `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
+| `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
+| `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
+| `benchmarks.yml` | `benchmarks` | long-running | `workflow_dispatch` | NO |
+| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `workflow_dispatch` | NO |
+| `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
+| `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
+| `ci-smoke.yml` | `ci-smoke` | long-running | `push` | NO |
+| `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
+| `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
+| `codeql.yml` | `CodeQL` | long-running | `push, schedule, workflow_dispatch` | NO |
+| `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
+| `docs.yml` | `docs` | long-running | `workflow_dispatch` | NO |
+| `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
+| `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
+| `physics-equivalence.yml` | `physics-equivalence` | long-running | `workflow_dispatch` | NO |
+| `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
+| `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
+| `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
 
 ---
 
@@ -89,7 +89,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_pytest.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -126,7 +126,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_quality.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -168,7 +168,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_chaos_tests.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -206,7 +206,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_property_tests.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -243,7 +243,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_ssot.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -280,7 +280,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_validation_tests.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -317,7 +317,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_benchmarks.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -359,7 +359,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_formal_science.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -402,7 +402,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/_reusable_gate_profile.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -439,7 +439,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/benchmarks.yml`
 **Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -476,7 +476,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/ci-benchmarks-elite.yml`
 **Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -513,7 +513,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/ci-benchmarks.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -608,7 +608,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/ci-pr.yml`
 **Status:** Active
 
-**Gate Class:** Manual-only
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -643,7 +643,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/ci-smoke.yml`
 **Status:** Candidate for consolidation
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -683,7 +683,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/ci-validation.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -730,7 +730,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/codecov-health.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -768,7 +768,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/codeql.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -807,7 +807,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/dependency-watch.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -845,7 +845,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/docs.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -883,7 +883,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/formal-coq.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -930,7 +930,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/formal-tla.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -977,7 +977,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/physics-equivalence.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -1016,7 +1016,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/quality-mutation.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -1054,7 +1054,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 **Path:** `.github/workflows/science.yml`
 **Status:** Active
 
-**Gate Class:** Long-running
+**Gate Class:** long-running
 
 **Gate Rationale:**
 
@@ -1167,7 +1167,7 @@ The workflows below are the required PR gates that must pass on pull requests.
 
 ## Completeness & Consistency
 
-* Inventory count: 25
-* Contract blocks count: 25
+* Inventory count: 26
+* Contract blocks count: 26
 * Missing: []
 * Mandatory named workflows present: YES (ci-validation.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)
