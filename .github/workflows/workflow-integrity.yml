@@ -21,23 +21,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          files=(
-            ".github/workflows/benchmarks.yml"
-            ".github/workflows/ci-benchmarks.yml"
-            ".github/workflows/ci-benchmarks-elite.yml"
-            ".github/workflows/ci-validation.yml"
-            ".github/workflows/formal-coq.yml"
-            ".github/workflows/formal-tla.yml"
-            ".github/workflows/physics-equivalence.yml"
-            ".github/workflows/science.yml"
+          guard_line="# Guard: non-PR-gate workflow; must remain off PRs."
+          mapfile -t files < <(
+            rg -l --fixed-strings "$guard_line" .github/workflows/*.yml || true
           )
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "Guard line not found in any workflow."
+            exit 1
+          fi
           violations=0
           for file in "${files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "Missing expected workflow file: $file"
-              violations=1
-              continue
-            fi
             awk '
               /^on:/ {in_on=1; next}
               in_on {
@@ -87,7 +80,10 @@ jobs:
                           offenders.append((path, line_no, detail))
                       category = unicodedata.category(ch)
                       if category in {'Cf', 'Cc'} and ch not in {'\n', '\r'}:
-                          detail = f'CONTROL_OR_BIDI {category} U+{codepoint:04X}'
+                          detail = (
+                              f'CONTROL_OR_BIDI {category} '
+                              f'U+{codepoint:04X}'
+                          )
                           offenders.append((path, line_no, detail))
 
           if offenders:
@@ -109,3 +105,7 @@ jobs:
         run: python -m pip install pyyaml jsonschema
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py
+      - name: Validate inventory snapshot
+        run: |
+          python tools/generate_inventory.py
+          git diff --exit-code -- INVENTORY.json
