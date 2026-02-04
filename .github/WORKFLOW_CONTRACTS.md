@@ -52,6 +52,14 @@ The workflows below are the required PR gates that must pass on pull requests. S
 * If a workflow is not explicitly labeled PR-gate, it MUST NOT be required in branch protection.
 * EXCEPTION format (only when a PR-gate lacks `pull_request`): `EXCEPTION: <workflow file> - <reason>` on the line immediately following the workflow row in the inventory table.
 
+<!-- BEGIN: AUTO-GENERATED WORKFLOW POLICIES -->
+## Workflow Policy Rules (Auto-generated)
+
+| Rule ID | Statement | Enforcement |
+| --- | --- | --- |
+| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+<!-- END: AUTO-GENERATED WORKFLOW POLICIES -->
+
 ## Workflow Inventory Table (Authoritative)
 
 | Workflow file | Workflow name | Gate Class | Trigger set | Reusable? |
@@ -70,10 +78,12 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
 | `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
-| `ci-smoke.yml` | `ci-smoke` | long-running | `push` | NO |
+| `ci-smoke.yml` | `ci-smoke` | PR-gate | `push` | NO |
+EXCEPTION: ci-smoke.yml - PR-gate without pull_request; non-blocking smoke signal.
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
-| `codeql.yml` | `CodeQL` | long-running | `push, schedule, workflow_dispatch` | NO |
+| `codeql.yml` | `CodeQL` | PR-gate | `push, schedule, workflow_dispatch` | NO |
+EXCEPTION: codeql.yml - PR-gate without pull_request; security scan runs on push/schedule.
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
 | `docs.yml` | `docs` | long-running | `workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
@@ -644,15 +654,15 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Path:** `.github/workflows/ci-smoke.yml`
 **Status:** Candidate for consolidation
 
-**Gate Class:** long-running
+**Gate Class:** PR-gate
 
 **Gate Rationale:**
 
-* Provides optional A2 smoke/SSOT signal but remains non-blocking while `ci-pr-atomic.yml` serves as the required PR gate.
+* Provides optional A2 smoke/SSOT signal, classified as PR-gate for trigger policy alignment while `ci-pr-atomic.yml` remains the required PR gate.
 
 **Intent (1–2 sentences):**
 
-* Provide quick SSOT and smoke-test feedback for PRs and main branch changes.
+* Provide quick SSOT and smoke-test feedback for main branch changes.
 
 **Axiom focus:**
 
@@ -661,7 +671,6 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `push` (branches: `main`).
-* `pull_request`.
 
 **Timeout(s):**
 
@@ -769,11 +778,11 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Path:** `.github/workflows/codeql.yml`
 **Status:** Active
 
-**Gate Class:** long-running
+**Gate Class:** PR-gate
 
 **Gate Rationale:**
 
-* Scheduled/push CodeQL analysis supports A9 security hygiene as a non-blocking long-running check.
+* Scheduled/push CodeQL analysis supports A9 security hygiene as a non-blocking PR-gate classification.
 
 **Intent (1–2 sentences):**
 
