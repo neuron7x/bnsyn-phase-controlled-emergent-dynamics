@@ -429,6 +429,26 @@ CI requirements and exact commands are defined in [`docs/CI_GATES.md`](docs/CI_G
 - **gitleaks** (secret scanning)
 - **pip-audit** (dependency vulnerability audit)
 
+PR-gate vs long-running workflows (authoritative metadata in [`.github/WORKFLOW_CONTRACTS.md`](.github/WORKFLOW_CONTRACTS.md)):
+
+| Gate class | Workflow | Max job timeout (min) | Purpose | Blocks merge |
+| --- | --- | --- | --- | --- |
+| PR-gate | `ci-pr-atomic.yml` | 10 (tests-smoke) | Determinism, quality, build, smoke tests, SSOT, security | Yes |
+| PR-gate | `workflow-integrity.yml` | 5 | Workflow linting, integrity, safety artifacts | Yes |
+| Long-running | `ci-validation.yml` | 60 (chaos-tests) | Scheduled validation/property/chaos suites | No |
+| Long-running | `ci-smoke.yml` | Not set | Scheduled SSOT + smoke tests | No |
+| Long-running | `ci-benchmarks.yml` | Not set | Scheduled benchmark routing (standard/elite) | No |
+| Long-running | `benchmarks.yml` | Not set | Legacy benchmark dispatch | No |
+| Long-running | `quality-mutation.yml` | 120 | Mutation testing | No |
+| Long-running | `formal-coq.yml` | 20 | Coq proof checks | No |
+| Long-running | `formal-tla.yml` | 30 | TLA+ model checking | No |
+| Long-running | `physics-equivalence.yml` | 15 | Physics equivalence validation | No |
+| Long-running | `codeql.yml` | 15 | Scheduled CodeQL analysis | No |
+| Long-running | `dependency-watch.yml` | Not set | Dependency advisory monitoring | No |
+| Long-running | `docs.yml` | Not set | Documentation build artifacts | No |
+| Long-running | `science.yml` | 30 | Flagship experiment validation | No |
+| Long-running | `codecov-health.yml` | Not set | Codecov availability checks | No |
+
 ```mermaid
 flowchart TD
   PR[Pull Request] --> ssot[ssot]
