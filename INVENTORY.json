@@ -8,9 +8,9 @@
   ],
   "counts": {
     "src": 67,
-    "tests": 118,
+    "tests": 119,
     "docs": 85,
-    ".github": 33
+    ".github": 34
   },
   "workflows": [
     "_reusable_benchmarks.yml",
