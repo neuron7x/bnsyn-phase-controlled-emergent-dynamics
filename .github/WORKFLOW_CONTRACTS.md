@@ -27,6 +27,12 @@
 * Workflow-level timeouts are not supported in GitHub Actions; only job-level `timeout-minutes` are recorded.
 * Timeout notation: use **Not set** when `timeout-minutes` is absent in the workflow YAML.
 * Branch protection must require only PR-gate workflows: `ci-pr-atomic.yml` and `workflow-integrity.yml`.
+* This contract is normative even if current branch protection temporarily deviates.
+
+## PR-Gate Definition (Authoritative)
+
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`.
+* Required checks MUST NOT include any workflow other than the PR-gates listed above.
 
 ## Gate Class Rules of Thumb
 
@@ -34,6 +40,8 @@
 * Workflows labeled **Long-running** must remain non-blocking status checks, even when they run on `pull_request`.
 * Workflows labeled **Manual-only** must not be required checks; gating is defined by their callers.
 * When changing a Gate Class, update the rationale, confirm triggers align with the taxonomy, and adjust branch protection notes accordingly.
+* If a workflow is not explicitly labeled PR-gate, it MUST NOT be required in branch protection.
+* Long-running workflows MAY run on `pull_request` but MUST NOT block merge.
 
 ## Workflow Inventory Index
 
@@ -1091,34 +1099,26 @@
 1. **ci-smoke.yml vs ci-pr-atomic.yml** (Candidate for consolidation)
    * Rationale: `ci-smoke.yml` and `ci-pr-atomic.yml` share `push` (main) and `pull_request` triggers, and `ci-smoke` job set (`ssot`, `tests-smoke`) overlaps with `ci-pr-atomic` which already runs SSOT and smoke tests via reusable workflow. `ci-pr.yml` is now a wrapper and no longer a target for consolidation.
    * Safe target: `ci-pr-atomic.yml` as SSOT.
-   * Removal criteria:
-    * [ ] Branch protection requires only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and removes `ci-smoke.yml`.
-    * [ ] `ci-pr-atomic.yml` smoke + SSOT checks verified equivalent for at least 2 weeks.
-    * [ ] No downstream integrations rely on `ci-smoke.yml` status checks.
+   * Removal criteria: Branch protection requires only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and removes `ci-smoke.yml`; `ci-pr-atomic.yml` smoke + SSOT checks verified equivalent for at least 2 weeks; no downstream integrations rely on `ci-smoke.yml` status checks.
    * Risks: Branch protection or external status check dependencies could block merges; mitigate by updating protection rules and notifying integrators.
    * Evidence: `./workflows/ci-smoke.yml`, `./workflows/ci-pr-atomic.yml`
 
 2. **ci-validation.yml (mode orchestration)** (Consolidation completed)
    * Rationale: Validation, property, and chaos suites are orchestrated via a single workflow with mode routing.
    * Current state: `ci-validation.yml` routes standard/elite/chaos schedules and dispatch inputs to reusable jobs.
-   * Follow-up criteria:
-     * [ ] Confirm branch protection expects only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`), not `ci-validation`.
-     * [ ] Confirm scheduled cadence matches prior weekly/daily runs.
+   * Follow-up criteria: Branch protection expects only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`), not `ci-validation`; scheduled cadence matches prior weekly/daily runs.
    * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_ssot.yml`, `./workflows/_reusable_validation_tests.yml`, `./workflows/_reusable_property_tests.yml`, `./workflows/_reusable_chaos_tests.yml`
 
 3. **ci-validation.yml (property mode)** (Consolidation completed)
    * Rationale: Property tests are now scheduled and dispatched via `ci-validation.yml` with a dedicated `property` mode.
    * Current state: `ci-validation.yml` owns the 02:30 UTC property schedule and `workflow_dispatch` supports `mode=property`.
-   * Follow-up criteria:
-     * [ ] Confirm property mode cadence and profile alignment with `ci` expectations.
+   * Follow-up criteria: Property mode cadence and profile alignment with `ci` expectations are confirmed.
    * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_property_tests.yml`
 
 4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Consolidation in progress)
    * Rationale: Benchmark execution is centralized in `_reusable_benchmarks.yml`, with `ci-benchmarks.yml` as the canonical entrypoint.
    * Current state: `benchmarks.yml` and `ci-benchmarks-elite.yml` are compatibility shims delegating to `ci-benchmarks.yml`.
-   * Removal criteria:
-     * [ ] Branch protection requires only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and downstream dependencies updated.
-     * [ ] Legacy schedules retired or migrated without duplicate runs.
+   * Removal criteria: Branch protection requires only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and downstream dependencies updated; legacy schedules retired or migrated without duplicate runs.
    * Risks: Duplicate benchmark runs while shims remain; mitigate by removing shims after protection verification.
    * Evidence: `./workflows/_reusable_benchmarks.yml`, `./workflows/benchmarks.yml`, `./workflows/ci-benchmarks-elite.yml`, `./workflows/ci-benchmarks.yml`
 
