@@ -7,7 +7,14 @@ from pathlib import Path
 def main() -> None:
     root = Path(".")
     paths = ["src", "tests", "docs", ".github"]
-    counts = {path: sum(1 for item in (root / path).rglob("*") if item.is_file()) for path in paths}
+    ignored_parts = {".pytest_cache", "__pycache__"}
+
+    def is_counted(path: Path) -> bool:
+        if not path.is_file():
+            return False
+        return not any(part in ignored_parts for part in path.parts)
+
+    counts = {path: sum(1 for item in (root / path).rglob("*") if is_counted(item)) for path in paths}
     workflows = sorted((root / ".github" / "workflows").glob("*.yml"))
     workflow_names = [path.name for path in workflows]
     detected_tools = [
