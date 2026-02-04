@@ -60,7 +60,7 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 - **Property Tests** (`-m property`): Hypothesis tests with thorough profile (1000 examples)
 - **Chaos Tests** (`-m "validation and chaos"`): Fault injection resilience tests
 
-**Workflows:** `ci-validation.yml` (modes: `elite`, `chaos`), `ci-property-tests.yml`
+**Workflows:** `ci-validation.yml` (modes: `elite`, `property`, `chaos`)
 
 ---
 
@@ -92,6 +92,6 @@ make docs-evidence             # Regenerate EVIDENCE_COVERAGE.md
 |------|--------|---------|---------|-----------|----------|
 | **BLOCKING** | smoke | Every PR | ~8 min | ✅ YES | `ci-pr.yml` |
 | **VALIDATION** | `@pytest.mark.validation` | Daily 2 AM | varies | ❌ NO | `ci-validation.yml` (mode: `elite`) |
-| **PROPERTY** | `@pytest.mark.property` | Daily 2:30 AM | ~10 min | ❌ NO | `ci-property-tests.yml` |
+| **PROPERTY** | `@pytest.mark.property` | Daily 2:30 AM | ~10 min | ❌ NO | `ci-validation.yml` (mode: `property`) |
 | **CHAOS** | `@pytest.mark.chaos` | Daily 4 AM | ~20 min | ❌ NO | `ci-validation.yml` (mode: `chaos`) |
 | **BENCHMARKS** | N/A | Weekly Sun 3 AM | ~20 min | ❌ NO | `benchmarks.yml` (tier=elite) |

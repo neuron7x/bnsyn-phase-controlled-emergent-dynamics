@@ -147,9 +147,9 @@ pytest -m "not validation and not property"
 
 ### Property Tests (Non-Blocking, Nightly)
 
-**Workflow**: `.github/workflows/ci-property-tests.yml`
-**Trigger**: Nightly at 2:30 AM UTC, manual dispatch
-**Timeout**: 15 minutes
+**Workflow**: `.github/workflows/ci-validation.yml` (mode: `property`)
+**Trigger**: Nightly at 2:30 AM UTC, manual dispatch (mode: `property`)
+**Timeout**: 30 minutes
 
 **Tests Run**:
 - Property-based tests with `quick` profile (100 examples by default)
@@ -161,7 +161,7 @@ pytest -m "not validation and not property"
 
 **How to Reproduce**:
 ```bash
-pytest -m property --hypothesis-profile=quick --hypothesis-show-statistics
+HYPOTHESIS_PROFILE=ci pytest -m property -v --tb=short --hypothesis-show-statistics
 ```
 
 ### Mutation Testing (Non-Blocking, Nightly)

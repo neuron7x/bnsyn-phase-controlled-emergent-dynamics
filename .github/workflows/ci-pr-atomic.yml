@@ -68,6 +68,8 @@ jobs:
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - name: Test determinism (run 1)
         id: run1
@@ -141,6 +143,8 @@ jobs:
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]" build
       - run: python -m build
       - run: python -c "import bnsyn; print(bnsyn.__version__)"
@@ -169,6 +173,8 @@ jobs:
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - run: python scripts/validate_bibliography.py
       - run: python scripts/validate_claims.py
@@ -190,6 +196,8 @@ jobs:
             requirements-lock.txt
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
       - name: gitleaks
         uses: gitleaks/gitleaks-action@v2
@@ -207,6 +215,7 @@ jobs:
         with:
           name: security-report-${{ github.sha }}
           path: artifacts/pip-audit.json
+          if-no-files-found: ignore
           retention-days: 30
 
   finalize:

@@ -16,6 +16,9 @@ on:
         type: number
         default: 7.5
 
+permissions:
+  contents: read
+
 jobs:
   ruff:
     name: Ruff (Format + Lint)
@@ -32,6 +35,9 @@ jobs:
       
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
 
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test]"
@@ -85,6 +91,7 @@ jobs:
           path: |
             ruff-format.log
             ruff-lint.log
+          if-no-files-found: ignore
           retention-days: 7
       
       - name: Fail if checks failed
@@ -106,6 +113,9 @@ jobs:
       
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
 
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test]"
@@ -154,6 +164,7 @@ jobs:
         with:
           name: mypy-logs-${{ github.sha }}
           path: mypy.log
+          if-no-files-found: ignore
           retention-days: 7
       
       - name: Fail if check failed
@@ -175,6 +186,9 @@ jobs:
       
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
 
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test]"
@@ -213,6 +227,7 @@ jobs:
         with:
           name: pylint-logs-${{ github.sha }}
           path: pylint.log
+          if-no-files-found: ignore
           retention-days: 7
       
       - name: Fail if check failed

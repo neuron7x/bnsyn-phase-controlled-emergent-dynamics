@@ -24,6 +24,9 @@ jobs:
           cache: 'pip'
       - name: Pin pip
         uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test]"
       - name: SSOT gates

@@ -19,13 +19,13 @@ Reporting typo corrected (ref: PR40).
 ## What Was Fixed
 
 ### B1: Truthful Verification in Workflows ✅
-- **Files**: `.github/workflows/ci-validation-elite.yml`
+- **Files**: `.github/workflows/ci-validation.yml (mode: elite)`
 - **Changes**: Removed `|| true` from validation and property test steps
 - **Impact**: Workflows now fail when tests fail; artifacts still upload via `if: always()`
 - **Verification**: Hard-coded test counts removed; actual results shown
 
 ### B2: Align Policy vs Workflows ✅
-- **Files**: `.github/workflows/ci-property-tests.yml`, `docs/CI_GATES.md`
+- **Files**: `.github/workflows/ci-validation.yml (mode: property)`, `docs/CI_GATES.md`
 - **Changes**: Made property tests schedule/dispatch only (no PR trigger)
 - **Impact**: Policy and triggers now match exactly (nightly at 2:30 AM UTC)
 
@@ -69,7 +69,7 @@ Reporting typo corrected (ref: PR40).
 - **Impact**: Formal models now match actual code; claims are substantiated
 
 ### B8: Add Real Chaos Engineering Tests ✅
-- **Files**: `tests/validation/test_chaos_integration.py`, `tests/validation/test_chaos_numeric.py`, `pyproject.toml`, `.github/workflows/chaos-validation.yml`
+- **Files**: `tests/validation/test_chaos_integration.py`, `tests/validation/test_chaos_numeric.py`, `pyproject.toml`, `.github/workflows/ci-validation.yml (mode: chaos)`
 - **Changes**:
   - Added `chaos` marker to pyproject.toml
   - Created `test_chaos_integration.py` with 10 integration tests
@@ -97,7 +97,7 @@ Reporting typo corrected (ref: PR40).
 
 ## Files Changed
 
-- **Workflows**: 4 files (ci-validation-elite, ci-property-tests, quality-mutation, chaos-validation)
+- **Workflows**: 2 files (ci-validation modes, quality-mutation)
 - **Scripts**: 2 new (generate_mutation_baseline.py, check_mutation_score.py)
 - **Tests**: 2 files (test_adex_properties.py, test_chaos_numeric.py modified; test_chaos_integration.py new)
 - **Config**: 2 files (Makefile, pyproject.toml, conftest.py)

@@ -41,8 +41,8 @@ python scripts/check_mutation_score.py --advisory
 ### 2. Hypothesis Profiles as SSOT
 
 **What was wrong:**
-- ci-validation-elite.yml used non-existent profile `ci-quick` (not in pyproject.toml)
-- ci-property-tests.yml used CLI flag `--hypothesis-profile=quick` instead of env var
+- ci-validation.yml (mode: elite) used non-existent profile `ci-quick` (not in pyproject.toml)
+- ci-validation.yml (mode: property) used CLI flag `--hypothesis-profile=quick` instead of env var
 - Profile precedence not properly enforced via environment variable
 - Documentation showed wrong profile values
 
@@ -66,9 +66,9 @@ grep -r "@settings" tests/ | grep "max_examples"
 **Evidence artifacts:**
 - `artifacts/audit/hypothesis_quick_stats.txt` - Shows max_examples=100
 - `artifacts/audit/hypothesis_thorough_stats_sample.txt` - Shows max_examples=1000
-- `.github/workflows/ci-property-tests.yml` lines 29-32 - Uses HYPOTHESIS_PROFILE=ci env var
-- `.github/workflows/ci-validation-elite.yml` lines 82-86 - Fixed to use `quick` profile
-- `.github/workflows/chaos-validation.yml` line 93 - Uses HYPOTHESIS_PROFILE=thorough
+- `.github/workflows/ci-validation.yml (mode: property)` lines 29-32 - Uses HYPOTHESIS_PROFILE=ci env var
+- `.github/workflows/ci-validation.yml (mode: elite)` lines 82-86 - Fixed to use `quick` profile
+- `.github/workflows/ci-validation.yml (mode: chaos)` line 93 - Uses HYPOTHESIS_PROFILE=thorough
 - `pyproject.toml` lines 82-99 - Profile definitions
 - `docs/QUALITY_INDEX.md` lines 105-116 - Updated documentation
 
@@ -199,10 +199,10 @@ on:
 
 **Workflows to modify:**
 - `.github/workflows/quality-mutation.yml` (line 4-6) - Mutation testing
-- `.github/workflows/ci-property-tests.yml` (line 4-6) - Property tests
-- `.github/workflows/chaos-validation.yml` (line 4-6) - Chaos validation
+- `.github/workflows/ci-validation.yml (mode: property)` (line 4-6) - Property tests
+- `.github/workflows/ci-validation.yml (mode: chaos)` (line 4-6) - Chaos validation
 - `.github/workflows/formal-tla.yml` - TLA+ model checking
-- `.github/workflows/ci-validation-elite.yml` (line 4-6) - Scientific validation
+- `.github/workflows/ci-validation.yml (mode: elite)` (line 4-6) - Scientific validation
 
 ### Option 2: Revert Mutation Strict Mode
 
@@ -233,9 +233,9 @@ Then merge the revert to restore previous behavior.
 
 ### Workflows
 - `.github/workflows/quality-mutation.yml` - Fixed shell arithmetic, added strict check
-- `.github/workflows/ci-property-tests.yml` - Use HYPOTHESIS_PROFILE env var
-- `.github/workflows/ci-validation-elite.yml` - Fixed profile name ci-quick → quick
-- `.github/workflows/chaos-validation.yml` - No changes (already correct)
+- `.github/workflows/ci-validation.yml (mode: property)` - Use HYPOTHESIS_PROFILE env var
+- `.github/workflows/ci-validation.yml (mode: elite)` - Fixed profile name ci-quick → quick
+- `.github/workflows/ci-validation.yml (mode: chaos)` - No changes (already correct)
 - `.github/workflows/_reusable_pytest.yml` - No changes (patterns already correct)
 - `.github/workflows/_reusable_quality.yml` - No changes (patterns already correct)
 - `.github/workflows/formal-tla.yml` - No changes (patterns already correct)

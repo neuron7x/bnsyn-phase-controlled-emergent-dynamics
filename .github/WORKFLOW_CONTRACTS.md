@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 25
-**Breakdown:** 18 primary + 7 reusable
+**Total workflows:** 24
+**Breakdown:** 17 primary + 7 reusable
 
 ## Axiom Dictionary
 
@@ -29,7 +29,7 @@
 
 ## Workflow Inventory Index
 
-* Count: 25 workflows
+* Count: 24 workflows
 * Files (lexicographic):
   * _reusable_benchmarks.yml
   * _reusable_chaos_tests.yml
@@ -43,7 +43,6 @@
   * ci-benchmarks.yml
   * ci-pr-atomic.yml
   * ci-pr.yml
-  * ci-property-tests.yml
   * ci-smoke.yml
   * ci-validation.yml
   * codecov-health.yml
@@ -466,38 +465,6 @@
 
 ---
 
-## ci-property-tests.yml
-
-**Path:** `.github/workflows/ci-property-tests.yml`
-**Status:** Candidate for consolidation
-
-**Intent (1–2 sentences):**
-
-* Run nightly property-based tests using Hypothesis for invariant checking.
-
-**Axiom focus:**
-
-* A2 — CI Correctness & Regression Safety
-
-**Trigger(s):**
-
-* `schedule` (nightly 02:30 UTC).
-* `workflow_dispatch`.
-
-**Timeout(s):**
-
-* `property-tests`: 15
-
-**Jobs:**
-
-* `property-tests` — Runs Hypothesis property tests and uploads artifacts.
-
-**Evidence:**
-
-* `./workflows/ci-property-tests.yml`
-
----
-
 ## ci-smoke.yml
 
 **Path:** `.github/workflows/ci-smoke.yml`
@@ -548,7 +515,7 @@
 **Trigger(s):**
 
 * `workflow_dispatch` with `mode` and `chaos_subset` inputs.
-* `schedule` (weekly Sunday 03:00 UTC, daily 02:00 UTC, daily 04:00 UTC).
+* `schedule` (weekly Sunday 03:00 UTC, daily 02:00 UTC, daily 02:30 UTC, daily 04:00 UTC).
 
 **Timeout(s):**
 
@@ -916,15 +883,12 @@
      * [ ] Confirm scheduled cadence matches prior weekly/daily runs.
    * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_ssot.yml`, `./workflows/_reusable_validation_tests.yml`, `./workflows/_reusable_property_tests.yml`, `./workflows/_reusable_chaos_tests.yml`
 
-3. **ci-property-tests.yml vs ci-validation.yml** (Candidate for consolidation)
-   * Rationale: Property tests are now executed in `ci-validation.yml` (elite/chaos modes) while `ci-property-tests.yml` remains scheduled.
-   * Safe target: `ci-validation.yml` as SSOT for property tests once schedules are reconciled.
-   * Removal criteria:
-     * [ ] Hypothesis profile parity confirmed (`ci` vs `thorough`).
-     * [ ] Runtime/cadence impact documented and accepted.
-     * [ ] Branch protection or required checks updated if needed.
-   * Risks: Profile differences may change coverage or runtime; mitigate by aligning profiles before removal.
-   * Evidence: `./workflows/ci-property-tests.yml`, `./workflows/ci-validation.yml`
+3. **ci-validation.yml (property mode)** (Consolidation completed)
+   * Rationale: Property tests are now scheduled and dispatched via `ci-validation.yml` with a dedicated `property` mode.
+   * Current state: `ci-validation.yml` owns the 02:30 UTC property schedule and `workflow_dispatch` supports `mode=property`.
+   * Follow-up criteria:
+     * [ ] Confirm property mode cadence and profile alignment with `ci` expectations.
+   * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_property_tests.yml`
 
 4. **benchmarks.yml vs ci-benchmarks-elite.yml vs ci-benchmarks.yml** (Consolidation in progress)
    * Rationale: Benchmark execution is centralized in `_reusable_benchmarks.yml`, with `ci-benchmarks.yml` as the canonical entrypoint.
@@ -939,7 +903,7 @@
 
 ## Completeness & Consistency
 
-* Inventory count: 25
-* Contract blocks count: 25
+* Inventory count: 24
+* Contract blocks count: 24
 * Missing: []
 * Mandatory named workflows present: YES (ci-validation.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)

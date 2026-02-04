@@ -26,6 +26,9 @@ jobs:
       - name: Pin pip
         uses: ./.github/actions/pin-pip
 
+      - name: Log pip version
+        run: python -m pip --version
+
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test,viz]"
 
@@ -47,6 +50,7 @@ jobs:
         with:
           name: experiment-results
           path: results/ci_run/
+          if-no-files-found: ignore
 
       - name: Upload visualizations
         uses: actions/upload-artifact@v4
@@ -54,6 +58,7 @@ jobs:
         with:
           name: experiment-figures
           path: figures/ci_run/
+          if-no-files-found: ignore
 
       - name: Summary
         if: always()

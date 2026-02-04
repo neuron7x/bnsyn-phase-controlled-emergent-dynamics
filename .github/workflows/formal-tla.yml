@@ -205,6 +205,7 @@ jobs:
             specs/tla/tla_summary.md
             specs/tla/BNsyn_runtime.cfg
             specs/tla/*.out
+          if-no-files-found: ignore
           retention-days: 30
       
       - name: Check for violations and fail if needed

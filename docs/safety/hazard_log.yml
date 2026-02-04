@@ -86,7 +86,7 @@ hazards:
     verification:
       - pytest tests/test_properties_determinism.py -q -m property
     gates:
-      - workflow: .github/workflows/ci-property-tests.yml
+      - workflow: .github/workflows/ci-validation.yml
         job: property-tests
         command: pytest -m property -v --tb=short --hypothesis-show-statistics
     owner: Safety Engineering

@@ -31,11 +31,11 @@ Quick reference for running quality checks locally and understanding what each a
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `ci-pr.yml` | PR, push to main | Fast verification |
-| `ci-property-tests.yml` | Nightly 2:30 UTC | Extended property testing |
 | `quality-mutation.yml` | Nightly 3:00 UTC | Mutation testing |
 | `formal-tla.yml` | Nightly 2:00 UTC | TLA+ model checking |
 | `ci-validation.yml` (mode: `standard`) | Weekly Sun 3:00 UTC | SSOT + validation |
 | `ci-validation.yml` (mode: `elite`) | Nightly 2:00 UTC | Validation + property |
+| `ci-validation.yml` (mode: `property`) | Nightly 2:30 UTC | Property testing |
 | `ci-validation.yml` (mode: `chaos`) | Nightly 4:00 UTC | Chaos engineering + property |
 
 ## Regenerating Baselines
@@ -91,7 +91,7 @@ cat quality/mutation_baseline.json | jq '.metrics'
 
 ### Layer 2: Nightly Deep Verification
 
-**Property-Based Testing** (`ci-property-tests.yml`, `ci-validation.yml` mode `elite`/`chaos`)
+**Property-Based Testing** (`ci-validation.yml` mode `elite`/`property`/`chaos`)
 - Hypothesis framework with quick/thorough profiles
 - Tests universal invariants (determinism, finiteness, boundedness)
 - Captures statistics for empirical validation
@@ -141,7 +141,7 @@ Defined in `tests/conftest.py`, controlled via `HYPOTHESIS_PROFILE` environment 
 
 | Marker | Purpose | CI Workflow |
 |--------|---------|-------------|
-| `property` | Hypothesis property tests | `ci-property-tests.yml`, `ci-validation.yml` (elite/chaos) |
+| `property` | Hypothesis property tests | `ci-validation.yml` (elite/property/chaos) |
 | `validation` | Extended validation tests | `ci-validation.yml` (standard/elite/chaos) |
 | `chaos` | Chaos engineering tests | `ci-validation.yml` (chaos) |
 

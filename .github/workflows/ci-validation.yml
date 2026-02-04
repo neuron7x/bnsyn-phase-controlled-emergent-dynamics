@@ -11,6 +11,7 @@ on:
           - standard
           - elite
           - chaos
+          - property
       chaos_subset:
         description: 'Chaos test subset to run (chaos mode only)'
         type: choice
@@ -25,13 +26,24 @@ on:
     - cron: "0 3 * * 0"
     - cron: "0 2 * * *"
     - cron: "0 4 * * *"
+    - cron: "30 2 * * *"
+  workflow_call:
+    inputs:
+      mode:
+        description: 'Validation mode'
+        type: string
+        default: standard
+      chaos_subset:
+        description: 'Chaos test subset to run (chaos mode only)'
+        type: string
+        default: all
 
 permissions:
   contents: read
 
 concurrency:
-  group: validation-${{ github.ref }}-${{ github.event.inputs.mode || github.event.schedule || 'manual' }}
-  cancel-in-progress: ${{ github.event.inputs.mode == 'chaos' || github.event.schedule == '0 4 * * *' }}
+  group: validation-${{ github.ref }}-${{ github.event.inputs.mode || inputs.mode || github.event.schedule || 'manual' }}
+  cancel-in-progress: ${{ github.event.inputs.mode == 'chaos' || inputs.mode == 'chaos' || github.event.schedule == '0 4 * * *' || github.event.schedule == '30 2 * * *' || github.event.inputs.mode == 'property' || inputs.mode == 'property' }}
 
 jobs:
   determine:
@@ -47,12 +59,18 @@ jobs:
               "0 3 * * 0") mode="standard";;
               "0 2 * * *") mode="elite";;
               "0 4 * * *") mode="chaos";;
+              "30 2 * * *") mode="property";;
               *) mode="standard";;
             esac
             chaos_subset="all"
           else
-            mode="${{ github.event.inputs.mode }}"
-            chaos_subset="${{ github.event.inputs.chaos_subset }}"
+            if [ "${{ github.event_name }}" = "workflow_call" ]; then
+              mode="${{ inputs.mode }}"
+              chaos_subset="${{ inputs.chaos_subset }}"
+            else
+              mode="${{ github.event.inputs.mode }}"
+              chaos_subset="${{ github.event.inputs.chaos_subset }}"
+            fi
             if [ -z "$chaos_subset" ]; then
               chaos_subset="all"
             fi
@@ -76,16 +94,16 @@ jobs:
 
   property-tests:
     needs: determine
-    if: needs.determine.outputs.mode == 'elite' || needs.determine.outputs.mode == 'chaos'
+    if: needs.determine.outputs.mode == 'elite' || needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property'
     uses: ./.github/workflows/_reusable_property_tests.yml
     with:
-      hypothesis-profile: ${{ needs.determine.outputs.mode == 'chaos' && 'thorough' || 'quick' }}
+      hypothesis-profile: ${{ needs.determine.outputs.mode == 'chaos' && 'thorough' || needs.determine.outputs.mode == 'property' && 'ci' || 'quick' }}
       extra-args: ${{ needs.determine.outputs.mode == 'chaos' && '-v --tb=short --strict-markers --hypothesis-show-statistics' || '-v --tb=short --hypothesis-show-statistics' }}
       junit-enabled: ${{ needs.determine.outputs.mode != 'chaos' }}
       summary-title: ${{ needs.determine.outputs.mode == 'chaos' && 'Property-Based Testing' || 'Property-Based Invariants (Hypothesis)' }}
       upload-artifacts: true
-      upload-hypothesis-cache: ${{ needs.determine.outputs.mode == 'chaos' }}
-      artifact-name: ${{ needs.determine.outputs.mode == 'chaos' && 'property-test-results' || 'property-logs' }}
+      upload-hypothesis-cache: ${{ needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property' }}
+      artifact-name: ${{ (needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property') && 'property-test-results' || 'property-logs' }}
 
   chaos-tests:
     needs: determine
