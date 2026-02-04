@@ -167,6 +167,116 @@ jobs:
           PY
       - name: Install safety checker dependencies
         run: python -m pip install pyyaml jsonschema
+      - name: Verify Required PR Gates list
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import re
+
+          import yaml
+
+          contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
+          workflows_path = Path(".github/workflows")
+
+          text = contracts_path.read_text(encoding="utf-8")
+          section_match = re.search(
+              r"^## Required PR Gates$",
+              text,
+              flags=re.MULTILINE,
+          )
+          if not section_match:
+              raise SystemExit("Required PR Gates section not found.")
+
+          lines = text[section_match.end():].splitlines()
+          table_lines: list[str] = []
+          for line in lines:
+              if line.startswith("## "):
+                  break
+              if line.strip():
+                  table_lines.append(line)
+
+          expected: dict[str, dict[str, object]] = {}
+          for line in table_lines:
+              if not line.strip().startswith("|"):
+                  continue
+              cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+              if len(cells) != 3:
+                  continue
+              if cells[0].startswith("---"):
+                  continue
+              if cells[0] == "Workflow File":
+                  continue
+              workflow_file = cells[0].strip("` ")
+              workflow_name = cells[1].strip("` ")
+              jobs_raw = cells[2]
+              jobs = [
+                  job.strip("` ").strip()
+                  for job in jobs_raw.split(",")
+                  if job.strip()
+              ]
+              expected[workflow_file] = {
+                  "name": workflow_name,
+                  "jobs": sorted(jobs),
+              }
+
+          if not expected:
+              raise SystemExit("No Required PR Gates entries found.")
+
+          actual: dict[str, dict[str, object]] = {}
+          for workflow in sorted(workflows_path.glob("*.yml")):
+              data = yaml.safe_load(workflow.read_text(encoding="utf-8"))
+              if not data:
+                  continue
+              on_section = data.get("on", {})
+              has_pr = False
+              if isinstance(on_section, list):
+                  has_pr = "pull_request" in on_section
+              elif isinstance(on_section, str):
+                  has_pr = on_section == "pull_request"
+              elif isinstance(on_section, dict):
+                  has_pr = "pull_request" in on_section
+              if not has_pr:
+                  continue
+              jobs = sorted((data.get("jobs") or {}).keys())
+              actual[workflow.name] = {
+                  "name": str(data.get("name", workflow.stem)),
+                  "jobs": jobs,
+              }
+
+          expected_keys = set(expected.keys())
+          actual_keys = set(actual.keys())
+          if expected_keys != actual_keys:
+              missing = sorted(actual_keys - expected_keys)
+              extra = sorted(expected_keys - actual_keys)
+              if missing:
+                  print(f"Missing Required PR Gates entries: {missing}")
+              if extra:
+                  print(f"Extra Required PR Gates entries: {extra}")
+              raise SystemExit(1)
+
+          mismatches = []
+          for workflow_file in sorted(expected_keys):
+              exp = expected[workflow_file]
+              act = actual[workflow_file]
+              if exp["name"] != act["name"]:
+                  mismatches.append(
+                      f"{workflow_file}: name mismatch "
+                      f"(expected {exp['name']}, actual {act['name']})"
+                  )
+              if exp["jobs"] != act["jobs"]:
+                  mismatches.append(
+                      f"{workflow_file}: job list mismatch "
+                      f"(expected {exp['jobs']}, actual {act['jobs']})"
+                  )
+          if mismatches:
+              for mismatch in mismatches:
+                  print(mismatch)
+              raise SystemExit(1)
+
+          print("Required PR Gates list matches PR-triggered workflows.")
+          PY
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py
       - name: Validate inventory snapshot
