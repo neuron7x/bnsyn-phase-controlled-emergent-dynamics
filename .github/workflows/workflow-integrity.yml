@@ -247,14 +247,13 @@ jobs:
 
           expected_keys = set(expected.keys())
           actual_keys = set(actual.keys())
-          if expected_keys != actual_keys:
-              missing = sorted(actual_keys - expected_keys)
-              extra = sorted(expected_keys - actual_keys)
-              if missing:
-                  print(f"Missing Required PR Gates entries: {missing}")
-              if extra:
-                  print(f"Extra Required PR Gates entries: {extra}")
+          missing = sorted(expected_keys - actual_keys)
+          if missing:
+              print(f"Required PR Gates not triggered on PRs: {missing}")
               raise SystemExit(1)
+          extra = sorted(actual_keys - expected_keys)
+          if extra:
+              print(f"Non-required PR-triggered workflows: {extra}")
 
           mismatches = []
           for workflow_file in sorted(expected_keys):

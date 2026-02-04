@@ -37,14 +37,12 @@
 
 ## Required PR Gates
 
-The workflows below are the PR-triggered gates that must pass on pull requests.
+The workflows below are the required PR gates that must pass on pull requests.
 
 | Workflow File | Workflow Name | Job IDs (must pass on PRs) |
 | --- | --- | --- |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
-| `ci-smoke.yml` | `ci-smoke` | `ssot`, `tests-smoke` |
-| `docs.yml` | `docs` | `build-docs` |
 
 ## Gate Class Policy (Normative)
 
