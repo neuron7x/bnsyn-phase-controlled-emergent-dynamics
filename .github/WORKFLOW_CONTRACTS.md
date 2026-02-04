@@ -28,6 +28,13 @@
 * Timeout notation: use **Not set** when `timeout-minutes` is absent in the workflow YAML.
 * Branch protection must require only PR-gate workflows: `ci-pr-atomic.yml` and `workflow-integrity.yml`.
 
+## Gate Class Rules of Thumb
+
+* Required checks must be limited to workflows labeled **PR-gate** (`ci-pr-atomic.yml`, `workflow-integrity.yml`).
+* Workflows labeled **Long-running** must remain non-blocking status checks, even when they run on `pull_request`.
+* Workflows labeled **Manual-only** must not be required checks; gating is defined by their callers.
+* When changing a Gate Class, update the rationale, confirm triggers align with the taxonomy, and adjust branch protection notes accordingly.
+
 ## Workflow Inventory Index
 
 * Count: 25 workflows
