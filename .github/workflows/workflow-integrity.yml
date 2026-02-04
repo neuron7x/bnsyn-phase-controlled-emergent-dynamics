@@ -172,6 +172,12 @@ jobs:
         run: python scripts/validate_pr_gates.py
       - name: Validate workflow contracts
         run: python scripts/validate_workflow_contracts.py
+      - name: Validate long-running workflow triggers
+        run: python scripts/validate_long_running_triggers.py
+      - name: Render workflow policy documentation
+        run: python scripts/render_workflow_policy_docs.py
+      - name: Verify workflow policy documentation
+        run: git diff --exit-code -- .github/WORKFLOW_CONTRACTS.md
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py
       - name: Validate inventory snapshot
