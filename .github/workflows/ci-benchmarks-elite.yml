@@ -10,9 +10,10 @@ permissions:
 
 jobs:
   benchmarks:
-    uses: ./.github/workflows/ci-benchmarks.yml
+    uses: ./.github/workflows/_reusable_benchmarks.yml
     with:
       tier: elite
       profile: baseline
       scenario: ci_smoke
+      publish_baseline: false
     secrets: inherit

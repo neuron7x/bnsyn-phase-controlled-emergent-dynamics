@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   validate-physics:
@@ -79,20 +78,3 @@ jobs:
             benchmarks/ci_throughput_gain.json
           if-no-files-found: ignore
           retention-days: 30
-
-      - name: Comment on PR (if equivalence failed)
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('fs');
-            const reportPath = 'benchmarks/ci_equivalence_report.md';
-            if (fs.existsSync(reportPath)) {
-              const report = fs.readFileSync(reportPath, 'utf8');
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: '##  Physics Equivalence Failed\n\n' + report
-              });
-            }

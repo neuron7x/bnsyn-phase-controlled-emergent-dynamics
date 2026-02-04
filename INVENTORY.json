@@ -1,0 +1,47 @@
+{
+  "paths": [
+    "src",
+    "tests",
+    "docs",
+    ".github"
+  ],
+  "counts": {
+    "src": 67,
+    "tests": 117,
+    "docs": 85,
+    ".github": 32
+  },
+  "workflows": [
+    "_reusable_benchmarks.yml",
+    "_reusable_chaos_tests.yml",
+    "_reusable_formal_science.yml",
+    "_reusable_property_tests.yml",
+    "_reusable_pytest.yml",
+    "_reusable_quality.yml",
+    "_reusable_ssot.yml",
+    "_reusable_validation_tests.yml",
+    "benchmarks.yml",
+    "ci-benchmarks-elite.yml",
+    "ci-benchmarks.yml",
+    "ci-pr-atomic.yml",
+    "ci-pr.yml",
+    "ci-smoke.yml",
+    "ci-validation.yml",
+    "codecov-health.yml",
+    "codeql.yml",
+    "dependency-watch.yml",
+    "docs.yml",
+    "formal-coq.yml",
+    "formal-tla.yml",
+    "physics-equivalence.yml",
+    "quality-mutation.yml",
+    "science.yml",
+    "workflow-integrity.yml"
+  ],
+  "detected_tools": [
+    "pyproject.toml",
+    "requirements-lock.txt",
+    "docker-compose.yml",
+    "Makefile"
+  ]
+}
