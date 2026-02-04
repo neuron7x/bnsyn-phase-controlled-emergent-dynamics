@@ -52,7 +52,8 @@ jobs:
           for file in "${files[@]}"; do
             base="$(basename "$file")"
             is_allowed="${allowed[$base]-}"
-            awk '
+            status=0
+            if ! awk '
               BEGIN { in_on=0; found=0 }
 
               /^on:[[:space:]]*\[/ {
@@ -83,8 +84,9 @@ jobs:
               }
 
               END { if (found) exit 2 }
-            ' "$file"
-            status=$?
+            ' "$file"; then
+              status=$?
+            fi
             if [ "$status" -eq 2 ]; then
               if [ -z "$is_allowed" ]; then
                 violations=1
