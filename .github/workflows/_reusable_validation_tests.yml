@@ -1,3 +1,4 @@
+# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
 name: Reusable Validation Tests
 
 on:

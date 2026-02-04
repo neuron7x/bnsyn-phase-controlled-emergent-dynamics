@@ -248,6 +248,10 @@ def format_trigger_list(triggers: Iterable[str]) -> str:
     return f"[{','.join(ordered)}]"
 
 
+def format_allowed_sets(allowed_sets: Iterable[set[str]]) -> str:
+    return " or ".join(format_trigger_list(item) for item in allowed_sets)
+
+
 def evaluate_policy(
     project_root: Path,
     runtime_version: tuple[int, int, int] | None,
@@ -276,14 +280,36 @@ def evaluate_policy(
         if row.gate_class != "long-running":
             continue
         triggers = workflows[workflow_file]
-        forbidden = sorted(set(triggers) & FORBIDDEN_TRIGGERS)
+        trigger_set = set(triggers)
+        forbidden = sorted(trigger_set & FORBIDDEN_TRIGGERS)
         if forbidden:
             violations.append(
                 "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER "
                 f"{workflow_file} class=long-running "
-                f"triggers={format_trigger_list(triggers)} "
+                f"triggers={format_trigger_list(trigger_set)} "
                 f"forbidden={format_trigger_list(forbidden)}"
             )
+        if row.reusable == "YES":
+            allowed_sets = [
+                {"workflow_call"},
+                {"workflow_call", "workflow_dispatch"},
+            ]
+            if trigger_set not in allowed_sets:
+                violations.append(
+                    "VIOLATION: LONG_RUNNING_TRIGGER_SET "
+                    f"{workflow_file} class=long-running reusable=YES "
+                    f"triggers={format_trigger_list(trigger_set)} "
+                    f"allowed={format_allowed_sets(allowed_sets)}"
+                )
+        else:
+            expected = {"schedule", "workflow_dispatch"}
+            if trigger_set != expected:
+                violations.append(
+                    "VIOLATION: LONG_RUNNING_TRIGGER_SET "
+                    f"{workflow_file} class=long-running reusable=NO "
+                    f"triggers={format_trigger_list(trigger_set)} "
+                    f"expected={format_trigger_list(expected)}"
+                )
 
     return sorted(violations), len(workflows)
 

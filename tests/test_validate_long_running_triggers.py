@@ -78,7 +78,9 @@ def test_long_running_pull_request_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[pull_request] forbidden=[pull_request]"
+        "triggers=[pull_request] forbidden=[pull_request]",
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[pull_request] expected=[schedule,workflow_dispatch]",
     ]
 
 
@@ -98,7 +100,9 @@ def test_long_running_push_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[push] forbidden=[push]"
+        "triggers=[push] forbidden=[push]",
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch]",
     ]
 
 
@@ -118,7 +122,144 @@ def test_long_running_combined_violation(tmp_path: Path) -> None:
     assert result.exit_code == 2
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[pull_request,push] forbidden=[pull_request,push]"
+        "triggers=[pull_request,push] forbidden=[pull_request,push]",
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[pull_request,push] expected=[schedule,workflow_dispatch]",
+    ]
+
+
+def test_long_running_missing_schedule_violation(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "long.yml",
+                "gate_class": "long-running",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "long.yml", "workflow_dispatch")
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[workflow_dispatch] expected=[schedule,workflow_dispatch]"
+    ]
+
+
+def test_long_running_missing_workflow_dispatch_violation(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "long.yml",
+                "gate_class": "long-running",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "long.yml", "schedule")
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[schedule] expected=[schedule,workflow_dispatch]"
+    ]
+
+
+def test_long_running_extra_trigger_violation(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "long.yml",
+                "gate_class": "long-running",
+            }
+        ],
+    )
+    write_workflow(
+        tmp_path,
+        "long.yml",
+        {"schedule": None, "workflow_dispatch": None, "workflow_call": None},
+    )
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[schedule,workflow_call,workflow_dispatch] "
+        "expected=[schedule,workflow_dispatch]"
+    ]
+
+
+def test_reusable_long_running_schedule_violation(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "reusable.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(
+        tmp_path,
+        "reusable.yml",
+        {"workflow_call": None, "schedule": None},
+    )
+    result = run_check(tmp_path)
+    assert result.exit_code == 2
+    assert result.output_lines == [
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET reusable.yml class=long-running "
+        "reusable=YES triggers=[schedule,workflow_call] "
+        "allowed=[workflow_call] or [workflow_call,workflow_dispatch]"
+    ]
+
+
+def test_reusable_long_running_allows_workflow_call(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "reusable.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(tmp_path, "reusable.yml", "workflow_call")
+    result = run_check(tmp_path)
+    assert result.exit_code == 0
+    assert result.output_lines == [
+        "OK: long_running_trigger_policy workflows=1 violations=0"
+    ]
+
+
+def test_reusable_long_running_allows_dispatch(tmp_path: Path) -> None:
+    write_pyproject(tmp_path)
+    write_contracts(
+        tmp_path,
+        [
+            {
+                "workflow_file": "reusable.yml",
+                "gate_class": "long-running",
+                "reusable": "YES",
+            }
+        ],
+    )
+    write_workflow(
+        tmp_path,
+        "reusable.yml",
+        {"workflow_call": None, "workflow_dispatch": None},
+    )
+    result = run_check(tmp_path)
+    assert result.exit_code == 0
+    assert result.output_lines == [
+        "OK: long_running_trigger_policy workflows=1 violations=0"
     ]
 
 
@@ -358,7 +499,9 @@ def test_dry_run_masks_violations(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert result.output_lines == [
         "VIOLATION: LONG_RUNNING_FORBIDDEN_TRIGGER long.yml class=long-running "
-        "triggers=[push] forbidden=[push]"
+        "triggers=[push] forbidden=[push]",
+        "VIOLATION: LONG_RUNNING_TRIGGER_SET long.yml class=long-running "
+        "reusable=NO triggers=[push] expected=[schedule,workflow_dispatch]",
     ]
 
 
