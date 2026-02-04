@@ -11,68 +11,8 @@ permissions:
 
 jobs:
   flagship-experiment:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Pin pip
-        uses: ./.github/actions/pin-pip
-
-      - name: Log pip version
-        run: python -m pip --version
-
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev,test,viz]"
-
-      - name: Run flagship experiment
-        run: |
-          python -m experiments.runner temp_ablation_v2 --seeds 20 --out results/ci_run
-
-      - name: Generate visualizations
-        run: |
-          python scripts/visualize_experiment.py --run-id temp_ablation_v2 --results results/ci_run --out figures/ci_run
-
-      - name: Verify hypothesis
-        run: |
-          python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/ci_run
-
-      - name: Upload experiment results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: experiment-results
-          path: results/ci_run/
-          if-no-files-found: ignore
-
-      - name: Upload visualizations
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: experiment-figures
-          path: figures/ci_run/
-          if-no-files-found: ignore
-
-      - name: Summary
-        if: always()
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "## Experiment Results"
-            echo ""
-            echo "Flagship experiment completed. Artifacts uploaded."
-            echo ""
-            if [ -f results/ci_run/manifest.json ]; then
-              echo "### Manifest"
-              echo '```json'
-              cat results/ci_run/manifest.json
-              echo '```'
-            fi
-          } >> "$summary_file"
+    uses: ./.github/workflows/_reusable_formal_science.yml
+    with:
+      proof-suite: science
+      model-set: temp_ablation_v2
+      time-budget: 30
