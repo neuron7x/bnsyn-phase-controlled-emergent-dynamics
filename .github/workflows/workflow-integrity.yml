@@ -21,19 +21,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          guard_line="# Guard: non-PR-gate workflow; must remain off PRs."
-          mapfile -t files < <(
-            grep -rlFx --include='*.yml' \
-              -- "$guard_line" .github/workflows || true
+          allowlist=(
+            "ci-pr-atomic.yml"
+            "ci-pr.yml"
+            "ci-smoke.yml"
+            "codeql.yml"
+            "docs.yml"
+            "workflow-integrity.yml"
+            "_reusable_benchmarks.yml"
+            "_reusable_chaos_tests.yml"
+            "_reusable_formal_science.yml"
+            "_reusable_property_tests.yml"
+            "_reusable_pytest.yml"
+            "_reusable_quality.yml"
+            "_reusable_ssot.yml"
+            "_reusable_validation_tests.yml"
           )
+          declare -A allowed
+          for name in "${allowlist[@]}"; do
+            allowed["$name"]=1
+          done
+          mapfile -t files < <(ls .github/workflows/*.yml)
           if [ "${#files[@]}" -eq 0 ]; then
-            echo "Guard line not found in any workflow."
-            echo "Either add the guard line to intended non-PR workflows"
-            echo "or remove this policy step."
+            echo "No workflow files found."
             exit 1
           fi
+          echo "Scanned ${#files[@]} workflows."
+          echo "Allowed PR-trigger workflows: ${allowlist[*]}"
           violations=0
           for file in "${files[@]}"; do
+            base="$(basename "$file")"
+            is_allowed="${allowed[$base]-}"
             awk '
               BEGIN { in_on=0; found=0 }
 
@@ -43,6 +61,12 @@ jobs:
                   print FILENAME ":" NR ":" $0
                   found=1
                 }
+                next
+              }
+
+              /^on:[[:space:]]*(pull_request|push|workflow_call)[[:space:]]*$/ {
+                print FILENAME ":" NR ":" $0
+                found=1
                 next
               }
 
@@ -59,12 +83,20 @@ jobs:
               }
 
               END { if (found) exit 2 }
-            ' "$file" || violations=1
+            ' "$file"
+            status=$?
+            if [ "$status" -eq 2 ]; then
+              if [ -z "$is_allowed" ]; then
+                violations=1
+              fi
+            elif [ "$status" -ne 0 ]; then
+              violations=1
+            fi
           done
           if [ "$violations" -ne 0 ]; then
             echo "Non-PR workflow trigger violations detected."
-            echo "Guarded workflows MUST NOT declare pull_request/push/"
-            echo "workflow_call under on:."
+            echo "Workflows outside the allowlist MUST NOT declare"
+            echo "pull_request/push/workflow_call under on:."
             exit 1
           fi
           echo "Guarded workflows: trigger policy OK."
@@ -93,33 +125,43 @@ jobs:
           from pathlib import Path
           import unicodedata
 
-          workflow_dir = Path('.github/workflows')
+          workflow_dir = Path(".github/workflows")
+          md_files = sorted(Path(".github").rglob("*.md"))
           offenders = []
 
-          for path in sorted(workflow_dir.glob('*.yml')):
-              text = path.read_text(encoding='utf-8', errors='replace')
+          def scan_text(
+              path: Path,
+              allow_non_ascii: bool,
+          ) -> None:
+              text = path.read_text(encoding="utf-8", errors="replace")
               for line_no, line in enumerate(text.splitlines(), 1):
-                  if '\t' in line:
-                      offenders.append((path, line_no, 'TAB'))
+                  if "\t" in line:
+                      offenders.append((path, line_no, "TAB"))
                   for ch in line:
                       codepoint = ord(ch)
-                      if codepoint > 0x7F:
-                          detail = f'NON_ASCII U+{codepoint:04X}'
-                          offenders.append((path, line_no, detail))
                       category = unicodedata.category(ch)
-                      if category in {'Cf', 'Cc'} and ch not in {'\n', '\r'}:
+                      if category in {"Cf", "Cc"} and ch not in {"\n", "\r"}:
                           detail = (
-                              f'CONTROL_OR_BIDI {category} '
-                              f'U+{codepoint:04X}'
+                              f"CONTROL_OR_BIDI {category} "
+                              f"U+{codepoint:04X}"
                           )
                           offenders.append((path, line_no, detail))
+                      if not allow_non_ascii and codepoint > 0x7F:
+                          detail = f"NON_ASCII U+{codepoint:04X}"
+                          offenders.append((path, line_no, detail))
+
+          for path in sorted(workflow_dir.glob("*.yml")):
+              scan_text(path, allow_non_ascii=False)
+
+          for path in md_files:
+              scan_text(path, allow_non_ascii=True)
 
           if offenders:
               for path, line_no, detail in offenders:
-                  print(f'{path}:{line_no}:{detail}')
+                  print(f"{path}:{line_no}:{detail}")
               raise SystemExit(1)
 
-          print('Workflow integrity checks passed.')
+          print("Workflow integrity checks passed.")
           PY
       - name: Install safety checker dependencies
         run: python -m pip install pyyaml jsonschema

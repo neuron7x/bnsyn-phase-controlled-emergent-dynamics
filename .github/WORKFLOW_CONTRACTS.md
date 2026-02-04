@@ -1080,7 +1080,7 @@
 
 **Jobs:**
 
-* `validate-workflows` — Enforces non-PR workflow trigger policy, runs actionlint, scans for encoding violations, validates safety artifacts, and checks inventory drift.
+* `validate-workflows` — Enforces non-PR workflow trigger policy, runs actionlint, scans workflows/docs for control or tab characters (and non-ASCII in workflow YAML), validates safety artifacts, and checks inventory drift.
 
 **Evidence:**
 
