@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 24
-**Breakdown:** 17 primary + 7 reusable
+**Total workflows:** 25
+**Breakdown:** 17 primary + 8 reusable
 
 ## Axiom Dictionary
 
@@ -29,10 +29,11 @@
 
 ## Workflow Inventory Index
 
-* Count: 24 workflows
+* Count: 25 workflows
 * Files (lexicographic):
   * _reusable_benchmarks.yml
   * _reusable_chaos_tests.yml
+  * _reusable_formal_science.yml
   * _reusable_property_tests.yml
   * _reusable_pytest.yml
   * _reusable_quality.yml
@@ -283,6 +284,43 @@
 **Evidence:**
 
 * `./workflows/_reusable_benchmarks.yml`
+
+---
+
+## _reusable_formal_science.yml
+
+**Path:** `.github/workflows/_reusable_formal_science.yml`
+**Status:** Active
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable formal/science job template that executes Coq proofs, TLA+ model checks, or flagship experiments based on explicit inputs.
+
+**Axiom focus:**
+
+* A7 — Formal Verification – Proof Assistants (e.g., Coq)
+* A8 — Formal Verification – Temporal Logic / Model Checking (e.g., TLA)
+* A2 — CI Correctness & Regression Safety
+
+**Owner:**
+
+* @neuron7x
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`proof-suite`, `model-set`, `time-budget`, `max-steps`).
+
+**Timeout(s):**
+
+* `formal-science`: `${{ inputs.time-budget }}`
+
+**Jobs:**
+
+* `formal-science` — Runs Coq, TLA+, or science experiment workflows based on the suite input.
+
+**Evidence:**
+
+* `./workflows/_reusable_formal_science.yml`
 
 ---
 
@@ -676,11 +714,15 @@
 
 **Intent (1–2 sentences):**
 
-* Compile and verify Coq proofs for formal specifications.
+* Compile and verify Coq proofs for formal specifications via the reusable formal/science template.
 
 **Axiom focus:**
 
 * A7 — Formal Verification – Proof Assistants (e.g., Coq)
+
+**Owner:**
+
+* @neuron7x
 
 **Trigger(s):**
 
@@ -695,6 +737,11 @@
 
 * `coq-proof-check` — Installs Coq and compiles proof files with artifacted outputs.
 
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=coq`, `model-set=specs/coq`, `time-budget=20`.
+* Critical outputs: `coq-proof-verification-${{ github.sha }}` artifact (`coq_output_*.txt`, `coq_summary.md`) and the job summary lines for compilation status.
+
 **Evidence:**
 
 * `./workflows/formal-coq.yml`
@@ -708,16 +755,20 @@
 
 **Intent (1–2 sentences):**
 
-* Run nightly TLA+ model checking with configurable MaxSteps and artifacted reports.
+* Run nightly TLA+ model checking with configurable MaxSteps via the reusable formal/science template.
 
 **Axiom focus:**
 
 * A8 — Formal Verification – Temporal Logic / Model Checking (e.g., TLA)
 
+**Owner:**
+
+* @neuron7x
+
 **Trigger(s):**
 
 * `schedule` (nightly 02:00 UTC).
-* `workflow_dispatch` with `max_steps` input.
+* `workflow_dispatch` with `max-steps` input.
 
 **Timeout(s):**
 
@@ -726,6 +777,11 @@
 **Jobs:**
 
 * `tla-model-check` — Downloads TLA+ tools, generates config, runs TLC, and uploads reports.
+
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=tla`, `model-set=specs/tla`, `time-budget=30`, and `max-steps` defaulting to `100` on schedules.
+* Critical outputs: `tla-model-check-report-${{ github.sha }}` artifact (`tlc_output.txt`, `tla_summary.md`, `BNsyn_runtime.cfg`) and the job summary lines containing model checking status.
 
 **Evidence:**
 
@@ -805,11 +861,15 @@
 
 **Intent (1–2 sentences):**
 
-* Execute a flagship experiment workflow to validate scientific hypotheses with artifacts.
+* Execute a flagship experiment workflow to validate scientific hypotheses with artifacts via the reusable formal/science template.
 
 **Axiom focus:**
 
 * A2 — CI Correctness & Regression Safety
+
+**Owner:**
+
+* @neuron7x
 
 **Trigger(s):**
 
@@ -823,6 +883,11 @@
 **Jobs:**
 
 * `flagship-experiment` — Runs experiment, visualizes results, verifies hypothesis, uploads artifacts.
+
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=science`, `model-set=temp_ablation_v2`, `time-budget=30`.
+* Critical outputs: `experiment-results` and `experiment-figures` artifacts plus summary manifest in the job summary.
 
 **Evidence:**
 
@@ -903,7 +968,7 @@
 
 ## Completeness & Consistency
 
-* Inventory count: 24
-* Contract blocks count: 24
+* Inventory count: 25
+* Contract blocks count: 25
 * Missing: []
 * Mandatory named workflows present: YES (ci-validation.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)
