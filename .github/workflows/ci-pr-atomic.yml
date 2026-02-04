@@ -9,15 +9,6 @@ on:
       python-version:
         type: string
         default: "3.11"
-      pytest-markers:
-        type: string
-        default: "not (validation or property)"
-      coverage-threshold:
-        type: string
-        default: "95"
-      pytest-timeout-minutes:
-        type: string
-        default: "10"
       upload-codecov:
         type: boolean
         default: true
@@ -26,15 +17,6 @@ on:
       python-version:
         type: string
         default: "3.11"
-      pytest-markers:
-        type: string
-        default: "not (validation or property)"
-      coverage-threshold:
-        type: string
-        default: "95"
-      pytest-timeout-minutes:
-        type: string
-        default: "10"
       upload-codecov:
         type: boolean
         default: true
@@ -55,6 +37,11 @@ env:
   PYTHONDONTWRITEBYTECODE: 1
 
 jobs:
+  gate-profile:
+    uses: ./.github/workflows/_reusable_gate_profile.yml
+    with:
+      profile: pr
+
   determinism:
     runs-on: ubuntu-latest
     steps:
@@ -150,12 +137,13 @@ jobs:
       - run: python -c "import bnsyn; print(bnsyn.__version__)"
 
   tests-smoke:
+    needs: gate-profile
     uses: ./.github/workflows/_reusable_pytest.yml
     with:
       python-version: ${{ inputs['python-version'] || '3.11' }}
-      markers: ${{ inputs['pytest-markers'] || 'not (validation or property)' }}
-      coverage-threshold: ${{ fromJSON(inputs['coverage-threshold'] || '95') }}
-      timeout-minutes: ${{ fromJSON(inputs['pytest-timeout-minutes'] || '10') }}
+      markers: ${{ needs.gate-profile.outputs.pytest-markers }}
+      coverage-threshold: ${{ fromJSON(needs.gate-profile.outputs.coverage-threshold) }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.pytest-timeout-minutes) }}
       upload-codecov: ${{ inputs['upload-codecov'] || true }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -220,7 +208,7 @@ jobs:
 
   finalize:
     runs-on: ubuntu-latest
-    needs: [determinism, quality, build, tests-smoke, ssot, security]
+    needs: [gate-profile, determinism, quality, build, tests-smoke, ssot, security]
     if: success()
     steps:
       - name: PR Quality Gate
@@ -229,7 +217,7 @@ jobs:
           echo "   Determinism verified"
           echo "   Code quality approved"
           echo "   Build successful"
-          echo "   Tests passed (85% coverage)"
+          echo "   Tests passed (${{ needs.gate-profile.outputs.coverage-threshold }}% coverage)"
           echo "   SSOT gates verified"
           echo "   Security audit passed"
           echo ""

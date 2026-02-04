@@ -10,12 +10,13 @@
     "src": 67,
     "tests": 117,
     "docs": 85,
-    ".github": 32
+    ".github": 33
   },
   "workflows": [
     "_reusable_benchmarks.yml",
     "_reusable_chaos_tests.yml",
     "_reusable_formal_science.yml",
+    "_reusable_gate_profile.yml",
     "_reusable_property_tests.yml",
     "_reusable_pytest.yml",
     "_reusable_quality.yml",

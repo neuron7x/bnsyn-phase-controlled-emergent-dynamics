@@ -36,6 +36,11 @@ concurrency:
   cancel-in-progress: ${{ github.event.inputs.mode == 'chaos' || github.event.schedule == '0 4 * * *' || github.event.schedule == '30 2 * * *' || github.event.inputs.mode == 'property' }}
 
 jobs:
+  gate-profile:
+    uses: ./.github/workflows/_reusable_gate_profile.yml
+    with:
+      profile: long
+
   determine:
     runs-on: ubuntu-latest
     outputs:
@@ -69,23 +74,27 @@ jobs:
     uses: ./.github/workflows/_reusable_ssot.yml
 
   validation-tests:
-    needs: determine
+    needs: [determine, gate-profile]
     if: needs.determine.outputs.mode == 'standard' || needs.determine.outputs.mode == 'elite'
     uses: ./.github/workflows/_reusable_validation_tests.yml
     with:
+      markers: ${{ needs.gate-profile.outputs.validation-markers }}
       summary-title: ${{ needs.determine.outputs.mode == 'elite' && 'Scientific Validation Suite' || 'Validation Suite' }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
       upload-artifacts: ${{ needs.determine.outputs.mode == 'elite' }}
       artifact-name: validation-logs
 
   property-tests:
-    needs: determine
+    needs: [determine, gate-profile]
     if: needs.determine.outputs.mode == 'elite' || needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property'
     uses: ./.github/workflows/_reusable_property_tests.yml
     with:
+      markers: ${{ needs.gate-profile.outputs.property-markers }}
       hypothesis-profile: ${{ needs.determine.outputs.mode == 'chaos' && 'thorough' || needs.determine.outputs.mode == 'property' && 'ci' || 'quick' }}
       extra-args: ${{ needs.determine.outputs.mode == 'chaos' && '-v --tb=short --strict-markers --hypothesis-show-statistics' || '-v --tb=short --hypothesis-show-statistics' }}
       junit-enabled: ${{ needs.determine.outputs.mode != 'chaos' }}
       summary-title: ${{ needs.determine.outputs.mode == 'chaos' && 'Property-Based Testing' || 'Property-Based Invariants (Hypothesis)' }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.property-timeout-minutes) }}
       upload-artifacts: true
       upload-hypothesis-cache: ${{ needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property' }}
       artifact-name: ${{ (needs.determine.outputs.mode == 'chaos' || needs.determine.outputs.mode == 'property') && 'property-test-results' || 'property-logs' }}

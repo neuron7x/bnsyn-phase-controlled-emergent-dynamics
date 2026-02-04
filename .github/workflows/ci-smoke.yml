@@ -3,12 +3,16 @@ name: ci-smoke
 on:
   push:
     branches: ["main"]
-  pull_request:
 
 permissions:
   contents: read
 
 jobs:
+  gate-profile:
+    uses: ./.github/workflows/_reusable_gate_profile.yml
+    with:
+      profile: pr
+
   ssot:
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +37,9 @@ jobs:
           python scripts/scan_normative_tags.py
 
   tests-smoke:
+    needs: gate-profile
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.pytest-timeout-minutes) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,4 +55,4 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -e ".[dev,test,viz]"
       - name: Smoke tests
-        run: pytest -m "not (validation or property)"
+        run: pytest -m "${{ needs.gate-profile.outputs.pytest-markers }}"

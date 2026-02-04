@@ -31,6 +31,7 @@ jobs:
             "_reusable_benchmarks.yml"
             "_reusable_chaos_tests.yml"
             "_reusable_formal_science.yml"
+            "_reusable_gate_profile.yml"
             "_reusable_property_tests.yml"
             "_reusable_pytest.yml"
             "_reusable_quality.yml"
