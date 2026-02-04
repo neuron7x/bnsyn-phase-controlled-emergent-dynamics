@@ -73,20 +73,20 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
 | `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
 | `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
-| `benchmarks.yml` | `benchmarks` | long-running | `workflow_dispatch` | NO |
-| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `workflow_dispatch` | NO |
+| `benchmarks.yml` | `benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
 | `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
-| `ci-smoke.yml` | `ci-smoke` | long-running | `workflow_dispatch` | NO |
+| `ci-smoke.yml` | `ci-smoke` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
 | `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
-| `docs.yml` | `docs` | long-running | `workflow_dispatch` | NO |
+| `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
-| `physics-equivalence.yml` | `physics-equivalence` | long-running | `workflow_dispatch` | NO |
+| `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
 | `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
@@ -465,6 +465,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch` with tier/profile/scenario inputs.
+* `schedule` (daily 02:00 UTC).
 
 **Timeout(s):**
 
@@ -502,6 +503,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch`.
+* `schedule` (daily 02:00 UTC).
 
 **Timeout(s):**
 
@@ -669,6 +671,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch`.
+* `schedule` (every 6 hours).
 
 **Timeout(s):**
 
@@ -868,8 +871,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Trigger(s):**
 
-* `pull_request`.
 * `workflow_dispatch`.
+* `schedule` (daily 01:00 UTC).
 
 **Timeout(s):**
 
@@ -1000,9 +1003,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Trigger(s):**
 
-* `pull_request` with path filters.
-* `push` (branches: `main`).
 * `workflow_dispatch`.
+* `schedule` (weekly Sunday 04:00 UTC).
 
 **Timeout(s):**
 
