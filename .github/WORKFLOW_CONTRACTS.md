@@ -58,6 +58,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | Rule ID | Statement | Enforcement |
 | --- | --- | --- |
 | R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}`. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
 <!-- END: AUTO-GENERATED WORKFLOW POLICIES -->
 
 ## Workflow Inventory Table (Authoritative)
@@ -73,20 +74,20 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
 | `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
 | `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
-| `benchmarks.yml` | `benchmarks` | long-running | `workflow_dispatch` | NO |
-| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `workflow_dispatch` | NO |
+| `benchmarks.yml` | `benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
 | `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
-| `ci-smoke.yml` | `ci-smoke` | long-running | `workflow_dispatch` | NO |
+| `ci-smoke.yml` | `ci-smoke` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
 | `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
-| `docs.yml` | `docs` | long-running | `workflow_dispatch` | NO |
+| `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
-| `physics-equivalence.yml` | `physics-equivalence` | long-running | `workflow_dispatch` | NO |
+| `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
 | `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
@@ -101,6 +102,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
 
 * Reusable workflow invoked by callers; gating is defined by the parent workflow, so it is not a standalone PR gate despite enforcing A2.
 
@@ -138,6 +141,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
 
 * Reusable lint/type checks are enforced by caller workflows; this template supports A6/A2 but is not a direct PR gate.
 
@@ -181,6 +186,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Reusable non-PR gate; must not run on pull_request/push.
+
 * Chaos suite is invoked by scheduled or dispatch workflows; it supports A5/A2 without being a direct PR gate.
 
 **Intent (1–2 sentences):**
@@ -219,6 +226,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Reusable non-PR gate; must not run on pull_request/push.
+
 * Property-based tests are executed by caller workflows, so this reusable job is not a standalone PR gate even though it enforces A2.
 
 **Intent (1–2 sentences):**
@@ -255,6 +264,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
 
 * SSOT checks are consumed by caller workflows; this reusable job supports A2 but has no independent PR-gate status.
 
@@ -293,6 +304,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Reusable non-PR gate; must not run on pull_request/push.
+
 * Validation tests are driven by parent workflows; this reusable job enforces A2 but is not a PR gate on its own.
 
 **Intent (1–2 sentences):**
@@ -329,6 +342,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
 
 * Benchmark execution is orchestrated by caller workflows; this reusable job supports A4/A2 but does not create a standalone PR gate.
 
@@ -371,6 +386,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
 
 * Formal/science tasks are invoked by scheduled or dispatch workflows; this template supports A7/A8/A2 without being a direct PR gate.
 
@@ -415,6 +432,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Reusable non-PR gate; must not run on pull_request/push.
+
 * Centralizes deterministic gate criteria for caller workflows without serving as a standalone PR gate.
 
 **Intent (1–2 sentences):**
@@ -452,6 +471,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Non-blocking benchmark dispatch preserves A4 performance tracking without gating PR merges.
 
 **Intent (1–2 sentences):**
@@ -465,6 +486,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch` with tier/profile/scenario inputs.
+* `schedule` (daily 02:00 UTC).
 
 **Timeout(s):**
 
@@ -489,6 +511,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Elite benchmark schedule preserves A4 fidelity tracking while remaining non-blocking for PR merges.
 
 **Intent (1–2 sentences):**
@@ -502,6 +526,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch`.
+* `schedule` (daily 02:00 UTC).
 
 **Timeout(s):**
 
@@ -525,6 +550,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Benchmark routing provides A4 performance regression visibility as a non-blocking long-running check.
 
@@ -621,6 +648,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Reusable non-PR gate; must not run on pull_request/push.
+
 * Thin wrapper for dispatch/call usage; gating is handled by `ci-pr-atomic.yml`, so this is not a direct PR gate.
 
 **Intent (1–2 sentences):**
@@ -656,6 +685,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Provides optional A2 smoke/SSOT signal as a non-blocking long-running workflow.
 
 **Intent (1–2 sentences):**
@@ -669,6 +700,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Trigger(s):**
 
 * `workflow_dispatch`.
+* `schedule` (every 6 hours).
 
 **Timeout(s):**
 
@@ -694,6 +726,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Scheduled validation and chaos suites provide non-blocking A2 regression coverage without gating PR merges.
 
@@ -742,6 +776,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Periodic Codecov health checks support A3 provenance without blocking PR merges.
 
 **Intent (1–2 sentences):**
@@ -779,6 +815,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Scheduled CodeQL analysis supports A9 security hygiene as a non-blocking long-running check.
 
@@ -818,6 +856,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Weekly dependency monitoring supports A9 security posture without gating PR merges.
 
 **Intent (1–2 sentences):**
@@ -856,6 +896,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Documentation builds provide A2 correctness feedback but remain non-blocking to avoid gating PR merges.
 
 **Intent (1–2 sentences):**
@@ -868,8 +910,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Trigger(s):**
 
-* `pull_request`.
 * `workflow_dispatch`.
+* `schedule` (daily 01:00 UTC).
 
 **Timeout(s):**
 
@@ -893,6 +935,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Nightly formal proof checks uphold A7 assurance as non-blocking long-running validation.
 
@@ -941,6 +985,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Nightly TLA+ model checks uphold A8 assurance as non-blocking long-running validation.
 
 **Intent (1–2 sentences):**
@@ -988,6 +1034,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Gate Rationale:**
 
+* Non-PR gate; must not run on pull_request/push.
+
 * Physics equivalence checks enforce A2 correctness but remain non-blocking to keep PR gates focused on `ci-pr-atomic.yml`.
 
 **Intent (1–2 sentences):**
@@ -1000,9 +1048,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 **Trigger(s):**
 
-* `pull_request` with path filters.
-* `push` (branches: `main`).
 * `workflow_dispatch`.
+* `schedule` (weekly Sunday 04:00 UTC).
 
 **Timeout(s):**
 
@@ -1026,6 +1073,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Mutation testing supports A6 quality posture as a non-blocking long-running check.
 
@@ -1064,6 +1113,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 **Gate Class:** long-running
 
 **Gate Rationale:**
+
+* Non-PR gate; must not run on pull_request/push.
 
 * Scheduled flagship experiments support A2 scientific validation without gating PR merges.
 

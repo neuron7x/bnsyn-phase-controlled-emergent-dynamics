@@ -14,6 +14,7 @@ def render_block() -> str:
         "| Rule ID | Statement | Enforcement |",
         "| --- | --- | --- |",
         "| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |",
+        "| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}`. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |",
         END,
     ]
     return "\n".join(lines) + "\n"
