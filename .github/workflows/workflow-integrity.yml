@@ -229,7 +229,7 @@ jobs:
               data = yaml.safe_load(workflow.read_text(encoding="utf-8"))
               if not data:
                   continue
-              on_section = data.get("on", {})
+              on_section = data.get("on", data.get(True, {}))
               has_pr = False
               if isinstance(on_section, list):
                   has_pr = "pull_request" in on_section
