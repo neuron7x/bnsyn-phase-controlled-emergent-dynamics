@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   coq-proof-check:
-    uses: ./.github/workflows/_reusable_formal_science.yml
+    uses: ${{ github.repository }}/.github/workflows/_reusable_formal_science.yml@${{ github.sha }}
     with:
       proof-suite: coq
       model-set: specs/coq
