@@ -737,6 +737,11 @@
 
 * `coq-proof-check` — Installs Coq and compiles proof files with artifacted outputs.
 
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=coq`, `model-set=specs/coq`, `time-budget=20`.
+* Critical outputs: `coq-proof-verification-${{ github.sha }}` artifact (`coq_output_*.txt`, `coq_summary.md`) and the job summary lines for compilation status.
+
 **Evidence:**
 
 * `./workflows/formal-coq.yml`
@@ -763,7 +768,7 @@
 **Trigger(s):**
 
 * `schedule` (nightly 02:00 UTC).
-* `workflow_dispatch` with `max_steps` input.
+* `workflow_dispatch` with `max-steps` input.
 
 **Timeout(s):**
 
@@ -772,6 +777,11 @@
 **Jobs:**
 
 * `tla-model-check` — Downloads TLA+ tools, generates config, runs TLC, and uploads reports.
+
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=tla`, `model-set=specs/tla`, `time-budget=30`, and `max-steps` defaulting to `100` on schedules.
+* Critical outputs: `tla-model-check-report-${{ github.sha }}` artifact (`tlc_output.txt`, `tla_summary.md`, `BNsyn_runtime.cfg`) and the job summary lines containing model checking status.
 
 **Evidence:**
 
@@ -873,6 +883,11 @@
 **Jobs:**
 
 * `flagship-experiment` — Runs experiment, visualizes results, verifies hypothesis, uploads artifacts.
+
+**Delegation & provenance:**
+
+* Delegates execution to `_reusable_formal_science.yml` with `proof-suite=science`, `model-set=temp_ablation_v2`, `time-budget=30`.
+* Critical outputs: `experiment-results` and `experiment-figures` artifacts plus summary manifest in the job summary.
 
 **Evidence:**
 

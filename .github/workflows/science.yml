@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   flagship-experiment:
-    uses: ${{ github.repository }}/.github/workflows/_reusable_formal_science.yml@${{ github.sha }}
+    uses: ./.github/workflows/_reusable_formal_science.yml
     with:
       proof-suite: science
       model-set: temp_ablation_v2

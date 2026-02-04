@@ -6,7 +6,7 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
-      max_steps:
+      max-steps:
         description: 'Maximum steps for model checking'
         required: false
         default: '100'
@@ -20,9 +20,9 @@ concurrency:
 
 jobs:
   tla-model-check:
-    uses: ${{ github.repository }}/.github/workflows/_reusable_formal_science.yml@${{ github.sha }}
+    uses: ./.github/workflows/_reusable_formal_science.yml
     with:
       proof-suite: tla
       model-set: specs/tla
       time-budget: 30
-      max-steps: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_steps || '100' }}
+      max-steps: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs['max-steps'] || '100' }}

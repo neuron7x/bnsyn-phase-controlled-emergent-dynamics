@@ -24,8 +24,7 @@ jobs:
       - name: Lint workflows with actionlint
         uses: rhysd/actionlint@v1.7.7
         with:
-          shellcheck: shellcheck
-          verbose: true
+          args: -shellcheck=shellcheck -verbose
       - name: Scan workflow files for tabs or non-ASCII
         shell: bash
         run: |
