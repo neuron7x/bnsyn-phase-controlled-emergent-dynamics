@@ -95,3 +95,45 @@ python -m pip install -e ".[test]"
 
 Deferred gate note:
 - `mypy` is configured in CI quality workflow; run locally only after full `.[dev]` install.
+
+
+## Offline dependency workflow (Python 3.11)
+
+Build the local wheelhouse from pinned lock dependencies:
+
+```bash
+make wheelhouse-build
+```
+
+Validate that every pinned dependency in `requirements-lock.txt` has a matching wheel in `wheelhouse/`:
+
+```bash
+make wheelhouse-validate
+```
+
+Install the development environment fully offline from the local wheelhouse:
+
+```bash
+make dev-env-offline
+```
+
+Equivalent install command:
+
+```bash
+pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+```
+
+## Updating lock and wheelhouse
+
+1. Refresh lock file after dependency changes:
+
+```bash
+pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+```
+
+2. Rebuild wheels for Python 3.11 and re-run validation:
+
+```bash
+make wheelhouse-build
+make wheelhouse-validate
+```

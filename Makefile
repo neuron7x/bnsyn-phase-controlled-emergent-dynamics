@@ -1,10 +1,21 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
 	pip install -e ".[dev,test]"
 	pre-commit install
 	pre-commit autoupdate
+
+
+wheelhouse-build:
+	python -m scripts.build_wheelhouse build --lock-file requirements-lock.txt --wheelhouse wheelhouse --python-version 3.11
+
+wheelhouse-validate:
+	python -m scripts.build_wheelhouse validate --lock-file requirements-lock.txt --wheelhouse wheelhouse
+
+dev-env-offline: wheelhouse-validate
+	pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+	pre-commit install
 
 test:
 	python -m pytest -m "not validation" -q

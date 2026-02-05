@@ -382,6 +382,14 @@ make test
 make coverage
 ```
 
+**Offline (air-gapped) dependency setup**
+
+```bash
+make wheelhouse-build
+make wheelhouse-validate
+make dev-env-offline
+```
+
 **Testing in Docker**
 
 ```bash
