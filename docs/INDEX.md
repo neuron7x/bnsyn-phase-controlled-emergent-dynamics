@@ -12,6 +12,9 @@ Use this index to find any document, specification, or governance artifact.
 | **What is BN-Syn** | <a href="../README.md">README.md</a> |
 | **Formal Specification** | [SPEC.md](SPEC.md) |
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| **Testing & Coverage (Canonical)** | [TESTING.md](TESTING.md) |
+| **Architecture & Invariants** | [ARCHITECTURE_INVARIANTS.md](ARCHITECTURE_INVARIANTS.md) |
+| **Traceability Map** | [TRACEABILITY_MAP.md](TRACEABILITY_MAP.md) |
 | **Reproducibility** | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
 | **Governance** | [GOVERNANCE.md](GOVERNANCE.md) |
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
@@ -32,7 +35,10 @@ Use this index to find any document, specification, or governance artifact.
 |----------|---------|
 | [SPEC.md](SPEC.md) | 12-component formal specification: equations, calibration, failure envelopes |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Architecture ↔ evidence crosswalk (component → claim mapping) |
+| [ARCHITECTURE_INVARIANTS.md](ARCHITECTURE_INVARIANTS.md) | Runtime invariants, boundaries, and failure modes |
 | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | Determinism protocol, environment setup, test commands |
+| [TESTING.md](TESTING.md) | Canonical test + coverage commands and artifacts |
+| [TRACEABILITY_MAP.md](TRACEABILITY_MAP.md) | Requirement/constraint to code, tests, and CI gates |
 
 ---
 

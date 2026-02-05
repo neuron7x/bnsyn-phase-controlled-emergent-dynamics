@@ -320,3 +320,22 @@ def test_stage_callbacks() -> None:
 
     assert len(transitions) == 1
     assert transitions[0] == (SleepStage.WAKE, SleepStage.LIGHT_SLEEP)
+
+
+def test_wake_rejects_non_integer_record_interval() -> None:
+    seed = 42
+    pack = seed_all(seed)
+    nparams = NetworkParams(N=20)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack.np_rng,
+    )
+    temp_schedule = TemperatureSchedule(TemperatureParams())
+    cycle = SleepCycle(net, temp_schedule)
+
+    with pytest.raises(ValueError, match="record_interval must be a positive integer"):
+        cycle.wake(duration_steps=1, record_memories=True, record_interval=1.5)

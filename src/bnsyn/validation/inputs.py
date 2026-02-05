@@ -133,6 +133,8 @@ def validate_state_vector(state: Float64Array, n_neurons: int, name: str = "stat
         raise ValueError(f"{name}: expected shape ({n_neurons},), got {arr.shape}")
     if np.any(np.isnan(arr)):
         raise ValueError(f"{name}: contains NaN")
+    if not np.all(np.isfinite(arr)):
+        raise ValueError(f"{name}: contains non-finite values")
 
 
 def validate_spike_array(spikes: BoolArray, n_neurons: int, name: str = "spikes") -> None:
@@ -195,3 +197,5 @@ def validate_connectivity_matrix(
         raise ValueError(f"{name}: expected shape {shape}, got {arr.shape}")
     if np.any(np.isnan(arr)):
         raise ValueError(f"{name}: contains NaN")
+    if not np.all(np.isfinite(arr)):
+        raise ValueError(f"{name}: contains non-finite values")

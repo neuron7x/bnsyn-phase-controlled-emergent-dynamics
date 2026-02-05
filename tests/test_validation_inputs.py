@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from bnsyn.validation.inputs import (
     validate_connectivity_matrix,
@@ -26,6 +28,11 @@ def test_validate_state_vector_shape_and_nan() -> None:
 
     with pytest.raises(ValueError, match="contains NaN"):
         validate_state_vector(np.array([0.0, np.nan], dtype=np.float64), n_neurons=2, name="state")
+
+
+def test_validate_state_vector_rejects_infinite_values() -> None:
+    with pytest.raises(ValueError, match="contains non-finite values"):
+        validate_state_vector(np.array([0.0, np.inf], dtype=np.float64), n_neurons=2, name="state")
 
 
 def test_validate_spike_array_dtype_and_shape() -> None:
@@ -51,3 +58,46 @@ def test_validate_connectivity_matrix_dtype_shape_nan() -> None:
         validate_connectivity_matrix(
             np.array([[np.nan]], dtype=np.float64), shape=(1, 1), name="conn"
         )
+
+
+def test_validate_connectivity_matrix_rejects_infinite_values() -> None:
+    with pytest.raises(ValueError, match="contains non-finite values"):
+        validate_connectivity_matrix(
+            np.array([[1.0, -np.inf]], dtype=np.float64), shape=(1, 2), name="conn"
+        )
+
+
+@settings(derandomize=True, max_examples=60, deadline=None)
+@given(
+    n_neurons=st.integers(min_value=1, max_value=64),
+    bad_index=st.integers(min_value=0, max_value=63),
+    bad_value=st.sampled_from([np.nan, np.inf, -np.inf]),
+)
+def test_state_validator_property_rejects_non_finite(
+    n_neurons: int,
+    bad_index: int,
+    bad_value: float,
+) -> None:
+    vec = np.zeros(n_neurons, dtype=np.float64)
+    vec[bad_index % n_neurons] = bad_value
+    with pytest.raises(ValueError, match="contains"):
+        validate_state_vector(vec, n_neurons=n_neurons)
+
+
+def test_state_validator_fuzz_entrypoint_fast() -> None:
+    """Bounded fuzz-style regression entrypoint for API boundary validation."""
+    rng = np.random.default_rng(20260205)
+    for _ in range(100):
+        size = int(rng.integers(1, 48))
+        vec = rng.standard_normal(size).astype(np.float64)
+        coin = int(rng.integers(0, 5))
+        if coin == 0:
+            vec[int(rng.integers(0, size))] = np.nan
+            with pytest.raises(ValueError, match="contains NaN"):
+                validate_state_vector(vec, n_neurons=size)
+        elif coin == 1:
+            vec[int(rng.integers(0, size))] = np.inf
+            with pytest.raises(ValueError, match="contains non-finite values"):
+                validate_state_vector(vec, n_neurons=size)
+        else:
+            validate_state_vector(vec, n_neurons=size)
