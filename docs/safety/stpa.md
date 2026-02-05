@@ -46,7 +46,7 @@
 | --- | --- | --- | --- | --- |
 | SC-1 | `bnsyn.validation.inputs` validators | `tests/test_validation_inputs.py` | `pytest -q` | enforced |
 | SC-2 | `Network.__init__` and `Network.step` validation | `tests/test_network_validation_edges.py`, `tests/test_network_external_input.py` | `pytest -q` | enforced |
-| SC-3 | `bnsyn.rng.seed_all` | `tests/test_properties_determinism.py` | `pytest -m property` | enforced |
+| SC-3 | `bnsyn.rng.seed_all` | `tests/properties/test_properties_determinism.py` | `pytest -m property` | enforced |
 | SC-4 | _unmitigated_ | _unmitigated_ | _unmitigated_ | unmitigated |
 | SC-5 | _unmitigated_ | `tests/validation/test_chaos_numeric.py` (numeric health utilities only) | _unmitigated_ | unmitigated |
 
