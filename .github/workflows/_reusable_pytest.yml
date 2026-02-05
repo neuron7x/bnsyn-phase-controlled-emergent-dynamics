@@ -37,8 +37,6 @@ jobs:
     name: Pytest (Coverage ${{ inputs['coverage-threshold'] }}%)
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs['timeout-minutes'] }}
-    env:
-      HYPOTHESIS_PROFILE: ci
     steps:
       - name: Checkout
         uses: actions/checkout@v4

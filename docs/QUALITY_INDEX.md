@@ -124,7 +124,7 @@ cat quality/mutation_baseline.json | jq '.metrics'
 
 ## Hypothesis Profiles
 
-Defined in `tests/conftest.py`, controlled via `HYPOTHESIS_PROFILE` environment variable:
+Defined in `tests/properties/conftest.py`, controlled via `HYPOTHESIS_PROFILE` environment variable for property contour:
 
 | Profile | Examples | Deadline | Use Case |
 |---------|----------|----------|----------|

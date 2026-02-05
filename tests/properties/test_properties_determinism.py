@@ -1,6 +1,6 @@
+import hypothesis.strategies as st
 import pytest
 from hypothesis import given, settings
-import hypothesis.strategies as st
 
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import run_simulation
