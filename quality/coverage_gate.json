@@ -1,0 +1,5 @@
+{
+  "baseline_percent": 99.03,
+  "minimum_percent": 99.0,
+  "note": "Soft gate: fail only if coverage drops from measured baseline or below justified floor."
+}

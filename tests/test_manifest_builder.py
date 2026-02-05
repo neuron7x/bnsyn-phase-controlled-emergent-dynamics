@@ -88,3 +88,45 @@ def test_build_experiment_manifest_filters_manifest_json(tmp_path: Path) -> None
 
     expected_hash = manifest_builder._compute_file_hash(data_path)
     assert manifest["result_files"] == {"metrics.json": expected_hash}
+
+
+def test_resolve_package_version_fallback_from_pyproject(tmp_path: Path, monkeypatch) -> None:
+    (tmp_path / "pyproject.toml").write_text(
+        "[project]\nname='bnsyn'\nversion='9.9.9'\n", encoding="utf-8"
+    )
+
+    def raise_pkg_not_found(_: str) -> str:
+        raise metadata.PackageNotFoundError
+
+    monkeypatch.setattr(manifest_builder.metadata, "version", raise_pkg_not_found)
+    assert manifest_builder._resolve_package_version(tmp_path) == "9.9.9"
+
+
+def test_resolve_package_version_invalid_toml_returns_default(
+    tmp_path: Path, monkeypatch
+) -> None:
+    (tmp_path / "pyproject.toml").write_text("{ this is invalid toml", encoding="utf-8")
+
+    def raise_pkg_not_found(_: str) -> str:
+        raise metadata.PackageNotFoundError
+
+    monkeypatch.setattr(manifest_builder.metadata, "version", raise_pkg_not_found)
+    assert manifest_builder._resolve_package_version(tmp_path) == "0.0.0"
+
+
+def test_build_sleep_stack_manifest_uses_fallback_git_id(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(manifest_builder.shutil, "which", lambda _: None)
+
+    with pytest.warns(UserWarning):
+        manifest = manifest_builder.build_sleep_stack_manifest(
+            seed=1,
+            steps_wake=2,
+            steps_sleep=3,
+            N=4,
+            package_version="0.2.0",
+            repo_root=tmp_path,
+        )
+
+    assert manifest["git_sha"] == "release-0.2.0"

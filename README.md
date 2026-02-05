@@ -54,6 +54,8 @@ This repository follows a **Fractal Quality Architecture** with 7 universal axio
 
 ## Validation & Testing Strategy
 
+Canonical commands for install, test, coverage, and coverage gate live in [`docs/TESTING.md`](docs/TESTING.md).
+
 BN-Syn implements a **3-tier test selection strategy** for optimal coverage without blocking development:
 
 ### Tier 1: BLOCKING (PR Gates) ⚡
@@ -321,8 +323,7 @@ BN-Syn enforces deterministic execution, controlled randomness, and validation g
 - Δt-invariance checks compare dt vs dt/2 against reference tolerances.
 
 **Test partition:**
-- Smoke tests: `pytest -m "not validation"`
-- Validation tests: `pytest -m validation`
+- Canonical test/coverage commands: [`docs/TESTING.md`](docs/TESTING.md)
 
 **SSOT gates:**
 - `python scripts/validate_bibliography.py`

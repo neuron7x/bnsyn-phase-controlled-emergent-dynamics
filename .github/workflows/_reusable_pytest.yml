@@ -54,7 +54,7 @@ jobs:
         run: python -m pip --version
 
       - name: Install dependencies
-        run: python -m pip install -e ".[dev,test,viz]"
+        run: python -m pip install -e ".[test,viz]"
       
       - name: Run pytest
         id: pytest
@@ -62,9 +62,10 @@ jobs:
           START_TIME=$(date +%s)
           pytest \
             -m "${{ inputs.markers }}" \
-            --cov=src/bnsyn \
+            --cov=bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
+            --cov-report=xml \
             --cov-report=html \
             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
             --junit-xml=junit.xml \
@@ -76,6 +77,10 @@ jobs:
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
           exit "$PYTEST_EXIT"
       
+      - name: Coverage regression gate
+        if: success()
+        run: python scripts/check_coverage_gate.py --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
       - name: Parse coverage
         if: always()
         id: coverage
@@ -157,11 +162,11 @@ jobs:
               echo "git checkout ${{ github.sha }}"
               echo ""
               echo "# Install dependencies"
-              echo "python${{ inputs['python-version'] }} -m pip install -e \".[dev,viz]\""
+              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test,viz]\""
               echo ""
               echo "# Run tests"
               echo "pytest -m \"${{ inputs.markers }}\" \\"
-              echo "  --cov=src/bnsyn \\"
+              echo "  --cov=bnsyn \\"
               echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
               echo "  -v"
               echo "\`\`\`"
@@ -190,6 +195,7 @@ jobs:
             junit.xml
             htmlcov/
             coverage.json
+            coverage.xml
           if-no-files-found: ignore
           retention-days: 7
       

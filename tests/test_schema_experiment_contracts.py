@@ -42,3 +42,12 @@ def test_experiment_config_requires_name_pattern() -> None:
             network={"size": 10},
             simulation={"duration_ms": 1.0, "dt_ms": 0.1},
         )
+
+
+def test_experiment_config_rejects_duration_not_multiple_of_dt() -> None:
+    with pytest.raises(ValidationError, match=r"duration_ms must be an integer multiple"):
+        BNSynExperimentConfig(
+            experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+            network={"size": 10},
+            simulation={"duration_ms": 1.25, "dt_ms": 0.1},
+        )
