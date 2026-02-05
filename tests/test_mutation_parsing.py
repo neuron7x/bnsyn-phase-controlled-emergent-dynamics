@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import tempfile
 from pathlib import Path
 
@@ -189,28 +190,66 @@ def test_read_mutation_counts_uses_result_ids(monkeypatch: pytest.MonkeyPatch) -
     assert counts.killed_equivalent == 1
 
 
-def test_check_script_reads_nonzero_score_from_result_ids(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure check script score is non-zero when killed-equivalent mutants exist."""
+def test_parse_mutmut_results_perfect_score(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Perfect run should yield all killed scored mutants."""
     from types import SimpleNamespace
 
     import scripts.check_mutation_score as check_mutation_score
 
     outputs = {
-        "killed": "1 2 3\n",
-        "survived": "4 5\n",
+        "killed": "1 2 3 4\n",
+        "survived": "\n",
         "timeout": "\n",
         "suspicious": "\n",
         "skipped": "\n",
-        "untested": "6 7 8\n",
+        "untested": "\n",
     }
 
     def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:
-        assert args[0:2] == ["mutmut", "result-ids"]
         return SimpleNamespace(stdout=outputs[args[2]])
 
     monkeypatch.setattr("subprocess.run", fake_run)
 
-    score, total, killed = check_mutation_score.parse_mutmut_results()
-    assert score == 60.0
-    assert total == 5
-    assert killed == 3
+    counts = check_mutation_score.parse_mutmut_results()
+    assert counts == MutationCounts(4, 0, 0, 0, 0, 0)
+    assert calculate_score(counts) == 100.0
+
+
+def test_parse_mutmut_results_partial_score(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Mixed outcomes should produce partial score."""
+    from types import SimpleNamespace
+
+    import scripts.check_mutation_score as check_mutation_score
+
+    outputs = {
+        "killed": "10 11\n",
+        "survived": "12 13\n",
+        "timeout": "14\n",
+        "suspicious": "15\n",
+        "skipped": "16\n",
+        "untested": "17 18\n",
+    }
+
+    def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(stdout=outputs[args[2]])
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+
+    counts = check_mutation_score.parse_mutmut_results()
+    assert counts == MutationCounts(2, 2, 1, 1, 1, 2)
+    assert calculate_score(counts) == 50.0
+
+
+def test_parse_mutmut_results_subprocess_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Subprocess failure must fail-closed."""
+    import scripts.check_mutation_score as check_mutation_score
+
+    def fake_run(*_args: object, **_kwargs: object) -> None:
+        raise subprocess.CalledProcessError(returncode=2, cmd=["mutmut", "result-ids", "killed"])
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+
+    with pytest.raises(SystemExit) as exc:
+        check_mutation_score.parse_mutmut_results()
+
+    assert exc.value.code == 1

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import subprocess
 import sys
@@ -11,7 +12,7 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scripts.mutation_counts import calculate_score, read_mutation_counts
+from scripts.mutation_counts import MutationCounts, calculate_score, read_mutation_counts
 
 
 def load_baseline() -> dict:
@@ -23,36 +24,21 @@ def load_baseline() -> dict:
         print("   Run 'python scripts/generate_mutation_baseline.py' first.", file=sys.stderr)
         sys.exit(1)
 
-    with baseline_path.open() as f:
+    with baseline_path.open(encoding="utf-8") as f:
         return json.load(f)
 
 
-def parse_mutmut_results() -> tuple[float, int, int]:
-    """Read canonical mutmut counts and calculate current score.
-
-    Returns:
-        Tuple of (score, total_mutants, killed_mutants)
-    """
+def parse_mutmut_results() -> MutationCounts:
+    """Read canonical mutmut counts from mutmut result-ids output."""
     try:
-        counts = read_mutation_counts()
+        return read_mutation_counts()
     except subprocess.CalledProcessError as e:
         print(f"❌ Error running mutmut result-ids: {e}", file=sys.stderr)
         sys.exit(1)
 
-    total = counts.total_scored
-    if total == 0:
-        return 0.0, 0, 0
-
-    killed_equivalent = counts.killed_equivalent
-    score = calculate_score(counts)
-
-    return score, total, killed_equivalent
-
 
 def main() -> int:
     """Check mutation score against baseline."""
-    import argparse
-
     parser = argparse.ArgumentParser(description="Check mutation score against baseline")
     parser.add_argument(
         "--strict", action="store_true", help="Fail if baseline is uninitialized (for CI/nightly)"
@@ -118,13 +104,13 @@ def main() -> int:
 
     if args.current_score is not None:
         current_score = args.current_score
-        total = 0
-        killed = 0
+        counts = MutationCounts(0, 0, 0, 0, 0, 0)
     else:
         print("Reading current mutation results...")
-        current_score, total, killed = parse_mutmut_results()
-        print(f"Total mutants:      {total}")
-        print(f"Killed mutants:     {killed}")
+        counts = parse_mutmut_results()
+        current_score = calculate_score(counts)
+        print(f"Total mutants:      {counts.total_scored}")
+        print(f"Killed mutants:     {counts.killed_equivalent}")
 
     print(f"Current score:      {current_score}%")
     print()
