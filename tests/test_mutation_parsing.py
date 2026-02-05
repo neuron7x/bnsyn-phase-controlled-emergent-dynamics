@@ -1,8 +1,4 @@
-"""Unit tests for mutation testing scripts.
-
-These tests verify the mutation baseline parsing and score checking logic
-without requiring mutmut to actually run (which would be slow).
-"""
+"""Unit tests for mutation testing scripts."""
 
 from __future__ import annotations
 
@@ -11,6 +7,8 @@ import tempfile
 from pathlib import Path
 
 import pytest
+
+from scripts.mutation_counts import MutationCounts, calculate_score
 
 
 def test_mutation_baseline_structure() -> None:
@@ -22,7 +20,6 @@ def test_mutation_baseline_structure() -> None:
     with baseline_path.open() as f:
         baseline = json.load(f)
 
-    # Check required top-level keys
     required_keys = {
         "version",
         "timestamp",
@@ -37,117 +34,48 @@ def test_mutation_baseline_structure() -> None:
         f"Missing keys: {required_keys - baseline.keys()}"
     )
 
-    # Check config structure
     config_keys = {"tool", "tool_version", "python_version", "commit_sha", "test_command"}
     assert config_keys.issubset(baseline["config"].keys()), (
         f"Missing config keys: {config_keys - baseline['config'].keys()}"
     )
 
-    # Check metrics structure
     metrics_keys = {"total_mutants", "killed_mutants", "survived_mutants", "score_percent"}
     assert metrics_keys.issubset(baseline["metrics"].keys()), (
         f"Missing metrics keys: {metrics_keys - baseline['metrics'].keys()}"
     )
 
-    # Check that metrics are non-zero (factual baseline)
-    # Note: total_mutants might be 0 initially, but after first run should be > 0
-    # For now, just check structure
     assert isinstance(baseline["metrics"]["total_mutants"], int)
     assert isinstance(baseline["metrics"]["killed_mutants"], int)
     assert isinstance(baseline["metrics"]["survived_mutants"], int)
     assert isinstance(baseline["metrics"]["score_percent"], (int, float))
 
 
-def test_parse_mutmut_results() -> None:
-    """Test parsing of mutmut results output."""
-    # Import the function from the script
-    import sys
-
-    sys.path.insert(0, "scripts")
-    from generate_mutation_baseline import parse_mutmut_results
-
-    # Sample mutmut output
-    sample_output = """
-To apply a mutant on disk:
-    mutmut apply <id>
-
-To show a mutant:
-    mutmut show <id>
-
-
-Killed: 45
-Survived: 5
-Timeout: 2
-Suspicious: 1
-Skipped: 0
-
-Total: 53
-"""
-
-    counts = parse_mutmut_results(sample_output)
-
-    assert counts["killed"] == 45
-    assert counts["survived"] == 5
-    assert counts["timeout"] == 2
-    assert counts["suspicious"] == 1
-    assert counts["skipped"] == 0
-
-
 def test_calculate_mutation_score() -> None:
     """Test mutation score calculation."""
-    import sys
+    counts = MutationCounts(
+        killed=45,
+        survived=5,
+        timeout=2,
+        suspicious=1,
+        skipped=0,
+        untested=0,
+    )
 
-    sys.path.insert(0, "scripts")
-    from generate_mutation_baseline import calculate_score
-
-    # Test normal case
-    counts = {
-        "killed": 45,
-        "survived": 5,
-        "timeout": 2,
-        "suspicious": 1,
-        "skipped": 0,
-    }
-
-    # Score = (killed + timeout) / (killed + survived + timeout + suspicious)
-    # Score = (45 + 2) / (45 + 5 + 2 + 1) = 47 / 53 ≈ 88.68
     score = calculate_score(counts)
-
     assert isinstance(score, float)
     assert 88.0 < score < 89.0
 
-    # Test edge case: no mutants
-    counts_zero = {
-        "killed": 0,
-        "survived": 0,
-        "timeout": 0,
-        "suspicious": 0,
-        "skipped": 0,
-    }
-
+    counts_zero = MutationCounts(0, 0, 0, 0, 0, 0)
     score_zero = calculate_score(counts_zero)
     assert score_zero == 0.0
 
-    # Test perfect score
-    counts_perfect = {
-        "killed": 100,
-        "survived": 0,
-        "timeout": 0,
-        "suspicious": 0,
-        "skipped": 0,
-    }
-
+    counts_perfect = MutationCounts(100, 0, 0, 0, 0, 0)
     score_perfect = calculate_score(counts_perfect)
     assert score_perfect == 100.0
 
 
 def test_check_mutation_score_logic() -> None:
     """Test mutation score checking logic."""
-    import sys
-
-    sys.path.insert(0, "scripts")
-
-    # Create a temporary baseline
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         baseline = {
             "baseline_score": 75.0,
@@ -157,23 +85,13 @@ def test_check_mutation_score_logic() -> None:
         baseline_path = Path(f.name)
 
     try:
-        # Test score checking logic manually
         baseline_score = 75.0
         tolerance = 5.0
-        min_acceptable = baseline_score - tolerance  # 70.0
+        min_acceptable = baseline_score - tolerance
 
-        # Score above threshold: pass
-        current_score = 72.0
-        assert current_score >= min_acceptable
-
-        # Score below threshold: fail
-        current_score_fail = 68.0
-        assert current_score_fail < min_acceptable
-
-        # Score exactly at threshold: pass
-        current_score_exact = 70.0
-        assert current_score_exact >= min_acceptable
-
+        assert 72.0 >= min_acceptable
+        assert 68.0 < min_acceptable
+        assert 70.0 >= min_acceptable
     finally:
         baseline_path.unlink()
 
@@ -187,23 +105,17 @@ def test_mutation_baseline_factuality() -> None:
     with baseline_path.open() as f:
         baseline = json.load(f)
 
-    # Check that baseline has been generated at least once
-    # (metrics should not all be zero defaults)
     metrics = baseline["metrics"]
 
-    # At least one of these should be non-zero after first generation
     has_data = (
         metrics["total_mutants"] > 0
         or metrics["killed_mutants"] > 0
         or metrics["survived_mutants"] > 0
     )
 
-    # Note: This test might fail before first baseline generation
-    # That's acceptable - it ensures we don't commit zeroed baselines
     if not has_data:
         pytest.skip("Baseline not yet generated - run 'make mutation-baseline' first")
 
-    # If we have data, verify it's consistent
     assert metrics["total_mutants"] == (
         metrics["killed_mutants"]
         + metrics["survived_mutants"]
@@ -211,7 +123,6 @@ def test_mutation_baseline_factuality() -> None:
         + metrics.get("suspicious_mutants", 0)
     ), "Total mutants must equal sum of categories"
 
-    # Verify score is in valid range
     assert 0.0 <= metrics["score_percent"] <= 100.0, "Score must be between 0 and 100"
 
 
@@ -223,10 +134,9 @@ def test_mutation_scripts_exist() -> None:
     assert generate_script.exists(), "Generate baseline script must exist"
     assert check_script.exists(), "Check score script must exist"
 
-    # Check they're executable (on Unix systems)
     import os
 
-    if os.name != "nt":  # Skip on Windows
+    if os.name != "nt":
         assert os.access(generate_script, os.X_OK), "Generate script should be executable"
         assert os.access(check_script, os.X_OK), "Check script should be executable"
 
@@ -240,48 +150,67 @@ def test_mutation_baseline_version() -> None:
 
     assert "version" in baseline
     assert isinstance(baseline["version"], str)
-    # Version should be semantic versioning format
     assert "." in baseline["version"], "Version should use semantic versioning (e.g., '1.0.0')"
 
 
-def test_check_script_parse_mutmut_results_compact_and_colon(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test check_mutation_score parser handles mutmut output variants."""
-    import sys
+def test_read_mutation_counts_uses_result_ids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure canonical count extraction comes from mutmut result-ids output."""
     from types import SimpleNamespace
 
-    sys.path.insert(0, "scripts")
-    from check_mutation_score import parse_mutmut_results
+    from scripts.mutation_counts import read_mutation_counts
 
-    colon_output = """
-Killed: 10
-Survived: 2
-Timeout: 1
-Suspicious: 1
-"""
+    outputs = {
+        "killed": "3\n",
+        "survived": "1 2\n",
+        "timeout": "\n",
+        "suspicious": "\n",
+        "skipped": "\n",
+        "untested": "4 5 6\n",
+    }
 
-    def fake_run_colon(*_args: object, **_kwargs: object) -> SimpleNamespace:
-        return SimpleNamespace(stdout=colon_output)
+    def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:
+        assert args[0:2] == ["mutmut", "result-ids"]
+        status = args[2]
+        return SimpleNamespace(stdout=outputs[status])
 
-    monkeypatch.setattr("subprocess.run", fake_run_colon)
-    score, total, killed = parse_mutmut_results()
+    monkeypatch.setattr("subprocess.run", fake_run)
 
-    assert total == 14
-    assert killed == 11
-    assert score == pytest.approx(78.57, abs=0.01)
+    counts = read_mutation_counts()
 
-    compact_output = """
-    killed 7
-    survived 1
-    timeout 2
-    suspicious 0
-"""
+    assert counts == MutationCounts(
+        killed=1,
+        survived=2,
+        timeout=0,
+        suspicious=0,
+        skipped=0,
+        untested=3,
+    )
+    assert counts.total_scored == 3
+    assert counts.killed_equivalent == 1
 
-    def fake_run_compact(*_args: object, **_kwargs: object) -> SimpleNamespace:
-        return SimpleNamespace(stdout=compact_output)
 
-    monkeypatch.setattr("subprocess.run", fake_run_compact)
-    score2, total2, killed2 = parse_mutmut_results()
+def test_check_script_reads_nonzero_score_from_result_ids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure check script score is non-zero when killed-equivalent mutants exist."""
+    from types import SimpleNamespace
 
-    assert total2 == 10
-    assert killed2 == 9
-    assert score2 == 90.0
+    import scripts.check_mutation_score as check_mutation_score
+
+    outputs = {
+        "killed": "1 2 3\n",
+        "survived": "4 5\n",
+        "timeout": "\n",
+        "suspicious": "\n",
+        "skipped": "\n",
+        "untested": "6 7 8\n",
+    }
+
+    def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:
+        assert args[0:2] == ["mutmut", "result-ids"]
+        return SimpleNamespace(stdout=outputs[args[2]])
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+
+    score, total, killed = check_mutation_score.parse_mutmut_results()
+    assert score == 60.0
+    assert total == 5
+    assert killed == 3

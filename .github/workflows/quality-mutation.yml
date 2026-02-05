@@ -18,11 +18,11 @@ jobs:
   mutation-testing:
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -39,14 +39,11 @@ jobs:
         run: |
           python -m pip install -e ".[dev,test]"
           python -m pip install mutmut==2.4.5
-      
+
       - name: Load mutation baseline
         id: baseline
         run: |
-          # Check if baseline is initialized using the check script in strict mode
           python scripts/check_mutation_score.py --strict --help > /dev/null 2>&1 || true
-          
-          # Load baseline values
           BASELINE_SCORE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['baseline_score'])")
           TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
           MIN_ACCEPTABLE=$(python -c "print(float($BASELINE_SCORE) - float($TOLERANCE))")
@@ -55,53 +52,43 @@ jobs:
             echo "tolerance=$TOLERANCE"
             echo "min_acceptable=$MIN_ACCEPTABLE"
           } >> "$GITHUB_OUTPUT"
-      
+
       - name: Run mutation testing
         id: mutation
         run: |
-          # Configure mutmut to test critical modules only
           export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
-          
-          # Run mutmut
+
           mutmut run \
             --paths-to-mutate="$MUTMUT_PATHS" \
             --tests-dir=tests \
-            --runner="pytest -x -q -m 'not validation and not property'"
-          
-          # Generate results
+            --runner="pytest -x -q -m 'not validation and not property and not benchmark'" || true
+
           mutmut results > mutation_results.txt
-          # Note: || true is acceptable here as mutmut show may have no survivors
           mutmut show --status survived > survived_mutants.txt || true
-          
-          # Calculate score
-          TOTAL=$(awk '/^(Survived|Killed|Timeout)/{count++} END{print count+0}' mutation_results.txt)
-          KILLED=$(awk '/^Killed/{count++} END{print count+0}' mutation_results.txt)
-          
-          if [ "$TOTAL" -gt 0 ]; then
-            SCORE=$(python -c "print(round(100.0 * $KILLED / $TOTAL, 2))")
-          else
-            SCORE="0.0"
-          fi
-          
-          {
-            echo "score=$SCORE"
-            echo "total=$TOTAL"
-            echo "killed=$KILLED"
-          } >> "$GITHUB_OUTPUT"
-          
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "##  Mutation Testing Results"
-            echo ""
-            echo "| Metric | Value |"
-            echo "|--------|-------|"
-            echo "| Mutation Score | ${SCORE}% |"
-            echo "| Total Mutants | $TOTAL |"
-            echo "| Killed Mutants | $KILLED |"
-            echo "| Baseline Score | ${{ steps.baseline.outputs.baseline_score }}% |"
-            echo "| Min Acceptable | ${{ steps.baseline.outputs.min_acceptable }}% |"
-          } >> "$summary_file"
-      
+
+          python - <<'PY'
+import os
+from scripts.mutation_counts import calculate_score, read_mutation_counts
+
+counts = read_mutation_counts()
+score = calculate_score(counts)
+
+with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+    output.write(f"score={score}\n")
+    output.write(f"total={counts.total_scored}\n")
+    output.write(f"killed={counts.killed_equivalent}\n")
+
+with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+    summary.write("##  Mutation Testing Results\n\n")
+    summary.write("| Metric | Value |\n")
+    summary.write("|--------|-------|\n")
+    summary.write(f"| Mutation Score | {score}% |\n")
+    summary.write(f"| Total Mutants | {counts.total_scored} |\n")
+    summary.write(f"| Killed Mutants | {counts.killed_equivalent} |\n")
+    summary.write("| Baseline Score | ${{ steps.baseline.outputs.baseline_score }}% |\n")
+    summary.write("| Min Acceptable | ${{ steps.baseline.outputs.min_acceptable }}% |\n")
+PY
+
       - name: Upload mutation artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -113,13 +100,11 @@ jobs:
             .mutmut-cache
           if-no-files-found: ignore
           retention-days: 30
-      
+
       - name: Check mutation score threshold
         if: always()
-        run: |
-          # Use the check_mutation_score.py script in strict mode
-          python scripts/check_mutation_score.py --strict
-      
+        run: python scripts/check_mutation_score.py --strict
+
       - name: Generate mutation report
         if: always()
         run: |
