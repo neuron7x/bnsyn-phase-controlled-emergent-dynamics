@@ -390,6 +390,10 @@ make wheelhouse-validate
 make dev-env-offline
 ```
 
+Notes:
+- `wheelhouse-build` requires internet; `wheelhouse-validate` and `dev-env-offline` are offline.
+- Wheelhouse artifacts are platform-specific (Python version, implementation/ABI, and platform tag).
+
 **Testing in Docker**
 
 ```bash

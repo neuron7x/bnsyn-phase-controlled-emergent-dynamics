@@ -99,6 +99,10 @@ Deferred gate note:
 
 ## Offline dependency workflow (Python 3.11)
 
+Notes:
+- `wheelhouse/` is platform-specific (implementation/ABI/platform tag). Build and validate for the same target.
+- `wheelhouse-build` requires internet access. `wheelhouse-validate` and `dev-env-offline` are offline.
+
 Build the local wheelhouse from pinned lock dependencies:
 
 ```bash
@@ -117,11 +121,17 @@ Install the development environment fully offline from the local wheelhouse:
 make dev-env-offline
 ```
 
-Equivalent install command:
+Equivalent install commands:
 
 ```bash
 pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+pip install --no-index --find-links wheelhouse --no-deps -e .
 ```
+
+Failure modes:
+- Locked package has no wheel for the configured target tuple.
+- Marker applicability differs from the target environment.
+- Wheelhouse built for a different platform/ABI than the install target.
 
 ## Updating lock and wheelhouse
 

@@ -1,4 +1,9 @@
-.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-clean check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
+
+LOCK_FILE ?= requirements-lock.txt
+WHEELHOUSE_DIR ?= wheelhouse
+PYTHON_VERSION ?= 3.11
+WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -8,14 +13,18 @@ dev-setup:
 
 
 wheelhouse-build:
-	python -m scripts.build_wheelhouse build --lock-file requirements-lock.txt --wheelhouse wheelhouse --python-version 3.11
+	python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
 
 wheelhouse-validate:
-	python -m scripts.build_wheelhouse validate --lock-file requirements-lock.txt --wheelhouse wheelhouse
+	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
 
 dev-env-offline: wheelhouse-validate
-	pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+	pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+	pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
 	pre-commit install
+
+wheelhouse-clean:
+	rm -rf $(WHEELHOUSE_DIR) artifacts/wheelhouse_report.json
 
 test:
 	python -m pytest -m "not validation" -q
@@ -129,4 +138,5 @@ clean:
 	find . -type f -name .coverage -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	rm -f .mutmut-cache
+	rm -rf $(WHEELHOUSE_DIR) artifacts/wheelhouse_report.json
 	@echo "Cleaned temporary files"
