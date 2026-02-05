@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table
+from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
 
 
 class PrGateParseError(RuntimeError):
