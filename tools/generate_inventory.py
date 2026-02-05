@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
+
+
+def _tracked_files_under(path_prefix: str) -> list[Path]:
+    out = subprocess.check_output(["git", "ls-files", f"{path_prefix}/**"], text=True)
+    return [Path(line) for line in out.splitlines() if line]
 
 
 def main() -> None:
     root = Path(".")
     paths = ["src", "tests", "docs", ".github"]
-    ignored_parts = {".pytest_cache", "__pycache__"}
 
-    def is_counted(path: Path) -> bool:
-        if not path.is_file():
-            return False
-        return not any(part in ignored_parts for part in path.parts)
-
-    counts = {path: sum(1 for item in (root / path).rglob("*") if is_counted(item)) for path in paths}
+    counts = {path: len(_tracked_files_under(path)) for path in paths}
     workflows = sorted((root / ".github" / "workflows").glob("*.yml"))
     workflow_names = [path.name for path in workflows]
     detected_tools = [
