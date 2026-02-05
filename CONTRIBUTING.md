@@ -78,7 +78,7 @@ def compute_variance(values: Float64Array, *, ddof: int = 1) -> float:
 pytest -m "not validation"
 
 # Determinism tests
-pytest tests/test_determinism.py tests/test_properties_determinism.py -v
+pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v
 
 # Validation tests (slow)
 pytest -m validation

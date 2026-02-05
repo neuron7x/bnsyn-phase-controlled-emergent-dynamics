@@ -33,7 +33,7 @@ test:
 	python -m pytest -m "not validation" -q
 
 test-determinism:
-	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+	python -m pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -q
 
 test-validation:
 	python -m pytest -m validation -q

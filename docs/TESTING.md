@@ -37,6 +37,35 @@ python -m pytest -m smoke -q
 Expected output pattern:
 - Only smoke-marked tests.
 
+
+## Property test contour (Hypothesis)
+
+Hypothesis profiles are defined only in:
+- `tests/properties/conftest.py`
+
+Run property tests (requires `hypothesis` installed):
+
+```bash
+HYPOTHESIS_PROFILE=ci python -m pytest tests/properties -m property -q
+```
+
+Alternate profiles:
+
+```bash
+HYPOTHESIS_PROFILE=quick python -m pytest tests/properties -m property -q
+HYPOTHESIS_PROFILE=thorough python -m pytest tests/properties -m property -q
+```
+
+Run non-property tests without Hypothesis dependency:
+
+```bash
+python -m pytest -m "not property" -q
+```
+
+Behavior when `hypothesis` is missing:
+- `python -m pytest -m "not property" -q` succeeds.
+- `python -m pytest tests/properties -m property -q` fails with explicit `ModuleNotFoundError: No module named 'hypothesis'`.
+
 ## Generate coverage artifacts
 
 ```bash
