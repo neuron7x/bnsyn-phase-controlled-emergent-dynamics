@@ -358,9 +358,75 @@ def test_mutation_ci_summary_requires_target_flags() -> None:
     """Summary tool must fail closed when no target outputs are requested."""
     import scripts.mutation_ci_summary as mutation_ci_summary
 
+
     old_argv = mutation_ci_summary.sys.argv
     try:
         mutation_ci_summary.sys.argv = ["mutation_ci_summary.py"]
         assert mutation_ci_summary.main() == 1
     finally:
+        mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_survivors_summary_no_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Survivor summary should emit fallback text when file is absent."""
+    import scripts.mutation_survivors_summary as survivors_summary
+
+    summary_path = tmp_path / "summary.md"
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary_path))
+
+    assert survivors_summary.main() == 0
+    content = summary_path.read_text(encoding="utf-8")
+    assert "## Surviving Mutants" in content
+    assert "No surviving mutants!" in content
+
+
+def test_mutation_survivors_summary_with_entries(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Survivor summary should cap output to first 50 lines."""
+    import scripts.mutation_survivors_summary as survivors_summary
+
+    summary_path = tmp_path / "summary.md"
+    survivors_path = tmp_path / "survived_mutants.txt"
+    survivors_path.write_text("".join([f"m{i}\n" for i in range(60)]), encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary_path))
+
+    assert survivors_summary.main() == 0
+    content = summary_path.read_text(encoding="utf-8")
+    assert "m0" in content
+    assert "m49" in content
+    assert "m50" not in content
+
+
+def test_mutation_ci_summary_missing_github_output_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Summary tool must fail closed when --write-output target env is missing."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        mutation_ci_summary,
+        "read_mutation_counts",
+        lambda: MutationCounts(1, 0, 0, 0, 0, 0),
+    )
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(baseline_path),
+            "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
         mutation_ci_summary.sys.argv = old_argv
