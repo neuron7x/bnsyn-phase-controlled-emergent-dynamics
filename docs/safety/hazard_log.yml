@@ -81,10 +81,10 @@ hazards:
       - code: src/bnsyn/sim/network.py:L514-L533
         description: run_simulation seeds RNG via seed_all before simulation.
     tests:
-      - path: tests/test_properties_determinism.py:L12-L31
+      - path: tests/properties/test_properties_determinism.py:L12-L31
         description: property tests assert deterministic behavior and seed control.
     verification:
-      - pytest tests/test_properties_determinism.py -q -m property
+      - pytest tests/properties/test_properties_determinism.py -q -m property
     gates:
       - workflow: .github/workflows/ci-validation.yml
         job: property-tests
