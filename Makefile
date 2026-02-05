@@ -1,4 +1,4 @@
-.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-clean check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -25,6 +25,9 @@ dev-env-offline: wheelhouse-validate
 
 wheelhouse-clean:
 	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+
+wheelhouse-report: wheelhouse-validate
+	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
 
 test:
 	python -m pytest -m "not validation" -q

@@ -115,6 +115,7 @@ Validate that every pinned dependency in `requirements-lock.txt` has a matching 
 
 ```bash
 make wheelhouse-validate
+make wheelhouse-report
 ```
 
 Install the development environment fully offline from the local wheelhouse:
@@ -134,6 +135,16 @@ Failure modes:
 - Locked package has no wheel for the configured target tuple.
 - Marker applicability differs from the target environment.
 - Wheelhouse built for a different platform/ABI than the install target.
+
+Validation exit codes:
+- `0`: wheelhouse fully covers applicable locked requirements.
+- `1`: one or more applicable locked requirements are missing wheels.
+- `2`: lock contains unsupported or duplicate applicable requirement entries.
+
+Report contains additional diagnostics:
+- `duplicate_requirements`
+- `incompatible_wheels`
+- `malformed_wheels`
 
 ## Updating lock and wheelhouse
 

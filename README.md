@@ -387,6 +387,7 @@ make coverage
 ```bash
 make wheelhouse-build
 make wheelhouse-validate
+make wheelhouse-report
 make dev-env-offline
 ```
 

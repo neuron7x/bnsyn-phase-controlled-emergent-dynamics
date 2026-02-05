@@ -11,6 +11,7 @@ from typing import Any
 
 from packaging.markers import default_environment
 from packaging.requirements import InvalidRequirement, Requirement
+from packaging.tags import Tag
 from packaging.utils import canonicalize_name, parse_wheel_filename
 from packaging.version import InvalidVersion, Version
 
@@ -43,6 +44,14 @@ class LockedRequirement:
 class ParseResult:
     requirements: list[LockedRequirement]
     unsupported: list[str]
+    duplicates: list[str]
+
+
+@dataclass(frozen=True)
+class WheelScanResult:
+    coverage: dict[tuple[str, Version], set[str]]
+    incompatible: list[str]
+    malformed: list[str]
 
 
 def _normalize_python_full_version(python_version: str) -> str:
@@ -127,8 +136,9 @@ def _iter_requirement_lines(lock_file: Path) -> list[str]:
 
 
 def parse_locked_requirements(lock_file: Path, target: TargetConfig) -> ParseResult:
-    applicable: list[LockedRequirement] = []
+    applicable_by_key: dict[tuple[str, Version], LockedRequirement] = {}
     unsupported: list[str] = []
+    duplicates: list[str] = []
     marker_env = _marker_environment(target)
 
     for req_line in _iter_requirement_lines(lock_file):
@@ -150,28 +160,59 @@ def parse_locked_requirements(lock_file: Path, target: TargetConfig) -> ParseRes
         if req.marker is not None and not req.marker.evaluate(marker_env):
             continue
 
-        applicable.append(
-            LockedRequirement(
-                raw=req_line,
-                name=req.name,
-                version=spec.version,
-                marker=str(req.marker) if req.marker is not None else None,
-            )
+        requirement = LockedRequirement(
+            raw=req_line,
+            name=req.name,
+            version=spec.version,
+            marker=str(req.marker) if req.marker is not None else None,
         )
 
-    return ParseResult(requirements=applicable, unsupported=unsupported)
-
-
-def wheelhouse_coverage(wheelhouse_dir: Path) -> dict[tuple[str, Version], set[str]]:
-    coverage: dict[tuple[str, Version], set[str]] = {}
-    for wheel_path in wheelhouse_dir.glob("*.whl"):
-        try:
-            parsed_name, parsed_version, _, _ = parse_wheel_filename(wheel_path.name)
-        except (InvalidVersion, ValueError):
+        if requirement.key in applicable_by_key:
+            duplicates.append(f"{requirement.name}=={requirement.version}")
             continue
+
+        applicable_by_key[requirement.key] = requirement
+
+    return ParseResult(
+        requirements=list(applicable_by_key.values()),
+        unsupported=unsupported,
+        duplicates=sorted(duplicates),
+    )
+
+
+def _wheel_matches_target_tag(target: TargetConfig, wheel_tags: frozenset[Tag]) -> bool:
+    py_tag = f"{target.implementation}{target.python_version.replace('.', '')}"
+    supported_interpreters = {py_tag, f"py{target.python_version.replace('.', '')}", "py3", "py2.py3"}
+
+    for tag in wheel_tags:
+        interpreter_ok = tag.interpreter in supported_interpreters
+        abi_ok = tag.abi in {target.abi, "abi3", "none"}
+        platform_ok = tag.platform in {target.platform_tag, "any"}
+        if interpreter_ok and abi_ok and platform_ok:
+            return True
+    return False
+
+
+def wheelhouse_coverage(wheelhouse_dir: Path, target: TargetConfig) -> WheelScanResult:
+    coverage: dict[tuple[str, Version], set[str]] = {}
+    incompatible: list[str] = []
+    malformed: list[str] = []
+
+    for wheel_path in sorted(wheelhouse_dir.glob("*.whl")):
+        try:
+            parsed_name, parsed_version, _, parsed_tags = parse_wheel_filename(wheel_path.name)
+        except (InvalidVersion, ValueError):
+            malformed.append(wheel_path.name)
+            continue
+
+        if not _wheel_matches_target_tag(target, parsed_tags):
+            incompatible.append(wheel_path.name)
+            continue
+
         key = (canonicalize_name(parsed_name), parsed_version)
         coverage.setdefault(key, set()).add(wheel_path.name)
-    return coverage
+
+    return WheelScanResult(coverage=coverage, incompatible=incompatible, malformed=malformed)
 
 
 def _build_report(
@@ -180,15 +221,17 @@ def _build_report(
     target: TargetConfig,
     parsed: ParseResult,
 ) -> dict[str, Any]:
-    coverage = wheelhouse_coverage(wheelhouse_dir)
+    scan = wheelhouse_coverage(wheelhouse_dir, target)
     missing: list[str] = []
     for requirement in parsed.requirements:
-        if requirement.key not in coverage:
+        if requirement.key not in scan.coverage:
             missing.append(f"{requirement.name}=={requirement.version}")
 
     wheels_by_requirement = {
         f"{name}=={str(version)}": sorted(files)
-        for (name, version), files in sorted(coverage.items(), key=lambda x: (x[0][0], str(x[0][1])))
+        for (name, version), files in sorted(
+            scan.coverage.items(), key=lambda item: (item[0][0], str(item[0][1]))
+        )
     }
 
     return {
@@ -207,8 +250,11 @@ def _build_report(
         "parsed_requirements_count": len(_iter_requirement_lines(lock_file)),
         "applicable_requirements_count": len(parsed.requirements),
         "unsupported_requirements": sorted(parsed.unsupported),
+        "duplicate_requirements": parsed.duplicates,
         "missing": sorted(missing),
-        "wheel_inventory_count": sum(len(files) for files in coverage.values()),
+        "incompatible_wheels": scan.incompatible,
+        "malformed_wheels": scan.malformed,
+        "wheel_inventory_count": sum(len(files) for files in scan.coverage.values()),
         "wheel_inventory": wheels_by_requirement,
     }
 
@@ -226,6 +272,11 @@ def validate_wheelhouse(
     target: TargetConfig,
     report_path: Path | None = None,
 ) -> int:
+    if not lock_file.is_file():
+        raise SystemExit(f"lock file not found: {lock_file}")
+    if not wheelhouse_dir.is_dir():
+        raise SystemExit(f"wheelhouse directory not found: {wheelhouse_dir}")
+
     parsed = parse_locked_requirements(lock_file, target)
     report = _build_report(lock_file=lock_file, wheelhouse_dir=wheelhouse_dir, target=target, parsed=parsed)
     _write_report(report_path, report)
@@ -236,6 +287,12 @@ def validate_wheelhouse(
             file=sys.stderr,
         )
         for entry in report["unsupported_requirements"]:
+            print(f"  - {entry}", file=sys.stderr)
+        return 2
+
+    if report["duplicate_requirements"]:
+        print("Duplicate applicable lock entries detected:", file=sys.stderr)
+        for entry in report["duplicate_requirements"]:
             print(f"  - {entry}", file=sys.stderr)
         return 2
 
@@ -250,6 +307,9 @@ def validate_wheelhouse(
 
 
 def build_wheelhouse(lock_file: Path, wheelhouse_dir: Path, target: TargetConfig) -> None:
+    if not lock_file.is_file():
+        raise SystemExit(f"lock file not found: {lock_file}")
+
     wheelhouse_dir.mkdir(parents=True, exist_ok=True)
     command = [
         sys.executable,
