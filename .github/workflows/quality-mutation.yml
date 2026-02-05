@@ -43,7 +43,6 @@ jobs:
       - name: Load mutation baseline
         id: baseline
         run: |
-          python scripts/check_mutation_score.py --strict --help > /dev/null 2>&1 || true
           BASELINE_SCORE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['baseline_score'])")
           TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
           MIN_ACCEPTABLE=$(python -c "print(float($BASELINE_SCORE) - float($TOLERANCE))")
@@ -61,7 +60,7 @@ jobs:
           mutmut run \
             --paths-to-mutate="$MUTMUT_PATHS" \
             --tests-dir=tests \
-            --runner="pytest -x -q -m 'not validation and not property and not benchmark'" || true
+            --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
 
           mutmut results > mutation_results.txt
           mutmut show --status survived > survived_mutants.txt || true

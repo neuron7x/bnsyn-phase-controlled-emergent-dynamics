@@ -183,11 +183,35 @@ class WorkflowLinter:
 
     def _check_job(self, job_name: str, job_def: dict, workflow_name: str) -> None:
         """Check a single job for violations."""
+        if job_def.get("continue-on-error") is True:
+            self.result.violations.append(
+                Violation(
+                    severity="error",
+                    category="Masked Job Failure",
+                    workflow=workflow_name,
+                    location=f"job:{job_name}",
+                    message="Job-level 'continue-on-error: true' masks failures for the entire job",
+                    suggestion="Remove 'continue-on-error' and use explicit conditional steps for non-critical cleanup",
+                )
+            )
+
         steps = job_def.get("steps", [])
 
         for i, step in enumerate(steps):
             step_name = step.get("name", f"step-{i}")
             location = f"job:{job_name}, step:{i + 1} ({step_name})"
+
+            if step.get("continue-on-error") is True:
+                self.result.violations.append(
+                    Violation(
+                        severity="error",
+                        category="Masked Step Failure",
+                        workflow=workflow_name,
+                        location=location,
+                        message="Step-level 'continue-on-error: true' masks failures",
+                        suggestion="Remove 'continue-on-error' and move non-critical post-processing to steps with 'if: always()'",
+                    )
+                )
 
             # Check for `run` steps with commands
             if "run" in step:
