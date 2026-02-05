@@ -1,7 +1,8 @@
+---
 # NON-PR-GATE: long-running workflow; must not run on pull_request/push.
 name: quality-mutation
 
-on:
+"on":
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -32,29 +33,36 @@ jobs:
         uses: ./.github/actions/pin-pip
 
       - name: Log pip version
-        run: python -m pip --version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip --version
 
       - name: Install dependencies
+        shell: bash
         run: |
+          set -euo pipefail
           python -m pip install -e ".[dev,test]"
           python -m pip install mutmut==2.4.5
 
-      - name: Run mutation testing
+      - name: Validate mutation baseline schema
+        shell: bash
         run: |
           set -euo pipefail
-          export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
+          python -m scripts.validate_mutation_baseline
 
-          mutmut run \
-            --paths-to-mutate="$MUTMUT_PATHS" \
-            --tests-dir=tests \
-            --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
-
-          mutmut results > mutation_results.txt
-          mutmut show --status survived > survived_mutants.txt
+      - name: Run mutation testing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.run_mutation_pipeline
 
       - name: Emit canonical mutation metrics
         if: always()
-        run: python scripts/mutation_ci_summary.py --write-output --write-summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.mutation_ci_summary --write-output --write-summary
 
       - name: Upload mutation artifacts
         if: always()
@@ -70,8 +78,14 @@ jobs:
 
       - name: Check mutation score threshold
         if: always()
-        run: python scripts/check_mutation_score.py --strict
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.check_mutation_score --strict
 
       - name: Generate mutation report
         if: always()
-        run: python scripts/mutation_survivors_summary.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.mutation_survivors_summary

@@ -1,3 +1,5 @@
+See also: `docs/MUTATION_GATE.md` for the canonical mutation gate contract.
+
 # Testing Guide for BNsyn
 
 This document describes the testing infrastructure and protocols for the BNsyn project.

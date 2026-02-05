@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -19,16 +19,30 @@ coverage:
 	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
 
 coverage-baseline: coverage
-	python scripts/generate_coverage_baseline.py --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
 
 coverage-gate: coverage
-	python scripts/check_coverage_gate.py --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+	python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+
+mutation:
+	@echo "🧬 Running mutation profile (reproducible local workflow step)..."
+	@pip install -e ".[test]" -q
+	@pip install mutmut==2.4.5 -q
+	@python -m scripts.run_mutation_pipeline
+
+mutation-ci:
+	@echo "🧬 Emitting mutation CI artifacts to local files..."
+	@baseline_file=quality/mutation_baseline.json; \
+	output_file=.mutation_ci_output; \
+	summary_file=.mutation_ci_summary.md; \
+	GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
 
 mutation-baseline:
 	@echo "🧬 Running mutation testing to establish baseline..."
 	@pip install -e ".[test]" -q
 	@pip install mutmut==2.4.5 -q
-	@python scripts/generate_mutation_baseline.py
+	@python -m scripts.generate_mutation_baseline
 
 mutation-check:
 	@echo "🧬 Running mutation testing against baseline..."
@@ -36,9 +50,9 @@ mutation-check:
 	@pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
-	@mutmut results
-	@python scripts/check_mutation_score.py --advisory
+	@python -m scripts.validate_mutation_baseline
+	@python -m scripts.run_mutation_pipeline
+	@python -m scripts.check_mutation_score --advisory
 
 mutation-check-strict:
 	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
@@ -46,9 +60,9 @@ mutation-check-strict:
 	@pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
-	@mutmut run --paths-to-mutate="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py" --tests-dir=tests --runner="pytest -x -q -m 'not validation and not property and not benchmark'"
-	@mutmut results
-	@python scripts/check_mutation_score.py --strict
+	@python -m scripts.validate_mutation_baseline
+	@python -m scripts.run_mutation_pipeline
+	@python -m scripts.check_mutation_score --strict
 
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"
@@ -69,15 +83,15 @@ mypy:
 	mypy src --strict --config-file pyproject.toml
 
 ssot:
-	python scripts/validate_bibliography.py
-	python scripts/validate_claims.py
-	python scripts/scan_normative_tags.py
+	python -m scripts.validate_bibliography
+	python -m scripts.validate_claims
+	python -m scripts.scan_normative_tags
 
 validate-claims-coverage:
-	python scripts/validate_claims_coverage.py --format markdown
+	python -m scripts.validate_claims_coverage --format markdown
 
 docs-evidence:
-	python scripts/generate_evidence_coverage.py
+	python -m scripts.generate_evidence_coverage
 
 security:
 	gitleaks detect --redact --verbose --source=.
@@ -92,7 +106,7 @@ docs:
 	@echo "Docs built at docs/_build"
 
 release-readiness:
-	python scripts/release_readiness.py
+	python -m scripts.release_readiness
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

@@ -1,3 +1,5 @@
+See also: `docs/MUTATION_GATE.md` for the canonical mutation gate contract.
+
 # Quality Infrastructure Index
 
 This document provides a comprehensive overview of the BN-Syn quality infrastructure, including how to run each system locally, what artifacts prove correctness, and what CI jobs enforce what.

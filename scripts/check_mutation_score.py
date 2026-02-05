@@ -8,9 +8,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-if __package__ in {None, ""}:
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from scripts.mutation_counts import (
     MutationCounts,
     assess_mutation_gate,
@@ -124,7 +121,7 @@ def main() -> int:
     print("  2. Add tests to kill surviving mutants")
     print("  3. Re-run mutation testing")
     print("  4. If baseline is outdated, regenerate it:")
-    print("     python scripts/generate_mutation_baseline.py")
+    print("     python -m scripts.generate_mutation_baseline")
 
     return 1
 
