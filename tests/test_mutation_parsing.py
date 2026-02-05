@@ -242,3 +242,46 @@ def test_mutation_baseline_version() -> None:
     assert isinstance(baseline["version"], str)
     # Version should be semantic versioning format
     assert "." in baseline["version"], "Version should use semantic versioning (e.g., '1.0.0')"
+
+
+def test_check_script_parse_mutmut_results_compact_and_colon(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test check_mutation_score parser handles mutmut output variants."""
+    import sys
+    from types import SimpleNamespace
+
+    sys.path.insert(0, "scripts")
+    from check_mutation_score import parse_mutmut_results
+
+    colon_output = """
+Killed: 10
+Survived: 2
+Timeout: 1
+Suspicious: 1
+"""
+
+    def fake_run_colon(*_args: object, **_kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(stdout=colon_output)
+
+    monkeypatch.setattr("subprocess.run", fake_run_colon)
+    score, total, killed = parse_mutmut_results()
+
+    assert total == 14
+    assert killed == 11
+    assert score == pytest.approx(78.57, abs=0.01)
+
+    compact_output = """
+    killed 7
+    survived 1
+    timeout 2
+    suspicious 0
+"""
+
+    def fake_run_compact(*_args: object, **_kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(stdout=compact_output)
+
+    monkeypatch.setattr("subprocess.run", fake_run_compact)
+    score2, total2, killed2 = parse_mutmut_results()
+
+    assert total2 == 10
+    assert killed2 == 9
+    assert score2 == 90.0

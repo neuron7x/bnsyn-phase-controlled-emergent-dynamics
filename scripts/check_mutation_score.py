@@ -15,6 +15,7 @@ If current_score is not provided, it will try to run 'mutmut results' to get it.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -54,16 +55,25 @@ def parse_mutmut_results() -> tuple[float, int, int]:
     # Parse counts from output
     counts = {"killed": 0, "survived": 0, "timeout": 0, "suspicious": 0}
 
+    compact_pattern = re.compile(
+        r"^(killed|survived|timeout|suspicious)[:\s].*?(\d+)\)?$", re.IGNORECASE
+    )
+
     for line in output.splitlines():
-        line = line.strip().lower()
-        if line.startswith("killed:"):
-            counts["killed"] = int(line.split(":")[1].strip())
-        elif line.startswith("survived:"):
-            counts["survived"] = int(line.split(":")[1].strip())
-        elif line.startswith("timeout:"):
-            counts["timeout"] = int(line.split(":")[1].strip())
-        elif line.startswith("suspicious:"):
-            counts["suspicious"] = int(line.split(":")[1].strip())
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        lowered = stripped.lower()
+        if lowered.startswith(("killed:", "survived:", "timeout:", "suspicious:")):
+            key, value = lowered.split(":", 1)
+            counts[key] = int(value.strip())
+            continue
+
+        match = compact_pattern.match(stripped)
+        if match:
+            key = match.group(1).lower()
+            counts[key] = int(match.group(2))
 
     total = counts["killed"] + counts["survived"] + counts["timeout"] + counts["suspicious"]
     if total == 0:
