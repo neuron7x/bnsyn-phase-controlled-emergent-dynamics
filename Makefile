@@ -27,8 +27,8 @@ coverage-gate: coverage
 
 mutation:
 	@echo "🧬 Running mutation profile (reproducible local workflow step)..."
-	@pip install -e ".[test]" -q
-	@pip install mutmut==2.4.5 -q
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.run_mutation_pipeline
 
 mutation-ci:
@@ -36,18 +36,20 @@ mutation-ci:
 	@baseline_file=quality/mutation_baseline.json; \
 	output_file=.mutation_ci_output; \
 	summary_file=.mutation_ci_summary.md; \
+	: > $$output_file; \
+	: > $$summary_file; \
 	GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
 
 mutation-baseline:
 	@echo "🧬 Running mutation testing to establish baseline..."
-	@pip install -e ".[test]" -q
-	@pip install mutmut==2.4.5 -q
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.generate_mutation_baseline
 
 mutation-check:
 	@echo "🧬 Running mutation testing against baseline..."
-	@pip install -e ".[test]" -q
-	@pip install mutmut==2.4.5 -q
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline
@@ -56,8 +58,8 @@ mutation-check:
 
 mutation-check-strict:
 	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
-	@pip install -e ".[test]" -q
-	@pip install mutmut==2.4.5 -q
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
 	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline

@@ -100,7 +100,7 @@ def test_load_mutation_baseline_and_assessment(tmp_path: Path) -> None:
             {
                 "baseline_score": 80.0,
                 "tolerance_delta": 5.0,
-                "status": "ready",
+                "status": "active",
                 "metrics": {"total_mutants": 42},
             }
         ),
@@ -119,7 +119,7 @@ def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
 
     assessment = MutationAssessment(
         counts=MutationCounts(3, 2, 1, 0, 0, 4),
-        baseline=MutationBaseline(70.0, 5.0, "ready", 12),
+        baseline=MutationBaseline(70.0, 5.0, "active", 12),
         score=66.67,
     )
 
@@ -133,7 +133,7 @@ def test_render_github_output_lines_contract() -> None:
 
     assessment = MutationAssessment(
         counts=MutationCounts(7, 3, 0, 0, 0, 0),
-        baseline=MutationBaseline(65.0, 4.0, "ready", 10),
+        baseline=MutationBaseline(65.0, 4.0, "active", 10),
         score=70.0,
     )
 
@@ -224,3 +224,83 @@ def test_parse_mutmut_results_subprocess_failure(monkeypatch: pytest.MonkeyPatch
         check_mutation_score.parse_mutmut_results()
 
     assert exc.value.code == 1
+
+
+def test_validate_mutation_baseline_invariant_mismatch(tmp_path: Path) -> None:
+    import scripts.validate_mutation_baseline as validate_mutation_baseline
+
+    baseline_path = tmp_path / "baseline_bad.json"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "version": "1.0.0",
+                "timestamp": "2026-01-01T00:00:00Z",
+                "baseline_score": 50.0,
+                "tolerance_delta": 5.0,
+                "status": "active",
+                "description": "test",
+                "config": {},
+                "scope": {},
+                "metrics": {
+                    "total_mutants": 10,
+                    "killed_mutants": 3,
+                    "survived_mutants": 5,
+                    "timeout_mutants": 1,
+                    "suspicious_mutants": 0,
+                    "score_percent": 90.0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    old_argv = validate_mutation_baseline.sys.argv
+    try:
+        validate_mutation_baseline.sys.argv = [
+            "validate_mutation_baseline.py",
+            "--baseline",
+            str(baseline_path),
+        ]
+        assert validate_mutation_baseline.main() == 1
+    finally:
+        validate_mutation_baseline.sys.argv = old_argv
+
+
+def test_validate_mutation_baseline_rejects_invalid_status(tmp_path: Path) -> None:
+    import scripts.validate_mutation_baseline as validate_mutation_baseline
+
+    baseline_path = tmp_path / "baseline_bad_status.json"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "version": "1.0.0",
+                "timestamp": "2026-01-01T00:00:00Z",
+                "baseline_score": 50.0,
+                "tolerance_delta": 5.0,
+                "status": "ready",
+                "description": "test",
+                "config": {},
+                "scope": {},
+                "metrics": {
+                    "total_mutants": 10,
+                    "killed_mutants": 4,
+                    "survived_mutants": 5,
+                    "timeout_mutants": 1,
+                    "suspicious_mutants": 0,
+                    "score_percent": 50.0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    old_argv = validate_mutation_baseline.sys.argv
+    try:
+        validate_mutation_baseline.sys.argv = [
+            "validate_mutation_baseline.py",
+            "--baseline",
+            str(baseline_path),
+        ]
+        assert validate_mutation_baseline.main() == 1
+    finally:
+        validate_mutation_baseline.sys.argv = old_argv

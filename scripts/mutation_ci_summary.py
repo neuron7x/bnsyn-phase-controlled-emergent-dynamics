@@ -24,6 +24,15 @@ def write_github_output(path: Path, assessment: MutationAssessment) -> None:
         output.write(render_github_output_lines(assessment))
 
 
+def _render_not_evaluated(reason: str) -> str:
+    return (
+        "## Mutation Testing Results\n\n"
+        "**Gate Status:** ⚠️ NOT EVALUATED\n\n"
+        f"Reason: `{reason}`\n\n"
+        "Use `python -m scripts.check_mutation_score --strict` as the enforcement gate.\n"
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate canonical mutation CI outputs and summary")
     parser.add_argument(
@@ -65,28 +74,38 @@ def main() -> int:
             return 1
         summary_path = Path(summary_path_raw)
 
+    assessment: MutationAssessment | None = None
+    not_evaluated_reason = ""
+
+    baseline = None
     try:
         baseline = load_mutation_baseline(args.baseline)
-        counts = read_mutation_counts()
-        assessment = assess_mutation_gate(counts, baseline)
     except FileNotFoundError as exc:
-        print(f"❌ Baseline file not found: {exc}", file=sys.stderr)
-        return 1
+        not_evaluated_reason = f"baseline file not found: {exc}"
     except (KeyError, ValueError, TypeError) as exc:
-        print(f"❌ Invalid baseline payload: {exc}", file=sys.stderr)
-        return 1
-    except subprocess.CalledProcessError as exc:
-        print(f"❌ Error running mutmut result-ids: {exc}", file=sys.stderr)
-        return 1
+        not_evaluated_reason = f"invalid baseline payload: {exc}"
+
+    if baseline is not None:
+        try:
+            counts = read_mutation_counts()
+            assessment = assess_mutation_gate(counts, baseline)
+        except FileNotFoundError as exc:
+            not_evaluated_reason = f"mutmut executable not found: {exc}"
+        except subprocess.CalledProcessError as exc:
+            not_evaluated_reason = f"mutmut result-ids failed: {exc}"
 
     try:
-        if output_path is not None:
+        if output_path is not None and assessment is not None:
             write_github_output(output_path, assessment)
 
         if summary_path is not None:
-            markdown = render_ci_summary_markdown(assessment)
-            with summary_path.open("a", encoding="utf-8") as summary_file:
-                summary_file.write(markdown)
+            if assessment is None:
+                with summary_path.open("a", encoding="utf-8") as summary_file:
+                    summary_file.write(_render_not_evaluated(not_evaluated_reason))
+            else:
+                markdown = render_ci_summary_markdown(assessment)
+                with summary_path.open("a", encoding="utf-8") as summary_file:
+                    summary_file.write(markdown)
     except OSError as exc:
         print(f"❌ Failed to write CI artifacts: {exc}", file=sys.stderr)
         return 1

@@ -71,6 +71,7 @@ jobs:
           name: mutation-report-${{ github.sha }}
           path: |
             mutation_results.txt
+            mutation_results.stderr.txt
             survived_mutants.txt
             .mutmut-cache
           if-no-files-found: ignore

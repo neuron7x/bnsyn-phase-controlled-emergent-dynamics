@@ -2,6 +2,9 @@
 
 ## Canonical Source of Truth
 
+Execution standard for tooling commands: `python -m scripts.<module>`.
+
+
 All mutation metrics are defined and derived in:
 
 - `scripts/mutation_counts.py`
@@ -55,6 +58,11 @@ Required top-level keys:
 - `scope`
 - `metrics`
 
+Allowed status values:
+
+- `active`
+- `needs_regeneration`
+
 Required `metrics` keys:
 
 - `total_mutants`
@@ -81,6 +89,15 @@ Formatting rules:
 - newline at end of output payload
 - no extra keys
 
+## Summary vs Gate Semantics
+
+`python -m scripts.mutation_ci_summary --write-output --write-summary` is best-effort for summary emission.
+When baseline is invalid/unavailable or mutation counts are unavailable, it writes a `NOT EVALUATED` summary block and does not enforce the gate.
+
+Enforcement is exclusively:
+
+- `python -m scripts.check_mutation_score --strict`
+
 ## Strict vs Advisory Gate
 
 `python -m scripts.check_mutation_score --strict`
@@ -106,3 +123,11 @@ Emit CI-style outputs/summary locally:
 Full strict check against baseline:
 
 - `make mutation-check-strict`
+
+## Mutation Artifacts
+
+`python -m scripts.run_mutation_pipeline` emits:
+
+- `mutation_results.txt`
+- `mutation_results.stderr.txt`
+- `survived_mutants.txt`

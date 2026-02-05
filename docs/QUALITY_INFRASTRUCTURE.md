@@ -61,8 +61,8 @@ make mutation-baseline
 make mutation-check
 
 # Or use scripts directly
-python scripts/generate_mutation_baseline.py
-python scripts/check_mutation_score.py
+python -m scripts.generate_mutation_baseline
+python -m scripts.check_mutation_score
 ```
 
 ### Formal Verification (Nightly)
