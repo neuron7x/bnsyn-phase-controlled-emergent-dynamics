@@ -67,27 +67,27 @@ jobs:
           mutmut show --status survived > survived_mutants.txt || true
 
           python - <<'PY'
-import os
-from scripts.mutation_counts import calculate_score, read_mutation_counts
+          import os
+          from scripts.mutation_counts import calculate_score, read_mutation_counts
 
-counts = read_mutation_counts()
-score = calculate_score(counts)
+          counts = read_mutation_counts()
+          score = calculate_score(counts)
 
-with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-    output.write(f"score={score}\n")
-    output.write(f"total={counts.total_scored}\n")
-    output.write(f"killed={counts.killed_equivalent}\n")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"score={score}\n")
+              output.write(f"total={counts.total_scored}\n")
+              output.write(f"killed={counts.killed_equivalent}\n")
 
-with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
-    summary.write("##  Mutation Testing Results\n\n")
-    summary.write("| Metric | Value |\n")
-    summary.write("|--------|-------|\n")
-    summary.write(f"| Mutation Score | {score}% |\n")
-    summary.write(f"| Total Mutants | {counts.total_scored} |\n")
-    summary.write(f"| Killed Mutants | {counts.killed_equivalent} |\n")
-    summary.write("| Baseline Score | ${{ steps.baseline.outputs.baseline_score }}% |\n")
-    summary.write("| Min Acceptable | ${{ steps.baseline.outputs.min_acceptable }}% |\n")
-PY
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write("##  Mutation Testing Results\n\n")
+              summary.write("| Metric | Value |\n")
+              summary.write("|--------|-------|\n")
+              summary.write(f"| Mutation Score | {score}% |\n")
+              summary.write(f"| Total Mutants | {counts.total_scored} |\n")
+              summary.write(f"| Killed Mutants | {counts.killed_equivalent} |\n")
+              summary.write("| Baseline Score | ${{ steps.baseline.outputs.baseline_score }}% |\n")
+              summary.write("| Min Acceptable | ${{ steps.baseline.outputs.min_acceptable }}% |\n")
+          PY
 
       - name: Upload mutation artifacts
         if: always()
