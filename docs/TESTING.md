@@ -66,6 +66,22 @@ Behavior when `hypothesis` is missing:
 - `python -m pytest -m "not property" -q` succeeds.
 - `python -m pytest tests/properties -m property -q` fails with explicit `ModuleNotFoundError: No module named 'hypothesis'`.
 
+## Generate fast local coverage artifacts (canonical dev path)
+
+```bash
+make coverage-fast
+```
+
+Equivalent explicit command:
+
+```bash
+python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml -q
+```
+
+Artifacts:
+- Terminal report with missing lines by module (`term-missing`).
+- `coverage.xml` at repository root.
+
 ## Generate coverage artifacts
 
 ```bash
