@@ -21,6 +21,10 @@ class TargetConfig:
     implementation: str
     abi: str
     platform_tag: str
+    sys_platform: str
+    os_name: str
+    platform_system: str
+    platform_machine: str
 
 
 @dataclass(frozen=True)
@@ -48,6 +52,29 @@ def _normalize_python_full_version(python_version: str) -> str:
     return python_version
 
 
+def _derive_target_env_from_platform_tag(platform_tag: str) -> tuple[str, str, str, str]:
+    tag = platform_tag.lower()
+
+    if tag.startswith(("manylinux", "linux")):
+        machine = tag.split("_")[-1]
+        return ("linux", "posix", "Linux", machine)
+
+    if tag.startswith("macosx"):
+        machine = tag.split("_")[-1]
+        return ("darwin", "posix", "Darwin", machine)
+
+    if tag.startswith("win"):
+        machine = tag.split("_", 1)[-1] if "_" in tag else tag.replace("win", "")
+        return ("win32", "nt", "Windows", machine)
+
+    return (
+        sys.platform,
+        "nt" if sys.platform.startswith("win") else "posix",
+        platform.system(),
+        platform.machine(),
+    )
+
+
 def _marker_environment(target: TargetConfig) -> dict[str, str]:
     env = default_environment()
     env["python_version"] = target.python_version
@@ -55,6 +82,10 @@ def _marker_environment(target: TargetConfig) -> dict[str, str]:
     env["implementation_name"] = (
         "cpython" if target.implementation == "cp" else target.implementation
     )
+    env["sys_platform"] = target.sys_platform
+    env["os_name"] = target.os_name
+    env["platform_system"] = target.platform_system
+    env["platform_machine"] = target.platform_machine
     return env
 
 
@@ -63,17 +94,23 @@ def _iter_requirement_lines(lock_file: Path) -> list[str]:
     buffer = ""
     for raw_line in lock_file.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
+
         if not line or line.startswith("#"):
             if buffer:
                 lines.append(buffer.strip())
                 buffer = ""
             continue
+
         if line.startswith("--hash="):
             if buffer:
                 lines.append(buffer.strip())
                 buffer = ""
             continue
+
         if line.startswith("--"):
+            if buffer:
+                lines.append(buffer.strip())
+                buffer = ""
             continue
 
         if line.endswith("\\"):
@@ -151,9 +188,7 @@ def _build_report(
 
     wheels_by_requirement = {
         f"{name}=={str(version)}": sorted(files)
-        for (name, version), files in sorted(
-            coverage.items(), key=lambda x: (x[0][0], str(x[0][1]))
-        )
+        for (name, version), files in sorted(coverage.items(), key=lambda x: (x[0][0], str(x[0][1])))
     }
 
     return {
@@ -164,6 +199,10 @@ def _build_report(
             "implementation": target.implementation,
             "abi": target.abi,
             "platform_tag": target.platform_tag,
+            "sys_platform": target.sys_platform,
+            "os_name": target.os_name,
+            "platform_system": target.platform_system,
+            "platform_machine": target.platform_machine,
         },
         "parsed_requirements_count": len(_iter_requirement_lines(lock_file)),
         "applicable_requirements_count": len(parsed.requirements),
@@ -188,9 +227,7 @@ def validate_wheelhouse(
     report_path: Path | None = None,
 ) -> int:
     parsed = parse_locked_requirements(lock_file, target)
-    report = _build_report(
-        lock_file=lock_file, wheelhouse_dir=wheelhouse_dir, target=target, parsed=parsed
-    )
+    report = _build_report(lock_file=lock_file, wheelhouse_dir=wheelhouse_dir, target=target, parsed=parsed)
     _write_report(report_path, report)
 
     if report["unsupported_requirements"]:
@@ -220,6 +257,7 @@ def build_wheelhouse(lock_file: Path, wheelhouse_dir: Path, target: TargetConfig
         "pip",
         "download",
         "--only-binary=:all:",
+        "--no-deps",
         "--dest",
         str(wheelhouse_dir),
         "--requirement",
@@ -232,6 +270,9 @@ def build_wheelhouse(lock_file: Path, wheelhouse_dir: Path, target: TargetConfig
         target.abi,
         "--platform",
         target.platform_tag,
+        "--progress-bar",
+        "off",
+        "--disable-pip-version-check",
     ]
     try:
         subprocess.run(command, check=True)
@@ -241,16 +282,6 @@ def build_wheelhouse(lock_file: Path, wheelhouse_dir: Path, target: TargetConfig
             f"for target python={target.python_version}, implementation={target.implementation}, "
             f"abi={target.abi}, platform={target.platform_tag}."
         ) from error
-
-
-def _default_target(python_version: str) -> TargetConfig:
-    normalized = python_version.replace(".", "")
-    return TargetConfig(
-        python_version=python_version,
-        implementation="cp",
-        abi=f"cp{normalized}",
-        platform_tag=sysconfig_platform_tag(),
-    )
 
 
 def sysconfig_platform_tag() -> str:
@@ -267,46 +298,45 @@ def sysconfig_platform_tag() -> str:
     return "any"
 
 
+def _default_target(
+    python_version: str,
+    implementation: str,
+    abi: str,
+    platform_tag: str,
+) -> TargetConfig:
+    sys_plat, os_name, plat_sys, plat_machine = _derive_target_env_from_platform_tag(platform_tag)
+    return TargetConfig(
+        python_version=python_version,
+        implementation=implementation,
+        abi=abi,
+        platform_tag=platform_tag,
+        sys_platform=sys_plat,
+        os_name=os_name,
+        platform_system=plat_sys,
+        platform_machine=plat_machine,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build and validate offline wheelhouse artifacts.")
     parser.add_argument("--lock-file", default="requirements-lock.txt", type=Path)
     parser.add_argument("--wheelhouse", default="wheelhouse", type=Path)
     parser.add_argument("--python-version", default="3.11")
-    parser.add_argument("--implementation", default=None)
+    parser.add_argument("--implementation", default="cp")
     parser.add_argument("--abi", default=None)
     parser.add_argument("--platform-tag", default=None)
     parser.add_argument("--report", type=Path, default=None)
 
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("build", help="Download all pinned wheels for the configured target.")
-    subparsers.add_parser(
-        "validate", help="Validate wheelhouse covers all applicable pinned dependencies."
-    )
+    subparsers.add_parser("build", help="Download pinned wheels for the configured target.")
+    subparsers.add_parser("validate", help="Validate wheelhouse covers applicable pinned dependencies.")
 
     args = parser.parse_args()
 
-    target = _default_target(args.python_version)
-    if args.implementation is not None:
-        target = TargetConfig(
-            python_version=target.python_version,
-            implementation=args.implementation,
-            abi=target.abi,
-            platform_tag=target.platform_tag,
-        )
-    if args.abi is not None:
-        target = TargetConfig(
-            python_version=target.python_version,
-            implementation=target.implementation,
-            abi=args.abi,
-            platform_tag=target.platform_tag,
-        )
-    if args.platform_tag is not None:
-        target = TargetConfig(
-            python_version=target.python_version,
-            implementation=target.implementation,
-            abi=target.abi,
-            platform_tag=args.platform_tag,
-        )
+    normalized = args.python_version.replace(".", "")
+    abi = args.abi or f"{args.implementation}{normalized}"
+    platform_tag = args.platform_tag or sysconfig_platform_tag()
+    target = _default_target(args.python_version, args.implementation, abi, platform_tag)
 
     if args.command == "build":
         build_wheelhouse(args.lock_file, args.wheelhouse, target)

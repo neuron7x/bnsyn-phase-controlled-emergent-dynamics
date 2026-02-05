@@ -36,3 +36,7 @@ PR_SUMMARY.md
 
 # Backup files
 *.bak
+
+wheelhouse/
+
+artifacts/wheelhouse_report.json

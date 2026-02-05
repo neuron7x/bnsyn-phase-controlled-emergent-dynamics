@@ -24,7 +24,7 @@ dev-env-offline: wheelhouse-validate
 	pre-commit install
 
 wheelhouse-clean:
-	rm -rf $(WHEELHOUSE_DIR) artifacts/wheelhouse_report.json
+	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
 
 test:
 	python -m pytest -m "not validation" -q
@@ -138,5 +138,5 @@ clean:
 	find . -type f -name .coverage -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	rm -f .mutmut-cache
-	rm -rf $(WHEELHOUSE_DIR) artifacts/wheelhouse_report.json
+	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
 	@echo "Cleaned temporary files"

@@ -102,6 +102,8 @@ Deferred gate note:
 Notes:
 - `wheelhouse/` is platform-specific (implementation/ABI/platform tag). Build and validate for the same target.
 - `wheelhouse-build` requires internet access. `wheelhouse-validate` and `dev-env-offline` are offline.
+- `wheelhouse-build` uses `pip download --only-binary=:all: --no-deps`; lock file must stay fully pinned.
+- `wheelhouse-validate` writes `artifacts/wheelhouse_report.json` by default.
 
 Build the local wheelhouse from pinned lock dependencies:
 
