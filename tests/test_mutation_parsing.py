@@ -463,3 +463,89 @@ def test_mutation_ci_summary_missing_github_summary_env(tmp_path: Path, monkeypa
         mutation_ci_summary.os.environ.clear()
         mutation_ci_summary.os.environ.update(old_env)
         mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_ci_summary_missing_env_does_not_load_baseline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Missing env wiring should fail before baseline loading."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    monkeypatch.setattr(
+        mutation_ci_summary,
+        "load_mutation_baseline",
+        lambda _path: (_ for _ in ()).throw(AssertionError("load_mutation_baseline should not be called")),
+    )
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.sys.argv = ["mutation_ci_summary.py", "--write-output"]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_ci_summary_invalid_baseline_payload(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Invalid baseline payload must fail closed."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(json.dumps({"metrics": {"total_mutants": 1}}), encoding="utf-8")
+
+    monkeypatch.setattr(
+        mutation_ci_summary,
+        "read_mutation_counts",
+        lambda: (_ for _ in ()).throw(AssertionError("read_mutation_counts should not be called")),
+    )
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ["GITHUB_OUTPUT"] = str(tmp_path / "out.txt")
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(baseline_path),
+            "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_ci_summary_mutmut_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """mutmut subprocess failure must fail closed."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        encoding="utf-8",
+    )
+
+    def _raise_called_process_error() -> MutationCounts:
+        raise subprocess.CalledProcessError(returncode=2, cmd=["mutmut", "result-ids", "killed"])
+
+    monkeypatch.setattr(mutation_ci_summary, "read_mutation_counts", _raise_called_process_error)
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ["GITHUB_OUTPUT"] = str(tmp_path / "out.txt")
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(baseline_path),
+            "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv

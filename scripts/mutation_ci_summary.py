@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -67,9 +68,19 @@ def main() -> int:
             return 1
         summary_path = Path(summary_path_raw)
 
-    baseline = load_mutation_baseline(args.baseline)
-    counts = read_mutation_counts()
-    assessment = assess_mutation_gate(counts, baseline)
+    try:
+        baseline = load_mutation_baseline(args.baseline)
+        counts = read_mutation_counts()
+        assessment = assess_mutation_gate(counts, baseline)
+    except FileNotFoundError as exc:
+        print(f"❌ Baseline file not found: {exc}", file=sys.stderr)
+        return 1
+    except (KeyError, ValueError, TypeError) as exc:
+        print(f"❌ Invalid baseline payload: {exc}", file=sys.stderr)
+        return 1
+    except subprocess.CalledProcessError as exc:
+        print(f"❌ Error running mutmut result-ids: {exc}", file=sys.stderr)
+        return 1
 
     if output_path is not None:
         write_github_output(output_path, assessment)
