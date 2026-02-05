@@ -1,3 +1,5 @@
+See also: `docs/MUTATION_GATE.md` for the canonical mutation gate contract.
+
 # Quality Infrastructure Index
 
 This document provides a comprehensive overview of the BN-Syn quality infrastructure, including how to run each system locally, what artifacts prove correctness, and what CI jobs enforce what.
@@ -59,8 +61,8 @@ make mutation-baseline
 make mutation-check
 
 # Or use scripts directly
-python scripts/generate_mutation_baseline.py
-python scripts/check_mutation_score.py
+python -m scripts.generate_mutation_baseline
+python -m scripts.check_mutation_score
 ```
 
 ### Formal Verification (Nightly)

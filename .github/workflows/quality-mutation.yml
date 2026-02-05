@@ -1,9 +1,9 @@
+---
 # NON-PR-GATE: long-running workflow; must not run on pull_request/push.
 name: quality-mutation
 
-on:
+"on":
   schedule:
-    # Run nightly at 3 AM UTC
     - cron: '0 3 * * *'
   workflow_dispatch:
 
@@ -26,68 +26,43 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
+          cache: pip
 
       - name: Pin pip
         uses: ./.github/actions/pin-pip
 
       - name: Log pip version
-        run: python -m pip --version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip --version
 
       - name: Install dependencies
+        shell: bash
         run: |
+          set -euo pipefail
           python -m pip install -e ".[dev,test]"
           python -m pip install mutmut==2.4.5
 
-      - name: Load mutation baseline
-        id: baseline
+      - name: Validate mutation baseline schema
+        shell: bash
         run: |
-          python scripts/check_mutation_score.py --strict --help > /dev/null 2>&1 || true
-          BASELINE_SCORE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['baseline_score'])")
-          TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
-          MIN_ACCEPTABLE=$(python -c "print(float($BASELINE_SCORE) - float($TOLERANCE))")
-          {
-            echo "baseline_score=$BASELINE_SCORE"
-            echo "tolerance=$TOLERANCE"
-            echo "min_acceptable=$MIN_ACCEPTABLE"
-          } >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          python -m scripts.validate_mutation_baseline
 
       - name: Run mutation testing
-        id: mutation
+        shell: bash
         run: |
-          export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
+          set -euo pipefail
+          python -m scripts.run_mutation_pipeline
 
-          mutmut run \
-            --paths-to-mutate="$MUTMUT_PATHS" \
-            --tests-dir=tests \
-            --runner="pytest -x -q -m 'not validation and not property and not benchmark'" || true
-
-          mutmut results > mutation_results.txt
-          mutmut show --status survived > survived_mutants.txt || true
-
-          python - <<'PY'
-          import os
-          from scripts.mutation_counts import calculate_score, read_mutation_counts
-
-          counts = read_mutation_counts()
-          score = calculate_score(counts)
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"score={score}\n")
-              output.write(f"total={counts.total_scored}\n")
-              output.write(f"killed={counts.killed_equivalent}\n")
-
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
-              summary.write("##  Mutation Testing Results\n\n")
-              summary.write("| Metric | Value |\n")
-              summary.write("|--------|-------|\n")
-              summary.write(f"| Mutation Score | {score}% |\n")
-              summary.write(f"| Total Mutants | {counts.total_scored} |\n")
-              summary.write(f"| Killed Mutants | {counts.killed_equivalent} |\n")
-              summary.write("| Baseline Score | ${{ steps.baseline.outputs.baseline_score }}% |\n")
-              summary.write("| Min Acceptable | ${{ steps.baseline.outputs.min_acceptable }}% |\n")
-          PY
+      - name: Emit canonical mutation metrics
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.mutation_ci_summary --write-output --write-summary
 
       - name: Upload mutation artifacts
         if: always()
@@ -96,6 +71,7 @@ jobs:
           name: mutation-report-${{ github.sha }}
           path: |
             mutation_results.txt
+            mutation_results.stderr.txt
             survived_mutants.txt
             .mutmut-cache
           if-no-files-found: ignore
@@ -103,20 +79,14 @@ jobs:
 
       - name: Check mutation score threshold
         if: always()
-        run: python scripts/check_mutation_score.py --strict
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.check_mutation_score --strict
 
       - name: Generate mutation report
         if: always()
+        shell: bash
         run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "## Surviving Mutants"
-            echo ""
-            if [ -f survived_mutants.txt ] && [ -s survived_mutants.txt ]; then
-              echo '```'
-              head -50 survived_mutants.txt
-              echo '```'
-            else
-              echo "No surviving mutants! "
-            fi
-          } >> "$summary_file"
+          set -euo pipefail
+          python -m scripts.mutation_survivors_summary
