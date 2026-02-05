@@ -253,3 +253,77 @@ def test_parse_mutmut_results_subprocess_failure(monkeypatch: pytest.MonkeyPatch
         check_mutation_score.parse_mutmut_results()
 
     assert exc.value.code == 1
+
+
+def test_load_mutation_baseline_and_assessment(tmp_path: Path) -> None:
+    """Canonical module should own baseline and gate derivation."""
+    from scripts.mutation_counts import assess_mutation_gate, load_mutation_baseline
+
+    baseline_path = tmp_path / "mutation_baseline.json"
+    baseline_path.write_text(
+        json.dumps(
+            {
+                "baseline_score": 80.0,
+                "tolerance_delta": 5.0,
+                "status": "ready",
+                "metrics": {"total_mutants": 42},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    baseline = load_mutation_baseline(baseline_path)
+    assert baseline.baseline_score == 80.0
+    assert baseline.tolerance_delta == 5.0
+    assert baseline.total_mutants == 42
+    assert baseline.min_acceptable == 75.0
+
+    assessment = assess_mutation_gate(MutationCounts(8, 2, 0, 0, 0, 0), baseline)
+    assert assessment.score == 80.0
+    assert assessment.gate_passes is True
+    assert assessment.delta_vs_baseline == 0.0
+    assert assessment.gap_vs_minimum == 5.0
+
+
+def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
+    """Rendered markdown must reflect canonical assessment values."""
+    from scripts.mutation_counts import (
+        MutationAssessment,
+        MutationBaseline,
+        render_ci_summary_markdown,
+    )
+
+    assessment = MutationAssessment(
+        counts=MutationCounts(3, 2, 1, 0, 0, 4),
+        baseline=MutationBaseline(baseline_score=70.0, tolerance_delta=5.0, status="ready", total_mutants=12),
+        score=66.67,
+    )
+
+    markdown = render_ci_summary_markdown(assessment)
+    assert "Gate Status:** ✅ PASS" in markdown
+    assert "| Mutation score | 66.67% |" in markdown
+    assert "| Minimum acceptable | 65.00% |" in markdown
+    assert "| Killed (incl. timeout) | 4 |" in markdown
+
+
+def test_mutation_ci_summary_writes_output_file(tmp_path: Path) -> None:
+    """CI summary helper should write deterministic key outputs."""
+    from scripts.mutation_ci_summary import write_github_output
+    from scripts.mutation_counts import MutationAssessment, MutationBaseline
+
+    output_file = tmp_path / "github_output.txt"
+    assessment = MutationAssessment(
+        counts=MutationCounts(5, 5, 0, 0, 0, 0),
+        baseline=MutationBaseline(baseline_score=50.0, tolerance_delta=2.0, status="ready", total_mutants=10),
+        score=50.0,
+    )
+
+    write_github_output(output_file, assessment)
+
+    content = output_file.read_text(encoding="utf-8")
+    assert "baseline_score=50.00" in content
+    assert "tolerance=2.00" in content
+    assert "min_acceptable=48.00" in content
+    assert "score=50.00" in content
+    assert "total=10" in content
+    assert "killed=5" in content

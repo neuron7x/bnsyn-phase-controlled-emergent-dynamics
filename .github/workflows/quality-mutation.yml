@@ -39,20 +39,7 @@ jobs:
           python -m pip install -e ".[dev,test]"
           python -m pip install mutmut==2.4.5
 
-      - name: Load mutation baseline
-        id: baseline
-        run: |
-          BASELINE_SCORE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['baseline_score'])")
-          TOLERANCE=$(python -c "import json; print(json.load(open('quality/mutation_baseline.json'))['tolerance_delta'])")
-          MIN_ACCEPTABLE=$(python -c "print(float($BASELINE_SCORE) - float($TOLERANCE))")
-          {
-            echo "baseline_score=$BASELINE_SCORE"
-            echo "tolerance=$TOLERANCE"
-            echo "min_acceptable=$MIN_ACCEPTABLE"
-          } >> "$GITHUB_OUTPUT"
-
       - name: Run mutation testing
-        id: mutation
         run: |
           export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
 
@@ -64,13 +51,9 @@ jobs:
           mutmut results > mutation_results.txt
           mutmut show --status survived > survived_mutants.txt
 
-      - name: Export canonical mutation metrics
-        run: |
-          python -c "from scripts.mutation_counts import calculate_score, read_mutation_counts; counts = read_mutation_counts(); score = calculate_score(counts); out=open('$GITHUB_OUTPUT','a',encoding='utf-8'); out.write(f'score={score}\n'); out.write(f'total={counts.total_scored}\n'); out.write(f'killed={counts.killed_equivalent}\n'); out.close()"
-
-      - name: Write mutation summary
+      - name: Emit canonical mutation metrics
         if: always()
-        run: python scripts/mutation_ci_summary.py
+        run: python scripts/mutation_ci_summary.py --write-output --write-summary
 
       - name: Upload mutation artifacts
         if: always()
@@ -90,16 +73,4 @@ jobs:
 
       - name: Generate mutation report
         if: always()
-        run: |
-          summary_file="$GITHUB_STEP_SUMMARY"
-          {
-            echo "## Surviving Mutants"
-            echo ""
-            if [ -f survived_mutants.txt ] && [ -s survived_mutants.txt ]; then
-              echo '```'
-              head -50 survived_mutants.txt
-              echo '```'
-            else
-              echo "No surviving mutants!"
-            fi
-          } >> "$summary_file"
+        run: python scripts/mutation_survivors_summary.py
