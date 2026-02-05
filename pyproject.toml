@@ -90,7 +90,6 @@ markers = [
 ]
 
 [tool.hypothesis]
-profile = "ci"
 derandomize = true
 
 [tool.hypothesis.profiles.ci]
