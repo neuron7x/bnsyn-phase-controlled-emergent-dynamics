@@ -82,13 +82,17 @@ def main() -> int:
         print(f"❌ Error running mutmut result-ids: {exc}", file=sys.stderr)
         return 1
 
-    if output_path is not None:
-        write_github_output(output_path, assessment)
+    try:
+        if output_path is not None:
+            write_github_output(output_path, assessment)
 
-    if summary_path is not None:
-        markdown = render_ci_summary_markdown(assessment)
-        with summary_path.open("a", encoding="utf-8") as summary_file:
-            summary_file.write(markdown)
+        if summary_path is not None:
+            markdown = render_ci_summary_markdown(assessment)
+            with summary_path.open("a", encoding="utf-8") as summary_file:
+                summary_file.write(markdown)
+    except OSError as exc:
+        print(f"❌ Failed to write CI artifacts: {exc}", file=sys.stderr)
+        return 1
 
     return 0
 

@@ -26,6 +26,9 @@ def parse_mutmut_results() -> MutationCounts:
     except subprocess.CalledProcessError as e:
         print(f"❌ Error running mutmut result-ids: {e}", file=sys.stderr)
         sys.exit(1)
+    except FileNotFoundError as e:
+        print(f"❌ mutmut executable not found: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def main() -> int:

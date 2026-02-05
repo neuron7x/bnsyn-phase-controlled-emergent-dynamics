@@ -549,3 +549,74 @@ def test_mutation_ci_summary_mutmut_failure(tmp_path: Path, monkeypatch: pytest.
         mutation_ci_summary.os.environ.clear()
         mutation_ci_summary.os.environ.update(old_env)
         mutation_ci_summary.sys.argv = old_argv
+
+
+def test_check_mutation_score_handles_missing_mutmut(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Missing mutmut executable must fail closed with exit code 1."""
+    import scripts.check_mutation_score as check_mutation_score
+
+    def _raise_file_not_found(*_args: object, **_kwargs: object) -> None:
+        raise FileNotFoundError("mutmut")
+
+    monkeypatch.setattr("subprocess.run", _raise_file_not_found)
+
+    with pytest.raises(SystemExit) as exc:
+        check_mutation_score.parse_mutmut_results()
+
+    assert exc.value.code == 1
+
+
+def test_mutation_ci_summary_missing_baseline_file(tmp_path: Path) -> None:
+    """Missing baseline file must fail closed."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    missing_baseline = tmp_path / "missing-baseline.json"
+    output_path = tmp_path / "out.txt"
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ["GITHUB_OUTPUT"] = str(output_path)
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(missing_baseline),
+            "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+        assert not output_path.exists()
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_ci_summary_write_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Write errors to CI artifacts must fail closed."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(mutation_ci_summary, "read_mutation_counts", lambda: MutationCounts(1, 0, 0, 0, 0, 0))
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ["GITHUB_OUTPUT"] = str(tmp_path / "nonexistent" / "out.txt")
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(baseline_path),
+            "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv
