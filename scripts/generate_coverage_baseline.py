@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.check_coverage_gate import METRIC_NAME, read_coverage_percent
+from scripts.check_coverage_gate import METRIC_NAME, read_coverage_percent  # noqa: E402
 
 
 def _git_sha(repo_root: Path) -> str:

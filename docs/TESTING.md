@@ -95,3 +95,68 @@ python -m pip install -e ".[test]"
 
 Deferred gate note:
 - `mypy` is configured in CI quality workflow; run locally only after full `.[dev]` install.
+
+
+## Offline dependency workflow (Python 3.11)
+
+Notes:
+- `wheelhouse/` is platform-specific (implementation/ABI/platform tag). Build and validate for the same target.
+- `wheelhouse-build` requires internet access. `wheelhouse-validate` and `dev-env-offline` are offline.
+- `wheelhouse-build` uses `pip download --only-binary=:all: --no-deps`; lock file must stay fully pinned.
+- `wheelhouse-validate` writes `artifacts/wheelhouse_report.json` by default.
+
+Build the local wheelhouse from pinned lock dependencies:
+
+```bash
+make wheelhouse-build
+```
+
+Validate that every pinned dependency in `requirements-lock.txt` has a matching wheel in `wheelhouse/`:
+
+```bash
+make wheelhouse-validate
+make wheelhouse-report
+```
+
+Install the development environment fully offline from the local wheelhouse:
+
+```bash
+make dev-env-offline
+```
+
+Equivalent install commands:
+
+```bash
+pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+pip install --no-index --find-links wheelhouse --no-deps -e .
+```
+
+Failure modes:
+- Locked package has no wheel for the configured target tuple.
+- Marker applicability differs from the target environment.
+- Wheelhouse built for a different platform/ABI than the install target.
+
+Validation exit codes:
+- `0`: wheelhouse fully covers applicable locked requirements.
+- `1`: one or more applicable locked requirements are missing wheels.
+- `2`: lock contains unsupported or duplicate applicable requirement entries.
+
+Report contains additional diagnostics:
+- `duplicate_requirements`
+- `incompatible_wheels`
+- `malformed_wheels`
+
+## Updating lock and wheelhouse
+
+1. Refresh lock file after dependency changes:
+
+```bash
+pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+```
+
+2. Rebuild wheels for Python 3.11 and re-run validation:
+
+```bash
+make wheelhouse-build
+make wheelhouse-validate
+```

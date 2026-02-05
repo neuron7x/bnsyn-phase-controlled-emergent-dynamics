@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.benchmark_physics import run_physics_benchmark
-from scripts.profile_kernels import aggregate_kernel_profiles, profile_network_kernels
+from scripts.benchmark_physics import run_physics_benchmark  # noqa: E402
+from scripts.profile_kernels import aggregate_kernel_profiles, profile_network_kernels  # noqa: E402
 
 
 def _median(values: list[float]) -> float:

@@ -382,6 +382,19 @@ make test
 make coverage
 ```
 
+**Offline (air-gapped) dependency setup**
+
+```bash
+make wheelhouse-build
+make wheelhouse-validate
+make wheelhouse-report
+make dev-env-offline
+```
+
+Notes:
+- `wheelhouse-build` requires internet; `wheelhouse-validate` and `dev-env-offline` are offline.
+- Wheelhouse artifacts are platform-specific (Python version, implementation/ABI, and platform tag).
+
 **Testing in Docker**
 
 ```bash
