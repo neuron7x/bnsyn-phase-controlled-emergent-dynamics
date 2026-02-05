@@ -31,24 +31,14 @@ BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-co
 
 ## Quality Assurance
 
-This repository follows a **Fractal Quality Architecture** with 7 universal axioms applied at all scales (function → module → system → repository):
+Quality gates are command-verifiable and documented in one place:
 
-- **A1. DETERMINISM**: 97% ✅ — Identical inputs → identical outputs (property tests enforce universally)
-- **A2. COMPOSABILITY**: 85% ✅ — Reusable workflows, modular design, dependency injection
-- **A3. OBSERVABILITY**: 90% ✅ — Elite workflows, step summaries, artifacts everywhere
-- **A4. EXHAUSTIVENESS**: 90% ✅ — Validation suite (10 tests), property tests (8 invariants), enforcement gates
-- **A5. PERFORMANCE**: 92% ✅ — Golden baseline + regression detection
-- **A6. SECURITY**: 91% ✅ — Gitleaks, pip-audit, bandit, pinned dependencies with SHA256 hashes
-- **A7. DOCUMENTATION**: 95% ✅ — Evidence coverage, CI gates, test protocol, 100% API docstrings
+- Canonical local test/coverage commands: [`docs/TESTING.md`](docs/TESTING.md)
+- CI gate definitions: [`docs/CI_GATES.md`](docs/CI_GATES.md)
+- Workflow contracts: [`.github/WORKFLOW_CONTRACTS.md`](.github/WORKFLOW_CONTRACTS.md)
+- Evidence mapping: [`docs/EVIDENCE_COVERAGE.md`](docs/EVIDENCE_COVERAGE.md)
 
-**Current Score**: 95.1% (Target: 95%+) ✅  
-**Grade**: Exemplary (Top 0.1%)
-
-**Quality Tracking**:
-- [Repository Manifest](.github/REPO_MANIFEST.md) — Overall quality scorecard & structure audit
-- [Workflow Contracts](.github/WORKFLOW_CONTRACTS.md) — CI/CD contracts & axiom scores
-- [Quality Ledger](.github/QUALITY_LEDGER.md) — Immutable improvement audit trail
-- [Evidence Coverage](docs/EVIDENCE_COVERAGE.md) — Claims→Evidence traceability matrix
+No aggregate quality percentages are published in README; only reproducible command outputs and artifacts are considered normative.
 
 ---
 
@@ -410,14 +400,7 @@ python scripts/scan_normative_tags.py
 python scripts/scan_governed_docs.py
 ```
 
-```bash
-pytest -m "not validation"
-```
-
-**Validation suite**
-```bash
-pytest -m validation
-```
+See canonical test commands in [`docs/TESTING.md`](docs/TESTING.md).
 
 ## CI on Pull Requests
 
@@ -426,7 +409,7 @@ CI requirements and exact commands are defined in [`docs/CI_GATES.md`](docs/CI_G
 - **ssot** (SSOT validation)
 - **quality** (ruff format/lint + mypy)
 - **build** (package build + import)
-- **tests-smoke** (pytest -m "not validation")
+- **tests-smoke** (python -m pytest -m "not validation")
 - **gitleaks** (secret scanning)
 - **pip-audit** (dependency vulnerability audit)
 

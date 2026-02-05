@@ -1,5 +1,7 @@
 {
-  "baseline_percent": 99.03,
+  "baseline_percent": 99.57,
   "minimum_percent": 99.0,
-  "note": "Soft gate: fail only if coverage drops from measured baseline or below justified floor."
+  "metric": "coverage.xml line-rate",
+  "generated_from": "fb2a5539c1508e8393d05c98981fddc41ef2a54b",
+  "generated_at_utc": "2026-02-05T11:18:07.151981+00:00"
 }

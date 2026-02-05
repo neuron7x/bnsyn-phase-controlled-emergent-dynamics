@@ -67,7 +67,7 @@ def test_validate_connectivity_matrix_rejects_infinite_values() -> None:
         )
 
 
-@settings(max_examples=60, deadline=None)
+@settings(derandomize=True, max_examples=60, deadline=None)
 @given(
     n_neurons=st.integers(min_value=1, max_value=64),
     bad_index=st.integers(min_value=0, max_value=63),

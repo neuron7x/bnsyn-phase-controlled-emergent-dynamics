@@ -53,6 +53,20 @@ Artifacts:
 - Terminal report with missing lines by module.
 - `coverage.xml` at repository root.
 
+## Generate / refresh coverage baseline
+
+```bash
+make coverage-baseline
+```
+
+Equivalent explicit command:
+
+```bash
+python scripts/generate_coverage_baseline.py --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+```
+
+This baseline uses the same metric enforced by the gate: `coverage.xml line-rate`.
+
 ## Enforce coverage gate
 
 ```bash
@@ -76,7 +90,7 @@ ruff check .
 If a tool is unavailable locally, install via:
 
 ```bash
-python -m pip install -e ".[dev,test]"
+python -m pip install -e ".[test]"
 ```
 
 Deferred gate note:

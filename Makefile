@@ -1,4 +1,4 @@
-.PHONY: dev-setup check test test-determinism test-validation coverage coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup check test test-determinism test-validation coverage coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation-baseline mutation-check mutation-check-strict release-readiness
 
 dev-setup:
 	pip install --upgrade pip setuptools wheel
@@ -10,13 +10,16 @@ test:
 	python -m pytest -m "not validation" -q
 
 test-determinism:
-	pytest tests/test_determinism.py tests/test_properties_determinism.py -v
+	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
 
 test-validation:
-	pytest -m validation -v
+	python -m pytest -m validation -q
 
 coverage:
 	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
+
+coverage-baseline: coverage
+	python scripts/generate_coverage_baseline.py --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
 
 coverage-gate: coverage
 	python scripts/check_coverage_gate.py --coverage-xml coverage.xml --baseline quality/coverage_gate.json
