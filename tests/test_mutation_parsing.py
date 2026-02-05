@@ -327,3 +327,40 @@ def test_mutation_ci_summary_writes_output_file(tmp_path: Path) -> None:
     assert "score=50.00" in content
     assert "total=10" in content
     assert "killed=5" in content
+
+
+def test_render_github_output_lines_is_canonical_and_ordered() -> None:
+    """Output key/value serialization must be canonical and ordered."""
+    from scripts.mutation_counts import (
+        MutationAssessment,
+        MutationBaseline,
+        render_github_output_lines,
+    )
+
+    assessment = MutationAssessment(
+        counts=MutationCounts(7, 3, 0, 0, 0, 0),
+        baseline=MutationBaseline(baseline_score=65.0, tolerance_delta=4.0, status="ready", total_mutants=10),
+        score=70.0,
+    )
+
+    rendered = render_github_output_lines(assessment).splitlines()
+    assert rendered == [
+        "baseline_score=65.00",
+        "tolerance=4.00",
+        "min_acceptable=61.00",
+        "score=70.00",
+        "total=10",
+        "killed=7",
+    ]
+
+
+def test_mutation_ci_summary_requires_target_flags() -> None:
+    """Summary tool must fail closed when no target outputs are requested."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    old_argv = mutation_ci_summary.sys.argv
+    try:
+        mutation_ci_summary.sys.argv = ["mutation_ci_summary.py"]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.sys.argv = old_argv

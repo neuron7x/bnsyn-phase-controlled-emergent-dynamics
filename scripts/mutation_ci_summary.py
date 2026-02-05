@@ -17,17 +17,13 @@ from scripts.mutation_counts import (
     load_mutation_baseline,
     read_mutation_counts,
     render_ci_summary_markdown,
+    render_github_output_lines,
 )
 
 
 def write_github_output(path: Path, assessment: MutationAssessment) -> None:
     with path.open("a", encoding="utf-8") as output:
-        output.write(f"baseline_score={assessment.baseline.baseline_score:.2f}\n")
-        output.write(f"tolerance={assessment.baseline.tolerance_delta:.2f}\n")
-        output.write(f"min_acceptable={assessment.baseline.min_acceptable:.2f}\n")
-        output.write(f"score={assessment.score:.2f}\n")
-        output.write(f"total={assessment.counts.total_scored}\n")
-        output.write(f"killed={assessment.counts.killed_equivalent}\n")
+        output.write(render_github_output_lines(assessment))
 
 
 def main() -> int:

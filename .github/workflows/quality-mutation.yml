@@ -41,6 +41,7 @@ jobs:
 
       - name: Run mutation testing
         run: |
+          set -euo pipefail
           export MUTMUT_PATHS="src/bnsyn/neuron/adex.py,src/bnsyn/plasticity/stdp.py,src/bnsyn/plasticity/three_factor.py,src/bnsyn/temperature/schedule.py"
 
           mutmut run \

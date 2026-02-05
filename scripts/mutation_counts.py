@@ -7,6 +7,17 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 import subprocess
+from typing import Final
+
+
+GITHUB_OUTPUT_KEYS: Final[tuple[str, ...]] = (
+    "baseline_score",
+    "tolerance",
+    "min_acceptable",
+    "score",
+    "total",
+    "killed",
+)
 
 
 @dataclass(frozen=True)
@@ -147,3 +158,17 @@ def render_ci_summary_markdown(assessment: MutationAssessment) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def render_github_output_lines(assessment: MutationAssessment) -> str:
+    """Render deterministic GitHub output entries from canonical assessment."""
+    output_map = {
+        "baseline_score": f"{assessment.baseline.baseline_score:.2f}",
+        "tolerance": f"{assessment.baseline.tolerance_delta:.2f}",
+        "min_acceptable": f"{assessment.baseline.min_acceptable:.2f}",
+        "score": f"{assessment.score:.2f}",
+        "total": str(assessment.counts.total_scored),
+        "killed": str(assessment.counts.killed_equivalent),
+    }
+    lines = [f"{key}={output_map[key]}" for key in GITHUB_OUTPUT_KEYS]
+    return "\n".join(lines) + "\n"
