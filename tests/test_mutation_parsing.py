@@ -412,7 +412,7 @@ def test_mutation_ci_summary_missing_github_output_env(tmp_path: Path, monkeypat
     monkeypatch.setattr(
         mutation_ci_summary,
         "read_mutation_counts",
-        lambda: MutationCounts(1, 0, 0, 0, 0, 0),
+        lambda: (_ for _ in ()).throw(AssertionError("read_mutation_counts should not be called")),
     )
 
     old_argv = mutation_ci_summary.sys.argv
@@ -424,6 +424,39 @@ def test_mutation_ci_summary_missing_github_output_env(tmp_path: Path, monkeypat
             "--baseline",
             str(baseline_path),
             "--write-output",
+        ]
+        assert mutation_ci_summary.main() == 1
+    finally:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.os.environ.update(old_env)
+        mutation_ci_summary.sys.argv = old_argv
+
+
+def test_mutation_ci_summary_missing_github_summary_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Summary tool must fail closed when --write-summary target env is missing."""
+    import scripts.mutation_ci_summary as mutation_ci_summary
+
+    baseline_path = tmp_path / "baseline.json"
+    baseline_path.write_text(
+        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        mutation_ci_summary,
+        "read_mutation_counts",
+        lambda: (_ for _ in ()).throw(AssertionError("read_mutation_counts should not be called")),
+    )
+
+    old_argv = mutation_ci_summary.sys.argv
+    old_env = dict(mutation_ci_summary.os.environ)
+    try:
+        mutation_ci_summary.os.environ.clear()
+        mutation_ci_summary.sys.argv = [
+            "mutation_ci_summary.py",
+            "--baseline",
+            str(baseline_path),
+            "--write-summary",
         ]
         assert mutation_ci_summary.main() == 1
     finally:

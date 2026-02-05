@@ -50,24 +50,33 @@ def main() -> int:
         print("❌ No output target selected. Use --write-output and/or --write-summary.", file=sys.stderr)
         return 1
 
-    baseline = load_mutation_baseline(args.baseline)
-    counts = read_mutation_counts()
-    assessment = assess_mutation_gate(counts, baseline)
+    output_path: Path | None = None
+    summary_path: Path | None = None
 
     if args.write_output:
         output_path_raw = os.environ.get("GITHUB_OUTPUT")
         if not output_path_raw:
             print("❌ GITHUB_OUTPUT is not set.", file=sys.stderr)
             return 1
-        write_github_output(Path(output_path_raw), assessment)
+        output_path = Path(output_path_raw)
 
     if args.write_summary:
         summary_path_raw = os.environ.get("GITHUB_STEP_SUMMARY")
         if not summary_path_raw:
             print("❌ GITHUB_STEP_SUMMARY is not set.", file=sys.stderr)
             return 1
+        summary_path = Path(summary_path_raw)
+
+    baseline = load_mutation_baseline(args.baseline)
+    counts = read_mutation_counts()
+    assessment = assess_mutation_gate(counts, baseline)
+
+    if output_path is not None:
+        write_github_output(output_path, assessment)
+
+    if summary_path is not None:
         markdown = render_ci_summary_markdown(assessment)
-        with Path(summary_path_raw).open("a", encoding="utf-8") as summary_file:
+        with summary_path.open("a", encoding="utf-8") as summary_file:
             summary_file.write(markdown)
 
     return 0
