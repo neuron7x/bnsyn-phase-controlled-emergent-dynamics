@@ -10,7 +10,7 @@ could lead to false-green CI or policy drift:
 4. Missing permissions declarations (should be explicit and minimal)
 
 Usage:
-    python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
+    python -m scripts.lint_ci_truthfulness --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
 
 Exit codes:
     0: All checks passed

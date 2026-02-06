@@ -216,7 +216,7 @@ def validate_contracts(contracts_path: Path, workflows_dir: Path) -> list[str]:
 def main(argv: Iterable[str]) -> int:
     args = list(argv)
     if len(args) != 1:
-        print("Usage: python scripts/validate_workflow_contracts.py")
+        print("Usage: python -m scripts.validate_workflow_contracts")
         return 3
     contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
     workflows_dir = Path(".github/workflows")

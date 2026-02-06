@@ -180,7 +180,7 @@ def validate_pr_gates(
 def main(argv: Iterable[str]) -> int:
     args = list(argv)
     if len(args) != 1:
-        print("Usage: python scripts/validate_pr_gates.py")
+        print("Usage: python -m scripts.validate_pr_gates")
         return 3
     pr_gates_path = Path(".github/PR_GATES.yml")
     workflows_dir = Path(".github/workflows")

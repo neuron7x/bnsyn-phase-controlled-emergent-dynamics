@@ -138,10 +138,10 @@ New "Governance Gates" step added after SSOT gates:
   id: governance-gates
   run: |
     # Verify formal constants match code
-    python scripts/verify_formal_constants.py
+    python -m scripts.verify_formal_constants
     
     # Lint CI workflows for truthfulness
-    python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
+    python -m scripts.lint_ci_truthfulness --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
 ```
 
 **Artifacts Uploaded**:
@@ -156,8 +156,8 @@ All commands pass successfully:
 
 ```bash
 # Governance gates
-python scripts/verify_formal_constants.py        # ✅ PASS
-python scripts/lint_ci_truthfulness.py           # ✅ PASS (1 warning acceptable)
+python -m scripts.verify_formal_constants        # ✅ PASS
+python -m scripts.lint_ci_truthfulness           # ✅ PASS (1 warning acceptable)
 
 # Unit tests
 pytest tests/test_mutation_parsing.py -v         # ✅ PASS (6/7, 1 skip expected)

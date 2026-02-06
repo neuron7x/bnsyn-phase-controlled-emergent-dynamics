@@ -132,8 +132,8 @@ All pass successfully:
 
 ```bash
 # Governance gates
-python scripts/verify_formal_constants.py
-python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
+python -m scripts.verify_formal_constants
+python -m scripts.lint_ci_truthfulness --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
 
 # Unit tests
 pytest tests/test_mutation_parsing.py -v
@@ -231,12 +231,12 @@ make mypy
 
 **Governance Gates**:
 ```bash
-$ python scripts/verify_formal_constants.py
+$ python -m scripts.verify_formal_constants
 🔍 Verifying formal specification constants...
 ✅ Extracted 7 constants from code
 ✅ All formal specification constants match code!
 
-$ python scripts/lint_ci_truthfulness.py
+$ python -m scripts.lint_ci_truthfulness
 📊 CI Truthfulness Lint Summary
 Files checked: 19
 Violations: 1

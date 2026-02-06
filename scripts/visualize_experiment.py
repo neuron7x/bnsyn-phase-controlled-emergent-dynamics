@@ -5,8 +5,8 @@ This script generates publication-quality figures from experiment results.
 
 Usage
 -----
-python scripts/visualize_experiment.py --run-id temp_ablation_v1
-python scripts/visualize_experiment.py --run-id temp_ablation_v1 --results results/temp_ablation_v1 --out figures
+python -m scripts.visualize_experiment --run-id temp_ablation_v1
+python -m scripts.visualize_experiment --run-id temp_ablation_v1 --results results/temp_ablation_v1 --out figures
 """
 
 from __future__ import annotations

@@ -210,15 +210,15 @@ Coverage HTML written to dir htmlcov
 Required test coverage of 95% reached. Total coverage: 100.00%
 386 passed, 3 skipped, 98 deselected, 2 warnings in 78.14s (0:01:18)
 Coverage report: htmlcov/index.html
-python scripts/validate_bibliography.py
+python -m scripts.validate_bibliography
 OK: bibliography SSOT validated.
   Bibkeys: 31
   Mapping entries: 26
   Claim IDs: 26
   Lock entries: 31
-python scripts/validate_claims.py
+python -m scripts.validate_claims
 [claims-gate] OK: 26 claims validated; 22 normative.
-python scripts/scan_normative_tags.py
+python -m scripts.scan_normative_tags
 OK: normative tag scan passed.
 gitleaks detect --redact --verbose --source=.
 

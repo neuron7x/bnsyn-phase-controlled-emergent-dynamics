@@ -9,7 +9,7 @@ Exit codes:
 - 1: Regressions detected (>threshold%)
 
 Usage:
-    python scripts/compare_benchmarks.py --baseline benchmarks/baselines/golden_baseline.yml \\
+    python -m scripts.compare_benchmarks --baseline benchmarks/baselines/golden_baseline.yml \\
                                          --current benchmarks/baseline.json \\
                                          --format markdown
 """

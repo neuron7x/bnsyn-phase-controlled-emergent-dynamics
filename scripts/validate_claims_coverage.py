@@ -12,8 +12,8 @@ Exit codes:
 - 1: Incomplete coverage (<100%)
 
 Usage:
-    python scripts/validate_claims_coverage.py --format markdown
-    python scripts/validate_claims_coverage.py --format json
+    python -m scripts.validate_claims_coverage --format markdown
+    python -m scripts.validate_claims_coverage --format json
 """
 
 from __future__ import annotations
