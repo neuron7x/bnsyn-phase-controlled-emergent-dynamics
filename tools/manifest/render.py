@@ -30,7 +30,10 @@ def render_markdown(computed: dict[str, Any]) -> str:
         f"- Mutation baseline score (`quality/mutation_baseline.json`): **{metrics['mutation_baseline_score']}**\n"
         f"- Mutation total mutants (`quality/mutation_baseline.json`): **{metrics['mutation_total_mutants']}**\n"
         f"- `ci_manifest.json` exists: **{metrics['ci_manifest_exists']}**\n"
-        f"- `ci_manifest.json` references in automation/docs: **{metrics['ci_manifest_reference_count']}**\n\n"
+        f"- `ci_manifest.json` references in scoped scan: **{metrics['ci_manifest_reference_count']}**\n"
+        + "- `ci_manifest.json` scan scope:\n"
+        + "\n".join(f"  - `{item}`" for item in metrics['ci_manifest_reference_scope'])
+        + "\n\n"
         "## Invariants\n\n"
         "| ID | Statement | Enforcement | Evidence kind |\n"
         "|---|---|---|---|\n"

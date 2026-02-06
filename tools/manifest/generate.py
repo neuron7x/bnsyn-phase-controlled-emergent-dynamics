@@ -13,6 +13,13 @@ SSOT_PATH = ROOT / "manifest/repo_manifest.yml"
 SCHEMA_PATH = ROOT / "manifest/repo_manifest.schema.json"
 COMPUTED_PATH = ROOT / "manifest/repo_manifest.computed.json"
 RENDERED_PATH = ROOT / ".github/REPO_MANIFEST.md"
+SCAN_SCOPE_ENTRIES: tuple[str, ...] = (
+    ".github/workflows",
+    "scripts",
+    "docs",
+    "Makefile",
+    "README.md",
+)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -27,7 +34,11 @@ def _load_workflow_yaml(path: Path) -> dict[str, Any]:
     return yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
 
 
-
+def _workflow_files(workflows_dir: Path) -> list[Path]:
+    return sorted(
+        [*workflows_dir.glob("*.yml"), *workflows_dir.glob("*.yaml")],
+        key=lambda path: path.name,
+    )
 
 
 def _repo_fingerprint() -> str:
@@ -39,25 +50,21 @@ def _repo_fingerprint() -> str:
         ROOT / "quality/mutation_baseline.json",
     ]
     for path in tracked:
-        digest.update(path.as_posix().encode("utf-8"))
+        rel = path.relative_to(ROOT).as_posix()
+        digest.update(rel.encode("utf-8"))
         digest.update(path.read_bytes())
-    workflow_files = sorted((ROOT / ".github/workflows").glob("*.yml"))
-    for path in workflow_files:
-        digest.update(path.name.encode("utf-8"))
+    for path in _workflow_files(ROOT / ".github/workflows"):
+        rel = path.relative_to(ROOT).as_posix()
+        digest.update(rel.encode("utf-8"))
         digest.update(path.read_bytes())
     return digest.hexdigest()
+
 
 def _count_ci_manifest_references() -> int:
     token = "ci_manifest.json"
     total = 0
-    roots = [
-        ROOT / ".github/workflows",
-        ROOT / "scripts",
-        ROOT / "docs",
-        ROOT / "Makefile",
-        ROOT / "README.md",
-    ]
-    for entry in roots:
+    for raw_entry in SCAN_SCOPE_ENTRIES:
+        entry = ROOT / raw_entry
         files: list[Path]
         if entry.is_dir():
             files = sorted(path for path in entry.rglob("*") if path.is_file())
@@ -72,13 +79,21 @@ def _count_ci_manifest_references() -> int:
 
 
 def _workflow_metrics(workflows_dir: Path) -> tuple[int, int, int]:
-    files = sorted(workflows_dir.glob("*.yml"))
+    files = _workflow_files(workflows_dir)
     reusable_count = 0
     workflow_call_count = 0
     for path in files:
         data = _load_workflow_yaml(path)
         trigger = data.get("on", {}) if isinstance(data, dict) else {}
-        trigger_keys = set(trigger.keys()) if isinstance(trigger, dict) else set()
+        trigger_keys: set[str]
+        if isinstance(trigger, dict):
+            trigger_keys = {str(key) for key in trigger.keys()}
+        elif isinstance(trigger, list):
+            trigger_keys = {str(item) for item in trigger}
+        elif isinstance(trigger, str):
+            trigger_keys = {trigger}
+        else:
+            trigger_keys = set()
         if path.name.startswith("_reusable_"):
             reusable_count += 1
         if "workflow_call" in trigger_keys:
@@ -123,6 +138,7 @@ def build_computed() -> dict[str, Any]:
             "mutation_total_mutants": mutation["metrics"]["total_mutants"],
             "ci_manifest_exists": (ROOT / "ci_manifest.json").exists(),
             "ci_manifest_reference_count": ci_manifest_reference_count,
+            "ci_manifest_reference_scope": list(SCAN_SCOPE_ENTRIES),
         },
         "invariants": ssot["invariants"],
         "policies": ssot["policies"],
@@ -134,8 +150,22 @@ def write_outputs() -> None:
     from tools.manifest.render import render_markdown
 
     computed = build_computed()
-    COMPUTED_PATH.write_text(json.dumps(computed, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    RENDERED_PATH.write_text(render_markdown(computed), encoding="utf-8")
+    computed_json = json.dumps(computed, indent=2, sort_keys=True) + "\n"
+    markdown = render_markdown(computed)
+    COMPUTED_PATH.write_text(computed_json, encoding="utf-8")
+    RENDERED_PATH.write_text(markdown, encoding="utf-8")
+
+    computed_sha = hashlib.sha256(computed_json.encode("utf-8")).hexdigest()
+    rendered_sha = hashlib.sha256(markdown.encode("utf-8")).hexdigest()
+    metrics = computed["metrics"]
+    print(
+        "manifest.generate "
+        f"computed_sha256={computed_sha} "
+        f"rendered_sha256={rendered_sha} "
+        f"workflow_total={metrics['workflow_total']} "
+        f"workflow_call_total={metrics['workflow_call_total']} "
+        f"ci_manifest_reference_count={metrics['ci_manifest_reference_count']}"
+    )
 
 
 if __name__ == "__main__":

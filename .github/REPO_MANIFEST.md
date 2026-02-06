@@ -2,7 +2,7 @@
 
 - Manifest version: `1.0`
 - Generated marker: `deterministic`
-- Repository fingerprint: `002ba88198687dac20b24264edcdd756fe7b192608e84f20c3c952697de30dd9`
+- Repository fingerprint: `5c31ea602cfd23f3bf2a2185718dceec35550232216b411ac601acd7c47fb3da`
 - Required PR gates source: `.github/PR_GATES.yml`
 - Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
 
@@ -17,7 +17,13 @@
 - Mutation baseline score (`quality/mutation_baseline.json`): **0.0**
 - Mutation total mutants (`quality/mutation_baseline.json`): **103**
 - `ci_manifest.json` exists: **False**
-- `ci_manifest.json` references in automation/docs: **0**
+- `ci_manifest.json` references in scoped scan: **0**
+- `ci_manifest.json` scan scope:
+  - `.github/workflows`
+  - `scripts`
+  - `docs`
+  - `Makefile`
+  - `README.md`
 
 ## Invariants
 

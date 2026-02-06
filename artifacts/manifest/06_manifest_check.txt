@@ -1,0 +1,62 @@
+$ make manifest-check
+python -m tools.manifest generate
+manifest.generate computed_sha256=4142326176e9c62fddc903a780a5c9029e31ae7bbe1d3988bdf8177bdbb252a0 rendered_sha256=28869b9f707c21ee3d45b5fc7852ed53a5e3767a2813aaeff954f52c32d1526b workflow_total=26 workflow_call_total=11 ci_manifest_reference_count=0
+python -m tools.manifest validate
+Manifest validation passed.
+git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+diff --git a/.github/REPO_MANIFEST.md b/.github/REPO_MANIFEST.md
+index 5f49185..f400e1a 100644
+--- a/.github/REPO_MANIFEST.md
++++ b/.github/REPO_MANIFEST.md
+@@ -2,7 +2,7 @@
+ 
+ - Manifest version: `1.0`
+ - Generated marker: `deterministic`
+-- Repository fingerprint: `002ba88198687dac20b24264edcdd756fe7b192608e84f20c3c952697de30dd9`
++- Repository fingerprint: `5c31ea602cfd23f3bf2a2185718dceec35550232216b411ac601acd7c47fb3da`
+ - Required PR gates source: `.github/PR_GATES.yml`
+ - Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
+ 
+@@ -17,7 +17,13 @@
+ - Mutation baseline score (`quality/mutation_baseline.json`): **0.0**
+ - Mutation total mutants (`quality/mutation_baseline.json`): **103**
+ - `ci_manifest.json` exists: **False**
+-- `ci_manifest.json` references in automation/docs: **0**
++- `ci_manifest.json` references in scoped scan: **0**
++- `ci_manifest.json` scan scope:
++  - `.github/workflows`
++  - `scripts`
++  - `docs`
++  - `Makefile`
++  - `README.md`
+ 
+ ## Invariants
+ 
+diff --git a/manifest/repo_manifest.computed.json b/manifest/repo_manifest.computed.json
+index 274af49..dc14ceb 100644
+--- a/manifest/repo_manifest.computed.json
++++ b/manifest/repo_manifest.computed.json
+@@ -42,6 +42,13 @@
+   "metrics": {
+     "ci_manifest_exists": false,
+     "ci_manifest_reference_count": 0,
++    "ci_manifest_reference_scope": [
++      ".github/workflows",
++      "scripts",
++      "docs",
++      "Makefile",
++      "README.md"
++    ],
+     "coverage_baseline_percent": 99.57,
+     "coverage_minimum_percent": 99.0,
+     "mutation_baseline_score": 0.0,
+@@ -60,7 +67,7 @@
+     ],
+     "generated_files_are_readonly": true
+   },
+-  "repo_ref": "002ba88198687dac20b24264edcdd756fe7b192608e84f20c3c952697de30dd9",
++  "repo_ref": "5c31ea602cfd23f3bf2a2185718dceec35550232216b411ac601acd7c47fb3da",
+   "required_pr_gates": {
+     "required_pr_gate_total": 2,
+     "sha256": "f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621",
+make: *** [Makefile:146: manifest-check] Error 1
