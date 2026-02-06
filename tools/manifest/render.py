@@ -16,8 +16,8 @@ def render_markdown(computed: dict[str, Any]) -> str:
     return (
         "# Repository Manifest (Generated)\n\n"
         f"- Manifest version: `{computed['manifest_version']}`\n"
-        f"- Generated at (commit time): `{computed['generated_at']}`\n"
-        f"- Repository ref: `{computed['repo_ref']}`\n"
+        f"- Generated marker: `{computed['generated_at']}`\n"
+        f"- Repository fingerprint: `{computed['repo_ref']}`\n"
         f"- Required PR gates source: `{required['source']}`\n"
         f"- Required PR gates SHA-256: `{required['sha256']}`\n\n"
         "## Metrics\n\n"

@@ -1,8 +1,8 @@
 # Repository Manifest (Generated)
 
 - Manifest version: `1.0`
-- Generated at (commit time): `2026-02-06T09:51:20+00:00`
-- Repository ref: `3505b0e68600cbc64fd06cd8d7a9ebda6c7638b2`
+- Generated marker: `deterministic`
+- Repository fingerprint: `002ba88198687dac20b24264edcdd756fe7b192608e84f20c3c952697de30dd9`
 - Required PR gates source: `.github/PR_GATES.yml`
 - Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
 

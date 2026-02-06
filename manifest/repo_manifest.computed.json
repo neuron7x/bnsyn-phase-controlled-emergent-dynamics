@@ -5,7 +5,7 @@
       "artifact"
     ]
   },
-  "generated_at": "2026-02-06T09:51:20+00:00",
+  "generated_at": "deterministic",
   "invariants": [
     {
       "enforcement": "python -m tools.manifest generate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json",
@@ -60,7 +60,7 @@
     ],
     "generated_files_are_readonly": true
   },
-  "repo_ref": "3505b0e68600cbc64fd06cd8d7a9ebda6c7638b2",
+  "repo_ref": "002ba88198687dac20b24264edcdd756fe7b192608e84f20c3c952697de30dd9",
   "required_pr_gates": {
     "required_pr_gate_total": 2,
     "sha256": "f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621",

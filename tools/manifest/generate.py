@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -28,26 +27,48 @@ def _load_workflow_yaml(path: Path) -> dict[str, Any]:
     return yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
 
 
-def _git_repo_ref() -> str:
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=ROOT,
-        check=True,
-        text=True,
-        capture_output=True,
-    )
-    return result.stdout.strip()
 
 
-def _git_commit_time() -> str:
-    result = subprocess.run(
-        ["git", "show", "-s", "--format=%cI", "HEAD"],
-        cwd=ROOT,
-        check=True,
-        text=True,
-        capture_output=True,
-    )
-    return result.stdout.strip()
+
+def _repo_fingerprint() -> str:
+    digest = hashlib.sha256()
+    tracked = [
+        ROOT / "manifest/repo_manifest.yml",
+        ROOT / ".github/PR_GATES.yml",
+        ROOT / "quality/coverage_gate.json",
+        ROOT / "quality/mutation_baseline.json",
+    ]
+    for path in tracked:
+        digest.update(path.as_posix().encode("utf-8"))
+        digest.update(path.read_bytes())
+    workflow_files = sorted((ROOT / ".github/workflows").glob("*.yml"))
+    for path in workflow_files:
+        digest.update(path.name.encode("utf-8"))
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+def _count_ci_manifest_references() -> int:
+    token = "ci_manifest.json"
+    total = 0
+    roots = [
+        ROOT / ".github/workflows",
+        ROOT / "scripts",
+        ROOT / "docs",
+        ROOT / "Makefile",
+        ROOT / "README.md",
+    ]
+    for entry in roots:
+        files: list[Path]
+        if entry.is_dir():
+            files = sorted(path for path in entry.rglob("*") if path.is_file())
+        elif entry.is_file():
+            files = [entry]
+        else:
+            files = []
+        for path in files:
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            total += sum(1 for line in text.splitlines() if token in line)
+    return total
 
 
 def _workflow_metrics(workflows_dir: Path) -> tuple[int, int, int]:
@@ -80,21 +101,12 @@ def build_computed() -> dict[str, Any]:
     coverage = _load_json(ROOT / "quality/coverage_gate.json")
     mutation = _load_json(ROOT / "quality/mutation_baseline.json")
 
-    ci_manifest_references = subprocess.run(
-        ["rg", "-n", "ci_manifest\\.json", ".github/workflows", "scripts", "Makefile", "README.md", "docs"],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    ci_manifest_reference_count = 0 if ci_manifest_references.returncode == 1 else len(
-        [line for line in ci_manifest_references.stdout.splitlines() if line.strip()]
-    )
+    ci_manifest_reference_count = _count_ci_manifest_references()
 
     return {
         "manifest_version": ssot["manifest_version"],
-        "generated_at": _git_commit_time(),
-        "repo_ref": _git_repo_ref(),
+        "generated_at": "deterministic",
+        "repo_ref": _repo_fingerprint(),
         "required_pr_gates": {
             "source": ssot["required_pr_gates"]["source"],
             "sha256": hashlib.sha256(pr_gates_bytes).hexdigest(),
