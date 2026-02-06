@@ -1,16 +1,8 @@
-"""Memory replay utilities for sleep cycles.
+"""Replay helpers for selecting and perturbing sleep-memory patterns.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
-Provides replay pattern generation and importance weighting for sleep cycles.
+Key components:
+- ``weighted_pattern_selection``: importance-weighted deterministic sampling API.
+- ``add_replay_noise``: bounded Gaussian perturbation with explicit noise controls.
 
 References
 ----------

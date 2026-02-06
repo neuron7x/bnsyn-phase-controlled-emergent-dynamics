@@ -98,6 +98,27 @@ class SparseConnectivity:
         density_threshold: float = 0.10,
         force_format: Literal["auto", "dense", "sparse"] = "auto",
     ) -> None:
+        """Initialize sparse connectivity storage and dispatch strategy.
+
+        Parameters
+        ----------
+        W : Float64Array
+            Synaptic weight matrix with shape ``(n_pre, n_post)``.
+        density_threshold : float, optional
+            Density cutoff used when ``force_format='auto'``; below cutoff selects CSR.
+        force_format : Literal["auto", "dense", "sparse"], optional
+            Explicit representation override. ``auto`` computes density from ``W``.
+
+        Raises
+        ------
+        ValueError
+            If ``W`` is not 2D.
+
+        Notes
+        -----
+        Normalizes all numeric storage to float64 and computes stable metrics
+        (density, nnz, memory estimates) used by downstream diagnostics.
+        """
         if W.ndim != 2:
             raise ValueError("W must be 2D")
         if W.dtype != np.float64:

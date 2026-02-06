@@ -1,16 +1,9 @@
-"""Sleep cycle controller with memory recording and replay.
+"""Sleep-cycle orchestration for wake, staged sleep, and deterministic replay.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
-Implements SleepCycle class for managing wake/sleep transitions, memory recording, and replay.
+Key components:
+- ``MemorySnapshot``: stored voltage pattern with importance metadata.
+- ``SleepCycle``: wake/sleep state machine with memory capture and dream replay.
+- ``default_human_sleep_cycle``: canonical staged configuration for integration paths.
 
 References
 ----------
