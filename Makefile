@@ -1,4 +1,4 @@
-.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness
+.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -135,6 +135,15 @@ docs:
 
 release-readiness:
 	python -m scripts.release_readiness
+
+manifest:
+	python -m tools.manifest generate
+
+manifest-validate:
+	python -m tools.manifest validate
+
+manifest-check: manifest manifest-validate
+	git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

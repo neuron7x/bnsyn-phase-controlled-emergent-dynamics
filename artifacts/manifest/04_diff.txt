@@ -1,0 +1,5 @@
+$ sha256sum .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+before=9889b14376298019c0f56d7715c071ed30598a01f6921b4af1d6f06412897808 859b625222b86919d287af353e828b64fbf06bce78929c686c6871032b8390aa 
+$ python -m tools.manifest generate
+after=9889b14376298019c0f56d7715c071ed30598a01f6921b4af1d6f06412897808 859b625222b86919d287af353e828b64fbf06bce78929c686c6871032b8390aa 
+PASS: zero-drift on repeated generate

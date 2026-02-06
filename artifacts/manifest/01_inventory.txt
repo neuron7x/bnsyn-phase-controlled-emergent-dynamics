@@ -1,0 +1,148 @@
+$ git rev-parse HEAD
+3505b0e68600cbc64fd06cd8d7a9ebda6c7638b2
+$ python --version
+Python 3.12.12
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+$ ls -la .github || true
+total 104
+drwxr-xr-x  4 root root  4096 Feb  6 09:45 .
+drwxr-xr-x 21 root root  4096 Feb  6 09:47 ..
+-rw-r--r--  1 root root   165 Feb  6 08:34 CODEOWNERS
+-rw-r--r--  1 root root   397 Feb  6 08:34 PR_GATES.yml
+-rw-r--r--  1 root root 25309 Feb  6 08:34 QUALITY_LEDGER.md
+-rw-r--r--  1 root root  1834 Feb  6 09:50 REPO_MANIFEST.md
+-rw-r--r--  1 root root   112 Feb  6 08:34 REQUIRED_CHECKS.yml
+-rw-r--r--  1 root root 34040 Feb  6 09:45 WORKFLOW_CONTRACTS.md
+drwxr-xr-x  3 root root  4096 Feb  6 08:34 actions
+-rw-r--r--  1 root root   571 Feb  6 08:34 dependabot.yml
+-rw-r--r--  1 root root  3635 Feb  6 09:45 pull_request_template.md
+drwxr-xr-x  2 root root  4096 Feb  6 09:45 workflows
+$ find .github/workflows -maxdepth 1 -type f \( -name "*.yml" -o -name "*.yaml" \) | sort
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/_reusable_chaos_tests.yml
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/_reusable_ssot.yml
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/benchmarks.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/ci-benchmarks.yml
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/ci-pr.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/ci-validation.yml
+.github/workflows/codecov-health.yml
+.github/workflows/codeql.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/docs.yml
+.github/workflows/formal-coq.yml
+.github/workflows/formal-tla.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/science.yml
+.github/workflows/workflow-integrity.yml
+$ rg -n "workflow_call" .github/workflows
+.github/workflows/_reusable_benchmarks.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_benchmarks.yml:5:  workflow_call:
+.github/workflows/_reusable_pytest.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_pytest.yml:5:  workflow_call:
+.github/workflows/ci-pr.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/ci-pr.yml:13:  workflow_call:
+.github/workflows/_reusable_ssot.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_ssot.yml:5:  workflow_call:
+.github/workflows/_reusable_property_tests.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_property_tests.yml:5:  workflow_call:
+.github/workflows/_reusable_quality.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_quality.yml:5:  workflow_call:
+.github/workflows/workflow-integrity.yml:62:                    $0 ~ /workflow_call/) {
+.github/workflows/workflow-integrity.yml:69:              /^on:[[:space:]]*(pull_request|push|workflow_call)[[:space:]]*$/ {
+.github/workflows/workflow-integrity.yml:79:                pattern = "^[[:space:]]*(pull_request|push|workflow_call)"
+.github/workflows/workflow-integrity.yml:102:            echo "pull_request/push/workflow_call under on:."
+.github/workflows/ci-pr-atomic.yml:15:  workflow_call:
+.github/workflows/_reusable_validation_tests.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_validation_tests.yml:5:  workflow_call:
+.github/workflows/_reusable_chaos_tests.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_chaos_tests.yml:5:  workflow_call:
+.github/workflows/_reusable_formal_science.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_formal_science.yml:5:  workflow_call:
+.github/workflows/_reusable_gate_profile.yml:1:# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+.github/workflows/_reusable_gate_profile.yml:5:  workflow_call:
+$ rg -n "workflow_call" .github/workflows | wc -l
+25
+$ python -m json.tool quality/coverage_gate.json
+{
+    "baseline_percent": 99.57,
+    "minimum_percent": 99.0,
+    "metric": "coverage.xml line-rate",
+    "generated_from": "2cea83c0051b41c5bd94034f362c54e780f00603",
+    "generated_at_utc": "2026-02-05T11:40:55.835693+00:00"
+}
+$ python -m json.tool quality/mutation_baseline.json
+{
+    "version": "1.0.0",
+    "timestamp": "2026-01-31T01:34:50.397483Z",
+    "baseline_score": 0.0,
+    "tolerance_delta": 5.0,
+    "status": "active",
+    "description": "Mutation testing baseline for BNsyn critical modules",
+    "config": {
+        "tool": "mutmut",
+        "tool_version": "2.4.5",
+        "python_version": "3.12",
+        "commit_sha": "4d4a9efcebcab80b387fbe7fcb1e5e57cdf4940c",
+        "test_command": "pytest -x -q -m 'not validation and not property and not benchmark'",
+        "mutation_timeout": 10
+    },
+    "scope": {
+        "modules": [
+            "src/bnsyn/neuron/adex.py",
+            "src/bnsyn/plasticity/stdp.py",
+            "src/bnsyn/plasticity/three_factor.py",
+            "src/bnsyn/temperature/schedule.py"
+        ],
+        "test_markers": "not validation and not property and not benchmark"
+    },
+    "metrics": {
+        "total_mutants": 103,
+        "killed_mutants": 0,
+        "survived_mutants": 103,
+        "timeout_mutants": 0,
+        "suspicious_mutants": 0,
+        "score_percent": 0.0
+    },
+    "metrics_per_module": {
+        "src/bnsyn/neuron/adex.py": {
+            "note": "Per-module breakdown requires manual mutmut analysis"
+        },
+        "src/bnsyn/plasticity/stdp.py": {
+            "note": "Per-module breakdown requires manual mutmut analysis"
+        },
+        "src/bnsyn/plasticity/three_factor.py": {
+            "note": "Per-module breakdown requires manual mutmut analysis"
+        },
+        "src/bnsyn/temperature/schedule.py": {
+            "note": "Per-module breakdown requires manual mutmut analysis"
+        }
+    },
+    "history": [
+        {
+            "date": "2026-01-31",
+            "score": 0.0,
+            "commit": "4d4a9efc",
+            "comment": "Baseline generated by scripts/generate_mutation_baseline.py"
+        }
+    ]
+}
+$ test -f ci_manifest.json && echo PRESENT:ci_manifest.json || echo MISSING:ci_manifest.json
+MISSING:ci_manifest.json
+$ rg -n "ci_manifest\\.json" .github/workflows scripts tools Makefile README.md docs
+tools/manifest/render.py:32:        f"- `ci_manifest.json` exists: **{metrics['ci_manifest_exists']}**\n"
+tools/manifest/render.py:33:        f"- `ci_manifest.json` references in automation/docs: **{metrics['ci_manifest_reference_count']}**\n\n"
+tools/manifest/generate.py:112:            "ci_manifest_exists": (ROOT / "ci_manifest.json").exists(),
+tools/manifest/validate.py:51:    if (ROOT / "ci_manifest.json").exists():
+tools/manifest/validate.py:52:        raise SystemExit("ci_manifest.json must be absent (dead control artifact)")
+tools/manifest/validate.py:54:        raise SystemExit("ci_manifest.json references detected in automation/docs")
