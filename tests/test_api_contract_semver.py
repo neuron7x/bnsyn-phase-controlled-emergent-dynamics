@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from scripts.check_api_contract import CONTRACT_SYMBOLS, check_api_changes, collect_public_api, semver_allows_breaking_change
+from scripts.check_api_contract import (
+    CONTRACT_SYMBOLS,
+    _normalize_signature_text,
+    check_api_changes,
+    collect_public_api,
+    semver_allows_breaking_change,
+)
 
 
 def test_api_contract_detects_breaking_changes() -> None:
@@ -20,3 +26,9 @@ def test_collect_public_api_uses_contract_symbols_only() -> None:
     snapshot = collect_public_api()
     for module_name, symbols in CONTRACT_SYMBOLS.items():
         assert set(snapshot[module_name]) == set(symbols)
+
+
+def test_signature_normalization_typing_prefix() -> None:
+    before = "(*, x: typing.Annotated[float, Gt(gt=0)] = 1.0) -> None"
+    after = "(*, x: Annotated[float, Gt(gt=0)] = 1.0) -> None"
+    assert _normalize_signature_text(before) == _normalize_signature_text(after)

@@ -48,9 +48,16 @@ CONTRACT_SYMBOLS: dict[str, tuple[str, ...]] = {
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 
+def _normalize_signature_text(signature_text: str) -> str:
+    normalized = signature_text
+    normalized = normalized.replace("typing.", "")
+    normalized = normalized.replace("collections.abc.", "")
+    return normalized
+
+
 def _safe_signature(obj: Any) -> str:
     try:
-        return str(inspect.signature(obj))
+        return _normalize_signature_text(str(inspect.signature(obj)))
     except (TypeError, ValueError):
         return "<signature-unavailable>"
 
@@ -98,11 +105,12 @@ def check_api_changes(
             if symbol_name not in current_symbols:
                 breaking.append(f"Symbol removed: {module_name}.{symbol_name}")
                 continue
-            current_signature = current_symbols[symbol_name]
-            if baseline_signature != current_signature:
+            current_signature = _normalize_signature_text(current_symbols[symbol_name])
+            baseline_signature_normalized = _normalize_signature_text(baseline_signature)
+            if baseline_signature_normalized != current_signature:
                 breaking.append(
                     f"Signature changed: {module_name}.{symbol_name} "
-                    f"{baseline_signature} -> {current_signature}"
+                    f"{baseline_signature_normalized} -> {current_signature}"
                 )
     return len(breaking) == 0, breaking
 
