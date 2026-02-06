@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from scripts.check_api_contract import check_api_changes, semver_allows_breaking_change
+from scripts.check_api_contract import CONTRACT_SYMBOLS, check_api_changes, collect_public_api, semver_allows_breaking_change
 
 
 def test_api_contract_detects_breaking_changes() -> None:
@@ -14,3 +14,9 @@ def test_api_contract_detects_breaking_changes() -> None:
 def test_semver_major_bump_allows_breaking_change() -> None:
     assert semver_allows_breaking_change("0.2.0", "1.0.0")
     assert not semver_allows_breaking_change("0.2.0", "0.3.0")
+
+
+def test_collect_public_api_uses_contract_symbols_only() -> None:
+    snapshot = collect_public_api()
+    for module_name, symbols in CONTRACT_SYMBOLS.items():
+        assert set(snapshot[module_name]) == set(symbols)

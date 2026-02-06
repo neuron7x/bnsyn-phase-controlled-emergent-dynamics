@@ -10,22 +10,41 @@ import re
 from pathlib import Path
 from typing import Any
 
-STABLE_MODULES: tuple[str, ...] = (
-    "bnsyn.config",
-    "bnsyn.rng",
-    "bnsyn.cli",
-    "bnsyn.neurons",
-    "bnsyn.synapses",
-    "bnsyn.control",
-    "bnsyn.simulation",
-    "bnsyn.sim.network",
-    "bnsyn.neuron.adex",
-    "bnsyn.synapse.conductance",
-    "bnsyn.plasticity.three_factor",
-    "bnsyn.criticality.branching",
-    "bnsyn.temperature.schedule",
-    "bnsyn.connectivity.sparse",
-)
+CONTRACT_SYMBOLS: dict[str, tuple[str, ...]] = {
+    "bnsyn.config": (),
+    "bnsyn.rng": (),
+    "bnsyn.cli": (),
+    "bnsyn.neurons": (
+        "AdExState",
+        "IntegrationMetrics",
+        "adex_step",
+        "adex_step_adaptive",
+        "adex_step_with_error_tracking",
+    ),
+    "bnsyn.synapses": ("ConductanceState", "ConductanceSynapses", "nmda_mg_block"),
+    "bnsyn.control": (
+        "BranchingEstimator",
+        "SigmaController",
+        "TemperatureSchedule",
+        "gate_sigmoid",
+        "energy_cost",
+        "total_reward",
+    ),
+    "bnsyn.simulation": ("Network", "NetworkParams", "run_simulation"),
+    "bnsyn.sim.network": ("Network", "NetworkParams", "run_simulation"),
+    "bnsyn.neuron.adex": (
+        "AdExState",
+        "IntegrationMetrics",
+        "adex_step",
+        "adex_step_adaptive",
+        "adex_step_with_error_tracking",
+    ),
+    "bnsyn.synapse.conductance": ("ConductanceState", "ConductanceSynapses", "nmda_mg_block"),
+    "bnsyn.plasticity.three_factor": ("three_factor_update",),
+    "bnsyn.criticality.branching": ("BranchingEstimator", "SigmaController"),
+    "bnsyn.temperature.schedule": ("TemperatureSchedule", "gate_sigmoid"),
+    "bnsyn.connectivity.sparse": ("SparseConnectivity", "build_random_connectivity"),
+}
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 
@@ -38,13 +57,10 @@ def _safe_signature(obj: Any) -> str:
 
 def collect_public_api() -> dict[str, dict[str, str]]:
     snapshot: dict[str, dict[str, str]] = {}
-    for module_name in STABLE_MODULES:
+    for module_name, contract_symbols in CONTRACT_SYMBOLS.items():
         module = importlib.import_module(module_name)
-        exports = getattr(module, "__all__", None)
-        if not isinstance(exports, (list, tuple)):
-            exports = [name for name in vars(module) if not name.startswith("_")]
         module_snapshot: dict[str, str] = {}
-        for symbol_name in sorted(set(str(name) for name in exports)):
+        for symbol_name in sorted(set(contract_symbols)):
             if not hasattr(module, symbol_name):
                 module_snapshot[symbol_name] = "<missing-symbol>"
                 continue
@@ -52,9 +68,6 @@ def collect_public_api() -> dict[str, dict[str, str]]:
             module_snapshot[symbol_name] = _safe_signature(obj)
         snapshot[module_name] = module_snapshot
     return snapshot
-
-
-
 
 def _read_pyproject_version() -> str:
     pyproject = Path("pyproject.toml")
