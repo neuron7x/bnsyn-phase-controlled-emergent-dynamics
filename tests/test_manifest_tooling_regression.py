@@ -105,3 +105,46 @@ def test_generate_summary_hashes_match_outputs(
     rendered_text = (root / ".github/REPO_MANIFEST.md").read_text(encoding="utf-8")
     assert fields["computed_sha256"] == hashlib.sha256(computed_text.encode("utf-8")).hexdigest()
     assert fields["rendered_sha256"] == hashlib.sha256(rendered_text.encode("utf-8")).hexdigest()
+
+
+def test_validate_fails_when_ci_manifest_references_present(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "repo"
+    _write(root / ".github/PR_GATES.yml", "version: '1'\nrequired_pr_gates: []\n")
+    _build_min_repo(root)
+    _write(root / "README.md", "ci_manifest.json\n")
+    _patch_roots(monkeypatch, root)
+
+    generate.write_outputs()
+
+    with pytest.raises(SystemExit, match="ci_manifest.json references detected"):
+        validate.validate_manifest()
+
+
+def test_repo_fingerprint_invariant_to_file_creation_order(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def build(root: Path, ordered: bool) -> None:
+        _write(root / "manifest/repo_manifest.yml", "manifest_version: '1.0'\n")
+        _write(root / ".github/PR_GATES.yml", "version: '1'\nrequired_pr_gates: []\n")
+        _write(root / "quality/coverage_gate.json", '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n')
+        _write(root / "quality/mutation_baseline.json", '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n')
+        items = [
+            (".github/workflows/b.yaml", "on: [workflow_call]\n"),
+            (".github/workflows/a.yml", "on:\n  pull_request:\n"),
+        ]
+        seq = items if ordered else list(reversed(items))
+        for rel, txt in seq:
+            _write(root / rel, txt)
+
+    a = tmp_path / "a"
+    b = tmp_path / "b"
+    build(a, ordered=True)
+    build(b, ordered=False)
+
+    monkeypatch.setattr(generate, "ROOT", a)
+    fp_a = generate._repo_fingerprint()
+    monkeypatch.setattr(generate, "ROOT", b)
+    fp_b = generate._repo_fingerprint()
+
+    assert fp_a == fp_b

@@ -95,3 +95,20 @@ def test_ci_manifest_reference_scope_fuzz(snippets: list[str]) -> None:
             assert generate._count_ci_manifest_references() == expected
         finally:
             generate.ROOT = old_root
+
+
+@given(st.lists(st.sampled_from([".yml", ".yaml", ".txt", ".json"]), min_size=1, max_size=20))
+@settings(max_examples=80)
+def test_workflow_metrics_fuzz_ignores_non_yaml_extensions(exts: list[str]) -> None:
+    with TemporaryDirectory() as tmp_dir:
+        workflows = Path(tmp_dir) / ".github/workflows"
+        expected_total = 0
+        for idx, ext in enumerate(exts):
+            name = f"wf_{idx}{ext}"
+            text = "on: workflow_call\n" if idx % 2 == 0 else "on: workflow_dispatch\n"
+            _write(workflows / name, text)
+            if ext in {".yml", ".yaml"}:
+                expected_total += 1
+
+        total, _, _ = generate._workflow_metrics(workflows)
+        assert total == expected_total
