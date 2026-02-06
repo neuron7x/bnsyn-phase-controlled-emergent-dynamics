@@ -24,11 +24,8 @@ def test_read_coverage_percent_parses_valid_xml(tmp_path: Path) -> None:
 def test_read_coverage_percent_missing_file_fails(tmp_path: Path) -> None:
     xml_path = tmp_path / "missing.xml"
 
-    try:
+    with pytest.raises(FileNotFoundError):
         check_coverage_gate.read_coverage_percent(xml_path)
-        raise AssertionError("expected FileNotFoundError")
-    except FileNotFoundError:
-        pass
 
 
 def test_read_coverage_percent_missing_line_rate_fails(tmp_path: Path) -> None:

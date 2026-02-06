@@ -281,13 +281,13 @@ class AttractorCrystallizer:
             object.__setattr__(self, "_pca_components", Vt)
             object.__setattr__(self, "_pca_mean", mean)
         except np.linalg.LinAlgError as e:
-            # If SVD fails, keep previous components
+            # If SVD fails, keep previous components as deterministic fallback.
             logger.warning(
                 "PCA SVD failed (data shape=%s): %s. Retaining previous components.",
                 data.shape,
                 e,
             )
-            pass
+            return
 
     def _transform_to_pca(self, state: Float64Array) -> Float64Array:
         """Transform state snapshot to PCA space.

@@ -32,16 +32,27 @@ def test_crystallizer_transform_default_passthrough() -> None:
     assert np.allclose(transformed, state)
 
 
-def test_crystallizer_pca_failure_retains_previous(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_crystallizer_pca_failure_retains_previous(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     crystallizer = AttractorCrystallizer(state_dim=2, snapshot_dim=2, max_buffer_size=5)
     crystallizer._buffer[:2] = np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64)
     crystallizer._buffer_idx = 2
+    crystallizer._update_pca()
+
+    previous_components = crystallizer._pca_components.copy()
+    previous_mean = crystallizer._pca_mean.copy()
 
     def _raise_svd(*_args: object, **_kwargs: object) -> None:
         raise np.linalg.LinAlgError("svd failure")
 
     monkeypatch.setattr(np.linalg, "svd", _raise_svd)
-    crystallizer._update_pca()
+    with caplog.at_level("WARNING"):
+        crystallizer._update_pca()
+
+    assert np.array_equal(crystallizer._pca_components, previous_components)
+    assert np.array_equal(crystallizer._pca_mean, previous_mean)
+    assert "Retaining previous components" in caplog.text
 
 
 def test_crystallizer_dbscan_detects_cluster() -> None:

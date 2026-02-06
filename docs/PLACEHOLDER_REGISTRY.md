@@ -6,30 +6,49 @@ Canonical registry for placeholder scan findings produced by `python -m scripts.
 
 - ID: PH-0001
 - Type: code
-- Path: `src/bnsyn/emergence/crystallizer.py:290`
-- Symptom: `pass_in_except`
-- Impact: exception branch keeps previous PCA state without explicit guard-level assertion.
+- Path: `src/bnsyn/emergence/crystallizer.py:283-290`
+- Symptom: `pass_in_except` in PCA failure fallback.
+- Impact: silent exception branch reduced explicitness of deterministic fallback.
 - Priority: P1
-- Status: OPEN
-- Exit criteria: replace `pass` branch with explicit fallback semantics and add deterministic tests for SVD failure behavior.
+- Status: RESOLVED
+- Acceptance Criteria:
+  - LinAlgError in `_update_pca` preserves previous `_pca_components` and `_pca_mean`.
+  - Warning is emitted for fallback branch.
+- Tests:
+  - `tests/test_crystallizer_edge_cases.py::test_crystallizer_pca_failure_retains_previous`
+- Evidence:
+  - `artifacts/ci_logs/pytest_targeted.txt`
+  - `artifacts/ci_logs/pytest_full.txt`
 
 - ID: PH-0002
 - Type: test
-- Path: `tests/test_coverage_gate.py:31`
-- Symptom: `pass_in_except`
-- Impact: expected-exception branch relies on `pass` instead of strict assertion helper.
+- Path: `tests/test_coverage_gate.py:24-30`
+- Symptom: `pass_in_except` in expected FileNotFoundError assertion.
+- Impact: weaker assertion style for failure branch.
 - Priority: P1
-- Status: OPEN
-- Exit criteria: rewrite using pytest exception assertions without `pass` and preserve failure signal quality.
+- Status: RESOLVED
+- Acceptance Criteria:
+  - Missing coverage file path raises `FileNotFoundError` with strict assertion style.
+- Tests:
+  - `tests/test_coverage_gate.py::test_read_coverage_percent_missing_file_fails`
+- Evidence:
+  - `artifacts/ci_logs/pytest_targeted.txt`
+  - `artifacts/ci_logs/pytest_full.txt`
 
 - ID: PH-0003
 - Type: test
-- Path: `tests/validation/test_chaos_integration.py:261`
-- Symptom: `pass_in_except`
-- Impact: chaos validation exception branch uses `pass`, reducing explicitness of contract checks.
+- Path: `tests/validation/test_chaos_integration.py:253-260`
+- Symptom: `pass_in_except` in ValueError branch for extreme AdEx state.
+- Impact: non-explicit control flow in chaos validation test.
 - Priority: P1
-- Status: OPEN
-- Exit criteria: rewrite with explicit assertion strategy for accepted ValueError branch.
+- Status: RESOLVED
+- Acceptance Criteria:
+  - Test explicitly accepts ValueError while asserting finite outputs on non-error path.
+- Tests:
+  - `tests/validation/test_chaos_integration.py::test_adex_handles_extreme_values_robustly`
+- Evidence:
+  - `artifacts/ci_logs/pytest_targeted.txt`
+  - `artifacts/ci_logs/pytest_full.txt`
 
 ## Scan Evidence
 
