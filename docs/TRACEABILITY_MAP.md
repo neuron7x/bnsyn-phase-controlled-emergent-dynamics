@@ -14,8 +14,8 @@ Requirements and safety constraints are mapped to code entrypoints, tests, and C
 
 ```bash
 python -m pytest -q
-python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
-python scripts/check_coverage_gate.py --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
 ```
 
 Expected output patterns:
