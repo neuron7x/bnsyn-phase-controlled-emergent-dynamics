@@ -16,6 +16,9 @@ cd bnsyn-phase-controlled-emergent-dynamics
 # Install dev dependencies
 make dev-setup
 
+# Alternative: install exactly what CI uses
+python -m pip install -e ".[dev,test]"
+
 # This installs:
 # - Pre-commit hooks (ruff, mypy, pylint, pydocstyle, pytest-smoke, coverage)
 # - Dev dependencies (pytest, hypothesis, bandit, pip-audit)
