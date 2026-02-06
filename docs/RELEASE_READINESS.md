@@ -54,3 +54,8 @@ To generate the report without failing the command:
 ```bash
 python -m scripts.release_readiness --advisory
 ```
+
+
+## Release Pipeline Automation
+
+For changelog/version/build/publish dry-run automation, see [`docs/RELEASE_PIPELINE.md`](RELEASE_PIPELINE.md).
