@@ -39,10 +39,10 @@ test-validation:
 	python -m pytest -m validation -q
 
 coverage:
-	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
+	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
 
 coverage-fast:
-	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml -q
+	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
 
 coverage-baseline: coverage
 	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0

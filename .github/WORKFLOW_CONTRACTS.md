@@ -57,10 +57,10 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 | Rule ID | Statement | Enforcement |
 | --- | --- | --- |
-| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
-| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}` with `workflow_call` required. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
-| R3 | Workflows named `_reusable_*.yml` MUST declare `on: workflow_call` only. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
-| R4 | Workflows with Gate Class `PR-gate` MUST include `pull_request` unless an explicit `EXCEPTION:` line is present in the inventory table. | `python scripts/validate_long_running_triggers.py` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}` with `workflow_call` required. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R3 | Workflows named `_reusable_*.yml` MUST declare `on: workflow_call` only. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R4 | Workflows with Gate Class `PR-gate` MUST include `pull_request` unless an explicit `EXCEPTION:` line is present in the inventory table. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
 <!-- END: AUTO-GENERATED WORKFLOW POLICIES -->
 
 ## Workflow Inventory Table (Authoritative)

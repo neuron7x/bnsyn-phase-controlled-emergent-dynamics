@@ -259,7 +259,7 @@ When adding a new quality check:
    - Add to workflow schedule if nightly
 
 4. **Verify with CI truthfulness lint**
-   - Run `python scripts/lint_ci_truthfulness.py`
+   - Run `python -m scripts.lint_ci_truthfulness`
    - Fix any violations before merging
 
 ## Troubleshooting
@@ -308,7 +308,7 @@ pytest -m "validation and chaos" --collect-only
 
 Read the report:
 ```bash
-python scripts/lint_ci_truthfulness.py --md output.md
+python -m scripts.lint_ci_truthfulness --md output.md
 cat output.md
 ```
 

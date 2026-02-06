@@ -101,7 +101,7 @@ pip install -e ".[dev,viz]"
 python -m experiments.runner temp_ablation_v2
 
 # Generate visualizations
-python scripts/visualize_experiment.py --run-id temp_ablation_v2
+python -m scripts.visualize_experiment --run-id temp_ablation_v2
 
 # Verify hypothesis
 python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/temp_ablation_v2
@@ -316,10 +316,10 @@ BN-Syn enforces deterministic execution, controlled randomness, and validation g
 - Canonical test/coverage commands: [`docs/TESTING.md`](docs/TESTING.md)
 
 **SSOT gates:**
-- `python scripts/validate_bibliography.py`
-- `python scripts/validate_claims.py`
-- `python scripts/scan_normative_tags.py`
-- `python scripts/scan_governed_docs.py`
+- `python -m scripts.validate_bibliography`
+- `python -m scripts.validate_claims`
+- `python -m scripts.scan_normative_tags`
+- `python -m scripts.scan_governed_docs`
 
 ## Quickstart
 
@@ -407,10 +407,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for full developer workflow.
 **Repository validation gates (SSOT)**
 
 ```bash
-python scripts/validate_bibliography.py
-python scripts/validate_claims.py
-python scripts/scan_normative_tags.py
-python scripts/scan_governed_docs.py
+python -m scripts.validate_bibliography
+python -m scripts.validate_claims
+python -m scripts.scan_normative_tags
+python -m scripts.scan_governed_docs
 ```
 
 See canonical test commands in [`docs/TESTING.md`](docs/TESTING.md).

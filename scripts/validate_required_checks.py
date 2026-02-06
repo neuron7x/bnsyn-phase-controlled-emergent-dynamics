@@ -95,7 +95,7 @@ def validate_required_checks(
 def main(argv: Iterable[str]) -> int:
     args = list(argv)
     if len(args) != 1:
-        print("Usage: python scripts/validate_required_checks.py")
+        print("Usage: python -m scripts.validate_required_checks")
         return 3
     required_checks_path = Path(".github/REQUIRED_CHECKS.yml")
     contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")

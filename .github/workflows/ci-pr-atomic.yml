@@ -164,10 +164,10 @@ jobs:
       - name: Log pip version
         run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
-      - run: python scripts/validate_bibliography.py
-      - run: python scripts/validate_claims.py
-      - run: python scripts/scan_governed_docs.py
-      - run: python scripts/scan_normative_tags.py
+      - run: python -m scripts.validate_bibliography
+      - run: python -m scripts.validate_claims
+      - run: python -m scripts.scan_governed_docs
+      - run: python -m scripts.scan_normative_tags
 
   security:
     runs-on: ubuntu-latest

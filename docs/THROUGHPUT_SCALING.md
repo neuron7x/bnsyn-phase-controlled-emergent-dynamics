@@ -240,24 +240,24 @@ All physics constraints from the problem statement are maintained:
 
 ### Run Complete Validation
 ```bash
-python scripts/orchestrate_throughput_scaling.py
+python -m scripts.orchestrate_throughput_scaling
 ```
 
 ### Run Individual Steps
 ```bash
 # STEP 1: Baseline
-python scripts/benchmark_physics.py --backend reference
+python -m scripts.benchmark_physics --backend reference
 
 # STEP 4: Accelerated
-python scripts/benchmark_physics.py --backend accelerated
+python -m scripts.benchmark_physics --backend accelerated
 
 # STEP 5: Verify equivalence
-python scripts/verify_equivalence.py \
+python -m scripts.verify_equivalence \
   --reference benchmarks/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json
 
 # STEP 6: Calculate gains
-python scripts/calculate_throughput_gain.py \
+python -m scripts.calculate_throughput_gain \
   --reference benchmarks/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json
 ```

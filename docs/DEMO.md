@@ -9,7 +9,7 @@ For full conference preparation (release readiness + backup plan), see
 ## Release Readiness (Blocking)
 
 ```bash
-python scripts/release_readiness.py
+python -m scripts.release_readiness
 ```
 
 **Expected output:**

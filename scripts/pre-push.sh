@@ -20,9 +20,9 @@ echo "5️⃣  Coverage (≥85%)..."
 pytest --cov=src/bnsyn --cov-fail-under=85 -q || { echo "❌ Coverage below 85%"; exit 1; }
 
 echo "6️⃣  SSOT gates..."
-python scripts/validate_bibliography.py || { echo "❌ Bibliography validation failed"; exit 1; }
-python scripts/validate_claims.py || { echo "❌ Claims validation failed"; exit 1; }
-python scripts/scan_normative_tags.py || { echo "❌ Normative tag scan failed"; exit 1; }
+python -m scripts.validate_bibliography || { echo "❌ Bibliography validation failed"; exit 1; }
+python -m scripts.validate_claims || { echo "❌ Claims validation failed"; exit 1; }
+python -m scripts.scan_normative_tags || { echo "❌ Normative tag scan failed"; exit 1; }
 
 echo "7️⃣  Security audit..."
 gitleaks detect --redact --source=. || { echo "❌ Gitleaks failed"; exit 1; }

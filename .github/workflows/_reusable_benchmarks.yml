@@ -221,16 +221,16 @@ jobs:
 
       - name: Run benchmarks
         run: |
-          python scripts/run_benchmarks.py --suite ci
+          python -m scripts.run_benchmarks --suite ci
 
       - name: Run performance baselines
         run: |
-          python scripts/benchmark_physics.py --output benchmarks/physics_current.json
-          python scripts/profile_kernels.py --steps 100 --warmup 2 --repeats 5 --output benchmarks/kernel_profile_current.json
+          python -m scripts.benchmark_physics --output benchmarks/physics_current.json
+          python -m scripts.profile_kernels --steps 100 --warmup 2 --repeats 5 --output benchmarks/kernel_profile_current.json
 
       - name: Check benchmark regressions
         run: |
-          python scripts/check_benchmark_regressions.py \
+          python -m scripts.check_benchmark_regressions \
             --physics-baseline benchmarks/baselines/physics_baseline_alloc_v2.json \
             --physics-current benchmarks/physics_current.json \
             --kernel-baseline benchmarks/baselines/kernel_profile_alloc_v2.json \
@@ -301,9 +301,9 @@ jobs:
           {
             echo "##  Benchmark Regression Analysis"
             echo ""
-            python scripts/compare_benchmarks.py --format markdown
+            python -m scripts.compare_benchmarks --format markdown
           } >> "$summary_file"
-          python scripts/compare_benchmarks.py --format json > benchmark_report.json
+          python -m scripts.compare_benchmarks --format json > benchmark_report.json
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4

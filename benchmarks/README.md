@@ -25,7 +25,7 @@ while maintaining exact emergent dynamics. This follows a rigorous 7-step valida
 Run the complete validation suite:
 
 ```bash
-python scripts/orchestrate_throughput_scaling.py
+python -m scripts.orchestrate_throughput_scaling
 ```
 
 This executes all 7 steps and generates comprehensive reports in `benchmarks/`.
@@ -34,13 +34,13 @@ This executes all 7 steps and generates comprehensive reports in `benchmarks/`.
 
 #### STEP 1: Ground-Truth Baseline
 ```bash
-python scripts/benchmark_physics.py --backend reference --output benchmarks/physics_baseline.json
+python -m scripts.benchmark_physics --backend reference --output benchmarks/physics_baseline.json
 ```
 Establishes the reference physics manifold that all optimizations must preserve.
 
 #### STEP 2: Kernel Profiling
 ```bash
-python scripts/profile_kernels.py --output benchmarks/kernel_profile.json
+python -m scripts.profile_kernels --output benchmarks/kernel_profile.json
 ```
 Creates the "Performance Jacobian" - identifies computational bottlenecks.
 
@@ -49,13 +49,13 @@ See `benchmarks/scaling_plan.md` for analysis of optimization opportunities.
 
 #### STEP 4: Accelerated Backend
 ```bash
-python scripts/benchmark_physics.py --backend accelerated --output benchmarks/physics_accelerated.json
+python -m scripts.benchmark_physics --backend accelerated --output benchmarks/physics_accelerated.json
 ```
 Runs the optimized backend (sparse synapse propagation, vectorization).
 
 #### STEP 5: Physics Equivalence Verification
 ```bash
-python scripts/verify_equivalence.py \
+python -m scripts.verify_equivalence \
   --reference benchmarks/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json \
   --output benchmarks/equivalence_report.md
@@ -64,7 +64,7 @@ Validates that accelerated backend preserves all physics within tolerance.
 
 #### STEP 6: Throughput Gains
 ```bash
-python scripts/calculate_throughput_gain.py \
+python -m scripts.calculate_throughput_gain \
   --reference benchmarks/physics_baseline.json \
   --accelerated benchmarks/physics_accelerated.json \
   --output benchmarks/throughput_gain.json

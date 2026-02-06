@@ -23,11 +23,11 @@ This PR fixes ALL remaining audit defects and SSOT violations in the BN-Syn qual
 **Proof commands:**
 ```bash
 # Test strict mode with uninitialized baseline (should FAIL)
-python scripts/check_mutation_score.py --strict
+python -m scripts.check_mutation_score --strict
 # Expected: exit code 1, error message
 
 # Test advisory mode with uninitialized baseline (should WARN but PASS)
-python scripts/check_mutation_score.py --advisory
+python -m scripts.check_mutation_score --advisory
 # Expected: exit code 0, warning message
 ```
 
@@ -209,8 +209,8 @@ on:
 If mutation strict mode is too aggressive:
 
 1. Edit `.github/workflows/quality-mutation.yml` line 107
-   - Change: `python scripts/check_mutation_score.py --strict`
-   - To: `python scripts/check_mutation_score.py --advisory`
+   - Change: `python -m scripts.check_mutation_score --strict`
+   - To: `python -m scripts.check_mutation_score --advisory`
 
 2. This allows nightly runs to pass even with uninitialized baseline (warning only)
 

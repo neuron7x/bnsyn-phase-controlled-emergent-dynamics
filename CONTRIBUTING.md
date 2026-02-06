@@ -153,8 +153,8 @@ make coverage    # Test with coverage report
 
 4. Validate:
    ```bash
-   python scripts/validate_bibliography.py
-   python scripts/validate_claims.py
+   python -m scripts.validate_bibliography
+   python -m scripts.validate_claims
    ```
 
 ## Before Creating a PR

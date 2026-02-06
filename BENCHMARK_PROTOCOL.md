@@ -43,7 +43,7 @@ Kernel `max_time_sec` metrics use a p95 estimate to reduce outlier noise.
 Command (local or controlled runner):
 
 ```bash
-python scripts/generate_benchmark_baseline.py \
+python -m scripts.generate_benchmark_baseline \
   --warmup 2 \
   --runs 5 \
   --physics-steps 1000 \

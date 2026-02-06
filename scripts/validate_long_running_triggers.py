@@ -397,7 +397,7 @@ def main(argv: Iterable[str]) -> int:
     if len(args) == 2 and args[1] == "--dry-run":
         dry_run = True
     elif len(args) != 1:
-        print("Usage: python scripts/validate_long_running_triggers.py [--dry-run]")
+        print("Usage: python -m scripts.validate_long_running_triggers [--dry-run]")
         return 3
 
     result = run_policy(Path("."), dry_run=dry_run, runtime_version=None)

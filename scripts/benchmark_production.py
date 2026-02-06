@@ -3,7 +3,7 @@
 Not executed in CI. Intended for manual profiling.
 
 Run:
-  python scripts/benchmark_production.py
+  python -m scripts.benchmark_production
 """
 
 from __future__ import annotations

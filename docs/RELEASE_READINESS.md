@@ -8,7 +8,7 @@ for declaring BN-Syn ready for public production/demo use.
 Generate the release readiness report (JSON + Markdown):
 
 ```bash
-python scripts/release_readiness.py
+python -m scripts.release_readiness
 ```
 
 If any blocking checks fail, the command exits with non-zero status and the
@@ -52,5 +52,5 @@ release remains **BLOCKED** until resolved.
 To generate the report without failing the command:
 
 ```bash
-python scripts/release_readiness.py --advisory
+python -m scripts.release_readiness --advisory
 ```

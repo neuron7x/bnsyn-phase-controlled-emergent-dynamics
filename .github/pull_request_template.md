@@ -24,10 +24,10 @@ Provide a clear and concise description of your changes.
 - [ ] mypy --strict passed ✅
 
 ### SSOT Gates (Single Source of Truth)
-- [ ] Validated bibliography: `python scripts/validate_bibliography.py` ✅
-- [ ] Validated claims: `python scripts/validate_claims.py` ✅
-- [ ] Scanned governed docs: `python scripts/scan_governed_docs.py` ✅
-- [ ] Scanned normative tags: `python scripts/scan_normative_tags.py` ✅
+- [ ] Validated bibliography: `python -m scripts.validate_bibliography` ✅
+- [ ] Validated claims: `python -m scripts.validate_claims` ✅
+- [ ] Scanned governed docs: `python -m scripts.scan_governed_docs` ✅
+- [ ] Scanned normative tags: `python -m scripts.scan_normative_tags` ✅
 
 ### Determinism (A1: 96%)
 - [ ] Used `seed_all()` for any random operations ✅

@@ -9,7 +9,7 @@ Checks:
 2. Coq BNsyn_Sigma.v constants vs src/bnsyn/config.py
 
 Usage:
-    python scripts/verify_formal_constants.py
+    python -m scripts.verify_formal_constants
 
 Exit codes:
     0: All constants match

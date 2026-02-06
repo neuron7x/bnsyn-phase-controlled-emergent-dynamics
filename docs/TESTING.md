@@ -75,7 +75,7 @@ make coverage-fast
 Equivalent explicit command:
 
 ```bash
-python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml -q
+python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
 ```
 
 Artifacts:
@@ -91,7 +91,7 @@ make coverage
 Equivalent explicit command:
 
 ```bash
-python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
+python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
 ```
 
 Artifacts:
@@ -107,7 +107,7 @@ make coverage-baseline
 Equivalent explicit command:
 
 ```bash
-python scripts/generate_coverage_baseline.py --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
 ```
 
 This baseline uses the same metric enforced by the gate: `coverage.xml line-rate`.
@@ -128,7 +128,7 @@ Use the same checks enforced in PR CI:
 
 ```bash
 python -m pytest -q
-python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml -q
+python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
 ruff check .
 ```
 

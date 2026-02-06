@@ -65,7 +65,7 @@ jobs:
             --cov=bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
-            --cov-report=xml \
+            --cov-report=xml:coverage.xml \
             --cov-report=html \
             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
             --junit-xml=junit.xml \
@@ -79,7 +79,7 @@ jobs:
       
       - name: Coverage regression gate
         if: success()
-        run: python scripts/check_coverage_gate.py --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+        run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
 
       - name: Parse coverage
         if: always()

@@ -63,14 +63,14 @@ repos:
 
       - id: validate-bibliography
         name: validate bibliography
-        entry: python scripts/validate_bibliography.py
+        entry: python -m scripts.validate_bibliography
         language: system
         pass_filenames: false
         stages: [commit]
 
       - id: validate-claims
         name: validate claims
-        entry: python scripts/validate_claims.py
+        entry: python -m scripts.validate_claims
         language: system
         pass_filenames: false
         stages: [commit]
