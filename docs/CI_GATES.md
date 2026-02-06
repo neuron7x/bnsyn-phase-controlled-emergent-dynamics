@@ -75,6 +75,24 @@ This document defines the **3-tier test selection strategy** for BN-Syn, balanci
 
 ---
 
+## Coverage Trend History
+
+Coverage trend observability is emitted directly by the reusable pytest workflow used by smoke/unit jobs.
+
+- Artifact name (stable): `coverage-trend-metrics`
+- Payload files: `coverage-trend.json`, `coverage-trend.csv`
+- Fields: `timestamp`, `sha`, `branch`, `total_coverage` (0..100 scale), `coverage_state` (critical/low/moderate/high/excellent)
+- Quantization thresholds: critical <50, low <70, moderate <85, high <95, excellent >=95
+- Retention policy: 90 days
+- Coverage XML remains mandatory and is uploaded as `coverage-xml-<sha>`
+
+Viewer entry point:
+1. Open GitHub Actions run for `ci-pr-atomic` or `ci-smoke`.
+2. Open job `tests-smoke`.
+3. Download artifact `coverage-trend-metrics`.
+
+---
+
 ## Makefile Targets
 
 ```bash

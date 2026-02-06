@@ -419,6 +419,8 @@ See canonical test commands in [`docs/TESTING.md`](docs/TESTING.md).
 
 CI requirements and exact commands are defined in [`docs/CI_GATES.md`](docs/CI_GATES.md). PRs run the following jobs:
 
+Coverage history entry point: download the stable `coverage-trend-metrics` artifact from the latest `tests-smoke` run in GitHub Actions (contains compact `coverage-trend.json` + `coverage-trend.csv` with timestamp/SHA/branch/total coverage (normalized to 0..100%) and quantized `coverage_state` (critical/low/moderate/high/excellent)).
+
 - **ssot** (SSOT validation)
 - **quality** (ruff format/lint + mypy)
 - **build** (package build + import)
