@@ -1,0 +1,6 @@
+$ git rev-parse HEAD
+d69263db43c98399358a17ed2b03b698b2dc6a8c
+$ python --version
+Python 3.12.12
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)

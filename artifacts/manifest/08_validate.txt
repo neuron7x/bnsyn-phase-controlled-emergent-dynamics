@@ -1,0 +1,2 @@
+$ python -m tools.manifest validate
+Manifest validation passed.

@@ -1,0 +1,11 @@
+$ sha256sum .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+before=28869b9f707c21ee3d45b5fc7852ed53a5e3767a2813aaeff954f52c32d1526b 4142326176e9c62fddc903a780a5c9029e31ae7bbe1d3988bdf8177bdbb252a0 
+$ python -m tools.manifest generate
+manifest.generate computed_sha256=4142326176e9c62fddc903a780a5c9029e31ae7bbe1d3988bdf8177bdbb252a0 rendered_sha256=28869b9f707c21ee3d45b5fc7852ed53a5e3767a2813aaeff954f52c32d1526b workflow_total=26 workflow_call_total=11 ci_manifest_reference_count=0
+after=28869b9f707c21ee3d45b5fc7852ed53a5e3767a2813aaeff954f52c32d1526b 4142326176e9c62fddc903a780a5c9029e31ae7bbe1d3988bdf8177bdbb252a0 
+PASS: zero-drift on repeated generate
+$ python -m tools.manifest generate (alternate checkout path)
+PASS: REPO_MANIFEST.md path-invariant
+PASS: repo_manifest.computed.json path-invariant
+$ python - <<PY ... scoped ci_manifest reference scan
+{'scope': ['.github/workflows', 'scripts', 'docs', 'Makefile', 'README.md'], 'count': 0}

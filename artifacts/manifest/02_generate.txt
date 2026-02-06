@@ -1,0 +1,2 @@
+$ python -m tools.manifest generate
+$ python -m tools.manifest generate
