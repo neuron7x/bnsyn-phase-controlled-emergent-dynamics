@@ -16,7 +16,7 @@ cd bnsyn-phase-controlled-emergent-dynamics
 # Install dev dependencies
 make dev-setup
 
-# Alternative: install exactly what CI uses
+# Alternative: install a CI-compatible superset used by most jobs
 python -m pip install -e ".[dev,test]"
 
 # This installs:
