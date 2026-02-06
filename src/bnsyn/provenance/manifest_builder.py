@@ -67,10 +67,14 @@ def _fallback_git_id(package_version: str | None) -> str:
 
 
 def _resolve_package_version(repo_root: Path) -> str:
+    package_version: str | None
     try:
-        return metadata.version("bnsyn")
+        package_version = metadata.version("bnsyn")
     except metadata.PackageNotFoundError:
-        pass
+        package_version = None
+
+    if package_version:
+        return package_version
 
     pyproject_path = repo_root / "pyproject.toml"
     if pyproject_path.exists():

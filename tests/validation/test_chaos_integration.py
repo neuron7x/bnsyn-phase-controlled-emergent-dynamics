@@ -15,6 +15,7 @@ docs/TESTING_MUTATION.md - Chaos engineering philosophy
 
 from __future__ import annotations
 
+import contextlib
 import numpy as np
 import pytest
 
@@ -250,15 +251,11 @@ def test_adex_bounds_enforcement() -> None:
     I_syn = np.zeros(1)
     I_ext = np.zeros(1)
 
-    # Should either reject extreme state or produce valid output
-    try:
+    # Should either reject extreme state or produce valid finite output
+    with contextlib.suppress(ValueError):
         result = adex_step(state_extreme, params, 0.1, I_syn, I_ext)
-        # If it doesn't reject, output must still be finite
         assert np.all(np.isfinite(result.V_mV))
         assert np.all(np.isfinite(result.w_pA))
-    except ValueError:
-        # Acceptable to reject extreme initial conditions
-        pass
 
 
 @pytest.mark.validation

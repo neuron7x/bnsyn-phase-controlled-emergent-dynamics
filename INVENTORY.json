@@ -8,8 +8,8 @@
   ],
   "counts": {
     "src": 67,
-    "tests": 140,
-    "docs": 91,
+    "tests": 141,
+    "docs": 92,
     ".github": 36
   },
   "workflows": [
