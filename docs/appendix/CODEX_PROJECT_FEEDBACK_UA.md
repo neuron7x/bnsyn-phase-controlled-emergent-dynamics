@@ -18,11 +18,8 @@
 - `benchmarks/` + `.github/workflows/benchmarks.yml` — performance tooling + workflow.
 
 ### Локальні артефакти запусків
-- `artifacts/local_runs/20260206T181022Z_api_contract_before.log`
-- `artifacts/local_runs/20260206T181117Z_api_contract_after.log`
-- `artifacts/local_runs/20260206T181131Z_verification.log`
-- `artifacts/local_runs/20260206T181156Z_readiness_subset.log`
-- `artifacts/local_runs/20260206T181252Z_final_checks.log`
+- `artifacts/local_runs/api_contract.log`
+- `artifacts/local_runs/test.log`
 
 ## Method (точні команди)
 
@@ -30,22 +27,19 @@
 
 ```bash
 python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
-python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
-make api-contract
-pytest -q tests/test_api_contract_command.py tests/test_api_contract_semver.py
-python -m scripts.validate_api_maturity
-pytest -q tests/test_determinism.py tests/test_quickstart_contract.py tests/test_integration_examples.py
+pytest -q tests/test_api_contract_command.py
 ```
 
-Перший запуск `python -m scripts.check_api_contract ...` зафіксовано як pre-fix (failure), другий — post-fix (pass).
+Canonical entrypoint для перевірки API-контракту: `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json`.  
+Wrapper для CI/dev: `make api-contract`.
 
 ## Findings (лише підтверджені факти)
 
 1. **Pre-fix проблема була відтворювана:** API-contract check падав із `ModuleNotFoundError: No module named 'bnsyn'` без ручного `PYTHONPATH`.
 2. **Post-fix команда працює без ручного `PYTHONPATH`:** `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json` завершується успішно.
-3. **Визначено canonical шлях:** `make api-contract` в Makefile та в PR SSOT workflow використовують однакову команду перевірки.
-4. **Автоматична перевірка додана:** subprocess-тест підтверджує успішний запуск canonical API-contract команди з чистим оточенням (без `PYTHONPATH`).
-5. **Підмножина readiness-доказів підтверджена запуском:** `validate_api_maturity`, determinism/quickstart/integration subset tests пройшли локально.
+3. **Визначено canonical entrypoint:** `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json` працює з кореня репозиторію без ручного `PYTHONPATH`.
+4. **Автоматична перевірка додана:** `pytest` subprocess-тест підтверджує `exit code == 0` для canonical entrypoint з чистим оточенням (без `PYTHONPATH`).
+5. **Wrapper узгоджений:** `make api-contract` викликає той самий canonical entrypoint для CI/dev-паритету.
 
 ## Readiness Rubric (fail-closed розрахунок)
 
@@ -67,5 +61,5 @@ pytest -q tests/test_determinism.py tests/test_quickstart_contract.py tests/test
 ## Ризики та next actions (мінімальні, high-impact)
 
 1. **Закрити PARTIAL по determinism/reproducibility/performance** одним відтворюваним gate-run (локально або CI-артефактами), після чого перерахувати rubric без припущень.
-2. **Зберігати canonical одну команду для API-contract (`make api-contract`)** у всіх інструкціях/воркфлоу для уникнення drift.
+2. **Зберігати canonical одну команду для API-contract (`python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json`)**; `make api-contract` використовувати як обгортку.
 3. **Для кожного майбутнього readiness claim** додавати пряме посилання на файл-джерело та/або артефакт логу запуску.
