@@ -109,6 +109,12 @@ jobs:
             --sha "${{ github.sha }}" \
             --branch "${{ github.ref_name }}"
 
+      - name: Parse coverage state
+        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+        run: |
+          COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+          echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
+
       - name: Enforce mandatory coverage.xml artifact input
         if: always()
         run: |
@@ -133,6 +139,7 @@ jobs:
             fi
             echo "| Tests Run | ${{ env.TEST_COUNT }} |"
             echo "| Coverage | ${{ env.COVERAGE }}% |"
+            echo "| Coverage State | ${{ env.COVERAGE_STATE || 'N/A' }} |"
             echo "| Threshold | ${{ inputs['coverage-threshold'] }}% |"
             echo "| Duration | ${{ env.DURATION }}s |"
             echo "| Markers | \`${{ inputs.markers }}\` |"

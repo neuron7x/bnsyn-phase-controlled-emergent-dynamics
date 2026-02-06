@@ -81,7 +81,7 @@ Coverage trend observability is emitted directly by the reusable pytest workflow
 
 - Artifact name (stable): `coverage-trend-metrics`
 - Payload files: `coverage-trend.json`, `coverage-trend.csv`
-- Fields: `timestamp`, `sha`, `branch`, `total_coverage` (0..100 scale)
+- Fields: `timestamp`, `sha`, `branch`, `total_coverage` (0..100 scale), `coverage_state` (critical/low/moderate/high/excellent)
 - Retention policy: 90 days
 - Coverage XML remains mandatory and is uploaded as `coverage-xml-<sha>`
 
