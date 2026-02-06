@@ -1,64 +1,71 @@
-# CODEX FEEDBACK (UA): Поточна фактична оцінка проєкту BN-Syn
+# CODEX FEEDBACK (UA): evidence-bound оцінка поточного стану BN-Syn
 
-**Дата оцінки:** 2026-02-06  
-**Формат:** фактологічний інженерний аудит по репозиторію «as-is», без припущень.
+**Дата:** 2026-02-06  
+**Статус:** fail-closed оцінка лише за доказами в репозиторії та зафіксованими локальними прогонами.
 
-## 1) Рівень проєкту (коротко)
+## Evidence Index
 
-**Рівень: сильний Senior+/Staff research-engineering codebase з ознаками production-governed R&D.**
+### Файлові джерела (SSOT / контракти / CI)
+- `CODEBASE_READINESS.md` — формальна модель scoring, категорії, критерії PASS/PARTIAL/FAIL.
+- `docs/API_CONTRACT.md` — задекларований stable API surface.
+- `quality/api_contract_baseline.json` — baseline для API contract gate.
+- `scripts/check_api_contract.py` — реалізація semver-aware API contract checker.
+- `Makefile` — canonical target `api-contract`.
+- `.github/workflows/ci-pr-atomic.yml` — PR SSOT gate з `make api-contract`.
+- `docs/TESTING.md` — canonical локальний запуск API contract check.
+- `requirements-lock.txt` — pinned dependencies.
+- `docs/RELEASE_PIPELINE.md` — release pipeline runbook.
+- `benchmarks/` + `.github/workflows/benchmarks.yml` — performance tooling + workflow.
 
-Пояснення по факту:
-- є чітка модель readiness із вагами і політикою release-gate;
-- є формалізовані API/SSOT/claims/benchmark артефакти;
-- є детерміністичний контур (seed discipline, determinism tests, API maturity, контрактні перевірки);
-- є глибока тестова поверхня (smoke + validation + property/perf/chaos напрямки);
-- є формальні специфікації (TLA+, Coq) і governance-документи.
+### Локальні артефакти запусків
+- `artifacts/local_runs/20260206T181022Z_api_contract_before.log`
+- `artifacts/local_runs/20260206T181117Z_api_contract_after.log`
+- `artifacts/local_runs/20260206T181131Z_verification.log`
+- `artifacts/local_runs/20260206T181156Z_readiness_subset.log`
+- `artifacts/local_runs/20260206T181252Z_final_checks.log`
 
-## 2) Фактична оцінка за readiness-рубрикою
+## Method (точні команди)
 
-На основі `CODEBASE_READINESS.md`:
+Виконано з кореня репозиторію:
 
-- **API Contract Readiness (25%) → PASS**
-- **Stability & Determinism (25%) → PASS**
-- **Reproducibility (20%) → PASS**
-- **Documentation (15%) → PASS**
-- **Performance (15%) → PASS**
+```bash
+python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+make api-contract
+pytest -q tests/test_api_contract_command.py tests/test_api_contract_semver.py
+python -m scripts.validate_api_maturity
+pytest -q tests/test_determinism.py tests/test_quickstart_contract.py tests/test_integration_examples.py
+```
 
-**Підсумкова оцінка: 100/100 (Ready за власною шкалою репозиторію).**
+Перший запуск `python -m scripts.check_api_contract ...` зафіксовано як pre-fix (failure), другий — post-fix (pass).
 
-## 3) Що вже дуже сильне
+## Findings (лише підтверджені факти)
 
-1. **Архітектурна дисципліна і governance**
-   - Репозиторій структурований як SSOT-driven система, а не просто «код + тести».
-2. **Детермінізм як first-class constraint**
-   - Є явна політика і тести на відтворюваність.
-3. **Контрактність API і зрілість публічних модулів**
-   - API maturity validated; контракт API звіряється з baseline.
-4. **Науково-інженерна доказовість**
-   - Бенчмарки, формальні специфікації, експериментальні артефакти, evidence mapping.
-5. **Готовність до аудиту**
-   - Багато runbook/verification документів, що полегшують external review.
+1. **Pre-fix проблема була відтворювана:** API-contract check падав із `ModuleNotFoundError: No module named 'bnsyn'` без ручного `PYTHONPATH`.
+2. **Post-fix команда працює без ручного `PYTHONPATH`:** `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json` завершується успішно.
+3. **Визначено canonical шлях:** `make api-contract` в Makefile та в PR SSOT workflow використовують однакову команду перевірки.
+4. **Автоматична перевірка додана:** subprocess-тест підтверджує успішний запуск canonical API-contract команди з чистим оточенням (без `PYTHONPATH`).
+5. **Підмножина readiness-доказів підтверджена запуском:** `validate_api_maturity`, determinism/quickstart/integration subset tests пройшли локально.
 
-## 4) Реальні ризики / вузькі місця (по факту запусків)
+## Readiness Rubric (fail-closed розрахунок)
 
-1. **Локальна ергономіка запуску скриптів API-contract**
-   - `python -m scripts.check_api_contract ...` без `PYTHONPATH=src` падає з `ModuleNotFoundError: No module named 'bnsyn'`.
-   - Це не ламає систему концептуально, але додає friction для нових контриб’юторів і CI-перенесення поза типовим контекстом.
+> Політика: якщо повний критерій категорії не доведений артефактами/запусками в цьому аудиті, ставиться `PARTIAL` або `UNKNOWN`.
 
-2. **Операційний ризик складності**
-   - Проєкт має високий governance overhead (багато gates, маніфестів, baseline’ів). Це плюс для якості, але вимагає жорсткої операційної гігієни.
+| Категорія | Вага | Статус | Фактор | Пояснення |
+|---|---:|---|---:|---|
+| API contract readiness | 25 | PASS | 1.0 | Доведено наявність контракту, baseline, checker, CI gate + локальний pass. |
+| Stability & determinism | 25 | PARTIAL | 0.5 | Є pass subset determinism тестів, але не проведено повний контур validation/property/CI replay в межах цього аудиту. |
+| Reproducibility | 20 | PARTIAL | 0.5 | Є lock file і частина reproducibility checks, але без повного end-to-end reproducibility audit. |
+| Documentation readiness | 15 | PARTIAL | 0.5 | Наявні runbooks/контракти, але повна doc-audit перевірка не виконувалась у цьому циклі. |
+| Performance readiness | 15 | PARTIAL | 0.5 | Наявні benchmark artifacts/workflows, але benchmark suite у цьому аудиті не проганялась. |
 
-## 5) Пряма чесна оцінка «як є»
+**Обчислення:**  
+`25*1.0 + 25*0.5 + 20*0.5 + 15*0.5 + 15*0.5 = 62.5`
 
-- **Це не «сирий research prototype».**
-- **Це вже зріла інженерно-наукова платформа з production-поведінкою у частині determinism/compliance.**
-- Основний бар’єр далі — не «якість коду», а **вартість підтримки складної системи контролів** і швидкість еволюції без регресій.
+**Результат за політикою `CODEBASE_READINESS.md`: `Advisory gap` (60 ≤ score < 80).**
 
-## 6) Рекомендований наступний крок (мінімальний, high-impact)
+## Ризики та next actions (мінімальні, high-impact)
 
-**Зменшити entry friction для контрактних перевірок**:
-- або документувати обов’язковий `PYTHONPATH=src` у canonical командах;
-- або запускати через встановлений пакетний контекст (`pip install -e .` в dev flow);
-- або уніфікувати CI/local wrapper-команди, щоб однаково працювало «з коробки».
-
-Це невелика зміна, але підвищує надійність операційного контуру без втручання в доменну архітектуру.
+1. **Закрити PARTIAL по determinism/reproducibility/performance** одним відтворюваним gate-run (локально або CI-артефактами), після чого перерахувати rubric без припущень.
+2. **Зберігати canonical одну команду для API-contract (`make api-contract`)** у всіх інструкціях/воркфлоу для уникнення drift.
+3. **Для кожного майбутнього readiness claim** додавати пряме посилання на файл-джерело та/або артефакт логу запуску.
