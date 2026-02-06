@@ -20,6 +20,7 @@ BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-co
 - [Start Here](#start-here)
 - [Repository Contract](#repository-contract)
 - [Quickstart](#quickstart)
+- [Codebase Readiness](#codebase-readiness)
 - [Demo Runbook](#demo-runbook)
 - [Release Notes](#release-notes)
 - [Development Workflow](#development-workflow)
@@ -323,6 +324,9 @@ BN-Syn enforces deterministic execution, controlled randomness, and validation g
 
 ## Quickstart
 
+Canonical runnable contract: [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
+
+
 **Prerequisites**
 - Python 3.11+
 - `pip` (recommended: virtual environment)
@@ -350,6 +354,18 @@ make test
 **Determinism note**
 - All random state is seeded via `bnsyn.rng.seed_all(seed)`.
 - Use explicit `--seed` for CLI demos and reproducibility.
+
+## Codebase Readiness
+
+Formal rubric and checklist: [`CODEBASE_READINESS.md`](CODEBASE_READINESS.md).
+
+Module maturity tags: [`docs/api_maturity.json`](docs/api_maturity.json).
+
+API contract baseline and semver gate: [`quality/api_contract_baseline.json`](quality/api_contract_baseline.json), [`scripts/check_api_contract.py`](scripts/check_api_contract.py).
+
+Integration examples: [`examples/integration/`](examples/integration/).
+
+Release automation dry-run: [`docs/RELEASE_PIPELINE.md`](docs/RELEASE_PIPELINE.md).
 
 ## Demo Runbook
 

@@ -92,6 +92,12 @@ mutation-check-strict:
 	@python -m scripts.run_mutation_pipeline
 	@python -m scripts.check_mutation_score --strict
 
+api-contract:
+	python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+
+validate-api-maturity:
+	python -m scripts.validate_api_maturity
+
 quality: format lint mypy ssot security
 	@echo "✅ All quality checks passed"
 
@@ -114,6 +120,8 @@ ssot:
 	python -m scripts.validate_bibliography
 	python -m scripts.validate_claims
 	python -m scripts.scan_normative_tags
+	python -m scripts.validate_api_maturity
+	python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
 
 validate-claims-coverage:
 	python -m scripts.validate_claims_coverage --format markdown

@@ -2,13 +2,13 @@
 
 - Manifest version: `1.0`
 - Generated marker: `deterministic`
-- Repository fingerprint: `a5b9c540616db0531828961e4e23c8791e6338b6d82e5097caf6b3caa7111c34`
+- Repository fingerprint: `4ad3bc744f879534e3201d1fa8b8c764e75b85468571a8680d4a1d99a527ff55`
 - Required PR gates source: `.github/PR_GATES.yml`
 - Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
 
 ## Metrics
 
-- Workflow files (`.github/workflows/*.yml`): **26**
+- Workflow files (`.github/workflows/*.yml`): **27**
 - Reusable workflow files (`_reusable_*.yml`): **9**
 - Workflows declaring `workflow_call`: **11**
 - Required PR gates (`.github/PR_GATES.yml`): **2**
