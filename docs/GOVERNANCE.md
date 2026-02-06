@@ -76,9 +76,9 @@ BN-Syn uses a **Single-Source-of-Truth (SSOT)** governance model where:
 
 ```bash
 # Run all SSOT validators
-python scripts/validate_bibliography.py
-python scripts/validate_claims.py
-python scripts/scan_normative_tags.py
+python -m scripts.validate_bibliography
+python -m scripts.validate_claims
+python -m scripts.scan_normative_tags
 
 # Or use Makefile
 make ssot

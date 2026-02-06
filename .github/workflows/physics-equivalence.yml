@@ -37,7 +37,7 @@ jobs:
 
       - name: Run reference backend benchmark
         run: |
-          python scripts/benchmark_physics.py \
+          python -m scripts.benchmark_physics \
             --backend reference \
             --steps 500 \
             --neurons 200 \
@@ -45,7 +45,7 @@ jobs:
 
       - name: Run accelerated backend benchmark
         run: |
-          python scripts/benchmark_physics.py \
+          python -m scripts.benchmark_physics \
             --backend accelerated \
             --steps 500 \
             --neurons 200 \
@@ -53,7 +53,7 @@ jobs:
 
       - name: Verify physics equivalence
         run: |
-          python scripts/verify_equivalence.py \
+          python -m scripts.verify_equivalence \
             --reference benchmarks/ci_physics_reference.json \
             --accelerated benchmarks/ci_physics_accelerated.json \
             --output benchmarks/ci_equivalence_report.md \
@@ -61,7 +61,7 @@ jobs:
 
       - name: Check throughput (no regression)
         run: |
-          python scripts/calculate_throughput_gain.py \
+          python -m scripts.calculate_throughput_gain \
             --reference benchmarks/ci_physics_reference.json \
             --accelerated benchmarks/ci_physics_accelerated.json \
             --output benchmarks/ci_throughput_gain.json

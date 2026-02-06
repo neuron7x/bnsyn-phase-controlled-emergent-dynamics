@@ -169,15 +169,15 @@ jobs:
       - name: Install safety checker dependencies
         run: python -m pip install pyyaml jsonschema
       - name: Validate PR gate definition
-        run: python scripts/validate_pr_gates.py
+        run: python -m scripts.validate_pr_gates
       - name: Validate required checks
-        run: python scripts/validate_required_checks.py
+        run: python -m scripts.validate_required_checks
       - name: Validate workflow contracts
-        run: python scripts/validate_workflow_contracts.py
+        run: python -m scripts.validate_workflow_contracts
       - name: Validate long-running workflow triggers
-        run: python scripts/validate_long_running_triggers.py
+        run: python -m scripts.validate_long_running_triggers
       - name: Render workflow policy documentation
-        run: python scripts/render_workflow_policy_docs.py
+        run: python -m scripts.render_workflow_policy_docs
       - name: Verify workflow policy documentation
         run: git diff --exit-code -- .github/WORKFLOW_CONTRACTS.md
       - name: Validate safety artifacts

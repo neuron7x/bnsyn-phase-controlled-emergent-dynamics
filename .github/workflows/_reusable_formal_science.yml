@@ -358,7 +358,7 @@ jobs:
       - name: Generate visualizations
         if: ${{ inputs.proof-suite == 'science' }}
         run: |
-          python scripts/visualize_experiment.py --run-id "${MODEL_SET}" --results results/ci_run --out figures/ci_run
+          python -m scripts.visualize_experiment --run-id "${MODEL_SET}" --results results/ci_run --out figures/ci_run
 
       - name: Verify hypothesis
         if: ${{ inputs.proof-suite == 'science' }}

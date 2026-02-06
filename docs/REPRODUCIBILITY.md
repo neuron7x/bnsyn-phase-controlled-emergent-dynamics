@@ -16,10 +16,10 @@ Expected output includes installation of `bnsyn` and development dependencies.
 ## SSOT gates
 
 ```bash
-python scripts/validate_bibliography.py
-python scripts/validate_claims.py
-python scripts/scan_normative_tags.py
-python scripts/scan_governed_docs.py
+python -m scripts.validate_bibliography
+python -m scripts.validate_claims
+python -m scripts.scan_normative_tags
+python -m scripts.scan_governed_docs
 ```
 
 Expected outputs:
@@ -31,7 +31,7 @@ Expected outputs:
 ## Generate evidence coverage
 
 ```bash
-python scripts/generate_evidence_coverage.py
+python -m scripts.generate_evidence_coverage
 ```
 
 Expected output:
@@ -59,7 +59,7 @@ Expected output reports passing validation tests.
 ## Rebuild sources lock (manual)
 
 ```bash
-python scripts/rebuild_sources_lock.py
+python -m scripts.rebuild_sources_lock
 ```
 
 This regenerates `bibliography/sources.lock` deterministically. It is NOT run in CI

@@ -227,7 +227,7 @@ if not np.isfinite(data).all():
 
 2. Validate:
    ```bash
-   python scripts/validate_bibliography.py
+   python -m scripts.validate_bibliography
    ```
 
 ### `claims_gate FAILED: Claim CLM-0001 references missing bibkey`
@@ -239,7 +239,7 @@ if not np.isfinite(data).all():
 2. OR update claim to use existing bibkey
 3. Validate:
    ```bash
-   python scripts/validate_claims.py
+   python -m scripts.validate_claims
    ```
 
 ### `normative_gate FAILED: File docs/example_doc.md contains [CLM-0001] but not marked normative`

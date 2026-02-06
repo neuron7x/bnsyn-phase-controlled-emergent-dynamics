@@ -71,9 +71,9 @@ CI executes the benchmarks and blocks PRs when regressions exceed 10% relative
 to the baselines. The regression gate is enforced via:
 
 ```bash
-python scripts/benchmark_physics.py --output benchmarks/physics_current.json
-python scripts/profile_kernels.py --steps 100 --output benchmarks/kernel_profile_current.json
-python scripts/check_benchmark_regressions.py \
+python -m scripts.benchmark_physics --output benchmarks/physics_current.json
+python -m scripts.profile_kernels --steps 100 --output benchmarks/kernel_profile_current.json
+python -m scripts.check_benchmark_regressions \
   --physics-baseline benchmarks/baselines/physics_baseline.json \
   --physics-current benchmarks/physics_current.json \
   --kernel-baseline benchmarks/baselines/kernel_profile.json \

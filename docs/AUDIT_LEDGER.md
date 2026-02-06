@@ -5,7 +5,7 @@
 - **Root cause:** Governed docs list lived outside the inventory and the scanner did not evaluate normative keywords.
 - **Blast radius:** Any governed document line using normative keywords could bypass claim tagging.
 - **Fix decision:** **FIX** — Moved the authoritative governed docs list to `docs/INVENTORY.md` and upgraded `scan_governed_docs.py` to enforce keyword + tag requirements.
-- **Acceptance criteria:** `python scripts/scan_governed_docs.py` fails on missing NORMATIVE + CLM-#### tags in governed docs and reports counts.
+- **Acceptance criteria:** `python -m scripts.scan_governed_docs` fails on missing NORMATIVE + CLM-#### tags in governed docs and reports counts.
 
 ## FND-0002 — SSOT rules missing expected fields
 - **Symptom:** SSOT rule registry lacked scope and examples, and used inconsistent enforcement field naming. (docs/SSOT_RULES.md:L1-L94)
@@ -19,14 +19,14 @@
 - **Root cause:** Policy and CI documentation used normative phrasing without explicit claim linkage.
 - **Blast radius:** Violates G0 “No Soft Text” by leaving normative statements untraceable.
 - **Fix decision:** **FIX** — Rephrased lines to remove normative keywords while preserving intent.
-- **Acceptance criteria:** `python scripts/scan_governed_docs.py` reports zero orphan normative lines.
+- **Acceptance criteria:** `python -m scripts.scan_governed_docs` reports zero orphan normative lines.
 
 ## FND-0004 — Normative tag scan lacked tier validation
 - **Symptom:** NORMATIVE tag scanning only verified claim existence, not Tier-A/normative compliance. (scripts/scan_normative_tags.py:L1-L103)
 - **Root cause:** Validator omitted tier/normativity enforcement despite SSOT rules.
 - **Blast radius:** Non-Tier-A claims could be referenced as normative without detection.
 - **Fix decision:** **FIX** — Enforced Tier-A + normative validation for every NORMATIVE + CLM-#### reference.
-- **Acceptance criteria:** `python scripts/scan_normative_tags.py` fails on non-Tier-A or non-normative references.
+- **Acceptance criteria:** `python -m scripts.scan_normative_tags` fails on non-Tier-A or non-normative references.
 
 ## FND-0005 — Evidence coverage missing status + DOI/URL
 - **Symptom:** Evidence coverage table omitted claim status and Tier-S canonical URLs. (docs/EVIDENCE_COVERAGE.md:L1-L30, scripts/generate_evidence_coverage.py:L1-L121)

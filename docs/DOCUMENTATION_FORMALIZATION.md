@@ -109,7 +109,7 @@ Use the following checklist before merging documentation updates:
    component mappings change.
 3. **Update claims**: Add/update claim IDs in `claims/claims.yml` and ensure bibliography
    mappings are present.
-4. **Regenerate evidence coverage**: Run `python scripts/generate_evidence_coverage.py` when
+4. **Regenerate evidence coverage**: Run `python -m scripts.generate_evidence_coverage` when
    claims or mappings change.
 5. **Run SSOT gates**: Execute the validation commands in `docs/REPRODUCIBILITY.md`.
 

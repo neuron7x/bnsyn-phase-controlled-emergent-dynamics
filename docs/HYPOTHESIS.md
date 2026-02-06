@@ -102,7 +102,7 @@ python -m experiments.runner temp_ablation_v2 --seeds 5 --out results/_smoke
 ### Generate visualizations
 
 ```bash
-python scripts/visualize_experiment.py --run-id temp_ablation_v2
+python -m scripts.visualize_experiment --run-id temp_ablation_v2
 ```
 
 ### Verify hypothesis

@@ -188,9 +188,9 @@ pytest tests/test_determinism.py -v  # Should be identical
 pytest -m "not validation" --cov=src/bnsyn --cov-fail-under=85
 
 # Verify SSOT gates
-python scripts/validate_bibliography.py
-python scripts/validate_claims.py
-python scripts/scan_governed_docs.py
+python -m scripts.validate_bibliography
+python -m scripts.validate_claims
+python -m scripts.scan_governed_docs
 
 # Security audit
 pip-audit

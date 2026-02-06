@@ -18,7 +18,7 @@ pip install -e ".[dev,viz]"
 ## 2) Release Readiness Report (Blocking)
 
 ```bash
-python scripts/release_readiness.py
+python -m scripts.release_readiness
 ```
 
 **Expected output:**

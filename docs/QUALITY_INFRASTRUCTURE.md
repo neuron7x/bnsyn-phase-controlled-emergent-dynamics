@@ -24,14 +24,14 @@ The BN-Syn quality infrastructure consists of multiple layers:
 pre-commit run --all-files
 
 # SSOT gates
-python scripts/validate_bibliography.py
-python scripts/validate_claims.py
-python scripts/scan_governed_docs.py
-python scripts/scan_normative_tags.py
+python -m scripts.validate_bibliography
+python -m scripts.validate_claims
+python -m scripts.scan_governed_docs
+python -m scripts.scan_normative_tags
 
 # Governance gates (NEW)
-python scripts/verify_formal_constants.py
-python scripts/lint_ci_truthfulness.py --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
+python -m scripts.verify_formal_constants
+python -m scripts.lint_ci_truthfulness --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
 
 # Fast tests
 pytest -m "not validation and not property" --cov=src/bnsyn --cov-fail-under=85
@@ -141,9 +141,9 @@ pytest tests/validation/test_adex_validation.py -v
 **How to Debug Failures**:
 ```bash
 # Reproduce locally
-python scripts/validate_claims_coverage.py --format markdown
-python scripts/verify_formal_constants.py
-python scripts/lint_ci_truthfulness.py --md artifacts/ci_truthfulness.md
+python -m scripts.validate_claims_coverage --format markdown
+python -m scripts.verify_formal_constants
+python -m scripts.lint_ci_truthfulness --md artifacts/ci_truthfulness.md
 pytest -m "not validation and not property"
 ```
 
@@ -343,20 +343,20 @@ git commit -m "Update mutation baseline after test improvements"
 1. Add state predicate to `specs/tla/BNsyn.tla`
 2. Add to `INVARIANTS` section in `specs/tla/BNsyn.cfg`
 3. Document code mapping in `specs/tla/README.md`
-4. Verify with `python scripts/verify_formal_constants.py`
+4. Verify with `python -m scripts.verify_formal_constants`
 
 **Coq Proofs**:
 1. Add lemma/theorem to `specs/coq/BNsyn_Sigma.v`
 2. Document code mapping in `specs/coq/README.md`
 3. Compile: `coqc BNsyn_Sigma.v`
-4. Verify constants: `python scripts/verify_formal_constants.py`
+4. Verify constants: `python -m scripts.verify_formal_constants`
 
 ### Workflow Changes
 
 **After modifying workflows**:
 ```bash
 # Lint for truthfulness
-python scripts/lint_ci_truthfulness.py --md artifacts/ci_truthfulness.md
+python -m scripts.lint_ci_truthfulness --md artifacts/ci_truthfulness.md
 
 # Check for violations
 cat artifacts/ci_truthfulness.md
@@ -378,13 +378,13 @@ cat artifacts/ci_truthfulness.md
 
 ### Formal Constants Mismatch
 ```bash
-python scripts/verify_formal_constants.py
+python -m scripts.verify_formal_constants
 # Fix constants in TLA+/Coq to match src/bnsyn/config.py
 ```
 
 ### CI Truthfulness Violations
 ```bash
-python scripts/lint_ci_truthfulness.py --md artifacts/ci_truthfulness.md
+python -m scripts.lint_ci_truthfulness --md artifacts/ci_truthfulness.md
 # Fix workflows: remove || true, add explicit permissions, remove unused inputs
 ```
 
