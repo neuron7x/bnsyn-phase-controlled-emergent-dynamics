@@ -25,6 +25,14 @@ STATE_MODERATE: Final[str] = "moderate"
 STATE_HIGH: Final[str] = "high"
 STATE_EXCELLENT: Final[str] = "excellent"
 
+STATE_THRESHOLDS: Final[tuple[tuple[float, str], ...]] = (
+    (50.0, STATE_CRITICAL),
+    (70.0, STATE_LOW),
+    (85.0, STATE_MODERATE),
+    (95.0, STATE_HIGH),
+    (101.0, STATE_EXCELLENT),
+)
+
 
 class CoverageTrendPayload(TypedDict):
     """Serialized coverage trend schema."""
@@ -74,17 +82,28 @@ def normalize_coverage_percent(value: float) -> float:
     return round(value, COVERAGE_PRECISION_DIGITS)
 
 
+def validate_state_thresholds(thresholds: tuple[tuple[float, str], ...]) -> None:
+    """Validate deterministic state thresholds for quantization."""
+    if not thresholds:
+        raise ValueError("State thresholds must not be empty")
+
+    previous_boundary = COVERAGE_SCALE_MIN
+    for boundary, _state in thresholds:
+        if boundary <= previous_boundary:
+            raise ValueError("State thresholds must be strictly increasing")
+        previous_boundary = boundary
+
+    if thresholds[-1][0] <= COVERAGE_SCALE_MAX:
+        raise ValueError("Last state threshold must exceed 100 to cover the full range")
+
+
 def quantize_coverage_state(total_coverage: float) -> str:
     """Quantize normalized coverage into deterministic discrete states."""
-    if total_coverage < 50.0:
-        return STATE_CRITICAL
-    if total_coverage < 70.0:
-        return STATE_LOW
-    if total_coverage < 85.0:
-        return STATE_MODERATE
-    if total_coverage < 95.0:
-        return STATE_HIGH
-    return STATE_EXCELLENT
+    validate_state_thresholds(STATE_THRESHOLDS)
+    for boundary, state in STATE_THRESHOLDS:
+        if total_coverage < boundary:
+            return state
+    raise ValueError("Coverage value could not be quantized")
 
 
 def load_total_coverage(coverage_json_path: Path) -> float:

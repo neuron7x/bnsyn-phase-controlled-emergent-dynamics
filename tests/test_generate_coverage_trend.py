@@ -18,6 +18,23 @@ def test_normalize_coverage_percent_rejects_out_of_scale(value: float) -> None:
         generate_coverage_trend.normalize_coverage_percent(value)
 
 
+def test_validate_state_thresholds_accepts_default() -> None:
+    generate_coverage_trend.validate_state_thresholds(generate_coverage_trend.STATE_THRESHOLDS)
+
+
+@pytest.mark.parametrize(
+    "thresholds",
+    [
+        tuple(),
+        ((50.0, "critical"), (50.0, "low")),
+        ((50.0, "critical"), (70.0, "low"), (95.0, "high")),
+    ],
+)
+def test_validate_state_thresholds_rejects_invalid(thresholds: tuple[tuple[float, str], ...]) -> None:
+    with pytest.raises(ValueError):
+        generate_coverage_trend.validate_state_thresholds(thresholds)
+
+
 @pytest.mark.parametrize(
     ("coverage", "state"),
     [
@@ -35,6 +52,13 @@ def test_normalize_coverage_percent_rejects_out_of_scale(value: float) -> None:
 )
 def test_quantize_coverage_state_boundaries(coverage: float, state: str) -> None:
     assert generate_coverage_trend.quantize_coverage_state(coverage) == state
+
+
+def test_load_total_coverage_rejects_missing_numeric(tmp_path: Path) -> None:
+    coverage_json = tmp_path / "coverage.json"
+    coverage_json.write_text(json.dumps({"totals": {"percent_covered": "bad"}}), encoding="utf-8")
+    with pytest.raises(ValueError, match="Missing numeric"):
+        generate_coverage_trend.load_total_coverage(coverage_json)
 
 
 def test_main_writes_json_and_csv(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
