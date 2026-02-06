@@ -322,3 +322,32 @@ jobs:
       - name: Analyze
         uses: github/codeql-action/analyze@v3
 ```
+
+---
+
+## PR Agent Evidence Run (Protocol BNSYN_PR_EXEC_v2026.02)
+
+STATUS: NEEDS_EVIDENCE
+
+### What changed
+- Added reproducible local evidence logs under `artifacts/pr_agent/` for inventory, baseline, PR gates, manifest determinism, test slice, and refactor slice checkpoints.
+- Re-ran inventory, PR gate parsing, manifest generation/validation, and targeted deterministic test suites.
+
+### Why
+- Enforces audit-grade traceability for required PR protocol steps.
+- Confirms the baseline failure mode is environmental/toolchain-security-gate related (`pip-audit` vulnerability in the runtime pip version), not source regressions.
+
+### Evidence pointers
+- `artifacts/pr_agent/00_inventory.txt`
+- `artifacts/pr_agent/01_baseline.txt`
+- `artifacts/pr_agent/02_pr_gates.txt`
+- `artifacts/pr_agent/03_manifest.txt`
+- `artifacts/pr_agent/04_tests.txt`
+- `artifacts/pr_agent/05_refactor.txt`
+
+### Missing proof to reach PASS
+- Canonical `make check` must pass without failing `pip-audit` security gate.
+- Required remediation command sequence (exact):
+  1. `python -m pip install --upgrade pip`
+  2. `export PATH="$HOME/go/bin:$PATH"`
+  3. `make check`

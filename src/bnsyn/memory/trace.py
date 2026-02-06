@@ -1,23 +1,12 @@
-"""Memory trace storage with pattern recall and consolidation.
+"""Memory trace storage and retrieval for consolidation workflows.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
-Implements memory trace storage with capacity-limited FIFO forgetting,
-similarity-based recall using cosine distance, and protein-dependent
-consolidation dynamics.
+Key components:
+- ``MemoryTrace``: bounded FIFO trace store with cosine-similarity recall.
+- Consolidation update path: deterministic importance scaling by protein/temperature.
 
 References
 ----------
-docs/SPEC.md
-docs/SSOT.md
+docs/SPEC.md#P0-7
 """
 
 from __future__ import annotations

@@ -1,22 +1,12 @@
-"""Consolidation event audit ledger with deterministic hashing.
+"""Consolidation audit ledger utilities for deterministic event tracking.
 
-Parameters
-----------
-None
-
-Returns
--------
-None
-
-Notes
------
-Implements audit trail for consolidation events with SHA256 hashing
-for reproducibility verification and cryptographic integrity checks.
+Key components:
+- ``ConsolidationEvent``: immutable record for a consolidation checkpoint.
+- ``ConsolidationLedger``: append-only event ledger with deterministic SHA256 hashing.
 
 References
 ----------
-docs/SPEC.md
-docs/SSOT.md
+docs/SPEC.md#P0-10
 """
 
 from __future__ import annotations

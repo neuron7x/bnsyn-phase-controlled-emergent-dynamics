@@ -101,6 +101,27 @@ class PhaseTransitionDetector:
         supercritical_threshold: float = 1.05,
         history_size: int = 200,
     ):
+        """Initialize transition detector thresholds and bounded histories.
+
+        Parameters
+        ----------
+        subcritical_threshold : float, optional
+            Upper sigma boundary for subcritical classification.
+        supercritical_threshold : float, optional
+            Lower sigma boundary for supercritical classification.
+        history_size : int, optional
+            Maximum number of sigma/phase observations retained.
+
+        Raises
+        ------
+        ValueError
+            If thresholds are unordered or ``history_size`` is non-positive.
+
+        Notes
+        -----
+        Maintains fixed-size deques for deterministic memory bounds and
+        transition sharpness calculations over recent observations.
+        """
         if subcritical_threshold >= supercritical_threshold:
             raise ValueError("subcritical_threshold must be less than supercritical_threshold")
         if history_size <= 0:
