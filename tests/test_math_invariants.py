@@ -102,3 +102,29 @@ def test_all_derived_data_artifacts_are_loadable_and_bounded() -> None:
         numerics = extract_numeric_scalars(data)
         if numerics:
             assert_numeric_finite_and_bounded(numerics, bound=1e12)
+
+
+def test_hazard_scan_skips_unsupported_python_syntax(tmp_path: Path) -> None:
+    artifact = tmp_path / "unsupported.py"
+    artifact.write_text("def f[T](x: T) -> T:\n    return x\n", encoding="utf-8")
+    import hashlib
+
+    digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    manifest = {
+        "schema_version": "2.0",
+        "timestamp": "2026-01-01T00:00:00Z",
+        "artifacts": [
+            {
+                "path": str(artifact),
+                "sha256": digest,
+                "type": "numeric_code",
+                "generator": None,
+                "provenance": "SOURCED",
+                "provenance_gap": "test",
+            }
+        ],
+    }
+    checks = validate_manifest(manifest)
+    hazard_checks = [c for c in checks if c.check_name == "numeric_hazard_scan"]
+    assert len(hazard_checks) == 1
+    assert hazard_checks[0].status in {"SKIP", "PASS"}

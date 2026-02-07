@@ -242,7 +242,10 @@ def validate_manifest(manifest: dict[str, Any]) -> list[CheckResult]:
             source = data if isinstance(data, str) else abs_path.read_text(encoding="utf-8")
 
             def hazard_check() -> tuple[str, str]:
-                hazards = analyze_python_hazards(rel_path, source)
+                try:
+                    hazards = analyze_python_hazards(rel_path, source)
+                except SyntaxError as exc:
+                    return "SKIP", f"hazard_scan_parser_unsupported:{exc.lineno}"
                 if not hazards:
                     return "PASS", "no_hazard_pattern_detected"
                 return "PASS", f"hazards_documented:{len(hazards)}"

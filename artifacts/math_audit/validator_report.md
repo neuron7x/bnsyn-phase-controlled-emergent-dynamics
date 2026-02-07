@@ -1,11 +1,11 @@
 # Math Validator Report
 
-- artifacts: 235
-- checks: 1042
-- PASS: 588
+- artifacts: 239
+- checks: 1058
+- PASS: 592
 - FAIL: 0
-- SKIP: 454
-- SOURCED: 74
+- SKIP: 466
+- SOURCED: 78
 - PARTIAL: 151
 - UNTRUSTED: 10
 
