@@ -1,0 +1,19 @@
+### COMMAND: git shortlog -sn --all
+   416	Yaroslav Vasylenko
+   154	copilot-swe-agent[bot]
+    16	dependabot[bot]
+     1	Codex
+
+### HUMAN contributors (excluding [bot] and known AI agents):
+   416	Yaroslav Vasylenko
+
+### BOT/AI contributors:
+   154	copilot-swe-agent[bot]
+    16	dependabot[bot]
+     1	Codex
+
+### SUMMARY:
+Human commits: 416
+Bot commits:   171
+Total commits: 587
+Bot ratio:     N/A%

@@ -1,72 +1,83 @@
 {
-  "stats": {
+  "categories": {
     "CORE_LOGIC": {
-      "files": 68,
-      "code": 7159,
-      "comment": 985,
-      "blank": 1852
+      "files": 67,
+      "code": 7015,
+      "comments": 980,
+      "blank": 1824
     },
     "TESTS": {
-      "files": 148,
-      "code": 11625,
-      "comment": 555,
-      "blank": 3140
+      "files": 147,
+      "code": 11535,
+      "comments": 555,
+      "blank": 3100
     },
-    "DOCUMENTATION": {
-      "files": 109,
-      "code": 7712,
-      "comment": 3103,
-      "blank": 3629
-    },
-    "CI/CD": {
-      "files": 29,
-      "code": 2607,
-      "comment": 100,
-      "blank": 301
+    "CI_CD": {
+      "files": 0,
+      "code": 0,
+      "comments": 0,
+      "blank": 0
     },
     "INFRASTRUCTURE": {
       "files": 3,
       "code": 148,
-      "comment": 0,
+      "comments": 0,
       "blank": 47
     },
+    "DOCUMENTATION": {
+      "files": 105,
+      "code": 7093,
+      "comments": 2247,
+      "blank": 2873
+    },
     "SCRIPTS_TOOLING": {
-      "files": 123,
-      "code": 12464,
-      "comment": 477,
-      "blank": 2359
+      "files": 121,
+      "code": 11970,
+      "comments": 476,
+      "blank": 2255
     },
     "DATA_SCHEMAS": {
       "files": 4,
       "code": 315,
-      "comment": 6,
+      "comments": 6,
       "blank": 84
     },
     "CONFIGURATION": {
-      "files": 26,
-      "code": 2047,
-      "comment": 1425,
-      "blank": 120
+      "files": 20,
+      "code": 1952,
+      "comments": 1394,
+      "blank": 106
     },
     "STATIC_ASSETS": {
       "files": 8,
-      "code": 7355,
-      "comment": 102,
-      "blank": 364
+      "code": 25414,
+      "comments": 316,
+      "blank": 2074
     },
     "GENERATED": {
-      "files": 102,
-      "code": 110378,
-      "comment": 91,
-      "blank": 302
+      "files": 96,
+      "code": 109993,
+      "comments": 89,
+      "blank": 305
     }
   },
-  "total_countable": {
-    "files": 518,
-    "code": 51432,
-    "comment": 6753,
-    "blank": 11896
+  "countable_totals": {
+    "files": 475,
+    "code": 65442,
+    "comments": 5974,
+    "blank": 12363
   },
-  "manifest_file": "/tmp/audit_files.txt",
-  "manifest_count": 620
+  "inventory_total_files": 571,
+  "core_logic_sublevels": {
+    "novel": 27,
+    "known_model": 19,
+    "glue": 9,
+    "boilerplate": 16
+  },
+  "documentation_depth": {
+    "stubs_lt20": 16,
+    "light_20_50": 29,
+    "substantive_gt50": 56,
+    "md_files_total": 101
+  }
 }

@@ -1,0 +1,4 @@
+### COMMAND: find CI/CD and deploy configs
+./Dockerfile
+./Makefile
+./docker-compose.yml

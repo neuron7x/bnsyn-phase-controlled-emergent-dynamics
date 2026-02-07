@@ -1,0 +1,34 @@
+### COMMAND: insertions/deletions and top churned files
+Insertions: 197018 Deletions: 23368
+
+### Top 30 most-churned files:
+18386 artifacts/math_audit/validator_report.json
+10563 results/temp_ablation_v2/random_T.json
+10563 results/temp_ablation_v2/fixed_low.json
+10563 results/temp_ablation_v2/fixed_high.json
+10563 results/temp_ablation_v2/cooling_piecewise.json
+10563 results/temp_ablation_v1/random_T.json
+10563 results/temp_ablation_v1/fixed_low.json
+10563 results/temp_ablation_v1/fixed_high.json
+10563 results/temp_ablation_v1/cooling_geometric.json
+3818 .github/WORKFLOW_CONTRACTS.md
+2084 artifacts/math_audit/manifest.json
+2065 requirements-lock.txt
+1842 tests/test_mutation_parsing.py
+1737 audit_evidence/phase3_radon.txt
+1311 artifacts/ci_logs/pytest.txt
+1217 .github/workflows/ci-pr.yml
+1201 src/bnsyn/sim/network.py
+989 src/bnsyn/neuron/adex.py
+978 artifacts/math_audit/phase_a_audit.txt
+964 README.md
+921 tests/properties/test_adex_properties.py
+897 src/bnsyn/connectivity/sparse.py
+878 src/bnsyn/synapse/conductance.py
+872 src/bnsyn/emergence/crystallizer.py
+865 .github/QUALITY_LEDGER.md
+844 docs/QUALITY_GATE_REPORT.md
+840 src/bnsyn/config.py
+800 src/bnsyn/cli.py
+788 src/bnsyn/viz/dashboard.py
+771 scripts/verify_formal_constants.py
