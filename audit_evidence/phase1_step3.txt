@@ -1,0 +1,2 @@
+=== FILE INVENTORY ===
+620 /tmp/audit_files.txt
