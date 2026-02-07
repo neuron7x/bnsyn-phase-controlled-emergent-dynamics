@@ -182,7 +182,12 @@ def parse_locked_requirements(lock_file: Path, target: TargetConfig) -> ParseRes
 
 def _wheel_matches_target_tag(target: TargetConfig, wheel_tags: frozenset[Tag]) -> bool:
     py_tag = f"{target.implementation}{target.python_version.replace('.', '')}"
-    supported_interpreters = {py_tag, f"py{target.python_version.replace('.', '')}", "py3", "py2.py3"}
+    supported_interpreters = {
+        py_tag,
+        f"py{target.python_version.replace('.', '')}",
+        "py3",
+        "py2.py3",
+    }
 
     for tag in wheel_tags:
         interpreter_ok = tag.interpreter in supported_interpreters
@@ -278,7 +283,9 @@ def validate_wheelhouse(
         raise SystemExit(f"wheelhouse directory not found: {wheelhouse_dir}")
 
     parsed = parse_locked_requirements(lock_file, target)
-    report = _build_report(lock_file=lock_file, wheelhouse_dir=wheelhouse_dir, target=target, parsed=parsed)
+    report = _build_report(
+        lock_file=lock_file, wheelhouse_dir=wheelhouse_dir, target=target, parsed=parsed
+    )
     _write_report(report_path, report)
 
     if report["unsupported_requirements"]:
@@ -389,7 +396,9 @@ def main() -> int:
 
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("build", help="Download pinned wheels for the configured target.")
-    subparsers.add_parser("validate", help="Validate wheelhouse covers applicable pinned dependencies.")
+    subparsers.add_parser(
+        "validate", help="Validate wheelhouse covers applicable pinned dependencies."
+    )
 
     args = parser.parse_args()
 

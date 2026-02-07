@@ -34,7 +34,9 @@ def _render_not_evaluated(reason: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate canonical mutation CI outputs and summary")
+    parser = argparse.ArgumentParser(
+        description="Generate canonical mutation CI outputs and summary"
+    )
     parser.add_argument(
         "--baseline",
         default="quality/mutation_baseline.json",
@@ -54,7 +56,10 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.write_output and not args.write_summary:
-        print("❌ No output target selected. Use --write-output and/or --write-summary.", file=sys.stderr)
+        print(
+            "❌ No output target selected. Use --write-output and/or --write-summary.",
+            file=sys.stderr,
+        )
         return 1
 
     output_path: Path | None = None

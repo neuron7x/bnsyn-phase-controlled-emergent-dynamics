@@ -107,11 +107,7 @@ def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
             raise ContractParseError(
                 f"Invalid reusable value '{reusable_raw}' for {workflow_file}."
             )
-        triggers = tuple(
-            trigger.strip()
-            for trigger in triggers_raw.split(",")
-            if trigger.strip()
-        )
+        triggers = tuple(trigger.strip() for trigger in triggers_raw.split(",") if trigger.strip())
         rows[workflow_file] = InventoryRow(
             workflow_file=workflow_file,
             workflow_name=workflow_name,
@@ -133,9 +129,7 @@ def load_workflow_inventory(workflows_dir: Path) -> dict[str, dict[str, object]]
         on_section = data.get("on", data.get(True, {}))
         triggers = normalize_on_section(on_section)
         name = data.get("name", "UNKNOWN")
-        reusable = "workflow_call" in triggers or workflow_path.name.startswith(
-            "_reusable_"
-        )
+        reusable = "workflow_call" in triggers or workflow_path.name.startswith("_reusable_")
         inventory[workflow_path.name] = {
             "name": str(name) if name is not None else "UNKNOWN",
             "triggers": triggers,
@@ -176,10 +170,7 @@ def validate_contracts(contracts_path: Path, workflows_dir: Path) -> list[str]:
         row = rows[workflow_file]
         actual_row = actual[workflow_file]
         if row.gate_class not in ALLOWED_GATE_CLASSES:
-            violations.append(
-                f"VIOLATION: INVALID_GATE_CLASS {workflow_file} "
-                f"{row.gate_class}"
-            )
+            violations.append(f"VIOLATION: INVALID_GATE_CLASS {workflow_file} {row.gate_class}")
         if row.workflow_name != actual_row["name"]:
             violations.append(
                 "VIOLATION: NAME_MISMATCH "
@@ -200,14 +191,12 @@ def validate_contracts(contracts_path: Path, workflows_dir: Path) -> list[str]:
             )
         if actual_row["prefix_reusable"] and "workflow_call" not in actual_row["triggers"]:
             violations.append(
-                "VIOLATION: AMBIGUOUS_REUSABLE "
-                f"{workflow_file} missing workflow_call trigger"
+                f"VIOLATION: AMBIGUOUS_REUSABLE {workflow_file} missing workflow_call trigger"
             )
         if row.gate_class == "PR-gate":
             if "pull_request" not in actual_row["triggers"] and not row.has_exception:
                 violations.append(
-                    "VIOLATION: PR_GATE_NO_PULL_REQUEST "
-                    f"{workflow_file} requires EXCEPTION entry"
+                    f"VIOLATION: PR_GATE_NO_PULL_REQUEST {workflow_file} requires EXCEPTION entry"
                 )
 
     return sorted(violations)

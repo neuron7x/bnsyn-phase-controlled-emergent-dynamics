@@ -115,7 +115,11 @@ def test_load_mutation_baseline_and_assessment(tmp_path: Path) -> None:
 
 
 def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
-    from scripts.mutation_counts import MutationAssessment, MutationBaseline, render_ci_summary_markdown
+    from scripts.mutation_counts import (
+        MutationAssessment,
+        MutationBaseline,
+        render_ci_summary_markdown,
+    )
 
     assessment = MutationAssessment(
         counts=MutationCounts(3, 2, 1, 0, 0, 4),
@@ -129,7 +133,11 @@ def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
 
 
 def test_render_github_output_lines_contract() -> None:
-    from scripts.mutation_counts import MutationAssessment, MutationBaseline, render_github_output_lines
+    from scripts.mutation_counts import (
+        MutationAssessment,
+        MutationBaseline,
+        render_github_output_lines,
+    )
 
     assessment = MutationAssessment(
         counts=MutationCounts(7, 3, 0, 0, 0, 0),
@@ -148,14 +156,18 @@ def test_render_github_output_lines_contract() -> None:
         "killed=7",
     ]
     assert rendered.endswith("\n")
-    assert all(line.split("=", 1)[0] in {
-        "baseline_score",
-        "tolerance",
-        "min_acceptable",
-        "score",
-        "total",
-        "killed",
-    } for line in lines)
+    assert all(
+        line.split("=", 1)[0]
+        in {
+            "baseline_score",
+            "tolerance",
+            "min_acceptable",
+            "score",
+            "total",
+            "killed",
+        }
+        for line in lines
+    )
 
 
 def test_validate_mutation_baseline_script(tmp_path: Path) -> None:

@@ -32,7 +32,7 @@ def render_markdown(computed: dict[str, Any]) -> str:
         f"- `ci_manifest.json` exists: **{metrics['ci_manifest_exists']}**\n"
         f"- `ci_manifest.json` references in scoped scan: **{metrics['ci_manifest_reference_count']}**\n"
         + "- `ci_manifest.json` scan scope:\n"
-        + "\n".join(f"  - `{item}`" for item in metrics['ci_manifest_reference_scope'])
+        + "\n".join(f"  - `{item}`" for item in metrics["ci_manifest_reference_scope"])
         + "\n\n"
         "## Invariants\n\n"
         "| ID | Statement | Enforcement | Evidence kind |\n"
@@ -40,6 +40,8 @@ def render_markdown(computed: dict[str, Any]) -> str:
         f"{invariant_rows}\n\n"
         "## Evidence Rules\n\n"
         "Accepted pointer formats:\n"
-        + "\n".join(f"- `{item}`" for item in computed["evidence_rules"]["accepted_pointer_formats"])
+        + "\n".join(
+            f"- `{item}`" for item in computed["evidence_rules"]["accepted_pointer_formats"]
+        )
         + "\n"
     )

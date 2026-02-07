@@ -126,7 +126,9 @@ def build_record(total_coverage: float, sha: str, branch: str) -> CoverageTrendR
     )
 
 
-def write_outputs(record: CoverageTrendRecord, output_json_path: Path, output_csv_path: Path) -> None:
+def write_outputs(
+    record: CoverageTrendRecord, output_json_path: Path, output_csv_path: Path
+) -> None:
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
     output_csv_path.parent.mkdir(parents=True, exist_ok=True)
     payload = record.to_payload()

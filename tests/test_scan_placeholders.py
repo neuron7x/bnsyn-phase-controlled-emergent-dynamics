@@ -13,7 +13,9 @@ ALLOWED_STATUSES = {"OPEN", "IN_PROGRESS", "RESOLVED", "ACCEPTED_BY_DESIGN"}
 def test_scan_placeholders_json_contract() -> None:
     findings = scan_placeholders.collect_findings()
 
-    assert findings == sorted(findings, key=lambda item: (item.path, item.line, item.kind, item.signature))
+    assert findings == sorted(
+        findings, key=lambda item: (item.path, item.line, item.kind, item.signature)
+    )
     assert all(item.path for item in findings)
     assert all(item.line > 0 for item in findings)
     assert all(item.kind in {"code", "docs", "script", "test"} for item in findings)
@@ -28,7 +30,9 @@ def test_registry_covers_all_scan_findings() -> None:
     status_pattern = re.compile(r"^- Status: ([A-Z_]+)$", re.MULTILINE)
 
     registry_ids = id_pattern.findall(registry_text)
-    registry_paths = [entry.split(":", maxsplit=1)[0] for entry in path_pattern.findall(registry_text)]
+    registry_paths = [
+        entry.split(":", maxsplit=1)[0] for entry in path_pattern.findall(registry_text)
+    ]
     registry_statuses = status_pattern.findall(registry_text)
 
     assert registry_ids

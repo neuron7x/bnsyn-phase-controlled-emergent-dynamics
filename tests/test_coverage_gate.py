@@ -9,9 +9,9 @@ import pytest
 
 def _write_xml(path: Path, line_rate: str | None = None) -> None:
     if line_rate is None:
-        path.write_text('<coverage version="7.0"></coverage>', encoding='utf-8')
+        path.write_text('<coverage version="7.0"></coverage>', encoding="utf-8")
     else:
-        path.write_text(f'<coverage line-rate="{line_rate}"></coverage>', encoding='utf-8')
+        path.write_text(f'<coverage line-rate="{line_rate}"></coverage>', encoding="utf-8")
 
 
 def test_read_coverage_percent_parses_valid_xml(tmp_path: Path) -> None:

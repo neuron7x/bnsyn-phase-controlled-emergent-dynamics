@@ -169,6 +169,7 @@ jobs:
       - run: python -m scripts.scan_governed_docs
       - run: python -m scripts.scan_normative_tags
       - run: python -m scripts.validate_api_maturity
+      - run: python -m scripts.validate_status_claims
       - run: make api-contract
       - run: python -m tools.manifest generate
       - run: python -m tools.manifest validate

@@ -254,9 +254,7 @@ def main() -> int:
 
         if isinstance(hazard.get("last_reviewed"), str):
             errors.extend(
-                _validate_iso_date(
-                    hazard["last_reviewed"], f"hazard_log:{hid}:last_reviewed"
-                )
+                _validate_iso_date(hazard["last_reviewed"], f"hazard_log:{hid}:last_reviewed")
             )
 
         errors.extend(

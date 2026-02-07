@@ -21,7 +21,7 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
             "spikes_per_sec": 10.0,
             "energy_cost": 110.0,
             "wall_time_sec": 1.0,
-        }
+        },
     }
     physics_current = {
         "regime_id": BENCHMARK_REGIME_ID,
@@ -31,7 +31,7 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
             "spikes_per_sec": 10.0,
             "energy_cost": 90.0,
             "wall_time_sec": 1.0,
-        }
+        },
     }
     kernel_baseline = {
         "regime_id": BENCHMARK_REGIME_ID,
@@ -44,7 +44,7 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
                 "min_time_sec": 0.005,
                 "avg_memory_mb": 1.0,
             }
-        }
+        },
     }
     kernel_current = {
         "regime_id": BENCHMARK_REGIME_ID,
@@ -57,7 +57,7 @@ def test_regression_gate_detects_degradation(tmp_path: Path) -> None:
                 "min_time_sec": 0.005,
                 "avg_memory_mb": 1.0,
             }
-        }
+        },
     }
 
     physics_base_path = tmp_path / "physics_baseline.json"

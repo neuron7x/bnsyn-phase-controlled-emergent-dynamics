@@ -25,8 +25,7 @@ def load_required_checks(required_checks_path: Path) -> list[str]:
     unknown_keys = set(data.keys()) - allowed_keys
     if unknown_keys:
         raise RequiredChecksParseError(
-            "Unknown keys in REQUIRED_CHECKS.yml: "
-            f"{sorted(unknown_keys)}"
+            f"Unknown keys in REQUIRED_CHECKS.yml: {sorted(unknown_keys)}"
         )
     version = data.get("version")
     if version != "1":
@@ -37,9 +36,7 @@ def load_required_checks(required_checks_path: Path) -> list[str]:
     entries: list[str] = []
     for entry in entries_raw:
         if not isinstance(entry, dict):
-            raise RequiredChecksParseError(
-                "Each required_checks entry must be a mapping."
-            )
+            raise RequiredChecksParseError("Each required_checks entry must be a mapping.")
         entry_keys = set(entry.keys())
         if entry_keys != {"workflow_file"}:
             raise RequiredChecksParseError(
@@ -47,9 +44,7 @@ def load_required_checks(required_checks_path: Path) -> list[str]:
             )
         workflow_file = entry["workflow_file"]
         if not isinstance(workflow_file, str) or not workflow_file:
-            raise RequiredChecksParseError(
-                "workflow_file must be a non-empty string."
-            )
+            raise RequiredChecksParseError("workflow_file must be a non-empty string.")
         entries.append(workflow_file)
     if not entries:
         raise RequiredChecksParseError("required_checks must not be empty.")
@@ -80,15 +75,9 @@ def validate_required_checks(
         )
         violations.append(message)
         if missing:
-            violations.append(
-                "VIOLATION: REQUIRED_CHECKS_MISSING "
-                f"workflows={missing}"
-            )
+            violations.append(f"VIOLATION: REQUIRED_CHECKS_MISSING workflows={missing}")
         if extra:
-            violations.append(
-                "VIOLATION: REQUIRED_CHECKS_EXTRA "
-                f"workflows={extra}"
-            )
+            violations.append(f"VIOLATION: REQUIRED_CHECKS_EXTRA workflows={extra}")
     return sorted(violations)
 
 

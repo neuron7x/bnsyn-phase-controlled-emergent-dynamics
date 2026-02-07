@@ -39,12 +39,16 @@ def test_mutation_ci_summary_writes_output_file(tmp_path: Path) -> None:
     assert "killed=5" in content
 
 
-def test_mutation_ci_summary_missing_github_output_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_ci_summary_missing_github_output_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     import scripts.mutation_ci_summary as mutation_ci_summary
 
     baseline_path = tmp_path / "baseline.json"
     baseline_path.write_text(
-        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        json.dumps(
+            {"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}
+        ),
         encoding="utf-8",
     )
 
@@ -71,12 +75,16 @@ def test_mutation_ci_summary_missing_github_output_env(tmp_path: Path, monkeypat
         mutation_ci_summary.sys.argv = old_argv
 
 
-def test_mutation_ci_summary_missing_github_summary_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_ci_summary_missing_github_summary_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     import scripts.mutation_ci_summary as mutation_ci_summary
 
     baseline_path = tmp_path / "baseline.json"
     baseline_path.write_text(
-        json.dumps({"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}),
+        json.dumps(
+            {"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}
+        ),
         encoding="utf-8",
     )
 
@@ -103,13 +111,17 @@ def test_mutation_ci_summary_missing_github_summary_env(tmp_path: Path, monkeypa
         mutation_ci_summary.sys.argv = old_argv
 
 
-def test_mutation_ci_summary_missing_env_does_not_load_baseline(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_ci_summary_missing_env_does_not_load_baseline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     import scripts.mutation_ci_summary as mutation_ci_summary
 
     monkeypatch.setattr(
         mutation_ci_summary,
         "load_mutation_baseline",
-        lambda _path: (_ for _ in ()).throw(AssertionError("load_mutation_baseline should not be called")),
+        lambda _path: (_ for _ in ()).throw(
+            AssertionError("load_mutation_baseline should not be called")
+        ),
     )
 
     old_argv = mutation_ci_summary.sys.argv
@@ -159,7 +171,9 @@ def test_mutation_ci_summary_invalid_baseline_payload_is_best_effort(
         mutation_ci_summary.sys.argv = old_argv
 
 
-def test_mutation_ci_summary_mutmut_failure_is_best_effort(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_ci_summary_mutmut_failure_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     import scripts.mutation_ci_summary as mutation_ci_summary
 
     baseline_path = tmp_path / "baseline.json"
@@ -255,7 +269,9 @@ def test_mutation_ci_summary_write_failure(tmp_path: Path, monkeypatch: pytest.M
         encoding="utf-8",
     )
 
-    monkeypatch.setattr(mutation_ci_summary, "read_mutation_counts", lambda: MutationCounts(1, 0, 0, 0, 0, 0))
+    monkeypatch.setattr(
+        mutation_ci_summary, "read_mutation_counts", lambda: MutationCounts(1, 0, 0, 0, 0, 0)
+    )
 
     old_argv = mutation_ci_summary.sys.argv
     old_env = dict(mutation_ci_summary.os.environ)

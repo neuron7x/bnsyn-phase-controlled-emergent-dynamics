@@ -96,6 +96,7 @@ def collect_public_api() -> dict[str, dict[str, str]]:
         snapshot[module_name] = module_snapshot
     return snapshot
 
+
 def _read_pyproject_version() -> str:
     pyproject = Path("pyproject.toml")
     payload = pyproject.read_text(encoding="utf-8")
@@ -103,6 +104,7 @@ def _read_pyproject_version() -> str:
     if not match:
         raise ValueError("Could not parse project version from pyproject.toml")
     return match.group(1)
+
 
 def _parse_semver(version: str) -> tuple[int, int, int]:
     match = SEMVER_RE.match(version)
@@ -158,7 +160,9 @@ def main() -> int:
             "modules": current_snapshot,
         }
         args.baseline.parent.mkdir(parents=True, exist_ok=True)
-        args.baseline.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        args.baseline.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
         print(f"Wrote baseline: {args.baseline}")
         return 0
 

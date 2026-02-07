@@ -120,9 +120,7 @@ def validate_pr_gates(
 
     for entry in entries:
         if entry.workflow_file not in workflow_data:
-            violations.append(
-                f"VIOLATION: MISSING_WORKFLOW_FILE {entry.workflow_file}"
-            )
+            violations.append(f"VIOLATION: MISSING_WORKFLOW_FILE {entry.workflow_file}")
             continue
         data = workflow_data[entry.workflow_file]
         if entry.workflow_name != data["name"]:
@@ -132,21 +130,16 @@ def validate_pr_gates(
                 f"actual={data['name']}"
             )
         if not data["has_pr"]:
-            violations.append(
-                f"VIOLATION: NO_PULL_REQUEST {entry.workflow_file}"
-            )
+            violations.append(f"VIOLATION: NO_PULL_REQUEST {entry.workflow_file}")
         required_jobs = set(entry.required_job_ids)
         actual_jobs = set(data["jobs"])
         missing_jobs = sorted(required_jobs - actual_jobs)
         if missing_jobs:
             violations.append(
-                "VIOLATION: MISSING_JOB_IDS "
-                f"{entry.workflow_file} missing={missing_jobs}"
+                f"VIOLATION: MISSING_JOB_IDS {entry.workflow_file} missing={missing_jobs}"
             )
 
-    pr_triggered = {
-        workflow for workflow, data in workflow_data.items() if data["has_pr"]
-    }
+    pr_triggered = {workflow for workflow, data in workflow_data.items() if data["has_pr"]}
     if contract_pr_gates != expected_files:
         violations.append(
             "VIOLATION: CONTRACT_PR_GATES_MISMATCH "
@@ -156,8 +149,7 @@ def validate_pr_gates(
     missing_pr_gate_triggers = sorted(contract_pr_gates - pr_triggered)
     if missing_pr_gate_triggers:
         violations.append(
-            "VIOLATION: CONTRACT_PR_GATE_NO_PULL_REQUEST "
-            f"workflows={missing_pr_gate_triggers}"
+            f"VIOLATION: CONTRACT_PR_GATE_NO_PULL_REQUEST workflows={missing_pr_gate_triggers}"
         )
 
     for workflow_file in sorted(workflow_data):
@@ -166,13 +158,9 @@ def validate_pr_gates(
         if workflow_file == "ci-pr-atomic.yml":
             continue
         if workflow_file in expected_files:
-            violations.append(
-                f"VIOLATION: CI_PR_WRAPPER_IN_SSOT {workflow_file}"
-            )
+            violations.append(f"VIOLATION: CI_PR_WRAPPER_IN_SSOT {workflow_file}")
         if workflow_file in contract_pr_gates:
-            violations.append(
-                f"VIOLATION: CI_PR_WRAPPER_IN_CONTRACTS {workflow_file}"
-            )
+            violations.append(f"VIOLATION: CI_PR_WRAPPER_IN_CONTRACTS {workflow_file}")
 
     return sorted(violations)
 
@@ -194,7 +182,9 @@ def main(argv: Iterable[str]) -> int:
         for violation in violations:
             print(violation)
         return 2
-    print(f"OK: pr_gates={len(load_pr_gates(pr_gates_path))} workflows={len(list(workflows_dir.glob('*.yml')))} validated")
+    print(
+        f"OK: pr_gates={len(load_pr_gates(pr_gates_path))} workflows={len(list(workflows_dir.glob('*.yml')))} validated"
+    )
     return 0
 
 

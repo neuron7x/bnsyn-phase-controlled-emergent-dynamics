@@ -111,7 +111,9 @@ def build_computed() -> dict[str, Any]:
     pr_gates = _load_yaml(pr_gates_path)
     required_pr_gate_total = len(pr_gates.get("required_pr_gates", []))
 
-    workflow_total, reusable_total, workflow_call_total = _workflow_metrics(ROOT / ".github/workflows")
+    workflow_total, reusable_total, workflow_call_total = _workflow_metrics(
+        ROOT / ".github/workflows"
+    )
 
     coverage = _load_json(ROOT / "quality/coverage_gate.json")
     mutation = _load_json(ROOT / "quality/mutation_baseline.json")
