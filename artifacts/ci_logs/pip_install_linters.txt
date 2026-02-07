@@ -1,0 +1,22 @@
+Collecting actionlint-py==1.7.7.23
+  Downloading actionlint_py-1.7.7.23.tar.gz (11 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting yamllint==1.37.1
+  Downloading yamllint-1.37.1-py3-none-any.whl.metadata (4.3 kB)
+Requirement already satisfied: pathspec>=0.5.3 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from yamllint==1.37.1) (1.0.3)
+Requirement already satisfied: pyyaml in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from yamllint==1.37.1) (6.0.3)
+Downloading yamllint-1.37.1-py3-none-any.whl (68 kB)
+Building wheels for collected packages: actionlint-py
+  Building wheel for actionlint-py (pyproject.toml): started
+  Building wheel for actionlint-py (pyproject.toml): finished with status 'done'
+  Created wheel for actionlint-py: filename=actionlint_py-1.7.7.23-py2.py3-none-linux_x86_64.whl size=2015034 sha256=ea196fb237df2735ff58d32e313e15fca8761908a17a0a0fcd1ab6f465392739
+  Stored in directory: /root/.cache/pip/wheels/4f/de/7c/f240222e73fac832628e30c6399e46862e0faf24efa9e585e8
+Successfully built actionlint-py
+Installing collected packages: yamllint, actionlint-py
+
+Successfully installed actionlint-py-1.7.7.23 yamllint-1.37.1

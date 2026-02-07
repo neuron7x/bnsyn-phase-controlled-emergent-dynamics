@@ -88,7 +88,12 @@ def iter_scope_files() -> list[Path]:
         base = ROOT / directory
         if not base.exists():
             continue
-        files.extend(sorted(p for p in base.rglob("*") if p.is_file()))
+        files.extend(
+            sorted(
+                p for p in base.rglob("*")
+                if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc" and not any(part.endswith(".egg-info") for part in p.parts)
+            )
+        )
     for config in CONFIG_FILES:
         candidate = ROOT / config
         if candidate.exists():

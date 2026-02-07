@@ -1,0 +1,14 @@
+.github/REPO_MANIFEST.md
+.github/workflows/math-quality-gate.yml
+artifacts/math_audit/baseline_env.txt
+artifacts/math_audit/manifest.json
+artifacts/math_audit/validator_report.json
+artifacts/math_audit/validator_report.md
+docs/math/CONTRACTS.md
+docs/math/PROVENANCE.md
+manifest/repo_manifest.computed.json
+scripts/generate_math_data.py
+scripts/math_validate.py
+src/contracts/__init__.py
+src/contracts/math_contracts.py
+tests/test_math_invariants.py

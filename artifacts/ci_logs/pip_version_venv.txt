@@ -1,0 +1,1 @@
+pip 26.0 from /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv/lib/python3.12/site-packages/pip (python 3.12)

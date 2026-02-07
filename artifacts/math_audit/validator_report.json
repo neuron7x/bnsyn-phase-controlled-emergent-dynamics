@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-02-07T13:20:00.456489+00:00",
+  "generated_at": "2026-02-07T13:28:42.597607+00:00",
   "summary": {
-    "artifacts": 239,
-    "checks": 1058,
-    "PASS": 592,
+    "artifacts": 233,
+    "checks": 1034,
+    "PASS": 586,
     "FAIL": 0,
-    "SKIP": 466
+    "SKIP": 448
   },
   "checks": [
     {
@@ -1049,7 +1049,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 4
+      "duration_ms": 5
     },
     {
       "artifact": "benchmarks/performance_utils.py",
@@ -1245,7 +1245,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "artifact": "benchmarks/scaling.py",
@@ -1280,7 +1280,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "hazards_documented:1",
-      "duration_ms": 1
+      "duration_ms": 2
     },
     {
       "artifact": "benchmarks/scaling_plan.md",
@@ -3345,7 +3345,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 2
+      "duration_ms": 3
     },
     {
       "artifact": "docs/api/api_bnsyn.md",
@@ -4472,14 +4472,14 @@
       "check_name": "numeric_sanity",
       "status": "PASS",
       "evidence": "numeric_count:10250",
-      "duration_ms": 3
+      "duration_ms": 4
     },
     {
       "artifact": "results/temp_ablation_v1/cooling_geometric.json",
       "check_name": "distribution_anomaly",
       "status": "SKIP",
       "evidence": "missing_distribution_expectation",
-      "duration_ms": 3
+      "duration_ms": 2
     },
     {
       "artifact": "results/temp_ablation_v1/fixed_high.json",
@@ -4500,7 +4500,7 @@
       "check_name": "numeric_sanity",
       "status": "PASS",
       "evidence": "numeric_count:10250",
-      "duration_ms": 3
+      "duration_ms": 4
     },
     {
       "artifact": "results/temp_ablation_v1/fixed_high.json",
@@ -4591,7 +4591,7 @@
       "check_name": "distribution_anomaly",
       "status": "SKIP",
       "evidence": "missing_distribution_expectation",
-      "duration_ms": 3
+      "duration_ms": 5
     },
     {
       "artifact": "results/temp_ablation_v2/cooling_piecewise.json",
@@ -4612,7 +4612,7 @@
       "check_name": "numeric_sanity",
       "status": "PASS",
       "evidence": "numeric_count:10250",
-      "duration_ms": 3
+      "duration_ms": 6
     },
     {
       "artifact": "results/temp_ablation_v2/cooling_piecewise.json",
@@ -4766,34 +4766,6 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
       "duration_ms": 0
     },
     {
@@ -5599,7 +5571,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "artifact": "src/bnsyn/memory/__init__.py",
@@ -5809,7 +5781,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "hazards_documented:2",
-      "duration_ms": 2
+      "duration_ms": 3
     },
     {
       "artifact": "src/bnsyn/neurons.py",
@@ -6019,7 +5991,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "hazards_documented:2",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "artifact": "src/bnsyn/production/__init__.py",
@@ -6197,90 +6169,6 @@
       "duration_ms": 0
     },
     {
-      "artifact": "src/bnsyn/provenance/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest_builder.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest_builder.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest_builder.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/bnsyn/provenance/__pycache__/manifest_builder.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
-      "duration_ms": 0
-    },
-    {
       "artifact": "src/bnsyn/provenance/manifest.py",
       "check_name": "sha256_match",
       "status": "PASS",
@@ -6551,7 +6439,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "hazards_documented:1",
-      "duration_ms": 5
+      "duration_ms": 6
     },
     {
       "artifact": "src/bnsyn/simulation.py",
@@ -6971,7 +6859,7 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 1
+      "duration_ms": 2
     },
     {
       "artifact": "src/bnsyn/tools/__init__.py",
@@ -7321,62 +7209,6 @@
       "check_name": "numeric_hazard_scan",
       "status": "PASS",
       "evidence": "no_hazard_pattern_detected",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/__init__.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/math_contracts.cpython-312.pyc",
-      "check_name": "sha256_match",
-      "status": "PASS",
-      "evidence": "digest_match",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/math_contracts.cpython-312.pyc",
-      "check_name": "schema_load",
-      "status": "SKIP",
-      "evidence": "unsupported_format",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/math_contracts.cpython-312.pyc",
-      "check_name": "numeric_sanity",
-      "status": "SKIP",
-      "evidence": "no_numeric_content",
-      "duration_ms": 0
-    },
-    {
-      "artifact": "src/contracts/__pycache__/math_contracts.cpython-312.pyc",
-      "check_name": "distribution_anomaly",
-      "status": "SKIP",
-      "evidence": "missing_distribution_expectation",
       "duration_ms": 0
     },
     {

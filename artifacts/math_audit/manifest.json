@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "timestamp": "2026-02-07T13:20:00.242106+00:00",
+  "timestamp": "2026-02-07T13:28:42.355484+00:00",
   "artifacts": [
     {
       "path": "Makefile",
@@ -1299,14 +1299,6 @@
       "provenance_gap": "version-controlled source"
     },
     {
-      "path": "src/bnsyn/__pycache__/__init__.cpython-312.pyc",
-      "sha256": "4968d6c31f5a56e3b199893fc044c1611d6008c812a7fe7b035239b302f305e3",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
       "path": "src/bnsyn/benchmarks/__init__.py",
       "sha256": "94fd83aa2f40e244112b4ae0c33f7f559bd3d49e6f9132ca23932b20a0bab5c6",
       "type": "numeric_code",
@@ -1627,30 +1619,6 @@
       "provenance_gap": "version-controlled source"
     },
     {
-      "path": "src/bnsyn/provenance/__pycache__/__init__.cpython-312.pyc",
-      "sha256": "7bbb8e344dddc09ba408c97cc28aad37e4961ef9ee3c621b6640684153e9ab0a",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
-      "path": "src/bnsyn/provenance/__pycache__/manifest.cpython-312.pyc",
-      "sha256": "3f195a24a7088e9df10180c5df5427cdea5661b78be3fe047bee7d88ec876eff",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
-      "path": "src/bnsyn/provenance/__pycache__/manifest_builder.cpython-312.pyc",
-      "sha256": "72efe995774668c60b23097afc8f572aaddd477c03d93b6704bd998faaed4550",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
       "path": "src/bnsyn/provenance/manifest.py",
       "sha256": "fba1dab120ad03675d0b15ae3ccb455487969a3d841080eef6758f717c47441f",
       "type": "numeric_code",
@@ -1885,22 +1853,6 @@
     {
       "path": "src/contracts/__init__.py",
       "sha256": "af3511cb8a91c2f9ae2b32b02305e328e67a0ebfe66760754ec66ab54450ea81",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
-      "path": "src/contracts/__pycache__/__init__.cpython-312.pyc",
-      "sha256": "a637841c8a4bf398dcc2158aaf17bfcf378f0f5ec8edba32c6f4d543601193ed",
-      "type": "numeric_code",
-      "generator": null,
-      "provenance": "SOURCED",
-      "provenance_gap": "version-controlled source"
-    },
-    {
-      "path": "src/contracts/__pycache__/math_contracts.cpython-312.pyc",
-      "sha256": "1404c51402e076d4cc2c397050227d4a852a31d1c8062f9464557915c65f4edb",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
