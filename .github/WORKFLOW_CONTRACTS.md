@@ -89,7 +89,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
-| `math-quality-gate.yml` | `math-quality-gate` | PR-gate | `pull_request, push` | NO |
+| `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
 | `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |

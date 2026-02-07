@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "timestamp": "2026-02-07T13:28:42.355484+00:00",
+  "timestamp": "2026-02-07T13:48:04.294814+00:00",
   "artifacts": [
     {
       "path": "Makefile",
@@ -32,7 +32,7 @@
       "type": "derived_data",
       "generator": "scripts/run_benchmarks.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; artifact depends on runtime profile selection"
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
     },
     {
       "path": "benchmarks/baselines/checksums_alloc_v2.json",
@@ -40,7 +40,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/golden_baseline.yml",
@@ -48,7 +48,7 @@
       "type": "config",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/kernel_profile.json",
@@ -56,7 +56,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/kernel_profile_alloc_v2.json",
@@ -64,7 +64,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/physics_baseline.json",
@@ -72,7 +72,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/physics_baseline_alloc_v2.json",
@@ -80,7 +80,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/kernel_run_1_alloc_v2.json",
@@ -88,7 +88,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/kernel_run_2_alloc_v2.json",
@@ -96,7 +96,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/kernel_run_3_alloc_v2.json",
@@ -104,7 +104,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/kernel_run_4_alloc_v2.json",
@@ -112,7 +112,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/kernel_run_5_alloc_v2.json",
@@ -120,7 +120,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/physics_run_1_alloc_v2.json",
@@ -128,7 +128,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/physics_run_2_alloc_v2.json",
@@ -136,7 +136,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/physics_run_3_alloc_v2.json",
@@ -144,7 +144,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/physics_run_4_alloc_v2.json",
@@ -152,7 +152,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/baselines/raw/physics_run_5_alloc_v2.json",
@@ -160,7 +160,7 @@
       "type": "derived_data",
       "generator": "scripts/generate_benchmark_baseline.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; seed handling delegated to benchmark scenario"
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
     },
     {
       "path": "benchmarks/bench_adex.py",
@@ -264,7 +264,7 @@
       "type": "derived_data",
       "generator": "scripts/run_benchmarks.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; artifact depends on runtime profile selection"
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
     },
     {
       "path": "benchmarks/metrics.py",
@@ -288,7 +288,7 @@
       "type": "derived_data",
       "generator": "scripts/run_benchmarks.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; artifact depends on runtime profile selection"
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
     },
     {
       "path": "benchmarks/physics_baseline.json",
@@ -296,7 +296,7 @@
       "type": "derived_data",
       "generator": "scripts/run_benchmarks.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; artifact depends on runtime profile selection"
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
     },
     {
       "path": "benchmarks/report.py",
@@ -416,7 +416,7 @@
       "type": "derived_data",
       "generator": "scripts/run_benchmarks.py",
       "provenance": "PARTIAL",
-      "provenance_gap": "generator exists; artifact depends on runtime profile selection"
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
     },
     {
       "path": "docker-compose.yml",
@@ -1124,7 +1124,7 @@
     },
     {
       "path": "docs/math/CONTRACTS.md",
-      "sha256": "aef69514ea8e3c62446d63014a03c882e2c2101bfdf41a0d56cc613b9c2a17a1",
+      "sha256": "c1742ef3b24aa19f59716d1614fb0d8a24209bffda76c1de6eae7354b0ebe5cd",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1132,7 +1132,7 @@
     },
     {
       "path": "docs/math/PROVENANCE.md",
-      "sha256": "fbb334bd13a56656931cae5e2685af3f5cd13b4c3b1fb2b7327f574f77131f82",
+      "sha256": "a79f98c9241e0374f4289f313368abe022a3e03ff0ec248bface8a5a81f5f68e",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1214,81 +1214,81 @@
       "path": "results/temp_ablation_v1/cooling_geometric.json",
       "sha256": "36b5ee870c4a03d65ba4d399315196693eb5c1457e1cd6d5600fe8bd17056bfd",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v1/fixed_high.json",
       "sha256": "b1bbb12b8b65d5a32107d442c97a59b28d863b004d5a5f22a3120f0ddec96be6",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v1/fixed_low.json",
       "sha256": "a0ca345a899b434b1991c10ce1b338e58fea562f47588dc56625a50cba557192",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v1/manifest.json",
       "sha256": "384be12ec14427f8a0215e78a68d1c386f3cb0dae7785ab0e21d34c069badc75",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v1/random_T.json",
       "sha256": "330cba54f2157c77329f8767e96e69a3645dfaa87348c555155389bf2e406a0e",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v2/cooling_piecewise.json",
       "sha256": "fec92cfbdf570a6a21a9447ea440df82634a992be8443f026731433dbaf5fb69",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v2/fixed_high.json",
       "sha256": "b1bbb12b8b65d5a32107d442c97a59b28d863b004d5a5f22a3120f0ddec96be6",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v2/fixed_low.json",
       "sha256": "a0ca345a899b434b1991c10ce1b338e58fea562f47588dc56625a50cba557192",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v2/manifest.json",
       "sha256": "af901dcc0db33fb527edb410b2c084475b2faa96da0a855b87f78c2ca7c14169",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "results/temp_ablation_v2/random_T.json",
       "sha256": "330cba54f2157c77329f8767e96e69a3645dfaa87348c555155389bf2e406a0e",
       "type": "derived_data",
-      "generator": null,
-      "provenance": "UNTRUSTED",
-      "provenance_gap": "no deterministic generator metadata co-located"
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
     },
     {
       "path": "src/bnsyn/__init__.py",
@@ -1852,7 +1852,7 @@
     },
     {
       "path": "src/contracts/__init__.py",
-      "sha256": "af3511cb8a91c2f9ae2b32b02305e328e67a0ebfe66760754ec66ab54450ea81",
+      "sha256": "894c60d5f4d185be7bbfd12095055695f10dd048a91f517aab58459df9e284f6",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1860,7 +1860,7 @@
     },
     {
       "path": "src/contracts/math_contracts.py",
-      "sha256": "812749be08b3785258a42d479bc4275efcd44892bdf6338ced5c1f1ced811fb0",
+      "sha256": "a1adef2632c9d44a04716cb759f198a1c65b41618cad397b3c93ac1c3174e38e",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",

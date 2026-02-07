@@ -1,37 +1,47 @@
-# Mathematical Contracts
+# Mathematical Contracts — BN-Syn
 
-## Artifact Family: derived_data (`results/*.csv`, `benchmarks/*.json`)
+## 1. ODE Integration
+- **CFL-like stability**: `dt * |λ_max| < 1.0` for Euler and `< 2.785` for RK4 via `assert_dt_stability`.
+- **State boundedness**: post-step state vectors must remain finite via `assert_state_finite_after_step`.
+- **Energy dissipation/boundedness**: energy time-series must not diverge and cannot increase above tolerance (`1e-4`) via `assert_energy_bounded`.
+- **Tolerance consistency**: `atol < dt` and `rtol > eps(float64)` via `assert_integration_tolerance_consistency`.
 
-- **Dimensions/Units**
-  - scalar metrics are dimensionless unless explicitly documented in source benchmark docs.
-- **Shape invariants**
-  - JSON artifacts must parse to object or list structures.
-  - CSV artifacts must parse with a stable header row.
-- **Range constraints**
-  - numeric values must be finite and satisfy `abs(x) <= 1e12`.
-- **Conservation laws**
-  - probability-like vectors (when present) must be represented as finite reals and are checked by numeric sanity gates.
-- **Monotonicity**
-  - not globally enforced across all benchmark outputs; category marked `MANUAL_REVIEW_REQUIRED`.
-- **Domain assumptions**
-  - all numeric fields are in real domain and cannot be NaN/Inf.
-- **Tolerance**
-  - anomaly scan threshold uses `|z| <= 4.0` with population statistics.
+## 2. Phase Dynamics
+- **Phase range**: `θ ∈ [0, 2π)` or `θ ∈ [-π, π)` via `assert_phase_range`.
+- **Order parameter bounds**: `r ∈ [0, 1]` (±1e-10) via `assert_order_parameter_range`.
+- **Order parameter recomputation**: `r = |(1/N) Σ exp(iθ_j)|` must match reported value via `assert_order_parameter_computation`.
+- **Phase velocity finite**: `dθ/dt` cannot contain NaN/Inf via `assert_phase_velocity_finite`.
 
-## Artifact Family: numeric_code (`src/**/*.py`)
+## 3. Network Topology
+- **Coupling matrix**: finite NxN matrix, optional symmetry (`K=Kᵀ`) via `assert_coupling_matrix_properties`.
+- **Adjacency matrix**: binary entries `{0,1}` and no self-loops via `assert_adjacency_binary`.
+- **Weight matrix physicality**: nonnegative weights via `assert_weight_matrix_nonnegative`.
 
-- **Shape invariants**
-  - source modules must be non-empty UTF-8 text files.
-- **Range constraints**
-  - static hazard scan identifies risky subtraction, division-by-zero literals, and exponential overflow patterns.
-- **Domain assumptions**
-  - hazard scan is informational and requires manual review for confirmed instability fixes.
-- **Tolerance**
-  - hazard scan has zero tolerance for parser errors; parse failures are `FAIL`.
+## 4. Numerical Guards
+- **Cancellation detector**: flags >3-digit precision loss contexts via `assert_no_catastrophic_cancellation`.
+- **Log domain guard**: requires `x > 0` via `assert_no_log_domain_violation`.
+- **Exp overflow guard**: flags `|x| > 500` via `assert_no_exp_overflow_risk`.
+- **Division near-zero guard**: flags `|denominator| < 1e-300` via `assert_no_division_by_zero_risk`.
+- **Dtype consistency**: prevents silent float32/float64 mixing via `assert_dtype_consistency`.
 
-## Artifact Family: reports/config (`docs/**/*.md`, root config)
+## 5. Data Integrity
+- **No NaN dataset entries** via `assert_no_nan_in_dataset`.
+- **No duplicate rows** via `assert_no_duplicate_rows`.
+- **Column range constraints** for structured arrays via `assert_column_ranges`.
+- **Probability normalization**: `sum(p)=1±1e-8` via `assert_probability_normalization`.
+- **Time monotonicity**: strictly increasing time grids via `assert_timeseries_monotonic_time`.
 
-- **Shape invariants**
-  - text/config artifacts must be non-empty and hash-stable.
-- **Domain assumptions**
-  - deterministic provenance and checksum verification are mandatory.
+## 6. Validator Categories
+- `physics_invariant`
+- `numeric_hazard`
+- `data_integrity`
+- `schema`
+
+## 7. Tolerances
+| Check | Absolute | Relative | Rationale |
+|---|---:|---:|---|
+| Order parameter recomputation | `1e-6` | — | complex summation roundoff |
+| Coupling symmetry | `1e-12` | — | matrix construction determinism |
+| Probability normalization | `1e-8` | — | floating-point summation |
+| Energy monotonic drift | `1e-4` | — | integrator truncation tolerance |
+| Order parameter range slack | `1e-10` | — | finite-precision bounds |
