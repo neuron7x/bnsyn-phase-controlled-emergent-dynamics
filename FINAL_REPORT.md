@@ -3,10 +3,19 @@
 ## CI_EXECUTABILITY_STATUS
 NEEDS_EVIDENCE
 
-- Missing required proof artifact: fresh CI run URL for current PR head commit.
-- Required human action:
+- Historical workflow evidence exists in:
+  - `artifacts/audit/workflow_226681253_runs.tsv`
+  - `artifacts/audit/workflow_229502046_runs.tsv`
+- Current HEAD CI evidence query:
+  - `artifacts/audit/runs_for_head.json` (result: `total_count = 0`)
+- Required human action to close:
   1. Push current branch to GitHub.
-  2. Provide CI run URLs for `ci-pr-atomic` and `workflow-integrity` for this PR head.
+  2. Wait for successful runs of `ci-pr-atomic` and `workflow-integrity`.
+  3. Record immutable run URLs below.
+
+### REQUIRED RUN URLS (current PR head)
+- ci-pr-atomic: NEEDS_EVIDENCE
+- workflow-integrity: NEEDS_EVIDENCE
 
 ## BATTLE_USAGE_STATUS
 FORMALIZED_NON_USAGE
@@ -15,14 +24,19 @@ FORMALIZED_NON_USAGE
 - PR-gate workflow enforces anti-overclaim check via `scripts.validate_status_claims`.
 
 ## READYNESS_PERCENT
-55
+75
 
 Rationale (fail-closed):
--100 baseline
---25 CI proof for current PR head missing
---20 snapshot-zip provenance missing (`/mnt/data/...zip` not mounted)
+- Start 100
+- -25: missing immutable CI run proof for current PR head
 
 ## Local Evidence
-- `artifacts/ci_local/ruff_format.log` (pass)
-- `artifacts/ci_local/mypy_strict.log` (pass)
-- `artifacts/ci_local/summary.tsv` (command exit inventory)
+- `artifacts/ci_local/pip_install.log`
+- `artifacts/ci_local/ruff_format.log`
+- `artifacts/ci_local/ruff_check.log`
+- `artifacts/ci_local/mypy_strict.log`
+- `artifacts/ci_local/pytest_q.log`
+- `artifacts/ci_local/validate_status_claims.log`
+- `artifacts/ci_local/manifest_generate.log`
+- `artifacts/ci_local/manifest_validate.log`
+- `artifacts/ci_local/summary.tsv` (all exit codes == 0)
