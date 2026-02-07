@@ -1,0 +1,56 @@
+{
+  "categories": {
+    "CI_CD": {
+      "files_count": 29,
+      "loc_code": 2607
+    },
+    "CONFIGURATION": {
+      "files_count": 42,
+      "loc_code": 3300
+    },
+    "CORE_LOGIC": {
+      "files_count": 68,
+      "loc_code": 7159
+    },
+    "DATA_SCHEMAS": {
+      "files_count": 4,
+      "loc_code": 315
+    },
+    "DOCUMENTATION": {
+      "files_count": 94,
+      "loc_code": 6459
+    },
+    "GENERATED": {
+      "files_count": 114,
+      "loc_code": 111402
+    },
+    "INFRASTRUCTURE": {
+      "files_count": 3,
+      "loc_code": 148
+    },
+    "SCRIPTS_TOOLING": {
+      "files_count": 123,
+      "loc_code": 12464
+    },
+    "STATIC_ASSETS": {
+      "files_count": 8,
+      "loc_code": 25414
+    },
+    "TESTS": {
+      "files_count": 148,
+      "loc_code": 11625
+    }
+  },
+  "ci_cd_inclusion": {
+    "ci_cd_files": 29,
+    "invariant_pass": true,
+    "workflow_files_present": 28
+  },
+  "inventory_total_files": 633,
+  "partition": {
+    "disjoint": true,
+    "equals_inventory": true,
+    "overlaps": [],
+    "union_count": 633
+  }
+}

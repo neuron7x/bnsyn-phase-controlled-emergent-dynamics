@@ -1,0 +1,9 @@
+{
+  "I-A Partition completeness": true,
+  "I-B Partition disjointness": true,
+  "I-C LOC sums": true,
+  "I-D No hidden files": true,
+  "I-E JSON formatting_schema": true,
+  "I-F Determinism": true,
+  "I-G CI/CD nonzero-if-present": true
+}

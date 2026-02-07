@@ -1,0 +1,11 @@
+{
+  "CLAIM-000": {
+    "claimed_value": "UNKNOWN",
+    "description": "ODT input missing",
+    "required_evidence": [
+      "provide_spec_file"
+    ],
+    "verification_method": "N/A",
+    "where_in_odt": "/mnt/data/codex pr.odt"
+  }
+}

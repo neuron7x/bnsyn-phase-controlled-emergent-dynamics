@@ -1,0 +1,11 @@
+ M REPO_WORK_ASSESSMENT_VALUATION.md
+ M audit_report_data.json
+?? .venv_audit/
+?? audit/
+?? schemas/audit_report_data.schema.json
+?? scripts/ci_cd_analyzer.py
+?? scripts/compute_repo_metrics.py
+?? scripts/crosscheck_metrics.py
+?? scripts/run_audit.sh
+?? scripts/valuation_model.py
+?? tests/test_audit_rules.py
