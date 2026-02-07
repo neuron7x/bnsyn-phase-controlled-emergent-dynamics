@@ -227,7 +227,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     rng = pack.np_rng
 
     # Create network
-    N = args.N
+    N = int(args.N)
     nparams = NetworkParams(N=N)
     net = Network(
         nparams,

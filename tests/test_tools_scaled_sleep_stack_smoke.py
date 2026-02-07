@@ -60,9 +60,20 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
     assert summary_path.exists()
     summary = json.loads(summary_path.read_text())
     assert summary["seed"] == 42
+    required_summary_keys = {
+        "seed",
+        "N_scaled",
+        "steps_wake_scaled",
+        "steps_sleep_scaled",
+        "determinism_runs",
+        "backend_equivalence",
+    }
+    assert required_summary_keys <= set(summary)
     assert summary["N_scaled"] == 80
     assert summary["steps_wake_scaled"] == 30
     assert summary["steps_sleep_scaled"] == 30
     assert summary["determinism_runs"] == 1
+    assert summary["determinism_identical"] is None
     assert summary["backend_equivalence"]["skipped"] is True
     assert summary["baseline_skipped"] is True
+    assert summary["baseline"] is None

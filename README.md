@@ -166,11 +166,11 @@ python -m bnsyn.tools.run_scaled_sleep_stack \
   --no-raster --no-plots
 ```
 
-The generated `artifacts/local_runs/scaled_sleep_stack_n2000/metrics.json` contains fields:
+The generated `<out>/metrics.json` contains fields:
 - `seed`, `N_scaled`, `steps_wake_scaled`, `steps_sleep_scaled`
 - `determinism_hashes` (per-run manifest/metrics hashes)
 - `determinism_runs` (int) and `determinism_identical` (bool or null when runs < 2)
-- `backend_equivalence` (`atol`, `equivalent`, `max_abs_sigma_diff`)
+- `backend_equivalence` (`atol`, `equivalent`, `max_abs_sigma_diff`, `skipped`; values may be null when skipped)
 - `baseline_skipped` (bool) and `baseline` (`wake_std_sigma`, `transitions`, `attractors` or null when baseline skipped)
 - `scaled` (`wake_std_sigma`, `transitions`, `attractors`, `crystallization_progress`)
 - `benchmark` (`elapsed_s`, `memory_current_bytes`, `memory_peak_bytes`)
