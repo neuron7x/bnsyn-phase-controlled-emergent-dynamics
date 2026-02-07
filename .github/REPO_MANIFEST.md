@@ -2,16 +2,16 @@
 
 - Manifest version: `1.0`
 - Generated marker: `deterministic`
-- Repository fingerprint: `535996cd7a84a7bc9db56d5e2314f04e7201fe049af97bde4df214629106cf4e`
+- Repository fingerprint: `32a21832cd306a8b7f3e6d0619331756ba76056dab90b4db7833a49f026227a4`
 - Required PR gates source: `.github/PR_GATES.yml`
-- Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
+- Required PR gates SHA-256: `e1ba5284084ab99fa941e2d0f20480e55054fa06cc54f8f1a4d37b176edbd3df`
 
 ## Metrics
 
-- Workflow files (`.github/workflows/*.yml`): **27**
+- Workflow files (`.github/workflows/*.yml`): **28**
 - Reusable workflow files (`_reusable_*.yml`): **9**
 - Workflows declaring `workflow_call`: **11**
-- Required PR gates (`.github/PR_GATES.yml`): **2**
+- Required PR gates (`.github/PR_GATES.yml`): **3**
 - Coverage minimum percent (`quality/coverage_gate.json`): **99.0**
 - Coverage baseline percent (`quality/coverage_gate.json`): **99.57**
 - Mutation baseline score (`quality/mutation_baseline.json`): **0.0**

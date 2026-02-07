@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 27
-**Breakdown:** 16 primary + 11 reusable
+**Total workflows:** 28
+**Breakdown:** 17 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -32,7 +32,7 @@
 ## PR-Gate Definition (Authoritative)
 
 * Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
-* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`.
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`.
 * Required checks MUST NOT include any workflow other than the PR-gates listed above.
 * If any other section conflicts with this, this section wins.
 
@@ -44,6 +44,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | --- | --- | --- |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
+| `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
 
 ## Gate Class Policy (Normative)
 
@@ -89,6 +90,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
+| `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
 | `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |

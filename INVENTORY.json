@@ -7,10 +7,10 @@
     ".github"
   ],
   "counts": {
-    "src": 70,
-    "tests": 147,
-    "docs": 95,
-    ".github": 36
+    "src": 72,
+    "tests": 148,
+    "docs": 97,
+    ".github": 37
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -35,6 +35,7 @@
     "docs.yml",
     "formal-coq.yml",
     "formal-tla.yml",
+    "math-quality-gate.yml",
     "physics-equivalence.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",

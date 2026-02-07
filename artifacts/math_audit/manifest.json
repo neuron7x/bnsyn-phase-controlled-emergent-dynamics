@@ -1,0 +1,1870 @@
+{
+  "schema_version": "2.0",
+  "timestamp": "2026-02-07T13:51:30.338257+00:00",
+  "artifacts": [
+    {
+      "path": "Makefile",
+      "sha256": "80f6439c453b273d2e305844a854251f51202859aea4fe1396d52e8451960da4",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/README.md",
+      "sha256": "d49efbe9da841918fbac965a5b6e28b1814b3795e7d81a7b81238640b1caeac9",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/__init__.py",
+      "sha256": "65d31285d96d901b5de95219507589f3ef2095a83d45cd7055785cb059a85161",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/baseline.json",
+      "sha256": "d97ba39b31f6ee5b3ee2a7532f5bb3ea3aef9aa1da2f82ae9c114e05831bc822",
+      "type": "derived_data",
+      "generator": "scripts/run_benchmarks.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
+    },
+    {
+      "path": "benchmarks/baselines/checksums_alloc_v2.json",
+      "sha256": "94304b1a728923d9311977e587bc471d92a43b8f8db78c0a0f2a7d2349837d33",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/golden_baseline.yml",
+      "sha256": "d1759f4b305b9489ce501618020a966a04d461f05068ce956249d011302f475d",
+      "type": "config",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/kernel_profile.json",
+      "sha256": "15178532352d96b4535c4bcea55fe747d5d3f19f3915495dbbd584409a76cb12",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/kernel_profile_alloc_v2.json",
+      "sha256": "729b7438bf2eff0674d4c5bd50cc307086ee44a2c3d441a7adc9cd8186555574",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/physics_baseline.json",
+      "sha256": "604a93561912a6d90044331da2ce703a9a23f525fe868e1ade1577a975fb8e84",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/physics_baseline_alloc_v2.json",
+      "sha256": "ee65e31c4fbe5e8a398fab652d520b8f9f538b37ca3762a961ce9448637c834e",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/kernel_run_1_alloc_v2.json",
+      "sha256": "0be97152d216ef811232056b980dc5492c3c86381a4aca17fb7d19ee8e77810c",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/kernel_run_2_alloc_v2.json",
+      "sha256": "7d449c089ac9681cdf1adcaa74afe085381a611d31d222de7ef03de4cbca9aa5",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/kernel_run_3_alloc_v2.json",
+      "sha256": "7517cbaa51c1488c8fa46677fd577afc2cbc7c835888348a59aa536a38005284",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/kernel_run_4_alloc_v2.json",
+      "sha256": "f2c542de18bea9bb62c4bd20eb2220f4d6479fd78d51fc688042a1c2e8862840",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/kernel_run_5_alloc_v2.json",
+      "sha256": "9bb0c4cc696eb55b29c5df4097bbe891c0c3f9b980a6c6dce08b0a9299a97c42",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/physics_run_1_alloc_v2.json",
+      "sha256": "0e541472db7a1c618087a9827dc7b2ef97443a2367b01db2fe36d3fa3071d261",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/physics_run_2_alloc_v2.json",
+      "sha256": "5f11fed39ce35afa35b7f602582bb38f4d8ef7a350750d1f5fbb091ec1b9716b",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/physics_run_3_alloc_v2.json",
+      "sha256": "5e7bb7398c9cc573709ccff58aa7735b4481433bd7a09b297a2f51c29f198305",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/physics_run_4_alloc_v2.json",
+      "sha256": "9e0906a06703908f26acb7598b969fed08ba3d91095b95c91de0d205a73c3177",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/baselines/raw/physics_run_5_alloc_v2.json",
+      "sha256": "8f5b6f8fe9d911f7011580776ec4fd584a7098be4a5e0e5eb67e5fc1c6f67a35",
+      "type": "derived_data",
+      "generator": "scripts/generate_benchmark_baseline.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; scenario-specific parameters are external"
+    },
+    {
+      "path": "benchmarks/bench_adex.py",
+      "sha256": "dff8655087d92d926012ce32964417964ea35fc51a3f4417cb0bca130990d61f",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/bench_criticality.py",
+      "sha256": "c696ad7d074b4a1a63bd305bf5329afe9dc995a090fda023ea494ca88a2397a9",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/bench_dt_invariance.py",
+      "sha256": "cfe4c13a544a6697faec2e90573a4871326f90f1627c0b80d953f07dfc2a9241",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/bench_plasticity.py",
+      "sha256": "12f892d91c9b29465470e5db182ded4ef1dbbe182edc45e971fa0c226101eb8d",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/bench_synapses.py",
+      "sha256": "36cd184a2d330fcc5dd30814292110bc338a5b95e119021913ec32a0be16c1fb",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/benchmark_dt.py",
+      "sha256": "ff10172cf6859baa34cb72eb0aa9ea089932571cbfa99dcfb74fc04daca3d710",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/benchmark_plasticity.py",
+      "sha256": "b2e65f1a4260bb51e1714e59ff80234a4543e2d41107ec024efec4cc7bac270d",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/benchmark_scale.py",
+      "sha256": "b5570349abc0fb7369337afcb724d80ed52b9d4e728436e48fb6e6ea35b06b1e",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/common.py",
+      "sha256": "15eec888748dff465a0a8a21a27ee52b15b80cad578cff0e210ff12446854651",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/criticality.py",
+      "sha256": "d637636513c98feefd35d79ce69ab64e58118caeca11b754740b69f5fe2d011f",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/determinism.py",
+      "sha256": "9e49d956496321e730e5bb9914b4e6dc641a9b186a2c1c318bf279b700024470",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/equivalence_report.md",
+      "sha256": "a34c7384a010499f4e4f2c0a3475cd506ec48e280a96f087980170a90d84dbbb",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/kernel_profile.json",
+      "sha256": "15178532352d96b4535c4bcea55fe747d5d3f19f3915495dbbd584409a76cb12",
+      "type": "derived_data",
+      "generator": "scripts/run_benchmarks.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
+    },
+    {
+      "path": "benchmarks/metrics.py",
+      "sha256": "17cead7e68308128cf98da93505ac2d39edc8915b1cfd8ab148648755d9b288c",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/performance_utils.py",
+      "sha256": "84351b6ef5def38a02907aac01d3713d89312fcee6b97605780fa59b9904004a",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/physics_accelerated.json",
+      "sha256": "c0e6980debc528aaf2f79fc4f3763f6454e912db123132913727182745095613",
+      "type": "derived_data",
+      "generator": "scripts/run_benchmarks.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
+    },
+    {
+      "path": "benchmarks/physics_baseline.json",
+      "sha256": "604a93561912a6d90044331da2ce703a9a23f525fe868e1ade1577a975fb8e84",
+      "type": "derived_data",
+      "generator": "scripts/run_benchmarks.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
+    },
+    {
+      "path": "benchmarks/report.py",
+      "sha256": "f85134e4b81229e686e42d4ffd891eddcd58ce854fc7d4e8c2f6b3eceae57008",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/run_benchmarks.py",
+      "sha256": "d4a1d6bc9aa64c99c3712172ebd68054730b4dc9cbffaf7c8d7519b06e0a5419",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scalability.py",
+      "sha256": "af8389fdf981af4ca4624cedee498a1e394a5c8cff947b6410d1bfbd64cf3064",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scaling.py",
+      "sha256": "ea8f963da0e1d12146705c06e119de3a142e2c11caebb320479cd143835616bb",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scaling_plan.md",
+      "sha256": "21ae66db9d423603e2d67e5eaf7d6aac154c994e828e7833c92860b88d07f6e7",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/__init__.py",
+      "sha256": "1b60d040f95373d9288ea0278bd70d8e594ae39fedcf52c9d978e91dfc312f36",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/base.py",
+      "sha256": "37b8cbf6e853eed31d1df5510e0dcc59dc61aee0e59a705b5c353442066481c6",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/ci_smoke.py",
+      "sha256": "5d31003ac87a98856adfaa9df22882d5ec318906a9d3abcfed1b836078461762",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/criticality_sweep.py",
+      "sha256": "45040146741f8e5ebfa63afaebfff87b609879af2fa70f76796964300e637c6e",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/dt_sweep.py",
+      "sha256": "60338c9db491f6291deab1b1ed8433e5b005af3e3f67bfbe3a2edb377ead5dd3",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/large_network.py",
+      "sha256": "632034b82893c27113ed718199caecbb427cd6094284fbef38e7374a44d86940",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/medium_network.py",
+      "sha256": "ff2ae4113d9a630422dddbeb2741180d8a107ac0fa9636820391ccb3d6e5e689",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/small_network.py",
+      "sha256": "fac7a7704cb4d602d2d6195f4b4da318d5d8da6cb1eca2a38b9103a5c81bdf2f",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/scenarios/temperature_sweep.py",
+      "sha256": "b02d74e1948d65bcbd9c54f930e253393f7f5a19606c095200be5d9eed2efa47",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "benchmarks/throughput_gain.json",
+      "sha256": "9b750d464d6f23625f75fabf21c91bb553e884f5fc4fc25fd91806dddd8536c8",
+      "type": "derived_data",
+      "generator": "scripts/run_benchmarks.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "generator exists; runtime profile metadata not embedded"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "096d6c717d1f1e1331ffce56dd34d8a4b407c78575e9457c7e2301d627ddeafd",
+      "type": "config",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/ACTIONS_TEST_PROTOCOL.md",
+      "sha256": "2f748f2c53213738cbb813afd9ee09b53245106f9596911d759c34d17870c2cf",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/API_CONTRACT.md",
+      "sha256": "68aef3290ba068cdb46074139805c8b3de64b26cdb41a5a292d415b330fc4553",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "sha256": "979a0e36d557d5c9a131b2eb1be30767d330abd2da5b7b5c51ec57eea58785b6",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/ARCHITECTURE_INVARIANTS.md",
+      "sha256": "8e3a46458e741c481b10fc81c1d574e7679be89b06cdc874b87c8ce75755e138",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/AUDIT_FINDINGS.md",
+      "sha256": "de261473eb2e0de85043c1e98b7af7e52804dc56f3e26fcf5c9984af3769c7c5",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/AUDIT_LEDGER.md",
+      "sha256": "1fda89c34471687d72b5d90bd1d35851a36b3ea599e863d680e21ef85b30edc8",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/BENCHMARKS.md",
+      "sha256": "c1f519f0696ce047583d79965f5cd0e3c42150cab989c4f13372835e61216ddd",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/BENCHMARK_MAP.md",
+      "sha256": "17d903e00f813e1b967edcaa4b4e187ef16731d38eecde95982251fb745670c2",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/BIBLIOGRAPHY.md",
+      "sha256": "0a4a2e682991d5133b853d6002bb5bd6032718ad6f1b8b69de1f3004f70f6478",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md",
+      "sha256": "3e6accf282da66ebc85e43a9eb08ef036580efd66e09c1c7e48ad282cb96b1aa",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/CI_GATES.md",
+      "sha256": "dc23250239afeb51f4e6a5e999f8c72d8bb55822ff6d08e0055f0a374bf71df4",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/COMPONENT_AUDIT.md",
+      "sha256": "3591d52d8e972b6e7ecde1fd2edd5ab213496f780fcc54e82dcbc2d447216007",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/CONFERENCE_RUNBOOK.md",
+      "sha256": "ef6e7a7ff8f771f082900519cbde69fca3aef05b0a4d72e7b119cf160a4fe1d4",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/CONSTITUTIONAL_AUDIT.md",
+      "sha256": "178ee1cc377a5a79e4adb249ab80c07e845d21c17119c324198bffdcb461ba26",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md",
+      "sha256": "59c5a36356c24965b1bce07a4ab554ae0f2b9591d23156627c7cd30a00bdfc6e",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/DEMO.md",
+      "sha256": "22f111114f32141f3921faabb561d40e72523a3dfc896a0a288fecb13e2eacb7",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/DOCUMENTATION_FORMALIZATION.md",
+      "sha256": "e4f6ba7aef1a6105ac617f023f3af7dfb662de681bd1da1e2cfa44a0f97a2d00",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/EVIDENCE_COVERAGE.md",
+      "sha256": "45f5f8811846adc4ca1b66845dc5e14a66f2d60c55532e72c306919893051ff0",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/GOVERNANCE.md",
+      "sha256": "daa96e290d366864c0ef323ba2d9ed2c43c9e8cdfa31751dfcd3c5af43d4c902",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/HYPOTHESIS.md",
+      "sha256": "d7f7f5e16bb418be3d5693c3736a2498d83d3b54f148fcc454611823447a2db2",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/INDEX.md",
+      "sha256": "cd8fb993333e6fcb81d0e4f7fd95bf2eae90555bbe38100a1ad98001424f5647",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/INTEGRATION.md",
+      "sha256": "88085ac2b052eb343112c36164ce1237fe6362e85a9eb2adbf77fbb672322813",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/INVENTORY.md",
+      "sha256": "39bebb336150f3a4d490ba03b5f0e9d68513dd3deb9580b97571e11dc84bb0e3",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/LEGENDARY_QUICKSTART.md",
+      "sha256": "0a814f703f278fccb37b97d5da232dc8639a81517e3e82521161fc2cce1e0200",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/MUTATION_GATE.md",
+      "sha256": "28f85c9a0b2653005ffe234deefbb3db6ea7bc7cc3497c0b2d40599b493ae0d3",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/NORMATIVE_LABELING.md",
+      "sha256": "61e51b015e5dee657fa67039f7eae7cb3ca7ad9fe68f57dc7efe0e4a54a801ad",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "sha256": "017d8ebf56726a46ad56552eb932f056b7d3591e26bdfbdc01030ffb2883d61b",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/PERFORMANCE_REPORT.md",
+      "sha256": "2bc0a460a39dd583bbe60f823dabb1eb483e06bc6bf6fbf2fb6edae8ddcbc56c",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/PHYSICAL_VALIDITY.md",
+      "sha256": "1ba30cb84d940050b382d197004a10c6583aea4e9429a394aa37d8ef7c1cbc4f",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/PLACEHOLDER_REGISTRY.md",
+      "sha256": "454dec498cc3d2ec20a9467ec4f6c9f78fc970ca14c86b5c1ca0b37731f9bd72",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/PR40_EVIDENCE_REPORT.md",
+      "sha256": "e176cdb4df60964dde44d88b69785301071bd014d6f9e21dc30c4dfbf9f1bba5",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/QUALITY_INDEX.md",
+      "sha256": "9f929959e77e081cc43a75a3b79c02a52424db8b1147442720583d8685c89951",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/QUALITY_INFRASTRUCTURE.md",
+      "sha256": "e04e691dcf8b7afc04fb549b1de8417bd949d932fe072b933841152fe9ed493b",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/QUICKSTART.md",
+      "sha256": "2ab0f59422aa8516e6adbc4fa87a36ddf179be9f8f2e56a1759357f75e87f2c2",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/RELEASE_NOTES.md",
+      "sha256": "4f2c39d532090286f48ee91500c9ae13068dbe953228158a8c1b07f4ddcab106",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/RELEASE_PIPELINE.md",
+      "sha256": "0b0abfa2e364586128a3c5e6ebb390065a4516cf50d1a22bf80089964288e8d9",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/RELEASE_READINESS.md",
+      "sha256": "c0a722a30856c54f3f66dc7503083ae52aea26ecb1a8ae2486d82e4e719fb9b0",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/REPO_STRUCTURE.md",
+      "sha256": "4fbb62e6dea966c049ff9a9058379882d68c90c26ad8c953f3847a0b00fd24fb",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/REPRODUCIBILITY.md",
+      "sha256": "edc6f84f5e9d67c30d3abee53b515e9b9604ce7868138f841e0bf26170fe004c",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/REPRODUCIBILITY_ENVELOPE.md",
+      "sha256": "312f21cff63a52d016dee9e5e316214a0dbbcaedacd06785d5692948fcb95959",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SCALABILITY.md",
+      "sha256": "249f58dfeaa3c3fe2cc599acef67e6bb703a50fa5a1bff705105c3164f0a200e",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SCALABILITY_REPORT.md",
+      "sha256": "6a1ac861ff0ed37a563acf7b6c4fd71c2a9a938eb7b070f3bf14a98877745fa2",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SECURITY_GITLEAKS.md",
+      "sha256": "ed7ffba439d6fca4253476b4580b7c2c7fb3eca792f2a918ca18eb7f7997e023",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SPEC.md",
+      "sha256": "fe7f1d1a98013c09d0a90c85d7e78d1eb6e6298d9f5f8df7d1d667eda878b3db",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SSOT.md",
+      "sha256": "c49b0bf331d9a04acf6dead417c2ada044f442c890c2d1b08ed3f3445b462ac1",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/SSOT_RULES.md",
+      "sha256": "713ff46f84a5a48f7dcad715f63886dc4a50eb8fa975079f35e36f0d69fedcea",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "sha256": "e808ed8a2f8fb4523e520e3d11efe581ae43bd8df0d67accfa7e37d09be61050",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/TESTING.md",
+      "sha256": "13de0b91eaf18bdf1c9eafabee41ddd9d91df59071622e08cf2efe1e19c22914",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/TESTING_MUTATION.md",
+      "sha256": "243f8a4fc8d2500cb3970ee703300e18df2b4afa6ecd666ad08044afe6d47d23",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/THROUGHPUT_SCALING.md",
+      "sha256": "ee78dedd9d3b01c96edec1235d543a4b66991614ce0ded0b3723cf376dbc0f1a",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/TRACEABILITY_MAP.md",
+      "sha256": "f361da99748b66d1161648d99ce47fd15cb13477f2ac35ac8378f029623b262b",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/TROUBLESHOOTING.md",
+      "sha256": "3bb521c4465d55e8aef789e268184742acee2903f48dc5f7642cfc7d3a4ecac2",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/VCG.md",
+      "sha256": "1472a6337096f4958862a4ca0654e26bb95d192e4bcf72a2b6e3ccb8ec822283",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_static/README.md",
+      "sha256": "ed505855a969de210f78795613c46bbaff83e351a3a37605818976a120270f47",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_static/manifest.json",
+      "sha256": "72b7db6be7ae714f3109a0f0c6d9b98a917303ec47b6216cc9a7a0c6804e5508",
+      "type": "derived_data",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_static/tools/update_manifest.py",
+      "sha256": "2bae9ef28b3433389091b08f67df8aa0d7a305efbf01323596978bb1809c7933",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_templates/README.md",
+      "sha256": "09c00be7ec4d8339cf43956e87d8cff223ff8ff9b4d60191c1de5ffbfd06b0b6",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_templates/manifest.json",
+      "sha256": "89e8c62c3fae220fd7859a566e427f49dd8aafc4653e3283dfd3483e6dd04240",
+      "type": "derived_data",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/_templates/tools/update_manifest.py",
+      "sha256": "192d3f87a4496b69015447f507343c4b4ae9dbd51b14f90b28cf528f5f0d51b6",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/api_bnsyn.md",
+      "sha256": "b7e958d9c56e03296941015da0594f6a752c7470bd7ac4eb416766170c5936f7",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/conf.py",
+      "sha256": "18d59df17dcf2f2123c13977a9ccdf80bc79101570271fba1fa079006293e26e",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.cli.rst",
+      "sha256": "1801756bfb45e72abc729aba86d2dcd0a185f752b7d0dc386ff417203cc34beb",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.config.rst",
+      "sha256": "59a3a37f347ede039d180b6b17a5bb5a72d0d3b79c24eacb3ee5d518ee8b5893",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.connectivity.sparse.rst",
+      "sha256": "753cafc17af804c89adb164ccd47e73e043c9437567fb0f10c9b5a646b51960a",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.criticality.branching.rst",
+      "sha256": "f2fae34fd85a8af0efc1d37621880d941d455a357c46e3ad8ea7f66b19b777a4",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.neuron.adex.rst",
+      "sha256": "3615887afc43122189a29672485552d19dece4f00013de0506af1f699da29b58",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.plasticity.three_factor.rst",
+      "sha256": "6b3faa5bcf01fbf6bcba7d1ba6fb5d7ad3bafb5e31f956066476b1316a6425f8",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.rng.rst",
+      "sha256": "7d7e9451bedcff739c42d494461fa8aeae442973437412ac2abe3a001961da87",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.sim.network.rst",
+      "sha256": "be6e05ef875755f95103b087b872e19b9caf387fca39f5c4a71f4a5d3bda3ab1",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.synapse.conductance.rst",
+      "sha256": "9992239d540f9060c02efc5013318d897b2fa73b787ab1ef9e728fc438fc4508",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/generated/bnsyn.temperature.schedule.rst",
+      "sha256": "e23d250f1abb5c388183647bdc99fbf861aadf0b05986d8e31cea8aef6f33145",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/index.md",
+      "sha256": "9ffa446f6c580b62952ab2bd608daeabcfcfe15f922272600647210b1330cf3f",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api/modules.md",
+      "sha256": "d23f941dd6a0253d25e7fc35b83a9d177dc7d24620e78dc8d04ac013508c1c3a",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/api_maturity.json",
+      "sha256": "e5c7d10b087f9d2501b9df44c08da8be13a1197fab050c3a53ccec4f0171f94c",
+      "type": "derived_data",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md",
+      "sha256": "06537ddcc211e372da3f1de7af4c4c2b5ef275314c41ed24c2b8f517ce024395",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/appendix/EXECUTIVE_SUMMARY.md",
+      "sha256": "a31ab89fd82d0ba99b53a3a523a8e602d2d154212f3aa7dd23442d77b8a0fd4b",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/appendix/PRODUCTION_AUDIT.md",
+      "sha256": "33f17bc4a8af2110251cbed7f60b4fb4cafe6c6884e57ca7ff44733503bd06a0",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/appendix/PRODUCTION_ROADMAP.md",
+      "sha256": "d068084207ab3e134f9509e728073feeebf262d28221c167693d1dae8dabcbb6",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/appendix/additional_audit_2026.md",
+      "sha256": "5f7c4e98bc3e4525c7391881516cbb2537cc1e09b7f8873bc2f53f88d69fa8b7",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/benchmarks/PROTOCOL.md",
+      "sha256": "95700f9122e457fb511e9e2995226257252d494134441de0251be6558ca356f1",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/benchmarks/README.md",
+      "sha256": "ece0d46d5c95129dc5fb26472f5a49626da09be7e265a4a2b49e0db5684302da",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/benchmarks/SCHEMA.md",
+      "sha256": "439df1bbc3c182418cc8e191ad216d0f8061cfdc4be092b1bc0fc97f59905dd9",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/benchmarks/ci_comparison_report_alloc_v2.txt",
+      "sha256": "b4e712d16118c20a2a693d02fb7972c66829919113a60382c9236bf4ae146541",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/benchmarks/threshold_derivation_alloc_v2.md",
+      "sha256": "ac166ccd593c95d60880e1ab9902fa517c1ccbde9a76e67adeec246f82df6ecb",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/conf.py",
+      "sha256": "f0a27fafa93513981c4e5348e5eee9cc8ce4fc396bc4100c652af975a5fcb369",
+      "type": "formula",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/emergence_tracking.md",
+      "sha256": "ab1685c4a6fce64205d6135fa86fecc3317331f6a27cb8b7aa46540f77c6722c",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/index.rst",
+      "sha256": "348d9c7b58ea1eb7e5a9b0654b327e1071c2a68d356614448b0c30d3c5463810",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/math/CONTRACTS.md",
+      "sha256": "c1742ef3b24aa19f59716d1614fb0d8a24209bffda76c1de6eae7354b0ebe5cd",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/math/PROVENANCE.md",
+      "sha256": "a79f98c9241e0374f4289f313368abe022a3e03ff0ec248bface8a5a81f5f68e",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/modules.rst",
+      "sha256": "c61f8c0a9a70c2d489a8265e5efcce015b7823a31530ee995fc513b5bee1ea20",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/safety/deferred_gates.md",
+      "sha256": "ac6048574b1a5c5bcefb80df08c6909dcc94327e098ccb1c9694550c1f3feca1",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/safety/followups.md",
+      "sha256": "d4858c8881199cd63f7eabd47d9da64b329f9551108521e59b6f31f4de57ad92",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/safety/hazard_log.yml",
+      "sha256": "e7196f1f1ef5e3158042c49f3b3f3a8966bbd3004f9d78aaab0301b200290c81",
+      "type": "config",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/safety/stpa.md",
+      "sha256": "fe972ebb58b6e2a179fcb80dc6ba78a764dab8d66b578ffc1a3530c9c7c4aeec",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/safety/traceability.yml",
+      "sha256": "fa29c78060a76e43a2c2a88acd02bb7c847649229fb44161d96fbbcc5cd04ce0",
+      "type": "config",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/sleep_stack.md",
+      "sha256": "6eea717ade28a457c1894a2d7186d9071f4f147acb8f0a84ade75a588796415f",
+      "type": "report",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "docs/spec_to_code.yml",
+      "sha256": "6603e0a430eb1ba05898d20fc953f367461ca7c3e3e91f44a5c145c613531726",
+      "type": "config",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "f4dc679dba89576e936ea42e1b47575059fb7dc73d62ffcbfffaeec289260fcf",
+      "type": "config",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
+      "path": "results/temp_ablation_v1/cooling_geometric.json",
+      "sha256": "36b5ee870c4a03d65ba4d399315196693eb5c1457e1cd6d5600fe8bd17056bfd",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v1/fixed_high.json",
+      "sha256": "b1bbb12b8b65d5a32107d442c97a59b28d863b004d5a5f22a3120f0ddec96be6",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v1/fixed_low.json",
+      "sha256": "a0ca345a899b434b1991c10ce1b338e58fea562f47588dc56625a50cba557192",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v1/manifest.json",
+      "sha256": "384be12ec14427f8a0215e78a68d1c386f3cb0dae7785ab0e21d34c069badc75",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v1/random_T.json",
+      "sha256": "330cba54f2157c77329f8767e96e69a3645dfaa87348c555155389bf2e406a0e",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v2/cooling_piecewise.json",
+      "sha256": "fec92cfbdf570a6a21a9447ea440df82634a992be8443f026731433dbaf5fb69",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v2/fixed_high.json",
+      "sha256": "b1bbb12b8b65d5a32107d442c97a59b28d863b004d5a5f22a3120f0ddec96be6",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v2/fixed_low.json",
+      "sha256": "a0ca345a899b434b1991c10ce1b338e58fea562f47588dc56625a50cba557192",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v2/manifest.json",
+      "sha256": "af901dcc0db33fb527edb410b2c084475b2faa96da0a855b87f78c2ca7c14169",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "results/temp_ablation_v2/random_T.json",
+      "sha256": "330cba54f2157c77329f8767e96e69a3645dfaa87348c555155389bf2e406a0e",
+      "type": "derived_data",
+      "generator": "experiments/temperature_ablation_consolidation.py",
+      "provenance": "PARTIAL",
+      "provenance_gap": "seed list present; deterministic replay command not embedded per file"
+    },
+    {
+      "path": "src/bnsyn/__init__.py",
+      "sha256": "431338ffe47c6c52ff152fe8216490e239349747b802d4f19b499393a9247aa8",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/benchmarks/__init__.py",
+      "sha256": "94fd83aa2f40e244112b4ae0c33f7f559bd3d49e6f9132ca23932b20a0bab5c6",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/benchmarks/regime.py",
+      "sha256": "50f55fa19409f8da262d79e0c31f86ce945e52a7475a319502273a8f782bcbae",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/calibration/__init__.py",
+      "sha256": "99cd4db2aab236196cb8ea4462f3e941f0de225da5f95fe9b539da32bfc75a2e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/calibration/accuracy_speed.py",
+      "sha256": "c46be3492deb992985af5a85d10a8dde49c4d1ee198b10eb423ad52bd6928150",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/calibration/fit.py",
+      "sha256": "a55118484fc94a9abbe5e18abbda6ddca142a97589252766be2bbe9834192899",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/cli.py",
+      "sha256": "03ee9ce248eaa40cd98424fd0fb0796509495b00e63654b356589d177e25f564",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/config.py",
+      "sha256": "6106cbe065ed4155d58907dca8df99684237aaed419d1192ced7da9765345152",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/connectivity/__init__.py",
+      "sha256": "fdd24d38fe4e9cf4e652d7080d861fa1379a8a540c82c94ed33c950b5e671f2f",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/connectivity/sparse.py",
+      "sha256": "d2d86a7977a7a169fb7a8e706fac6b795ae5803f5bda7ab1d64a00890bbe724b",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/consolidation/__init__.py",
+      "sha256": "0ac7339e4c5f2e411afa928a6a70c6f6a2c30da119f7a597a9ddafd9050e947c",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/consolidation/dual_weight.py",
+      "sha256": "3c0f1baf501c2d059c2b84dc5897629a17eb18c75b3d146d3595fc7b53975d9a",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/control.py",
+      "sha256": "5959b80943e81ee730aff3faf309112635547b049cbc0958ec66581c20bbb773",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/criticality/__init__.py",
+      "sha256": "b88ce3003ce7d890a8c41314f2c9a07f6b6affcda1c61b709799fca2eba4b80a",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/criticality/analysis.py",
+      "sha256": "83485c596e20c55b65db1f274336ad720f19cb18fb2cb68651c1321dd42bc620",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/criticality/branching.py",
+      "sha256": "131288dccfe1e3ed31680892613ae24ebb7a2dd8eca5a24d877100bcbc5e8d46",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/criticality/phase_transition.py",
+      "sha256": "c5b33fd4d9fbb470550f060ddf6d872eaaf5b806a464079b380dbafb8fe9949f",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/emergence/__init__.py",
+      "sha256": "15d54f3a452fcaeb1e0dd555eaf449e75ad204e7f0b8507fedf34ff4eb35aec1",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/emergence/crystallizer.py",
+      "sha256": "4cb2251b59ea4a376616af47126ceb6833f7c3f7bec22eb3ef7eb24faf422303",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/energy/__init__.py",
+      "sha256": "0701a5217846ca162ca4150f8a7755dcb2e450748415e08d0a12546bb6b8a57b",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/energy/regularization.py",
+      "sha256": "58d1c20d1d8604f5cc1e0cb1478123a5bb1dc44a668f3e63bac01abfac7f5ba1",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/experiments/__init__.py",
+      "sha256": "b689c3f330ed27d8daf731efc9d09f0e31493da13ef030c9bb776a3c99aad379",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/experiments/declarative.py",
+      "sha256": "242e06fc28cfa9fa528e5426d4d99b0819908d53c5ff2d6bcbc107bd294a78d5",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/incremental.py",
+      "sha256": "4ad5944447b9042966581b2721ca20b1eb67456eeb5247bd05b7ac216e806895",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/memory/__init__.py",
+      "sha256": "ce37a341af944494b8b1c5b47b1c0b12ec12a4a90212f8baedd4977d9c1c48ec",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/memory/consolidator.py",
+      "sha256": "2938e45b268bdeb9ad029c70d0fd7362ebf1abb5caced6c1f495897abe93b43b",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/memory/ledger.py",
+      "sha256": "c445d29690cab606232dd9683c4a232b5546f1128f3bb369fd06fcc6d2beedea",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/memory/trace.py",
+      "sha256": "6b571a27824aa98c0fd49a65cd27153e50dd3620317bb3d6959a3c7d0eb46397",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/neuron/__init__.py",
+      "sha256": "5c240eb1907f62fa1b780d02643b1d6916e7807a067f0b09cfba4d971ddcd9ac",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/neuron/adex.py",
+      "sha256": "1b25be505fda19f13b5b008faf54039524059a7db77c092543436a597ce7f53e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/neurons.py",
+      "sha256": "7fab85332c927364d9e16d06f26944da29f985846541ba912995a16a7b7800a5",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/numerics/__init__.py",
+      "sha256": "0ac37ec2faed3a0eb999936860f8ce4cbccde10989eb2dcbd87ae4ff014f8c3d",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/numerics/integrators.py",
+      "sha256": "30abb4b1bae8a51b854cdab5b603468e196f4bd5b638d01d74dd0b4b98193180",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/plasticity/__init__.py",
+      "sha256": "5598924a1bd05ba582b5e159fe2d92dd00eea61a9197014d17d11ec96a25d5c4",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/plasticity/stdp.py",
+      "sha256": "d372d96b23b2440c3cf27aa8d1334ec6e8d5bb9e7a0e3411ff47d3848c1a6c18",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/plasticity/three_factor.py",
+      "sha256": "e004560821b5d3edd559bbb5221b7007acc6bb3678168ff6c5a844f40511648f",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/production/__init__.py",
+      "sha256": "003afb0490028c5efbb6cef1dc5f128ec55c456990919f17557538e0dd4216eb",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/production/adex.py",
+      "sha256": "2ff16503af327a0970c2b96514ce67c07fbf97ff968092e3eb5ad2514e7ad64e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/production/connectivity.py",
+      "sha256": "ed35add514329cdfd4f8a7600dd72ff880d319336cf6a6210ed7f48b6644d851",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/production/jax_backend.py",
+      "sha256": "69ad01cf72a9239e2e9b754b106daba49e5821d206a25235278e35462f2cdee4",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/provenance/__init__.py",
+      "sha256": "113402d774e353ba623c84c98e6711084bf0f9bc9fa6e26d53d91ee50f30e75f",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/provenance/manifest.py",
+      "sha256": "fba1dab120ad03675d0b15ae3ccb455487969a3d841080eef6758f717c47441f",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/provenance/manifest_builder.py",
+      "sha256": "78bd5448adbaee97fee0cbb9682b2a4129f919245fd426cfac841cddf20add01",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/rng.py",
+      "sha256": "c0eca6ebd495b36f435fffa9bc5a9a4b83287deab8a0f0ddb8dbb761da672137",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/schemas/__init__.py",
+      "sha256": "fbb043d22b63101ce08010315d3c960855c6a6c92b90bc41031ba590fd197742",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/schemas/experiment.py",
+      "sha256": "bf5dcc61cbed98da76bc696263e6521cda0e404ca4e462615ac114f424bea83c",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sim/__init__.py",
+      "sha256": "441ea35b07df53f1d5c3e61595722ae4c570cfa1d257b128d68328346cb31c9c",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sim/network.py",
+      "sha256": "8935e0640124612b06ac0f63aa77e276fd9ce1873f2bcc28cf1b76a020aff377",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/simulation.py",
+      "sha256": "4ac316d0130584c4c89a1c5b02938719ea62e81bb495b9eff466cc8c4225a66b",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sleep/__init__.py",
+      "sha256": "be3c05497006f22b58cd5a3df79aac33ab7755357302c00acc1f0f2ecc0ea04e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sleep/cycle.py",
+      "sha256": "2d487d2fb5239aba568fcd6d390b6c366af46086b77c9353cc1f1332ae759c3a",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sleep/replay.py",
+      "sha256": "d46af20bf2a8fe9f50ada567e083defc246d2c44195e7c9752fd9f8ed6065fd6",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/sleep/stages.py",
+      "sha256": "cb986992b0fe504dc3d116f023538e905a5c97644c883a2efa61e5432a7f482e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/synapse/__init__.py",
+      "sha256": "4168f5391ee9bd39a4c7c39fb3685de78c14348b803caf2de90190c2309a2fca",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/synapse/conductance.py",
+      "sha256": "f9bbb5df8502024d2f7ca3a623ee96734286a651b9628e4bd97c819d6e917737",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/synapses.py",
+      "sha256": "2827570bea385c9e20203bc804afeac674b12e0de6ecd19748b36bdd4062f5d4",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/temperature/__init__.py",
+      "sha256": "c4bb620ca79c3ceb2fef9d02d1365f62822b3338883add8eee22d4d555e16950",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/temperature/schedule.py",
+      "sha256": "16a2396da223d7be1a3af5d59421a2d4ded95ecb97424fa62662132a5a61b56e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/testing/__init__.py",
+      "sha256": "6739f21b40771d4c79676c48f9814d82221fc7733ad6251598d9b67ce7c4e5a9",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/testing/faults.py",
+      "sha256": "324b93804949e61b26bb1ff26c843e761eb516a172be89fb0741343b26acfab5",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/tools/__init__.py",
+      "sha256": "7ff0952b3d82225f7205aa2fc03c2696a47b11e013ba141a2cec35d6659e0b9a",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/tools/benchmark_sleep_stack_scale.py",
+      "sha256": "78bee4e911f98fc98bbea18f85ac3cee19e68f7cb4791baf7827f3f4ac89a59e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/tools/run_scaled_sleep_stack.py",
+      "sha256": "f944ae7f7da6607eb388058378ed9cbcf8c4ec727e89f843e578b2164e1a9d28",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/validation/__init__.py",
+      "sha256": "9704775868dcee38615b946b52fd50f1b76dff4a3ed5089d1f4b64f5150fa383",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/validation/inputs.py",
+      "sha256": "a0fedb0ae8b158882ba7c100e9a61fd4671091b753dc12a69edddb9b3aa706e6",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/vcg.py",
+      "sha256": "3a5da81e879ad223b6ea052afe116a1fb1e80d444ad942d3a4675274ab2fe121",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/viz/__init__.py",
+      "sha256": "857cdb7b0d998a2eb221e53e186f14253e917db664b0ad496de025a437887a94",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/viz/dashboard.py",
+      "sha256": "b16f244ae9f7971beadf9db5b5d2e1a89585ad08dab96f8f21a62999edc65a40",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/bnsyn/viz/interactive.py",
+      "sha256": "d8933e9a8c7924c256ee5096d2cc12720a6004d53ba0824612fc0fcc28630879",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/contracts/__init__.py",
+      "sha256": "894c60d5f4d185be7bbfd12095055695f10dd048a91f517aab58459df9e284f6",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    },
+    {
+      "path": "src/contracts/math_contracts.py",
+      "sha256": "a1adef2632c9d44a04716cb759f198a1c65b41618cad397b3c93ac1c3174e38e",
+      "type": "numeric_code",
+      "generator": null,
+      "provenance": "SOURCED",
+      "provenance_gap": "version-controlled source"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+f0144b1 (HEAD -> work) Fix math gate CI stability and sync manifest artifacts
+478bc94 Expand math gate tests to cover all scoped artifacts
+8904abc Add deterministic Math Quality Gate: validator, contracts, docs, tests, and CI
+033bdd2 Merge pull request #189 from neuron7x/codex/conduct-ci-and-battle-usage-verification
+bbd56d3 Regenerate INVENTORY.json to resolve inventory drift gate
+e2ac3e5 Tighten fail-closed audit status and gap closure tracking
+86ba5de Close audit gaps with local gate convergence and status policy
+55ffbab Add CI and battle-usage audit report for 2026-02-07
+5ec7930 Merge pull request #188 from neuron7x/codex/scale-flagship-experiment-to-n=2000
+53bdae3 chore: regenerate inventory after adding coverage tests
+2275a71 fix: align README summary contract and smoke assertions
+389affc fix: tighten scaled-tool smoke contract and baseline/determinism semantics
+a738c68 fix: remove PYTHONPATH test hacks and add fast-mode flags for scaled tool
+b4184a6 fix: harden scaled tooling entrypoints and docs for CI-safe reproducibility
+97a15c3 feat+perf: scale sleep-stack workflow to N=2000 with determinism evidence
+0edaa9c Merge pull request #187 from neuron7x/codex/provide-project-feedback
+f0a5c86 fix: regenerate manifest inventory and harden api-contract import fallback
+853aa9b docs: align UA appendix with canonical api-contract proof
+20e94a5 fix: make api-contract check runnable without PYTHONPATH
+2682313 docs: add factual codex project feedback in ukrainian
