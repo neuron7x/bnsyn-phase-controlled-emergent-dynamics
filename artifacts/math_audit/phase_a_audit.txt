@@ -532,3 +532,447 @@ def test_hazard_scan_skips_unsupported_python_syntax(tmp_path: Path) -> None:
     assert hazard_checks[0].status in {"SKIP", "PASS"}
 ### python scripts/math_validate.py
 EXIT:0
+### CMD: git status
+On branch work
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   artifacts/math_audit/phase_a_audit.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+### CMD: git rev-parse --abbrev-ref HEAD
+work
+
+### CMD: git log -n 5 --oneline
+e3acd85 Harden math quality gate with domain-specific contracts and tests
+3f94cbb fix(ci): sync workflow contracts and manifest for math-quality gate
+ee5bc29 fix(ci): quote extras spec for actionlint shellcheck compliance
+dddcd95 chore(security): record explicit clean bidi scan result (#190)
+0efb3bc chore(math-audit): refresh generated validator artifacts (#190)
+
+### CMD: find . -name "*.py" -o -name "*.json" -o -name "*.csv" -o -name "*.npy" -o -name "*.npz" -o -name "*.yaml" -o -name "*.toml" | grep -v __pycache__ | grep -v .git | grep -v node_modules | sort > /tmp/all_files.txt
+3122 /tmp/all_files.txt
+
+### CMD: grep -rl "numpy\|scipy\|np\.\|math\.\|torch\.\|jax\." --include="*.py" . | sort > /tmp/numeric_code.txt
+1467 /tmp/numeric_code.txt
+
+### CMD: grep -rl "integrate\|solver\|euler\|runge\|rk4\|step.*dt\|odeint" --include="*.py" . | sort > /tmp/ode_code.txt
+377 /tmp/ode_code.txt
+
+### CMD: grep -rl "phase\|coherence\|kuramoto\|synchron\|order.*param\|coupling" --include="*.py" . | sort > /tmp/phase_code.txt
+154 /tmp/phase_code.txt
+
+### CMD: find . \( -name "*.csv" -o -name "*.json" -o -name "*.npy" -o -name "*.npz" \) -not -path "./.git/*" -exec ls -lh {} \; > /tmp/data_files.txt
+137 /tmp/data_files.txt
+
+### CMD: cat src/contracts/math_contracts.py
+from __future__ import annotations
+
+import math
+from typing import Iterable
+
+import numpy as np
+
+
+def assert_non_empty_text(value: str) -> None:
+    if not value.strip():
+        raise AssertionError("empty_text")
+
+
+def assert_numeric_finite_and_bounded(values: Iterable[float], *, bound: float = 1e12) -> None:
+    for value in values:
+        if not math.isfinite(value):
+            raise AssertionError("non_finite_detected")
+        if abs(value) > bound:
+            raise AssertionError("range_violation_abs_gt_bound")
+
+
+def assert_dt_stability(dt: float, max_eigenvalue: float, *, method: str = "euler") -> None:
+    method_l = method.lower()
+    threshold = 1.0 if method_l == "euler" else 2.785 if method_l == "rk4" else None
+    if threshold is None:
+        raise AssertionError(f"unsupported_method:{method}")
+    product = dt * abs(max_eigenvalue)
+    if product >= threshold:
+        raise AssertionError(
+            f"dt_stability_violation:method={method_l}:dt|lambda|={product:.6g}:threshold={threshold}"
+        )
+
+
+def assert_state_finite_after_step(state: np.ndarray, step_index: int) -> None:
+    if not np.all(np.isfinite(state)):
+        bad = np.argwhere(~np.isfinite(state)).flatten().tolist()
+        raise AssertionError(f"state_non_finite:step={step_index}:indices={bad}")
+
+
+def assert_energy_bounded(energy_series: np.ndarray, max_energy: float) -> None:
+    energy = np.asarray(energy_series, dtype=np.float64)
+    if energy.ndim != 1 or energy.size == 0:
+        raise AssertionError("energy_series_invalid_shape")
+    if np.any(~np.isfinite(energy)):
+        raise AssertionError("energy_non_finite")
+    over = np.where(np.abs(energy) > max_energy)[0]
+    if over.size:
+        idx = int(over[0])
+        raise AssertionError(f"energy_bound_violation:index={idx}:value={energy[idx]:.6g}")
+    deltas = np.diff(energy)
+    inc = np.where(deltas > 1e-4)[0]
+    if inc.size:
+        idx = int(inc[0] + 1)
+        raise AssertionError(f"energy_monotonicity_violation:index={idx}:delta={deltas[inc[0]]:.6g}")
+
+
+def assert_integration_tolerance_consistency(atol: float, rtol: float, dt: float) -> None:
+    if not (atol < dt):
+        raise AssertionError(f"atol_dt_inconsistent:atol={atol}:dt={dt}")
+    if not (rtol > np.finfo(np.float64).eps):
+        raise AssertionError(f"rtol_too_small:rtol={rtol}")
+
+
+def assert_phase_range(phases: np.ndarray) -> None:
+    vals = np.asarray(phases, dtype=np.float64)
+    if vals.size == 0:
+        raise AssertionError("phase_empty")
+    in_0_2pi = np.all((vals >= 0.0) & (vals < 2.0 * np.pi))
+    in_pm_pi = np.all((vals >= -np.pi) & (vals < np.pi))
+    if not (in_0_2pi or in_pm_pi):
+        bad = np.where(~(((vals >= 0.0) & (vals < 2.0 * np.pi)) | ((vals >= -np.pi) & (vals < np.pi))))[0]
+        raise AssertionError(f"phase_out_of_range:indices={bad[:10].tolist()}")
+
+
+def assert_order_parameter_range(r: float) -> None:
+    eps = 1e-10
+    if not (-eps <= r <= 1.0 + eps):
+        raise AssertionError(f"order_parameter_out_of_range:r={r}")
+
+
+def assert_order_parameter_computation(phases: np.ndarray, reported_r: float, tol: float = 1e-6) -> None:
+    vals = np.asarray(phases, dtype=np.float64)
+    recomputed = float(np.abs(np.mean(np.exp(1j * vals))))
+    if abs(recomputed - reported_r) >= tol:
+        raise AssertionError(
+            f"order_parameter_mismatch:reported={reported_r:.9g}:recomputed={recomputed:.9g}:tol={tol}"
+        )
+
+
+def assert_phase_velocity_finite(dtheta_dt: np.ndarray) -> None:
+    vals = np.asarray(dtheta_dt, dtype=np.float64)
+    if not np.all(np.isfinite(vals)):
+        raise AssertionError("phase_velocity_non_finite")
+
+
+def assert_coupling_matrix_properties(K: np.ndarray, expected_symmetric: bool = True) -> None:
+    arr = np.asarray(K)
+    if arr.ndim != 2 or arr.shape[0] != arr.shape[1]:
+        raise AssertionError(f"coupling_shape_invalid:shape={arr.shape}")
+    if not np.all(np.isfinite(arr)):
+        raise AssertionError("coupling_non_finite")
+    if expected_symmetric and not np.allclose(arr, arr.T, atol=1e-12):
+        raise AssertionError("coupling_not_symmetric")
+    _ = float(np.max(np.abs(np.linalg.eigvals(arr))))
+
+
+def assert_adjacency_binary(A: np.ndarray) -> None:
+    arr = np.asarray(A)
+    if arr.ndim != 2 or arr.shape[0] != arr.shape[1]:
+        raise AssertionError("adjacency_shape_invalid")
+    if not np.all(np.isin(arr, (0, 1))):
+        raise AssertionError("adjacency_non_binary")
+    if not np.all(np.diag(arr) == 0):
+        raise AssertionError("adjacency_self_loops")
+
+
+def assert_weight_matrix_nonnegative(W: np.ndarray) -> None:
+    arr = np.asarray(W, dtype=np.float64)
+    if np.any(arr < 0):
+        idx = np.argwhere(arr < 0)[0].tolist()
+        raise AssertionError(f"weight_negative:index={idx}:value={arr[tuple(idx)]}")
+
+
+def assert_no_catastrophic_cancellation(
+    a: np.ndarray, b: np.ndarray, result: np.ndarray, context: str
+) -> None:
+    aa = np.asarray(a, dtype=np.float64)
+    bb = np.asarray(b, dtype=np.float64)
+    rr = np.asarray(result, dtype=np.float64)
+    ref = np.maximum(np.abs(aa), np.abs(bb))
+    small = np.abs(aa - bb)
+    mask = (ref > 0) & (small / ref < 1e-8)
+    if np.any(mask):
+        if np.any(rr[mask] == 0.0):
+            raise AssertionError(f"catastrophic_cancellation:{context}")
+        rel_err = np.abs((rr - (aa - bb)) / np.maximum(np.abs(aa - bb), 1e-30))
+        if np.any(rel_err[mask] > 1e-3):
+            raise AssertionError(f"catastrophic_cancellation:{context}")
+
+
+def assert_no_log_domain_violation(x: np.ndarray, context: str) -> None:
+    arr = np.asarray(x, dtype=np.float64)
+    bad = np.where(arr <= 0)[0]
+    if bad.size:
+        raise AssertionError(f"log_domain_violation:{context}:indices={bad[:10].tolist()}")
+
+
+def assert_no_exp_overflow_risk(x: np.ndarray, context: str) -> None:
+    arr = np.asarray(x, dtype=np.float64)
+    bad = np.where(np.abs(arr) > 500.0)[0]
+    if bad.size:
+        raise AssertionError(f"exp_overflow_risk:{context}:indices={bad[:10].tolist()}")
+
+
+def assert_no_division_by_zero_risk(denominator: np.ndarray, context: str) -> None:
+    arr = np.asarray(denominator, dtype=np.float64)
+    bad = np.where(np.abs(arr) < 1e-300)[0]
+    if bad.size:
+        raise AssertionError(f"division_by_zero_risk:{context}:indices={bad[:10].tolist()}")
+
+
+def assert_dtype_consistency(arrays: dict[str, np.ndarray]) -> None:
+    dtypes = {name: np.asarray(value).dtype for name, value in arrays.items()}
+    unique = {str(v) for v in dtypes.values()}
+    if len(unique) > 1:
+        raise AssertionError(f"dtype_mismatch:{dtypes}")
+
+
+def assert_no_nan_in_dataset(data: np.ndarray, name: str) -> None:
+    arr = np.asarray(data, dtype=np.float64)
+    if np.isnan(arr).any():
+        raise AssertionError(f"dataset_nan:{name}")
+
+
+def assert_no_duplicate_rows(data: np.ndarray, name: str) -> None:
+    arr = np.asarray(data)
+    if arr.ndim != 2:
+        raise AssertionError(f"dataset_not_2d:{name}")
+    unique_rows = np.unique(arr, axis=0)
+    if unique_rows.shape[0] != arr.shape[0]:
+        raise AssertionError(f"dataset_duplicate_rows:{name}")
+
+
+def assert_column_ranges(
+    data: np.ndarray, column_specs: dict[str, tuple[float, float]], name: str
+) -> None:
+    if data.dtype.names is None:
+        raise AssertionError(f"dataset_not_structured:{name}")
+    for col, (lo, hi) in column_specs.items():
+        if col not in data.dtype.names:
+            raise AssertionError(f"missing_column:{name}:{col}")
+        vals = np.asarray(data[col], dtype=np.float64)
+        if np.any((vals < lo) | (vals > hi)):
+            raise AssertionError(f"column_out_of_range:{name}:{col}")
+
+
+def assert_probability_normalization(probs: np.ndarray, axis: int, tol: float = 1e-8) -> None:
+    arr = np.asarray(probs, dtype=np.float64)
+    sums = np.sum(arr, axis=axis)
+    if not np.allclose(sums, 1.0, atol=tol, rtol=0.0):
+        raise AssertionError("probability_not_normalized")
+
+
+def assert_timeseries_monotonic_time(t: np.ndarray) -> None:
+    arr = np.asarray(t, dtype=np.float64)
+    if np.any(np.diff(arr) <= 0):
+        raise AssertionError("time_not_strictly_increasing")
+
+### CMD: cat tests/test_math_invariants.py
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+from pathlib import Path
+
+import hypothesis.extra.numpy as hnp
+import numpy as np
+import pytest
+from hypothesis import given, strategies as st
+
+from scripts.math_validate import MANIFEST_PATH, build_manifest, iter_scope_files, validate_manifest
+from src.contracts import (
+    assert_adjacency_binary,
+    assert_column_ranges,
+    assert_coupling_matrix_properties,
+    assert_dt_stability,
+    assert_dtype_consistency,
+    assert_energy_bounded,
+    assert_integration_tolerance_consistency,
+    assert_no_catastrophic_cancellation,
+    assert_no_division_by_zero_risk,
+    assert_no_duplicate_rows,
+    assert_no_exp_overflow_risk,
+    assert_no_log_domain_violation,
+    assert_no_nan_in_dataset,
+    assert_non_empty_text,
+    assert_numeric_finite_and_bounded,
+    assert_order_parameter_computation,
+    assert_order_parameter_range,
+    assert_phase_range,
+    assert_phase_velocity_finite,
+    assert_probability_normalization,
+    assert_state_finite_after_step,
+    assert_timeseries_monotonic_time,
+    assert_weight_matrix_nonnegative,
+)
+
+
+class TestContractNegativeCases:
+    def test_non_empty_text_rejects_blank(self) -> None:
+        with pytest.raises(AssertionError, match="empty_text"):
+            assert_non_empty_text("  ")
+
+    def test_numeric_finite_rejects_inf(self) -> None:
+        with pytest.raises(AssertionError, match="non_finite"):
+            assert_numeric_finite_and_bounded([1.0, math.inf])
+
+    def test_dt_stability_rejects_unstable(self) -> None:
+        with pytest.raises(AssertionError, match="dt_stability_violation"):
+            assert_dt_stability(0.1, 20.0, method="euler")
+
+    def test_state_finite_rejects_nan(self) -> None:
+        with pytest.raises(AssertionError, match="state_non_finite"):
+            assert_state_finite_after_step(np.array([1.0, np.nan]), 42)
+
+    def test_energy_rejects_growth(self) -> None:
+        with pytest.raises(AssertionError, match="energy_monotonicity_violation"):
+            assert_energy_bounded(np.array([1.0, 1.2]), 2.0)
+
+    def test_tolerance_rejects_bad_atol(self) -> None:
+        with pytest.raises(AssertionError, match="atol_dt_inconsistent"):
+            assert_integration_tolerance_consistency(0.1, 1e-6, 0.01)
+
+    def test_phase_range_rejects_invalid(self) -> None:
+        with pytest.raises(AssertionError, match="phase_out_of_range"):
+            assert_phase_range(np.array([0.1, 7.1]))
+
+    def test_order_parameter_range_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="order_parameter_out_of_range"):
+            assert_order_parameter_range(1.2)
+
+    def test_order_parameter_computation_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="order_parameter_mismatch"):
+            assert_order_parameter_computation(np.array([0.0, np.pi]), 0.9)
+
+    def test_phase_velocity_rejects_inf(self) -> None:
+        with pytest.raises(AssertionError, match="phase_velocity_non_finite"):
+            assert_phase_velocity_finite(np.array([1.0, np.inf]))
+
+    def test_coupling_matrix_rejects_asymmetry(self) -> None:
+        with pytest.raises(AssertionError, match="coupling_not_symmetric"):
+            assert_coupling_matrix_properties(np.array([[1.0, 2.0], [0.0, 1.0]]))
+
+    def test_adjacency_rejects_self_loops(self) -> None:
+        with pytest.raises(AssertionError, match="adjacency_self_loops"):
+            assert_adjacency_binary(np.array([[1, 0], [0, 0]]))
+
+    def test_weight_matrix_rejects_negative(self) -> None:
+        with pytest.raises(AssertionError, match="weight_negative"):
+            assert_weight_matrix_nonnegative(np.array([[1.0, -1.0], [0.0, 1.0]]))
+
+    def test_cancellation_contract_rejects_precision_loss(self) -> None:
+        a = np.array([1e16], dtype=np.float64)
+        b = np.array([1e16 - 1.0], dtype=np.float64)
+        with pytest.raises(AssertionError, match="catastrophic_cancellation"):
+            assert_no_catastrophic_cancellation(a, b, np.array([0.0]), "test")
+
+    def test_log_domain_rejects_non_positive(self) -> None:
+        with pytest.raises(AssertionError, match="log_domain_violation"):
+            assert_no_log_domain_violation(np.array([1.0, 0.0]), "test")
+
+    def test_exp_overflow_rejects_large_values(self) -> None:
+        with pytest.raises(AssertionError, match="exp_overflow_risk"):
+            assert_no_exp_overflow_risk(np.array([1.0, 800.0]), "test")
+
+    def test_division_by_zero_rejects_tiny_denominator(self) -> None:
+        with pytest.raises(AssertionError, match="division_by_zero_risk"):
+            assert_no_division_by_zero_risk(np.array([1.0, 1e-320]), "test")
+
+    def test_dtype_consistency_rejects_mixed(self) -> None:
+        with pytest.raises(AssertionError, match="dtype_mismatch"):
+            assert_dtype_consistency({"a": np.array([1.0], dtype=np.float32), "b": np.array([1.0], dtype=np.float64)})
+
+    def test_nan_dataset_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="dataset_nan"):
+            assert_no_nan_in_dataset(np.array([1.0, np.nan]), "x")
+
+    def test_duplicate_rows_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="dataset_duplicate_rows"):
+            assert_no_duplicate_rows(np.array([[1, 2], [1, 2]]), "x")
+
+    def test_column_ranges_rejects(self) -> None:
+        d = np.array([(1.2,)], dtype=[("r", np.float64)])
+        with pytest.raises(AssertionError, match="column_out_of_range"):
+            assert_column_ranges(d, {"r": (0.0, 1.0)}, "x")
+
+    def test_probability_normalization_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="probability_not_normalized"):
+            assert_probability_normalization(np.array([[0.2, 0.2]]), axis=1)
+
+    def test_timeseries_monotonic_rejects(self) -> None:
+        with pytest.raises(AssertionError, match="time_not_strictly_increasing"):
+            assert_timeseries_monotonic_time(np.array([0.0, 0.0, 1.0]))
+
+
+@given(
+    phases=hnp.arrays(
+        np.float64,
+        shape=hnp.array_shapes(min_dims=1, max_dims=1, min_side=1, max_side=200),
+        elements=st.floats(min_value=0.0, max_value=(2 * np.pi) - 1e-12, allow_nan=False, allow_infinity=False),
+    )
+)
+def test_order_parameter_always_in_unit_interval(phases: np.ndarray) -> None:
+    r = float(np.abs(np.mean(np.exp(1j * phases))))
+    assert 0.0 <= r <= 1.0 + 1e-10
+
+
+@given(N=st.integers(min_value=2, max_value=20))
+def test_symmetric_coupling_stays_symmetric(N: int) -> None:
+    rng = np.random.default_rng(123)
+    K = rng.standard_normal((N, N))
+    K = (K + K.T) / 2.0
+    assert_coupling_matrix_properties(K, expected_symmetric=True)
+
+
+def test_manifest_covers_scoped_files() -> None:
+    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest_paths = {item["path"] for item in manifest["artifacts"]}
+    scoped_paths = {str(path).replace("\\", "/") for path in iter_scope_files()}
+    assert manifest_paths == scoped_paths
+
+
+def test_validator_reports_no_failures_current_manifest() -> None:
+    manifest = build_manifest()
+    checks = validate_manifest(manifest)
+    failures = [check for check in checks if check.status == "FAIL"]
+    assert failures == []
+
+
+def test_validator_detects_untrusted_provenance(tmp_path: Path) -> None:
+    artifact = tmp_path / "sample.json"
+    artifact.write_text(json.dumps({"x": 1.0}), encoding="utf-8")
+    digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    manifest = {
+        "schema_version": "2.0",
+        "timestamp": "2026-01-01T00:00:00Z",
+        "artifacts": [
+            {
+                "path": str(artifact),
+                "sha256": digest,
+                "type": "derived_data",
+                "generator": None,
+                "provenance": "UNTRUSTED",
+                "provenance_gap": "test",
+            }
+        ],
+    }
+    checks = validate_manifest(manifest)
+    assert any(c.check_name == "provenance_trust" and c.status == "FAIL" for c in checks)
+
+
+def test_build_manifest_has_no_untrusted_entries() -> None:
+    manifest = build_manifest()
+    assert all(a["provenance"] != "UNTRUSTED" for a in manifest["artifacts"])
+
+### CMD: python scripts/math_validate.py
+EXIT:0
+

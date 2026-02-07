@@ -5,14 +5,14 @@
 - Seed: N/A (deterministic filesystem walk)
 - Dependencies: repository tracked files in `results/`, `benchmarks/`, `docs/`, `src/`, root config files
 - Reproduction: `python scripts/generate_math_data.py`
-- Checksum (SHA256): `23f7c40a3252dde276d38584b4ee723540ee6b1cbca82f2c3b40fab328f1d209`
+- Checksum (SHA256): `c0b7c1825238dbba95e2bd1eb4c247fa64bef115da10d9ab798c79dbe3fda7af`
 
 ## artifacts/math_audit/validator_report.json
 - Generator: `python scripts/math_validate.py`
 - Seed: N/A (deterministic contract execution)
 - Dependencies: `artifacts/math_audit/manifest.json`, contract set in `src/contracts/math_contracts.py`
 - Reproduction: `python scripts/math_validate.py`
-- Checksum (SHA256): `eef6021d202b7ca6f2940d859af7925fd3edc444ed579d5b52d3a8a518c5f329`
+- Checksum (SHA256): `e446191a8ea00380312ebcb8ea6bc3375c43074e4de437806da41599518e5db7`
 
 ## artifacts/math_audit/validator_report.md
 - Generator: `python scripts/math_validate.py`
@@ -37,7 +37,7 @@
 - Seed: N/A
 - Dependencies: repository file inventory and command outputs
 - Reproduction: rerun Phase A command block from task specification
-- Checksum (SHA256): `cafca403fc233004f4b6a3d0ceadfbd763d55d46c17b0cbcb255a945c86f0dd6`
+- Checksum (SHA256): `cd78d067b710b45ddbc6d0c15d2c15ac8a4538f504c2b95acf3602eea980d46d`
 
 ## artifacts/math_audit/hardened_run.log
 - Generator: `python scripts/math_validate.py 2>&1 | tee artifacts/math_audit/hardened_run.log`
