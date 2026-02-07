@@ -22,7 +22,7 @@ jobs:
         run: python scripts/math_validate.py
       - name: Run math invariant tests
         run: pytest tests/test_math_invariants.py -v --tb=short
-      - name: Verify no UNTRUSTED artifacts
+      - name: Artifact Integrity Verification
         run: |
           python - <<'PY'
           import json

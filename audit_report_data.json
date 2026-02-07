@@ -1,5 +1,5 @@
 {
-  "inventory_total_files": 633,
+  "inventory_total_files": 634,
   "categories": {
     "CI_CD": {
       "files": 29,
@@ -8,10 +8,10 @@
       "blank": 301
     },
     "CONFIGURATION": {
-      "files": 42,
-      "code": 3364,
-      "comments": 1867,
-      "blank": 656
+      "files": 44,
+      "code": 3425,
+      "comments": 1858,
+      "blank": 641
     },
     "CORE_LOGIC": {
       "files": 68,
@@ -27,15 +27,15 @@
     },
     "DOCUMENTATION": {
       "files": 94,
-      "code": 6459,
-      "comments": 2676,
-      "blank": 3099
+      "code": 6446,
+      "comments": 2674,
+      "blank": 3097
     },
     "GENERATED": {
-      "files": 114,
-      "code": 111402,
-      "comments": 113,
-      "blank": 309
+      "files": 107,
+      "code": 91872,
+      "comments": 87,
+      "blank": 177
     },
     "INFRASTRUCTURE": {
       "files": 3,
@@ -44,10 +44,10 @@
       "blank": 47
     },
     "SCRIPTS_TOOLING": {
-      "files": 123,
-      "code": 12464,
-      "comments": 477,
-      "blank": 2359
+      "files": 128,
+      "code": 12927,
+      "comments": 490,
+      "blank": 2427
     },
     "STATIC_ASSETS": {
       "files": 8,
@@ -56,17 +56,17 @@
       "blank": 2074
     },
     "TESTS": {
-      "files": 148,
-      "code": 11625,
+      "files": 149,
+      "code": 11649,
       "comments": 555,
-      "blank": 3140
+      "blank": 3148
     }
   },
   "countable_totals": {
-    "files": 519,
-    "code": 69555,
-    "comments": 6982,
-    "blank": 13612
+    "files": 527,
+    "code": 70090,
+    "comments": 6984,
+    "blank": 13671
   },
   "core_logic_sublevels": {
     "novel": 28,

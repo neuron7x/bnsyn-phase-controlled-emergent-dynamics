@@ -41,7 +41,9 @@ python - <<'PY'
 import json,re,zipfile
 from pathlib import Path
 from lxml import etree
-odt=Path('/mnt/data/codex pr.odt')
+odt=Path('/mnt/data/кодекс чек.odt')
+if not odt.exists():
+    odt=Path('/mnt/data/codex pr.odt')
 out=Path('artifacts/math_audit')
 claims={}
 if odt.exists():
@@ -55,7 +57,7 @@ if odt.exists():
     for i,n in enumerate(nums[:200],1):
         claims[f'CLAIM-{i:03d}']={'description':'numeric claim extracted from ODT','claimed_value':n,'where_in_odt':'content.xml','required_evidence':['repo_metrics'], 'verification_method':'compare_with_computed_metrics'}
 else:
-    claims['CLAIM-000']={'description':'ODT input missing','claimed_value':'UNKNOWN','where_in_odt':'/mnt/data/codex pr.odt','required_evidence':['provide_spec_file'],'verification_method':'N/A'}
+    claims['CLAIM-000']={'description':'ODT input missing','claimed_value':'UNKNOWN','where_in_odt':'/mnt/data/кодекс чек.odt|/mnt/data/codex pr.odt','required_evidence':['provide_spec_file'],'verification_method':'N/A'}
 (out/'claims.json').write_text(json.dumps(claims,indent=2,sort_keys=True)+'\n')
 PY
 
@@ -116,6 +118,18 @@ report={
 PY
 
 python scripts/valuation_model.py
+python - <<'PY'
+import json,hashlib
+from pathlib import Path
+cm=json.loads(Path('artifacts/math_audit/computed_metrics.json').read_text())
+out=[]
+for cat in ['CORE_LOGIC','TESTS']:
+    for rel in cm['categories'][cat]['files']:
+        p=Path(rel)
+        out.append({'category':cat,'path':rel,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size})
+Path('artifacts/math_audit/core_tests_sha256.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+PY
+
 python - <<'PY'
 import hashlib,json,subprocess
 from pathlib import Path

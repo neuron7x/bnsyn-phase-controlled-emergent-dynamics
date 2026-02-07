@@ -1,47 +1,30 @@
-# Data Provenance — BN-Syn
+# Data Provenance — BN-Syn Math Audit
 
-## artifacts/math_audit/manifest.json
-- Generator: `python scripts/generate_math_data.py`
-- Seed: N/A (deterministic filesystem walk)
-- Dependencies: repository tracked files in `results/`, `benchmarks/`, `docs/`, `src/`, root config files
-- Reproduction: `python scripts/generate_math_data.py`
-- Checksum (SHA256): `c0b7c1825238dbba95e2bd1eb4c247fa64bef115da10d9ab798c79dbe3fda7af`
+## Source-of-Truth Policy
+- Canonical audit metrics: `artifacts/math_audit/computed_metrics.json`
+- Independent cross-check metrics: `artifacts/math_audit/crosscheck_metrics.json`
+- Invariant gate result: `artifacts/math_audit/reconciliation_report.json`
+- CI/CD workflow analytics: `artifacts/math_audit/ci_cd_metrics.json`
+- Valuation model I/O: `artifacts/math_audit/valuation_inputs.json`, `artifacts/math_audit/valuation_results.json`
 
-## artifacts/math_audit/validator_report.json
-- Generator: `python scripts/math_validate.py`
-- Seed: N/A (deterministic contract execution)
-- Dependencies: `artifacts/math_audit/manifest.json`, contract set in `src/contracts/math_contracts.py`
-- Reproduction: `python scripts/math_validate.py`
-- Checksum (SHA256): `e446191a8ea00380312ebcb8ea6bc3375c43074e4de437806da41599518e5db7`
+## Reproduction Command (single source)
+- `bash scripts/run_audit.sh`
 
-## artifacts/math_audit/validator_report.md
-- Generator: `python scripts/math_validate.py`
-- Seed: N/A
-- Dependencies: validator execution results
-- Reproduction: `python scripts/math_validate.py`
-- Checksum (SHA256): `c0a9eaaf814cc40181ffadc17719653950d017ea596ed8ac619d27ccc770b1ae`
+## Artifacts Folder Provenance
+| Artifact | Source of Truth | Reproduction Command |
+|---|---|---|
+| `artifacts/math_audit/computed_metrics.json` | `scripts/compute_repo_metrics.py` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/crosscheck_metrics.json` | `scripts/crosscheck_metrics.py` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/reconciliation_report.json` | invariant block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/ci_cd_metrics.json` | `scripts/ci_cd_analyzer.py` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/claims.json` | ODT parser block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/valuation_inputs.json` | `scripts/valuation_model.py` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/valuation_results.json` | `scripts/valuation_model.py` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/core_tests_sha256.json` | checksum block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/inputs_manifest.json` | manifest block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/toolchain_versions.json` | toolchain capture block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/environment_facts.json` | environment capture block in `scripts/run_audit.sh` | `bash scripts/run_audit.sh` |
+| `artifacts/math_audit/raw/*` | command logs emitted by scripts/commands | `bash scripts/run_audit.sh` |
 
-## artifacts/math_audit/baseline_env.txt
-- Generator: phase-0 environment baseline command block
-- Seed: N/A
-- Dependencies: local Python/pip/runtime platform and installed packages
-- Reproduction:
-  - `python --version`
-  - `python -m pip --version`
-  - `python -c "import platform; print(platform.platform())"`
-  - `python -m pip freeze`
-- Checksum (SHA256): `a719e4b5d759d2017c565db33a99cb2113b228cd3f5efbc9259f0e468ed55105`
-
-## artifacts/math_audit/phase_a_audit.txt
-- Generator: Phase A audit command bundle
-- Seed: N/A
-- Dependencies: repository file inventory and command outputs
-- Reproduction: rerun Phase A command block from task specification
-- Checksum (SHA256): `cd78d067b710b45ddbc6d0c15d2c15ac8a4538f504c2b95acf3602eea980d46d`
-
-## artifacts/math_audit/hardened_run.log
-- Generator: `python scripts/math_validate.py 2>&1 | tee artifacts/math_audit/hardened_run.log`
-- Seed: N/A
-- Dependencies: validator runtime output stream
-- Reproduction: command above
-- Checksum (SHA256): `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+## Legacy files
+Legacy artifacts in `artifacts/math_audit/` not listed above are non-canonical historical outputs and are not used by the final valuation model.

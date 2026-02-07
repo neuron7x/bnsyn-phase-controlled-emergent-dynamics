@@ -16,6 +16,8 @@ excludes:
     reason: "rust build output"
   - pattern: "__pycache__/**"
     reason: "python cache"
+  - pattern: "artifacts/math_audit/**"
+    reason: "self-generated audit outputs excluded from canonical inventory to avoid recursive non-determinism"
   - pattern: ".DS_Store"
     reason: "os metadata"
 categories:

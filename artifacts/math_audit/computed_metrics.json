@@ -64,6 +64,7 @@
         "REPO_WORK_ASSESSMENT_VALUATION.md",
         "SECURITY.md",
         "VERIFICATION_REPORT.md",
+        "audit/classification_rules.yml",
         "audit_report_data.json",
         "bibliography/bnsyn.bib",
         "bibliography/mapping.yml",
@@ -77,15 +78,16 @@
         "quality/coverage_gate.json",
         "quality/mutation_baseline.json",
         "requirements-lock.txt",
+        "schemas/audit_report_data.schema.json",
         "schemas/experiment.schema.json",
         "specs/coq/BNsyn_Sigma.v",
         "specs/tla/BNsyn.cfg",
         "specs/tla/BNsyn.tla"
       ],
-      "files_count": 42,
+      "files_count": 44,
       "loc_blank": 641,
-      "loc_code": 3300,
-      "loc_comments": 1858
+      "loc_code": 3445,
+      "loc_comments": 1859
     },
     "CORE_LOGIC": {
       "files": [
@@ -273,9 +275,9 @@
         "specs/tla/README.md"
       ],
       "files_count": 94,
-      "loc_blank": 3099,
-      "loc_code": 6459,
-      "loc_comments": 2676
+      "loc_blank": 3097,
+      "loc_code": 6446,
+      "loc_comments": 2674
     },
     "GENERATED": {
       "files": [
@@ -316,13 +318,6 @@
         "artifacts/manifest/07_generate.txt",
         "artifacts/manifest/08_validate.txt",
         "artifacts/manifest/09_diff.txt",
-        "artifacts/math_audit/baseline_env.txt",
-        "artifacts/math_audit/failures_fixed.md",
-        "artifacts/math_audit/hardened_run.log",
-        "artifacts/math_audit/manifest.json",
-        "artifacts/math_audit/phase_a_audit.txt",
-        "artifacts/math_audit/validator_report.json",
-        "artifacts/math_audit/validator_report.md",
         "artifacts/release_rc/build.log",
         "artifacts/release_rc/chaos_validation_run.log",
         "artifacts/release_rc/coverage.json",
@@ -394,10 +389,10 @@
         "results/temp_ablation_v2/manifest.json",
         "results/temp_ablation_v2/random_T.json"
       ],
-      "files_count": 114,
-      "loc_blank": 309,
-      "loc_code": 111402,
-      "loc_comments": 113
+      "files_count": 107,
+      "loc_blank": 177,
+      "loc_code": 91872,
+      "loc_comments": 87
     },
     "INFRASTRUCTURE": {
       "files": [
@@ -486,7 +481,10 @@
         "scripts/check_benchmark_regressions.py",
         "scripts/check_coverage_gate.py",
         "scripts/check_mutation_score.py",
+        "scripts/ci_cd_analyzer.py",
         "scripts/compare_benchmarks.py",
+        "scripts/compute_repo_metrics.py",
+        "scripts/crosscheck_metrics.py",
         "scripts/generate_benchmark_baseline.py",
         "scripts/generate_coverage_baseline.py",
         "scripts/generate_coverage_trend.py",
@@ -505,6 +503,7 @@
         "scripts/release_pipeline.py",
         "scripts/release_readiness.py",
         "scripts/render_workflow_policy_docs.py",
+        "scripts/run_audit.sh",
         "scripts/run_benchmarks.py",
         "scripts/run_mutation_pipeline.py",
         "scripts/run_scaled_sleep_stack.py",
@@ -524,6 +523,7 @@
         "scripts/validate_required_checks.py",
         "scripts/validate_status_claims.py",
         "scripts/validate_workflow_contracts.py",
+        "scripts/valuation_model.py",
         "scripts/verify_equivalence.py",
         "scripts/verify_formal_constants.py",
         "scripts/visualize_experiment.py",
@@ -536,10 +536,10 @@
         "tools/manifest/validate.py",
         "tools/safety/check_safety_artifacts.py"
       ],
-      "files_count": 123,
-      "loc_blank": 2359,
-      "loc_code": 12464,
-      "loc_comments": 477
+      "files_count": 128,
+      "loc_blank": 2427,
+      "loc_code": 12927,
+      "loc_comments": 490
     },
     "STATIC_ASSETS": {
       "files": [
@@ -576,6 +576,7 @@
         "tests/test_api_maturity.py",
         "tests/test_api_surface_reexports.py",
         "tests/test_attractor_crystallizer.py",
+        "tests/test_audit_rules.py",
         "tests/test_benchmark_regression_gate.py",
         "tests/test_benchmarks_smoke.py",
         "tests/test_calibration_accuracy_speed.py",
@@ -708,9 +709,9 @@
         "tests/validation/test_validation.py",
         "tests/validation/test_viz_dashboard.py"
       ],
-      "files_count": 148,
-      "loc_blank": 3140,
-      "loc_code": 11625,
+      "files_count": 149,
+      "loc_blank": 3148,
+      "loc_code": 11649,
       "loc_comments": 555
     }
   },
@@ -883,9 +884,9 @@
         "sha256": "c50c4fa8e149c9744a69e811b52722c57445ba25f413e4cfec81295aae9c04a1"
       },
       {
-        "bytes": 1338,
+        "bytes": 1340,
         "path": ".github/workflows/math-quality-gate.yml",
-        "sha256": "0ed722a38d86553a90f43121ddfb310f0e3a672493dbcc1ffea3bd4b4f1632b9"
+        "sha256": "7b16576282a41d2fcce73e5822934605c8535f2f49d6de37b982654f4f3db577"
       },
       {
         "bytes": 2587,
@@ -1013,9 +1014,9 @@
         "sha256": "51d46832a7bca23fa0d5cd0938fe1ef064aab2899dd6628809864ffb25f5720e"
       },
       {
-        "bytes": 3226,
+        "bytes": 3885,
         "path": "REPO_WORK_ASSESSMENT_VALUATION.md",
-        "sha256": "5d5e7f03895077f981f6fe54c51ee7e2864083bcaf7dcc03b72569a9671e645b"
+        "sha256": "2bb83e1d7594e62c473fd98c53ac812911da2cc74be9728c027528930ddad084"
       },
       {
         "bytes": 272,
@@ -1213,41 +1214,6 @@
         "sha256": "dab7ee2f8ff49074a15ae7cab8a18352688eeeca29333b41894461debf358ac9"
       },
       {
-        "bytes": 723,
-        "path": "artifacts/math_audit/baseline_env.txt",
-        "sha256": "a719e4b5d759d2017c565db33a99cb2113b228cd3f5efbc9259f0e468ed55105"
-      },
-      {
-        "bytes": 998,
-        "path": "artifacts/math_audit/failures_fixed.md",
-        "sha256": "c2468a97a9689f070283d1c630dae1e51d015d64413abb7405551c484fb7d112"
-      },
-      {
-        "bytes": 0,
-        "path": "artifacts/math_audit/hardened_run.log",
-        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-      },
-      {
-        "bytes": 68178,
-        "path": "artifacts/math_audit/manifest.json",
-        "sha256": "c0b7c1825238dbba95e2bd1eb4c247fa64bef115da10d9ab798c79dbe3fda7af"
-      },
-      {
-        "bytes": 51526,
-        "path": "artifacts/math_audit/phase_a_audit.txt",
-        "sha256": "cd78d067b710b45ddbc6d0c15d2c15ac8a4538f504c2b95acf3602eea980d46d"
-      },
-      {
-        "bytes": 486413,
-        "path": "artifacts/math_audit/validator_report.json",
-        "sha256": "e446191a8ea00380312ebcb8ea6bc3375c43074e4de437806da41599518e5db7"
-      },
-      {
-        "bytes": 281,
-        "path": "artifacts/math_audit/validator_report.md",
-        "sha256": "c0a9eaaf814cc40181ffadc17719653950d017ea596ed8ac619d27ccc770b1ae"
-      },
-      {
         "bytes": 28144,
         "path": "artifacts/release_rc/build.log",
         "sha256": "6541edd162bb20ce2727c4d1d924f4522f3dd7dae4691a1bece04f11b45c5aeb"
@@ -1366,6 +1332,11 @@
         "bytes": 1410,
         "path": "artifacts/rwu_log.md",
         "sha256": "43af68a0c0f524a7871dec12713575ccf753db1bd3b59de0687dd481915b71ae"
+      },
+      {
+        "bytes": 1967,
+        "path": "audit/classification_rules.yml",
+        "sha256": "1e2593e4c0ce282bb215d1c45d37f67fdcff5387f2de16bc317406ad6d3c7602"
       },
       {
         "bytes": 1708,
@@ -1498,9 +1469,9 @@
         "sha256": "cdca66cd63eccc717f3e2cc6b620fe239918d327a97067746c150c22f4ce9add"
       },
       {
-        "bytes": 1498,
+        "bytes": 1496,
         "path": "audit_report_data.json",
-        "sha256": "efbeaa2114232df0f1584f3619aca03e44bab3ce8b918ff119f46862c20459b9"
+        "sha256": "87b61d536b1b678f0eb06910e62b5e2f27f02acd24fa03571e9126994793843a"
       },
       {
         "bytes": 5115,
@@ -2228,9 +2199,9 @@
         "sha256": "c1742ef3b24aa19f59716d1614fb0d8a24209bffda76c1de6eae7354b0ebe5cd"
       },
       {
-        "bytes": 2142,
+        "bytes": 2230,
         "path": "docs/math/PROVENANCE.md",
-        "sha256": "0683ae228cdbd50fde5cadd1a8e9eeafee071df55d983c1b68d81569fc89a36c"
+        "sha256": "66cb15aab070b1046a7780a3f03aad0ba0c821b05698c2ebe3785fd175ca7ee0"
       },
       {
         "bytes": 190,
@@ -2453,6 +2424,11 @@
         "sha256": "330cba54f2157c77329f8767e96e69a3645dfaa87348c555155389bf2e406a0e"
       },
       {
+        "bytes": 1523,
+        "path": "schemas/audit_report_data.schema.json",
+        "sha256": "2e25d0438e06efcbc5c394ce703d343955b410575f0bc6fefadaa19de35239c5"
+      },
+      {
         "bytes": 1665,
         "path": "schemas/experiment.schema.json",
         "sha256": "8aadee71ef6c1db4733f9bb6a09134d721011af7dd0d93e17bcfa1f8c4f9ef73"
@@ -2523,9 +2499,24 @@
         "sha256": "9a6ab8e3e545086af92a6c6c73b6fb139c4a60a9907b25da665999cae7f2b98b"
       },
       {
+        "bytes": 2572,
+        "path": "scripts/ci_cd_analyzer.py",
+        "sha256": "4d2890d3b1b884ee365e2bcde9e6fd608f884c29844a8a06cd037474b36f784d"
+      },
+      {
         "bytes": 6599,
         "path": "scripts/compare_benchmarks.py",
         "sha256": "6e7a7b16b04e3bd34dadc2805387eb21d66120e69bd88d059c8c3a3d17962ea5"
+      },
+      {
+        "bytes": 6284,
+        "path": "scripts/compute_repo_metrics.py",
+        "sha256": "cf74b7d154e1428918d932d7587b2764f0f419109c83f58e424968d26a08e648"
+      },
+      {
+        "bytes": 3144,
+        "path": "scripts/crosscheck_metrics.py",
+        "sha256": "ab3b7aa6677bc562649b2d353ea67b52f807fdebbd3afe49e8c077a5a82728d2"
       },
       {
         "bytes": 7528,
@@ -2616,6 +2607,11 @@
         "bytes": 2428,
         "path": "scripts/render_workflow_policy_docs.py",
         "sha256": "9856dd9108dedfc1439269c6f935b9597aca030e1c5980f46300a7c64653a561"
+      },
+      {
+        "bytes": 7291,
+        "path": "scripts/run_audit.sh",
+        "sha256": "12602fc795c1fe31c898feddb01feb5e2945913474225238742c1b0b0a37eb7d"
       },
       {
         "bytes": 6422,
@@ -2711,6 +2707,11 @@
         "bytes": 8464,
         "path": "scripts/validate_workflow_contracts.py",
         "sha256": "dc48f43adac50641e26fae15d865e7975522c570edd6b9918824f05661bf7ba1"
+      },
+      {
+        "bytes": 2817,
+        "path": "scripts/valuation_model.py",
+        "sha256": "8fe3c409b5269f8f6f8ba7ce07b86eeca0d31c0b06c46cae83800a2a03c33f83"
       },
       {
         "bytes": 12375,
@@ -3196,6 +3197,11 @@
         "bytes": 8940,
         "path": "tests/test_attractor_crystallizer.py",
         "sha256": "0dffc9fe71810f9bf0fda8563acc8c890017e6b3217947ce48b2970d41f5c419"
+      },
+      {
+        "bytes": 1118,
+        "path": "tests/test_audit_rules.py",
+        "sha256": "23291be26051c97c0393ce0fd27f5394039238e33307bedb67bc07c4aebdbc57"
       },
       {
         "bytes": 2646,
@@ -3893,27 +3899,27 @@
         "sha256": "833188ee0437587e084663b51431589e1150d3caf52db2a42775e731d11963ff"
       }
     ],
-    "total_files": 633
+    "total_files": 634
   },
   "language_extensions": {
     ".bib": 1,
     ".cff": 1,
     ".cfg": 1,
-    ".json": 46,
+    ".json": 45,
     ".lock": 1,
-    ".log": 21,
-    ".md": 105,
+    ".log": 20,
+    ".md": 103,
     ".png": 8,
-    ".py": 317,
+    ".py": 322,
     ".rst": 12,
-    ".sh": 3,
+    ".sh": 4,
     ".tla": 1,
     ".toml": 2,
-    ".txt": 65,
+    ".txt": 63,
     ".typed": 1,
     ".v": 1,
     ".yaml": 2,
-    ".yml": 40,
+    ".yml": 41,
     "<none>": 5
   },
   "metadata": {
@@ -3937,9 +3943,9 @@
         "name": "Codex"
       }
     ],
-    "first_commit": "715aa014afad29da67f40a4f19fb43d4f32d1a1c 2026-02-07 18:55:05 +0000 Codex",
-    "head": "715aa014afad29da67f40a4f19fb43d4f32d1a1c",
-    "latest_commit": "commit 715aa014afad29da67f40a4f19fb43d4f32d1a1c\nAuthor: Codex <codex@openai.com>\nDate:   2026-02-07T18:55:05+00:00\n\n    Calibrate audit evidence and finalize merge-ready valuation report\n    \n    ### Motivation\n    - Produce an updated, evidence-bound valuation report that matches the repository's current state and is merge-ready.\n    - Ensure deterministic, reproducible aggregates and arithmetic reconciliation between the narrative report and machine-readable inputs.\n    - Surface CI/CD, test, complexity and inventory evidence so figures survive audit and cross-examination.\n    \n    ### Description\n    - Added `REPO_WORK_ASSESSMENT_VALUATION.md` containing the reconciled valuation narrative, convergence binding, dual framing, and final monetary ranges.\n    - Persisted deterministic evidence under `audit_evidence/` (notably `00_index.txt`, `01_metadata.txt`, `02_contributors.txt`, `03_file_inventory.txt`, `04_loc.txt`, `05_tests.txt`, `06_cicd.txt`, `07_complexity.txt`, `08_churn.txt`, `09_velocity.txt`, `10_doc_sizes.txt`, `11_function_points.txt`, and phase1/phase3 probes).\n    - Added `audit_report_data.json` with category totals, `countable_totals`, `core_logic_sublevels`, and `documentation_depth` to drive the report and enable programmatic reconciliation.\n    - Calibrated CI/CD discovery and complexity outputs (radon) and reconciled generated / countable file splits; changes committed and prepared for PR.\n    \n    ### Testing\n    - Ran `python -m json.tool audit_report_data.json` to validate JSON syntax (status: OK).\n    - Executed reconciliation assertions via a short `python` assertion script that verifies files/code totals and inventory split (status: `RECON_OK`).\n    - Collected complexity evidence with `radon cc` and persisted results to `audit_evidence/07_complexity.txt` (status: OK).\n    - Verified test inventory, CI/CD discovery (`find`), and LOC fallback outputs via the recorded `audit_evidence/*` files; `cloc` was unavailable so a labeled `wc -l` fallback was used and recorded (fallback executed and recorded).",
+    "first_commit": "8a41e85b2e5b01da97e52f0087df93d9069d746b 2026-02-07 19:21:58 +0000 Codex",
+    "head": "8a41e85b2e5b01da97e52f0087df93d9069d746b",
+    "latest_commit": "commit 8a41e85b2e5b01da97e52f0087df93d9069d746b\nAuthor: Codex <codex@openai.com>\nDate:   2026-02-07T19:21:58+00:00\n\n    chore(audit): deterministic CI/CD-safe math+financial validation bundle\n    \n    ### Motivation\n    - Fix a CI/CD classification/exclusion bug that previously hid workflows and caused CI/CD counts to be reported as zero.\n    - Produce a deterministic, reproducible, audit-grade proof bundle of repository metrics and valuation inputs so every reported number is traceable.\n    - Provide dual-source verification (canonical + crosscheck) and enforce fail-closed rules for missing external evidence (ODT, market rates, external contributions).\n    \n    ### Description\n    - Added a glob-based classification rules file (`audit/classification_rules.yml`) and unit tests (`tests/test_audit_rules.py`) to ensure `.github/workflows/**` are always classified as `CI_CD` and exclusions cannot hide workflows.\n    - Implemented a deterministic canonical metrics pipeline (`scripts/compute_repo_metrics.py`), an independent cross-check pipeline (`scripts/crosscheck_metrics.py`), and a workflow YAML analyzer (`scripts/ci_cd_analyzer.py`) that emit machine-readable artifacts under `artifacts/math_audit/`.\n    - Added an end-to-end runner (`scripts/run_audit.sh`), a pinned venv toolchain capture (`artifacts/math_audit/toolchain_versions.json` / `environment_facts.json`), JSON schema (`schemas/audit_report_data.schema.json`), and a simple valuation model (`scripts/valuation_model.py`) with evidence-gated market-rate and external-contributions sections.\n    - Persisted deterministic evidence and final report updates (`REPO_WORK_ASSESSMENT_VALUATION.md`, `audit_report_data.json`, `artifacts/math_audit/*`) and added schema validation + manifest outputs for reproducibility.\n    \n    ### Testing\n    - Bootstrapped a pinned virtual environment and installed pinned packages (`radon==6.0.1`, `PyYAML==6.0.2`, `jsonschema==4.23.0`, `lxml==5.3.0`) and recorded tool versions (success).\n    - Executed the end-to-end audit runner `bash scripts/run_audit.sh` which produced the proof bundle under `artifacts/math_audit/` and completed with `AUDIT_OK` (success).\n    - Ran regression tests `pytest -q tests/test_audit_rules.py` to validate classification rules and the tests passed (success).\n    - Validated `audit_report_data.json` against `schemas/audit_report_data.schema.json` using `jsonschema` (SCHEMA_OK) and produced `reconciliation_report.json` with all required invariants passing except external evidence gates which are intentionally marked NEEDS_EVIDENCE (invariants success; external evidence gated).",
     "total_commits": 587
   },
   "metrics": {
@@ -4044,13 +4050,13 @@
   "tests": {
     "negative_asserts": 216,
     "property_markers": 83,
-    "test_files": 148,
-    "test_functions_ast": 639
+    "test_files": 149,
+    "test_functions_ast": 641
   },
   "totals": {
-    "countable_files": 519,
-    "countable_loc_blank": 13597,
-    "countable_loc_code": 69491,
-    "countable_loc_comments": 6973
+    "countable_files": 527,
+    "countable_loc_blank": 13671,
+    "countable_loc_code": 70110,
+    "countable_loc_comments": 6985
   }
 }

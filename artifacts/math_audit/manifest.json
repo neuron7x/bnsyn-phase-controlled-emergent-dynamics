@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "timestamp": "2026-02-07T13:51:30.338257+00:00",
+  "timestamp": "2026-02-07T19:26:29.863938+00:00",
   "artifacts": [
     {
       "path": "Makefile",
@@ -1132,7 +1132,7 @@
     },
     {
       "path": "docs/math/PROVENANCE.md",
-      "sha256": "a79f98c9241e0374f4289f313368abe022a3e03ff0ec248bface8a5a81f5f68e",
+      "sha256": "66cb15aab070b1046a7780a3f03aad0ba0c821b05698c2ebe3785fd175ca7ee0",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",

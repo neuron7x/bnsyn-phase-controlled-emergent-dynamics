@@ -3,9 +3,9 @@
     "status": "UNKNOWN_NEEDS_EVIDENCE"
   },
   "replacement_cost_usd_assumption": {
-    "base": 107720.1,
-    "high": 209455.4,
-    "low": 57450.6,
+    "base": 108792.0,
+    "high": 211540.0,
+    "low": 58022.4,
     "rates_usd_per_hour": {
       "base": 90,
       "high": 140,
@@ -13,19 +13,19 @@
     }
   },
   "replacement_hours": {
-    "base_hours": 1196.89,
-    "high_hours": 1496.11,
-    "low_hours": 957.51
+    "base_hours": 1208.8,
+    "high_hours": 1511.0,
+    "low_hours": 967.04
   },
   "replacement_hours_per_category": {
     "CI_CD": 57.35,
-    "CONFIGURATION": 48.4,
+    "CONFIGURATION": 50.53,
     "CORE_LOGIC": 262.5,
     "DATA_SCHEMAS": 6.93,
-    "DOCUMENTATION": 82.89,
+    "DOCUMENTATION": 82.72,
     "INFRASTRUCTURE": 2.71,
-    "SCRIPTS_TOOLING": 251.36,
+    "SCRIPTS_TOOLING": 260.69,
     "STATIC_ASSETS": 186.37,
-    "TESTS": 298.38
+    "TESTS": 298.99
   }
 }
