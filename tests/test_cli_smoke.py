@@ -1,17 +1,10 @@
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 
 def test_cli_demo_runs() -> None:
-    root = Path(__file__).resolve().parents[1]
-    env = dict(os.environ)
-    pythonpath = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = (
-        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
-    )
     p = subprocess.run(
         [
             sys.executable,
@@ -30,19 +23,12 @@ def test_cli_demo_runs() -> None:
         check=True,
         capture_output=True,
         text=True,
-        env=env,
     )
     out = json.loads(p.stdout)
     assert "demo" in out
 
 
 def test_cli_dtcheck_runs() -> None:
-    root = Path(__file__).resolve().parents[1]
-    env = dict(os.environ)
-    pythonpath = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = (
-        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
-    )
     p = subprocess.run(
         [
             sys.executable,
@@ -63,7 +49,6 @@ def test_cli_dtcheck_runs() -> None:
         check=True,
         capture_output=True,
         text=True,
-        env=env,
     )
     out = json.loads(p.stdout)
     assert "m_dt" in out
@@ -72,14 +57,6 @@ def test_cli_dtcheck_runs() -> None:
 
 def test_cli_sleep_stack_runs() -> None:
     """Test sleep-stack CLI command."""
-    root = Path(__file__).resolve().parents[1]
-    env = dict(os.environ)
-    pythonpath = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = (
-        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
-    )
-
-    # Create temp output directory
     import tempfile
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -107,17 +84,14 @@ def test_cli_sleep_stack_runs() -> None:
             check=True,
             capture_output=True,
             text=True,
-            env=env,
         )
 
-        # Check that manifest and metrics were created
         manifest_path = out_dir / "manifest.json"
         metrics_path = out_dir / "metrics.json"
 
         assert manifest_path.exists(), "manifest.json not created"
         assert metrics_path.exists(), "metrics.json not created"
 
-        # Verify manifest contents
         with open(manifest_path) as f:
             manifest = json.load(f)
         assert "seed" in manifest
@@ -126,11 +100,9 @@ def test_cli_sleep_stack_runs() -> None:
         assert "steps_sleep" in manifest
         assert manifest["N"] == 80
 
-        # Verify metrics contents
         with open(metrics_path) as f:
             metrics = json.load(f)
 
-        # Verify backend metadata
         assert metrics["backend"] == "reference"
         assert "wake" in metrics
         assert "sleep" in metrics
@@ -138,10 +110,8 @@ def test_cli_sleep_stack_runs() -> None:
         assert "attractors" in metrics
         assert "consolidation" in metrics
 
-        # Check wake metrics
         assert "steps" in metrics["wake"]
         assert "memories_recorded" in metrics["wake"]
 
-        # Check consolidation stats
         assert "count" in metrics["consolidation"]
         assert "consolidated_count" in metrics["consolidation"]

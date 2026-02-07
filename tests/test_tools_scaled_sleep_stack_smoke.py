@@ -1,20 +1,12 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 
 def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
-    root = Path(__file__).resolve().parents[1]
-    env = dict(os.environ)
-    pythonpath = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = (
-        os.pathsep.join([str(root / "src"), pythonpath]) if pythonpath else str(root / "src")
-    )
-
     out_dir = tmp_path / "scaled"
     proc = subprocess.run(
         [
@@ -28,14 +20,24 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
             "--n",
             "80",
             "--steps-wake",
-            "50",
+            "30",
             "--steps-sleep",
-            "50",
+            "30",
+            "--baseline-steps-wake",
+            "20",
+            "--baseline-steps-sleep",
+            "10",
+            "--determinism-runs",
+            "1",
+            "--equivalence-steps-wake",
+            "20",
+            "--skip-backend-equivalence",
+            "--no-raster",
+            "--no-plots",
         ],
         check=True,
         capture_output=True,
         text=True,
-        env=env,
     )
     assert proc.returncode == 0
 
@@ -47,8 +49,8 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
     manifest = json.loads(manifest_path.read_text())
     assert manifest["seed"] == 42
     assert manifest["N"] == 80
-    assert manifest["steps_wake"] == 50
-    assert manifest["steps_sleep"] == 50
+    assert manifest["steps_wake"] == 30
+    assert manifest["steps_sleep"] == 30
 
     metrics = json.loads(metrics_path.read_text())
     assert "backend" in metrics

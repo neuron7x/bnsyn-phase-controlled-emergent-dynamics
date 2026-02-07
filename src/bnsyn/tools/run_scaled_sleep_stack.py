@@ -22,7 +22,14 @@ from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
 from bnsyn.temperature.schedule import TemperatureSchedule
 
 
-def _run_once(*, seed: int, N: int, steps_wake: int, steps_sleep: int, backend: str) -> tuple[dict[str, Any], dict[str, Any], list[tuple[int, int]]]:
+def _run_once(
+    *,
+    seed: int,
+    N: int,
+    steps_wake: int,
+    steps_sleep: int,
+    backend: str,
+) -> tuple[dict[str, Any], dict[str, Any], list[tuple[int, int]]]:
     pack = seed_all(seed)
     rng = pack.np_rng
     net = Network(
@@ -40,7 +47,6 @@ def _run_once(*, seed: int, N: int, steps_wake: int, steps_sleep: int, backend: 
     phase_detector = PhaseTransitionDetector()
     crystallizer = AttractorCrystallizer(state_dim=N, max_buffer_size=500, snapshot_dim=min(100, N))
 
-    wake_metrics: list[dict[str, float]] = []
     sigma_trace: list[float] = []
     rate_trace: list[float] = []
     raster: list[tuple[int, int]] = []
@@ -48,7 +54,6 @@ def _run_once(*, seed: int, N: int, steps_wake: int, steps_sleep: int, backend: 
     injected_current = np.full(N, 80.0, dtype=np.float64)
     for step in range(steps_wake):
         m = net.step(external_current_pA=injected_current)
-        wake_metrics.append(m)
         sigma_trace.append(float(m["sigma"]))
         rate_trace.append(float(m["spike_rate_hz"]))
         for idx in np.nonzero(net.state.spiked)[0][:200]:
@@ -118,6 +123,47 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _write_raster_artifacts(out: Path, first_raster: list[tuple[int, int]]) -> None:
+    raster_csv = out / "raster.csv"
+    raster_csv.write_text("step,neuron\n" + "\n".join(f"{s},{n}" for s, n in first_raster))
+
+    width, height = 1200, 500
+    max_step = max((s for s, _ in first_raster), default=1)
+    max_neuron = max((n for _, n in first_raster), default=1)
+    points: list[str] = []
+    for s, n in first_raster[:20000]:
+        x = int((s / max_step) * (width - 20)) + 10
+        y = int((n / max_neuron) * (height - 20)) + 10
+        points.append(f'<circle cx="{x}" cy="{height - y}" r="1" fill="#1f77b4" />')
+    svg = (
+        f"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\">"
+        + '<rect width="100%" height="100%" fill="white"/>'
+        + "".join(points)
+        + "</svg>"
+    )
+    (out / "raster.svg").write_text(svg)
+
+
+def _write_plot(out: Path, first_raster: list[tuple[int, int]], n: int) -> None:
+    try:
+        import matplotlib.pyplot as plt
+
+        if first_raster:
+            xs, ys = zip(*first_raster)
+        else:
+            xs, ys = [], []
+        plt.figure(figsize=(10, 4))
+        plt.scatter(xs, ys, s=2, alpha=0.6)
+        plt.xlabel("Wake step")
+        plt.ylabel("Neuron index")
+        plt.title(f"Scaled wake raster N={n}")
+        plt.tight_layout()
+        plt.savefig(out / "raster.png", dpi=150)
+        plt.close()
+    except Exception:
+        return
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="artifacts/local_runs/scaled_sleep_stack_n2000")
@@ -125,7 +171,22 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=2000)
     ap.add_argument("--steps-wake", type=int, default=2400)
     ap.add_argument("--steps-sleep", type=int, default=1800)
+
+    ap.add_argument("--baseline-steps-wake", type=int, default=800)
+    ap.add_argument("--baseline-steps-sleep", type=int, default=600)
+    ap.add_argument("--determinism-runs", type=int, default=3)
+    ap.add_argument("--equivalence-steps-wake", type=int, default=1200)
+    ap.add_argument("--skip-backend-equivalence", action="store_true")
+    ap.add_argument("--no-raster", action="store_true")
+    ap.add_argument("--no-plots", action="store_true")
     args = ap.parse_args()
+
+    if args.determinism_runs <= 0:
+        raise ValueError("--determinism-runs must be > 0")
+    if args.baseline_steps_wake < 0 or args.baseline_steps_sleep < 0:
+        raise ValueError("baseline steps must be >= 0")
+    if args.equivalence_steps_wake <= 0 and not args.skip_backend_equivalence:
+        raise ValueError("--equivalence-steps-wake must be > 0 unless skipping equivalence")
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -133,12 +194,11 @@ def main() -> None:
     tracemalloc.start()
     t0 = time.perf_counter()
 
-    # Baseline experiment
     b_manifest, b_metrics, _ = _run_once(
         seed=args.seed,
         N=200,
-        steps_wake=800,
-        steps_sleep=600,
+        steps_wake=args.baseline_steps_wake,
+        steps_sleep=args.baseline_steps_sleep,
         backend="reference",
     )
     bdir = out / "baseline"
@@ -146,11 +206,10 @@ def main() -> None:
     (bdir / "manifest.json").write_text(json.dumps(b_manifest, indent=2))
     (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
 
-    # Determinism triplicate scaled runs
     hashes: list[dict[str, str]] = []
     first_metrics: dict[str, Any] | None = None
     first_raster: list[tuple[int, int]] = []
-    for i in range(3):
+    for i in range(args.determinism_runs):
         manifest, metrics, raster = _run_once(
             seed=args.seed,
             N=args.n,
@@ -158,7 +217,7 @@ def main() -> None:
             steps_sleep=args.steps_sleep,
             backend="reference",
         )
-        rdir = out / f"scaled_run{i+1}"
+        rdir = out / f"scaled_run{i + 1}"
         rdir.mkdir(exist_ok=True)
         mp = rdir / "manifest.json"
         kp = rdir / "metrics.json"
@@ -169,13 +228,37 @@ def main() -> None:
             first_metrics = metrics
             first_raster = raster
 
-    # Backend equivalence guard
-    _, m_ref, _ = _run_once(seed=args.seed, N=args.n, steps_wake=1200, steps_sleep=0, backend="reference")
-    _, m_acc, _ = _run_once(seed=args.seed, N=args.n, steps_wake=1200, steps_sleep=0, backend="accelerated")
-    ref_trace = np.asarray(m_ref["trace"]["sigma"], dtype=np.float64)
-    acc_trace = np.asarray(m_acc["trace"]["sigma"], dtype=np.float64)
-    max_abs_diff = float(np.max(np.abs(ref_trace - acc_trace)))
-    equivalent = bool(np.allclose(ref_trace, acc_trace, atol=1e-8, rtol=0.0))
+    backend_equivalence: dict[str, Any]
+    if args.skip_backend_equivalence:
+        backend_equivalence = {
+            "atol": 1e-8,
+            "equivalent": None,
+            "max_abs_sigma_diff": None,
+            "skipped": True,
+        }
+    else:
+        _, m_ref, _ = _run_once(
+            seed=args.seed,
+            N=args.n,
+            steps_wake=args.equivalence_steps_wake,
+            steps_sleep=0,
+            backend="reference",
+        )
+        _, m_acc, _ = _run_once(
+            seed=args.seed,
+            N=args.n,
+            steps_wake=args.equivalence_steps_wake,
+            steps_sleep=0,
+            backend="accelerated",
+        )
+        ref_trace = np.asarray(m_ref["trace"]["sigma"], dtype=np.float64)
+        acc_trace = np.asarray(m_acc["trace"]["sigma"], dtype=np.float64)
+        backend_equivalence = {
+            "atol": 1e-8,
+            "equivalent": bool(np.allclose(ref_trace, acc_trace, atol=1e-8, rtol=0.0)),
+            "max_abs_sigma_diff": float(np.max(np.abs(ref_trace - acc_trace))),
+            "skipped": False,
+        }
 
     current, peak = tracemalloc.get_traced_memory()
     elapsed = time.perf_counter() - t0
@@ -195,12 +278,8 @@ def main() -> None:
         "steps_wake_scaled": args.steps_wake,
         "steps_sleep_scaled": args.steps_sleep,
         "determinism_hashes": hashes,
-        "determinism_identical": hashes[0] == hashes[1] == hashes[2],
-        "backend_equivalence": {
-            "atol": 1e-8,
-            "equivalent": equivalent,
-            "max_abs_sigma_diff": max_abs_diff,
-        },
+        "determinism_identical": all(h == hashes[0] for h in hashes[1:]),
+        "backend_equivalence": backend_equivalence,
         "variance_reduction_sigma_std_percent_vs_baseline": variance_reduction,
         "baseline": {
             "wake_std_sigma": b_metrics["wake"]["std_sigma"],
@@ -221,43 +300,10 @@ def main() -> None:
     }
     (out / "metrics.json").write_text(json.dumps(summary, indent=2))
 
-    # Raster artifacts (dependency-free CSV + SVG, optional PNG)
-    raster_csv = out / "raster.csv"
-    raster_csv.write_text("step,neuron\n" + "\n".join(f"{s},{n}" for s, n in first_raster))
-
-    width, height = 1200, 500
-    max_step = max((s for s, _ in first_raster), default=1)
-    max_neuron = max((n for _, n in first_raster), default=1)
-    points = []
-    for s, n in first_raster[:20000]:
-        x = int((s / max_step) * (width - 20)) + 10
-        y = int((n / max_neuron) * (height - 20)) + 10
-        points.append(f'<circle cx="{x}" cy="{height - y}" r="1" fill="#1f77b4" />')
-    svg = (
-        f"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\">"
-        + '<rect width="100%" height="100%" fill="white"/>'
-        + "".join(points)
-        + "</svg>"
-    )
-    (out / "raster.svg").write_text(svg)
-
-    try:
-        import matplotlib.pyplot as plt
-
-        if first_raster:
-            xs, ys = zip(*first_raster)
-        else:
-            xs, ys = [], []
-        plt.figure(figsize=(10, 4))
-        plt.scatter(xs, ys, s=2, alpha=0.6)
-        plt.xlabel("Wake step")
-        plt.ylabel("Neuron index")
-        plt.title(f"Scaled wake raster N={args.n}")
-        plt.tight_layout()
-        plt.savefig(out / "raster.png", dpi=150)
-        plt.close()
-    except Exception:
-        pass
+    if not args.no_raster:
+        _write_raster_artifacts(out, first_raster)
+    if not args.no_plots:
+        _write_plot(out, first_raster, args.n)
 
 
 if __name__ == "__main__":
