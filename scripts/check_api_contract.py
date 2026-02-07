@@ -79,7 +79,9 @@ def collect_public_api() -> dict[str, dict[str, str]]:
         try:
             module = importlib.import_module(module_name)
         except ModuleNotFoundError as exc:
-            if path_bootstrapped or not module_name.startswith("bnsyn"):
+            missing_name = getattr(exc, "name", "")
+            missing_bnsyn_root = missing_name in {"bnsyn", "bnsyn.__init__"}
+            if path_bootstrapped or not module_name.startswith("bnsyn") or not missing_bnsyn_root:
                 raise
             _ensure_repo_src_on_path()
             path_bootstrapped = True
