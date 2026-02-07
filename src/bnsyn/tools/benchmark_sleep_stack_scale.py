@@ -50,5 +50,5 @@ def main() -> None:
     (out / "metrics.json").write_text(json.dumps(data, indent=2))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

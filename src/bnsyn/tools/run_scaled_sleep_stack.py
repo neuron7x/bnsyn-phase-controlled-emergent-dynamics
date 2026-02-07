@@ -326,5 +326,5 @@ def main() -> None:
         _write_plot(out, first_raster, args.n)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
