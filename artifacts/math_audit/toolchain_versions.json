@@ -1,9 +1,0 @@
-{
-  "packages": {
-    "PyYAML": "Name: PyYAML\nVersion: 6.0.2\nSummary: YAML parser and emitter for Python\nHome-page: https://pyyaml.org/\nAuthor: Kirill Simonov\nAuthor-email: xi@resolvent.net\nLicense: MIT\nLocation: /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_audit/lib/python3.12/site-packages\nRequires: \nRequired-by:",
-    "jsonschema": "Name: jsonschema\nVersion: 4.23.0\nSummary: An implementation of JSON Schema validation for Python\nHome-page: https://github.com/python-jsonschema/jsonschema\nAuthor: \nAuthor-email: Julian Berman <Julian+jsonschema@GrayVines.com>\nLicense: MIT\nLocation: /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_audit/lib/python3.12/site-packages\nRequires: attrs, jsonschema-specifications, referencing, rpds-py\nRequired-by:",
-    "lxml": "Name: lxml\nVersion: 5.3.0\nSummary: Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.\nHome-page: https://lxml.de/\nAuthor: lxml dev team\nAuthor-email: lxml-dev@lxml.de\nLicense: BSD-3-Clause\nLocation: /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_audit/lib/python3.12/site-packages\nRequires: \nRequired-by:",
-    "radon": "Name: radon\nVersion: 6.0.1\nSummary: Code Metrics in Python\nHome-page: https://radon.readthedocs.org/\nAuthor: Michele Lacchia\nAuthor-email: michelelacchia@gmail.com\nLicense: MIT\nLocation: /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_audit/lib/python3.12/site-packages\nRequires: colorama, mando\nRequired-by:"
-  },
-  "pip": "pip 26.0 from /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_audit/lib/python3.12/site-packages/pip (python 3.12)"
-}

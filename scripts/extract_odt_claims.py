@@ -5,75 +5,74 @@ import argparse
 import hashlib
 import json
 import re
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
-from typing import Any
 
-from lxml import etree
+TEXT_NS = {'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'}
 
 
 def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open('rb') as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b''):
-            h.update(chunk)
-    return h.hexdigest()
+    digest = hashlib.sha256()
+    with path.open('rb') as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-def extract_claims(odt: Path, source_name: str) -> list[dict[str, Any]]:
-    with zipfile.ZipFile(odt) as zf:
-        content = zf.read('content.xml')
-    root = etree.fromstring(content)
-    ns = {'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0'}
-    paras = ["".join(p.itertext()).strip() for p in root.xpath('.//text:p', namespaces=ns)]
-
-    claims: list[dict[str, Any]] = []
-    idx = 1
-    for pidx, para in enumerate(paras, start=1):
-        if not para:
+def extract_claims_from_odt(path: Path, source_name: str) -> dict[str, dict[str, str]]:
+    with zipfile.ZipFile(path) as archive:
+        content = archive.read('content.xml')
+    root = ET.fromstring(content)
+    claims: dict[str, dict[str, str]] = {}
+    index = 1
+    for pidx, paragraph in enumerate(root.findall('.//text:p', TEXT_NS), start=1):
+        text = ''.join(paragraph.itertext()).strip()
+        if not text:
             continue
-        for m in re.finditer(r'(?<!\w)(\d[\d\s,\.]*)', para):
-            val = m.group(1).strip()
-            claims.append(
-                {
-                    'id': f'{source_name}-CLAIM-{idx:04d}',
-                    'value': val,
-                    'unit': 'UNKNOWN',
-                    'context': para[:300],
-                    'locator': f'content.xml:text:p[{pidx}]@{m.start()}-{m.end()}',
-                }
-            )
-            idx += 1
+        for match in re.finditer(r'(?<!\w)(\d[\d\s,\.]*)', text):
+            key = f'{source_name}-CLAIM-{index:04d}'
+            claims[key] = {
+                'value': match.group(1).strip(),
+                'unit': 'UNKNOWN',
+                'context': text[:300],
+                'locator': f'content.xml:text:p[{pidx}]@{match.start()}-{match.end()}',
+            }
+            index += 1
     return claims
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--inputs', nargs='+', required=True)
-    ap.add_argument('--output', default='audit_inputs/claims.json')
-    ap.add_argument('--hash-dir', default='audit_inputs/odt_sources')
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inputs', nargs='*', default=[])
+    parser.add_argument('--output', default='audit_inputs/claims.json')
+    parser.add_argument('--hash-dir', default='audit_inputs/odt_sources')
+    args = parser.parse_args()
 
     hash_dir = Path(args.hash_dir)
     hash_dir.mkdir(parents=True, exist_ok=True)
 
-    sources = []
-    all_claims: list[dict[str, Any]] = []
+    sources: list[dict[str, str]] = []
+    claims: dict[str, dict[str, str]] = {}
 
-    for in_path in args.inputs:
-        p = Path(in_path)
-        if not p.exists():
+    for candidate in sorted({str(Path(raw)) for raw in args.inputs}):
+        path = Path(candidate)
+        if not path.exists() or path.suffix.lower() != '.odt':
             continue
-        digest = sha256_file(p)
-        src_name = p.name
-        (hash_dir / f'{src_name}.sha256').write_text(f'{digest}  {src_name}\n')
-        sources.append({'name': src_name, 'sha256': digest})
-        all_claims.extend(extract_claims(p, src_name))
+        source_name = path.name
+        file_hash = sha256_file(path)
+        (hash_dir / f'{source_name}.sha256').write_text(f'{file_hash}  {source_name}\n', encoding='utf-8')
+        sources.append({'name': source_name, 'sha256': file_hash})
+        claims.update(extract_claims_from_odt(path, source_name))
 
-    all_claims.sort(key=lambda x: x['id'])
-    out = {'sources': sorted(sources, key=lambda x: x['name']), 'claims': all_claims}
-    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
-    Path(args.output).write_text(json.dumps(out, indent=2, sort_keys=True) + '\n')
+    if claims:
+        payload = {'claims': dict(sorted(claims.items())), 'sources': sorted(sources, key=lambda x: x['name'])}
+    else:
+        payload = {'claims': {}, 'sources': sorted(sources, key=lambda x: x['name']), 'note': 'No external ODT inputs provided'}
+
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8')
 
 
 if __name__ == '__main__':

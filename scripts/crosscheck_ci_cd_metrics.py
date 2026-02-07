@@ -2,40 +2,52 @@
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'artifacts' / 'math_audit'
 
 
-def git_files() -> list[str]:
-    p = subprocess.run(
+def workflow_files() -> list[str]:
+    proc = subprocess.run(
         ['git', 'ls-files', '.github/workflows/*.yml', '.github/workflows/*.yaml'],
         cwd=ROOT,
         text=True,
         capture_output=True,
         check=True,
     )
-    return [x for x in p.stdout.splitlines() if x]
+    return sorted([line for line in proc.stdout.splitlines() if line])
 
 
 def main() -> None:
-    workflows = sorted(git_files())
-    jobs = 0
-    steps = 0
+    workflows = workflow_files()
+    job_count = 0
+    step_count = 0
     uses = set()
-    for wf in workflows:
-        txt = (ROOT / wf).read_text(encoding='utf-8', errors='ignore')
-        jobs += len(re.findall(r'^\s{2}[A-Za-z0-9_-]+:\s*$', txt, flags=re.M))
-        steps += len(re.findall(r'^\s*-\s+(name:|uses:|run:)', txt, flags=re.M))
-        for m in re.finditer(r'\buses:\s*([^\n#]+)', txt):
-            uses.add(m.group(1).strip())
+
+    for rel in workflows:
+        payload = yaml.safe_load((ROOT / rel).read_text(encoding='utf-8', errors='ignore')) or {}
+        jobs = payload.get('jobs') if isinstance(payload, dict) else None
+        if isinstance(jobs, dict):
+            job_count += len(jobs)
+            for job in jobs.values():
+                if not isinstance(job, dict):
+                    continue
+                steps = job.get('steps')
+                if isinstance(steps, list):
+                    step_count += len(steps)
+                    for step in steps:
+                        if isinstance(step, dict) and isinstance(step.get('uses'), str):
+                            uses.add(step['uses'])
+
     out = {
         'workflow_count': len(workflows),
-        'job_count_proxy': jobs,
-        'step_count_proxy': steps,
+        'workflow_files': workflows,
+        'job_count': job_count,
+        'step_count': step_count,
         'uses_actions_unique': sorted(uses),
     }
     OUT.mkdir(parents=True, exist_ok=True)

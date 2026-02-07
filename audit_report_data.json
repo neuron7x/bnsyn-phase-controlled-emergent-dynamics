@@ -1,83 +1,83 @@
 {
-  "inventory_total_files": 634,
   "categories": {
     "CI_CD": {
-      "files": 29,
+      "blank": 299,
       "code": 2607,
       "comments": 100,
-      "blank": 301
+      "files": 29
     },
     "CONFIGURATION": {
-      "files": 44,
-      "code": 3425,
-      "comments": 1858,
-      "blank": 641
+      "blank": 644,
+      "code": 3488,
+      "comments": 1862,
+      "files": 47
     },
     "CORE_LOGIC": {
-      "files": 68,
+      "blank": 1852,
       "code": 7159,
       "comments": 985,
-      "blank": 1852
+      "files": 68
     },
     "DATA_SCHEMAS": {
-      "files": 4,
+      "blank": 84,
       "code": 315,
       "comments": 6,
-      "blank": 84
+      "files": 4
     },
     "DOCUMENTATION": {
-      "files": 94,
+      "blank": 3097,
       "code": 6446,
       "comments": 2674,
-      "blank": 3097
+      "files": 94
     },
     "GENERATED": {
-      "files": 107,
-      "code": 91872,
-      "comments": 87,
-      "blank": 177
+      "blank": 169,
+      "code": 88535,
+      "comments": 64,
+      "files": 81
     },
     "INFRASTRUCTURE": {
-      "files": 3,
+      "blank": 47,
       "code": 148,
       "comments": 0,
-      "blank": 47
+      "files": 3
     },
     "SCRIPTS_TOOLING": {
-      "files": 128,
-      "code": 12927,
-      "comments": 490,
-      "blank": 2427
+      "blank": 2512,
+      "code": 13215,
+      "comments": 494,
+      "files": 133
     },
     "STATIC_ASSETS": {
-      "files": 8,
+      "blank": 2074,
       "code": 25414,
       "comments": 316,
-      "blank": 2074
+      "files": 8
     },
     "TESTS": {
-      "files": 149,
+      "blank": 3148,
       "code": 11649,
       "comments": 555,
-      "blank": 3148
+      "files": 149
     }
   },
-  "countable_totals": {
-    "files": 527,
-    "code": 70090,
-    "comments": 6984,
-    "blank": 13671
-  },
   "core_logic_sublevels": {
-    "novel": 28,
-    "known_model": 19,
-    "glue": 9,
-    "boilerplate": 16
+    "boilerplate": 0,
+    "glue": 0,
+    "known_model": 0,
+    "novel": 0
+  },
+  "countable_totals": {
+    "blank": 13757,
+    "code": 70441,
+    "comments": 6992,
+    "files": 535
   },
   "documentation_depth": {
-    "stubs_lt20": 16,
-    "light_20_50": 30,
-    "substantive_gt50": 59,
-    "md_files_total": 105
-  }
+    "light_20_50": 0,
+    "md_files_total": 0,
+    "stubs_lt20": 0,
+    "substantive_gt50": 0
+  },
+  "inventory_total_files": 616
 }

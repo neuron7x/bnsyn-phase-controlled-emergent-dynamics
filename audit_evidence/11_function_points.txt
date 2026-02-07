@@ -1,5 +1,0 @@
-### COMMAND: function-point supporting counts
-Core modules (src/bnsyn non-__init__.py): 45
-CLI parser commands (add_parser): 4
-Schema modules (src/bnsyn/schemas + src/contracts): 4
-External integration import hits (numpy|scipy|yaml|matplotlib|streamlit|jax): 65

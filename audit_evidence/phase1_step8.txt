@@ -1,5 +1,0 @@
-=== INFRASTRUCTURE ===
-./docker-compose.yml
-./pyproject.toml
-./Dockerfile
-./Makefile
