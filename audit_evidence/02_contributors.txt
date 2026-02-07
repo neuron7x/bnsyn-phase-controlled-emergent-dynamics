@@ -16,4 +16,4 @@
 Human commits: 416
 Bot commits:   171
 Total commits: 587
-Bot ratio:     N/A%
+Bot ratio:     29.1%

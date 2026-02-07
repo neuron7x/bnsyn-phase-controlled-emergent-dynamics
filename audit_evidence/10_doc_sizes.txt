@@ -48,6 +48,7 @@
 181 ./docs/sleep_stack.md
 180 ./benchmarks/README.md
 163 ./docs/HYPOTHESIS.md
+160 ./REPO_WORK_ASSESSMENT_VALUATION.md
 150 ./docs/INTEGRATION.md
 142 ./docs/benchmarks/README.md
 140 ./docs/INVENTORY.md
@@ -56,7 +57,6 @@
 128 ./.github/pull_request_template.md
 127 ./docs/INDEX.md
 126 ./docs/AUDIT_FINDINGS.md
-126 ./REPO_WORK_ASSESSMENT_VALUATION.md
 115 ./docs/CI_GATES.md
 99 ./CODEBASE_READINESS.md
 94 ./docs/SSOT_RULES.md

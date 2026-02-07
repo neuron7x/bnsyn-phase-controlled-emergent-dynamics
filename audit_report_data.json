@@ -1,22 +1,23 @@
 {
+  "inventory_total_files": 635,
   "categories": {
     "CORE_LOGIC": {
-      "files": 67,
-      "code": 7015,
-      "comments": 980,
-      "blank": 1824
+      "files": 68,
+      "code": 7159,
+      "comments": 985,
+      "blank": 1852
     },
     "TESTS": {
-      "files": 147,
-      "code": 11535,
+      "files": 148,
+      "code": 11625,
       "comments": 555,
-      "blank": 3100
+      "blank": 3140
     },
     "CI_CD": {
-      "files": 0,
-      "code": 0,
-      "comments": 0,
-      "blank": 0
+      "files": 29,
+      "code": 2607,
+      "comments": 100,
+      "blank": 301
     },
     "INFRASTRUCTURE": {
       "files": 3,
@@ -25,16 +26,16 @@
       "blank": 47
     },
     "DOCUMENTATION": {
-      "files": 105,
-      "code": 7093,
-      "comments": 2247,
-      "blank": 2873
+      "files": 109,
+      "code": 7735,
+      "comments": 3109,
+      "blank": 3634
     },
     "SCRIPTS_TOOLING": {
-      "files": 121,
-      "code": 11970,
-      "comments": 476,
-      "blank": 2255
+      "files": 123,
+      "code": 12464,
+      "comments": 477,
+      "blank": 2359
     },
     "DATA_SCHEMAS": {
       "files": 4,
@@ -43,10 +44,10 @@
       "blank": 84
     },
     "CONFIGURATION": {
-      "files": 20,
-      "code": 1952,
-      "comments": 1394,
-      "blank": 106
+      "files": 26,
+      "code": 2058,
+      "comments": 1425,
+      "blank": 120
     },
     "STATIC_ASSETS": {
       "files": 8,
@@ -55,29 +56,28 @@
       "blank": 2074
     },
     "GENERATED": {
-      "files": 96,
-      "code": 109993,
-      "comments": 89,
-      "blank": 305
+      "files": 117,
+      "code": 115145,
+      "comments": 113,
+      "blank": 309
     }
   },
   "countable_totals": {
-    "files": 475,
-    "code": 65442,
-    "comments": 5974,
-    "blank": 12363
+    "files": 518,
+    "code": 69525,
+    "comments": 6973,
+    "blank": 13611
   },
-  "inventory_total_files": 571,
   "core_logic_sublevels": {
-    "novel": 27,
+    "novel": 28,
     "known_model": 19,
     "glue": 9,
     "boilerplate": 16
   },
   "documentation_depth": {
     "stubs_lt20": 16,
-    "light_20_50": 29,
-    "substantive_gt50": 56,
-    "md_files_total": 101
+    "light_20_50": 30,
+    "substantive_gt50": 59,
+    "md_files_total": 105
   }
 }

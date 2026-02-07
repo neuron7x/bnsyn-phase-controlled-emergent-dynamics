@@ -51,6 +51,7 @@
 ./tests/test_integration_experiment_flow.py
 ./tests/test_interactive_smoke.py
 ./tests/test_jax_backend.py
+./tests/test_manifest_builder.py
 ./tests/test_manifest_consistency.py
 ./tests/test_manifest_tooling.py
 ./tests/test_manifest_tooling_regression.py
@@ -141,7 +142,7 @@
 ./tests/validation/test_validation.py
 ./tests/validation/test_viz_dashboard.py
 ---
-Unique test files: 141
-Test functions:    617
+Unique test files: 142
+Test functions:    639
 Negative asserts:  216
-Property tests:    84
+Property tests:    100
