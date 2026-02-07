@@ -54,7 +54,7 @@ def test_cmd_sleep_stack_git_sha_failure(monkeypatch: pytest.MonkeyPatch, tmp_pa
     )
 
     out_dir = tmp_path / "sleep_stack"
-    args = argparse.Namespace(seed=1, steps_wake=2, steps_sleep=2, out=str(out_dir))
+    args = argparse.Namespace(seed=1, N=64, backend="reference", steps_wake=2, steps_sleep=2, out=str(out_dir))
     result = cli._cmd_sleep_stack(args)
     assert result == 0
 
@@ -87,6 +87,6 @@ def test_cmd_sleep_stack_transitions_and_figure_error(
     )
 
     out_dir = tmp_path / "sleep_stack_transitions"
-    args = argparse.Namespace(seed=2, steps_wake=2, steps_sleep=2, out=str(out_dir))
+    args = argparse.Namespace(seed=2, N=64, backend="reference", steps_wake=2, steps_sleep=2, out=str(out_dir))
     result = cli._cmd_sleep_stack(args)
     assert result == 0

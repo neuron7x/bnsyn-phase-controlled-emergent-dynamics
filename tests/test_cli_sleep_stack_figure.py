@@ -62,7 +62,7 @@ def test_cmd_sleep_stack_generates_figure(monkeypatch: pytest.MonkeyPatch, tmp_p
     monkeypatch.setattr("bnsyn.sleep.default_human_sleep_cycle", tiny_cycle)
 
     out_dir = tmp_path / "sleep_stack"
-    args = argparse.Namespace(seed=1, steps_wake=2, steps_sleep=2, out=str(out_dir))
+    args = argparse.Namespace(seed=1, N=64, backend="reference", steps_wake=2, steps_sleep=2, out=str(out_dir))
     result = cli._cmd_sleep_stack(args)
     assert result == 0
     fake_plt.subplots.assert_called_once()

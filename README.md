@@ -144,28 +144,27 @@ bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/de
 **Scaled flagship run (N=2000, extended wake/sleep):**
 
 ```bash
-PYTHONPATH=src python scripts/run_scaled_sleep_stack.py \
+python -m bnsyn.tools.run_scaled_sleep_stack \
   --out artifacts/local_runs/scaled_sleep_stack_n2000 \
   --seed 123 --n 2000 --steps-wake 2400 --steps-sleep 1800
 ```
 
-Verified artifact summary (`artifacts/local_runs/scaled_sleep_stack_n2000/metrics.json`):
+**Optional scale benchmark:**
 
-| Metric | Baseline (N=200) | Scaled (N=2000) | Evidence |
-|---|---:|---:|---|
-| Determinism (3 reruns, hash match) | — | true | `determinism_identical=true` |
-| Backend equivalence (reference vs accelerated, atol=1e-8) | — | true | `backend_equivalence.equivalent=true` |
-| Sigma std (wake) | 0.0 | 0.0 | `baseline.wake_std_sigma`, `scaled.wake_std_sigma` |
-| Variance reduction vs baseline | — | 0.0% | `variance_reduction_sigma_std_percent_vs_baseline` |
-| Attractor count | 2 | 5 | `baseline.attractors`, `scaled.attractors` |
-| Phase transitions | 0 | 0 | `baseline.transitions`, `scaled.transitions` |
+```bash
+python -m bnsyn.tools.benchmark_sleep_stack_scale
+```
 
-Benchmark artifact (`artifacts/local_runs/benchmarks_scale/metrics.json`):
+The generated `artifacts/local_runs/scaled_sleep_stack_n2000/metrics.json` contains fields:
+- `seed`, `N_scaled`, `steps_wake_scaled`, `steps_sleep_scaled`
+- `determinism_hashes` (per-run manifest/metrics hashes)
+- `determinism_identical` (bool)
+- `backend_equivalence` (`atol`, `equivalent`, `max_abs_sigma_diff`)
+- `baseline` (`wake_std_sigma`, `transitions`, `attractors`)
+- `scaled` (`wake_std_sigma`, `transitions`, `attractors`, `crystallization_progress`)
+- `benchmark` (`elapsed_s`, `memory_current_bytes`, `memory_peak_bytes`)
 
-| Case | Steps/s | Peak memory (bytes) |
-|---|---:|---:|
-| N=1000, steps=200 | 680.50 | 177652 |
-| N=10000, steps=50 | 74.41 | 1624025 |
+Benchmark output is written to `artifacts/local_runs/benchmarks_scale/metrics.json` and is machine-dependent.
 
 ### Minimal Usage Example
 

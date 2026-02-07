@@ -227,7 +227,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     rng = pack.np_rng
 
     # Create network
-    N = int(getattr(args, "N", 64))
+    N = int(args.N)
     nparams = NetworkParams(N=N)
     net = Network(
         nparams,
@@ -236,7 +236,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
         CriticalityParams(),
         dt_ms=0.5,
         rng=rng,
-        backend=getattr(args, "backend", "reference"),
+        backend=args.backend,
     )
 
     # Temperature schedule
@@ -306,7 +306,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     cons_stats = consolidator.stats()
 
     metrics: dict[str, Any] = {
-        "backend": getattr(args, "backend", "reference"),
+        "backend": args.backend,
         "wake": {
             "steps": args.steps_wake,
             "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
