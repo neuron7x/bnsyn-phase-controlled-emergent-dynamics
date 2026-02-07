@@ -2,7 +2,7 @@
 
 - Manifest version: `1.0`
 - Generated marker: `deterministic`
-- Repository fingerprint: `20b5d226b48e323df48594752bc2f0ff155ad5470109ec56a45d39acdfb7fd83`
+- Repository fingerprint: `535996cd7a84a7bc9db56d5e2314f04e7201fe049af97bde4df214629106cf4e`
 - Required PR gates source: `.github/PR_GATES.yml`
 - Required PR gates SHA-256: `f8485eae2607f385e3c905112789c460c1efcd91cf35ff516f95eba089ad4621`
 

@@ -40,7 +40,9 @@ def _win_target() -> TargetConfig:
     )
 
 
-def test_parse_locked_requirements_ignores_hashes_comments_and_continuations(tmp_path: Path) -> None:
+def test_parse_locked_requirements_ignores_hashes_comments_and_continuations(
+    tmp_path: Path,
+) -> None:
     lock_file = tmp_path / "requirements-lock.txt"
     lock_file.write_text(
         (
@@ -63,7 +65,9 @@ def test_parse_locked_requirements_ignores_hashes_comments_and_continuations(tmp
     assert parsed.duplicates == []
 
 
-def test_parse_locked_requirements_evaluates_markers_against_target_not_host(tmp_path: Path) -> None:
+def test_parse_locked_requirements_evaluates_markers_against_target_not_host(
+    tmp_path: Path,
+) -> None:
     lock_file = tmp_path / "requirements-lock.txt"
     lock_file.write_text(
         "\n".join(

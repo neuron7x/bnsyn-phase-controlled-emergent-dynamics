@@ -7,7 +7,7 @@ import json
 import time
 import tracemalloc
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 
@@ -28,7 +28,7 @@ def _run_once(
     N: int,
     steps_wake: int,
     steps_sleep: int,
-    backend: str,
+    backend: Literal["reference", "accelerated"],
 ) -> tuple[dict[str, Any], dict[str, Any], list[tuple[int, int]]]:
     pack = seed_all(seed)
     rng = pack.np_rng
@@ -136,7 +136,7 @@ def _write_raster_artifacts(out: Path, first_raster: list[tuple[int, int]]) -> N
         y = int((n / max_neuron) * (height - 20)) + 10
         points.append(f'<circle cx="{x}" cy="{height - y}" r="1" fill="#1f77b4" />')
     svg = (
-        f"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{width}\" height=\"{height}\">"
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">'
         + '<rect width="100%" height="100%" fill="white"/>'
         + "".join(points)
         + "</svg>"
@@ -148,10 +148,15 @@ def _write_plot(out: Path, first_raster: list[tuple[int, int]], n: int) -> None:
     try:
         import matplotlib.pyplot as plt
 
+        xs: list[int]
+        ys: list[int]
         if first_raster:
-            xs, ys = zip(*first_raster)
+            xs_t, ys_t = zip(*first_raster)
+            xs = list(xs_t)
+            ys = list(ys_t)
         else:
-            xs, ys = [], []
+            xs = []
+            ys = []
         plt.figure(figsize=(10, 4))
         plt.scatter(xs, ys, s=2, alpha=0.6)
         plt.xlabel("Wake step")

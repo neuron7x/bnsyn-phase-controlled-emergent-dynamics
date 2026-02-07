@@ -78,7 +78,7 @@ def specifier_allows(
         op = "=="
     wildcard = version_text.endswith(".*")
     if wildcard:
-        version_text = version_text[: -2]
+        version_text = version_text[:-2]
     required = parse_version(version_text)
     runtime_cmp = compare_versions(runtime, required)
     if op == "==":
@@ -289,9 +289,7 @@ def evaluate_policy(
     validate_python_version(project_root, runtime_version)
     contracts_path = project_root / ".github/WORKFLOW_CONTRACTS.md"
     workflows_dir = project_root / ".github/workflows"
-    rows, duplicates, exceptions = parse_inventory_table(
-        contracts_path.read_text(encoding="utf-8")
-    )
+    rows, duplicates, exceptions = parse_inventory_table(contracts_path.read_text(encoding="utf-8"))
     workflows = load_workflows(workflows_dir)
 
     violations: list[str] = []
@@ -384,10 +382,7 @@ def run_policy(
 
     return PolicyResult(
         0,
-        [
-            "OK: long_running_trigger_policy "
-            f"workflows={workflow_count} violations=0"
-        ],
+        [f"OK: long_running_trigger_policy workflows={workflow_count} violations=0"],
     )
 
 

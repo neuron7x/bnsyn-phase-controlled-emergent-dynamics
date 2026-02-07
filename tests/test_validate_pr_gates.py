@@ -11,9 +11,7 @@ def write_workflow(
     on_block: str,
     jobs: list[str],
 ) -> None:
-    jobs_block = "\n".join(
-        f"  {job}:\n    runs-on: ubuntu-latest" for job in jobs
-    )
+    jobs_block = "\n".join(f"  {job}:\n    runs-on: ubuntu-latest" for job in jobs)
     path.write_text(
         "\n".join(
             [
@@ -30,10 +28,10 @@ def write_workflow(
 
 
 def write_pr_gates(path: Path, entries: list[dict[str, object]]) -> None:
-    lines = ["version: \"1\"", "required_pr_gates:"]
+    lines = ['version: "1"', "required_pr_gates:"]
     for entry in entries:
-        lines.append(f"  - workflow_file: \"{entry['workflow_file']}\"")
-        lines.append(f"    workflow_name: \"{entry['workflow_name']}\"")
+        lines.append(f'  - workflow_file: "{entry["workflow_file"]}"')
+        lines.append(f'    workflow_name: "{entry["workflow_name"]}"')
         lines.append("    required_job_ids:")
         for job in entry["required_job_ids"]:
             lines.append(f"      - {job}")

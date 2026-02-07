@@ -83,7 +83,7 @@ def main() -> int:
                     f"--paths-to-mutate={paths_to_mutate}",
                     "--tests-dir=tests",
                     "--runner",
-                    "pytest -x -q -m \"not validation and not property and not benchmark\"",
+                    'pytest -x -q -m "not validation and not property and not benchmark"',
                 ],
                 check=False,
                 capture_output=True,
@@ -114,7 +114,12 @@ def main() -> int:
 
     score = assess_mutation_gate(
         counts,
-        MutationBaseline(baseline_score=0.0, tolerance_delta=0.0, status="active", total_mutants=counts.total_scored),
+        MutationBaseline(
+            baseline_score=0.0,
+            tolerance_delta=0.0,
+            status="active",
+            total_mutants=counts.total_scored,
+        ),
     ).score
     total_mutants = counts.total_scored
 

@@ -13,7 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 TARGET_DIRS: tuple[str, ...] = ("src", "scripts", "docs", ".github", "tests")
 DOC_EXTENSIONS: tuple[str, ...] = (".md", ".rst")
-DOC_PLACEHOLDER_PATTERN = re.compile(r"\(TEMPLATE\)|\bfill in when generating\b|\bcoming soon\b", re.IGNORECASE)
+DOC_PLACEHOLDER_PATTERN = re.compile(
+    r"\(TEMPLATE\)|\bfill in when generating\b|\bcoming soon\b", re.IGNORECASE
+)
 DOC_EXCLUDE_PATHS: tuple[str, ...] = (
     ".github/QUALITY_LEDGER.md",
     ".github/WORKFLOW_CONTRACTS.md",

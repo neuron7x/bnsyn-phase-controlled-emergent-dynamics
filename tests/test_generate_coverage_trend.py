@@ -30,7 +30,9 @@ def test_validate_state_thresholds_accepts_default() -> None:
         ((50.0, "critical"), (70.0, "low"), (95.0, "high")),
     ],
 )
-def test_validate_state_thresholds_rejects_invalid(thresholds: tuple[tuple[float, str], ...]) -> None:
+def test_validate_state_thresholds_rejects_invalid(
+    thresholds: tuple[tuple[float, str], ...],
+) -> None:
     with pytest.raises(ValueError):
         generate_coverage_trend.validate_state_thresholds(thresholds)
 
@@ -63,7 +65,9 @@ def test_load_total_coverage_rejects_missing_numeric(tmp_path: Path) -> None:
 
 def test_main_writes_json_and_csv(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     coverage_json = tmp_path / "coverage.json"
-    coverage_json.write_text(json.dumps({"totals": {"percent_covered": 91.234567}}), encoding="utf-8")
+    coverage_json.write_text(
+        json.dumps({"totals": {"percent_covered": 91.234567}}), encoding="utf-8"
+    )
     output_json = tmp_path / "out" / "coverage-trend.json"
     output_csv = tmp_path / "out" / "coverage-trend.csv"
 

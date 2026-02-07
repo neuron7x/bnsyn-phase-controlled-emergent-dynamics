@@ -8,7 +8,12 @@ import json
 from pathlib import Path
 import sys
 
-from scripts.mutation_counts import MutationBaseline, MutationCounts, assess_mutation_gate, load_mutation_baseline
+from scripts.mutation_counts import (
+    MutationBaseline,
+    MutationCounts,
+    assess_mutation_gate,
+    load_mutation_baseline,
+)
 
 REQUIRED_TOP_LEVEL_KEYS = {
     "version",
@@ -87,7 +92,12 @@ def main() -> int:
 
         computed_score = assess_mutation_gate(
             counts,
-            MutationBaseline(baseline_score=0.0, tolerance_delta=0.0, status="active", total_mutants=counts.total_scored),
+            MutationBaseline(
+                baseline_score=0.0,
+                tolerance_delta=0.0,
+                status="active",
+                total_mutants=counts.total_scored,
+            ),
         ).score
         score_percent = float(metrics["score_percent"])
         if abs(score_percent - computed_score) > 0.01:

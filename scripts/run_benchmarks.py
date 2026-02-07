@@ -115,15 +115,11 @@ def _compare_baseline(entries: list[dict[str, Any]], baseline: list[dict[str, An
         tolerance = tolerances.get(metric, 0.05)
         if metric == "adex_steps_per_sec":
             if current < base * (1 - tolerance):
-                raise SystemExit(
-                    f"Regression detected for {entry['metric_name']} N={entry['N']}"
-                )
+                raise SystemExit(f"Regression detected for {entry['metric_name']} N={entry['N']}")
             continue
         if metric.endswith("_cost_ms") or metric.endswith("_drift") or metric.endswith("_mb"):
             if current > base * (1 + tolerance):
-                raise SystemExit(
-                    f"Regression detected for {entry['metric_name']} N={entry['N']}"
-                )
+                raise SystemExit(f"Regression detected for {entry['metric_name']} N={entry['N']}")
 
 
 def main() -> None:

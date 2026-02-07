@@ -103,9 +103,7 @@ def test_external_input_zero_matches_default_adaptive() -> None:
     )
     metrics2 = []
     for _ in range(steps):
-        metrics2.append(
-            net2.step_adaptive(external_current_pA=np.zeros(N, dtype=np.float64))
-        )
+        metrics2.append(net2.step_adaptive(external_current_pA=np.zeros(N, dtype=np.float64)))
 
     for i in range(steps):
         assert metrics1[i]["A_t"] == metrics2[i]["A_t"]

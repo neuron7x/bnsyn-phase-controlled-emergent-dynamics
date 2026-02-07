@@ -24,7 +24,7 @@ def _build_min_repo(root: Path) -> None:
                 '  source: ".github/PR_GATES.yml"',
                 f'  sha256: "{hashlib.sha256((root / ".github/PR_GATES.yml").read_bytes()).hexdigest()}"',
                 "invariants:",
-                '  - id: INV-001',
+                "  - id: INV-001",
                 '    statement: "s"',
                 '    enforcement: "e"',
                 '    evidence_kind: "artifact"',
@@ -45,10 +45,19 @@ def _build_min_repo(root: Path) -> None:
         )
         + "\n",
     )
-    _write(root / "manifest/repo_manifest.schema.json", (Path("manifest/repo_manifest.schema.json")).read_text())
+    _write(
+        root / "manifest/repo_manifest.schema.json",
+        (Path("manifest/repo_manifest.schema.json")).read_text(),
+    )
     _write(root / ".github/PR_GATES.yml", "version: '1'\nrequired_pr_gates: []\n")
-    _write(root / "quality/coverage_gate.json", '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n')
-    _write(root / "quality/mutation_baseline.json", '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n')
+    _write(
+        root / "quality/coverage_gate.json",
+        '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n',
+    )
+    _write(
+        root / "quality/mutation_baseline.json",
+        '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+    )
     _write(root / ".github/workflows/ci.yml", "on:\n  workflow_call:\n")
     _write(root / "scripts/noop.py", "print('ok')\n")
     _write(root / "docs/readme.md", "ok\n")
@@ -123,12 +132,20 @@ def test_validate_fails_when_ci_manifest_references_present(
         validate.validate_manifest()
 
 
-def test_repo_fingerprint_invariant_to_file_creation_order(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_repo_fingerprint_invariant_to_file_creation_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     def build(root: Path, ordered: bool) -> None:
         _write(root / "manifest/repo_manifest.yml", "manifest_version: '1.0'\n")
         _write(root / ".github/PR_GATES.yml", "version: '1'\nrequired_pr_gates: []\n")
-        _write(root / "quality/coverage_gate.json", '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n')
-        _write(root / "quality/mutation_baseline.json", '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n')
+        _write(
+            root / "quality/coverage_gate.json",
+            '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n',
+        )
+        _write(
+            root / "quality/mutation_baseline.json",
+            '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+        )
         items = [
             (".github/workflows/b.yaml", "on: [workflow_call]\n"),
             (".github/workflows/a.yml", "on:\n  pull_request:\n"),

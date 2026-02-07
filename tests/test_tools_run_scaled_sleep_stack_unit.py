@@ -143,7 +143,6 @@ def test_validation_errors(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> N
     with pytest.raises(ValueError, match="determinism-runs"):
         tool.main()
 
-
     monkeypatch.setattr(
         sys,
         "argv",

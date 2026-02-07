@@ -9,7 +9,7 @@ from scripts.validate_long_running_triggers import run_policy
 
 def write_pyproject(root: Path, requires: str = ">=3.11") -> None:
     root.joinpath("pyproject.toml").write_text(
-        f"[project]\nrequires-python = \"{requires}\"\n",
+        f'[project]\nrequires-python = "{requires}"\n',
         encoding="utf-8",
     )
 
@@ -45,7 +45,9 @@ def write_contracts(root: Path, rows: list[dict[str, str]]) -> None:
     )
 
 
-def write_workflow(root: Path, name: str, on_section: object | None, include_on: bool = True) -> None:
+def write_workflow(
+    root: Path, name: str, on_section: object | None, include_on: bool = True
+) -> None:
     workflow_dir = root / ".github" / "workflows"
     workflow_dir.mkdir(parents=True, exist_ok=True)
     data: dict[object, object] = {"name": name.replace(".yml", "")}
@@ -218,9 +220,7 @@ def test_long_running_non_reusable_ok(tmp_path: Path) -> None:
     )
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=1 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=1 violations=0"]
 
 
 def test_reusable_long_running_schedule_violation(tmp_path: Path) -> None:
@@ -265,9 +265,7 @@ def test_reusable_long_running_allows_workflow_call(tmp_path: Path) -> None:
     write_workflow(tmp_path, "reusable.yml", "workflow_call")
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=1 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=1 violations=0"]
 
 
 def test_reusable_long_running_allows_dispatch(tmp_path: Path) -> None:
@@ -289,9 +287,7 @@ def test_reusable_long_running_allows_dispatch(tmp_path: Path) -> None:
     )
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=1 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=1 violations=0"]
 
 
 def test_reusable_long_running_missing_workflow_call(tmp_path: Path) -> None:
@@ -358,9 +354,7 @@ def test_reusable_prefix_ok(tmp_path: Path) -> None:
     write_workflow(tmp_path, "_reusable_alpha.yml", "workflow_call")
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=1 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=1 violations=0"]
 
 
 def test_pr_gate_allows_push_and_pull_request(tmp_path: Path) -> None:
@@ -377,9 +371,7 @@ def test_pr_gate_allows_push_and_pull_request(tmp_path: Path) -> None:
     write_workflow(tmp_path, "gate.yml", ["pull_request", "push"])
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=1 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=1 violations=0"]
 
 
 def test_pr_gate_requires_pull_request_without_exception(tmp_path: Path) -> None:
@@ -418,9 +410,7 @@ def test_missing_inventory_row(tmp_path: Path) -> None:
     write_workflow(tmp_path, "missing.yml", "workflow_dispatch")
     result = run_check(tmp_path)
     assert result.exit_code == 2
-    assert result.output_lines == [
-        "VIOLATION: MISSING_GATE_CLASS_ROW missing.yml"
-    ]
+    assert result.output_lines == ["VIOLATION: MISSING_GATE_CLASS_ROW missing.yml"]
 
 
 def test_extra_inventory_row(tmp_path: Path) -> None:
@@ -441,9 +431,7 @@ def test_extra_inventory_row(tmp_path: Path) -> None:
     write_workflow(tmp_path, "present.yml", "pull_request")
     result = run_check(tmp_path)
     assert result.exit_code == 2
-    assert result.output_lines == [
-        "VIOLATION: EXTRA_GATE_CLASS_ROW extra.yml"
-    ]
+    assert result.output_lines == ["VIOLATION: EXTRA_GATE_CLASS_ROW extra.yml"]
 
 
 def test_invalid_gate_class_value(tmp_path: Path) -> None:
@@ -460,9 +448,7 @@ def test_invalid_gate_class_value(tmp_path: Path) -> None:
     write_workflow(tmp_path, "invalid.yml", "workflow_dispatch")
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: GATE_CLASS_INVALID value=invalid"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: GATE_CLASS_INVALID value=invalid"]
 
 
 def test_on_section_forms(tmp_path: Path) -> None:
@@ -480,9 +466,7 @@ def test_on_section_forms(tmp_path: Path) -> None:
     write_workflow(tmp_path, "dict.yml", {"pull_request": None})
     result = run_check(tmp_path)
     assert result.exit_code == 0
-    assert result.output_lines == [
-        "OK: long_running_trigger_policy workflows=3 violations=0"
-    ]
+    assert result.output_lines == ["OK: long_running_trigger_policy workflows=3 violations=0"]
 
 
 def test_missing_on_section(tmp_path: Path) -> None:
@@ -499,9 +483,7 @@ def test_missing_on_section(tmp_path: Path) -> None:
     write_workflow(tmp_path, "missing.yml", None, include_on=False)
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: WORKFLOW_ON_SECTION_MISSING file=missing.yml"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: WORKFLOW_ON_SECTION_MISSING file=missing.yml"]
 
 
 def test_empty_on_dict(tmp_path: Path) -> None:
@@ -518,9 +500,7 @@ def test_empty_on_dict(tmp_path: Path) -> None:
     write_workflow(tmp_path, "empty.yml", {})
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: WORKFLOW_ON_SECTION_EMPTY"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: WORKFLOW_ON_SECTION_EMPTY"]
 
 
 def test_empty_on_list(tmp_path: Path) -> None:
@@ -537,9 +517,7 @@ def test_empty_on_list(tmp_path: Path) -> None:
     write_workflow(tmp_path, "empty.yml", [])
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: WORKFLOW_ON_SECTION_EMPTY"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: WORKFLOW_ON_SECTION_EMPTY"]
 
 
 def test_null_on_section(tmp_path: Path) -> None:
@@ -556,9 +534,7 @@ def test_null_on_section(tmp_path: Path) -> None:
     write_workflow(tmp_path, "null.yml", None)
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: WORKFLOW_ON_SECTION_MISSING"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: WORKFLOW_ON_SECTION_MISSING"]
 
 
 def test_duplicate_inventory_rows(tmp_path: Path) -> None:
@@ -579,9 +555,7 @@ def test_duplicate_inventory_rows(tmp_path: Path) -> None:
     write_workflow(tmp_path, "dup.yml", "pull_request")
     result = run_check(tmp_path)
     assert result.exit_code == 2
-    assert result.output_lines == [
-        "VIOLATION: DUPLICATE_WORKFLOW_ROW dup.yml"
-    ]
+    assert result.output_lines == ["VIOLATION: DUPLICATE_WORKFLOW_ROW dup.yml"]
 
 
 def test_invalid_reusable_value(tmp_path: Path) -> None:
@@ -599,9 +573,7 @@ def test_invalid_reusable_value(tmp_path: Path) -> None:
     write_workflow(tmp_path, "invalid.yml", "workflow_dispatch")
     result = run_check(tmp_path)
     assert result.exit_code == 3
-    assert result.output_lines == [
-        "PARSE_ERROR: REUSABLE_VALUE_INVALID value=MAYBE"
-    ]
+    assert result.output_lines == ["PARSE_ERROR: REUSABLE_VALUE_INVALID value=MAYBE"]
 
 
 def test_dry_run_masks_violations(tmp_path: Path) -> None:

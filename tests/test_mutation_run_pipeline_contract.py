@@ -34,7 +34,9 @@ def test_run_pipeline_accepts_survivor_exit_code(monkeypatch: pytest.MonkeyPatch
     assert any(call[:2] == ("mutmut", "results") for call in calls)
 
 
-def test_run_pipeline_fails_when_results_unavailable(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+def test_run_pipeline_fails_when_results_unavailable(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
     import scripts.run_mutation_pipeline as run_mutation_pipeline
 
     def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:
@@ -51,7 +53,9 @@ def test_run_pipeline_fails_when_results_unavailable(monkeypatch: pytest.MonkeyP
     assert not (tmp_path / "mutation_results.txt").exists()
 
 
-def test_run_pipeline_fails_when_results_stdout_empty(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+def test_run_pipeline_fails_when_results_stdout_empty(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
     import scripts.run_mutation_pipeline as run_mutation_pipeline
 
     def fake_run(args: list[str], **_kwargs: object) -> SimpleNamespace:

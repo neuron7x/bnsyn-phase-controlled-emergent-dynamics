@@ -81,9 +81,7 @@ def test_pr_gate_requires_pull_request(tmp_path: Path) -> None:
     contracts_path.parent.mkdir(parents=True, exist_ok=True)
     contracts_path.write_text(contracts, encoding="utf-8")
     violations = validate_contracts(contracts_path, workflows_dir)
-    assert any(
-        "PR_GATE_NO_PULL_REQUEST alpha.yml" in violation for violation in violations
-    )
+    assert any("PR_GATE_NO_PULL_REQUEST alpha.yml" in violation for violation in violations)
 
 
 def test_counts_mismatch_violation(tmp_path: Path) -> None:

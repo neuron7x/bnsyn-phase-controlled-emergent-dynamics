@@ -7,7 +7,9 @@ from pathlib import Path
 import pytest
 
 
-def test_mutation_survivors_summary_no_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_survivors_summary_no_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     import scripts.mutation_survivors_summary as survivors_summary
 
     summary_path = tmp_path / "summary.md"
@@ -20,7 +22,9 @@ def test_mutation_survivors_summary_no_file(tmp_path: Path, monkeypatch: pytest.
     assert "No surviving mutants!" in content
 
 
-def test_mutation_survivors_summary_with_entries(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_mutation_survivors_summary_with_entries(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     import scripts.mutation_survivors_summary as survivors_summary
 
     summary_path = tmp_path / "summary.md"

@@ -21,7 +21,9 @@ def _write(path: Path, text: str) -> None:
     st.lists(
         st.tuples(
             st.booleans(),
-            st.sampled_from(["dict_call", "dict_other", "list_call", "list_other", "str_call", "str_other"]),
+            st.sampled_from(
+                ["dict_call", "dict_other", "list_call", "list_other", "str_call", "str_other"]
+            ),
         ),
         min_size=1,
         max_size=12,

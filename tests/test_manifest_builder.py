@@ -102,9 +102,7 @@ def test_resolve_package_version_fallback_from_pyproject(tmp_path: Path, monkeyp
     assert manifest_builder._resolve_package_version(tmp_path) == "9.9.9"
 
 
-def test_resolve_package_version_invalid_toml_returns_default(
-    tmp_path: Path, monkeypatch
-) -> None:
+def test_resolve_package_version_invalid_toml_returns_default(tmp_path: Path, monkeypatch) -> None:
     (tmp_path / "pyproject.toml").write_text("{ this is invalid toml", encoding="utf-8")
 
     def raise_pkg_not_found(_: str) -> str:

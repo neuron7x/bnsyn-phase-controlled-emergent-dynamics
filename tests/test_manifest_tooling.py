@@ -40,8 +40,14 @@ def test_repo_fingerprint_is_path_invariant(tmp_path: Path, monkeypatch: object)
     def build_repo(root: Path) -> None:
         _write(root / "manifest/repo_manifest.yml", "manifest_version: '1.0'\n")
         _write(root / ".github/PR_GATES.yml", "version: '1'\nrequired_pr_gates: []\n")
-        _write(root / "quality/coverage_gate.json", '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n')
-        _write(root / "quality/mutation_baseline.json", '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n')
+        _write(
+            root / "quality/coverage_gate.json",
+            '{"minimum_percent": 99.0, "baseline_percent": 99.57}\n',
+        )
+        _write(
+            root / "quality/mutation_baseline.json",
+            '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+        )
         _write(root / ".github/workflows/a.yml", "on:\n  pull_request:\n")
         _write(root / ".github/workflows/b.yaml", "on: [workflow_call]\n")
 

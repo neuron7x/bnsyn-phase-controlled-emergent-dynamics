@@ -13,6 +13,7 @@ BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-co
 ## Contents
 
 - [Quality Assurance](#quality-assurance)
+- [Project Status](#project-status)
 - [Validation & Testing Strategy](#validation--testing-strategy)
 - [Results: Temperature-Controlled Consolidation](#results-temperature-controlled-consolidation)
 - [Sleep–Emergence Stack](#sleepemergence-stack)
@@ -42,6 +43,10 @@ Quality gates are command-verifiable and documented in one place:
 No aggregate quality percentages are published in README; only reproducible command outputs and artifacts are considered normative.
 
 ---
+
+## Project Status
+
+Official status declaration: [`docs/STATUS.md`](docs/STATUS.md).
 
 ## Validation & Testing Strategy
 
