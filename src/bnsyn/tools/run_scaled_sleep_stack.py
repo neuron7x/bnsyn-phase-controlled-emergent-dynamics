@@ -177,6 +177,7 @@ def main() -> None:
     ap.add_argument("--determinism-runs", type=int, default=3)
     ap.add_argument("--equivalence-steps-wake", type=int, default=1200)
     ap.add_argument("--skip-backend-equivalence", action="store_true")
+    ap.add_argument("--skip-baseline", action="store_true")
     ap.add_argument("--no-raster", action="store_true")
     ap.add_argument("--no-plots", action="store_true")
     args = ap.parse_args()
@@ -194,17 +195,21 @@ def main() -> None:
     tracemalloc.start()
     t0 = time.perf_counter()
 
-    b_manifest, b_metrics, _ = _run_once(
-        seed=args.seed,
-        N=200,
-        steps_wake=args.baseline_steps_wake,
-        steps_sleep=args.baseline_steps_sleep,
-        backend="reference",
-    )
-    bdir = out / "baseline"
-    bdir.mkdir(exist_ok=True)
-    (bdir / "manifest.json").write_text(json.dumps(b_manifest, indent=2))
-    (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
+    b_metrics: dict[str, Any] | None
+    if args.skip_baseline:
+        b_metrics = None
+    else:
+        b_manifest, b_metrics, _ = _run_once(
+            seed=args.seed,
+            N=200,
+            steps_wake=args.baseline_steps_wake,
+            steps_sleep=args.baseline_steps_sleep,
+            backend="reference",
+        )
+        bdir = out / "baseline"
+        bdir.mkdir(exist_ok=True)
+        (bdir / "manifest.json").write_text(json.dumps(b_manifest, indent=2))
+        (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
 
     hashes: list[dict[str, str]] = []
     first_metrics: dict[str, Any] | None = None
@@ -267,25 +272,40 @@ def main() -> None:
     if first_metrics is None:
         raise RuntimeError("No scaled runs executed")
 
-    variance_reduction = 100.0 * (
-        (b_metrics["wake"]["std_sigma"] - first_metrics["wake"]["std_sigma"])
-        / max(b_metrics["wake"]["std_sigma"], 1e-12)
-    )
+    variance_reduction: float | None
+    baseline_summary: dict[str, float | int] | None
+    if b_metrics is None:
+        variance_reduction = None
+        baseline_summary = None
+    else:
+        variance_reduction = 100.0 * (
+            (b_metrics["wake"]["std_sigma"] - first_metrics["wake"]["std_sigma"])
+            / max(b_metrics["wake"]["std_sigma"], 1e-12)
+        )
+        baseline_summary = {
+            "wake_std_sigma": b_metrics["wake"]["std_sigma"],
+            "transitions": b_metrics["transitions"],
+            "attractors": b_metrics["attractors"]["count"],
+        }
+
+    determinism_identical: bool | None
+    if args.determinism_runs < 2:
+        determinism_identical = None
+    else:
+        determinism_identical = all(h == hashes[0] for h in hashes[1:])
 
     summary = {
         "seed": args.seed,
         "N_scaled": args.n,
         "steps_wake_scaled": args.steps_wake,
         "steps_sleep_scaled": args.steps_sleep,
+        "determinism_runs": args.determinism_runs,
         "determinism_hashes": hashes,
-        "determinism_identical": all(h == hashes[0] for h in hashes[1:]),
+        "determinism_identical": determinism_identical,
         "backend_equivalence": backend_equivalence,
+        "baseline_skipped": args.skip_baseline,
         "variance_reduction_sigma_std_percent_vs_baseline": variance_reduction,
-        "baseline": {
-            "wake_std_sigma": b_metrics["wake"]["std_sigma"],
-            "transitions": b_metrics["transitions"],
-            "attractors": b_metrics["attractors"]["count"],
-        },
+        "baseline": baseline_summary,
         "scaled": {
             "wake_std_sigma": first_metrics["wake"]["std_sigma"],
             "transitions": first_metrics["transitions"],

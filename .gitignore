@@ -21,7 +21,6 @@ results/*
 !results/temp_ablation_v1/
 !results/temp_ablation_v2/
 artifacts/
-artifacts/local_runs/
 benchmarks/baselines/
 !benchmarks/baselines/
 !benchmarks/baselines/golden_baseline.yml

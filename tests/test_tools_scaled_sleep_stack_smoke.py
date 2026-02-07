@@ -32,6 +32,7 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
             "--equivalence-steps-wake",
             "20",
             "--skip-backend-equivalence",
+            "--skip-baseline",
             "--no-raster",
             "--no-plots",
         ],
@@ -54,3 +55,14 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
 
     metrics = json.loads(metrics_path.read_text())
     assert "backend" in metrics
+
+    summary_path = out_dir / "metrics.json"
+    assert summary_path.exists()
+    summary = json.loads(summary_path.read_text())
+    assert summary["seed"] == 42
+    assert summary["N_scaled"] == 80
+    assert summary["steps_wake_scaled"] == 30
+    assert summary["steps_sleep_scaled"] == 30
+    assert summary["determinism_runs"] == 1
+    assert summary["backend_equivalence"]["skipped"] is True
+    assert summary["baseline_skipped"] is True
