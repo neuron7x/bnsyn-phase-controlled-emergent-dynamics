@@ -141,6 +141,32 @@ bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/de
 
 **Expected runtime:** ~5-10 seconds
 
+**Scaled flagship run (N=2000, extended wake/sleep):**
+
+```bash
+PYTHONPATH=src python scripts/run_scaled_sleep_stack.py \
+  --out artifacts/local_runs/scaled_sleep_stack_n2000 \
+  --seed 123 --n 2000 --steps-wake 2400 --steps-sleep 1800
+```
+
+Verified artifact summary (`artifacts/local_runs/scaled_sleep_stack_n2000/metrics.json`):
+
+| Metric | Baseline (N=200) | Scaled (N=2000) | Evidence |
+|---|---:|---:|---|
+| Determinism (3 reruns, hash match) | — | true | `determinism_identical=true` |
+| Backend equivalence (reference vs accelerated, atol=1e-8) | — | true | `backend_equivalence.equivalent=true` |
+| Sigma std (wake) | 0.0 | 0.0 | `baseline.wake_std_sigma`, `scaled.wake_std_sigma` |
+| Variance reduction vs baseline | — | 0.0% | `variance_reduction_sigma_std_percent_vs_baseline` |
+| Attractor count | 2 | 5 | `baseline.attractors`, `scaled.attractors` |
+| Phase transitions | 0 | 0 | `baseline.transitions`, `scaled.transitions` |
+
+Benchmark artifact (`artifacts/local_runs/benchmarks_scale/metrics.json`):
+
+| Case | Steps/s | Peak memory (bytes) |
+|---|---:|---:|
+| N=1000, steps=200 | 680.50 | 177652 |
+| N=10000, steps=50 | 74.41 | 1624025 |
+
 ### Minimal Usage Example
 
 ```python

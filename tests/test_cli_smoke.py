@@ -93,6 +93,10 @@ def test_cli_sleep_stack_runs() -> None:
                 "sleep-stack",
                 "--seed",
                 "42",
+                "--N",
+                "80",
+                "--backend",
+                "reference",
                 "--steps-wake",
                 "50",
                 "--steps-sleep",
@@ -120,10 +124,14 @@ def test_cli_sleep_stack_runs() -> None:
         assert manifest["seed"] == 42
         assert "steps_wake" in manifest
         assert "steps_sleep" in manifest
+        assert manifest["N"] == 80
 
         # Verify metrics contents
         with open(metrics_path) as f:
             metrics = json.load(f)
+
+        # Verify backend metadata
+        assert metrics["backend"] == "reference"
         assert "wake" in metrics
         assert "sleep" in metrics
         assert "transitions" in metrics
