@@ -1,0 +1,22 @@
+commit 8a41e85b2e5b01da97e52f0087df93d9069d746b
+Author: Codex <codex@openai.com>
+Date:   2026-02-07T19:21:58+00:00
+
+    chore(audit): deterministic CI/CD-safe math+financial validation bundle
+    
+    ### Motivation
+    - Fix a CI/CD classification/exclusion bug that previously hid workflows and caused CI/CD counts to be reported as zero.
+    - Produce a deterministic, reproducible, audit-grade proof bundle of repository metrics and valuation inputs so every reported number is traceable.
+    - Provide dual-source verification (canonical + crosscheck) and enforce fail-closed rules for missing external evidence (ODT, market rates, external contributions).
+    
+    ### Description
+    - Added a glob-based classification rules file (`audit/classification_rules.yml`) and unit tests (`tests/test_audit_rules.py`) to ensure `.github/workflows/**` are always classified as `CI_CD` and exclusions cannot hide workflows.
+    - Implemented a deterministic canonical metrics pipeline (`scripts/compute_repo_metrics.py`), an independent cross-check pipeline (`scripts/crosscheck_metrics.py`), and a workflow YAML analyzer (`scripts/ci_cd_analyzer.py`) that emit machine-readable artifacts under `artifacts/math_audit/`.
+    - Added an end-to-end runner (`scripts/run_audit.sh`), a pinned venv toolchain capture (`artifacts/math_audit/toolchain_versions.json` / `environment_facts.json`), JSON schema (`schemas/audit_report_data.schema.json`), and a simple valuation model (`scripts/valuation_model.py`) with evidence-gated market-rate and external-contributions sections.
+    - Persisted deterministic evidence and final report updates (`REPO_WORK_ASSESSMENT_VALUATION.md`, `audit_report_data.json`, `artifacts/math_audit/*`) and added schema validation + manifest outputs for reproducibility.
+    
+    ### Testing
+    - Bootstrapped a pinned virtual environment and installed pinned packages (`radon==6.0.1`, `PyYAML==6.0.2`, `jsonschema==4.23.0`, `lxml==5.3.0`) and recorded tool versions (success).
+    - Executed the end-to-end audit runner `bash scripts/run_audit.sh` which produced the proof bundle under `artifacts/math_audit/` and completed with `AUDIT_OK` (success).
+    - Ran regression tests `pytest -q tests/test_audit_rules.py` to validate classification rules and the tests passed (success).
+    - Validated `audit_report_data.json` against `schemas/audit_report_data.schema.json` using `jsonschema` (SCHEMA_OK) and produced `reconciliation_report.json` with all required invariants passing except external evidence gates which are intentionally marked NEEDS_EVIDENCE (invariants success; external evidence gated).

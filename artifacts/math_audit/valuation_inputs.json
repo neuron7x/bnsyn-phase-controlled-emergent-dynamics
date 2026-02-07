@@ -1,0 +1,37 @@
+{
+  "external_contributions": {
+    "required_evidence": [
+      "timesheets",
+      "invoices",
+      "calendar_exports",
+      "issue_tracker_links"
+    ],
+    "status": "UNKNOWN"
+  },
+  "model_1_repo_replacement": {
+    "assumptions": "ASSUMPTION_BOUNDED",
+    "coefficients": {
+      "CI_CD": 0.6,
+      "CONFIGURATION": 0.4,
+      "CORE_LOGIC": 1.0,
+      "DATA_SCHEMAS": 0.6,
+      "DOCUMENTATION": 0.35,
+      "INFRASTRUCTURE": 0.5,
+      "SCRIPTS_TOOLING": 0.55,
+      "STATIC_ASSETS": 0.2,
+      "TESTS": 0.7
+    },
+    "complexity_factor": 1.0,
+    "formula": "hours=sum((loc_code/30)*category_weight*complexity_factor*test_factor)",
+    "test_factor": 1.1
+  },
+  "model_2_market_rates": {
+    "reason": "No external rate snapshots collected in this run",
+    "required_evidence": [
+      "market_rate_source_urls",
+      "snapshot_timestamp",
+      "fx_source_if_non_usd"
+    ],
+    "status": "UNKNOWN"
+  }
+}

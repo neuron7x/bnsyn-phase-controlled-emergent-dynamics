@@ -1,8 +1,9 @@
 name: Math Quality Gate
 
-on:
-  pull_request:
-  push:
+on: [push, pull_request]
+
+env:
+  PIP_VERSION: "26.0"
 
 jobs:
   math-gate:
@@ -12,31 +13,32 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install audit dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pyyaml jsonschema requests radon
-      - name: Run audit pipeline
-        id: run_audit
-        continue-on-error: true
-        run: ./scripts/run_audit.sh
-      - name: Build proof bundle alias
-        if: always()
+          python -m pip install --upgrade "pip==${PIP_VERSION}"
+          python -m pip --version
+          python -m pip install -e ".[test]"
+      - name: Run math validator
+        run: python scripts/math_validate.py
+      - name: Run math invariant tests
+        run: pytest tests/test_math_invariants.py -v --tb=short
+      - name: Artifact Integrity Verification
         run: |
-          sha=$(git rev-parse --short HEAD)
-          test -f "artifacts/math_audit/proof_bundle_${sha}.tar.gz"
-          cp "artifacts/math_audit/proof_bundle_${sha}.tar.gz" artifacts/math_audit/proof_bundle_latest.tar.gz
-      - name: Upload proof bundle
+          python - <<'PY'
+          import json
+
+          with open('artifacts/math_audit/manifest.json', encoding='utf-8') as handle:
+              m = json.load(handle)
+          untrusted = [a for a in m['artifacts'] if a.get('provenance') == 'UNTRUSTED']
+          if untrusted:
+              for item in untrusted:
+                  print(f"UNTRUSTED: {item['path']}")
+              raise SystemExit(1)
+          print('All artifacts have provenance.')
+          PY
+      - name: Upload audit artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: proof_bundle_${{ github.sha }}
-          path: |
-            artifacts/math_audit/proof_bundle_latest.tar.gz
-            artifacts/math_audit/final_status.txt
-      - name: Enforce VERIFIED status
-        if: always()
-        run: |
-          status=$(cat artifacts/math_audit/final_status.txt)
-          echo "AUDIT_STATUS=${status}"
-          test "${status}" = "VERIFIED"
+          name: math-audit
+          path: artifacts/math_audit/

@@ -1,0 +1,24 @@
+ M .github/workflows/math-quality-gate.yml
+ M REPO_WORK_ASSESSMENT_VALUATION.md
+ M artifacts/math_audit/claims.json
+ M artifacts/math_audit/computed_metrics.json
+ M artifacts/math_audit/crosscheck_metrics.json
+ M artifacts/math_audit/environment_facts.json
+ M artifacts/math_audit/inputs_manifest.json
+ M artifacts/math_audit/manifest.json
+ M artifacts/math_audit/raw/git_head.stdout.log
+ M artifacts/math_audit/raw/git_log_1.stdout.log
+ M artifacts/math_audit/raw/git_log_first.stdout.log
+ M artifacts/math_audit/raw/git_ls_files.stdout.log
+ M artifacts/math_audit/raw/p0_git_log_1.txt
+ M artifacts/math_audit/raw/p0_git_rev_parse_head.txt
+ M artifacts/math_audit/raw/p0_git_status_porcelain.txt
+ M artifacts/math_audit/raw/p0_uname_a.txt
+ M artifacts/math_audit/raw/radon_cc.stdout.log
+ M artifacts/math_audit/validator_report.json
+ M artifacts/math_audit/valuation_results.json
+ M audit/classification_rules.yml
+ M audit_report_data.json
+ M docs/math/PROVENANCE.md
+ M scripts/run_audit.sh
+?? .venv_audit/

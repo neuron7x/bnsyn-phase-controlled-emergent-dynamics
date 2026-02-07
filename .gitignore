@@ -40,11 +40,3 @@ PR_SUMMARY.md
 wheelhouse/
 
 artifacts/wheelhouse_report.json
-
-# Audit proof artifacts (CI-only)
-artifacts/math_audit/raw/
-artifacts/math_audit/sources/
-artifacts/math_audit/proof_bundle_*.tar.gz
-artifacts/math_audit/proof_bundle_latest.tar.gz
-audit_evidence/
-.venv_audit/

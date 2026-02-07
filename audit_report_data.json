@@ -1,83 +1,83 @@
 {
+  "inventory_total_files": 634,
   "categories": {
     "CI_CD": {
-      "blank": 299,
+      "files": 29,
       "code": 2607,
       "comments": 100,
-      "files": 29
+      "blank": 301
     },
     "CONFIGURATION": {
-      "blank": 644,
-      "code": 3488,
-      "comments": 1862,
-      "files": 47
+      "files": 44,
+      "code": 3425,
+      "comments": 1858,
+      "blank": 641
     },
     "CORE_LOGIC": {
-      "blank": 1852,
+      "files": 68,
       "code": 7159,
       "comments": 985,
-      "files": 68
+      "blank": 1852
     },
     "DATA_SCHEMAS": {
-      "blank": 84,
+      "files": 4,
       "code": 315,
       "comments": 6,
-      "files": 4
+      "blank": 84
     },
     "DOCUMENTATION": {
-      "blank": 3097,
+      "files": 94,
       "code": 6446,
       "comments": 2674,
-      "files": 94
+      "blank": 3097
     },
     "GENERATED": {
-      "blank": 169,
-      "code": 88535,
-      "comments": 64,
-      "files": 81
+      "files": 107,
+      "code": 91872,
+      "comments": 87,
+      "blank": 177
     },
     "INFRASTRUCTURE": {
-      "blank": 47,
+      "files": 3,
       "code": 148,
       "comments": 0,
-      "files": 3
+      "blank": 47
     },
     "SCRIPTS_TOOLING": {
-      "blank": 2512,
-      "code": 13215,
-      "comments": 494,
-      "files": 133
+      "files": 128,
+      "code": 12927,
+      "comments": 490,
+      "blank": 2427
     },
     "STATIC_ASSETS": {
-      "blank": 2074,
+      "files": 8,
       "code": 25414,
       "comments": 316,
-      "files": 8
+      "blank": 2074
     },
     "TESTS": {
-      "blank": 3148,
+      "files": 149,
       "code": 11649,
       "comments": 555,
-      "files": 149
+      "blank": 3148
     }
   },
-  "core_logic_sublevels": {
-    "boilerplate": 0,
-    "glue": 0,
-    "known_model": 0,
-    "novel": 0
-  },
   "countable_totals": {
-    "blank": 13757,
-    "code": 70441,
-    "comments": 6992,
-    "files": 535
+    "files": 527,
+    "code": 70090,
+    "comments": 6984,
+    "blank": 13671
+  },
+  "core_logic_sublevels": {
+    "novel": 28,
+    "known_model": 19,
+    "glue": 9,
+    "boilerplate": 16
   },
   "documentation_depth": {
-    "light_20_50": 0,
-    "md_files_total": 0,
-    "stubs_lt20": 0,
-    "substantive_gt50": 0
-  },
-  "inventory_total_files": 616
+    "stubs_lt20": 16,
+    "light_20_50": 30,
+    "substantive_gt50": 59,
+    "md_files_total": 105
+  }
 }

@@ -1,0 +1,9 @@
+### COMMAND: cloc or labeled wc -l fallback
+cloc UNAVAILABLE — labeled fallback:
+  .py: 39559 lines across 317 files
+  .yaml: 87 lines across 2 files
+  .yml: 4170 lines across 40 files
+  .toml: 202 lines across 2 files
+  .json: 108207 lines across 47 files
+  .md: 14094 lines across 105 files
+  .rst: 194 lines across 12 files

@@ -1,0 +1,12 @@
+### COMMAND: radon cc
+### Average:
+
+1464 blocks (classes, functions, methods) analyzed.
+Average complexity: A (3.498633879781421)
+
+### Grade distribution:
+   1295  - A
+    119  - B
+     44  - C
+      4  - D
+      2  - E
