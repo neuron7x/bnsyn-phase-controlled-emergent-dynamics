@@ -15,3 +15,8 @@ required_pr_gates:
     workflow_name: "Workflow Integrity"
     required_job_ids:
       - validate-workflows
+
+  - workflow_file: "math-quality-gate.yml"
+    workflow_name: "Math Quality Gate"
+    required_job_ids:
+      - math-gate

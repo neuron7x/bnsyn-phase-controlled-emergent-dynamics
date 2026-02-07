@@ -2,3 +2,5 @@ version: "1"
 required_checks:
   - workflow_file: "ci-pr-atomic.yml"
   - workflow_file: "workflow-integrity.yml"
+
+  - workflow_file: "math-quality-gate.yml"

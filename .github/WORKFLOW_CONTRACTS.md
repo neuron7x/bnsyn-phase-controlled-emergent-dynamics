@@ -32,7 +32,7 @@
 ## PR-Gate Definition (Authoritative)
 
 * Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
-* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`.
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`.
 * Required checks MUST NOT include any workflow other than the PR-gates listed above.
 * If any other section conflicts with this, this section wins.
 
@@ -44,6 +44,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | --- | --- | --- |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `tests-smoke`, `ssot`, `security`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
+| `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
 
 ## Gate Class Policy (Normative)
 
