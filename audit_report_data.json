@@ -13,10 +13,10 @@
       "blank": 3140
     },
     "DOCUMENTATION": {
-      "files": 108,
-      "code": 7622,
-      "comment": 3088,
-      "blank": 3608
+      "files": 109,
+      "code": 7712,
+      "comment": 3103,
+      "blank": 3629
     },
     "CI/CD": {
       "files": 29,
@@ -43,8 +43,8 @@
       "blank": 84
     },
     "CONFIGURATION": {
-      "files": 25,
-      "code": 1975,
+      "files": 26,
+      "code": 2047,
       "comment": 1425,
       "blank": 120
     },
@@ -55,16 +55,18 @@
       "blank": 364
     },
     "GENERATED": {
-      "files": 88,
-      "code": 108065,
-      "comment": 90,
-      "blank": 301
+      "files": 102,
+      "code": 110378,
+      "comment": 91,
+      "blank": 302
     }
   },
   "total_countable": {
-    "files": 516,
-    "code": 51270,
-    "comment": 6738,
-    "blank": 11875
-  }
+    "files": 518,
+    "code": 51432,
+    "comment": 6753,
+    "blank": 11896
+  },
+  "manifest_file": "/tmp/audit_files.txt",
+  "manifest_count": 620
 }
