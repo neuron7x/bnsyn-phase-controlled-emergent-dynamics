@@ -1,0 +1,70 @@
+{
+  "stats": {
+    "CORE_LOGIC": {
+      "files": 68,
+      "code": 7159,
+      "comment": 985,
+      "blank": 1852
+    },
+    "TESTS": {
+      "files": 148,
+      "code": 11625,
+      "comment": 555,
+      "blank": 3140
+    },
+    "DOCUMENTATION": {
+      "files": 108,
+      "code": 7622,
+      "comment": 3088,
+      "blank": 3608
+    },
+    "CI/CD": {
+      "files": 29,
+      "code": 2607,
+      "comment": 100,
+      "blank": 301
+    },
+    "INFRASTRUCTURE": {
+      "files": 3,
+      "code": 148,
+      "comment": 0,
+      "blank": 47
+    },
+    "SCRIPTS_TOOLING": {
+      "files": 123,
+      "code": 12464,
+      "comment": 477,
+      "blank": 2359
+    },
+    "DATA_SCHEMAS": {
+      "files": 4,
+      "code": 315,
+      "comment": 6,
+      "blank": 84
+    },
+    "CONFIGURATION": {
+      "files": 25,
+      "code": 1975,
+      "comment": 1425,
+      "blank": 120
+    },
+    "STATIC_ASSETS": {
+      "files": 8,
+      "code": 7355,
+      "comment": 102,
+      "blank": 364
+    },
+    "GENERATED": {
+      "files": 88,
+      "code": 108065,
+      "comment": 90,
+      "blank": 301
+    }
+  },
+  "total_countable": {
+    "files": 516,
+    "code": 51270,
+    "comment": 6738,
+    "blank": 11875
+  }
+}
