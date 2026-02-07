@@ -141,6 +141,42 @@ bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/de
 
 **Expected runtime:** ~5-10 seconds
 
+**Scaled flagship run (N=2000, extended wake/sleep):**
+
+```bash
+python -m bnsyn.tools.run_scaled_sleep_stack \
+  --out artifacts/local_runs/scaled_sleep_stack_n2000 \
+  --seed 123 --n 2000 --steps-wake 2400 --steps-sleep 1800
+```
+
+**Optional scale benchmark:**
+
+```bash
+python -m bnsyn.tools.benchmark_sleep_stack_scale
+```
+
+For CI/quick smoke runs, use fast flags to reduce workload:
+
+```bash
+python -m bnsyn.tools.run_scaled_sleep_stack \
+  --out /tmp/bnsyn_scaled_smoke \
+  --seed 42 --n 80 --steps-wake 30 --steps-sleep 30 \
+  --baseline-steps-wake 20 --baseline-steps-sleep 10 \
+  --determinism-runs 1 --skip-backend-equivalence --skip-baseline \
+  --no-raster --no-plots
+```
+
+The generated `<out>/metrics.json` contains fields:
+- `seed`, `N_scaled`, `steps_wake_scaled`, `steps_sleep_scaled`
+- `determinism_hashes` (per-run manifest/metrics hashes)
+- `determinism_runs` (int) and `determinism_identical` (bool or null when runs < 2)
+- `backend_equivalence` (`atol`, `equivalent`, `max_abs_sigma_diff`, `skipped`; values may be null when skipped)
+- `baseline_skipped` (bool) and `baseline` (`wake_std_sigma`, `transitions`, `attractors` or null when baseline skipped)
+- `scaled` (`wake_std_sigma`, `transitions`, `attractors`, `crystallization_progress`)
+- `benchmark` (`elapsed_s`, `memory_current_bytes`, `memory_peak_bytes`)
+
+Benchmark output is written to `artifacts/local_runs/benchmarks_scale/metrics.json` and is machine-dependent.
+
 ### Minimal Usage Example
 
 ```python

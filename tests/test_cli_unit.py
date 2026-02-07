@@ -59,6 +59,8 @@ def test_cmd_sleep_stack_direct() -> None:
 
         args = argparse.Namespace(
             seed=123,
+            N=64,
+            backend="reference",
             steps_wake=50,
             steps_sleep=50,
             out=str(out_dir),
@@ -95,6 +97,8 @@ def test_cmd_sleep_stack_with_custom_sleep_duration() -> None:
 
         args = argparse.Namespace(
             seed=456,
+            N=64,
+            backend="reference",
             steps_wake=30,
             steps_sleep=300,  # Different from default 600
             out=str(out_dir),

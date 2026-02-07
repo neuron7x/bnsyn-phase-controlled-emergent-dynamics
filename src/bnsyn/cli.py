@@ -227,7 +227,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     rng = pack.np_rng
 
     # Create network
-    N = 64  # Small network for demo speed
+    N = int(args.N)
     nparams = NetworkParams(N=N)
     net = Network(
         nparams,
@@ -236,6 +236,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
         CriticalityParams(),
         dt_ms=0.5,
         rng=rng,
+        backend=args.backend,
     )
 
     # Temperature schedule
@@ -305,6 +306,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     cons_stats = consolidator.stats()
 
     metrics: dict[str, Any] = {
+        "backend": args.backend,
         "wake": {
             "steps": args.steps_wake,
             "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
@@ -494,6 +496,13 @@ def main() -> None:
 
     sleep = sub.add_parser("sleep-stack", help="Run sleep-stack demo with emergence tracking")
     sleep.add_argument("--seed", type=int, default=123, help="RNG seed")
+    sleep.add_argument("--N", type=int, default=64, help="Number of neurons")
+    sleep.add_argument(
+        "--backend",
+        choices=["reference", "accelerated"],
+        default="reference",
+        help="Simulation backend",
+    )
     sleep.add_argument("--steps-wake", type=int, default=800, help="Wake phase steps")
     sleep.add_argument("--steps-sleep", type=int, default=600, help="Sleep phase steps")
     sleep.add_argument(
