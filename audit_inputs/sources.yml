@@ -1,0 +1,19 @@
+sources:
+  - id: principal_rate_1
+    url: "https://www.glassdoor.com/Salaries/principal-software-engineer-salary-SRCH_KO0,27.htm"
+    extract:
+      type: regex
+      pattern: "\\$([0-9]{2,3})/hr"
+      unit: "USD/hour"
+  - id: qa_rate_1
+    url: "https://www.toptal.com/rates"
+    extract:
+      type: regex
+      pattern: "\\$([0-9]{2,3})"
+      unit: "USD/hour"
+  - id: fx_usd_uah
+    url: "https://api.exchangerate.host/latest?base=USD&symbols=UAH"
+    extract:
+      type: json
+      path: "rates.UAH"
+      unit: "UAH per USD"
