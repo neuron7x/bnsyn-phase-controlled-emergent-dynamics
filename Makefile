@@ -121,7 +121,7 @@ ssot:
 	python -m scripts.validate_claims
 	python -m scripts.scan_normative_tags
 	python -m scripts.validate_api_maturity
-	python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+	$(MAKE) api-contract
 
 validate-claims-coverage:
 	python -m scripts.validate_claims_coverage --format markdown

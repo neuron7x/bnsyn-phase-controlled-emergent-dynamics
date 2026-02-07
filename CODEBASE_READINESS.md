@@ -94,6 +94,6 @@ python -m scripts.validate_api_maturity
 
 ```bash
 python -m scripts.validate_api_maturity
-python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+make api-contract
 python -m pytest tests/test_quickstart_contract.py tests/test_integration_examples.py -q
 ```

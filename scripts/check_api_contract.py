@@ -7,6 +7,7 @@ import importlib
 import inspect
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +49,15 @@ CONTRACT_SYMBOLS: dict[str, tuple[str, ...]] = {
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 
+def _ensure_repo_src_on_path() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    src_path = repo_root / "src"
+    if src_path.is_dir():
+        src_text = str(src_path)
+        if src_text not in sys.path:
+            sys.path.insert(0, src_text)
+
+
 def _normalize_signature_text(signature_text: str) -> str:
     normalized = signature_text
     normalized = normalized.replace("typing.", "")
@@ -64,8 +74,18 @@ def _safe_signature(obj: Any) -> str:
 
 def collect_public_api() -> dict[str, dict[str, str]]:
     snapshot: dict[str, dict[str, str]] = {}
+    path_bootstrapped = False
     for module_name, contract_symbols in CONTRACT_SYMBOLS.items():
-        module = importlib.import_module(module_name)
+        try:
+            module = importlib.import_module(module_name)
+        except ModuleNotFoundError as exc:
+            missing_name = getattr(exc, "name", "")
+            missing_bnsyn_root = missing_name in {"bnsyn", "bnsyn.__init__"}
+            if path_bootstrapped or not module_name.startswith("bnsyn") or not missing_bnsyn_root:
+                raise
+            _ensure_repo_src_on_path()
+            path_bootstrapped = True
+            module = importlib.import_module(module_name)
         module_snapshot: dict[str, str] = {}
         for symbol_name in sorted(set(contract_symbols)):
             if not hasattr(module, symbol_name):

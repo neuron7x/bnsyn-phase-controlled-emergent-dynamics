@@ -122,6 +122,22 @@ Gate behavior:
 - Fails if current coverage drops below baseline in `quality/coverage_gate.json`.
 - Fails if current coverage drops below minimum floor in `quality/coverage_gate.json`.
 
+
+## API contract check (canonical)
+
+```bash
+make api-contract
+```
+
+Equivalent explicit command:
+
+```bash
+python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+```
+
+Expected output pattern:
+- `API contract check passed`
+
 ## CI parity checks (local)
 
 Use the same checks enforced in PR CI:
