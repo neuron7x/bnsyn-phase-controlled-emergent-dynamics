@@ -5,7 +5,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from bnsyn.sleep.replay import add_replay_noise, weighted_pattern_selection
+from bnsyn.sleep.replay import (
+    add_replay_noise,
+    validate_noise_level,
+    weighted_pattern_selection,
+)
 
 
 def _patterns() -> list[np.ndarray]:
@@ -65,6 +69,24 @@ def test_weighted_pattern_selection_uniform_weights_is_deterministic() -> None:
     selected = weighted_pattern_selection(patterns, importance, rng)
 
     assert np.array_equal(selected, patterns[expected_idx])
+
+
+def test_weighted_pattern_selection_returns_copy() -> None:
+    patterns = _patterns()
+    rng = np.random.default_rng(0)
+
+    selected = weighted_pattern_selection(patterns, np.array([1.0, 0.0], dtype=np.float64), rng)
+    selected[0] = 99.0
+
+    assert patterns[0][0] == 1.0
+
+
+def test_validate_noise_level_rejects_out_of_range() -> None:
+    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+        validate_noise_level(-0.1)
+
+    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+        validate_noise_level(1.1)
 
 
 def test_add_replay_noise_zero_level_returns_copy() -> None:

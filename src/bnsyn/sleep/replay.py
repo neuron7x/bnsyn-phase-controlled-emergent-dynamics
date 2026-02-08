@@ -17,6 +17,23 @@ from numpy.typing import NDArray
 Float64Array = NDArray[np.float64]
 
 
+def validate_noise_level(noise_level: float) -> None:
+    """Validate replay noise level.
+
+    Parameters
+    ----------
+    noise_level : float
+        Noise level in [0, 1] (0 = no noise, 1 = max noise).
+
+    Raises
+    ------
+    ValueError
+        If noise_level is out of range.
+    """
+    if not 0.0 <= noise_level <= 1.0:
+        raise ValueError("noise_level must be in [0, 1]")
+
+
 def weighted_pattern_selection(
     patterns: list[Float64Array],
     importance: Float64Array,
@@ -104,8 +121,7 @@ def add_replay_noise(
     -----
     Adds Gaussian noise scaled by noise_level * noise_scale.
     """
-    if not 0.0 <= noise_level <= 1.0:
-        raise ValueError("noise_level must be in [0, 1]")
+    validate_noise_level(noise_level)
 
     if noise_level == 0.0:
         return pattern.copy()

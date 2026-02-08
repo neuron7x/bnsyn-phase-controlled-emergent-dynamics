@@ -327,6 +327,23 @@ def test_wake_rejects_non_integer_record_interval() -> None:
         cycle.wake(duration_steps=1, record_memories=True, record_interval=1.5)
 
 
+def test_dream_noise_validation_matches_replay_helper() -> None:
+    seed = 42
+    pack = seed_all(seed)
+    net = Network(
+        NetworkParams(N=10),
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack.np_rng,
+    )
+    cycle = SleepCycle(net, TemperatureSchedule(TemperatureParams()), rng=pack.np_rng)
+
+    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+        cycle.dream(memories=[], noise_level=1.1, duration_steps=1)
+
+
 def test_sleep_stage_config_fields_affect_runtime_or_removed() -> None:
     field_names = set(SleepStageConfig.__dataclass_fields__)
     assert field_names == {
