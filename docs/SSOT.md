@@ -25,3 +25,13 @@ rule registry lives in `docs/SSOT_RULES.md` and is enforced by the validators in
 ## Reference examples (Tier-S and Tier-A)
 
 - NeurIPS checklist (Tier-S), ACM badges (Tier-S), FAIR (Tier-A `wilkinson2016fair`).
+
+## Temperature-gate requirement record (P1-5)
+
+- **Requirement owner**: temperature-ablation maintainers (registry entry `temp_ablation_v2`).
+- **Protected invariant**: `G(T)` must remain monotone and non-impulsive during early cooling to preserve bounded, continuous plasticity modulation.
+- **Validated parameter window**: `gate_tau ∈ [0.015, 0.08]`.
+- **If out of range**:
+  - Too small (`<0.015`) causes near-binary gate transitions and pulse-like plasticity switching.
+  - Too large (`>0.08`) over-smooths gating and weakens exploration/consolidation separation.
+  - Both regimes degrade tracked metrics in the ablation protocol: `stability_w_total_var_end`, `stability_w_cons_var_end`, `protein_mean_end`, `tag_activity_mean`.
