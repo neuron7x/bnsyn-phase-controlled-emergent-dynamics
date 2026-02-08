@@ -57,8 +57,6 @@ def test_multi_cycle_sleep() -> None:
                 stage=SleepStage.LIGHT_SLEEP,
                 duration_steps=50,
                 temperature_range=(0.8, 1.0),
-                plasticity_gate=0.6,
-                consolidation_active=False,
                 replay_active=False,
                 replay_noise=0.0,
             ),
@@ -66,8 +64,6 @@ def test_multi_cycle_sleep() -> None:
                 stage=SleepStage.DEEP_SLEEP,
                 duration_steps=50,
                 temperature_range=(0.3, 0.5),
-                plasticity_gate=0.3,
-                consolidation_active=True,
                 replay_active=False,
                 replay_noise=0.0,
             ),
@@ -75,8 +71,6 @@ def test_multi_cycle_sleep() -> None:
                 stage=SleepStage.REM,
                 duration_steps=50,
                 temperature_range=(0.9, 1.2),
-                plasticity_gate=0.9,
-                consolidation_active=False,
                 replay_active=True,
                 replay_noise=0.3,
             ),
@@ -119,3 +113,14 @@ def test_long_replay_session() -> None:
         duration_steps=100,
     )
     assert len(metrics) == 100
+
+
+@pytest.mark.validation
+def test_sleep_stage_config_contract_surface() -> None:
+    assert set(SleepStageConfig.__dataclass_fields__) == {
+        "stage",
+        "duration_steps",
+        "temperature_range",
+        "replay_active",
+        "replay_noise",
+    }

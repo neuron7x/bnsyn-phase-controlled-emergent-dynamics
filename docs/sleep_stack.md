@@ -8,19 +8,18 @@ The Sleep–Emergence Stack integrates sleep-wake cycles with memory consolidati
 
 ### SleepCycle
 
-Orchestrates sleep-wake transitions with stage-specific temperature and plasticity modulation.
+Orchestrates sleep-wake transitions with stage-specific temperature control and optional replay.
 
 **Stages:**
 - `WAKE`: Normal network operation with memory recording
 - `LIGHT_SLEEP`: Temperature modulation begins
-- `DEEP_SLEEP`: Consolidation active, low temperature
+- `DEEP_SLEEP`: Low-temperature stage
 - `REM`: Replay active, elevated temperature
 
 **Key Features:**
 - Memory recording during wake (periodic voltage snapshots)
-- Temperature-gated consolidation during deep sleep
 - Pattern replay with noise during REM
-- Configurable stage durations and parameters
+- Configurable stage durations, temperature ranges, and replay settings
 
 ### MemoryConsolidator
 
@@ -161,7 +160,7 @@ pack = seed_all(123)
 ### With Existing DualWeights
 
 SleepCycle does not replace DualWeights consolidation. Instead:
-- SleepCycle controls *when* consolidation happens (sleep stages)
+- SleepCycle controls wake/sleep staging and replay timing
 - DualWeights/MemoryConsolidator implements *how* consolidation happens
 - Temperature schedule gates plasticity via existing `gate_sigmoid`
 

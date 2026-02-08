@@ -290,8 +290,6 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
                 stage=stage.stage,
                 duration_steps=int(stage.duration_steps * scale),
                 temperature_range=stage.temperature_range,
-                plasticity_gate=stage.plasticity_gate,
-                consolidation_active=stage.consolidation_active,
                 replay_active=stage.replay_active,
                 replay_noise=stage.replay_noise,
             )

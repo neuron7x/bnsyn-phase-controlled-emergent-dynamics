@@ -100,8 +100,6 @@ def test_sleep_improves_consolidation() -> None:
                 stage=stage.stage,
                 duration_steps=stage.duration_steps // 3,
                 temperature_range=stage.temperature_range,
-                plasticity_gate=stage.plasticity_gate,
-                consolidation_active=stage.consolidation_active,
                 replay_active=stage.replay_active,
                 replay_noise=stage.replay_noise,
             )
@@ -276,8 +274,6 @@ def test_determinism_across_sleep_runs() -> None:
                 stage=stage.stage,
                 duration_steps=stage.duration_steps // 5,
                 temperature_range=stage.temperature_range,
-                plasticity_gate=stage.plasticity_gate,
-                consolidation_active=stage.consolidation_active,
                 replay_active=stage.replay_active,
                 replay_noise=stage.replay_noise,
             )

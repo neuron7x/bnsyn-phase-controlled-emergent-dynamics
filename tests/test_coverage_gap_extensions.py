@@ -390,8 +390,6 @@ def test_sleep_cycle_sleep_and_dream_paths() -> None:
         stage=SleepStage.LIGHT_SLEEP,
         duration_steps=1,
         temperature_range=(0.8, 1.0),
-        plasticity_gate=0.6,
-        consolidation_active=False,
         replay_active=False,
         replay_noise=0.0,
     )

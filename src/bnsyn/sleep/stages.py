@@ -56,32 +56,21 @@ class SleepStageConfig:
         Duration in simulation steps.
     temperature_range : tuple[float, float]
         Temperature range (min, max) for this stage.
-    plasticity_gate : float
-        Plasticity gating value in [0, 1].
-    consolidation_active : bool
-        Whether consolidation is active in this stage.
     replay_active : bool
         Whether memory replay is active in this stage.
     replay_noise : float
         Noise level for replay (0 = exact, 1 = high noise).
 
-    Notes
-    -----
-    Temperature flows to gate_sigmoid for plasticity gating.
     """
 
     stage: SleepStage
     duration_steps: int
     temperature_range: tuple[float, float]
-    plasticity_gate: float
-    consolidation_active: bool
     replay_active: bool
     replay_noise: float
 
     def __post_init__(self) -> None:
         if self.duration_steps <= 0:
             raise ValueError("duration_steps must be positive")
-        if not 0.0 <= self.plasticity_gate <= 1.0:
-            raise ValueError("plasticity_gate must be in [0, 1]")
         if not 0.0 <= self.replay_noise <= 1.0:
             raise ValueError("replay_noise must be in [0, 1]")
