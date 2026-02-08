@@ -250,7 +250,9 @@ class SleepCycle:
         if not stages:
             raise ValueError("stages list cannot be empty")
 
-        total_metrics: list[dict[str, float]] = []
+        steps_count = 0
+        sigma_sum = 0.0
+        spike_rate_sum = 0.0
 
         for stage_config in stages:
             old_stage = self.current_stage
@@ -265,18 +267,17 @@ class SleepCycle:
             T_min, T_max = stage_config.temperature_range
             self.temperature_schedule.T = float(T_min + T_max) / 2.0
 
-            stage_metrics = []
             for _ in range(stage_config.duration_steps):
                 # run network step
                 m = self.network.step()
-                stage_metrics.append(m)
+                steps_count += 1
+                sigma_sum += float(m["sigma"])
+                spike_rate_sum += float(m["spike_rate_hz"])
                 self.step_in_stage += 1
                 self.total_step += 1
 
                 # update temperature
                 self.temperature_schedule.step_geometric()
-
-            total_metrics.extend(stage_metrics)
 
             # replay if configured
             if stage_config.replay_active and len(self.memories) > 0:
@@ -291,10 +292,13 @@ class SleepCycle:
         for cycle_cb in self._cycle_callbacks:
             cycle_cb()
 
+        if steps_count == 0:
+            raise RuntimeError("sleep stages must include at least one step")
+
         return {
-            "total_steps": len(total_metrics),
-            "mean_sigma": float(np.mean([m["sigma"] for m in total_metrics])),
-            "mean_spike_rate": float(np.mean([m["spike_rate_hz"] for m in total_metrics])),
+            "total_steps": steps_count,
+            "mean_sigma": sigma_sum / steps_count,
+            "mean_spike_rate": spike_rate_sum / steps_count,
         }
 
     def dream(

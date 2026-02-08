@@ -269,6 +269,77 @@ def test_replay_determinism() -> None:
         assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
 
 
+def test_sleep_summary_matches_streaming_manual_aggregation() -> None:
+    seed = 123
+    nparams = NetworkParams(N=50)
+    stages = [
+        SleepStageConfig(
+            stage=SleepStage.LIGHT_SLEEP,
+            duration_steps=7,
+            temperature_range=(0.8, 1.0),
+            replay_active=False,
+            replay_noise=0.0,
+        ),
+        SleepStageConfig(
+            stage=SleepStage.DEEP_SLEEP,
+            duration_steps=9,
+            temperature_range=(0.3, 0.5),
+            replay_active=False,
+            replay_noise=0.0,
+        ),
+        SleepStageConfig(
+            stage=SleepStage.REM,
+            duration_steps=11,
+            temperature_range=(0.9, 1.2),
+            replay_active=False,
+            replay_noise=0.0,
+        ),
+    ]
+
+    pack_sleep = seed_all(seed)
+    net_sleep = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack_sleep.np_rng,
+    )
+    schedule_sleep = TemperatureSchedule(TemperatureParams())
+    cycle = SleepCycle(net_sleep, schedule_sleep, rng=pack_sleep.np_rng)
+
+    summary = cycle.sleep(stages)
+
+    pack_manual = seed_all(seed)
+    net_manual = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=pack_manual.np_rng,
+    )
+    schedule_manual = TemperatureSchedule(TemperatureParams())
+
+    steps_count = 0
+    sigma_sum = 0.0
+    spike_rate_sum = 0.0
+
+    for stage in stages:
+        t_min, t_max = stage.temperature_range
+        schedule_manual.T = float(t_min + t_max) / 2.0
+        for _ in range(stage.duration_steps):
+            metrics = net_manual.step()
+            steps_count += 1
+            sigma_sum += float(metrics["sigma"])
+            spike_rate_sum += float(metrics["spike_rate_hz"])
+            schedule_manual.step_geometric()
+
+    assert summary["total_steps"] == steps_count
+    assert summary["mean_sigma"] == pytest.approx(sigma_sum / steps_count)
+    assert summary["mean_spike_rate"] == pytest.approx(spike_rate_sum / steps_count)
+
+
 def test_stage_callbacks() -> None:
     """Test stage change callbacks."""
     seed = 42
