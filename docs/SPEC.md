@@ -127,7 +127,7 @@ G(T)=\frac{1}{1+\exp(-(T-T_c)/\tau)}
 
 **Requirement owner:** temperature-ablation maintainers (`experiments/registry.py`, `temp_ablation_v2`).
 
-**Protected invariant:** gate modulation must remain smooth and monotone so the plasticity controller is not reduced to an impulse-like binary switch during early cooling, preserving bounded dual-weight dynamics.
+**Protected invariant:** gate modulation is maintained as a bounded sigmoid-control channel (`gate_sigmoid`) with `gate_tau` constrained to a validated window to prevent collapse into binary-like switching or over-flat response.
 
 **Validated operating window:** `gate_tau ∈ [0.015, 0.08]`.
 

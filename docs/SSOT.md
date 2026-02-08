@@ -29,7 +29,7 @@ rule registry lives in `docs/SSOT_RULES.md` and is enforced by the validators in
 ## Temperature-gate requirement record (P1-5)
 
 - **Requirement owner**: temperature-ablation maintainers (registry entry `temp_ablation_v2`).
-- **Protected invariant**: `G(T)` must remain monotone and non-impulsive during early cooling to preserve bounded, continuous plasticity modulation.
+- **Protected invariant**: `G(T)` is implemented as logistic gating with validated `gate_tau` bounds, preserving bounded plasticity modulation without undocumented threshold-controller behavior.
 - **Validated parameter window**: `gate_tau ∈ [0.015, 0.08]`.
 - **If out of range**:
   - Too small (`<0.015`) causes near-binary gate transitions and pulse-like plasticity switching.
