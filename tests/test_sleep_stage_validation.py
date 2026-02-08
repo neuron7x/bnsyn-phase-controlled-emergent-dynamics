@@ -13,8 +13,6 @@ def test_sleep_stage_replay_noise_bounds() -> None:
             stage=SleepStage.REM,
             duration_steps=10,
             temperature_range=(0.8, 1.0),
-            plasticity_gate=0.5,
-            consolidation_active=True,
             replay_active=True,
             replay_noise=1.5,
         )

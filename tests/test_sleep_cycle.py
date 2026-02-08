@@ -34,8 +34,6 @@ def test_sleep_stage_creation() -> None:
         stage=SleepStage.WAKE,
         duration_steps=100,
         temperature_range=(0.5, 1.0),
-        plasticity_gate=0.8,
-        consolidation_active=True,
         replay_active=False,
         replay_noise=0.0,
     )
@@ -48,22 +46,18 @@ def test_sleep_stage_creation() -> None:
             stage=SleepStage.WAKE,
             duration_steps=0,
             temperature_range=(0.5, 1.0),
-            plasticity_gate=0.8,
-            consolidation_active=True,
             replay_active=False,
             replay_noise=0.0,
         )
 
-    # invalid plasticity_gate
-    with pytest.raises(ValueError, match="plasticity_gate must be in"):
+    # invalid replay_noise
+    with pytest.raises(ValueError, match="replay_noise must be in"):
         SleepStageConfig(
             stage=SleepStage.WAKE,
             duration_steps=100,
             temperature_range=(0.5, 1.0),
-            plasticity_gate=1.5,
-            consolidation_active=True,
             replay_active=False,
-            replay_noise=0.0,
+            replay_noise=1.5,
         )
 
 
@@ -186,8 +180,6 @@ def test_sleep_stages_progression() -> None:
             stage=SleepStage.LIGHT_SLEEP,
             duration_steps=10,
             temperature_range=(0.8, 1.0),
-            plasticity_gate=0.6,
-            consolidation_active=False,
             replay_active=False,
             replay_noise=0.0,
         ),
@@ -195,8 +187,6 @@ def test_sleep_stages_progression() -> None:
             stage=SleepStage.DEEP_SLEEP,
             duration_steps=10,
             temperature_range=(0.3, 0.5),
-            plasticity_gate=0.3,
-            consolidation_active=True,
             replay_active=False,
             replay_noise=0.0,
         ),
@@ -204,8 +194,6 @@ def test_sleep_stages_progression() -> None:
             stage=SleepStage.REM,
             duration_steps=10,
             temperature_range=(0.9, 1.2),
-            plasticity_gate=0.9,
-            consolidation_active=False,
             replay_active=True,
             replay_noise=0.3,
         ),
@@ -310,8 +298,6 @@ def test_stage_callbacks() -> None:
             stage=SleepStage.LIGHT_SLEEP,
             duration_steps=5,
             temperature_range=(0.8, 1.0),
-            plasticity_gate=0.6,
-            consolidation_active=False,
             replay_active=False,
             replay_noise=0.0,
         ),
@@ -339,3 +325,15 @@ def test_wake_rejects_non_integer_record_interval() -> None:
 
     with pytest.raises(ValueError, match="record_interval must be a positive integer"):
         cycle.wake(duration_steps=1, record_memories=True, record_interval=1.5)
+
+
+def test_sleep_stage_config_fields_affect_runtime_or_removed() -> None:
+    field_names = set(SleepStageConfig.__dataclass_fields__)
+    assert field_names == {
+        "stage",
+        "duration_steps",
+        "temperature_range",
+        "replay_active",
+        "replay_noise",
+    }
+

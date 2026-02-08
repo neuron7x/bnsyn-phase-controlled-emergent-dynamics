@@ -74,8 +74,6 @@ def _run_once(
                     stage=s.stage,
                     duration_steps=max(1, int(s.duration_steps * scale)),
                     temperature_range=s.temperature_range,
-                    plasticity_gate=s.plasticity_gate,
-                    consolidation_active=s.consolidation_active,
                     replay_active=s.replay_active,
                     replay_noise=s.replay_noise,
                 )

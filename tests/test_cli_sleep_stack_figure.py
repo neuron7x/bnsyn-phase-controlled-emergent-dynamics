@@ -52,8 +52,6 @@ def test_cmd_sleep_stack_generates_figure(monkeypatch: pytest.MonkeyPatch, tmp_p
                 stage=SleepStage.LIGHT_SLEEP,
                 duration_steps=450,
                 temperature_range=(0.8, 1.0),
-                plasticity_gate=0.6,
-                consolidation_active=False,
                 replay_active=False,
                 replay_noise=0.0,
             )
