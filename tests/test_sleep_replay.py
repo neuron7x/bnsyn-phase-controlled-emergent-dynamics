@@ -67,6 +67,18 @@ def test_weighted_pattern_selection_uniform_weights_is_deterministic() -> None:
     assert np.array_equal(selected, patterns[expected_idx])
 
 
+
+
+def test_weighted_pattern_selection_returns_copy() -> None:
+    patterns = _patterns()
+    rng = np.random.default_rng(0)
+
+    selected = weighted_pattern_selection(patterns, np.array([1.0, 0.0], dtype=np.float64), rng)
+    selected[0] = 99.0
+
+    assert patterns[0][0] == 1.0
+
+
 def test_add_replay_noise_zero_level_returns_copy() -> None:
     rng = np.random.default_rng(0)
     pattern = np.array([1.0, -1.0], dtype=np.float64)

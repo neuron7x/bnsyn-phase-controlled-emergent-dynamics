@@ -48,6 +48,30 @@ def test_dream_zero_importance_memories_executes_with_uniform_fallback() -> None
     assert all("sigma" in metric for metric in metrics)
 
 
+def test_dream_rejects_negative_importance_via_replay_helper() -> None:
+    cycle = _build_cycle(seed=106)
+    memory = MemorySnapshot(
+        voltage_mV=np.full(60, cycle.network.adex.EL_mV, dtype=np.float64),
+        importance=-0.1,
+        step=0,
+    )
+
+    with np.testing.assert_raises_regex(ValueError, "importance must be non-negative"):
+        cycle.dream(memories=[memory], noise_level=0.0, duration_steps=1)
+
+
+def test_dream_rejects_nonfinite_importance_via_replay_helper() -> None:
+    cycle = _build_cycle(seed=107)
+    memory = MemorySnapshot(
+        voltage_mV=np.full(60, cycle.network.adex.EL_mV, dtype=np.float64),
+        importance=float("inf"),
+        step=0,
+    )
+
+    with np.testing.assert_raises_regex(ValueError, "importance must be finite"):
+        cycle.dream(memories=[memory], noise_level=0.0, duration_steps=1)
+
+
 def test_record_memory_subsamples_when_population_exceeds_threshold() -> None:
     cycle = _build_cycle(seed=103, n_neurons=640)
 

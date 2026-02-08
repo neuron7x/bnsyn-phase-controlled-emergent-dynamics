@@ -22,6 +22,7 @@ from numpy.typing import NDArray
 from bnsyn.sim.network import Network
 from bnsyn.temperature.schedule import TemperatureSchedule
 
+from .replay import add_replay_noise, weighted_pattern_selection
 from .stages import SleepStage, SleepStageConfig
 
 
@@ -327,8 +328,13 @@ class SleepCycle:
         -----
         Replays memories by converting voltage patterns to current injections.
         """
-        if not 0.0 <= noise_level <= 1.0:
-            raise ValueError("noise_level must be in [0, 1]")
+        # Keep noise-level validation aligned with replay helper API.
+        add_replay_noise(
+            np.zeros(1, dtype=np.float64),
+            noise_level=noise_level,
+            noise_scale=0.0,
+            rng=self.rng,
+        )
         if duration_steps <= 0:
             raise ValueError("duration_steps must be positive")
         if not memories:
@@ -336,18 +342,14 @@ class SleepCycle:
 
         metrics = []
         N = self.network.np.N
+        patterns = [np.asarray(m.voltage_mV, dtype=np.float64) for m in memories]
+        importance = np.asarray([m.importance for m in memories], dtype=np.float64)
 
         for _ in range(duration_steps):
             # select a random memory weighted by importance
-            weights = np.array([m.importance for m in memories], dtype=np.float64)
-            if np.sum(weights) == 0:
-                weights = np.ones_like(weights)
-            weights = weights / np.sum(weights)
-            idx = self.rng.choice(len(memories), p=weights)
-            memory = memories[idx]
+            V_pattern = weighted_pattern_selection(patterns, importance, self.rng)
 
             # convert voltage to current (simplified: scaled voltage pattern)
-            V_pattern = memory.voltage_mV
             # expand if subsampled
             if len(V_pattern) < N:
                 V_pattern = np.interp(
@@ -360,9 +362,12 @@ class SleepCycle:
             I_replay = (V_pattern - self.network.adex.EL_mV) * 10.0
 
             # add noise
-            if noise_level > 0:
-                noise = self.rng.normal(0, noise_level * 50.0, N)  # 50 pA std at max noise
-                I_replay = I_replay + noise
+            I_replay = add_replay_noise(
+                np.asarray(I_replay, dtype=np.float64),
+                noise_level=noise_level,
+                noise_scale=50.0,
+                rng=self.rng,
+            )
 
             I_replay = np.asarray(I_replay, dtype=np.float64)
 
