@@ -22,7 +22,7 @@ from numpy.typing import NDArray
 from bnsyn.sim.network import Network
 from bnsyn.temperature.schedule import TemperatureSchedule
 
-from .replay import add_replay_noise, weighted_pattern_selection
+from .replay import add_replay_noise, validate_noise_level, weighted_pattern_selection
 from .stages import SleepStage, SleepStageConfig
 
 
@@ -329,12 +329,7 @@ class SleepCycle:
         Replays memories by converting voltage patterns to current injections.
         """
         # Keep noise-level validation aligned with replay helper API.
-        add_replay_noise(
-            np.zeros(1, dtype=np.float64),
-            noise_level=noise_level,
-            noise_scale=0.0,
-            rng=self.rng,
-        )
+        validate_noise_level(noise_level)
         if duration_steps <= 0:
             raise ValueError("duration_steps must be positive")
         if not memories:
