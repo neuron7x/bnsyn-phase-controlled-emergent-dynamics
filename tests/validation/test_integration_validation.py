@@ -66,7 +66,7 @@ def test_plasticity_update_requires_modulator_and_spikes() -> None:
 
 @pytest.mark.validation
 def test_temperature_gate_switches_regimes() -> None:
-    params = TemperatureParams(T0=1.0, Tmin=0.1, alpha=0.9, Tc=0.5, gate_tau=0.1)
+    params = TemperatureParams(T0=1.0, Tmin=0.1, alpha=0.9, Tc=0.5, gate_tau=0.08)
     sched = TemperatureSchedule(params=params)
     gate_high = sched.plasticity_gate()
     sched.T = 0.1

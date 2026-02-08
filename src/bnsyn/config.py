@@ -213,7 +213,15 @@ class TemperatureParams(BaseModel):
     Tmin: PositiveFloat = 1e-3
     alpha: float = Field(default=0.95, ge=0.0, le=1.0)
     Tc: PositiveFloat = 0.1
-    gate_tau: PositiveFloat = 0.02  # sigmoid sharpness
+    gate_tau: float = Field(
+        default=0.02,
+        ge=0.015,
+        le=0.08,
+        description=(
+            "Validated temperature-gate slope window from ablation studies; "
+            "narrow bounds prevent near-binary gating at low tau and over-flat gating at high tau."
+        ),
+    )
 
 
 class DualWeightParams(BaseModel):

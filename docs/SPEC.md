@@ -125,7 +125,16 @@ Plasticity gate (sigmoid):
 G(T)=\frac{1}{1+\exp(-(T-T_c)/\tau)}
 \]
 
-Used to couple exploration→consolidation in downstream systems.
+**Requirement owner:** temperature-ablation maintainers (`experiments/registry.py`, `temp_ablation_v2`).
+
+**Protected invariant:** gate modulation is maintained as a bounded sigmoid-control channel (`gate_sigmoid`) with `gate_tau` constrained to a validated window to prevent collapse into binary-like switching or over-flat response.
+
+**Validated operating window:** `gate_tau ∈ [0.015, 0.08]`.
+
+**Out-of-range degradation:**
+- `gate_tau < 0.015` drives near-binary gate collapse and stepwise plasticity jumps.
+- `gate_tau > 0.08` over-flattens the gate, weakening phase separation between exploration and consolidation.
+- Both regimes degrade temperature-ablation metrics: `stability_w_total_var_end`, `stability_w_cons_var_end`, and consolidation activity (`protein_mean_end`, `tag_activity_mean`).
 
 ---
 

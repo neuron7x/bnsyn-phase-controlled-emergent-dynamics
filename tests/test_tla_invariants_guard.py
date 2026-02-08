@@ -26,7 +26,7 @@ def default_temp_params() -> TemperatureParams:
         Tmin=1e-3,
         alpha=0.95,
         Tc=0.5,
-        gate_tau=0.1,
+        gate_tau=0.08,
     )
 
 
