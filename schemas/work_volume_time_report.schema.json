@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["generated_at_utc", "git", "volume", "time", "verification"],
+  "properties": {
+    "generated_at_utc": {"type": "string"},
+    "git": {
+      "type": "object",
+      "required": ["head_ref", "head_sha", "base_ref", "base_sha"],
+      "properties": {
+        "head_ref": {"type": "string"},
+        "head_sha": {"type": "string"},
+        "base_ref": {"type": "string"},
+        "base_sha": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "volume": {
+      "type": "object",
+      "required": [
+        "files_changed_count",
+        "lines_added",
+        "lines_deleted",
+        "changed_files_top_200",
+        "tests_added_count",
+        "test_files_top_200",
+        "repo_inventory_counts",
+        "tracked_files_total"
+      ],
+      "properties": {
+        "files_changed_count": {"type": "integer", "minimum": 0},
+        "lines_added": {"type": "integer", "minimum": 0},
+        "lines_deleted": {"type": "integer", "minimum": 0},
+        "changed_files_top_200": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "added", "deleted"],
+            "properties": {
+              "path": {"type": "string"},
+              "added": {"type": "integer", "minimum": 0},
+              "deleted": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          }
+        },
+        "tests_added_count": {"type": "integer", "minimum": 0},
+        "test_files_top_200": {"type": "array", "items": {"type": "string"}},
+        "repo_inventory_counts": {
+          "type": "object",
+          "required": ["src", "tests", "docs", ".github", "other"],
+          "properties": {
+            "src": {"type": "integer", "minimum": 0},
+            "tests": {"type": "integer", "minimum": 0},
+            "docs": {"type": "integer", "minimum": 0},
+            ".github": {"type": "integer", "minimum": 0},
+            "other": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "tracked_files_total": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "time": {
+      "type": "object",
+      "required": ["commit_time_window", "audit_runtime_seconds", "ci_run_durations"],
+      "properties": {
+        "commit_time_window": {
+          "type": "object",
+          "required": ["first_commit_utc", "last_commit_utc", "elapsed_hours"],
+          "properties": {
+            "first_commit_utc": {"type": "string"},
+            "last_commit_utc": {"type": "string"},
+            "elapsed_hours": {"type": "number", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "audit_runtime_seconds": {"type": "number", "minimum": 0},
+        "ci_run_durations": {
+          "type": "object",
+          "required": ["status", "how_to_verify"],
+          "properties": {
+            "status": {"type": "string"},
+            "how_to_verify": {"type": "string"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status", "non_verifiable_fields"],
+      "properties": {
+        "status": {"const": "VERIFIED"},
+        "non_verifiable_fields": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

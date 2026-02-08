@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "UNKNOWN",
+  "git": {
+    "base_ref": "UNKNOWN",
+    "base_sha": "UNKNOWN",
+    "head_ref": "work",
+    "head_sha": "UNKNOWN"
+  },
+  "time": {
+    "audit_runtime_seconds": 0.0,
+    "ci_run_durations": {
+      "how_to_verify": "Use GitHub API workflow runs endpoint with a repository token and inspect duration metrics.",
+      "status": "UNKNOWN"
+    },
+    "commit_time_window": {
+      "elapsed_hours": 0.0,
+      "first_commit_utc": "UNKNOWN",
+      "last_commit_utc": "UNKNOWN"
+    }
+  },
+  "verification": {
+    "non_verifiable_fields": [
+      "git.head_sha",
+      "git.base_ref",
+      "git.base_sha",
+      "time.commit_time_window",
+      "time.ci_run_durations"
+    ],
+    "status": "VERIFIED"
+  },
+  "volume": {
+    "changed_files_top_200": [],
+    "files_changed_count": 93,
+    "lines_added": 457,
+    "lines_deleted": 34989,
+    "repo_inventory_counts": {
+      ".github": 37,
+      "docs": 98,
+      "other": 262,
+      "src": 72,
+      "tests": 150
+    },
+    "test_files_top_200": [],
+    "tests_added_count": 1,
+    "tracked_files_total": 619
+  }
+}

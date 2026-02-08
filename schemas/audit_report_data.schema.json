@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["inventory_total_files", "categories", "countable_totals", "core_logic_sublevels", "documentation_depth"],
+  "properties": {
+    "inventory_total_files": {"type": "integer", "minimum": 0},
+    "categories": {
+      "type": "object",
+      "required": ["CORE_LOGIC","TESTS","CI_CD","INFRASTRUCTURE","DOCUMENTATION","SCRIPTS_TOOLING","DATA_SCHEMAS","CONFIGURATION","STATIC_ASSETS","GENERATED"],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[A-Z_]+$": {
+          "type": "object",
+          "required": ["files", "code", "comments", "blank"],
+          "properties": {
+            "files": {"type": "integer", "minimum": 0},
+            "code": {"type": "integer", "minimum": 0},
+            "comments": {"type": "integer", "minimum": 0},
+            "blank": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "countable_totals": {
+      "type": "object",
+      "required": ["files", "code", "comments", "blank"],
+      "properties": {
+        "files": {"type": "integer", "minimum": 0},
+        "code": {"type": "integer", "minimum": 0},
+        "comments": {"type": "integer", "minimum": 0},
+        "blank": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "core_logic_sublevels": {"type": "object"},
+    "documentation_depth": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,83 @@
+{
+  "inventory_total_files": 634,
+  "categories": {
+    "CI_CD": {
+      "files": 29,
+      "code": 2607,
+      "comments": 100,
+      "blank": 301
+    },
+    "CONFIGURATION": {
+      "files": 44,
+      "code": 3425,
+      "comments": 1858,
+      "blank": 641
+    },
+    "CORE_LOGIC": {
+      "files": 68,
+      "code": 7159,
+      "comments": 985,
+      "blank": 1852
+    },
+    "DATA_SCHEMAS": {
+      "files": 4,
+      "code": 315,
+      "comments": 6,
+      "blank": 84
+    },
+    "DOCUMENTATION": {
+      "files": 94,
+      "code": 6446,
+      "comments": 2674,
+      "blank": 3097
+    },
+    "GENERATED": {
+      "files": 107,
+      "code": 91872,
+      "comments": 87,
+      "blank": 177
+    },
+    "INFRASTRUCTURE": {
+      "files": 3,
+      "code": 148,
+      "comments": 0,
+      "blank": 47
+    },
+    "SCRIPTS_TOOLING": {
+      "files": 128,
+      "code": 12927,
+      "comments": 490,
+      "blank": 2427
+    },
+    "STATIC_ASSETS": {
+      "files": 8,
+      "code": 25414,
+      "comments": 316,
+      "blank": 2074
+    },
+    "TESTS": {
+      "files": 149,
+      "code": 11649,
+      "comments": 555,
+      "blank": 3148
+    }
+  },
+  "countable_totals": {
+    "files": 527,
+    "code": 70090,
+    "comments": 6984,
+    "blank": 13671
+  },
+  "core_logic_sublevels": {
+    "novel": 28,
+    "known_model": 19,
+    "glue": 9,
+    "boilerplate": 16
+  },
+  "documentation_depth": {
+    "stubs_lt20": 16,
+    "light_20_50": 30,
+    "substantive_gt50": 59,
+    "md_files_total": 105
+  }
+}

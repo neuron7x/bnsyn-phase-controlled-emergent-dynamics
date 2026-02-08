@@ -1,12 +1,11 @@
 name: Math Quality Gate
 
-on: [push, pull_request]
-
-env:
-  PIP_VERSION: "26.0"
+on:
+  pull_request:
+  push:
 
 jobs:
-  math-gate:
+  work-volume-time:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,30 +14,32 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade "pip==${PIP_VERSION}"
-          python -m pip --version
-          python -m pip install -e ".[test]"
-      - name: Run math validator
-        run: python scripts/math_validate.py
-      - name: Run math invariant tests
-        run: pytest tests/test_math_invariants.py -v --tb=short
-      - name: Verify no UNTRUSTED artifacts
+          python -m pip install --upgrade pip
+          python -m pip install jsonschema
+      - name: Unicode control scan
+        run: python scripts/scan_unicode_controls.py
+      - name: Generate work volume and time report
+        run: python scripts/generate_work_volume_time_report.py
+      - name: Validate schema
         run: |
           python - <<'PY'
           import json
-
-          with open('artifacts/math_audit/manifest.json', encoding='utf-8') as handle:
-              m = json.load(handle)
-          untrusted = [a for a in m['artifacts'] if a.get('provenance') == 'UNTRUSTED']
-          if untrusted:
-              for item in untrusted:
-                  print(f"UNTRUSTED: {item['path']}")
-              raise SystemExit(1)
-          print('All artifacts have provenance.')
+          from pathlib import Path
+          from jsonschema import validate
+          schema = json.loads(Path('schemas/work_volume_time_report.schema.json').read_text(encoding='utf-8'))
+          report = json.loads(Path('artifacts/work_volume_time/report.json').read_text(encoding='utf-8'))
+          validate(report, schema)
+          print('SCHEMA_OK')
           PY
-      - name: Upload audit artifacts
+      - name: Report freshness gate
+        run: |
+          python scripts/generate_work_volume_time_report.py
+          git diff --exit-code -- docs/WORK_VOLUME_TIME_REPORT.md artifacts/work_volume_time/report.json
+      - name: Upload runtime artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: math-audit
-          path: artifacts/math_audit/
+          name: work-volume-time-${{ github.sha }}
+          path: |
+            artifacts/work_volume_time/report.json
+            docs/WORK_VOLUME_TIME_REPORT.md

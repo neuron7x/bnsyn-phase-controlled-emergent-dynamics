@@ -40,3 +40,14 @@ PR_SUMMARY.md
 wheelhouse/
 
 artifacts/wheelhouse_report.json
+
+# Audit raw evidence (CI artifacts only)
+artifacts/math_audit/raw/
+artifacts/math_audit/sources/
+audit_evidence/
+
+# allow deterministic work volume/time artifact
+!artifacts/
+artifacts/*
+!artifacts/work_volume_time/
+!artifacts/work_volume_time/report.json
