@@ -76,7 +76,7 @@ jobs:
             --output "artifacts/bench_${SCENARIO}_report.md"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-results-${{ github.run_id }}
           path: artifacts/
@@ -170,7 +170,7 @@ jobs:
           gh release upload nightly artifacts/*.json* --clobber
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: nightly-benchmark-results-${{ matrix.scenario }}-${{ github.run_id }}
           path: artifacts/
@@ -238,7 +238,7 @@ jobs:
             --threshold 0.10
 
       - name: Upload benchmark artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-results-${{ github.run_id }}
           path: |
@@ -306,7 +306,7 @@ jobs:
           python -m scripts.compare_benchmarks --format json > benchmark_report.json
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: benchmark-results-${{ github.sha }}
@@ -317,7 +317,7 @@ jobs:
           retention-days: 90
 
       - name: Upload regression report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: regression-report-${{ github.sha }}

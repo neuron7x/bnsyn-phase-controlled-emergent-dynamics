@@ -86,7 +86,7 @@ jobs:
       
       - name: Upload logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ruff-logs-${{ github.sha }}
           path: |
@@ -161,7 +161,7 @@ jobs:
       
       - name: Upload logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mypy-logs-${{ github.sha }}
           path: mypy.log
@@ -224,7 +224,7 @@ jobs:
       
       - name: Upload logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pylint-logs-${{ github.sha }}
           path: pylint.log

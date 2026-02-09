@@ -67,7 +67,7 @@ jobs:
           exit "$TEST_STATUS"
       - name: Upload chaos test results
         if: inputs['upload-artifacts'] && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: chaos-results-${{ matrix.fault-type }}-${{ github.sha }}
           path: chaos_output_${{ matrix.fault-type }}.txt

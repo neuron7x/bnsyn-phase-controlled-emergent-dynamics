@@ -112,7 +112,7 @@ jobs:
           } >> "$summary_file"
       - name: Upload logs
         if: inputs['upload-artifacts'] && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ inputs['artifact-name'] }}-${{ github.sha }}
           path: |
@@ -122,7 +122,7 @@ jobs:
           retention-days: 30
       - name: Upload Hypothesis cache
         if: inputs['upload-hypothesis-cache'] && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: hypothesis-cache-${{ github.sha }}
           path: .hypothesis/

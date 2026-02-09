@@ -212,7 +212,7 @@ jobs:
       
       - name: Upload artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pytest-failure-${{ github.sha }}
           path: |
@@ -226,7 +226,7 @@ jobs:
       
       - name: Upload mandatory coverage.xml artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-xml-${{ github.sha }}
           path: coverage.xml
@@ -235,7 +235,7 @@ jobs:
 
       - name: Upload coverage HTML report artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-html-${{ github.sha }}
           path: htmlcov/
@@ -244,7 +244,7 @@ jobs:
 
       - name: Upload coverage trend metrics artifact
         if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-trend-metrics
           path: artifacts/coverage-trend/
