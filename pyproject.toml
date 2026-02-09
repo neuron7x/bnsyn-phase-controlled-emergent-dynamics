@@ -26,7 +26,7 @@ dev = [
   "pylint==3.3.5",
   "pydocstyle==6.3.0",
   "bandit==1.9.3",
-  "validate-pyproject==0.24.0",
+  "validate-pyproject==0.25",
   "pre-commit==4.5.1",
   "pip-audit==2.10.0",
   "psutil==7.2.2",

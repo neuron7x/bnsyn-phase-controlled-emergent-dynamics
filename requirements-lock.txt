@@ -1404,9 +1404,9 @@ urllib3==2.6.3 \
     --hash=sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed \
     --hash=sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4
     # via requests
-validate-pyproject==0.24 \
-    --hash=sha256:4b153fc33ba93ff0f67bcb8d624abb146db51d81741273891fbe1c6f4596849b \
-    --hash=sha256:822f0beae5f9b0dfa9a10d68f40fd588e49152b30485edeb0672e922583e24b6
+validate-pyproject==0.25 \
+    --hash=sha256:e68c12d1cb0d8ddc269ffc42875a81727ddb7865000aa6d2f77d833b55c53f0b \
+    --hash=sha256:f9d05e2686beff82f9ea954f582306b036ced3d3feb258c1110f2c2a495b1981
     # via bnsyn (pyproject.toml)
 virtualenv==20.36.1 \
     --hash=sha256:575a8d6b124ef88f6f51d56d656132389f961062a9177016a50e4f507bbcc19f \
