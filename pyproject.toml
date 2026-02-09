@@ -17,7 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "hypothesis==6.150.3",
+  "hypothesis==6.151.5",
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
   "pyyaml==6.0.3",
@@ -38,7 +38,7 @@ dev = [
 ]
 
 test = [
-  "hypothesis==6.150.3",
+  "hypothesis==6.151.5",
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
   "pyyaml==6.0.3",
