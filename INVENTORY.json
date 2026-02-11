@@ -9,7 +9,7 @@
   "counts": {
     "src": 72,
     "tests": 150,
-    "docs": 98,
+    "docs": 99,
     ".github": 37
   },
   "workflows": [
