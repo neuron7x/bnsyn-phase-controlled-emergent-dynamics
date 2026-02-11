@@ -7,7 +7,7 @@ from pathlib import Path
 
 from scripts import scan_placeholders
 
-ALLOWED_STATUSES = {"OPEN", "IN_PROGRESS", "RESOLVED", "ACCEPTED_BY_DESIGN"}
+ALLOWED_STATUSES = {"OPEN", "IN_PROGRESS", "CLOSED", "ACCEPTED_BY_DESIGN"}
 
 
 def test_scan_placeholders_json_contract() -> None:
@@ -52,6 +52,41 @@ def test_registry_covers_all_scan_findings() -> None:
         if status in {"OPEN", "IN_PROGRESS"}
     }
     assert open_like_paths <= scan_paths
+
+
+def test_registry_closed_entries_include_evidence_ref() -> None:
+    registry_path = Path("docs/PLACEHOLDER_REGISTRY.md")
+    registry_text = registry_path.read_text(encoding="utf-8")
+
+    entry_blocks = [
+        match.group(0)
+        for match in re.finditer(
+            r"^- ID: PH-\d{4}$.*?(?=\n\n- ID: PH-\d{4}$|\Z)",
+            registry_text,
+            flags=re.MULTILINE | re.DOTALL,
+        )
+    ]
+    assert entry_blocks
+
+    for entry in entry_blocks:
+        status_match = re.search(r"^- Status: ([A-Z_]+)$", entry, flags=re.MULTILINE)
+        assert status_match is not None
+        status = status_match.group(1)
+        evidence_ref_match = re.search(
+            r"^- evidence_ref: `([^`]+)`$", entry, flags=re.MULTILINE
+        )
+
+        if status == "CLOSED":
+            assert evidence_ref_match is not None
+        if status == "OPEN":
+            fix_strategy_match = re.search(
+                r"^- Fix Strategy: `([^`]+)`$", entry, flags=re.MULTILINE
+            )
+            test_strategy_match = re.search(
+                r"^- Test Strategy: `([^`]+)`$", entry, flags=re.MULTILINE
+            )
+            assert fix_strategy_match is not None
+            assert test_strategy_match is not None
 
 
 def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:

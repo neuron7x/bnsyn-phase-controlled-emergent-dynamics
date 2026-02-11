@@ -1,0 +1,4 @@
+ERROR: not found: /tmp/tmp.3tA7mR6dag/tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref
+(no match in any of [<Module test_scan_placeholders.py>])
+
+
