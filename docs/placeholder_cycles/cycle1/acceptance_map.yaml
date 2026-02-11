@@ -1,0 +1,76 @@
+cycle: "1-6"
+objective: "Close all PH entries with deterministic evidence and CI-verifiable registry/meta contracts"
+requirements:
+  ac1_closed_with_evidence_ref:
+    rule: "Each PH entry has status=CLOSED and Evidence Ref present"
+  ac2_per_ph_red_green_test:
+    rule: "Each PH maps to a regression test that fails pre-fix and passes post-fix"
+  ac3_meta_scan_no_open:
+    rule: "placeholder-scan returns findings=0 OR no OPEN registry entries"
+  ac4_registry_validation:
+    rule: "Registry validates schema, unique PH IDs, and status-specific required fields"
+  ac5_ci_green:
+    rule: "Required CI checks pass"
+  ac6_minimal_scope:
+    rule: "Only PH files and direct validation dependencies changed"
+architecture_seams:
+  - seam: "numeric_backend_svd"
+    dependency: "np.linalg.svd"
+    strategy: "guard_fail_closed"
+  - seam: "coverage_file_io"
+    dependency: "filesystem coverage.xml"
+    strategy: "explicit_missing_file_contract"
+  - seam: "chaos_validation"
+    dependency: "adex_step extreme input handling"
+    strategy: "explicit_error_or_finite_output_contract"
+  - seam: "registry_parser"
+    dependency: "docs/PLACEHOLDER_REGISTRY.md structure"
+    strategy: "schema+uniqueness+status-contract validation"
+ph_acceptance:
+  - id: PH-0001
+    batch: PH_BATCH_01
+    file: src/bnsyn/emergence/crystallizer.py
+    fix_strategy: guard_fail_closed
+    test_strategy: regression
+    tests:
+      - tests/test_crystallizer_edge_cases.py::test_crystallizer_pca_failure_retains_previous
+    expected_status: CLOSED
+    expected_evidence_ref: "pytest -q tests/test_crystallizer_edge_cases.py::test_crystallizer_pca_failure_retains_previous"
+  - id: PH-0002
+    batch: PH_BATCH_02
+    file: tests/test_coverage_gate.py
+    fix_strategy: implement_minimal
+    test_strategy: regression
+    tests:
+      - tests/test_coverage_gate.py::test_read_coverage_percent_missing_file_fails
+    expected_status: CLOSED
+    expected_evidence_ref: "pytest -q tests/test_coverage_gate.py::test_read_coverage_percent_missing_file_fails"
+  - id: PH-0003
+    batch: PH_BATCH_02
+    file: tests/validation/test_chaos_integration.py
+    fix_strategy: guard_fail_closed
+    test_strategy: regression
+    tests:
+      - tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement
+    expected_status: CLOSED
+    expected_evidence_ref: "pytest -q tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement"
+meta_tests:
+  - name: placeholder_scan_text
+    command: python -m scripts.scan_placeholders --format text
+    expected: "findings=0"
+  - name: placeholder_scan_json
+    command: python -m scripts.scan_placeholders --format json
+    expected: "[]"
+  - name: registry_validation
+    command: pytest -q tests/test_scan_placeholders.py
+    expected: "pass"
+ci_gate:
+  required_commands:
+    - pytest -q tests/test_scan_placeholders.py tests/test_crystallizer_edge_cases.py::test_crystallizer_pca_failure_retains_previous tests/test_coverage_gate.py::test_read_coverage_percent_missing_file_fails tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement
+    - python -m scripts.scan_placeholders --format text
+    - python -m scripts.scan_placeholders --format json
+artifacts:
+  - docs/placeholder_cycles/cycle1/plan.md
+  - docs/placeholder_cycles/cycle1/acceptance_map.yaml
+  - docs/placeholder_cycles/cycle1/worklist.json
+  - docs/PLACEHOLDER_REGISTRY.md
