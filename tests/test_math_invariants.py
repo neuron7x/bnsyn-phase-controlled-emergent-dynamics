@@ -16,7 +16,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover - exercised in subprocess contract test
     _HYPOTHESIS_AVAILABLE = False
 
-from scripts.math_validate import MANIFEST_PATH, build_manifest, iter_scope_files, validate_manifest
+from scripts.math_validate import build_manifest, iter_scope_files, validate_manifest
 from src.contracts import (
     assert_adjacency_binary,
     assert_column_ranges,
@@ -173,7 +173,7 @@ else:
 
 
 def test_manifest_covers_scoped_files() -> None:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = build_manifest()
     manifest_paths = {item["path"] for item in manifest["artifacts"]}
     scoped_paths = {str(path).replace("\\", "/") for path in iter_scope_files()}
     assert manifest_paths == scoped_paths
