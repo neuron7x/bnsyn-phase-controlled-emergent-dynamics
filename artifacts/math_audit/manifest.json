@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "timestamp": "2026-02-07T13:51:30.338257+00:00",
+  "timestamp": "2026-02-11T12:27:38.540266+00:00",
   "artifacts": [
     {
       "path": "Makefile",
@@ -772,7 +772,7 @@
     },
     {
       "path": "docs/SPEC.md",
-      "sha256": "fe7f1d1a98013c09d0a90c85d7e78d1eb6e6298d9f5f8df7d1d667eda878b3db",
+      "sha256": "ad17cf865e39c1f089d5b93c211102b725506c60eaaf4ebc479255f406a51a04",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -780,7 +780,7 @@
     },
     {
       "path": "docs/SSOT.md",
-      "sha256": "c49b0bf331d9a04acf6dead417c2ada044f442c890c2d1b08ed3f3445b462ac1",
+      "sha256": "9f06f13be7d439b2a8fa0ab8a853e9938ea780a155ac99940df3ee03ca9e0d7b",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1059,6 +1059,14 @@
       "provenance_gap": "no explicit generator metadata"
     },
     {
+      "path": "docs/appendix/intelligence_cycle_report.json",
+      "sha256": "d8aaba044b9ac81c27db7926b53aed5a96bb105bab7a750ea9c8d0d5ef9e6c01",
+      "type": "derived_data",
+      "generator": null,
+      "provenance": "PARTIAL",
+      "provenance_gap": "no explicit generator metadata"
+    },
+    {
       "path": "docs/benchmarks/PROTOCOL.md",
       "sha256": "95700f9122e457fb511e9e2995226257252d494134441de0251be6558ca356f1",
       "type": "report",
@@ -1132,7 +1140,7 @@
     },
     {
       "path": "docs/math/PROVENANCE.md",
-      "sha256": "a79f98c9241e0374f4289f313368abe022a3e03ff0ec248bface8a5a81f5f68e",
+      "sha256": "0683ae228cdbd50fde5cadd1a8e9eeafee071df55d983c1b68d81569fc89a36c",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1188,7 +1196,7 @@
     },
     {
       "path": "docs/sleep_stack.md",
-      "sha256": "6eea717ade28a457c1894a2d7186d9071f4f147acb8f0a84ade75a588796415f",
+      "sha256": "efedf8572552ca4445fc40469ee50b78184fb6e2954ee06ee643d770402e7243",
       "type": "report",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1204,7 +1212,7 @@
     },
     {
       "path": "pyproject.toml",
-      "sha256": "f4dc679dba89576e936ea42e1b47575059fb7dc73d62ffcbfffaeec289260fcf",
+      "sha256": "ba14b452c9bfb5e347bae5ad2d436f27b4a4c16c8715ad9ea7d5389a9ddc8c0f",
       "type": "config",
       "generator": null,
       "provenance": "PARTIAL",
@@ -1340,7 +1348,7 @@
     },
     {
       "path": "src/bnsyn/cli.py",
-      "sha256": "03ee9ce248eaa40cd98424fd0fb0796509495b00e63654b356589d177e25f564",
+      "sha256": "a5586c3f46fe0c5ffaff3cf6a62d8910db1f5a1b1a0b12af5952ea976e3980bd",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1348,7 +1356,7 @@
     },
     {
       "path": "src/bnsyn/config.py",
-      "sha256": "6106cbe065ed4155d58907dca8df99684237aaed419d1192ced7da9765345152",
+      "sha256": "07f5f89e4fb2a93568702e73065483bccd6fa9f0b6c51fd6ade7eab9bcdc1d01",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1700,7 +1708,7 @@
     },
     {
       "path": "src/bnsyn/sleep/cycle.py",
-      "sha256": "2d487d2fb5239aba568fcd6d390b6c366af46086b77c9353cc1f1332ae759c3a",
+      "sha256": "3c6aa180b50345e38986975c8f141aa0a186c04a268dfd88bbc52b42d635d108",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1708,7 +1716,7 @@
     },
     {
       "path": "src/bnsyn/sleep/replay.py",
-      "sha256": "d46af20bf2a8fe9f50ada567e083defc246d2c44195e7c9752fd9f8ed6065fd6",
+      "sha256": "c692044140c62fecf66ac708d082702c5b828547485526c3be1211d7306150ee",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1716,7 +1724,7 @@
     },
     {
       "path": "src/bnsyn/sleep/stages.py",
-      "sha256": "cb986992b0fe504dc3d116f023538e905a5c97644c883a2efa61e5432a7f482e",
+      "sha256": "48f01ce968b7a8308e37be2b5a0bee466db5fd13e72c8744371bbe5c88ecec7e",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",
@@ -1796,7 +1804,7 @@
     },
     {
       "path": "src/bnsyn/tools/run_scaled_sleep_stack.py",
-      "sha256": "f944ae7f7da6607eb388058378ed9cbcf8c4ec727e89f843e578b2164e1a9d28",
+      "sha256": "984c9e61ccab3026dc34f2d7389353e9032715ecc15298ffaad16e17cd2e8254",
       "type": "numeric_code",
       "generator": null,
       "provenance": "SOURCED",

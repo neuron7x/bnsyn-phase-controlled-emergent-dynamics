@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-02-07T13:51:30.558860+00:00",
+  "generated_at": "2026-02-11T12:27:38.743271+00:00",
   "summary": {
-    "artifacts": 233,
-    "checks": 2094,
-    "PASS": 1590,
+    "artifacts": 234,
+    "checks": 2099,
+    "PASS": 1594,
     "FAIL": 0,
-    "SKIP": 504,
+    "SKIP": 505,
     "categories": {
-      "schema": 699,
-      "data_integrity": 468,
+      "schema": 702,
+      "data_integrity": 470,
       "numeric_hazard": 440,
       "physics_invariant": 487
     }
@@ -5551,6 +5551,46 @@
       "duration_ms": 0
     },
     {
+      "artifact": "docs/appendix/intelligence_cycle_report.json",
+      "check_name": "provenance_trust",
+      "category": "schema",
+      "status": "PASS",
+      "evidence": "provenance=PARTIAL",
+      "duration_ms": 0
+    },
+    {
+      "artifact": "docs/appendix/intelligence_cycle_report.json",
+      "check_name": "sha256_match",
+      "category": "schema",
+      "status": "PASS",
+      "evidence": "digest_match",
+      "duration_ms": 0
+    },
+    {
+      "artifact": "docs/appendix/intelligence_cycle_report.json",
+      "check_name": "schema_load",
+      "category": "schema",
+      "status": "PASS",
+      "evidence": "loaded_type:dict",
+      "duration_ms": 0
+    },
+    {
+      "artifact": "docs/appendix/intelligence_cycle_report.json",
+      "check_name": "numeric_sanity",
+      "category": "data_integrity",
+      "status": "PASS",
+      "evidence": "numeric_count:75",
+      "duration_ms": 0
+    },
+    {
+      "artifact": "docs/appendix/intelligence_cycle_report.json",
+      "check_name": "distribution_anomaly",
+      "category": "data_integrity",
+      "status": "SKIP",
+      "evidence": "heterogeneous_record",
+      "duration_ms": 0
+    },
+    {
       "artifact": "docs/benchmarks/PROTOCOL.md",
       "check_name": "provenance_trust",
       "category": "schema",
@@ -10572,7 +10612,7 @@
       "category": "schema",
       "status": "PASS",
       "evidence": "digest_match",
-      "duration_ms": 0
+      "duration_ms": 1
     },
     {
       "artifact": "results/temp_ablation_v2/fixed_high.json",
@@ -12292,7 +12332,7 @@
       "category": "schema",
       "status": "PASS",
       "evidence": "digest_match",
-      "duration_ms": 1
+      "duration_ms": 0
     },
     {
       "artifact": "results/temp_ablation_v2/random_T.json",
@@ -16339,7 +16379,7 @@
       "check_name": "numeric_hazard_scan_0",
       "category": "numeric_hazard",
       "status": "PASS",
-      "evidence": "cancellation_site:line=137",
+      "evidence": "cancellation_site:line=135",
       "duration_ms": 0
     },
     {
@@ -16347,7 +16387,7 @@
       "check_name": "numeric_hazard_scan_1",
       "category": "numeric_hazard",
       "status": "PASS",
-      "evidence": "cancellation_site:line=269",
+      "evidence": "cancellation_site:line=267",
       "duration_ms": 0
     },
     {
