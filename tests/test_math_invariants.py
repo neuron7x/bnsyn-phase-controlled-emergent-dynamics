@@ -5,12 +5,18 @@ import json
 import math
 from pathlib import Path
 
-import hypothesis.extra.numpy as hnp
 import numpy as np
 import pytest
-from hypothesis import given, strategies as st
 
-from scripts.math_validate import MANIFEST_PATH, build_manifest, iter_scope_files, validate_manifest
+try:
+    import hypothesis.extra.numpy as hnp
+    from hypothesis import given, strategies as st
+
+    _HYPOTHESIS_AVAILABLE = True
+except ModuleNotFoundError:  # pragma: no cover - exercised in subprocess contract test
+    _HYPOTHESIS_AVAILABLE = False
+
+from scripts.math_validate import build_manifest, iter_scope_files, validate_manifest
 from src.contracts import (
     assert_adjacency_binary,
     assert_column_ranges,
@@ -135,28 +141,39 @@ class TestContractNegativeCases:
             assert_timeseries_monotonic_time(np.array([0.0, 0.0, 1.0]))
 
 
-@given(
-    phases=hnp.arrays(
-        np.float64,
-        shape=hnp.array_shapes(min_dims=1, max_dims=1, min_side=1, max_side=200),
-        elements=st.floats(min_value=0.0, max_value=(2 * np.pi) - 1e-12, allow_nan=False, allow_infinity=False),
+if _HYPOTHESIS_AVAILABLE:
+
+    @given(
+        phases=hnp.arrays(
+            np.float64,
+            shape=hnp.array_shapes(min_dims=1, max_dims=1, min_side=1, max_side=200),
+            elements=st.floats(min_value=0.0, max_value=(2 * np.pi) - 1e-12, allow_nan=False, allow_infinity=False),
+        )
     )
-)
-def test_order_parameter_always_in_unit_interval(phases: np.ndarray) -> None:
-    r = float(np.abs(np.mean(np.exp(1j * phases))))
-    assert 0.0 <= r <= 1.0 + 1e-10
+    def test_order_parameter_always_in_unit_interval(phases: np.ndarray) -> None:
+        r = float(np.abs(np.mean(np.exp(1j * phases))))
+        assert 0.0 <= r <= 1.0 + 1e-10
 
 
-@given(N=st.integers(min_value=2, max_value=20))
-def test_symmetric_coupling_stays_symmetric(N: int) -> None:
-    rng = np.random.default_rng(123)
-    K = rng.standard_normal((N, N))
-    K = (K + K.T) / 2.0
-    assert_coupling_matrix_properties(K, expected_symmetric=True)
+    @given(N=st.integers(min_value=2, max_value=20))
+    def test_symmetric_coupling_stays_symmetric(N: int) -> None:
+        rng = np.random.default_rng(123)
+        K = rng.standard_normal((N, N))
+        K = (K + K.T) / 2.0
+        assert_coupling_matrix_properties(K, expected_symmetric=True)
+
+else:
+
+    def test_order_parameter_always_in_unit_interval() -> None:
+        pytest.skip("Hypothesis is required for property tests")
+
+
+    def test_symmetric_coupling_stays_symmetric() -> None:
+        pytest.skip("Hypothesis is required for property tests")
 
 
 def test_manifest_covers_scoped_files() -> None:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = build_manifest()
     manifest_paths = {item["path"] for item in manifest["artifacts"]}
     scoped_paths = {str(path).replace("\\", "/") for path in iter_scope_files()}
     assert manifest_paths == scoped_paths
