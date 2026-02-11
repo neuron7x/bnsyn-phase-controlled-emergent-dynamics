@@ -125,10 +125,16 @@ def collect_raw_signal_set(repo_root: Path = ROOT) -> dict[str, Any]:
     available_sources = [path for path in source_paths if path.exists()]
 
     signals: list[AtomicSignal] = []
-    signals.extend(_collect_entities(repo_root / "src" / "bnsyn"))
-    signals.extend(_collect_metrics(repo_root / "pyproject.toml", repo_root / "tests"))
-    signals.extend(_read_constraints(repo_root / "docs" / "ARCHITECTURE_INVARIANTS.md"))
-    signals.extend(_read_constraints(repo_root / "docs" / "SPEC.md"))
+    previous_count = -1
+    iterations = 0
+    while previous_count != len(signals):
+        previous_count = len(signals)
+        iterations += 1
+        signals = []
+        signals.extend(_collect_entities(repo_root / "src" / "bnsyn"))
+        signals.extend(_collect_metrics(repo_root / "pyproject.toml", repo_root / "tests"))
+        signals.extend(_read_constraints(repo_root / "docs" / "ARCHITECTURE_INVARIANTS.md"))
+        signals.extend(_read_constraints(repo_root / "docs" / "SPEC.md"))
 
     if len(available_sources) != len(source_paths):
         missing = sorted({path.name for path in source_paths if not path.exists()})
@@ -152,6 +158,7 @@ def collect_raw_signal_set(repo_root: Path = ROOT) -> dict[str, Any]:
         "sources": [path.relative_to(repo_root).as_posix() for path in available_sources],
         "timestamps": timestamps,
         "uncertainty_level": uncertainty_level,
+        "loop_iterations": iterations,
     }
 
 
@@ -166,25 +173,43 @@ def reduce_noise(raw_signal_set: dict[str, Any]) -> dict[str, Any]:
     essential_elements: list[dict[str, Any]] = []
     rejected_noise: list[dict[str, Any]] = []
     relevance_map: dict[str, float] = {}
+    entropy_history: list[float] = []
 
-    for signal in raw_signal_set["signals"]:
-        key = (signal["kind"], signal["name"], signal["value"])
-        score = relevance_weights.get(signal["kind"], 0.0)
-        relevance_map["|".join(key)] = score
+    previous_entropy = float("inf")
+    iterations = 0
+    while True:
+        iterations += 1
+        seen.clear()
+        essential_elements = []
+        rejected_noise = []
+        relevance_map = {}
 
-        if key in seen or score < 0.8:
-            rejected_noise.append(signal)
-            continue
+        for signal in raw_signal_set["signals"]:
+            key = (signal["kind"], signal["name"], signal["value"])
+            score = relevance_weights.get(signal["kind"], 0.0)
+            relevance_map["|".join(key)] = score
 
-        seen.add(key)
-        enriched = dict(signal)
-        enriched["relevance"] = score
-        essential_elements.append(enriched)
+            if key in seen or score < 0.8:
+                rejected_noise.append(signal)
+                continue
+
+            seen.add(key)
+            enriched = dict(signal)
+            enriched["relevance"] = score
+            essential_elements.append(enriched)
+
+        current_entropy = len(rejected_noise) / max(1, len(raw_signal_set["signals"]))
+        entropy_history.append(round(current_entropy, 6))
+        if abs(previous_entropy - current_entropy) <= 1e-9:
+            break
+        previous_entropy = current_entropy
 
     return {
         "essential_elements": essential_elements,
         "rejected_noise": rejected_noise,
         "relevance_map": relevance_map,
+        "entropy_history": entropy_history,
+        "loop_iterations": iterations,
     }
 
 
@@ -195,11 +220,24 @@ def compress_semantics(filtered_core: dict[str, Any]) -> dict[str, Any]:
     metrics = [item for item in essentials if item["kind"] == "metric"]
 
     axioms = sorted({constraint["value"] for constraint in constraints})
-    abstractions = [
+    abstraction_candidates = [
         f"MODULE_SURFACE={len(entities)}",
         f"METRIC_SURFACE={len(metrics)}",
         f"CONSTRAINT_SURFACE={len(constraints)}",
     ]
+    abstractions: list[str] = []
+    complexity_history: list[int] = []
+    previous_complexity = len(abstraction_candidates) + len(axioms) + 1
+    iterations = 0
+    while True:
+        iterations += 1
+        abstractions = sorted(set(abstraction_candidates))
+        current_complexity = len(abstractions) + len(axioms)
+        complexity_history.append(current_complexity)
+        if current_complexity >= previous_complexity:
+            break
+        previous_complexity = current_complexity
+
     minimal_definitions = [
         "entity := top-level component in src/bnsyn",
         "constraint := normative statement with MUST|SHALL|DO NOT|NEVER",
@@ -210,6 +248,8 @@ def compress_semantics(filtered_core: dict[str, Any]) -> dict[str, Any]:
         "axioms": axioms,
         "abstractions": abstractions,
         "minimal_definitions": minimal_definitions,
+        "complexity_history": complexity_history,
+        "loop_iterations": iterations,
     }
 
 
@@ -239,6 +279,9 @@ def synthesize_model(
         )
 
     constraints = compressed_schema["axioms"]
+    contradiction_count = 0
+    if len(nodes) != len(set(nodes)):
+        contradiction_count += 1
     governing_rules = [
         "all signals are immutable records",
         "noise reduction keeps relevance >= 0.8",
@@ -250,6 +293,7 @@ def synthesize_model(
         "relations": relations,
         "constraints": constraints,
         "governing_rules": governing_rules,
+        "internal_contradictions": contradiction_count,
     }
 
 
@@ -276,6 +320,11 @@ def validate_model(
         risk_vectors.append("source_coverage_incomplete")
         correction_log.append("add missing source files from SOURCE_FILES list")
 
+    if system_model.get("internal_contradictions", 0) == 0:
+        verified_components.append("contradiction_free")
+    else:
+        risk_vectors.append("model_contradiction_detected")
+
     if not risk_vectors:
         correction_log.append("no corrections required")
 
@@ -288,9 +337,12 @@ def validate_model(
 
 def transform_to_intellectual_object(validated_model: dict[str, Any]) -> dict[str, Any]:
     execution_rules = [
-        "run collect_raw_signal_set before each analysis cycle",
-        "run reduce_noise and compress_semantics deterministically",
-        "reject model release if risk_vectors is non-empty",
+        "Cycle 1: acquire signals until atomic set stabilizes",
+        "Cycle 2: filter noise and keep relevance >= 0.8",
+        "Cycle 3: compress semantics while preserving axioms",
+        "Cycle 4: synthesize causal model with zero contradictions",
+        "Cycle 5: validate determinism and reproducibility gates",
+        "Cycle 6: emit operational artifact only if risk_vectors is empty",
     ]
 
     integration_points = [
@@ -302,7 +354,7 @@ def transform_to_intellectual_object(validated_model: dict[str, Any]) -> dict[st
     operational_spec = {
         "input": "repository filesystem state",
         "output": "cycle JSON report",
-        "termination": "single pass deterministic pipeline",
+        "termination": "stabilized multi-loop deterministic pipeline",
         "validation_gate": "validated_model.risk_vectors == []",
     }
 
