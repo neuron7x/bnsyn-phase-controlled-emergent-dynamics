@@ -3,9 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import sys
-from typing import Iterable
+from typing import Any, Iterable
 
-import yaml
+
+class PrGateDependencyError(RuntimeError):
+    pass
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -18,6 +20,22 @@ class PrGateParseError(RuntimeError):
     pass
 
 
+def _load_yaml(path: Path) -> dict[str, Any]:
+    try:
+        import yaml
+    except ModuleNotFoundError as exc:  # pragma: no cover - environment dependent
+        raise PrGateDependencyError(
+            "Missing dependency: pyyaml is required to validate PR gates. "
+            "Install test/dev dependencies (e.g. `pip install -e .[test]`)."
+        ) from exc
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise PrGateParseError(f"{path.name} must be a mapping.")
+    return data
+
+
 @dataclass(frozen=True)
 class PrGateEntry:
     workflow_file: str
@@ -26,9 +44,7 @@ class PrGateEntry:
 
 
 def load_pr_gates(pr_gates_path: Path) -> list[PrGateEntry]:
-    data = yaml.safe_load(pr_gates_path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise PrGateParseError("PR_GATES.yml must be a mapping.")
+    data = _load_yaml(pr_gates_path)
     allowed_keys = {"version", "required_pr_gates"}
     unknown_keys = set(data.keys()) - allowed_keys
     if unknown_keys:
@@ -90,7 +106,7 @@ def has_pull_request(on_section: object) -> bool:
 def load_workflow_data(workflows_dir: Path) -> dict[str, dict[str, object]]:
     workflow_data: dict[str, dict[str, object]] = {}
     for workflow_path in sorted(workflows_dir.glob("*.yml")):
-        data = yaml.safe_load(workflow_path.read_text(encoding="utf-8")) or {}
+        data = _load_yaml(workflow_path)
         on_section = data.get("on", data.get(True, {}))
         workflow_data[workflow_path.name] = {
             "name": str(data.get("name", workflow_path.stem)),
@@ -175,7 +191,7 @@ def main(argv: Iterable[str]) -> int:
     contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
     try:
         violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
-    except (PrGateParseError, ContractParseError) as exc:
+    except (PrGateParseError, ContractParseError, PrGateDependencyError) as exc:
         print(f"VIOLATION: PARSE_ERROR {exc}")
         return 3
     if violations:

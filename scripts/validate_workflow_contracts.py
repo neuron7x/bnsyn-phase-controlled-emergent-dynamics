@@ -4,9 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import re
 import sys
-from typing import Iterable
-
-import yaml
+from typing import Any, Iterable
 
 ALLOWED_GATE_CLASSES = {"PR-gate", "long-running"}
 ALLOWED_REUSABLE_VALUES = {"YES", "NO"}
@@ -21,6 +19,26 @@ TRIGGER_ORDER = (
 
 class ContractParseError(RuntimeError):
     pass
+
+
+class ContractDependencyError(RuntimeError):
+    pass
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    try:
+        import yaml
+    except ModuleNotFoundError as exc:  # pragma: no cover - environment dependent
+        raise ContractDependencyError(
+            "Missing dependency: pyyaml is required to validate workflow contracts. "
+            "Install test/dev dependencies (e.g. `pip install -e .[test]`)."
+        ) from exc
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ContractParseError(f"{path.name} must be a mapping.")
+    return data
 
 
 @dataclass(frozen=True)
@@ -125,7 +143,7 @@ def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
 def load_workflow_inventory(workflows_dir: Path) -> dict[str, dict[str, object]]:
     inventory: dict[str, dict[str, object]] = {}
     for workflow_path in sorted(workflows_dir.glob("*.yml")):
-        data = yaml.safe_load(workflow_path.read_text(encoding="utf-8")) or {}
+        data = _load_yaml(workflow_path)
         on_section = data.get("on", data.get(True, {}))
         triggers = normalize_on_section(on_section)
         name = data.get("name", "UNKNOWN")
@@ -211,7 +229,7 @@ def main(argv: Iterable[str]) -> int:
     workflows_dir = Path(".github/workflows")
     try:
         violations = validate_contracts(contracts_path, workflows_dir)
-    except ContractParseError as exc:
+    except (ContractParseError, ContractDependencyError) as exc:
         print(f"PARSE_ERROR: {exc}")
         return 3
     if violations:
