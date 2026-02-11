@@ -97,3 +97,16 @@ def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:
     captured = capsys.readouterr()
     payload = json.loads(captured.out)
     assert isinstance(payload, list)
+
+
+def test_placeholder_scan_and_registry_have_no_open_entries() -> None:
+    findings = scan_placeholders.collect_findings()
+    assert findings == []
+
+    registry_path = Path("docs/PLACEHOLDER_REGISTRY.md")
+    registry_text = registry_path.read_text(encoding="utf-8")
+    status_pattern = re.compile(r"^- Status: ([A-Z_]+)$", re.MULTILINE)
+    statuses = status_pattern.findall(registry_text)
+
+    assert statuses
+    assert all(status not in {"OPEN", "IN_PROGRESS"} for status in statuses)
