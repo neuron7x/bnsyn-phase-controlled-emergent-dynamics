@@ -22,9 +22,16 @@ from __future__ import annotations
 import argparse
 import json
 import tempfile
+from types import SimpleNamespace
 from pathlib import Path
 
-from bnsyn.cli import _cmd_demo, _cmd_dtcheck, _cmd_sleep_stack
+from bnsyn.cli import (
+    _build_sleep_stack_metrics,
+    _cmd_demo,
+    _cmd_dtcheck,
+    _cmd_sleep_stack,
+    _scaled_sleep_stages,
+)
 
 
 def test_cmd_demo_direct() -> None:
@@ -112,3 +119,68 @@ def test_cmd_sleep_stack_with_custom_sleep_duration() -> None:
         with open(manifest_path) as f:
             manifest = json.load(f)
         assert manifest["steps_sleep"] == 300
+
+
+def test_scaled_sleep_stages_matches_default_for_600_steps() -> None:
+    """Ensure default sleep-stage schedule is preserved for canonical 600 steps."""
+    from bnsyn.sleep import default_human_sleep_cycle
+
+    default_stages = default_human_sleep_cycle()
+    scaled_stages = _scaled_sleep_stages(600)
+
+    assert len(scaled_stages) == len(default_stages)
+    assert [s.stage for s in scaled_stages] == [s.stage for s in default_stages]
+    assert [s.duration_steps for s in scaled_stages] == [s.duration_steps for s in default_stages]
+
+
+def test_scaled_sleep_stages_scales_nondefault_budget() -> None:
+    """Ensure non-default sleep budget rescales durations deterministically."""
+    from bnsyn.sleep import default_human_sleep_cycle
+
+    target_steps = 300
+    scale = target_steps / 450
+    default_stages = default_human_sleep_cycle()
+    scaled_stages = _scaled_sleep_stages(target_steps)
+
+    expected_durations = [int(stage.duration_steps * scale) for stage in default_stages]
+    assert [stage.duration_steps for stage in scaled_stages] == expected_durations
+
+
+def test_build_sleep_stack_metrics_contains_expected_fields() -> None:
+    """Ensure metrics builder keeps expected schema and deterministic values."""
+    wake_metrics = [
+        {"sigma": 1.2, "spike_rate_hz": 6.0},
+        {"sigma": 0.8, "spike_rate_hz": 4.0},
+    ]
+    transition = SimpleNamespace(
+        step=10,
+        from_phase=SimpleNamespace(name="WAKE"),
+        to_phase=SimpleNamespace(name="SLEEP"),
+        sigma_before=1.2,
+        sigma_after=0.9,
+        sharpness=0.3,
+    )
+    cryst_state = SimpleNamespace(progress=0.4, phase=SimpleNamespace(name="GROWTH"))
+
+    metrics = _build_sleep_stack_metrics(
+        backend="reference",
+        steps_wake=2,
+        wake_metrics=wake_metrics,
+        sleep_summary={"total_steps": 123},
+        transitions=[transition],
+        attractors=[object(), object()],
+        cryst_state=cryst_state,
+        cons_stats={"count": 2, "consolidated_count": 1},
+        memory_count=7,
+    )
+
+    assert metrics["backend"] == "reference"
+    assert metrics["wake"]["steps"] == 2
+    assert metrics["wake"]["mean_sigma"] == 1.0
+    assert metrics["wake"]["mean_spike_rate"] == 5.0
+    assert metrics["wake"]["memories_recorded"] == 7
+    assert metrics["attractors"]["count"] == 2
+    assert metrics["attractors"]["crystallization_progress"] == 0.4
+    assert metrics["attractors"]["phase"] == "GROWTH"
+    assert metrics["transitions"][0]["from"] == "WAKE"
+    assert metrics["transitions"][0]["to"] == "SLEEP"
