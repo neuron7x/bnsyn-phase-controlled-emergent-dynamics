@@ -23,11 +23,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
         with:
           languages: "python"
           build-mode: none
       - name: Analyze
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
