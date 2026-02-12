@@ -490,8 +490,16 @@ class AttractorCrystallizer:
             raise ValueError("temperature must be non-negative")
 
         object.__setattr__(self, "_current_temperature", temperature)
+        self._store_snapshot(state)
 
-        # Subsample and store
+        if self._observation_count % self.pca_update_interval != 0:
+            return
+
+        self._update_pca()
+        self._refresh_attractors()
+
+    def _store_snapshot(self, state: Float64Array) -> None:
+        """Store state snapshot in ring buffer and advance counters."""
         snapshot = self._subsample_state(state)
         self._buffer[self._buffer_idx] = snapshot
 
@@ -501,29 +509,23 @@ class AttractorCrystallizer:
 
         object.__setattr__(self, "_observation_count", self._observation_count + 1)
 
-        # Update PCA periodically
-        if self._observation_count % self.pca_update_interval == 0:
-            self._update_pca()
+    def _refresh_attractors(self) -> None:
+        """Detect attractors, merge novel ones, and update phase."""
+        new_attractors = self._detect_attractors()
+        for new_attr in new_attractors:
+            if self._is_novel_attractor(new_attr):
+                self._attractors.append(new_attr)
+                for callback in self._attractor_callbacks:
+                    callback(new_attr)
+        self._update_phase()
 
-        # Detect attractors
-        if self._observation_count % self.pca_update_interval == 0:
-            new_attractors = self._detect_attractors()
-
-            # Check for new attractors
-            for new_attr in new_attractors:
-                is_new = True
-                for existing_attr in self._attractors:
-                    dist = float(np.linalg.norm(new_attr.center - existing_attr.center))
-                    if dist < self.cluster_eps:
-                        is_new = False
-                        break
-
-                if is_new:
-                    self._attractors.append(new_attr)
-                    for callback in self._attractor_callbacks:
-                        callback(new_attr)
-
-            self._update_phase()
+    def _is_novel_attractor(self, attractor: Attractor) -> bool:
+        """Return True if attractor is farther than epsilon from known attractors."""
+        for existing_attr in self._attractors:
+            dist = float(np.linalg.norm(attractor.center - existing_attr.center))
+            if dist < self.cluster_eps:
+                return False
+        return True
 
     def get_attractors(self) -> list[Attractor]:
         """Return list of detected attractors.

@@ -184,6 +184,226 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         return 1
 
 
+def _create_sleep_stack_runtime(args: argparse.Namespace) -> tuple[Any, ...]:
+    """Create deterministic runtime components for sleep-stack execution."""
+    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+    from bnsyn.criticality import PhaseTransitionDetector
+    from bnsyn.emergence import AttractorCrystallizer
+    from bnsyn.memory import MemoryConsolidator
+    from bnsyn.rng import seed_all
+    from bnsyn.sim.network import Network, NetworkParams
+    from bnsyn.sleep import SleepCycle
+    from bnsyn.temperature.schedule import TemperatureSchedule
+
+    pack = seed_all(args.seed)
+    rng = pack.np_rng
+    neuron_count = int(args.N)
+
+    net = Network(
+        NetworkParams(N=neuron_count),
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=rng,
+        backend=args.backend,
+    )
+    temp_schedule = TemperatureSchedule(TemperatureParams())
+    sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=rng)
+    consolidator = MemoryConsolidator(capacity=100)
+    phase_detector = PhaseTransitionDetector()
+    crystallizer = AttractorCrystallizer(
+        state_dim=neuron_count,
+        max_buffer_size=500,
+        snapshot_dim=min(50, neuron_count),
+        pca_update_interval=50,
+    )
+    return net, temp_schedule, sleep_cycle, consolidator, phase_detector, crystallizer, neuron_count
+
+
+def _run_wake_phase(
+    steps_wake: int,
+    net: Any,
+    temp_schedule: Any,
+    sleep_cycle: Any,
+    consolidator: Any,
+    phase_detector: Any,
+    crystallizer: Any,
+) -> list[dict[str, float]]:
+    """Run deterministic wake phase and collect metrics."""
+    wake_metrics: list[dict[str, float]] = []
+    print(f"Running wake phase ({steps_wake} steps)...")
+    for step_idx in range(steps_wake):
+        metrics = net.step()
+        wake_metrics.append(metrics)
+
+        if (step_idx + 1) % 20 == 0:
+            importance = min(1.0, metrics["spike_rate_hz"] / 10.0)
+            sleep_cycle.record_memory(importance)
+            consolidator.tag(net.state.V_mV, importance)
+
+        phase_detector.observe(metrics["sigma"], step_idx + 1)
+        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+
+    return wake_metrics
+
+
+def _scaled_sleep_stages(steps_sleep: int) -> list[Any]:
+    """Return default sleep stages scaled to requested step budget."""
+    from bnsyn.sleep import SleepStageConfig, default_human_sleep_cycle
+
+    sleep_stages = default_human_sleep_cycle()
+    if steps_sleep == 600:
+        return sleep_stages
+
+    scale = steps_sleep / 450
+    return [
+        SleepStageConfig(
+            stage=stage.stage,
+            duration_steps=int(stage.duration_steps * scale),
+            temperature_range=stage.temperature_range,
+            replay_active=stage.replay_active,
+            replay_noise=stage.replay_noise,
+        )
+        for stage in sleep_stages
+    ]
+
+
+def _build_sleep_stack_metrics(
+    backend: str,
+    steps_wake: int,
+    wake_metrics: list[dict[str, float]],
+    sleep_summary: dict[str, Any],
+    transitions: list[Any],
+    attractors: list[Any],
+    cryst_state: Any,
+    cons_stats: dict[str, Any],
+    memory_count: int,
+) -> dict[str, Any]:
+    """Build serialized sleep-stack metrics payload."""
+    return {
+        "backend": backend,
+        "wake": {
+            "steps": steps_wake,
+            "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
+            "mean_spike_rate": float(
+                sum(m["spike_rate_hz"] for m in wake_metrics) / len(wake_metrics)
+            ),
+            "memories_recorded": memory_count,
+        },
+        "sleep": sleep_summary,
+        "transitions": [
+            {
+                "step": t.step,
+                "from": t.from_phase.name,
+                "to": t.to_phase.name,
+                "sigma_before": t.sigma_before,
+                "sigma_after": t.sigma_after,
+                "sharpness": t.sharpness,
+            }
+            for t in transitions
+        ],
+        "attractors": {
+            "count": len(attractors),
+            "crystallization_progress": cryst_state.progress,
+            "phase": cryst_state.phase.name,
+        },
+        "consolidation": cons_stats,
+    }
+
+
+def _write_sleep_stack_outputs(
+    out_dir: Path,
+    metrics: dict[str, Any],
+    args: argparse.Namespace,
+    neuron_count: int,
+) -> None:
+    """Write metrics and manifest artifacts."""
+    metrics_path = out_dir / "metrics.json"
+    with open(metrics_path, "w") as f:
+        json.dump(metrics, f, indent=2)
+    print(f"Metrics written to {metrics_path}")
+
+    manifest = build_sleep_stack_manifest(
+        seed=args.seed,
+        steps_wake=args.steps_wake,
+        steps_sleep=args.steps_sleep,
+        N=neuron_count,
+        package_version=_get_package_version(),
+        repo_root=Path(__file__).parent.parent,
+    )
+    manifest_path = out_dir / "manifest.json"
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2)
+    print(f"Manifest written to {manifest_path}")
+
+
+def _render_sleep_stack_figure(
+    fig_dir: Path,
+    wake_metrics: list[dict[str, float]],
+    transitions: list[Any],
+    attractors: list[Any],
+    cryst_state: Any,
+) -> None:
+    """Generate optional sleep-stack summary figure."""
+    try:
+        import matplotlib.pyplot as plt
+        from typing import Any as _Any
+
+        fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
+        axes: _Any = axes_raw
+
+        ax = axes[0, 0]
+        wake_sigmas = [m["sigma"] for m in wake_metrics]
+        ax.plot(wake_sigmas, label="Wake", alpha=0.7)
+        ax.axhline(y=1.0, color="k", linestyle="--", alpha=0.3)
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Sigma")
+        ax.set_title("Criticality (Sigma)")
+        ax.legend()
+        ax.grid(alpha=0.3)
+
+        ax = axes[0, 1]
+        wake_rates = [m["spike_rate_hz"] for m in wake_metrics]
+        ax.plot(wake_rates, alpha=0.7, color="orange")
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Spike Rate (Hz)")
+        ax.set_title("Network Activity")
+        ax.grid(alpha=0.3)
+
+        ax = axes[1, 0]
+        if transitions:
+            trans_steps = [t.step for t in transitions]
+            trans_phases = [t.to_phase.name for t in transitions]
+            ax.scatter(trans_steps, range(len(trans_steps)), s=100, alpha=0.7)
+            for i, (step, phase) in enumerate(zip(trans_steps, trans_phases)):
+                ax.text(step, i, phase, fontsize=8, ha="left")
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Transition Index")
+        ax.set_title(f"Phase Transitions ({len(transitions)} total)")
+        ax.grid(alpha=0.3)
+
+        ax = axes[1, 1]
+        ax.bar(["Progress", "Count"], [cryst_state.progress, len(attractors) / 10.0])
+        ax.set_ylabel("Value")
+        ax.set_title(f"Crystallization ({cryst_state.phase.name})")
+        ax.set_ylim([0, 1.1])
+        ax.grid(alpha=0.3)
+
+        plt.tight_layout()
+        fig_path = fig_dir / "summary.png"
+        plt.savefig(fig_path, dpi=150, bbox_inches="tight")
+        plt.close()
+        print(f"Figure saved to {fig_path}")
+    except ImportError:
+        print(
+            "Matplotlib not installed; skipping figure generation. "
+            'Install with: pip install -e ".[viz]"'
+        )
+    except Exception as e:
+        print(f"Figure generation failed: {e}")
+
+
 def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     """Run sleep-stack demo with attractor crystallization and consolidation.
 
@@ -207,215 +427,53 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     docs/sleep_stack.md
     docs/emergence_tracking.md
     """
-    # Import here to avoid circular dependencies and keep CLI fast
-    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
-    from bnsyn.criticality import PhaseTransitionDetector
-    from bnsyn.emergence import AttractorCrystallizer
-    from bnsyn.memory import MemoryConsolidator
-    from bnsyn.rng import seed_all
-    from bnsyn.sim.network import Network, NetworkParams
-    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
-    from bnsyn.temperature.schedule import TemperatureSchedule
-
-    # Setup output directory
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     fig_dir = out_dir.parent / "figures" / out_dir.name
     fig_dir.mkdir(parents=True, exist_ok=True)
 
-    # Seed RNG
-    pack = seed_all(args.seed)
-    rng = pack.np_rng
+    (
+        net,
+        temp_schedule,
+        sleep_cycle,
+        consolidator,
+        phase_detector,
+        crystallizer,
+        neuron_count,
+    ) = _create_sleep_stack_runtime(args)
 
-    # Create network
-    N = int(args.N)
-    nparams = NetworkParams(N=N)
-    net = Network(
-        nparams,
-        AdExParams(),
-        SynapseParams(),
-        CriticalityParams(),
-        dt_ms=0.5,
-        rng=rng,
-        backend=args.backend,
+    wake_metrics = _run_wake_phase(
+        args.steps_wake,
+        net,
+        temp_schedule,
+        sleep_cycle,
+        consolidator,
+        phase_detector,
+        crystallizer,
     )
 
-    # Temperature schedule
-    temp_schedule = TemperatureSchedule(TemperatureParams())
-
-    # Sleep cycle
-    sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=rng)
-
-    # Memory consolidator
-    consolidator = MemoryConsolidator(capacity=100)
-
-    # Phase transition detector
-    phase_detector = PhaseTransitionDetector()
-
-    # Attractor crystallizer
-    crystallizer = AttractorCrystallizer(
-        state_dim=N,
-        max_buffer_size=500,
-        snapshot_dim=min(50, N),
-        pca_update_interval=50,
-    )
-
-    # Wake phase
-    print(f"Running wake phase ({args.steps_wake} steps)...")
-    wake_metrics = []
-    for _ in range(args.steps_wake):
-        m = net.step()
-        wake_metrics.append(m)
-
-        # Record memory periodically
-        if len(wake_metrics) % 20 == 0:
-            importance = min(1.0, m["spike_rate_hz"] / 10.0)
-            sleep_cycle.record_memory(importance)
-            consolidator.tag(net.state.V_mV, importance)
-
-        # Track phase transitions
-        phase_detector.observe(m["sigma"], len(wake_metrics))
-
-        # Track attractor crystallization
-        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
-
-    # Sleep phase
     print(f"Running sleep phase ({args.steps_sleep} steps)...")
-    sleep_stages = default_human_sleep_cycle()
-    # Scale durations if requested
-    if args.steps_sleep != 600:
-        scale = args.steps_sleep / 450
-        sleep_stages = [
-            SleepStageConfig(
-                stage=stage.stage,
-                duration_steps=int(stage.duration_steps * scale),
-                temperature_range=stage.temperature_range,
-                replay_active=stage.replay_active,
-                replay_noise=stage.replay_noise,
-            )
-            for stage in sleep_stages
-        ]
+    sleep_summary = sleep_cycle.sleep(_scaled_sleep_stages(args.steps_sleep))
 
-    sleep_summary = sleep_cycle.sleep(sleep_stages)
-
-    # Collect metrics
     transitions = phase_detector.get_transitions()
     attractors = crystallizer.get_attractors()
     cryst_state = crystallizer.get_crystallization_state()
     cons_stats = consolidator.stats()
 
-    metrics: dict[str, Any] = {
-        "backend": args.backend,
-        "wake": {
-            "steps": args.steps_wake,
-            "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
-            "mean_spike_rate": float(
-                sum(m["spike_rate_hz"] for m in wake_metrics) / len(wake_metrics)
-            ),
-            "memories_recorded": sleep_cycle.get_memory_count(),
-        },
-        "sleep": sleep_summary,
-        "transitions": [
-            {
-                "step": t.step,
-                "from": t.from_phase.name,
-                "to": t.to_phase.name,
-                "sigma_before": t.sigma_before,
-                "sigma_after": t.sigma_after,
-                "sharpness": t.sharpness,
-            }
-            for t in transitions
-        ],
-        "attractors": {
-            "count": len(attractors),
-            "crystallization_progress": cryst_state.progress,
-            "phase": cryst_state.phase.name,
-        },
-        "consolidation": cons_stats,
-    }
-
-    # Write metrics
-    metrics_path = out_dir / "metrics.json"
-    with open(metrics_path, "w") as f:
-        json.dump(metrics, f, indent=2)
-    print(f"Metrics written to {metrics_path}")
-
-    # Generate manifest
-    manifest = build_sleep_stack_manifest(
-        seed=args.seed,
-        steps_wake=args.steps_wake,
-        steps_sleep=args.steps_sleep,
-        N=N,
-        package_version=_get_package_version(),
-        repo_root=Path(__file__).parent.parent,
+    metrics = _build_sleep_stack_metrics(
+        args.backend,
+        args.steps_wake,
+        wake_metrics,
+        sleep_summary,
+        transitions,
+        attractors,
+        cryst_state,
+        cons_stats,
+        sleep_cycle.get_memory_count(),
     )
 
-    manifest_path = out_dir / "manifest.json"
-    with open(manifest_path, "w") as f:
-        json.dump(manifest, f, indent=2)
-    print(f"Manifest written to {manifest_path}")
-
-    # Generate figure (optional, only if matplotlib available)
-    try:
-        import matplotlib.pyplot as plt
-        from typing import Any as _Any
-
-        fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
-        axes: _Any = axes_raw  # Type hint to satisfy mypy
-
-        # Sigma trace
-        ax = axes[0, 0]
-        wake_sigmas = [m["sigma"] for m in wake_metrics]
-        ax.plot(wake_sigmas, label="Wake", alpha=0.7)
-        ax.axhline(y=1.0, color="k", linestyle="--", alpha=0.3)
-        ax.set_xlabel("Step")
-        ax.set_ylabel("Sigma")
-        ax.set_title("Criticality (Sigma)")
-        ax.legend()
-        ax.grid(alpha=0.3)
-
-        # Spike rate
-        ax = axes[0, 1]
-        wake_rates = [m["spike_rate_hz"] for m in wake_metrics]
-        ax.plot(wake_rates, alpha=0.7, color="orange")
-        ax.set_xlabel("Step")
-        ax.set_ylabel("Spike Rate (Hz)")
-        ax.set_title("Network Activity")
-        ax.grid(alpha=0.3)
-
-        # Phase transitions
-        ax = axes[1, 0]
-        if transitions:
-            trans_steps = [t.step for t in transitions]
-            trans_phases = [t.to_phase.name for t in transitions]
-            ax.scatter(trans_steps, range(len(trans_steps)), s=100, alpha=0.7)
-            for i, (step, phase) in enumerate(zip(trans_steps, trans_phases)):
-                ax.text(step, i, phase, fontsize=8, ha="left")
-        ax.set_xlabel("Step")
-        ax.set_ylabel("Transition Index")
-        ax.set_title(f"Phase Transitions ({len(transitions)} total)")
-        ax.grid(alpha=0.3)
-
-        # Attractor crystallization
-        ax = axes[1, 1]
-        ax.bar(["Progress", "Count"], [cryst_state.progress, len(attractors) / 10.0])
-        ax.set_ylabel("Value")
-        ax.set_title(f"Crystallization ({cryst_state.phase.name})")
-        ax.set_ylim([0, 1.1])
-        ax.grid(alpha=0.3)
-
-        plt.tight_layout()
-        fig_path = fig_dir / "summary.png"
-        plt.savefig(fig_path, dpi=150, bbox_inches="tight")
-        plt.close()
-        print(f"Figure saved to {fig_path}")
-    except ImportError:
-        print(
-            "Matplotlib not installed; skipping figure generation. "
-            'Install with: pip install -e ".[viz]"'
-        )
-    except Exception as e:
-        print(f"Figure generation failed: {e}")
+    _write_sleep_stack_outputs(out_dir, metrics, args, neuron_count)
+    _render_sleep_stack_figure(fig_dir, wake_metrics, transitions, attractors, cryst_state)
 
     print("\n=== Sleep-Stack Demo Complete ===")
     print(f"Wake: {args.steps_wake} steps, {metrics['wake']['memories_recorded']} memories")
@@ -423,7 +481,6 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     print(f"Transitions: {len(transitions)}")
     print(f"Attractors: {len(attractors)}")
     print(f"Consolidation: {cons_stats['consolidated_count']}/{cons_stats['count']} patterns")
-
     return 0
 
 
