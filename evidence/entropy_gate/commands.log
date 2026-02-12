@@ -1,3 +1,25 @@
 python -m tools.entropy_gate --mode baseline
 python -m tools.entropy_gate --mode current
 pytest -q tests/test_entropy_gate.py
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
+rg -n "uses:\\s*[^\\s]+@[^\\s]+" .github/workflows
+PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
+pytest -q tests/test_entropy_gate.py
+make test
+python -m pip install hypothesis pyyaml psutil
+PYTHONPATH=src make test
+git rev-parse HEAD -> a6cf4d9a6b4eb130e7702f79fdcd6fb4a0f84d95
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode current
+pytest -q tests/test_entropy_gate.py
+git rev-parse HEAD -> 9604fe68573850a4fb8d8fefcf6db2c9a502a8e4
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current

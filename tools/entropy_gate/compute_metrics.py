@@ -113,6 +113,83 @@ def _count_workflow_action_pins(repo_root: Path) -> int:
     return offenders
 
 
+
+def _workflow_hardening_gaps(repo_root: Path) -> dict[str, int]:
+    workflow_root = repo_root / ".github" / "workflows"
+    if not workflow_root.exists():
+        return {
+            "gh_workflows_missing_job_permissions_count": 0,
+            "gh_workflows_missing_job_timeout_count": 0,
+        }
+
+    missing_permissions = 0
+    missing_timeout = 0
+    workflow_files = sorted(workflow_root.rglob("*.yml")) + sorted(workflow_root.rglob("*.yaml"))
+    for workflow in sorted(set(workflow_files)):
+        lines = workflow.read_text(encoding="utf-8", errors="ignore").splitlines()
+        in_jobs = False
+        jobs_indent = 0
+        in_job = False
+        job_indent = 0
+        seen_permissions = False
+        seen_timeout = False
+        for raw_line in lines:
+            stripped = raw_line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            indent = len(raw_line) - len(raw_line.lstrip(" "))
+            if stripped == "jobs:":
+                in_jobs = True
+                jobs_indent = indent
+                in_job = False
+                continue
+            if in_jobs and indent <= jobs_indent and not stripped.startswith("-"):
+                if in_job:
+                    if not seen_permissions:
+                        missing_permissions += 1
+                    if not seen_timeout:
+                        missing_timeout += 1
+                in_jobs = False
+                in_job = False
+            if not in_jobs:
+                continue
+
+            if indent == jobs_indent + 2 and stripped.endswith(":") and not stripped.startswith(("permissions:", "timeout-minutes:")):
+                if in_job:
+                    if not seen_permissions:
+                        missing_permissions += 1
+                    if not seen_timeout:
+                        missing_timeout += 1
+                in_job = True
+                job_indent = indent
+                seen_permissions = False
+                seen_timeout = False
+                continue
+
+            if in_job and indent <= job_indent:
+                if not seen_permissions:
+                    missing_permissions += 1
+                if not seen_timeout:
+                    missing_timeout += 1
+                in_job = False
+
+            if in_job and indent >= job_indent + 2:
+                if stripped.startswith("permissions:"):
+                    seen_permissions = True
+                if stripped.startswith("timeout-minutes:"):
+                    seen_timeout = True
+
+        if in_job:
+            if not seen_permissions:
+                missing_permissions += 1
+            if not seen_timeout:
+                missing_timeout += 1
+
+    return {
+        "gh_workflows_missing_job_permissions_count": missing_permissions,
+        "gh_workflows_missing_job_timeout_count": missing_timeout,
+    }
+
 def _count_todo_fixme(repo_root: Path) -> int:
     src_root = repo_root / "src"
     if not src_root.exists():
@@ -142,6 +219,7 @@ def compute_metrics(repo_root: Path) -> dict[str, Any]:
     required_checks_file_present = (repo_root / ".github" / "REQUIRED_CHECKS.yml").exists()
 
     determinism_metrics = _scan_python_offenders(repo_root)
+    workflow_hardening = _workflow_hardening_gaps(repo_root)
 
     return {
         "version": 1,
@@ -160,6 +238,8 @@ def compute_metrics(repo_root: Path) -> dict[str, Any]:
         },
         "process": {
             "gh_workflows_unpinned_actions_count": _count_workflow_action_pins(repo_root),
+            "gh_workflows_missing_job_permissions_count": workflow_hardening["gh_workflows_missing_job_permissions_count"],
+            "gh_workflows_missing_job_timeout_count": workflow_hardening["gh_workflows_missing_job_timeout_count"],
             "required_checks_files_present": bool(required_checks_file_present),
         },
         "docs": {
