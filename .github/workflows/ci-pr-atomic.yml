@@ -227,7 +227,13 @@ jobs:
       - run: make api-contract
       - run: python -m tools.manifest generate
       - run: python -m tools.manifest validate
-      - run: git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+      - name: Verify manifest artifacts are in sync
+        run: |
+          if ! git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json; then
+            echo "::error::.github/REPO_MANIFEST.md and/or manifest/repo_manifest.computed.json are out of date. Run: python -m tools.manifest generate && git add .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json"
+            git --no-pager diff -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+            exit 1
+          fi
 
   security:
     runs-on: ubuntu-latest

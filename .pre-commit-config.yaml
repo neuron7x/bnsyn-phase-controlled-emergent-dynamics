@@ -69,6 +69,14 @@ repos:
         pass_filenames: false
         files: ^(src/|tests/|docs/|\.github/|tools/generate_inventory\.py|INVENTORY\.json)
         stages: [commit]
+
+      - id: regenerate-repo-manifest
+        name: regenerate repository manifest artifacts
+        entry: python -m tools.manifest generate
+        language: system
+        pass_filenames: false
+        files: ^(\.github/|manifest/|quality/|scripts/|tools/manifest/|Makefile|README\.md)
+        stages: [commit]
       - id: validate-bibliography
         name: validate bibliography
         entry: python -m scripts.validate_bibliography
