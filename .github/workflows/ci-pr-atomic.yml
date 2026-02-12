@@ -223,8 +223,35 @@ jobs:
         run: |
           python -m pip install pip-tools==7.5.3
           tmp_lock="$(mktemp)"
+          export TMP_LOCK="$tmp_lock"
           python -m piptools compile --extra=dev --no-strip-extras --generate-hashes --output-file="$tmp_lock" pyproject.toml
-          diff -u requirements-lock.txt "$tmp_lock"
+          python - <<'PYLOCK'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import difflib
+          import os
+
+          lock = Path("requirements-lock.txt")
+          generated = Path(os.environ["TMP_LOCK"])
+
+          def _normalize(path: Path) -> list[str]:
+              lines = path.read_text(encoding="utf-8").splitlines()
+              idx = 0
+              while idx < len(lines) and (lines[idx].startswith("#") or lines[idx] == ""):
+                  idx += 1
+              return [line + "\n" for line in lines[idx:]]
+
+          expected = _normalize(lock)
+          actual = _normalize(generated)
+
+          if expected != actual:
+              for line in difflib.unified_diff(expected, actual, fromfile=str(lock), tofile=str(generated)):
+                  print(line, end="")
+              raise SystemExit(1)
+
+          print("Lockfile freshness: normalized content matches")
+          PYLOCK
           sha256sum requirements-lock.txt "$tmp_lock"
       - run: python -m build
       - name: Install from wheel in clean venv
