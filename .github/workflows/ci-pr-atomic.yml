@@ -56,6 +56,7 @@ jobs:
       deps_changed: ${{ steps.filter.outputs.deps_changed }}
       docker_changed: ${{ steps.filter.outputs.docker_changed }}
       spec_changed: ${{ steps.filter.outputs.spec_changed }}
+      unknown_changed: ${{ steps.filter.outputs.unknown_changed }}
       docs_only: ${{ steps.filter.outputs.docs_only }}
       dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
     steps:
@@ -72,6 +73,7 @@ jobs:
             const files = [];
             if (context.eventName === 'pull_request') {
               const pr = context.payload.pull_request;
+              core.info(`EVIDENCE: pr_number=${pr.number} base_sha=${pr.base.sha} head_sha=${pr.head.sha}`);
               for await (const resp of github.paginate.iterator(
                 github.rest.pulls.listFiles,
                 {
@@ -104,6 +106,7 @@ jobs:
               deps_changed: false,
               docker_changed: false,
               spec_changed: false,
+              unknown_changed: false,
               docs_only: true,
             };
 
@@ -188,6 +191,7 @@ jobs:
                 continue;
               }
 
+              flags.unknown_changed = true;
               markNonDocs();
             }
 
@@ -349,11 +353,13 @@ jobs:
       - name: Log pip version
         run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]" build
-      - name: Verify lockfile freshness
+      - name: Verify lockfile freshness (non-mutating)
         run: |
           python -m pip install pip-tools
-          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
-          git diff --exit-code -- requirements-lock.txt
+          tmp_lock="$(mktemp)"
+          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file="$tmp_lock" pyproject.toml
+          diff -u requirements-lock.txt "$tmp_lock"
+          sha256sum requirements-lock.txt "$tmp_lock"
       - run: python -m build
       - name: Install from wheel in clean venv
         run: |
@@ -631,6 +637,7 @@ jobs:
           code_changed="${{ needs.changes.outputs.code_changed }}"
           tests_changed="${{ needs.changes.outputs.tests_changed }}"
           spec_changed="${{ needs.changes.outputs.spec_changed }}"
+          unknown_changed="${{ needs.changes.outputs.unknown_changed }}"
 
           fail() {
             echo "::error::$1"
@@ -654,13 +661,14 @@ jobs:
           }
 
           require_success "changes" "${{ needs.changes.result }}"
+          echo "EVIDENCE: flags docs_only=${docs_only} workflows_changed=${workflows_changed} deps_changed=${deps_changed} code_changed=${code_changed} tests_changed=${tests_changed} spec_changed=${spec_changed} unknown_changed=${unknown_changed}"
 
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             require_success "pr-description-policy" "${{ needs.pr-description-policy.result }}"
           fi
 
           if [[ "$docs_only" == "true" ]]; then
-            if [[ "$workflows_changed" == "true" || "$deps_changed" == "true" || "$code_changed" == "true" || "$tests_changed" == "true" || "$spec_changed" == "true" ]]; then
+            if [[ "$workflows_changed" == "true" || "$deps_changed" == "true" || "$code_changed" == "true" || "$tests_changed" == "true" || "$spec_changed" == "true" || "$unknown_changed" == "true" ]]; then
               fail "docs_only=true but sensitive change flags set"
             fi
             echo "EVIDENCE: docs_only=true heavy_gates=skipped"
@@ -672,7 +680,7 @@ jobs:
           require_success "security" "${{ needs.security.result }}"
           require_success "ssot" "${{ needs.ssot.result }}"
 
-          if [[ "$code_changed" == "true" || "$deps_changed" == "true" || "$tests_changed" == "true" ]]; then
+          if [[ "$code_changed" == "true" || "$deps_changed" == "true" || "$tests_changed" == "true" || "$unknown_changed" == "true" ]]; then
             require_success "quality" "${{ needs.quality.result }}"
             require_success "build" "${{ needs.build.result }}"
             require_success "tests-smoke" "${{ needs.tests-smoke.result }}"
