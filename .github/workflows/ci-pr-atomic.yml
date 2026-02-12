@@ -53,7 +53,7 @@ jobs:
       dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: dorny/paths-filter@3b5a20e7b6fd2596d9d75649f5e8c1ce6a5ea561
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
         id: filter
         with:
           filters: |
