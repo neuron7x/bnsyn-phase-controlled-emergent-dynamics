@@ -47,36 +47,109 @@ jobs:
       pull-requests: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      tests_changed: ${{ steps.filter.outputs.tests_changed }}
       validation: ${{ steps.filter.outputs.validation }}
       property: ${{ steps.filter.outputs.property }}
       docs: ${{ steps.filter.outputs.docs }}
+      workflows_changed: ${{ steps.filter.outputs.workflows_changed }}
+      deps_changed: ${{ steps.filter.outputs.deps_changed }}
+      docker_changed: ${{ steps.filter.outputs.docker_changed }}
+      spec_changed: ${{ steps.filter.outputs.spec_changed }}
+      docs_only: ${{ steps.filter.outputs.docs_only }}
       dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
-        id: filter
         with:
-          filters: |
-            code:
-              - 'src/**'
-              - 'tests/**'
-            validation:
-              - 'src/**'
-              - 'tools/**'
-              - 'scripts/**'
-              - 'docs/**'
-              - 'tests/**'
-            property:
-              - 'src/**'
-              - 'tests/**'
-            docs:
-              - 'docs/**'
-              - 'README*'
-              - 'mkdocs.yml'
-              - 'pyproject.toml'
-            dependency_manifest:
-              - 'pyproject.toml'
-              - 'requirements*.txt'
+          fetch-depth: 0
+      - name: Derive changed-file classes
+        id: filter
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_ref="${{ github.base_ref || 'main' }}"
+          git fetch --no-tags --depth=1 origin "$base_ref"
+
+          mapfile -t changed_files < <(git diff --name-only "origin/${base_ref}...HEAD")
+
+          has_any=false
+          code=false
+          tests_changed=false
+          validation=false
+          property=false
+          docs=false
+          dependency_manifest=false
+          workflows_changed=false
+          deps_changed=false
+          docker_changed=false
+          spec_changed=false
+          docs_only=true
+
+          for file in "${changed_files[@]}"; do
+            has_any=true
+            case "$file" in
+              src/*)
+                code=true
+                validation=true
+                property=true
+                docs_only=false
+                ;;
+              tests/*)
+                code=true
+                tests_changed=true
+                validation=true
+                property=true
+                docs_only=false
+                ;;
+              scripts/*|tools/*)
+                validation=true
+                docs_only=false
+                ;;
+              docs/*|README*|mkdocs.yml)
+                docs=true
+                ;;
+              .github/workflows/*)
+                workflows_changed=true
+                docs_only=false
+                ;;
+              pyproject.toml|requirements*.txt|requirements/*|setup.py|setup.cfg|poetry.lock|uv.lock|Pipfile|Pipfile.lock)
+                dependency_manifest=true
+                deps_changed=true
+                docs_only=false
+                ;;
+              Dockerfile|Dockerfile.*|docker/*|compose*.yml|compose*.yaml)
+                docker_changed=true
+                docs_only=false
+                ;;
+              specs/*|formal/*|*.tla|*.cfg|*.coq|*.v)
+                spec_changed=true
+                docs_only=false
+                ;;
+              *)
+                docs_only=false
+                ;;
+            esac
+          done
+
+          if [[ "$has_any" == false ]]; then
+            docs_only=false
+          fi
+
+          {
+            echo "code=$code"
+            echo "tests_changed=$tests_changed"
+            echo "validation=$validation"
+            echo "property=$property"
+            echo "docs=$docs"
+            echo "dependency_manifest=$dependency_manifest"
+            echo "workflows_changed=$workflows_changed"
+            echo "deps_changed=$deps_changed"
+            echo "docker_changed=$docker_changed"
+            echo "spec_changed=$spec_changed"
+            echo "docs_only=$docs_only"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "EVIDENCE: changed_files_count=${#changed_files[@]} base_ref=${base_ref}"
 
   gate-profile:
     permissions:
@@ -86,6 +159,8 @@ jobs:
       profile: pr
 
   determinism:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -158,6 +233,8 @@ jobs:
 
 
   contracts:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -190,6 +267,8 @@ jobs:
           retention-days: 30
 
   quality:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/_reusable_quality.yml
@@ -199,6 +278,8 @@ jobs:
       pylint-threshold: 7.5
 
   build:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -232,6 +313,8 @@ jobs:
           python -c "import bnsyn; print(bnsyn.__version__)"
 
   smoke-wheel-matrix:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     name: smoke-wheel-matrix (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     permissions:
@@ -264,7 +347,8 @@ jobs:
           python -c "import bnsyn; print(bnsyn.__version__)"
 
   tests-smoke:
-    needs: gate-profile
+    needs: [changes, gate-profile]
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/_reusable_pytest.yml
@@ -363,6 +447,8 @@ jobs:
             core.info('PR description and labels policy checks passed.');
 
   ssot:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -399,6 +485,8 @@ jobs:
           fi
 
   security:
+    needs: changes
+    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -467,6 +555,7 @@ jobs:
       contents: read
     timeout-minutes: 5
     needs:
+      - changes
       - gate-profile
       - determinism
       - quality
@@ -475,7 +564,7 @@ jobs:
       - tests-smoke
       - ssot
       - security
-    if: success()
+    if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.docs_only == 'true' || success())
     steps:
       - name: PR Quality Gate
         run: |
