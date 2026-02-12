@@ -3,10 +3,10 @@
     "determinism": 1,
     "math_physics": 1,
     "mutation": 4,
-    "pytest": 105,
+    "pytest": 109,
     "workflow_integrity": 1
   },
-  "flaky_indicator_count": 63,
+  "flaky_indicator_count": 67,
   "generated_by": "python -m scripts.generate_tests_inventory",
   "reusable_workflow_jobs": [
     "_reusable_benchmarks.yml",
@@ -19,8 +19,15 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 112,
+  "test_count": 116,
   "tests": [
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_actions_pinning.py"
+    },
     {
       "category": "pytest",
       "entropy_signals": [],
@@ -454,6 +461,13 @@
     {
       "category": "pytest",
       "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_no_escape_tripwires.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
         "time_dependency"
       ],
       "path": "tests/test_performance.py"
@@ -544,6 +558,13 @@
         "filesystem_io"
       ],
       "path": "tests/test_scan_placeholders.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_schema_contracts.py"
     },
     {
       "category": "pytest",
@@ -696,6 +717,14 @@
         "filesystem_io"
       ],
       "path": "tests/test_verify_hypothesis_v2.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io",
+        "subprocess_dependency"
+      ],
+      "path": "tests/test_verify_reproducible_artifacts.py"
     },
     {
       "category": "pytest",

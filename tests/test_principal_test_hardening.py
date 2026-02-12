@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import subprocess
 from pathlib import Path
 
@@ -38,24 +37,6 @@ class TestDeterministicExecutionChain:
 
         assert first_hash == second_hash
         tmp_path.joinpath("inventory.sha").write_text(first_hash, encoding="utf-8")
-
-
-class TestWorkflowPinningIntegrity:
-    def test_external_actions_are_sha_pinned(self) -> None:
-        workflow_paths = sorted((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
-        sha_pin_pattern = re.compile(r"@[0-9a-f]{40}$")
-        violations: list[str] = []
-        for path in workflow_paths:
-            for line in path.read_text(encoding="utf-8").splitlines():
-                stripped = line.strip()
-                if not stripped.startswith("uses:"):
-                    continue
-                uses_value = stripped.split("uses:", 1)[1].strip().strip("\"'")
-                if uses_value.startswith("./"):
-                    continue
-                if not sha_pin_pattern.search(uses_value):
-                    violations.append(f"{path.name}: {uses_value}")
-        assert violations == []
 
 
 class TestArtifactProvenanceInvariant:

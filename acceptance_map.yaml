@@ -43,3 +43,22 @@ ph_to_tests:
       - tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement
     evidence:
       - evidence/placeholder_closure/per_batch/PH_BATCH_02.json
+
+no_escape_acceptance:
+  merge_safety_budget_minutes: 12
+  determinism_runs: 3
+  decision_mode: fail_closed
+  required_checks:
+    - ci-pr-atomic
+    - workflow-integrity
+    - determinism
+    - contracts
+  forbidden:
+    - unpinned_actions
+    - flaky_tests
+    - unknown_evidence
+  artifacts:
+    tests_inventory.json:
+      generator_command: python -m scripts.generate_tests_inventory
+    INVENTORY.json:
+      generator_command: python tools/generate_inventory.py
