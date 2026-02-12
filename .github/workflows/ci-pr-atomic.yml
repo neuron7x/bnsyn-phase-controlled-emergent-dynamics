@@ -47,6 +47,7 @@ jobs:
       pull-requests: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      code_changed: ${{ steps.filter.outputs.code_changed }}
       tests_changed: ${{ steps.filter.outputs.tests_changed }}
       validation: ${{ steps.filter.outputs.validation }}
       property: ${{ steps.filter.outputs.property }}
@@ -74,6 +75,7 @@ jobs:
 
           has_any=false
           code=false
+          code_changed=false
           tests_changed=false
           validation=false
           property=false
@@ -90,12 +92,14 @@ jobs:
             case "$file" in
               src/*)
                 code=true
+                code_changed=true
                 validation=true
                 property=true
                 docs_only=false
                 ;;
               tests/*)
                 code=true
+                code_changed=true
                 tests_changed=true
                 validation=true
                 property=true
@@ -105,14 +109,14 @@ jobs:
                 validation=true
                 docs_only=false
                 ;;
-              docs/*|README*|mkdocs.yml)
+              docs/*|.github/*.md|*.md|README*|mkdocs.yml)
                 docs=true
                 ;;
               .github/workflows/*)
                 workflows_changed=true
                 docs_only=false
                 ;;
-              pyproject.toml|requirements*.txt|requirements/*|setup.py|setup.cfg|poetry.lock|uv.lock|Pipfile|Pipfile.lock)
+              pyproject.toml|requirements*.txt|requirements/*.txt|requirements/*/*.txt|setup.py|setup.cfg|poetry.lock|uv.lock|Pipfile|Pipfile.lock)
                 dependency_manifest=true
                 deps_changed=true
                 docs_only=false
@@ -137,6 +141,7 @@ jobs:
 
           {
             echo "code=$code"
+            echo "code_changed=$code_changed"
             echo "tests_changed=$tests_changed"
             echo "validation=$validation"
             echo "property=$property"
@@ -149,7 +154,8 @@ jobs:
             echo "docs_only=$docs_only"
           } >> "$GITHUB_OUTPUT"
 
-          echo "EVIDENCE: changed_files_count=${#changed_files[@]} base_ref=${base_ref}"
+          changed_hash=$(printf '%s\n' "${changed_files[@]}" | sha256sum | awk '{print $1}')
+          echo "EVIDENCE: changed_files_count=${#changed_files[@]} base_ref=${base_ref} changed_files_sha256=${changed_hash}"
 
   gate-profile:
     permissions:
