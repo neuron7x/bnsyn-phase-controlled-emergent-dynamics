@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
-          fetch-depth: 0
+          fetch-depth: 2
       - name: Derive changed-file classes (PR truth via API)
         id: filter
         env:

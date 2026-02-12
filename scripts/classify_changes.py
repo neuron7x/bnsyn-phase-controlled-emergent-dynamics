@@ -9,13 +9,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, asdict
-from typing import Iterable
+from typing import Callable, Iterable
 
 
 API_TIMEOUT_SECONDS = 10
 MAX_API_RETRIES = 3
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 USER_AGENT = "bnsyn-ci-classifier/1.0"
+
 
 @dataclass
 class ChangeFlags:
@@ -38,82 +39,160 @@ def _mark_non_docs(flags: ChangeFlags) -> None:
     flags.docs_only = False
 
 
+def _is_dependency_file(path: str) -> bool:
+    return (
+        path == "pyproject.toml"
+        or path == "requirements-lock.txt"
+        or (path.startswith("requirements") and path.endswith(".txt"))
+        or path in {"setup.py", "setup.cfg", "poetry.lock", "uv.lock", "Pipfile", "Pipfile.lock"}
+    )
+
+
+def _is_docker_file(path: str) -> bool:
+    return (
+        path == "Dockerfile"
+        or path.startswith("Dockerfile.")
+        or path.startswith("docker/")
+        or (path.startswith("compose") and (path.endswith(".yml") or path.endswith(".yaml")))
+    )
+
+
+def _is_spec_file(path: str) -> bool:
+    return (
+        path.startswith("specs/")
+        or path.startswith("formal/")
+        or path.endswith(".tla")
+        or path.endswith(".cfg")
+        or path.endswith(".coq")
+        or path.endswith(".v")
+    )
+
+
+def _is_docs_file(path: str) -> bool:
+    return (
+        path.startswith("docs/")
+        or path == "mkdocs.yml"
+        or (path.startswith(".github/") and path.endswith(".md"))
+        or path == "README.md"
+        or path.startswith("README")
+    )
+
+
+def _apply_src(flags: ChangeFlags, path: str) -> bool:
+    if not path.startswith("src/"):
+        return False
+    flags.code = True
+    flags.code_changed = True
+    flags.validation = True
+    flags.property = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_tests(flags: ChangeFlags, path: str) -> bool:
+    if not path.startswith("tests/"):
+        return False
+    flags.code = True
+    flags.code_changed = True
+    flags.tests_changed = True
+    flags.validation = True
+    flags.property = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_scripts(flags: ChangeFlags, path: str) -> bool:
+    if not (path.startswith("scripts/") or path.startswith("tools/")):
+        return False
+    flags.validation = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_workflows(flags: ChangeFlags, path: str) -> bool:
+    if not (path.startswith(".github/workflows/") or path.startswith(".github/actions/")):
+        return False
+    flags.workflows_changed = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_dependencies(flags: ChangeFlags, path: str) -> bool:
+    if not _is_dependency_file(path):
+        return False
+    flags.dependency_manifest = True
+    flags.deps_changed = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_docker(flags: ChangeFlags, path: str) -> bool:
+    if not _is_docker_file(path):
+        return False
+    flags.docker_changed = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_specs(flags: ChangeFlags, path: str) -> bool:
+    if not _is_spec_file(path):
+        return False
+    flags.spec_changed = True
+    _mark_non_docs(flags)
+    return True
+
+
+def _apply_docs(flags: ChangeFlags, path: str) -> bool:
+    if not _is_docs_file(path):
+        return False
+    flags.docs = True
+    return True
+
+
+
+
+def _classify_single_path(flags: ChangeFlags, path: str) -> bool:
+    handlers: tuple[Callable[[ChangeFlags, str], bool], ...] = (
+        _apply_src,
+        _apply_tests,
+        _apply_scripts,
+        _apply_workflows,
+        _apply_dependencies,
+        _apply_docker,
+        _apply_specs,
+        _apply_docs,
+    )
+    for handler in handlers:
+        if handler(flags, path):
+            return True
+    return False
+
+
 def classify_files(files: Iterable[str]) -> ChangeFlags:
     flags = ChangeFlags()
     items = [f for f in files if f]
 
-    for file in items:
-        if file.startswith("src/"):
-            flags.code = True
-            flags.code_changed = True
-            flags.validation = True
-            flags.property = True
-            _mark_non_docs(flags)
-            continue
-        if file.startswith("tests/"):
-            flags.code = True
-            flags.code_changed = True
-            flags.tests_changed = True
-            flags.validation = True
-            flags.property = True
-            _mark_non_docs(flags)
-            continue
-        if file.startswith("scripts/") or file.startswith("tools/"):
-            flags.validation = True
-            _mark_non_docs(flags)
-            continue
-        if file.startswith(".github/workflows/") or file.startswith(".github/actions/"):
-            flags.workflows_changed = True
-            _mark_non_docs(flags)
-            continue
-        if (
-            file == "pyproject.toml"
-            or file == "requirements-lock.txt"
-            or file.endswith(".txt") and file.startswith("requirements")
-            or file in {"setup.py", "setup.cfg", "poetry.lock", "uv.lock", "Pipfile", "Pipfile.lock"}
-        ):
-            flags.dependency_manifest = True
-            flags.deps_changed = True
-            _mark_non_docs(flags)
-            continue
-        if (
-            file == "Dockerfile"
-            or file.startswith("Dockerfile.")
-            or file.startswith("docker/")
-            or file.startswith("compose") and (file.endswith(".yml") or file.endswith(".yaml"))
-        ):
-            flags.docker_changed = True
-            _mark_non_docs(flags)
-            continue
-        if (
-            file.startswith("specs/")
-            or file.startswith("formal/")
-            or file.endswith(".tla")
-            or file.endswith(".cfg")
-            or file.endswith(".coq")
-            or file.endswith(".v")
-        ):
-            flags.spec_changed = True
-            _mark_non_docs(flags)
-            continue
-        if (
-            file.startswith("docs/")
-            or file == "mkdocs.yml"
-            or file.startswith(".github/") and file.endswith(".md")
-            or file == "README.md"
-            or file.startswith("README")
-        ):
-            flags.docs = True
-            continue
+    handlers: tuple[Callable[[ChangeFlags, str], bool], ...] = (
+        _apply_src,
+        _apply_tests,
+        _apply_scripts,
+        _apply_workflows,
+        _apply_dependencies,
+        _apply_docker,
+        _apply_specs,
+        _apply_docs,
+    )
 
-        flags.unknown_changed = True
-        _mark_non_docs(flags)
+    for path in items:
+        matched = any(handler(flags, path) for handler in handlers)
+        if not matched:
+            flags.unknown_changed = True
+            _mark_non_docs(flags)
 
     if not items:
         flags.docs_only = False
 
     return flags
-
 
 
 def _api_get_json(url: str, token: str) -> list[dict[str, object]]:
