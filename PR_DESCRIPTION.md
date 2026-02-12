@@ -47,3 +47,29 @@
 **Compatibility note**
 
 * Python >= 3.9 → pip 26.0 pinned via `.github/actions/pin-pip` (single source of truth).
+
+---
+
+## Test hardening upgrade (determinism + entropy)
+
+**Upgraded**
+- Added deterministic test topology inventory generator: `scripts/generate_tests_inventory.py` producing `tests_inventory.json`.
+- Added principal-level invariant tests in `tests/test_principal_test_hardening.py`:
+  - `TestEntropyMonotonicity`
+  - `TestDeterministicExecutionChain`
+  - `TestWorkflowPinningIntegrity`
+  - `TestArtifactProvenanceInvariant`
+- Hardened CI by adding explicit `timeout-minutes` to control-plane jobs in `.github/workflows/ci-validation.yml`.
+
+**Removed**
+- No test deletions in this change set.
+
+**Invariants added**
+- Determinism offender counters cannot regress versus entropy baseline.
+- Inventory generation hash remains stable across repeated runs.
+- External workflow actions must be full SHA-pinned.
+- Manifest provenance digest must remain SHA-addressed with non-empty invariant set.
+
+**Entropy reduction rationale**
+- Explicit timeouts reduce hanging workflow entropy and enforce fail-closed CI behavior.
+- Deterministic inventory generation and pinning checks reduce nondeterministic drift in quality signals.

@@ -1,0 +1,8 @@
+python -m scripts.generate_tests_inventory
+python -m pip install -e '.[test]'
+pytest -q tests/test_principal_test_hardening.py tests/test_generate_inventory.py tests/test_validate_workflow_contracts.py
+pytest -q tests/test_entropy_gate.py tests/test_principal_test_hardening.py
+pytest -q
+python -m scripts.run_mutation_pipeline --paths-to-mutate src/bnsyn/memory.py --tests-dir tests --results-file evidence/tests_upgrade/mutation_results.txt --results-stderr-file evidence/tests_upgrade/mutation_stderr.txt --survivors-file evidence/tests_upgrade/mutation_survivors.txt
+for i in 1 2 3; do python -m scripts.generate_tests_inventory; sha256sum tests_inventory.json >> evidence/tests_upgrade/determinism_triple_run.sha256; done
+python - <<'PY' ... entropy baseline/current diff ... PY
