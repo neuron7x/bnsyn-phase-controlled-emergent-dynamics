@@ -9,7 +9,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, asdict
-from typing import Callable, Iterable
+from typing import Iterable
 
 
 API_TIMEOUT_SECONDS = 10
@@ -150,29 +150,11 @@ def _apply_docs(flags: ChangeFlags, path: str) -> bool:
 
 
 
-
-def _classify_single_path(flags: ChangeFlags, path: str) -> bool:
-    handlers: tuple[Callable[[ChangeFlags, str], bool], ...] = (
-        _apply_src,
-        _apply_tests,
-        _apply_scripts,
-        _apply_workflows,
-        _apply_dependencies,
-        _apply_docker,
-        _apply_specs,
-        _apply_docs,
-    )
-    for handler in handlers:
-        if handler(flags, path):
-            return True
-    return False
-
-
 def classify_files(files: Iterable[str]) -> ChangeFlags:
     flags = ChangeFlags()
     items = [f for f in files if f]
 
-    handlers: tuple[Callable[[ChangeFlags, str], bool], ...] = (
+    handlers = (
         _apply_src,
         _apply_tests,
         _apply_scripts,
