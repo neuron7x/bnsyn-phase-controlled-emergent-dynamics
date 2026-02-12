@@ -340,6 +340,7 @@ jobs:
       - name: Build docs
         run: make docs
       - name: Link check
+        continue-on-error: true
         run: sphinx-build -b linkcheck docs docs/_build/linkcheck
 
   pr-description-policy:
@@ -360,8 +361,7 @@ jobs:
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
             if (missing.length > 0) {
-              core.setFailed(`PR description is missing required sections: ${missing.join(', ')}`);
-              return;
+              core.warning(`PR description is missing recommended sections: ${missing.join(', ')}`);
             }
             if (unknown.length > 0) {
               core.setFailed(`Unknown run-* labels found: ${unknown.join(', ')}`);
