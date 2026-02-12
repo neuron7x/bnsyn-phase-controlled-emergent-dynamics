@@ -61,6 +61,14 @@ repos:
         files: ^pyproject\.toml$
         additional_dependencies: [validate-pyproject]
 
+
+      - id: regenerate-inventory
+        name: regenerate inventory snapshot
+        entry: python tools/generate_inventory.py
+        language: system
+        pass_filenames: false
+        files: ^(src/|tests/|docs/|\.github/|tools/generate_inventory\.py|INVENTORY\.json)
+        stages: [commit]
       - id: validate-bibliography
         name: validate bibliography
         entry: python -m scripts.validate_bibliography
