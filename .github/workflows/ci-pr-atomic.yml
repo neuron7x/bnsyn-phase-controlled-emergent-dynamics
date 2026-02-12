@@ -2,6 +2,7 @@ name: ci-pr-atomic
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
   push:
     branches: [main]
   workflow_dispatch:
@@ -39,6 +40,44 @@ env:
   PIP_NO_PYTHON_VERSION_WARNING: 1
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      validation: ${{ steps.filter.outputs.validation }}
+      property: ${{ steps.filter.outputs.property }}
+      docs: ${{ steps.filter.outputs.docs }}
+      dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: dorny/paths-filter@3b5a20e7b6fd2596d9d75649f5e8c1ce6a5ea561
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'tests/**'
+            validation:
+              - 'src/**'
+              - 'tools/**'
+              - 'scripts/**'
+              - 'docs/**'
+              - 'tests/**'
+            property:
+              - 'src/**'
+              - 'tests/**'
+            docs:
+              - 'docs/**'
+              - 'README*'
+              - 'mkdocs.yml'
+              - 'pyproject.toml'
+            dependency_manifest:
+              - 'pyproject.toml'
+              - 'requirements*.txt'
+
   gate-profile:
     permissions:
       contents: read
@@ -184,7 +223,44 @@ jobs:
           PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
           git diff --exit-code -- requirements-lock.txt
       - run: python -m build
-      - run: python -c "import bnsyn; print(bnsyn.__version__)"
+      - name: Install from wheel in clean venv
+        run: |
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
+
+  smoke-wheel-matrix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]" build
+      - name: Smoke tests
+        run: pytest -m smoke -v --tb=short
+      - name: Build and install wheel
+        run: |
+          python -m build
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
 
   tests-smoke:
     needs: gate-profile
@@ -198,6 +274,92 @@ jobs:
       upload-codecov: ${{ inputs['upload-codecov'] || true }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  validation-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.validation == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-validation') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_validation_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.validation-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
+      summary-title: PR Validation Suite
+      upload-artifacts: true
+      artifact-name: validation-logs-pr
+
+  property-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.property == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-property') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_property_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.property-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.property-timeout-minutes) }}
+      hypothesis-profile: ci
+      summary-title: PR Property-Based Invariants
+      upload-artifacts: true
+      artifact-name: property-logs-pr
+
+  docs-pr:
+    needs: changes
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.docs == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
+      - name: Build docs
+        run: make docs
+      - name: Link check
+        run: sphinx-build -b linkcheck docs docs/_build/linkcheck
+
+  pr-description-policy:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: Validate PR body sections and labels policy
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          script: |
+            const body = (context.payload.pull_request?.body || '').toLowerCase();
+            const requiredSections = ['what changed', 'why', 'risk', 'evidence', 'how to test'];
+            const missing = requiredSections.filter((section) => !body.includes(section));
+            const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
+            const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
+            const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
+            if (missing.length > 0) {
+              core.setFailed(`PR description is missing required sections: ${missing.join(', ')}`);
+              return;
+            }
+            if (unknown.length > 0) {
+              core.setFailed(`Unknown run-* labels found: ${unknown.join(', ')}`);
+              return;
+            }
+            core.info('PR description and labels policy checks passed.');
 
   ssot:
     runs-on: ubuntu-latest
@@ -275,12 +437,43 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  codeql-pr:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (contains(github.event.pull_request.labels.*.name, 'run-codeql') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+        with:
+          languages: "python"
+          build-mode: none
+      - name: Analyze
+        uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+
+
   finalize:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 5
-    needs: [gate-profile, determinism, quality, build, tests-smoke, ssot, security]
+    needs:
+      - gate-profile
+      - determinism
+      - quality
+      - build
+      - smoke-wheel-matrix
+      - tests-smoke
+      - ssot
+      - security
     if: success()
     steps:
       - name: PR Quality Gate

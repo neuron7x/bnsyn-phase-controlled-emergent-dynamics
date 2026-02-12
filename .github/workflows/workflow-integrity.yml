@@ -27,6 +27,7 @@ jobs:
             "ci-smoke.yml"
             "codeql.yml"
             "docs.yml"
+            "dependency-review.yml"
             "workflow-integrity.yml"
             "_reusable_benchmarks.yml"
             "_reusable_chaos_tests.yml"

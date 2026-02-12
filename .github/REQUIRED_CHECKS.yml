@@ -4,3 +4,5 @@ required_checks:
   - workflow_file: "workflow-integrity.yml"
 
   - workflow_file: "math-quality-gate.yml"
+
+  - workflow_file: "dependency-review.yml"

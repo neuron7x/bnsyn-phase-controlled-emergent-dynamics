@@ -1,3 +1,35 @@
+## What changed
+
+-
+
+## Why
+
+-
+
+## Risk
+
+-
+
+## Evidence
+
+-
+
+## How to test
+
+```bash
+# add exact verification commands
+```
+
+## Labels policy
+
+Supported control labels:
+- `run-property`
+- `run-validation`
+- `run-codeql`
+- `heavy-ci`
+
+---
+
 ## Description
 
 Provide a clear and concise description of your changes.
