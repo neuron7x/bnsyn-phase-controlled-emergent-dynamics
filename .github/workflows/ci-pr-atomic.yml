@@ -62,100 +62,145 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
-      - name: Derive changed-file classes
+      - name: Derive changed-file classes (PR truth via API)
         id: filter
-        shell: bash
-        run: |
-          set -euo pipefail
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          script: |
+            const crypto = require('crypto');
 
-          base_ref="${{ github.base_ref || 'main' }}"
-          git fetch --no-tags --depth=1 origin "$base_ref"
+            const files = [];
+            if (context.eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              for await (const resp of github.paginate.iterator(
+                github.rest.pulls.listFiles,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                  per_page: 100,
+                },
+              )) {
+                for (const f of resp.data) files.push(f.filename);
+              }
+            } else {
+              const { execSync } = require('child_process');
+              const out = execSync('git diff --name-only HEAD~1...HEAD', { encoding: 'utf8' });
+              for (const line of out.split('\\n')) {
+                if (line.trim().length > 0) files.push(line.trim());
+              }
+              core.info('EVIDENCE: non_pr_diff=HEAD~1...HEAD');
+            }
 
-          mapfile -t changed_files < <(git diff --name-only "origin/${base_ref}...HEAD")
+            const flags = {
+              code: false,
+              code_changed: false,
+              tests_changed: false,
+              validation: false,
+              property: false,
+              docs: false,
+              dependency_manifest: false,
+              workflows_changed: false,
+              deps_changed: false,
+              docker_changed: false,
+              spec_changed: false,
+              docs_only: true,
+            };
 
-          has_any=false
-          code=false
-          code_changed=false
-          tests_changed=false
-          validation=false
-          property=false
-          docs=false
-          dependency_manifest=false
-          workflows_changed=false
-          deps_changed=false
-          docker_changed=false
-          spec_changed=false
-          docs_only=true
+            const markNonDocs = () => {
+              flags.docs_only = false;
+            };
 
-          for file in "${changed_files[@]}"; do
-            has_any=true
-            case "$file" in
-              src/*)
-                code=true
-                code_changed=true
-                validation=true
-                property=true
-                docs_only=false
-                ;;
-              tests/*)
-                code=true
-                code_changed=true
-                tests_changed=true
-                validation=true
-                property=true
-                docs_only=false
-                ;;
-              scripts/*|tools/*)
-                validation=true
-                docs_only=false
-                ;;
-              docs/*|.github/*.md|*.md|README*|mkdocs.yml)
-                docs=true
-                ;;
-              .github/workflows/*)
-                workflows_changed=true
-                docs_only=false
-                ;;
-              pyproject.toml|requirements*.txt|requirements/*.txt|requirements/*/*.txt|setup.py|setup.cfg|poetry.lock|uv.lock|Pipfile|Pipfile.lock)
-                dependency_manifest=true
-                deps_changed=true
-                docs_only=false
-                ;;
-              Dockerfile|Dockerfile.*|docker/*|compose*.yml|compose*.yaml)
-                docker_changed=true
-                docs_only=false
-                ;;
-              specs/*|formal/*|*.tla|*.cfg|*.coq|*.v)
-                spec_changed=true
-                docs_only=false
-                ;;
-              *)
-                docs_only=false
-                ;;
-            esac
-          done
+            for (const file of files) {
+              if (file.startsWith('src/')) {
+                flags.code = true;
+                flags.code_changed = true;
+                flags.validation = true;
+                flags.property = true;
+                markNonDocs();
+                continue;
+              }
+              if (file.startsWith('tests/')) {
+                flags.code = true;
+                flags.code_changed = true;
+                flags.tests_changed = true;
+                flags.validation = true;
+                flags.property = true;
+                markNonDocs();
+                continue;
+              }
+              if (file.startsWith('scripts/') || file.startsWith('tools/')) {
+                flags.validation = true;
+                markNonDocs();
+                continue;
+              }
+              if (file.startsWith('.github/workflows/') || file.startsWith('.github/actions/')) {
+                flags.workflows_changed = true;
+                markNonDocs();
+                continue;
+              }
+              if (
+                file === 'pyproject.toml' ||
+                file === 'requirements-lock.txt' ||
+                /^requirements.*\.txt$/.test(file) ||
+                file === 'setup.py' ||
+                file === 'setup.cfg' ||
+                file === 'poetry.lock' ||
+                file === 'uv.lock' ||
+                file === 'Pipfile' ||
+                file === 'Pipfile.lock'
+              ) {
+                flags.dependency_manifest = true;
+                flags.deps_changed = true;
+                markNonDocs();
+                continue;
+              }
+              if (
+                file === 'Dockerfile' ||
+                file.startsWith('Dockerfile.') ||
+                file.startsWith('docker/') ||
+                /^compose.*\.ya?ml$/.test(file)
+              ) {
+                flags.docker_changed = true;
+                markNonDocs();
+                continue;
+              }
+              if (
+                file.startsWith('specs/') ||
+                file.startsWith('formal/') ||
+                file.endsWith('.tla') ||
+                file.endsWith('.cfg') ||
+                file.endsWith('.coq') ||
+                file.endsWith('.v')
+              ) {
+                flags.spec_changed = true;
+                markNonDocs();
+                continue;
+              }
+              if (
+                file.startsWith('docs/') ||
+                file === 'mkdocs.yml' ||
+                (file.startsWith('.github/') && file.endsWith('.md')) ||
+                file === 'README.md' ||
+                file.startsWith('README')
+              ) {
+                flags.docs = true;
+                continue;
+              }
 
-          if [[ "$has_any" == false ]]; then
-            docs_only=false
-          fi
+              markNonDocs();
+            }
 
-          {
-            echo "code=$code"
-            echo "code_changed=$code_changed"
-            echo "tests_changed=$tests_changed"
-            echo "validation=$validation"
-            echo "property=$property"
-            echo "docs=$docs"
-            echo "dependency_manifest=$dependency_manifest"
-            echo "workflows_changed=$workflows_changed"
-            echo "deps_changed=$deps_changed"
-            echo "docker_changed=$docker_changed"
-            echo "spec_changed=$spec_changed"
-            echo "docs_only=$docs_only"
-          } >> "$GITHUB_OUTPUT"
+            if (files.length === 0) {
+              flags.docs_only = false;
+            }
 
-          changed_hash=$(printf '%s\n' "${changed_files[@]}" | sha256sum | awk '{print $1}')
-          echo "EVIDENCE: changed_files_count=${#changed_files[@]} base_ref=${base_ref} changed_files_sha256=${changed_hash}"
+            for (const [k, v] of Object.entries(flags)) {
+              core.setOutput(k, String(v));
+            }
+
+            const changedHash = crypto.createHash('sha256').update(files.join('\\n')).digest('hex');
+            core.info(`EVIDENCE: changed_files_count=${files.length} changed_files_sha256=${changedHash}`);
 
   gate-profile:
     permissions:
@@ -166,7 +211,7 @@ jobs:
 
   determinism:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
+    if: github.event_name != 'pull_request' || needs.changes.outputs.code_changed == 'true' || needs.changes.outputs.deps_changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -274,7 +319,7 @@ jobs:
 
   quality:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
+    if: github.event_name != 'pull_request' || needs.changes.outputs.code_changed == 'true' || needs.changes.outputs.deps_changed == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/_reusable_quality.yml
@@ -285,7 +330,7 @@ jobs:
 
   build:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
+    if: github.event_name != 'pull_request' || needs.changes.outputs.code_changed == 'true' || needs.changes.outputs.deps_changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -320,7 +365,7 @@ jobs:
 
   smoke-wheel-matrix:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
+    if: github.event_name != 'pull_request' || needs.changes.outputs.code_changed == 'true' || needs.changes.outputs.deps_changed == 'true'
     name: smoke-wheel-matrix (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     permissions:
@@ -354,7 +399,7 @@ jobs:
 
   tests-smoke:
     needs: [changes, gate-profile]
-    if: github.event_name != 'pull_request' || needs.changes.outputs.docs_only != 'true'
+    if: github.event_name != 'pull_request' || needs.changes.outputs.code_changed == 'true' || needs.changes.outputs.tests_changed == 'true' || needs.changes.outputs.deps_changed == 'true'
     permissions:
       contents: read
     uses: ./.github/workflows/_reusable_pytest.yml
@@ -519,6 +564,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
       - name: pip-audit
+        if: github.event_name != 'pull_request' || needs.changes.outputs.deps_changed == 'true'
         run: |
           mkdir -p artifacts
           pip-audit --desc --format json --output artifacts/pip-audit.json
@@ -564,22 +610,80 @@ jobs:
       - changes
       - gate-profile
       - determinism
+      - contracts
       - quality
       - build
       - smoke-wheel-matrix
       - tests-smoke
       - ssot
       - security
-    if: always() && (github.event_name != 'pull_request' || needs.changes.outputs.docs_only == 'true' || success())
+      - pr-description-policy
+    if: always()
     steps:
-      - name: PR Quality Gate
+      - name: Merge gate verdict (fail-closed)
+        shell: bash
         run: |
-          echo " All PR checks passed!"
-          echo "   Determinism verified"
-          echo "   Code quality approved"
-          echo "   Build successful"
-          echo "   Tests passed (${{ needs.gate-profile.outputs.coverage-threshold }}% coverage)"
-          echo "   SSOT gates verified"
-          echo "   Security audit passed"
-          echo ""
-          echo "Ready for merge "
+          set -euo pipefail
+
+          docs_only="${{ needs.changes.outputs.docs_only }}"
+          workflows_changed="${{ needs.changes.outputs.workflows_changed }}"
+          deps_changed="${{ needs.changes.outputs.deps_changed }}"
+          code_changed="${{ needs.changes.outputs.code_changed }}"
+          tests_changed="${{ needs.changes.outputs.tests_changed }}"
+          spec_changed="${{ needs.changes.outputs.spec_changed }}"
+
+          fail() {
+            echo "::error::$1"
+            exit 1
+          }
+
+          require_success() {
+            local name="$1"
+            local result="$2"
+            if [[ "$result" != "success" ]]; then
+              fail "Required gate failed or did not run: ${name} result=${result}"
+            fi
+          }
+
+          require_success_or_skipped() {
+            local name="$1"
+            local result="$2"
+            if [[ "$result" != "success" && "$result" != "skipped" ]]; then
+              fail "Gate failed: ${name} result=${result}"
+            fi
+          }
+
+          require_success "changes" "${{ needs.changes.result }}"
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            require_success "pr-description-policy" "${{ needs.pr-description-policy.result }}"
+          fi
+
+          if [[ "$docs_only" == "true" ]]; then
+            if [[ "$workflows_changed" == "true" || "$deps_changed" == "true" || "$code_changed" == "true" || "$tests_changed" == "true" || "$spec_changed" == "true" ]]; then
+              fail "docs_only=true but sensitive change flags set"
+            fi
+            echo "EVIDENCE: docs_only=true heavy_gates=skipped"
+            exit 0
+          fi
+
+          require_success "gate-profile" "${{ needs.gate-profile.result }}"
+          require_success "contracts" "${{ needs.contracts.result }}"
+          require_success "security" "${{ needs.security.result }}"
+          require_success "ssot" "${{ needs.ssot.result }}"
+
+          if [[ "$code_changed" == "true" || "$deps_changed" == "true" || "$tests_changed" == "true" ]]; then
+            require_success "quality" "${{ needs.quality.result }}"
+            require_success "build" "${{ needs.build.result }}"
+            require_success "tests-smoke" "${{ needs.tests-smoke.result }}"
+            require_success "determinism" "${{ needs.determinism.result }}"
+            require_success "smoke-wheel-matrix" "${{ needs.smoke-wheel-matrix.result }}"
+          else
+            require_success_or_skipped "quality" "${{ needs.quality.result }}"
+            require_success_or_skipped "build" "${{ needs.build.result }}"
+            require_success_or_skipped "tests-smoke" "${{ needs.tests-smoke.result }}"
+            require_success_or_skipped "determinism" "${{ needs.determinism.result }}"
+            require_success_or_skipped "smoke-wheel-matrix" "${{ needs.smoke-wheel-matrix.result }}"
+          fi
+
+          echo "EVIDENCE: merge_gate=PASS"
