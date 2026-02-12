@@ -5,13 +5,17 @@ import hashlib
 import json
 import os
 import subprocess
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, asdict
 from typing import Iterable
 
+
+API_TIMEOUT_SECONDS = 10
+MAX_API_RETRIES = 3
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+USER_AGENT = "bnsyn-ci-classifier/1.0"
 
 @dataclass
 class ChangeFlags:
@@ -111,6 +115,38 @@ def classify_files(files: Iterable[str]) -> ChangeFlags:
     return flags
 
 
+
+def _api_get_json(url: str, token: str) -> list[dict[str, object]]:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": USER_AGENT,
+    }
+
+    last_error: Exception | None = None
+    for attempt in range(1, MAX_API_RETRIES + 1):
+        request = urllib.request.Request(url, headers=headers)
+        try:
+            with urllib.request.urlopen(request, timeout=API_TIMEOUT_SECONDS) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+                if not isinstance(payload, list):
+                    raise RuntimeError("unexpected GitHub API payload type")
+                return payload
+        except urllib.error.HTTPError as exc:
+            last_error = exc
+            if exc.code not in RETRYABLE_STATUS_CODES or attempt == MAX_API_RETRIES:
+                raise RuntimeError(f"failed to read PR file list from GitHub API: HTTP {exc.code}") from exc
+        except urllib.error.URLError as exc:
+            last_error = exc
+            if attempt == MAX_API_RETRIES:
+                raise RuntimeError(f"failed to read PR file list from GitHub API: {exc}") from exc
+
+    if last_error is not None:
+        raise RuntimeError(f"failed to read PR file list from GitHub API: {last_error}") from last_error
+    raise RuntimeError("failed to read PR file list from GitHub API: unknown error")
+
+
 def _read_pr_files(event_path: str, repository: str, token: str) -> tuple[list[str], dict[str, str]]:
     with open(event_path, encoding="utf-8") as handle:
         event = json.load(handle)
@@ -129,19 +165,7 @@ def _read_pr_files(event_path: str, repository: str, token: str) -> tuple[list[s
     while True:
         query = urllib.parse.urlencode({"per_page": 100, "page": page})
         url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files?{query}"
-        request = urllib.request.Request(
-            url,
-            headers={
-                "Accept": "application/vnd.github+json",
-                "Authorization": f"Bearer {token}",
-                "X-GitHub-Api-Version": "2022-11-28",
-            },
-        )
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                payload = json.loads(response.read().decode("utf-8"))
-        except urllib.error.URLError as exc:
-            raise RuntimeError(f"failed to read PR file list from GitHub API: {exc}") from exc
+        payload = _api_get_json(url=url, token=token)
 
         if not payload:
             break
