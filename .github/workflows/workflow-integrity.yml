@@ -27,6 +27,7 @@ jobs:
             "ci-smoke.yml"
             "codeql.yml"
             "docs.yml"
+            "dependency-review.yml"
             "workflow-integrity.yml"
             "_reusable_benchmarks.yml"
             "_reusable_chaos_tests.yml"
@@ -172,6 +173,10 @@ jobs:
         run: python -m scripts.validate_pr_gates
       - name: Validate required checks
         run: python -m scripts.validate_required_checks
+      - name: Validate required status contexts
+        run: python -m scripts.validate_required_status_contexts
+      - name: Validate branch protection governance document
+        run: python -m scripts.validate_branch_protection_governance
       - name: Validate workflow contracts
         run: python -m scripts.validate_workflow_contracts
       - name: Validate long-running workflow triggers
