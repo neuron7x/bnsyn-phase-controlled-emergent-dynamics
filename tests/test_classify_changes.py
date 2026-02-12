@@ -8,7 +8,6 @@ import subprocess
 import urllib.error
 
 import pytest
-from hypothesis import given, strategies as st
 
 from scripts import classify_changes
 from scripts.classify_changes import _api_get_json, classify_files
@@ -107,14 +106,21 @@ def test_main_non_pr_writes_outputs(monkeypatch: pytest.MonkeyPatch, tmp_path: P
     assert "docs_only=false" in content
 
 
-@given(st.lists(st.text(min_size=1, max_size=20), max_size=50))
-def test_property_unknown_keeps_docs_only_false(file_list: list[str]) -> None:
-    flagged = [f for f in file_list if not f.startswith("docs/")]
-    if not flagged:
-        flagged = ["unknown.file"]
-    flags = classify_files(flagged)
-    if flags.unknown_changed:
-        assert flags.docs_only is False
+def test_property_unknown_keeps_docs_only_false() -> None:
+    hypothesis = pytest.importorskip("hypothesis")
+    given = hypothesis.given
+    st = hypothesis.strategies
+
+    @given(st.lists(st.text(min_size=1, max_size=20), max_size=50))
+    def _property(file_list: list[str]) -> None:
+        flagged = [f for f in file_list if not f.startswith("docs/")]
+        if not flagged:
+            flagged = ["unknown.file"]
+        flags = classify_files(flagged)
+        if flags.unknown_changed:
+            assert flags.docs_only is False
+
+    _property()
 
 def test_read_non_pr_files_success(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("subprocess.check_output", lambda *args, **kwargs: "a\nb\n")
