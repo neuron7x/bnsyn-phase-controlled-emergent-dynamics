@@ -10,7 +10,7 @@
     "src": 72,
     "tests": 157,
     "docs": 103,
-    ".github": 39
+    ".github": 41
   },
   "workflows": [
     "_reusable_benchmarks.yml",
