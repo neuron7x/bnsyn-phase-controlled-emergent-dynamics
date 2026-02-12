@@ -44,6 +44,7 @@ jobs:
 
   determine:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       mode: ${{ steps.set.outputs.mode }}
       chaos_subset: ${{ steps.set.outputs.chaos_subset }}
@@ -109,6 +110,7 @@ jobs:
 
   elite-summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [determine, validation-tests, property-tests]
     if: needs.determine.outputs.mode == 'elite'
     steps:
@@ -129,6 +131,7 @@ jobs:
 
   chaos-summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [determine, chaos-tests, property-tests]
     if: needs.determine.outputs.mode == 'chaos' && always()
     steps:
