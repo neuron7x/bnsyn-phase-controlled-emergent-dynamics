@@ -1,0 +1,3 @@
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
+pytest -q tests/test_entropy_gate.py
