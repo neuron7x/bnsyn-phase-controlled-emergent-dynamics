@@ -42,7 +42,6 @@ jobs:
   gate-profile:
     permissions:
       contents: read
-    timeout-minutes: 10
     uses: ./.github/workflows/_reusable_gate_profile.yml
     with:
       profile: pr
@@ -121,7 +120,6 @@ jobs:
   quality:
     permissions:
       contents: read
-    timeout-minutes: 20
     uses: ./.github/workflows/_reusable_quality.yml
     with:
       python-version: ${{ inputs['python-version'] || '3.11' }}
@@ -159,13 +157,11 @@ jobs:
     needs: gate-profile
     permissions:
       contents: read
-    timeout-minutes: 35
     uses: ./.github/workflows/_reusable_pytest.yml
     with:
       python-version: ${{ inputs['python-version'] || '3.11' }}
       markers: ${{ needs.gate-profile.outputs.pytest-markers }}
       coverage-threshold: ${{ fromJSON(needs.gate-profile.outputs.coverage-threshold) }}
-      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.pytest-timeout-minutes) }}
       upload-codecov: ${{ inputs['upload-codecov'] || true }}
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
