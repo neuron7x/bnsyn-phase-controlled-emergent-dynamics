@@ -232,6 +232,7 @@ jobs:
           python -c "import bnsyn; print(bnsyn.__version__)"
 
   smoke-wheel-matrix:
+    name: smoke-wheel-matrix (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
