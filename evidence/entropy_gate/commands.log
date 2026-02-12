@@ -19,3 +19,7 @@ python -m tools.entropy_gate --mode current
 python -m tools.entropy_gate --mode current
 pytest -q tests/test_entropy_gate.py
 git rev-parse HEAD -> 9604fe68573850a4fb8d8fefcf6db2c9a502a8e4
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
