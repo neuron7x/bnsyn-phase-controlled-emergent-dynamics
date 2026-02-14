@@ -10,6 +10,8 @@ Do not remove or rename these headings.
 
 ## What changed
 
+> **Required by CI policy:** keep these 5 section titles exactly as written: `What changed`, `Why`, `Risk`, `Evidence`, `How to test`.
+
 -
 
 ## Why
