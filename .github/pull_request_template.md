@@ -11,6 +11,7 @@ Do not remove or rename these headings.
 ## What changed
 
 > **Required by CI policy:** keep these 5 section titles exactly as written: `What changed`, `Why`, `Risk`, `Evidence`, `How to test`.
+> **Heads up:** CI validates these section names using case-insensitive text matching; if any are missing, `Workflow Integrity` fails.
 
 -
 
