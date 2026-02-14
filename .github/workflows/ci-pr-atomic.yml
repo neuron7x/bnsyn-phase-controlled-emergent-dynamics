@@ -353,7 +353,11 @@ jobs:
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
             if (missing.length > 0) {
-              core.setFailed(`PR description is missing required sections: ${missing.join(', ')}`);
+              core.setFailed(
+                `PR description is missing required sections: ${missing.join(', ')}\n\n` +
+                'Use these exact headings in the PR body:\n' +
+                '## What changed\n## Why\n## Risk\n## Evidence\n## How to test'
+              );
               return;
             }
             if (unknown.length > 0) {
