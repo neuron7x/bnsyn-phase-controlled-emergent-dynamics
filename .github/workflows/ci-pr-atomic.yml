@@ -346,20 +346,15 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         with:
           script: |
-            const rawBody = context.payload.pull_request?.body || '';
-            const body = rawBody.toLowerCase();
+            const body = (context.payload.pull_request?.body || '').toLowerCase();
             const requiredSections = ['what changed', 'why', 'risk', 'evidence', 'how to test'];
             const missing = requiredSections.filter((section) => !body.includes(section));
-            const bodyIsEffectivelyEmpty = rawBody.trim().length === 0;
             const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
-            if (missing.length > 0 && !bodyIsEffectivelyEmpty) {
+            if (missing.length > 0) {
               core.setFailed(`PR description is missing required sections: ${missing.join(', ')}`);
               return;
-            }
-            if (missing.length > 0 && bodyIsEffectivelyEmpty) {
-              core.warning('PR description is empty; skipping required-section enforcement for this run.');
             }
             if (unknown.length > 0) {
               core.setFailed(`Unknown run-* labels found: ${unknown.join(', ')}`);
