@@ -6,8 +6,8 @@ PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 
 dev-setup:
-	pip install --upgrade pip setuptools wheel
-	pip install -e ".[dev,test]"
+	python -m pip install --upgrade pip setuptools wheel
+	python -m pip install -e ".[dev,test]"
 	pre-commit install
 	pre-commit autoupdate
 
@@ -19,8 +19,8 @@ wheelhouse-validate:
 	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
 
 dev-env-offline: wheelhouse-validate
-	pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
-	pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
 	pre-commit install
 
 wheelhouse-clean:

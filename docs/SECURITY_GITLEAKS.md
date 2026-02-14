@@ -68,5 +68,5 @@ gitleaks detect --config .gitleaks.toml --log-opts="origin/main..HEAD" --verbose
 ## References
 
 - [Gitleaks Documentation](https://github.com/gitleaks/gitleaks)
-- [Gitleaks Configuration Reference](https://github.com/gitleaks/gitleaks#configuration)
+- [Gitleaks Configuration Reference](https://github.com/gitleaks/gitleaks)
 - [Repository Audit Findings](AUDIT_FINDINGS.md)

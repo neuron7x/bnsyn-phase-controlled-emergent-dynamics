@@ -488,3 +488,26 @@ jobs:
           echo "   Security audit passed"
           echo ""
           echo "Ready for merge "
+
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "ci-pr-atomic",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-ci-pr-atomic-${{ github.sha }}
+          path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30

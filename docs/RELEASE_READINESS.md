@@ -32,8 +32,10 @@ The release readiness gate enforces these requirements:
    (`scripts/lint_ci_truthfulness.py`, `scripts/verify_formal_constants.py`)
    and mutation scripts.
 5. **Project version defined** in `pyproject.toml`.
-6. **Mutation baseline active with factual counts**: `quality/mutation_baseline.json`
-   must have `status="active"` and `metrics.total_mutants > 0`.
+6. **Mutation baseline non-trivial and factual**: `quality/mutation_baseline.json`
+   must have `status="active"`, `metrics.total_mutants > 0`, and `metrics.killed_mutants > 0`.
+7. **Entropy gate consistency**: current repository entropy metrics must satisfy
+   comparators in `entropy/policy.json` against `entropy/baseline.json` (no regressions).
 
 ## Mutation Baseline (Required for Release)
 

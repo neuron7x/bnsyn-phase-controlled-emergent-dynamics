@@ -188,8 +188,8 @@ make dev-env-offline
 Equivalent install commands:
 
 ```bash
-pip install --no-index --find-links wheelhouse -r requirements-lock.txt
-pip install --no-index --find-links wheelhouse --no-deps -e .
+python -m pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+python -m pip install --no-index --find-links wheelhouse --no-deps -e .
 ```
 
 Failure modes:
