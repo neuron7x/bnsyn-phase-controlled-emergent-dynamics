@@ -13,6 +13,8 @@ from typing import Any
 
 import tomllib
 
+from tools.entropy_gate.compute_metrics import compute_metrics, flatten
+
 
 @dataclass(frozen=True)
 class CheckResult:
@@ -50,6 +52,7 @@ def check_mutation_baseline(path: Path) -> CheckResult:
     status = data.get("status")
     metrics = data.get("metrics", {})
     total_mutants = metrics.get("total_mutants")
+    killed_mutants = metrics.get("killed_mutants")
     if status != "active" or not isinstance(total_mutants, int) or total_mutants <= 0:
         detail_parts = [
             f"status={status!r}",
@@ -63,10 +66,99 @@ def check_mutation_baseline(path: Path) -> CheckResult:
             + ")",
             blocking=True,
         )
+    if not isinstance(killed_mutants, int) or killed_mutants <= 0:
+        return CheckResult(
+            name="Mutation baseline",
+            status="fail",
+            details=(
+                "Baseline is trivial: metrics.killed_mutants must be > 0 "
+                f"(killed_mutants={killed_mutants!r})"
+            ),
+            blocking=True,
+        )
     return CheckResult(
         name="Mutation baseline",
         status="pass",
-        details=f"status={status}, total_mutants={total_mutants}",
+        details=(
+            f"status={status}, total_mutants={total_mutants}, "
+            f"killed_mutants={killed_mutants}"
+        ),
+        blocking=True,
+    )
+
+
+def check_entropy_gate(repo_root: Path) -> CheckResult:
+    policy_path = repo_root / "entropy" / "policy.json"
+    baseline_path = repo_root / "entropy" / "baseline.json"
+    if not policy_path.exists() or not baseline_path.exists():
+        missing: list[str] = []
+        if not policy_path.exists():
+            missing.append(str(policy_path))
+        if not baseline_path.exists():
+            missing.append(str(baseline_path))
+        return CheckResult(
+            name="Entropy gate",
+            status="fail",
+            details=f"Missing entropy gate files: {', '.join(missing)}",
+            blocking=True,
+        )
+
+    policy = load_json(policy_path)
+    baseline = load_json(baseline_path)
+    comparators = policy.get("comparators", {})
+    if not isinstance(comparators, dict) or not comparators:
+        return CheckResult(
+            name="Entropy gate",
+            status="fail",
+            details="policy.json comparators missing/empty",
+            blocking=True,
+        )
+
+    current = compute_metrics(repo_root)
+    baseline_flat = flatten(baseline)
+    current_flat = flatten(current)
+
+    failures: list[str] = []
+    for key, comparator in sorted(comparators.items()):
+        if key not in baseline_flat:
+            failures.append(f"{key}: baseline missing key")
+            continue
+        if key not in current_flat:
+            failures.append(f"{key}: current missing key")
+            continue
+
+        baseline_value = baseline_flat[key]
+        current_value = current_flat[key]
+        if comparator == "lte":
+            if not (current_value <= baseline_value):
+                failures.append(
+                    f"{key}: regression (current={current_value} > baseline={baseline_value})"
+                )
+        elif comparator == "gte":
+            if not (current_value >= baseline_value):
+                failures.append(
+                    f"{key}: regression (current={current_value} < baseline={baseline_value})"
+                )
+        elif comparator == "eq":
+            if not (current_value == baseline_value):
+                failures.append(
+                    f"{key}: changed (current={current_value} != baseline={baseline_value})"
+                )
+        else:
+            failures.append(f"{key}: unknown comparator '{comparator}'")
+
+    if failures:
+        return CheckResult(
+            name="Entropy gate",
+            status="fail",
+            details="; ".join(failures[:3]),
+            blocking=True,
+        )
+
+    return CheckResult(
+        name="Entropy gate",
+        status="pass",
+        details="No comparator regressions vs entropy baseline",
         blocking=True,
     )
 
@@ -140,6 +232,7 @@ def build_report(repo_root: Path) -> dict[str, Any]:
     version_check, version = check_pyproject_version(repo_root / "pyproject.toml")
     checks.append(version_check)
     checks.append(check_mutation_baseline(repo_root / "quality" / "mutation_baseline.json"))
+    checks.append(check_entropy_gate(repo_root))
 
     blocking_failures = [
         check.name for check in checks if check.blocking and check.status != "pass"

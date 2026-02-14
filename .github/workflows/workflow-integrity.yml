@@ -175,6 +175,27 @@ jobs:
         run: python -m scripts.validate_required_checks
       - name: Validate required status contexts
         run: python -m scripts.validate_required_status_contexts
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "workflow-integrity",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-workflow-integrity-${{ github.sha }}
+          path: artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Validate branch protection governance document
         run: python -m scripts.validate_branch_protection_governance
       - name: Validate workflow contracts
