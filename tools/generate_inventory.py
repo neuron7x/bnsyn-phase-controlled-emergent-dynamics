@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 def _tracked_files_under(path_prefix: str) -> list[Path]:
-    out = subprocess.check_output(["git", "ls-files", f"{path_prefix}/**"], text=True)
+    out = subprocess.check_output(["git", "ls-files", "--", path_prefix], text=True)
     return [Path(line) for line in out.splitlines() if line]
 
 
