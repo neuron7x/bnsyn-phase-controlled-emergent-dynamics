@@ -346,9 +346,14 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
         with:
           script: |
-            const body = (context.payload.pull_request?.body || '').toLowerCase();
+            const body = context.payload.pull_request?.body || '';
             const requiredSections = ['what changed', 'why', 'risk', 'evidence', 'how to test'];
-            const missing = requiredSections.filter((section) => !body.includes(section));
+            const hasSectionHeading = (section) => {
+              const escaped = section.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const headingPattern = new RegExp(`^\\s{0,3}(?:#{1,6}\\s*)?${escaped}\\s*:?\\s*$`, 'im');
+              return headingPattern.test(body);
+            };
+            const missing = requiredSections.filter((section) => !hasSectionHeading(section));
             const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
