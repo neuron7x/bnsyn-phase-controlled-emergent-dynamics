@@ -1,3 +1,13 @@
+<!--
+CI policy check enforces these exact sections (case-insensitive text match):
+- what changed
+- why
+- risk
+- evidence
+- how to test
+Do not remove or rename these headings.
+-->
+
 ## What changed
 
 -
