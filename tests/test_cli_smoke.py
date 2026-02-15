@@ -1,7 +1,18 @@
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _cli_env() -> dict[str, str]:
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH", "")
+    src_path = str(Path("src").resolve())
+    env["PYTHONPATH"] = (
+        f"{src_path}{os.pathsep}{existing_pythonpath}" if existing_pythonpath else src_path
+    )
+    return env
 
 
 def test_cli_demo_runs() -> None:
@@ -23,6 +34,7 @@ def test_cli_demo_runs() -> None:
         check=True,
         capture_output=True,
         text=True,
+        env=_cli_env(),
     )
     out = json.loads(p.stdout)
     assert "demo" in out
@@ -49,6 +61,7 @@ def test_cli_dtcheck_runs() -> None:
         check=True,
         capture_output=True,
         text=True,
+        env=_cli_env(),
     )
     out = json.loads(p.stdout)
     assert "m_dt" in out
@@ -84,6 +97,7 @@ def test_cli_sleep_stack_runs() -> None:
             check=True,
             capture_output=True,
             text=True,
+            env=_cli_env(),
         )
 
         manifest_path = out_dir / "manifest.json"

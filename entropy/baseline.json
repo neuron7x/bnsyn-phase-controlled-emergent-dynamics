@@ -1,14 +1,21 @@
 {
+  "version": 1,
   "dependencies": {
-    "build_requires_unpinned_count": 0,
-    "lockfiles_present": true,
+    "project_unpinned_count": 0,
     "optional_unpinned_count": 0,
-    "project_unpinned_count": 0
+    "build_requires_unpinned_count": 0,
+    "lockfiles_present": true
   },
   "determinism": {
     "global_np_random_offenders": 0,
     "python_random_offenders": 0,
     "time_calls_offenders": 0
+  },
+  "process": {
+    "gh_workflows_unpinned_actions_count": 0,
+    "gh_workflows_missing_job_permissions_count": 39,
+    "gh_workflows_missing_job_timeout_count": 32,
+    "required_checks_files_present": true
   },
   "docs": {
     "src_todo_fixme_count": 0
@@ -17,12 +24,5 @@
     "np": [],
     "py": [],
     "time": []
-  },
-  "process": {
-    "gh_workflows_missing_job_permissions_count": 39,
-    "gh_workflows_missing_job_timeout_count": 29,
-    "gh_workflows_unpinned_actions_count": 0,
-    "required_checks_files_present": true
-  },
-  "version": 1
+  }
 }

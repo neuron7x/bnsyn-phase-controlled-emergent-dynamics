@@ -173,7 +173,7 @@ class Network:
         validate_connectivity_matrix(W_exc, shape=(N, nE), name="W_exc")
         validate_connectivity_matrix(W_inh, shape=(N, nI), name="W_inh")
 
-        # Backend-aware connectivity (reference = force dense, accelerated = auto sparse)
+        # Backend-aware connectivity (reference = force dense, accelerated = force sparse)
         if backend == "reference":
             self.W_exc = SparseConnectivity(W_exc, force_format="dense")
             self.W_inh = SparseConnectivity(W_inh, force_format="dense")
