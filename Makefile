@@ -126,6 +126,7 @@ ssot:
 	$(MAKE) inventory-check
 	python -m scripts.validate_api_maturity
 	$(MAKE) api-contract
+	$(MAKE) manifest-check
 
 validate-claims-coverage:
 	python -m scripts.validate_claims_coverage --format markdown
