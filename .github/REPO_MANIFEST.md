@@ -2,7 +2,7 @@
 
 - Manifest version: `1.0`
 - Generated marker: `deterministic`
-- Repository fingerprint: `f214a3b2960a63df5e15dcaf1aa4f15f7c5d3b5c019f1f6a8b2587243a788eb1`
+- Repository fingerprint: `67d2399bf7a028591307d89f2f9d83afc64dd753a4186b9972096b4d8ae4b8a5`
 - Required PR gates source: `.github/PR_GATES.yml`
 - Required PR gates SHA-256: `cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9`
 
@@ -14,8 +14,8 @@
 - Required PR gates (`.github/PR_GATES.yml`): **4**
 - Coverage minimum percent (`quality/coverage_gate.json`): **99.0**
 - Coverage baseline percent (`quality/coverage_gate.json`): **99.57**
-- Mutation baseline score (`quality/mutation_baseline.json`): **0.0**
-- Mutation total mutants (`quality/mutation_baseline.json`): **103**
+- Mutation baseline score (`quality/mutation_baseline.json`): **51.61**
+- Mutation total mutants (`quality/mutation_baseline.json`): **31**
 - `ci_manifest.json` exists: **False**
 - `ci_manifest.json` references in scoped scan: **0**
 - `ci_manifest.json` scan scope:
