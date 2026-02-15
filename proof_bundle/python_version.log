@@ -1,6 +1,6 @@
 $ python --version
 [exit_code]=0
-[duration_sec]=1.91
+[duration_sec]=1.75
 --- STDOUT ---
 Python 3.12.12
 

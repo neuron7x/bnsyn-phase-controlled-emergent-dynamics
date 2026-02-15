@@ -1,6 +1,6 @@
 $ find . -maxdepth 3 -type f \( -name 'pyproject.toml' -o -name 'requirements-lock.txt' -o -name 'Dockerfile' -o -name 'docker-compose.yml' -o -name '.pre-commit-config.yaml' -o -path './.github/workflows/*.yml' \) | sort
 [exit_code]=0
-[duration_sec]=1.76
+[duration_sec]=1.73
 --- STDOUT ---
 ./.github/workflows/_reusable_benchmarks.yml
 ./.github/workflows/_reusable_chaos_tests.yml

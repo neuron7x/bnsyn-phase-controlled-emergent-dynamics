@@ -1,7 +1,9 @@
 $ find . -maxdepth 2 -mindepth 1 -type d | sort
 [exit_code]=0
-[duration_sec]=1.80
+[duration_sec]=1.30
 --- STDOUT ---
+./.cache
+./.cache/bnsyn
 ./.git
 ./.git/branches
 ./.git/hooks
@@ -12,6 +14,11 @@ $ find . -maxdepth 2 -mindepth 1 -type d | sort
 ./.github
 ./.github/actions
 ./.github/workflows
+./.hypothesis
+./.hypothesis/constants
+./.hypothesis/unicode_data
+./.pytest_cache
+./.pytest_cache/v
 ./artifacts
 ./artifacts/audit
 ./artifacts/ci_logs
@@ -20,10 +27,12 @@ $ find . -maxdepth 2 -mindepth 1 -type d | sort
 ./artifacts/readiness
 ./artifacts/release_rc
 ./benchmarks
+./benchmarks/__pycache__
 ./benchmarks/baselines
 ./benchmarks/scenarios
 ./bibliography
 ./claims
+./dist
 ./docs
 ./docs/api
 ./docs/appendix
@@ -32,6 +41,7 @@ $ find . -maxdepth 2 -mindepth 1 -type d | sort
 ./docs/placeholder_cycles
 ./docs/safety
 ./entropy
+./entropy/__pycache__
 ./entropy/guards
 ./evidence
 ./evidence/entropy
@@ -46,6 +56,7 @@ $ find . -maxdepth 2 -mindepth 1 -type d | sort
 ./examples/configs
 ./examples/integration
 ./experiments
+./experiments/__pycache__
 ./figures
 ./figures/temp_ablation_v2
 ./manifest
@@ -56,17 +67,21 @@ $ find . -maxdepth 2 -mindepth 1 -type d | sort
 ./results/temp_ablation_v2
 ./schemas
 ./scripts
+./scripts/__pycache__
 ./specs
 ./specs/coq
 ./specs/tla
 ./src
 ./src/bnsyn
+./src/bnsyn.egg-info
 ./src/contracts
 ./tests
+./tests/__pycache__
 ./tests/benchmarks
 ./tests/properties
 ./tests/validation
 ./tools
+./tools/__pycache__
 ./tools/entropy_gate
 ./tools/manifest
 ./tools/safety

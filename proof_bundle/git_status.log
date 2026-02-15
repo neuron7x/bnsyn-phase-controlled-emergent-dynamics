@@ -1,6 +1,6 @@
 $ git status --short --branch
 [exit_code]=0
-[duration_sec]=1.84
+[duration_sec]=1.33
 --- STDOUT ---
 ## work
 
