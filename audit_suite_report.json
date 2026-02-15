@@ -1,6 +1,6 @@
 {
   "meta": {
-    "timestamp_utc": "2026-02-15T20:06:09.019055Z",
+    "timestamp_utc": "2026-02-15T20:13:58.803243Z",
     "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
     "git": {
       "commit": "c84ec61da8184424909a7f819971f31996412843",
@@ -28,7 +28,7 @@
       }
     ],
     "toolchain_fingerprint_artifact": "proof_bundle/generated/toolchain_fingerprint.json",
-    "audit_hash_sha256": "29c6be1a1feaf1eb8096298eb0b39bbb28e3a832c31388d78ae9b5f23828da0c",
+    "audit_hash_sha256": "4d4f125d80bab4d755a79da3d133a0518aa599bd3e7ece48c501c13f757ef555",
     "time_budget_sec": 3600,
     "repo_scale_classification": "L",
     "time_budget_allocation_strategy": {
@@ -1504,7 +1504,7 @@
     {
       "path": "proof_bundle/index.json",
       "type": "generated",
-      "sha256": "f8c265b0c21ccf4f8910e62366c72e07ad71f277a7bf9d0d7a099348f0e723f6"
+      "sha256": "3370b8ce69c18c40b1f7ba4a33edba60c178b672610cd9abbf25cfb05f0d132c"
     },
     {
       "path": "proof_bundle/install_build.log",
@@ -1555,21 +1555,6 @@
       "path": "proof_bundle/uname.log",
       "type": "generated",
       "sha256": "c78c5ad7853e6e324a0a48930cacf3c8b9e9f9c39c1ef3bc47415fdffe65309b"
-    },
-    {
-      "path": "audit_suite_report.json",
-      "type": "generated",
-      "sha256": "d3885756c8a151d32e55a94e840bb2c74c4976fbefacf2613916d3c6046dcafd"
-    },
-    {
-      "path": "executive_summary.md",
-      "type": "generated",
-      "sha256": "4650399f87355cc98ffd4e009ed566673fcb2ea7a5bb4f2f64324c64d9cc877a"
-    },
-    {
-      "path": "attack_paths_graph.json",
-      "type": "generated",
-      "sha256": "e2a4aec5f61fc41398b9bc352b399be09c1ed0e69f6f11b73f697ef3a12e8cd4"
     }
   ]
 }

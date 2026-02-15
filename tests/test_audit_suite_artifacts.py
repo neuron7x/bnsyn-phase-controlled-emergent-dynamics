@@ -34,7 +34,8 @@ def test_report_contains_required_top_level_sections() -> None:
     assert required_top_level.issubset(report.keys())
 
     modules = report["modules"]
-    assert len(modules) == 15
+    assert len(modules) == 16
+    assert "M0_audit_integrity_control" in modules
     assert "M1_zero_trust_threat_modeling" in modules
     assert "M15_board_report" in modules
 

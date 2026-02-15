@@ -292,7 +292,7 @@
   {
     "path": "proof_bundle/index.json",
     "type": "generated",
-    "sha256": "f8c265b0c21ccf4f8910e62366c72e07ad71f277a7bf9d0d7a099348f0e723f6"
+    "sha256": "3370b8ce69c18c40b1f7ba4a33edba60c178b672610cd9abbf25cfb05f0d132c"
   },
   {
     "path": "proof_bundle/install_build.log",
@@ -343,20 +343,5 @@
     "path": "proof_bundle/uname.log",
     "type": "generated",
     "sha256": "c78c5ad7853e6e324a0a48930cacf3c8b9e9f9c39c1ef3bc47415fdffe65309b"
-  },
-  {
-    "path": "audit_suite_report.json",
-    "type": "generated",
-    "sha256": "d3885756c8a151d32e55a94e840bb2c74c4976fbefacf2613916d3c6046dcafd"
-  },
-  {
-    "path": "executive_summary.md",
-    "type": "generated",
-    "sha256": "4650399f87355cc98ffd4e009ed566673fcb2ea7a5bb4f2f64324c64d9cc877a"
-  },
-  {
-    "path": "attack_paths_graph.json",
-    "type": "generated",
-    "sha256": "e2a4aec5f61fc41398b9bc352b399be09c1ed0e69f6f11b73f697ef3a12e8cd4"
   }
 ]
