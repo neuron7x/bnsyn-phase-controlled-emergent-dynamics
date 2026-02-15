@@ -3,19 +3,26 @@
 This quickstart is a runnable contract:
 
 1. install
-2. run minimal simulation
-3. verify expected output shape
+2. verify CLI
+3. run minimal deterministic simulation
+4. verify expected output shape
 
 ## Install
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e .
 ```
 
-## Run minimal simulation
+## Verify CLI
 
 ```bash
-PYTHONPATH=src python -m bnsyn.cli demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+python -m bnsyn --help
+```
+
+## Run minimal deterministic simulation
+
+```bash
+bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 ```
 
 ## Expected output contract

@@ -367,14 +367,16 @@ BN-Syn enforces deterministic execution, controlled randomness, and validation g
 
 Canonical runnable contract: [`docs/QUICKSTART.md`](docs/QUICKSTART.md).
 
+**Canonical distribution path**
+- Source-first install from this repository (editable mode).
+- PyPI is not the canonical install path for this repository.
 
-**Prerequisites**
-- Python 3.11+
-- `pip` (recommended: virtual environment)
+**Supported Python versions**
+- Python 3.11+ (`requires-python = ">=3.11"` in `pyproject.toml`).
 
 **Install**
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e .
 ```
 
 **Verify installation**
@@ -382,9 +384,9 @@ python -m pip install -e ".[dev]"
 python -m bnsyn --help
 ```
 
-**Run the deterministic demo**
+**Run the deterministic quickstart demo**
 ```bash
-bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc
+bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 ```
 
 **Run the default PR test suite**

@@ -1,4 +1,4 @@
-.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+.PHONY: dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -10,6 +10,13 @@ dev-setup:
 	python -m pip install -e ".[dev,test]"
 	pre-commit install
 	pre-commit autoupdate
+
+quickstart-smoke:
+	python -m pip install -e .
+	python -m pip show bnsyn
+	bnsyn --help
+	bnsyn sleep-stack --help
+	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
 
 
 wheelhouse-build:
