@@ -347,15 +347,19 @@ jobs:
         with:
           script: |
             const body = (context.payload.pull_request?.body || '').toLowerCase();
+            const headings = new Set(
+              [...body.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim())
+            );
             const requiredSections = {
-              'what changed': ['what changed', 'description', 'summary'],
-              'why': ['why', 'motivation', 'context'],
-              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes'],
-              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
-              'how to test': ['how to test', 'testing', 'test plan', 'commands run'],
+              'what changed': ['what changed', 'description', 'summary', 'що змінено', 'зміни'],
+              'why': ['why', 'motivation', 'context', 'чому', 'мотивація'],
+              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes', 'ризик', 'ризики'],
+              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification', 'доказ', 'докази'],
+              'how to test': ['how to test', 'testing', 'test plan', 'commands run', 'як тестувати', 'перевірка'],
             };
+            const hasAlias = (alias) => body.includes(alias) || Array.from(headings).some((heading) => heading.includes(alias));
             const missing = Object.entries(requiredSections)
-              .filter(([, aliases]) => !aliases.some((alias) => body.includes(alias)))
+              .filter(([, aliases]) => !aliases.some((alias) => hasAlias(alias)))
               .map(([section]) => section);
             const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
