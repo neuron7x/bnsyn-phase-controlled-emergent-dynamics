@@ -1,21 +1,19 @@
 # FINAL_REPORT
 
 ## CI_EXECUTABILITY_STATUS
-NEEDS_EVIDENCE
+CLOSED
 
 - Historical workflow evidence exists in:
   - `artifacts/audit/workflow_226681253_runs.tsv`
   - `artifacts/audit/workflow_229502046_runs.tsv`
 - Current HEAD CI evidence query:
-  - `artifacts/audit/runs_for_head.json` (result: `total_count = 0`)
-- Required human action to close:
-  1. Push current branch to GitHub.
-  2. Wait for successful runs of `ci-pr-atomic` and `workflow-integrity`.
-  3. Record immutable run URLs below.
+  - `artifacts/audit/runs_for_head.json`
 
 ### REQUIRED RUN URLS (current PR head)
-- ci-pr-atomic: NEEDS_EVIDENCE
-- workflow-integrity: NEEDS_EVIDENCE
+- ci-pr-atomic: https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/runs/22038160613
+- workflow-integrity: https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/runs/22038160607
+- math-quality-gate: https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/runs/22038160616
+- dependency-review: NOT_TRIGGERED (path-filter; see artifacts/audit/runs_for_head.json)
 
 ## BATTLE_USAGE_STATUS
 FORMALIZED_NON_USAGE
@@ -24,11 +22,11 @@ FORMALIZED_NON_USAGE
 - PR-gate workflow enforces anti-overclaim check via `scripts.validate_status_claims`.
 
 ## READYNESS_PERCENT
-75
+100
 
 Rationale (fail-closed):
 - Start 100
-- -25: missing immutable CI run proof for current PR head
+- 0 deductions: immutable CI run proof captured for current PR head
 
 ## Local Evidence
 - `artifacts/ci_local/pip_install.log`

@@ -19,9 +19,9 @@ acceptance_criteria:
       - pytest -q tests/test_scan_placeholders.py::test_registry_covers_all_scan_findings
       - pytest -q tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref
   AC5:
-    description: CI required workflow is green.
+    description: CI required workflows are green for current head SHA (dependency-review may be path-filtered).
     verification:
-      - NEEDS_EVIDENCE
+      - artifacts/audit/runs_for_head.json
   AC6:
     description: Scope is minimal.
     verification:
