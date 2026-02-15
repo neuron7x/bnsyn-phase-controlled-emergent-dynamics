@@ -45,6 +45,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    timeout-minutes: 5
     outputs:
       code: ${{ steps.filter.outputs.code }}
       validation: ${{ steps.filter.outputs.validation }}
@@ -81,6 +82,7 @@ jobs:
   gate-profile:
     permissions:
       contents: read
+    timeout-minutes: 10
     uses: ./.github/workflows/_reusable_gate_profile.yml
     with:
       profile: pr
@@ -192,6 +194,7 @@ jobs:
   quality:
     permissions:
       contents: read
+    timeout-minutes: 15
     uses: ./.github/workflows/_reusable_quality.yml
     with:
       python-version: ${{ inputs['python-version'] || '3.11' }}
