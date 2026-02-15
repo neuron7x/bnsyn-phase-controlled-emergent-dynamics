@@ -20,7 +20,6 @@ docs/REPRODUCIBILITY.md
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 import numpy as np
 
@@ -71,7 +70,13 @@ def seed_all(seed: int) -> RNGPack:
 
     Notes
     -----
-    Sets PYTHONHASHSEED and returns an explicit NumPy Generator.
+    Returns an explicit NumPy Generator.
+
+    Notes on determinism
+    --------------------
+    `PYTHONHASHSEED` is evaluated when the Python interpreter starts. Setting it
+    inside a running process has no effect on hash randomization for that process,
+    so this function intentionally avoids mutating environment variables.
 
     References
     ----------
@@ -83,7 +88,6 @@ def seed_all(seed: int) -> RNGPack:
     if seed < 0 or seed > 2**32 - 1:
         raise ValueError("seed must be in [0, 2**32-1]")
 
-    os.environ["PYTHONHASHSEED"] = str(seed)
     np_rng = np.random.default_rng(seed)
     return RNGPack(seed=seed, np_rng=np_rng)
 

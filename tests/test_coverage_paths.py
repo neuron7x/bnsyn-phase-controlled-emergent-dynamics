@@ -1,6 +1,5 @@
 import argparse
 import importlib
-import os
 
 import numpy as np
 import pytest
@@ -75,7 +74,6 @@ def test_integrators_and_stdp() -> None:
 def test_rng_seed_and_split() -> None:
     pack = seed_all(123)
     assert pack.seed == 123
-    assert os.environ["PYTHONHASHSEED"] == "123"
     with pytest.raises(TypeError):
         seed_all(1.5)
     with pytest.raises(ValueError):

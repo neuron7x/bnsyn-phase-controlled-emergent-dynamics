@@ -358,9 +358,9 @@ Fixes violations V2.1, V2.2, V2.3 from WORKFLOW_CONTRACTS.md:
    - Listed 7 axioms with current scores and status icons (✅/⚠️)
    - Displayed overall score: 87.3% (Target: 95%+)
    - Added links to quality manifests:
-     - [Repository Manifest](.github/REPO_MANIFEST.md)
-     - [Workflow Contracts](.github/WORKFLOW_CONTRACTS.md)
-     - [Quality Ledger](.github/QUALITY_LEDGER.md)
+     - [Repository Manifest](REPO_MANIFEST.md)
+     - [Workflow Contracts](WORKFLOW_CONTRACTS.md)
+     - [Quality Ledger](QUALITY_LEDGER.md)
    - Explains Fractal Quality Architecture philosophy
 
 2. Updated `.github/QUALITY_LEDGER.md` (this file)
