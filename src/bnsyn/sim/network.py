@@ -21,7 +21,7 @@ docs/SSOT.md
 from __future__ import annotations
 
 from dataclasses import dataclass
-from numbers import Integral
+from numbers import Integral, Real
 from typing import Any, Literal, cast
 
 import os
@@ -517,6 +517,11 @@ def run_simulation(
         raise TypeError("steps must be a positive integer")
     if steps <= 0:
         raise ValueError("steps must be greater than 0")
+    if not isinstance(external_current_pA, Real):
+        raise TypeError("external_current_pA must be a finite real number")
+    external_current = float(external_current_pA)
+    if not np.isfinite(external_current):
+        raise ValueError("external_current_pA must be a finite real number")
 
     _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
     pack = seed_all(seed)
@@ -537,8 +542,8 @@ def run_simulation(
 
     # Prepare external current array if needed
     injected_current: NDArray[np.float64] | None = None
-    if abs(external_current_pA) > 1e-9:  # Robust check for non-zero
-        injected_current = np.full(N, external_current_pA, dtype=np.float64)
+    if abs(external_current) > 1e-9:  # Robust check for non-zero
+        injected_current = np.full(N, external_current, dtype=np.float64)
 
     for _ in range(steps):
         m = net.step(external_current_pA=injected_current)
