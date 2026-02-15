@@ -120,6 +120,9 @@ ssot:
 	python -m scripts.validate_bibliography
 	python -m scripts.validate_claims
 	python -m scripts.scan_normative_tags
+	python -m scripts.validate_pr_gates
+	python -m scripts.validate_required_status_contexts
+	python -m scripts.sync_required_status_contexts --check
 	python -m scripts.validate_api_maturity
 	$(MAKE) api-contract
 
