@@ -106,6 +106,28 @@ def test_cli_module_main_executes() -> None:
         sys.argv = old_argv
 
 
+def test_package_module_main_executes() -> None:
+    argv = [
+        "bnsyn",
+        "demo",
+        "--steps",
+        "1",
+        "--dt-ms",
+        "0.1",
+        "--seed",
+        "1",
+        "--N",
+        "10",
+    ]
+    old_argv = sys.argv
+    sys.argv = argv
+    try:
+        with pytest.raises(SystemExit):
+            runpy.run_module("bnsyn", run_name="__main__")
+    finally:
+        sys.argv = old_argv
+
+
 def test_cmd_run_experiment_success(monkeypatch: pytest.MonkeyPatch) -> None:
     args = SimpleNamespace(config="config.yaml", output=None)
     import bnsyn.experiments.declarative as declarative
