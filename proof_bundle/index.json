@@ -260,11 +260,6 @@
     "sha256": "ab13706f0ce8be94c1452c04acd69e371fde5f01deac8c9a864cb1eae0699386"
   },
   {
-    "path": "proof_bundle/index.json",
-    "type": "generated",
-    "sha256": "2b828ff79d15073215da64351381063c3f1ffc93d815134b1242b9647c35a037"
-  },
-  {
     "path": "proof_bundle/install_build.log",
     "type": "generated",
     "sha256": "d7c5ccf54332f258b92dc0afeec31062a588b4e228f88a1cba33abd1d94ea961"
