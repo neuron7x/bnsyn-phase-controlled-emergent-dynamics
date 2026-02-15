@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "git_commit": "c84ec61da8184424909a7f819971f31996412843",
+    "timestamp_utc": "2026-02-15T20:06:09.016596Z"
+  },
+  "nodes": [
+    {
+      "id": "actor:external_contributor",
+      "type": "actor",
+      "criticality_1_5": 3
+    },
+    {
+      "id": "boundary:ci_pipeline",
+      "type": "boundary",
+      "criticality_1_5": 5
+    },
+    {
+      "id": "asset:release_artifacts",
+      "type": "asset",
+      "criticality_1_5": 4
+    }
+  ],
+  "edges": [
+    {
+      "from": "actor:external_contributor",
+      "to": "boundary:ci_pipeline",
+      "kind": "trust_crossing",
+      "evidence": [
+        {
+          "ref": "path:.github/workflows/ci.yml:1-120",
+          "type": "static",
+          "strength_score_1_5": 3,
+          "reproducible": true
+        }
+      ]
+    },
+    {
+      "from": "boundary:ci_pipeline",
+      "to": "asset:release_artifacts",
+      "kind": "data_flow",
+      "evidence": [
+        {
+          "ref": "path:.github/workflows/ci.yml:1-220",
+          "type": "static",
+          "strength_score_1_5": 3,
+          "reproducible": true
+        }
+      ]
+    }
+  ],
+  "privilege_chains": [
+    {
+      "chain": [
+        "actor:external_contributor",
+        "boundary:ci_pipeline",
+        "asset:release_artifacts"
+      ],
+      "feasibility_score_0_100": 55,
+      "minimal_cut_sets": [
+        [
+          "enforce_action_pinning",
+          "require_protected_branches"
+        ]
+      ]
+    }
+  ]
+}

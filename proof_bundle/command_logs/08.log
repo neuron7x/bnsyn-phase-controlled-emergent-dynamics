@@ -1,80 +1,29 @@
-COMMAND: find . -maxdepth 2 -type d | sort
-START_UTC: 2026-02-15T19:39:06.249054Z
-END_UTC: 2026-02-15T19:39:06.266491Z
-TIMEOUT_SEC: 600
+COMMAND: rg -n "\[tool\.poetry\]|dependencies|requires-python|pytest|ruff|mypy" pyproject.toml
+START_UTC: 2026-02-15T20:06:08.585748Z
+END_UTC: 2026-02-15T20:06:08.605267Z
+TIMEOUT_SEC: 30
 EXIT_CODE: 0
 TIMED_OUT: false
 --- STDOUT ---
-.
-./.git
-./.git/branches
-./.git/hooks
-./.git/info
-./.git/logs
-./.git/objects
-./.git/refs
-./.github
-./.github/actions
-./.github/workflows
-./artifacts
-./artifacts/audit
-./artifacts/ci_logs
-./artifacts/manifest
-./artifacts/math_audit
-./artifacts/readiness
-./artifacts/release_rc
-./benchmarks
-./benchmarks/baselines
-./benchmarks/scenarios
-./bibliography
-./claims
-./docs
-./docs/api
-./docs/appendix
-./docs/benchmarks
-./docs/math
-./docs/placeholder_cycles
-./docs/safety
-./entropy
-./entropy/guards
-./evidence
-./evidence/entropy
-./evidence/entropy_gate
-./evidence/inventory_fix
-./evidence/manifest_fix
-./evidence/placeholder_closure
-./evidence/pr_216
-./evidence/tests_upgrade
-./evidence/zqsg_2026_02_12
-./examples
-./examples/configs
-./examples/integration
-./experiments
-./figures
-./figures/temp_ablation_v2
-./manifest
-./proof_bundle
-./proof_bundle/command_logs
-./quality
-./results
-./results/temp_ablation_v1
-./results/temp_ablation_v2
-./schemas
-./scripts
-./specs
-./specs/coq
-./specs/tla
-./src
-./src/bnsyn
-./src/contracts
-./tests
-./tests/benchmarks
-./tests/properties
-./tests/validation
-./tools
-./tools/entropy_gate
-./tools/manifest
-./tools/safety
+5:requires-python = ">=3.11"
+10:dependencies = [
+18:[project.optional-dependencies]
+21:  "pytest==9.0.2",
+22:  "pytest-cov==7.0.0",
+24:  "ruff==0.15.0",
+25:  "mypy==1.19.1",
+42:  "pytest==9.0.2",
+43:  "pytest-cov==7.0.0",
+79:[tool.pytest.ini_options]
+110:[tool.ruff]
+114:[tool.mypy]
+127:plugins = ["pydantic.mypy"]
+129:# Optional visualization dependencies (no type stubs available)
+130:[[tool.mypy.overrides]]
+154:[[tool.mypy.overrides]]
+158:[[tool.mypy.overrides]]
+162:[[tool.mypy.overrides]]
 
 --- STDERR ---
 
+LOG_SHA256: aafbcdd474f965d2210a038ab9f0d4ff5a14be34dc0548ca47249103d34e815c
