@@ -2,11 +2,11 @@
   "coverage_surface": {
     "determinism": 1,
     "math_physics": 1,
-    "mutation": 4,
-    "pytest": 109,
-    "workflow_integrity": 1
+    "mutation": 5,
+    "pytest": 114,
+    "workflow_integrity": 2
   },
-  "flaky_indicator_count": 67,
+  "flaky_indicator_count": 73,
   "generated_by": "python -m scripts.generate_tests_inventory",
   "reusable_workflow_jobs": [
     "_reusable_benchmarks.yml",
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 116,
+  "test_count": 123,
   "tests": [
     {
       "category": "pytest",
@@ -418,6 +418,11 @@
     },
     {
       "category": "mutation",
+      "entropy_signals": [],
+      "path": "tests/test_mutation_killers.py"
+    },
+    {
+      "category": "mutation",
       "entropy_signals": [
         "filesystem_io",
         "subprocess_dependency"
@@ -495,6 +500,20 @@
     {
       "category": "pytest",
       "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_pr_description_policy_template.py"
+    },
+    {
+      "category": "workflow_integrity",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_pr_description_policy_workflow.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
         "filesystem_io",
         "rng_without_explicit_seed",
         "subprocess_dependency"
@@ -526,6 +545,13 @@
       "entropy_signals": [
         "subprocess_dependency"
       ],
+      "path": "tests/test_quickstart_consistency_script.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "subprocess_dependency"
+      ],
       "path": "tests/test_quickstart_contract.py"
     },
     {
@@ -534,6 +560,13 @@
         "filesystem_io"
       ],
       "path": "tests/test_release_pipeline.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_release_readiness.py"
     },
     {
       "category": "pytest",
@@ -616,6 +649,13 @@
     },
     {
       "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_sync_required_status_contexts.py"
+    },
+    {
+      "category": "pytest",
       "entropy_signals": [],
       "path": "tests/test_temperature_smoke.py"
     },
@@ -660,6 +700,13 @@
         "filesystem_io"
       ],
       "path": "tests/test_validate_bibliography_script.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_validate_codebase_readiness_audit.py"
     },
     {
       "category": "pytest",
