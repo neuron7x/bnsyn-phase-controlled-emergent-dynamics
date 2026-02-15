@@ -209,10 +209,4 @@ jobs:
       - name: Validate safety artifacts
         run: python tools/safety/check_safety_artifacts.py
       - name: Validate inventory snapshot
-        run: |
-          python tools/generate_inventory.py
-          if ! git diff --exit-code -- INVENTORY.json; then
-            echo "::error::INVENTORY.json is out of date. Run: python tools/generate_inventory.py && git add INVENTORY.json"
-            git --no-pager diff -- INVENTORY.json
-            exit 1
-          fi
+        run: python tools/generate_inventory.py --check
