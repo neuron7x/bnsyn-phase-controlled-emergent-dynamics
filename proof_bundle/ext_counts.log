@@ -1,0 +1,43 @@
+$ python - <<'P2'
+from pathlib import Path
+from collections import Counter
+root=Path('.')
+c=Counter(p.suffix or '<noext>' for p in root.rglob('*') if p.is_file() and '.git/' not in str(p))
+for k,v in c.most_common(40):
+ print(f'{k}	{v}')
+P2
+[exit_code]=0
+[duration_sec]=1.72
+--- STDOUT ---
+.py	350
+.pyc	298
+<noext>	128
+.md	121
+.json	79
+.txt	59
+.log	43
+.yml	42
+.rst	12
+.png	8
+.yaml	5
+.sh	3
+.gz	3
+.toml	2
+.pkl	2
+.2	2
+.1	2
+.sha	2
+.diff	2
+.cff	1
+.TAG	1
+.whl	1
+.bib	1
+.lock	1
+.sha256	1
+.v	1
+.tla	1
+.cfg	1
+.typed	1
+
+--- STDERR ---
+

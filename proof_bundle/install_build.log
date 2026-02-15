@@ -1,0 +1,14 @@
+$ python -m pip install build
+[exit_code]=0
+[duration_sec]=2.55
+--- STDOUT ---
+Requirement already satisfied: build in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (1.4.0)
+Requirement already satisfied: packaging>=24.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from build) (25.0)
+Requirement already satisfied: pyproject_hooks in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from build) (1.2.0)
+
+--- STDERR ---
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+
