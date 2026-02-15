@@ -1,4 +1,4 @@
-.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check
+.PHONY: dev-setup dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -120,8 +120,13 @@ ssot:
 	python -m scripts.validate_bibliography
 	python -m scripts.validate_claims
 	python -m scripts.scan_normative_tags
+	python -m scripts.validate_pr_gates
+	python -m scripts.validate_required_status_contexts
+	python -m scripts.sync_required_status_contexts --check
+	$(MAKE) inventory-check
 	python -m scripts.validate_api_maturity
 	$(MAKE) api-contract
+	$(MAKE) manifest-check
 
 validate-claims-coverage:
 	python -m scripts.validate_claims_coverage --format markdown
@@ -152,6 +157,12 @@ manifest-validate:
 
 manifest-check: manifest manifest-validate
 	git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+
+inventory:
+	python tools/generate_inventory.py
+
+inventory-check:
+	python tools/generate_inventory.py --check
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

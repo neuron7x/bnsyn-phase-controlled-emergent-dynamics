@@ -23,6 +23,11 @@ echo "6️⃣  SSOT gates..."
 python -m scripts.validate_bibliography || { echo "❌ Bibliography validation failed"; exit 1; }
 python -m scripts.validate_claims || { echo "❌ Claims validation failed"; exit 1; }
 python -m scripts.scan_normative_tags || { echo "❌ Normative tag scan failed"; exit 1; }
+python -m scripts.validate_pr_gates || { echo "❌ PR gates validation failed"; exit 1; }
+python -m scripts.validate_required_status_contexts || { echo "❌ Required status contexts validation failed"; exit 1; }
+python -m scripts.sync_required_status_contexts --check || { echo "❌ Required status contexts are not synchronized"; exit 1; }
+python tools/generate_inventory.py --check || { echo "❌ INVENTORY.json is not synchronized"; exit 1; }
+make manifest-check || { echo "❌ Manifest artifacts are not synchronized"; exit 1; }
 
 echo "7️⃣  Security audit..."
 gitleaks detect --redact --source=. || { echo "❌ Gitleaks failed"; exit 1; }

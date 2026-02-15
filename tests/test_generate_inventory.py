@@ -4,6 +4,8 @@ import json
 import subprocess
 from pathlib import Path
 
+from tools.generate_inventory import build_inventory, render_inventory
+
 
 def _tracked_files_under(path_prefix: str) -> list[str]:
     out = subprocess.check_output(["git", "ls-files", f"{path_prefix}/**"], text=True)
@@ -32,3 +34,9 @@ def test_inventory_json_matches_repository_state() -> None:
 
     inventory = json.loads((root / "INVENTORY.json").read_text(encoding="utf-8"))
     assert inventory == expected
+
+
+def test_build_inventory_render_matches_file() -> None:
+    root = Path(__file__).resolve().parents[1]
+    rendered = render_inventory(build_inventory(root))
+    assert (root / "INVENTORY.json").read_text(encoding="utf-8") == rendered
