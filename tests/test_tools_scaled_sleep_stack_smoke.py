@@ -1,9 +1,20 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _module_env() -> dict[str, str]:
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH", "")
+    src_path = str(Path("src").resolve())
+    env["PYTHONPATH"] = (
+        f"{src_path}{os.pathsep}{existing_pythonpath}" if existing_pythonpath else src_path
+    )
+    return env
 
 
 def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
@@ -39,6 +50,7 @@ def test_scaled_sleep_stack_module_smoke(tmp_path: Path) -> None:
         check=True,
         capture_output=True,
         text=True,
+        env=_module_env(),
     )
     assert proc.returncode == 0
 
