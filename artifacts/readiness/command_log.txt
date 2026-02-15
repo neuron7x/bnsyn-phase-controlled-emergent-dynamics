@@ -1,0 +1,1115 @@
+[1] $ python -V
+exit_code: 0
+stdout:
+Python 3.12.12
+
+[2] $ python -m pip --version
+exit_code: 0
+stdout:
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+
+[3] $ uname -a || ver || systeminfo
+exit_code: 0
+stdout:
+Linux d08e7aba2b32 6.12.47 #1 SMP Mon Oct 27 10:01:15 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+
+[4] $ git rev-parse HEAD
+exit_code: 0
+stdout:
+a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a
+
+[5] $ git status --porcelain
+exit_code: 0
+
+[6] $ ls -la
+exit_code: 0
+stdout:
+total 468
+drwxr-xr-x 26 root root   4096 Feb 15 17:35 .
+drwxr-xr-x  3 root root   4096 Feb 15 11:56 ..
+drwxr-xr-x  3 root root   4096 Feb 15 17:30 .cache
+-rw-r--r--  1 root root  69632 Feb 15 17:34 .coverage
+drwxr-xr-x  8 root root   4096 Feb 15 17:46 .git
+drwxr-xr-x  4 root root   4096 Feb 15 17:29 .github
+-rw-r--r--  1 root root    645 Feb 15 11:56 .gitignore
+-rw-r--r--  1 root root   1378 Feb 15 11:56 .gitleaks.toml
+drwxr-xr-x  4 root root   4096 Feb 15 17:31 .hypothesis
+-rw-r--r--  1 root root   2648 Feb 15 11:56 .pre-commit-config.yaml
+drwxr-xr-x  3 root root   4096 Feb 15 17:29 .pytest_cache
+-rw-r--r--  1 root root   2074 Feb 15 11:56 BENCHMARK_PROTOCOL.md
+-rw-r--r--  1 root root    331 Feb 15 11:56 CHANGELOG.md
+-rw-r--r--  1 root root    240 Feb 15 11:56 CITATION.cff
+-rw-r--r--  1 root root   2691 Feb 15 11:56 CODEBASE_READINESS.md
+-rw-r--r--  1 root root   7874 Feb 15 11:56 CONTRIBUTING.md
+-rw-r--r--  1 root root    554 Feb 15 11:56 Dockerfile
+-rw-r--r--  1 root root   1476 Feb 15 17:29 FINAL_REPORT.md
+-rw-r--r--  1 root root    948 Feb 15 17:29 GAP_TABLE.md
+-rw-r--r--  1 root root   1325 Feb 15 11:56 GOVERNANCE_VERIFICATION_REPORT.md
+-rw-r--r--  1 root root   9048 Feb 15 11:56 HARDENING_SUMMARY.md
+-rw-r--r--  1 root root   1137 Feb 15 17:29 INVENTORY.json
+-rw-r--r--  1 root root   1076 Feb 15 11:56 LICENSE
+-rw-r--r--  1 root root   6479 Feb 15 17:29 Makefile
+-rw-r--r--  1 root root   4583 Feb 15 11:56 PR_DESCRIPTION.md
+-rw-r--r--  1 root root  14423 Feb 15 11:56 PR_DESCRIPTION_EVIDENCE.md
+-rw-r--r--  1 root root  22390 Feb 15 17:29 README.md
+-rw-r--r--  1 root root    861 Feb 15 11:56 README_CLAIMS_GATE.md
+-rw-r--r--  1 root root    272 Feb 15 11:56 SECURITY.md
+-rw-r--r--  1 root root   6639 Feb 15 11:56 VERIFICATION_REPORT.md
+-rw-r--r--  1 root root   2293 Feb 15 17:29 acceptance_map.yaml
+drwxr-xr-x  8 root root   4096 Feb 15 17:46 artifacts
+drwxr-xr-x  5 root root   4096 Feb 15 17:30 benchmarks
+drwxr-xr-x  2 root root   4096 Feb 15 11:56 bibliography
+drwxr-xr-x  2 root root   4096 Feb 15 11:56 claims
+-rw-r--r--  1 root root    195 Feb 15 11:56 docker-compose.yml
+drwxr-xr-x  8 root root   4096 Feb 15 17:29 docs
+drwxr-xr-x  4 root root   4096 Feb 15 17:30 entropy
+drwxr-xr-x 10 root root   4096 Feb 15 11:56 evidence
+drwxr-xr-x  4 root root   4096 Feb 15 11:56 examples
+drwxr-xr-x  3 root root   4096 Feb 15 17:30 experiments
+drwxr-xr-x  3 root root   4096 Feb 15 11:56 figures
+drwxr-xr-x  2 root root   4096 Feb 15 17:29 manifest
+-rw-r--r--  1 root root   1107 Feb 15 11:56 plan.md
+-rw-r--r--  1 root root   3520 Feb 15 11:56 pyproject.toml
+drwxr-xr-x  2 root root   4096 Feb 15 17:29 quality
+-rw-r--r--  1 root root 103848 Feb 15 11:56 requirements-lock.txt
+drwxr-xr-x  4 root root   4096 Feb 15 11:56 results
+drwxr-xr-x  2 root root   4096 Feb 15 11:56 schemas
+drwxr-xr-x  3 root root   4096 Feb 15 17:30 scripts
+drwxr-xr-x  4 root root   4096 Feb 15 11:56 specs
+drwxr-xr-x  5 root root   4096 Feb 15 17:30 src
+drwxr-xr-x  6 root root  12288 Feb 15 17:29 tests
+-rw-r--r--  1 root root  17435 Feb 15 17:35 tests_inventory.json
+drwxr-xr-x  6 root root   4096 Feb 15 17:30 tools
+-rw-r--r--  1 root root    331 Feb 15 11:56 worklist.json
+
+[7] $ find scripts -maxdepth 2 -type f -name "*.py" 2>/dev/null || true
+exit_code: 0
+stdout:
+scripts/check_quickstart_consistency.py
+scripts/benchmark_physics.py
+scripts/build_wheelhouse.py
+scripts/run_scaled_sleep_stack.py
+scripts/validate_required_status_contexts.py
+scripts/scan_governed_docs.py
+scripts/lint_ci_truthfulness.py
+scripts/release_pipeline.py
+scripts/generate_math_data.py
+scripts/calculate_throughput_gain.py
+scripts/bench_ci_smoke.py
+scripts/sync_required_status_contexts.py
+scripts/mutation_ci_summary.py
+scripts/validate_workflow_contracts.py
+scripts/validate_required_checks.py
+scripts/validate_api_maturity.py
+scripts/collect_ci_run_urls.py
+scripts/run_benchmarks.py
+scripts/profile_kernels.py
+scripts/generate_coverage_baseline.py
+scripts/generate_coverage_trend.py
+scripts/validate_mutation_baseline.py
+scripts/benchmark_production.py
+scripts/validate_claims.py
+scripts/ssot_rules.py
+scripts/mutation_counts.py
+scripts/orchestrate_throughput_scaling.py
+scripts/math_validate.py
+scripts/verify_equivalence.py
+scripts/release_readiness.py
+scripts/visualize_experiment.py
+scripts/verify_formal_constants.py
+scripts/render_workflow_policy_docs.py
+scripts/intelligence_cycle.py
+scripts/generate_evidence_coverage.py
+scripts/scan_tierS_misuse.py
+scripts/validate_long_running_triggers.py
+scripts/scan_normative_tags.py
+scripts/validate_branch_protection_governance.py
+scripts/generate_mutation_baseline.py
+scripts/_audit_metrics_pr40.py
+scripts/check_api_contract.py
+scripts/check_coverage_gate.py
+scripts/validate_status_claims.py
+scripts/validate_pr_gates.py
+scripts/check_benchmark_regressions.py
+scripts/check_mutation_score.py
+scripts/rebuild_sources_lock.py
+scripts/validate_bibliography.py
+scripts/track_quality.py
+scripts/__init__.py
+scripts/validate_claims_coverage.py
+scripts/benchmark_sleep_stack_scale.py
+scripts/audit_spec_implementation.py
+scripts/verify_reproducible_artifacts.py
+scripts/generate_benchmark_baseline.py
+scripts/compare_benchmarks.py
+scripts/run_mutation_pipeline.py
+scripts/mutation_survivors_summary.py
+scripts/scan_placeholders.py
+scripts/generate_tests_inventory.py
+
+[8] $ ls -la .github/workflows 2>/dev/null || true
+exit_code: 0
+stdout:
+total 184
+drwxr-xr-x 2 root root  4096 Feb 15 17:29 .
+drwxr-xr-x 4 root root  4096 Feb 15 17:29 ..
+-rw-r--r-- 1 root root 11339 Feb 15 11:56 _reusable_benchmarks.yml
+-rw-r--r-- 1 root root  2863 Feb 15 11:56 _reusable_chaos_tests.yml
+-rw-r--r-- 1 root root 14073 Feb 15 11:56 _reusable_formal_science.yml
+-rw-r--r-- 1 root root  3287 Feb 15 11:56 _reusable_gate_profile.yml
+-rw-r--r-- 1 root root  4262 Feb 15 11:56 _reusable_property_tests.yml
+-rw-r--r-- 1 root root  9190 Feb 15 11:56 _reusable_pytest.yml
+-rw-r--r-- 1 root root  7307 Feb 15 11:56 _reusable_quality.yml
+-rw-r--r-- 1 root root  1083 Feb 15 11:56 _reusable_ssot.yml
+-rw-r--r-- 1 root root  3214 Feb 15 11:56 _reusable_validation_tests.yml
+-rw-r--r-- 1 root root  1331 Feb 15 11:56 benchmarks.yml
+-rw-r--r-- 1 root root   513 Feb 15 11:56 ci-benchmarks-elite.yml
+-rw-r--r-- 1 root root  1919 Feb 15 11:56 ci-benchmarks.yml
+-rw-r--r-- 1 root root 18898 Feb 15 17:29 ci-pr-atomic.yml
+-rw-r--r-- 1 root root   858 Feb 15 11:56 ci-pr.yml
+-rw-r--r-- 1 root root  1455 Feb 15 11:56 ci-smoke.yml
+-rw-r--r-- 1 root root  6818 Feb 15 11:56 ci-validation.yml
+-rw-r--r-- 1 root root   907 Feb 15 11:56 codecov-health.yml
+-rw-r--r-- 1 root root   801 Feb 15 11:56 codeql.yml
+-rw-r--r-- 1 root root   637 Feb 15 11:56 dependency-review.yml
+-rw-r--r-- 1 root root  1405 Feb 15 11:56 dependency-watch.yml
+-rw-r--r-- 1 root root  1089 Feb 15 11:56 docs.yml
+-rw-r--r-- 1 root root   511 Feb 15 11:56 formal-coq.yml
+-rw-r--r-- 1 root root   753 Feb 15 11:56 formal-tla.yml
+-rw-r--r-- 1 root root  1452 Feb 15 11:56 math-quality-gate.yml
+-rw-r--r-- 1 root root  2701 Feb 15 11:56 physics-equivalence.yml
+-rw-r--r-- 1 root root  2329 Feb 15 11:56 quality-mutation.yml
+-rw-r--r-- 1 root root  1576 Feb 15 11:56 release-pipeline.yml
+-rw-r--r-- 1 root root   455 Feb 15 11:56 science.yml
+-rw-r--r-- 1 root root  7651 Feb 15 17:29 workflow-integrity.yml
+
+[9] $ ls -la Makefile pyproject.toml setup.cfg setup.py requirements*.txt 2>/dev/null || true
+exit_code: 0
+stdout:
+-rw-r--r-- 1 root root   6479 Feb 15 17:29 Makefile
+-rw-r--r-- 1 root root   3520 Feb 15 11:56 pyproject.toml
+-rw-r--r-- 1 root root 103848 Feb 15 11:56 requirements-lock.txt
+
+[10] $ rg -n "quickstart|install|pip install|bnsyn" README* docs 2>/dev/null || true
+exit_code: 0
+stdout:
+README.md:5:[![ci-pr](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
+README.md:6:[![ci-validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)
+README.md:7:[![codeql](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml)
+README.md:8:[![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
+README.md:9:[![ci-pr-atomic](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
+README.md:23:- [Quickstart](#quickstart)
+README.md:53:Canonical commands for install, test, coverage, and coverage gate live in [`docs/TESTING.md`](docs/TESTING.md).
+README.md:104:pip install -e ".[dev,viz]"
+README.md:139:bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1
+README.md:145:- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)
+README.md:152:python -m bnsyn.tools.run_scaled_sleep_stack \
+README.md:160:python -m bnsyn.tools.benchmark_sleep_stack_scale
+README.md:166:python -m bnsyn.tools.run_scaled_sleep_stack \
+README.md:167:  --out /tmp/bnsyn_scaled_smoke \
+README.md:188:from bnsyn.rng import seed_all
+README.md:189:from bnsyn.sim.network import Network, NetworkParams
+README.md:190:from bnsyn.config import AdExParams, SynapseParams, CriticalityParams, TemperatureParams
+README.md:191:from bnsyn.temperature.schedule import TemperatureSchedule
+README.md:192:from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+README.md:193:from bnsyn.memory import MemoryConsolidator
+README.md:194:from bnsyn.criticality import PhaseTransitionDetector
+README.md:195:from bnsyn.emergence import AttractorCrystallizer
+README.md:236:- **Lazy Visualization**: Optional matplotlib-based dashboard (install with `pip install -e ".[viz]"`)
+README.md:267:pip install -e ".[viz]"
+README.md:270:bnsyn demo --interactive
+README.md:286:bnsyn run examples/configs/quickstart.yaml
+README.md:289:bnsyn run examples/configs/quickstart.yaml -o results/my_experiment.json
+README.md:292:**Example config** (`examples/configs/quickstart.yaml`):
+README.md:295:  name: quickstart
+README.md:322:from bnsyn.incremental import cached
+README.md:352:- All randomness flows through `numpy.random.Generator` created by `bnsyn.rng.seed_all(seed)`.
+README.md:371:- Source-first install from this repository (editable mode).
+README.md:372:- PyPI is not the canonical install path for this repository.
+README.md:379:python -m pip install -e .
+README.md:382:**Verify installation**
+README.md:384:python -m bnsyn --help
+README.md:387:**Run the deterministic quickstart demo**
+README.md:389:bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+README.md:392:**Run the quickstart smoke contract**
+README.md:394:make quickstart-smoke
+README.md:403:- All random state is seeded via `bnsyn.rng.seed_all(seed)`.
+README.md:465:docker build -t bnsyn-dev .
+README.md:466:docker run bnsyn-dev
+README.md:539:- **Source artifacts:** [`bibliography/bnsyn.bib`](bibliography/bnsyn.bib), [`bibliography/mapping.yml`](bibliography/mapping.yml), [`bibliography/sources.lock`](bibliography/sources.lock)
+docs/ENTROPY_LEDGER.md:4:- Repository: `bnsyn-phase-controlled-emergent-dynamics`
+docs/sleep_stack.md:73:from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+docs/sleep_stack.md:74:from bnsyn.criticality import PhaseTransitionDetector
+docs/sleep_stack.md:75:from bnsyn.emergence import AttractorCrystallizer
+docs/sleep_stack.md:76:from bnsyn.memory import MemoryConsolidator
+docs/sleep_stack.md:77:from bnsyn.rng import seed_all
+docs/sleep_stack.md:78:from bnsyn.sim.network import Network, NetworkParams
+docs/sleep_stack.md:79:from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+docs/sleep_stack.md:80:from bnsyn.temperature.schedule import TemperatureSchedule
+docs/sleep_stack.md:125:bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1
+docs/sleep_stack.md:131:- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)
+docs/sleep_stack.md:176:- `src/bnsyn/sleep/`: Sleep cycle implementation
+docs/sleep_stack.md:177:- `src/bnsyn/memory/`: Memory consolidation and trace
+docs/sleep_stack.md:178:- `src/bnsyn/criticality/`: Phase transition detection
+docs/sleep_stack.md:179:- `src/bnsyn/emergence/`: Attractor crystallization
+docs/LEGENDARY_QUICKSTART.md:5:## Canonical install path
+docs/LEGENDARY_QUICKSTART.md:8:Use an editable install from source as the canonical path.
+docs/LEGENDARY_QUICKSTART.md:17:python -m pip install -e .
+docs/LEGENDARY_QUICKSTART.md:23:python -m bnsyn --help
+docs/LEGENDARY_QUICKSTART.md:26:## Run deterministic quickstart demo
+docs/LEGENDARY_QUICKSTART.md:29:bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+docs/LEGENDARY_QUICKSTART.md:37:make quickstart-smoke
+docs/LEGENDARY_QUICKSTART.md:43:bnsyn sleep-stack --help
+docs/INVENTORY.md:55:  - docs/api/api_bnsyn.md
+docs/INVENTORY.md:68:| `bibliography/` | SSOT bibliography (`bnsyn.bib`), mappings (`mapping.yml`), lockfile (`sources.lock`) | [SSOT.md](SSOT.md) |
+docs/INVENTORY.md:72:| `src/` | Reference implementation (`bnsyn`) | [SPEC.md](SPEC.md) |
+docs/INVENTORY.md:135:1. `bibliography/bnsyn.bib` — BibTeX entries
+docs/RELEASE_READINESS.md:48:This installs test dependencies and runs mutmut against the critical modules.
+docs/DEMO.md:23:bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc
+docs/DEMO.md:30:- `figures/demo_rc/summary.png` (if `matplotlib` is installed)
+docs/DEMO.md:35:bnsyn sleep-stack --seed 7 --steps-wake 60 --steps-sleep 40 --out results/demo_smoke
+docs/SECURITY_GITLEAKS.md:58:# macOS: brew install gitleaks
+docs/ACTIONS_TEST_PROTOCOL.md:5:**Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
+docs/emergence_tracking.md:41:from bnsyn.emergence import AttractorCrystallizer, Phase
+docs/emergence_tracking.md:112:from bnsyn.criticality import PhaseTransitionDetector, CriticalPhase
+docs/emergence_tracking.md:157:from bnsyn.criticality import PhaseTransitionDetector
+docs/emergence_tracking.md:158:from bnsyn.emergence import AttractorCrystallizer
+docs/emergence_tracking.md:159:from bnsyn.temperature.schedule import TemperatureSchedule, TemperatureParams
+docs/emergence_tracking.md:227:from bnsyn.viz import EmergenceDashboard
+docs/emergence_tracking.md:262:- `src/bnsyn/emergence/crystallizer.py`: AttractorCrystallizer implementation
+docs/emergence_tracking.md:263:- `src/bnsyn/criticality/phase_transition.py`: PhaseTransitionDetector implementation
+docs/EVIDENCE_COVERAGE.md:5:| CLM-0001 | Tier-A | true | PROVEN | brette2005adaptive | 10.1152/jn.00686.2005 | P0-1 AdEx neuron model | `src/bnsyn/neuron/adex.py`, `src/bnsyn/sim/network.py` | `tests/test_adex_smoke.py`, `tests/test_network_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:6:| CLM-0002 | Tier-A | true | PROVEN | brette2005adaptive | 10.1152/jn.00686.2005 | P0-1 AdEx model | `src/bnsyn/neuron/adex.py`, `src/bnsyn/sim/network.py` | `tests/test_adex_smoke.py`, `tests/test_network_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:7:| CLM-0003 | Tier-A | true | PROVEN | jahr1990voltage | 10.1523/JNEUROSCI.10-09-03178.1990 | P0-2 NMDA block | `src/bnsyn/synapse/conductance.py` | `tests/test_synapse_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:8:| CLM-0004 | Tier-A | true | PROVEN | fremaux2016neuromodulated | 10.3389/fncir.2015.00085 | P0-3 Three-factor learning | `src/bnsyn/plasticity/three_factor.py` | `tests/test_plasticity_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:9:| CLM-0005 | Tier-A | true | PROVEN | izhikevich2007solving | 10.1093/cercor/bhl152 | P0-3 Neuromodulated STDP | `src/bnsyn/plasticity/three_factor.py` | `tests/test_plasticity_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:10:| CLM-0006 | Tier-A | true | PROVEN | beggs2003neuronal | 10.1523/JNEUROSCI.23-35-11167.2003 | P0-4 Avalanche exponents | `src/bnsyn/criticality/branching.py` | `tests/test_criticality_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:11:| CLM-0007 | Tier-A | true | PROVEN | beggs2003neuronal | 10.1523/JNEUROSCI.23-35-11167.2003 | P0-4 Branching parameter σ | `src/bnsyn/criticality/branching.py` | `tests/test_criticality_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:12:| CLM-0008 | Tier-A | true | PROVEN | wilting2018inferring | 10.1038/s41467-018-04725-4 | P0-4 MR estimator | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
+docs/EVIDENCE_COVERAGE.md:13:| CLM-0009 | Tier-A | true | PROVEN | clauset2009power | 10.1137/070710111 | P0-4 Power-law fitting | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
+docs/EVIDENCE_COVERAGE.md:14:| CLM-0010 | Tier-A | true | PROVEN | frey1997synaptic | 10.1038/385533a0 | P1-6 Synaptic tagging | `src/bnsyn/consolidation/dual_weight.py` | `tests/test_consolidation_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:15:| CLM-0019 | Tier-A | true | PROVEN | kirkpatrick1983annealing | 10.1126/science.220.4598.671 | P1-5 Temperature schedule | `src/bnsyn/temperature/schedule.py` | `tests/test_temperature_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:16:| CLM-0020 | Tier-A | true | PROVEN | benna2016synaptic | 10.1038/nn.4401 | P1-6 Dual-weight consolidation | `src/bnsyn/consolidation/dual_weight.py` | `tests/test_consolidation_smoke.py`, `tests/validation/test_consolidation_validation.py` |
+docs/EVIDENCE_COVERAGE.md:17:| CLM-0021 | Tier-A | true | PROVEN | hopfield1982neural | 10.1073/pnas.79.8.2554 | P1-7 Energy regularization | `src/bnsyn/energy/regularization.py` | `tests/test_energy_smoke.py`, `tests/validation/test_energy_validation.py` |
+docs/EVIDENCE_COVERAGE.md:18:| CLM-0022 | Tier-A | true | PROVEN | hairer1993solving | 10.1007/978-3-540-78862-1 | P2-8 Numerical methods | `src/bnsyn/numerics/integrators.py` | `tests/test_dt_invariance.py`, `tests/validation/test_numerics_validation.py` |
+docs/EVIDENCE_COVERAGE.md:19:| CLM-0023 | Tier-A | true | PROVEN | matsumoto1998mersenne | 10.1145/272991.272995 | P2-9 Determinism protocol | `src/bnsyn/rng.py`, `src/bnsyn/sim/network.py` | `tests/test_determinism.py`, `tests/validation/test_determinism_validation.py` |
+docs/EVIDENCE_COVERAGE.md:20:| CLM-0024 | Tier-A | true | PROVEN | bjorck1996least | 10.1137/1.9781611971484 | P2-10 Calibration utilities | `src/bnsyn/calibration/fit.py` | `tests/test_calibration_smoke.py`, `tests/validation/test_calibration_validation.py` |
+docs/EVIDENCE_COVERAGE.md:21:| CLM-0025 | Tier-A | true | PROVEN | izhikevich2003simple | 10.1109/TNN.2003.820440 | P2-11 Reference network simulator | `src/bnsyn/sim/network.py` | `tests/test_network_smoke.py`, `tests/validation/test_network_validation.py` |
+docs/EVIDENCE_COVERAGE.md:22:| CLM-0026 | Tier-S | false | PROVEN | cliguidelines2024 | https://clig.dev/ | P2-12 Bench harness contract | `src/bnsyn/cli.py` | `tests/test_cli_smoke.py`, `tests/validation/test_cli_validation.py` |
+docs/EVIDENCE_COVERAGE.md:27:| CLM-0015 | Tier-A | true | PROVEN | trivers1971reciprocal | 10.1086/406755 | GOV-1 Result-based reciprocity (foundation) | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:28:| CLM-0016 | Tier-A | true | PROVEN | axelrod1981cooperation | 10.1126/science.7466396 | GOV-1 Symmetric reciprocity (tit-for-tat) | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:29:| CLM-0017 | Tier-A | true | PROVEN | nowak1998imagescoring | 10.1038/31225 | GOV-1 Reputation / indirect reciprocity | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
+docs/EVIDENCE_COVERAGE.md:30:| CLM-0018 | Tier-A | true | PROVEN | fehr2002punishment | 10.1038/415137a | GOV-1 Costly sanctioning / defector suppression | `src/bnsyn/vcg.py` | `tests/test_vcg_smoke.py` |
+docs/PLACEHOLDER_REGISTRY.md:9:- Canonical test command: `python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=json --cov-report=xml:coverage.xml --cov-report=html --cov-fail-under=85 --junit-xml=junit.xml -v`
+docs/PLACEHOLDER_REGISTRY.md:15:- Path: `src/bnsyn/emergence/crystallizer.py:283`
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:15:    file: src/bnsyn/emergence/crystallizer.py
+docs/placeholder_cycles/cycle1/worklist.json:7:      "context": "src/bnsyn/emergence/crystallizer.py",
+docs/placeholder_cycles/cycle1/worklist.json:11:          "path": "src/bnsyn/emergence/crystallizer.py",
+docs/placeholder_cycles/cycle1/plan.md:8:   - `src/bnsyn/emergence/crystallizer.py` (PH-0001)
+docs/placeholder_cycles/cycle1/plan.md:21:- Module/context: `bnsyn.emergence.crystallizer`
+docs/placeholder_cycles/cycle1/plan.md:37:| PH-0001 | `src/bnsyn/emergence/crystallizer.py` | `guard_fail_closed` | `regression` | Replace implicit `pass` fallback with deterministic explicit state retention branch and auditable warning path. |
+docs/API_CONTRACT.md:9:- `bnsyn.config`
+docs/API_CONTRACT.md:10:- `bnsyn.rng`
+docs/API_CONTRACT.md:11:- `bnsyn.cli`
+docs/API_CONTRACT.md:12:- `bnsyn.neurons` (alias for `bnsyn.neuron`)
+docs/API_CONTRACT.md:13:- `bnsyn.synapses` (alias for `bnsyn.synapse`)
+docs/API_CONTRACT.md:14:- `bnsyn.control` (criticality + temperature + energy control utilities)
+docs/API_CONTRACT.md:15:- `bnsyn.simulation` (alias for `bnsyn.sim.network`)
+docs/API_CONTRACT.md:16:- `bnsyn.sim.network`
+docs/API_CONTRACT.md:17:- `bnsyn.neuron.adex`
+docs/API_CONTRACT.md:18:- `bnsyn.synapse.conductance`
+docs/API_CONTRACT.md:19:- `bnsyn.plasticity.three_factor`
+docs/API_CONTRACT.md:20:- `bnsyn.criticality.branching`
+docs/API_CONTRACT.md:21:- `bnsyn.temperature.schedule`
+docs/API_CONTRACT.md:22:- `bnsyn.connectivity.sparse`
+docs/API_CONTRACT.md:27:from bnsyn import config, rng
+docs/API_CONTRACT.md:28:from bnsyn.simulation import Network, NetworkParams, run_simulation
+docs/API_CONTRACT.md:29:from bnsyn.neurons import adex_step
+docs/API_CONTRACT.md:30:from bnsyn.synapses import ConductanceSynapses
+docs/API_CONTRACT.md:37:- `bnsyn.neuron.adex.adex_step` / `bnsyn.neurons.adex_step`  
+docs/API_CONTRACT.md:40:- `bnsyn.synapse.conductance.ConductanceSynapses` / `bnsyn.synapses.ConductanceSynapses`  
+docs/API_CONTRACT.md:42:- `bnsyn.plasticity.three_factor.three_factor_update`  
+docs/API_CONTRACT.md:44:- `bnsyn.criticality.branching.BranchingEstimator` and `SigmaController`  
+docs/API_CONTRACT.md:46:- `bnsyn.temperature.schedule.TemperatureSchedule` and `gate_sigmoid`  
+docs/API_CONTRACT.md:48:- `bnsyn.sim.network.Network` / `bnsyn.simulation.Network`  
+docs/API_CONTRACT.md:50:- `bnsyn.rng.seed_all`  
+docs/API_CONTRACT.md:57:- `bnsyn.rng.seed_all` and all functions that accept explicit `np.random.Generator` objects.
+docs/API_CONTRACT.md:58:- `bnsyn.sim.network.run_simulation` and `Network.step` for fixed parameters and seed.
+docs/API_CONTRACT.md:59:- `bnsyn.neuron.adex` integration helpers (`adex_step`, `adex_step_with_error_tracking`).
+docs/modules.rst:8:   bnsyn.neurons
+docs/modules.rst:9:   bnsyn.synapses
+docs/modules.rst:10:   bnsyn.plasticity
+docs/modules.rst:11:   bnsyn.control
+docs/modules.rst:12:   bnsyn.simulation
+docs/modules.rst:13:   bnsyn.cli
+docs/GOVERNANCE.md:24:| **Data** | <a href="../bibliography/bnsyn.bib">bibliography/bnsyn.bib</a>, <a href="../bibliography/mapping.yml">bibliography/mapping.yml</a>, <a href="../claims/claims.yml">claims/claims.yml</a> | SSOT data artifacts |
+docs/ARCHITECTURE_INVARIANTS.md:7:- `bnsyn.validation.inputs`: strict boundary validators for array shape/dtype/finiteness.
+docs/ARCHITECTURE_INVARIANTS.md:8:- `bnsyn.schemas.experiment`: declarative config schema and admissible simulation grid.
+docs/ARCHITECTURE_INVARIANTS.md:9:- `bnsyn.sleep.cycle`: wake/sleep orchestration with deterministic stage transitions.
+docs/ARCHITECTURE_INVARIANTS.md:10:- `bnsyn.provenance.manifest_builder`: deterministic manifest metadata capture.
+docs/TRACEABILITY_MAP.md:7:| Reject malformed external numeric inputs (shape/dtype/non-finite) | Prevent undefined numerical state propagation | `src/bnsyn/validation/inputs.py` | `tests/test_validation_inputs.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:8:| Enforce admissible simulation grid (`dt_ms`, duration multiple) | Prevent unstable/undefined integration schedules | `src/bnsyn/schemas/experiment.py` | `tests/test_schema_experiment_contracts.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:9:| Wake-cycle API must reject invalid recording cadence | Prevent silent memory-capture corruption | `src/bnsyn/sleep/cycle.py` | `tests/test_sleep_cycle.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:10:| Provenance generation must be deterministic without git availability | Preserve auditability in non-git execution contexts | `src/bnsyn/provenance/manifest_builder.py` | `tests/test_manifest_builder.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:17:python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+docs/appendix/PRODUCTION_AUDIT.md:34:# src/bnsyn/plasticity/three_factor.py:21
+docs/appendix/PRODUCTION_AUDIT.md:60:# src/bnsyn/neuron/adex.py:33
+docs/appendix/PRODUCTION_AUDIT.md:135:# src/bnsyn/sim/network.py:99-100
+docs/appendix/PRODUCTION_AUDIT.md:184:# src/bnsyn/backends/jax_backend.py
+docs/appendix/PRODUCTION_AUDIT.md:214:# src/bnsyn/sim/network.py:122
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:38:1. **Pre-fix проблема була відтворювана:** API-contract check падав із `ModuleNotFoundError: No module named 'bnsyn'` без ручного `PYTHONPATH`.
+docs/api/generated/bnsyn.rng.rst:1:bnsyn.rng
+docs/api/generated/bnsyn.rng.rst:4:.. automodule:: bnsyn.rng
+docs/api/generated/bnsyn.cli.rst:1:bnsyn.cli
+docs/api/generated/bnsyn.cli.rst:4:.. automodule:: bnsyn.cli
+docs/api/generated/bnsyn.temperature.schedule.rst:1:bnsyn.temperature.schedule
+docs/api/generated/bnsyn.temperature.schedule.rst:4:.. automodule:: bnsyn.temperature.schedule
+docs/api/generated/bnsyn.sim.network.rst:1:bnsyn.sim.network
+docs/api/generated/bnsyn.sim.network.rst:4:.. automodule:: bnsyn.sim.network
+docs/api/generated/bnsyn.neuron.adex.rst:1:bnsyn.neuron.adex
+docs/api/generated/bnsyn.neuron.adex.rst:4:.. automodule:: bnsyn.neuron.adex
+docs/api/generated/bnsyn.synapse.conductance.rst:1:bnsyn.synapse.conductance
+docs/api/generated/bnsyn.synapse.conductance.rst:4:.. automodule:: bnsyn.synapse.conductance
+docs/api/generated/bnsyn.criticality.branching.rst:1:bnsyn.criticality.branching
+docs/api/generated/bnsyn.criticality.branching.rst:4:.. automodule:: bnsyn.criticality.branching
+docs/api/generated/bnsyn.plasticity.three_factor.rst:1:bnsyn.plasticity.three\_factor
+docs/api/generated/bnsyn.plasticity.three_factor.rst:4:.. automodule:: bnsyn.plasticity.three_factor
+docs/appendix/intelligence_cycle_report.json:8:        "source": "src/bnsyn/benchmarks"
+docs/appendix/intelligence_cycle_report.json:14:        "source": "src/bnsyn/calibration"
+docs/appendix/intelligence_cycle_report.json:20:        "source": "src/bnsyn/cli.py"
+docs/appendix/intelligence_cycle_report.json:26:        "source": "src/bnsyn/config.py"
+docs/appendix/intelligence_cycle_report.json:32:        "source": "src/bnsyn/connectivity"
+docs/appendix/intelligence_cycle_report.json:38:        "source": "src/bnsyn/consolidation"
+docs/appendix/intelligence_cycle_report.json:44:        "source": "src/bnsyn/control.py"
+docs/appendix/intelligence_cycle_report.json:50:        "source": "src/bnsyn/criticality"
+docs/appendix/intelligence_cycle_report.json:56:        "source": "src/bnsyn/emergence"
+docs/appendix/intelligence_cycle_report.json:62:        "source": "src/bnsyn/energy"
+docs/appendix/intelligence_cycle_report.json:68:        "source": "src/bnsyn/experiments"
+docs/appendix/intelligence_cycle_report.json:74:        "source": "src/bnsyn/incremental.py"
+docs/appendix/intelligence_cycle_report.json:80:        "source": "src/bnsyn/memory"
+docs/appendix/intelligence_cycle_report.json:86:        "source": "src/bnsyn/neuron"
+docs/appendix/intelligence_cycle_report.json:92:        "source": "src/bnsyn/neurons.py"
+docs/appendix/intelligence_cycle_report.json:98:        "source": "src/bnsyn/numerics"
+docs/appendix/intelligence_cycle_report.json:104:        "source": "src/bnsyn/plasticity"
+docs/appendix/intelligence_cycle_report.json:110:        "source": "src/bnsyn/production"
+docs/appendix/intelligence_cycle_report.json:116:        "source": "src/bnsyn/provenance"
+docs/appendix/intelligence_cycle_report.json:122:        "source": "src/bnsyn/py.typed"
+docs/appendix/intelligence_cycle_report.json:128:        "source": "src/bnsyn/rng.py"
+docs/appendix/intelligence_cycle_report.json:134:        "source": "src/bnsyn/schemas"
+docs/appendix/intelligence_cycle_report.json:140:        "source": "src/bnsyn/sim"
+docs/appendix/intelligence_cycle_report.json:146:        "source": "src/bnsyn/simulation.py"
+docs/appendix/intelligence_cycle_report.json:152:        "source": "src/bnsyn/sleep"
+docs/appendix/intelligence_cycle_report.json:158:        "source": "src/bnsyn/synapse"
+docs/appendix/intelligence_cycle_report.json:164:        "source": "src/bnsyn/synapses.py"
+docs/appendix/intelligence_cycle_report.json:170:        "source": "src/bnsyn/temperature"
+docs/appendix/intelligence_cycle_report.json:176:        "source": "src/bnsyn/testing"
+docs/appendix/intelligence_cycle_report.json:182:        "source": "src/bnsyn/tools"
+docs/appendix/intelligence_cycle_report.json:188:        "source": "src/bnsyn/validation"
+docs/appendix/intelligence_cycle_report.json:194:        "source": "src/bnsyn/vcg.py"
+docs/appendix/intelligence_cycle_report.json:200:        "source": "src/bnsyn/viz"
+docs/appendix/intelligence_cycle_report.json:249:        "source": "src/bnsyn/benchmarks",
+docs/appendix/intelligence_cycle_report.json:256:        "source": "src/bnsyn/calibration",
+docs/appendix/intelligence_cycle_report.json:263:        "source": "src/bnsyn/cli.py",
+docs/appendix/intelligence_cycle_report.json:270:        "source": "src/bnsyn/config.py",
+docs/appendix/intelligence_cycle_report.json:277:        "source": "src/bnsyn/connectivity",
+docs/appendix/intelligence_cycle_report.json:284:        "source": "src/bnsyn/consolidation",
+docs/appendix/intelligence_cycle_report.json:291:        "source": "src/bnsyn/control.py",
+docs/appendix/intelligence_cycle_report.json:298:        "source": "src/bnsyn/criticality",
+docs/appendix/intelligence_cycle_report.json:305:        "source": "src/bnsyn/emergence",
+docs/appendix/intelligence_cycle_report.json:312:        "source": "src/bnsyn/energy",
+docs/appendix/intelligence_cycle_report.json:319:        "source": "src/bnsyn/experiments",
+docs/appendix/intelligence_cycle_report.json:326:        "source": "src/bnsyn/incremental.py",
+docs/appendix/intelligence_cycle_report.json:333:        "source": "src/bnsyn/memory",
+docs/appendix/intelligence_cycle_report.json:340:        "source": "src/bnsyn/neuron",
+docs/appendix/intelligence_cycle_report.json:347:        "source": "src/bnsyn/neurons.py",
+docs/appendix/intelligence_cycle_report.json:354:        "source": "src/bnsyn/numerics",
+docs/appendix/intelligence_cycle_report.json:361:        "source": "src/bnsyn/plasticity",
+docs/appendix/intelligence_cycle_report.json:368:        "source": "src/bnsyn/production",
+docs/appendix/intelligence_cycle_report.json:375:        "source": "src/bnsyn/provenance",
+docs/appendix/intelligence_cycle_report.json:382:        "source": "src/bnsyn/py.typed",
+docs/appendix/intelligence_cycle_report.json:389:        "source": "src/bnsyn/rng.py",
+docs/appendix/intelligence_cycle_report.json:396:        "source": "src/bnsyn/schemas",
+docs/appendix/intelligence_cycle_report.json:403:        "source": "src/bnsyn/sim",
+docs/appendix/intelligence_cycle_report.json:410:        "source": "src/bnsyn/simulation.py",
+docs/appendix/intelligence_cycle_report.json:417:        "source": "src/bnsyn/sleep",
+docs/appendix/intelligence_cycle_report.json:424:        "source": "src/bnsyn/synapse",
+docs/appendix/intelligence_cycle_report.json:431:        "source": "src/bnsyn/synapses.py",
+docs/appendix/intelligence_cycle_report.json:438:        "source": "src/bnsyn/temperature",
+docs/appendix/intelligence_cycle_report.json:445:        "source": "src/bnsyn/testing",
+docs/appendix/intelligence_cycle_report.json:452:        "source": "src/bnsyn/tools",
+docs/appendix/intelligence_cycle_report.json:459:        "source": "src/bnsyn/validation",
+docs/appendix/intelligence_cycle_report.json:466:        "source": "src/bnsyn/vcg.py",
+docs/appendix/intelligence_cycle_report.json:473:        "source": "src/bnsyn/viz",
+docs/appendix/intelligence_cycle_report.json:554:      "entity := top-level component in src/bnsyn",
+docs/api/generated/bnsyn.connectivity.sparse.rst:1:bnsyn.connectivity.sparse
+docs/api/generated/bnsyn.connectivity.sparse.rst:4:.. automodule:: bnsyn.connectivity.sparse
+docs/api/generated/bnsyn.config.rst:1:bnsyn.config
+docs/api/generated/bnsyn.config.rst:4:.. automodule:: bnsyn.config
+docs/appendix/additional_audit_2026.md:4:- Repository: /workspace/bnsyn-phase-controlled-emergent-dynamics
+docs/appendix/additional_audit_2026.md:9:### Dependency install
+docs/appendix/additional_audit_2026.md:11:pip install -e ".[dev,test]"
+docs/appendix/additional_audit_2026.md:64:  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+docs/appendix/additional_audit_2026.md:66:  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+docs/appendix/PRODUCTION_ROADMAP.md:25:**File:** `bnsyn_production_adex.py` (203 lines)
+docs/appendix/PRODUCTION_ROADMAP.md:40:**File:** `bnsyn_production_connectivity.py` (298 lines)
+docs/appendix/PRODUCTION_ROADMAP.md:54:**File:** `bnsyn_production_jax_backend.py` (250 lines)
+docs/appendix/PRODUCTION_ROADMAP.md:201:- User guide (installation, quickstart, tutorials)
+docs/appendix/PRODUCTION_ROADMAP.md:211:bnsyn-phase-controlled-emergent-dynamics/
+docs/appendix/PRODUCTION_ROADMAP.md:212:├── src/bnsyn/
+docs/appendix/PRODUCTION_ROADMAP.md:243:    ├── quickstart.py
+docs/appendix/PRODUCTION_ROADMAP.md:263:from bnsyn.sim.network import Network
+docs/appendix/PRODUCTION_ROADMAP.md:267:from bnsyn.sim.network import NetworkSparse
+docs/appendix/PRODUCTION_ROADMAP.md:268:from bnsyn.backends.jax_backend import JAXBackend
+docs/appendix/PRODUCTION_ROADMAP.md:315:- Provide Docker container with preinstalled JAX
+docs/appendix/PRODUCTION_ROADMAP.md:367:1. ⬜ Replace `src/bnsyn/neuron/adex.py` with production version
+docs/appendix/PRODUCTION_ROADMAP.md:368:2. ⬜ Add `src/bnsyn/connectivity/sparse.py` module
+docs/appendix/EXECUTIVE_SUMMARY.md:54:**File:** `bnsyn_production_adex.py` (203 lines)
+docs/appendix/EXECUTIVE_SUMMARY.md:89:**File:** `bnsyn_production_connectivity.py` (298 lines)
+docs/appendix/EXECUTIVE_SUMMARY.md:116:**File:** `bnsyn_production_jax_backend.py` (250 lines)
+docs/appendix/EXECUTIVE_SUMMARY.md:225:| `bnsyn_production_adex.py` | 203 | Type-safe neuron dynamics |
+docs/appendix/EXECUTIVE_SUMMARY.md:226:| `bnsyn_production_connectivity.py` | 298 | Sparse matrix efficiency |
+docs/appendix/EXECUTIVE_SUMMARY.md:227:| `bnsyn_production_jax_backend.py` | 250 | GPU acceleration |
+docs/REPRODUCIBILITY.md:10:python -m pip install --upgrade pip
+docs/REPRODUCIBILITY.md:11:pip install -e ".[dev,test]"
+docs/REPRODUCIBILITY.md:14:Expected output includes installation of `bnsyn` and development dependencies.
+docs/REPRODUCIBILITY.md:70:1) All randomness flows through `numpy.random.Generator` created by `bnsyn.rng.seed_all(seed)`.
+docs/AUDIT_FINDINGS.md:21:- **Root cause:** `PyYAML` dependency not installed in the execution environment.
+docs/AUDIT_FINDINGS.md:27:- **Symptom:** `pytest -m "not validation"` fails during test collection with `ModuleNotFoundError: No module named 'bnsyn'` across multiple tests.
+docs/AUDIT_FINDINGS.md:28:- **Root cause:** Python package not installed or import path not configured for tests.
+docs/AUDIT_FINDINGS.md:30:- **Fix:** Install package via `pip install -e ".[dev,test]"` before running tests. CI workflows already do this.
+docs/AUDIT_FINDINGS.md:34:- **Symptom:** `pytest -m validation` fails during test collection with same `ModuleNotFoundError: No module named 'bnsyn'`.
+docs/api/api_bnsyn.md:1:# `bnsyn` Package
+docs/api/api_bnsyn.md:4:.. automodule:: bnsyn
+docs/api/api_bnsyn.md:11:.. currentmodule:: bnsyn
+docs/COMPONENT_AUDIT.md:5:| P0-1 | P0-1 | VERIFIED | src/bnsyn/neuron/adex.py; src/bnsyn/sim/network.py | tests/test_adex_smoke.py; tests/validation/test_adex_validation.py | CLM-0001, CLM-0002 | AdEx equations, reset rule, and exp clamp aligned with spec. |
+docs/COMPONENT_AUDIT.md:6:| P0-2 | P0-2 | VERIFIED | src/bnsyn/synapse/conductance.py; src/bnsyn/sim/network.py | tests/test_synapse_smoke.py; tests/validation/test_synapse_validation.py | CLM-0003 | Mg block and conductance decay align with spec equations. |
+docs/COMPONENT_AUDIT.md:7:| P0-3 | P0-3 | VERIFIED | src/bnsyn/plasticity/three_factor.py | tests/test_plasticity_smoke.py; tests/validation/test_plasticity_validation.py | CLM-0004, CLM-0005 | Eligibility × neuromodulator update and weight bounds verified. |
+docs/COMPONENT_AUDIT.md:8:| P0-4 | P0-4 | VERIFIED | src/bnsyn/criticality/branching.py; src/bnsyn/criticality/analysis.py | tests/test_criticality_smoke.py; tests/validation/test_criticality_validation.py | CLM-0006, CLM-0007, CLM-0008, CLM-0009 | σ estimation and gain homeostasis validated. |
+docs/COMPONENT_AUDIT.md:9:| P1-5 | P1-5 | VERIFIED | src/bnsyn/temperature/schedule.py | tests/test_temperature_smoke.py; tests/validation/test_temperature_validation.py | CLM-0019 | Geometric cooling and gate sigmoid covered. |
+docs/COMPONENT_AUDIT.md:10:| P1-6 | P1-6 | VERIFIED | src/bnsyn/consolidation/dual_weight.py | tests/test_consolidation_smoke.py; tests/validation/test_consolidation_validation.py | CLM-0010, CLM-0020 | Dual-weight dynamics and tagging/protein gating verified. |
+docs/COMPONENT_AUDIT.md:11:| P1-7 | P1-7 | VERIFIED | src/bnsyn/energy/regularization.py | tests/test_energy_smoke.py; tests/validation/test_energy_validation.py | CLM-0021 | Energy regularization objective terms verified. |
+docs/COMPONENT_AUDIT.md:12:| P2-8 | P2-8 | VERIFIED | src/bnsyn/numerics/integrators.py | tests/test_dt_invariance.py; tests/validation/test_numerics_validation.py | CLM-0022 | Euler/RK2 and exp decay methods covered. |
+docs/COMPONENT_AUDIT.md:13:| P2-9 | P2-9 | VERIFIED | src/bnsyn/rng.py; src/bnsyn/sim/network.py | tests/test_determinism.py; tests/validation/test_determinism_validation.py | CLM-0023 | Determinism protocol and explicit RNG injection enforced. |
+docs/COMPONENT_AUDIT.md:14:| P2-10 | P2-10 | VERIFIED | src/bnsyn/calibration/fit.py | tests/test_calibration_smoke.py; tests/validation/test_calibration_validation.py | CLM-0024 | Deterministic least-squares fit validated. |
+docs/COMPONENT_AUDIT.md:15:| P2-11 | P2-11 | VERIFIED | src/bnsyn/sim/network.py | tests/test_network_smoke.py; tests/validation/test_network_validation.py | CLM-0025 | Reference simulator with safety bounds verified. |
+docs/COMPONENT_AUDIT.md:16:| P2-12 | P2-12 | VERIFIED | src/bnsyn/cli.py | tests/test_cli_smoke.py; tests/validation/test_cli_validation.py | CLM-0026 | CLI bench harness outputs deterministic metrics. |
+docs/INDEX.md:73:| [bibliography/bnsyn.bib](../bibliography/bnsyn.bib) | BibTeX entries for all cited sources |
+docs/INDEX.md:106:| `src/bnsyn/` | Reference implementation |
+docs/QUICKSTART.md:3:This quickstart is a runnable contract:
+docs/QUICKSTART.md:5:1. install
+docs/QUICKSTART.md:13:python -m pip install -e .
+docs/QUICKSTART.md:19:python -m bnsyn --help
+docs/QUICKSTART.md:25:bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+docs/api/index.md:7:- Project overview: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/README.md>
+docs/api/index.md:8:- Formal specification: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/SPEC.md>
+docs/api/index.md:9:- Reproducibility contract: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/REPRODUCIBILITY.md>
+docs/api/index.md:10:- API contract: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/API_CONTRACT.md>
+docs/api/index.md:24:.. automodule:: bnsyn.cli
+docs/api/index.md:31:See <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/REPRODUCIBILITY.md> for the determinism and seed protocol.
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:4:Target: https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:17:   - `pip_install.log` => pass
+docs/api/modules.md:6:api_bnsyn
+docs/TESTING.md:8:python -m pip install -e ".[test]"
+docs/TESTING.md:12:- `Successfully installed bnsyn-...`
+docs/TESTING.md:46:Run property tests (requires `hypothesis` installed):
+docs/TESTING.md:78:python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+docs/TESTING.md:94:python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+docs/TESTING.md:147:python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+docs/TESTING.md:151:If a tool is unavailable locally, install via:
+docs/TESTING.md:154:python -m pip install -e ".[test]"
+docs/TESTING.md:158:- `mypy` is configured in CI quality workflow; run locally only after full `.[dev]` install.
+docs/TESTING.md:188:Equivalent install commands:
+docs/TESTING.md:191:python -m pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+docs/TESTING.md:192:python -m pip install --no-index --find-links wheelhouse --no-deps -e .
+docs/TESTING.md:198:- Wheelhouse built for a different platform/ABI than the install target.
+docs/TESTING_MUTATION.md:38:- **Purpose**: Verify all code paths use deterministic RNG via `bnsyn.rng.seed_all()`
+docs/TESTING_MUTATION.md:57:`make mutation-baseline` and `make mutation-check` install the test extras
+docs/TESTING_MUTATION.md:217:1. **Always use `bnsyn.rng.seed_all()`** for any randomness
+docs/TESTING_MUTATION.md:235:- Ensure using `bnsyn.rng` not `random` or `np.random`
+docs/SSOT_RULES.md:29:    statement: Mapping entries reference existing bibkeys in bibliography/bnsyn.bib.
+docs/SSOT_RULES.md:46:    statement: Tier-A bibkeys include DOI values in bnsyn.bib and appear in sources.lock.
+docs/SSOT_RULES.md:84:      - "implementation_paths: src/bnsyn/...; verification_paths: tests/..."
+docs/QUALITY_INDEX.md:155:- `src/bnsyn/neuron/adex.py` - AdEx neuron dynamics
+docs/QUALITY_INDEX.md:156:- `src/bnsyn/plasticity/stdp.py` - STDP learning rule
+docs/QUALITY_INDEX.md:157:- `src/bnsyn/plasticity/three_factor.py` - Neuromodulated plasticity
+docs/QUALITY_INDEX.md:158:- `src/bnsyn/temperature/schedule.py` - Temperature scheduling
+docs/spec_to_code.yml:4:    - src/bnsyn/neuron/adex.py
+docs/spec_to_code.yml:5:    - src/bnsyn/sim/network.py
+docs/spec_to_code.yml:15:    - src/bnsyn/synapse/conductance.py
+docs/spec_to_code.yml:16:    - src/bnsyn/sim/network.py
+docs/spec_to_code.yml:25:    - src/bnsyn/plasticity/three_factor.py
+docs/spec_to_code.yml:35:    - src/bnsyn/criticality/branching.py
+docs/spec_to_code.yml:36:    - src/bnsyn/criticality/analysis.py
+docs/spec_to_code.yml:48:    - src/bnsyn/temperature/schedule.py
+docs/spec_to_code.yml:57:    - src/bnsyn/consolidation/dual_weight.py
+docs/spec_to_code.yml:67:    - src/bnsyn/energy/regularization.py
+docs/spec_to_code.yml:76:    - src/bnsyn/numerics/integrators.py
+docs/spec_to_code.yml:85:    - src/bnsyn/rng.py
+docs/spec_to_code.yml:86:    - src/bnsyn/sim/network.py
+docs/spec_to_code.yml:95:    - src/bnsyn/calibration/fit.py
+docs/spec_to_code.yml:104:    - src/bnsyn/sim/network.py
+docs/spec_to_code.yml:113:    - src/bnsyn/cli.py
+docs/THROUGHPUT_SCALING.md:77:- `src/bnsyn/sim/network.py`: Added backend parameter with validation
+docs/THROUGHPUT_SCALING.md:235:1. `src/bnsyn/sim/network.py` - Backend parameter added
+docs/THROUGHPUT_SCALING.md:267:from bnsyn.rng import seed_all
+docs/THROUGHPUT_SCALING.md:268:from bnsyn.sim.network import Network, NetworkParams
+docs/THROUGHPUT_SCALING.md:269:from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
+docs/HYPOTHESIS.md:38:- **DualWeightParams**: Default parameters from `bnsyn.config.DualWeightParams`.
+docs/HYPOTHESIS.md:89:pip install -e ".[dev,test,viz]"
+docs/HYPOTHESIS.md:129:- SPEC P1-5: Temperature schedule and gating (`src/bnsyn/temperature/schedule.py`).
+docs/HYPOTHESIS.md:130:- SPEC P1-6: Dual-weight consolidation (`src/bnsyn/consolidation/dual_weight.py`).
+docs/HYPOTHESIS.md:131:- SPEC P2-9: Determinism protocol (`src/bnsyn/rng.py`).
+docs/CI_GATES.md:5:**Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
+docs/math/PROVENANCE.md:27:- Dependencies: local Python/pip/runtime platform and installed packages
+docs/AUDIT_TASKS_2026-02-15.md:18:- Джерело: `src/bnsyn/rng.py`.
+docs/AUDIT_TASKS_2026-02-15.md:25:- Джерело: `src/bnsyn/sim/network.py`.
+docs/api_maturity.json:4:    "bnsyn.config": "stable",
+docs/api_maturity.json:5:    "bnsyn.rng": "stable",
+docs/api_maturity.json:6:    "bnsyn.cli": "stable",
+docs/api_maturity.json:7:    "bnsyn.neurons": "stable",
+docs/api_maturity.json:8:    "bnsyn.synapses": "stable",
+docs/api_maturity.json:9:    "bnsyn.control": "stable",
+docs/api_maturity.json:10:    "bnsyn.simulation": "stable",
+docs/api_maturity.json:11:    "bnsyn.sim.network": "stable",
+docs/api_maturity.json:12:    "bnsyn.neuron.adex": "stable",
+docs/api_maturity.json:13:    "bnsyn.synapse.conductance": "stable",
+docs/api_maturity.json:14:    "bnsyn.plasticity.three_factor": "stable",
+docs/api_maturity.json:15:    "bnsyn.criticality.branching": "stable",
+docs/api_maturity.json:16:    "bnsyn.temperature.schedule": "stable",
+docs/api_maturity.json:17:    "bnsyn.connectivity.sparse": "stable",
+docs/api_maturity.json:18:    "bnsyn.emergence": "experimental",
+docs/api_maturity.json:19:    "bnsyn.memory": "experimental",
+docs/api_maturity.json:20:    "bnsyn.sleep": "experimental",
+docs/api_maturity.json:21:    "bnsyn.viz": "experimental"
+docs/REPO_STRUCTURE.md:27:1. **Source code** (`src/bnsyn/**`): All production Python modules implementing BN-Syn
+docs/REPO_STRUCTURE.md:47:   - `bnsyn.bib`: BibTeX entries for all cited sources
+docs/RELEASE_NOTES.md:6:deterministic behavior, build/install validation, and audit-grade evidence.
+docs/RELEASE_NOTES.md:12:- **Coverage**: ≥95% line coverage for `src/bnsyn` with JSON report.
+docs/RELEASE_NOTES.md:14:- **Packaging**: `pip install -e ".[dev]"` and `python -m build`.
+docs/safety/hazard_log.yml:18:      - code: src/bnsyn/validation/inputs.py:L83-L197
+docs/safety/hazard_log.yml:47:      - code: src/bnsyn/sim/network.py:L132-L175
+docs/safety/hazard_log.yml:49:      - code: src/bnsyn/sim/network.py:L249-L255
+docs/safety/hazard_log.yml:79:      - code: src/bnsyn/rng.py:L52-L88
+docs/safety/hazard_log.yml:81:      - code: src/bnsyn/sim/network.py:L514-L533
+docs/safety/hazard_log.yml:133:      - rg -n "validate_numeric_health" src/bnsyn
+docs/safety/traceability.yml:11:      - code: src/bnsyn/validation/inputs.py:L83-L197
+docs/safety/traceability.yml:33:      - code: src/bnsyn/sim/network.py:L132-L175
+docs/safety/traceability.yml:35:      - code: src/bnsyn/sim/network.py:L249-L255
+docs/safety/traceability.yml:60:      - code: src/bnsyn/rng.py:L52-L88
+docs/safety/traceability.yml:62:      - code: src/bnsyn/sim/network.py:L514-L533
+docs/safety/traceability.yml:104:      - rg -n "validate_numeric_health" src/bnsyn
+docs/safety/followups.md:17:**Target evidence**: New tests in `tests/validation` and explicit runtime checks in `src/bnsyn/sim/network.py`.
+docs/safety/stpa.md:47:| SC-1 | `bnsyn.validation.inputs` validators | `tests/test_validation_inputs.py` | `pytest -q` | enforced |
+docs/safety/stpa.md:49:| SC-3 | `bnsyn.rng.seed_all` | `tests/properties/test_properties_determinism.py` | `pytest -m property` | enforced |
+docs/INTEGRATION.md:12:| `bnsyn.cli` | CLI entrypoint, subcommand dispatch, orchestration for demo/run/sleep-stack | Python 3.11+ | CLI (`bnsyn`), subcommands: `demo`, `run`, `dtcheck`, `sleep-stack` | Argparse flags; config path for `run` | 
+docs/INTEGRATION.md:13:| `bnsyn.experiments.declarative` | YAML-driven experiment runner, schema validation, result persistence | Python 3.11+ | Python API (`load_config`, `run_experiment`, `run_from_yaml`) | YAML config |
+docs/INTEGRATION.md:14:| `bnsyn.schemas.experiment` / `schemas/experiment.schema.json` | Explicit experiment config schema | JSON Schema / Pydantic | Schema validation | YAML config object |
+docs/INTEGRATION.md:15:| `bnsyn.sim.network.run_simulation` | Deterministic network simulator producing metrics | Python 3.11+ | Python API | Explicit args (steps, dt_ms, seed, N, backend) |
+docs/INTEGRATION.md:20:CLI (bnsyn.cli)
+docs/INTEGRATION.md:42:- Validation boundary: `bnsyn.experiments.declarative.load_config`.
+docs/INTEGRATION.md:100:python -m bnsyn.cli run examples/configs/quickstart.yaml -o results/quickstart_v1.json
+docs/INTEGRATION.md:105:- CLI entrypoint and subcommands: `bnsyn.cli` (`demo`, `run`, `dtcheck`, `sleep-stack`). Evidence: `src/bnsyn/cli.py`.
+docs/INTEGRATION.md:106:- Declarative runner and YAML loader: `bnsyn.experiments.declarative` (`load_config`, `run_experiment`, `run_from_yaml`). Evidence: `src/bnsyn/experiments/declarative.py`.
+docs/INTEGRATION.md:108:- Deterministic simulation API: `run_simulation` in `bnsyn.sim.network`. Evidence: `src/bnsyn/sim/network.py`.
+docs/INTEGRATION.md:109:- Example config used for local reproduction: `examples/configs/quickstart.yaml`. Evidence: `examples/configs/quickstart.yaml`.
+docs/INTEGRATION.md:135:- [ ] Integration test is deterministic and passes locally with dependencies installed.
+docs/INTEGRATION.md:141:  environments. Mitigation: ensure dev/test dependencies are installed per repo
+docs/benchmarks/PROTOCOL.md:9:1. **RNG seeding**: All randomness flows through `bnsyn.rng.seed_all(seed)` which seeds:
+docs/benchmarks/PROTOCOL.md:33:pip install -e ".[dev,test]"
+docs/REPRODUCIBILITY_ENVELOPE.md:7:* All benchmarks use explicit integer seeds via `bnsyn.rng.seed_all`.
+docs/QUALITY_INFRASTRUCTURE.md:37:pytest -m "not validation and not property" --cov=src/bnsyn --cov-fail-under=85
+docs/QUALITY_INFRASTRUCTURE.md:89:opam install coq.8.18.0
+docs/QUALITY_INFRASTRUCTURE.md:312:- Dependencies installed from locked requirements
+docs/QUALITY_INFRASTRUCTURE.md:315:- All randomness uses seeded RNG (`bnsyn.rng.seed_all()`)
+docs/QUALITY_INFRASTRUCTURE.md:382:# Fix constants in TLA+/Coq to match src/bnsyn/config.py
+docs/SPEC.md:3:This document is the **authoritative** spec for the reference implementation in `src/bnsyn/`.
+docs/SPEC.md:18:| P0-1 | AdEx neuron dynamics | `bnsyn/neuron/adex.py` | `test_adex_smoke.py` |
+docs/SPEC.md:19:| P0-2 | Conductance synapses (AMPA/NMDA/GABA_A) + NMDA Mg block | `bnsyn/synapse/conductance.py` | `test_synapse_smoke.py` |
+docs/SPEC.md:20:| P0-3 | Three-factor learning (eligibility × neuromodulator) | `bnsyn/plasticity/three_factor.py` | `test_plasticity_smoke.py` |
+docs/SPEC.md:21:| P0-4 | Criticality tracking σ and gain homeostasis | `bnsyn/criticality/branching.py` | `test_criticality_smoke.py` |
+docs/SPEC.md:22:| P1-5 | Temperature schedule + gating | `bnsyn/temperature/schedule.py` | `test_temperature_smoke.py` |
+docs/SPEC.md:23:| P1-6 | Dual-weight consolidation (fast/slow + tags + protein) | `bnsyn/consolidation/dual_weight.py` | `test_consolidation_smoke.py` |
+docs/SPEC.md:24:| P1-7 | Energy regularization objective terms | `bnsyn/energy/regularization.py` | `test_energy_smoke.py` |
+docs/SPEC.md:25:| P2-8 | Numerical methods (Euler/RK2/exp decay) | `bnsyn/numerics/integrators.py` | `test_dt_invariance.py` |
+docs/SPEC.md:26:| P2-9 | Determinism protocol (seed + explicit RNG) | `bnsyn/rng.py` | `test_determinism.py` |
+docs/SPEC.md:27:| P2-10 | Calibration utilities (f–I fit) | `bnsyn/calibration/fit.py` | `test_calibration_smoke.py` |
+docs/SPEC.md:28:| P2-11 | Reference network simulator (small-N) | `bnsyn/sim/network.py` | `test_network_smoke.py` |
+docs/SPEC.md:29:| P2-12 | Bench harness contract (CLI + metrics) | `bnsyn/cli.py` | `test_cli_smoke.py` |
+docs/SPEC.md:184:All stochasticity is routed through explicit RNG injection; see `bnsyn/rng.py`
+docs/TROUBLESHOOTING.md:7:### `ModuleNotFoundError: No module named 'bnsyn'`
+docs/TROUBLESHOOTING.md:9:**Cause:** Package not installed or virtual environment not activated.
+docs/TROUBLESHOOTING.md:14:pip install -e .
+docs/TROUBLESHOOTING.md:17:pip install -e ".[dev,test]"
+docs/TROUBLESHOOTING.md:19:# Verify installation
+docs/TROUBLESHOOTING.md:20:python -c "import bnsyn; print(bnsyn.__version__)"
+docs/TROUBLESHOOTING.md:23:### `ImportError: JAX is not installed`
+docs/TROUBLESHOOTING.md:25:**Cause:** Trying to use JAX backend without JAX installed.
+docs/TROUBLESHOOTING.md:30:pip install -e ".[jax]"
+docs/TROUBLESHOOTING.md:33:pip install "jax[cuda12]"
+docs/TROUBLESHOOTING.md:38:**Cause:** Using torch backend without PyTorch installed.
+docs/TROUBLESHOOTING.md:42:pip install -e ".[torch]"
+docs/TROUBLESHOOTING.md:45:pip install torch
+docs/TROUBLESHOOTING.md:54:pip install -e ".[viz]"
+docs/TROUBLESHOOTING.md:78:docker build -t bnsyn-dev .
+docs/TROUBLESHOOTING.md:79:docker run bnsyn-dev
+docs/TROUBLESHOOTING.md:94:from bnsyn.rng import seed_all
+docs/TROUBLESHOOTING.md:110:pytest -m "not validation" --cov=src/bnsyn --cov-report=html
+docs/TROUBLESHOOTING.md:185:   from bnsyn.connectivity import SparseConnectivity
+docs/TROUBLESHOOTING.md:207:# BN-Syn version: python -c "import bnsyn; print(bnsyn.__version__)"
+docs/TROUBLESHOOTING.md:217:1. Add to `bibliography/bnsyn.bib`:
+docs/TROUBLESHOOTING.md:311:   pip install -e ".[jax]"
+docs/TROUBLESHOOTING.md:358:1. **Check existing issues:** [GitHub Issues](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/issues)
+docs/TROUBLESHOOTING.md:395:- Source: `src/bnsyn/`
+docs/TROUBLESHOOTING.md:400:- Bibliography: `bibliography/bnsyn.bib`
+docs/PR40_EVIDENCE_REPORT.md:25:Install:        pip install -e ".[dev,test,viz]"
+docs/PR40_EVIDENCE_REPORT.md:137:1. **Protein synthesis requires N_p=50 simultaneous tags** (src/bnsyn/consolidation/dual_weight.py:137)
+docs/PR40_EVIDENCE_REPORT.md:158:**Core src/bnsyn/ changes:**
+docs/PR40_EVIDENCE_REPORT.md:160:git diff f27aab0..HEAD -- src/bnsyn/
+docs/PR40_EVIDENCE_REPORT.md:163:**Result:** Only `src/bnsyn/py.typed` added (empty file for mypy). Zero semantic changes to core implementation.
+docs/PR40_EVIDENCE_REPORT.md:288:- src/bnsyn/py.typed
+docs/PR40_EVIDENCE_REPORT.md:303:- ✅ Reproducible (clean venv install works)
+docs/PR40_EVIDENCE_REPORT.md:333:- [x] A5: Core src/bnsyn/ unchanged (only py.typed added)
+docs/CONFERENCE_RUNBOOK.md:15:pip install -e ".[dev,viz]"
+docs/CONFERENCE_RUNBOOK.md:34:bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc
+docs/CONFERENCE_RUNBOOK.md:41:- `figures/demo_rc/summary.png` (if `matplotlib` installed)
+docs/CONFERENCE_RUNBOOK.md:46:bnsyn sleep-stack --seed 7 --steps-wake 60 --steps-sleep 40 --out results/demo_smoke
+docs/CONFERENCE_RUNBOOK.md:59:bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc_repeat
+
+[11] $ python -m venv .venv_readiness
+exit_code: 0
+
+[12] $ . .venv_readiness/bin/activate && python -m pip install -U pip
+exit_code: 0
+stdout:
+Requirement already satisfied: pip in ./.venv_readiness/lib/python3.12/site-packages (25.0.1)
+Collecting pip
+  Downloading pip-26.0.1-py3-none-any.whl.metadata (4.7 kB)
+Downloading pip-26.0.1-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 20.3 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 25.0.1
+    Uninstalling pip-25.0.1:
+      Successfully uninstalled pip-25.0.1
+Successfully installed pip-26.0.1
+
+[13] $ . .venv_readiness/bin/activate && python -m pip install -e .
+exit_code: 0
+stdout:
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting numpy==2.4.1 (from bnsyn==0.2.0)
+  Downloading numpy-2.4.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting pydantic==2.12.5 (from bnsyn==0.2.0)
+  Downloading pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)
+Collecting scipy==1.17.0 (from bnsyn==0.2.0)
+  Downloading scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting jsonschema==4.26.0 (from bnsyn==0.2.0)
+  Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting joblib==1.4.2 (from bnsyn==0.2.0)
+  Downloading joblib-1.4.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting attrs>=22.2.0 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Downloading attrs-25.4.0-py3-none-any.whl.metadata (10 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Downloading rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting annotated-types>=0.6.0 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.41.5 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Downloading pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Collecting typing-extensions>=4.14.1 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Downloading joblib-1.4.2-py3-none-any.whl (301 kB)
+Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Downloading numpy-2.4.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.4/16.4 MB 28.6 MB/s  0:00:00
+Downloading pydantic-2.12.5-py3-none-any.whl (463 kB)
+Downloading pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 23.2 MB/s  0:00:00
+Downloading scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.0/35.0 MB 20.1 MB/s  0:00:01
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading attrs-25.4.0-py3-none-any.whl (67 kB)
+Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (394 kB)
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=10887 sha256=5aae163cc182bb50db9d4106f06cce092f7865c3960dcf0efeeba22f567faea8
+  Stored in directory: /tmp/pip-ephem-wheel-cache-pc7lzif_/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: typing-extensions, rpds-py, numpy, joblib, attrs, annotated-types, typing-inspection, scipy, referencing, pydantic-core, pydantic, jsonschema-specifications, jsonschema, bnsyn
+
+Successfully installed annotated-types-0.7.0 attrs-25.4.0 bnsyn-0.2.0 joblib-1.4.2 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 numpy-2.4.1 pydantic-2.12.5 pydantic-core-2.41.5 referencing-0.37.0 rpds-py-0.30.0 scipy-1.17.0 typing-extensions-4.15.0 typing-inspection-0.4.2
+
+[14] $ . .venv_readiness/bin/activate && python -c "import bnsyn; print('import_ok', getattr(bnsyn,'__version__',None))"
+exit_code: 0
+stdout:
+import_ok 0.2.0
+
+[15] $ . .venv_readiness/bin/activate && python -m bnsyn --help
+exit_code: 0
+stdout:
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+
+[16] $ python -m scripts.release_readiness
+exit_code: 0
+stdout:
+Release readiness: READY
+JSON report: /workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/release_readiness.json
+Markdown report: /workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/release_readiness.md
+
+[17] $ python -m scripts.validate_required_checks
+exit_code: 0
+stdout:
+OK: required_checks=4 contract_pr_gates=4 validated
+
+[18] $ python -m scripts.validate_required_status_contexts
+exit_code: 0
+stdout:
+OK: required_status_contexts=13 validated
+
+[19] $ python -m scripts.validate_mutation_baseline
+exit_code: 0
+stdout:
+✅ Mutation baseline valid: quality/mutation_baseline.json
+
+[20] $ make test
+exit_code: 0
+stdout:
+python -m pytest -m "not validation" -q
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+........................................................................ [ 32%]
+..................................................ss....ss.............. [ 42%]
+........................................................................ [ 53%]
+........................................................................ [ 64%]
+........................................................................ [ 74%]
+........................................................................ [ 85%]
+........................................................................ [ 96%]
+...........................                                              [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+[21] $ python -m pytest -q -m "not validation and not property and not benchmark"
+exit_code: 0
+stdout:
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+......................ss....ss.......................................... [ 44%]
+........................................................................ [ 55%]
+........................................................................ [ 66%]
+........................................................................ [ 77%]
+........................................................................ [ 89%]
+.......................................................................  [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+[22] $ . .venv_readiness/bin/activate && python -m pip install -e .
+exit_code: 0
+stdout:
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=10887 sha256=1df69ca9fa4448619152f8b0b6f46721ac5fc78b4b911ce8aa2ca8ad2a25f8ea
+  Stored in directory: /tmp/pip-ephem-wheel-cache-vly91vyu/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+
+[23] $ . .venv_readiness/bin/activate && python -m bnsyn --help
+exit_code: 0
+stdout:
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+
+[24] $ . .venv_readiness/bin/activate && bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+exit_code: 0
+stdout:
+{
+  "demo": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  }
+}
+
+[25] $ . .venv_readiness/bin/activate && make quickstart-smoke
+exit_code: 0
+stdout:
+python -m scripts.check_quickstart_consistency
+quickstart consistency check PASSED
+python -m pip install -e .
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=10887 sha256=e458e4f7c4f7b0648af4691fa2dc2c9e0d33c39cdac57dfbce6920a866be9738
+  Stored in directory: /tmp/pip-ephem-wheel-cache-a2htn6n4/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+python -m pip show bnsyn
+Name: bnsyn
+Version: 0.2.0
+Summary: BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation
+Home-page: 
+Author: BN-Syn Contributors
+Author-email: 
+License-Expression: MIT
+Location: /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_readiness/lib/python3.12/site-packages
+Editable project location: /workspace/bnsyn-phase-controlled-emergent-dynamics
+Requires: joblib, jsonschema, numpy, pydantic, scipy
+Required-by: 
+bnsyn --help
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+bnsyn sleep-stack --help
+usage: bnsyn sleep-stack [-h] [--seed SEED] [--N N]
+                         [--backend {reference,accelerated}]
+                         [--steps-wake STEPS_WAKE] [--steps-sleep STEPS_SLEEP]
+                         [--out OUT]
+
+options:
+  -h, --help            show this help message and exit
+  --seed SEED           RNG seed
+  --N N                 Number of neurons
+  --backend {reference,accelerated}
+                        Simulation backend
+  --steps-wake STEPS_WAKE
+                        Wake phase steps
+  --steps-sleep STEPS_SLEEP
+                        Sleep phase steps
+  --out OUT             Output directory for results
+bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
+quickstart demo output validated
+
+[26] $ python -m scripts.collect_ci_run_urls --help
+exit_code: 0
+stdout:
+usage: collect_ci_run_urls.py [-h] [--repo REPO] [--sha SHA] [--out OUT]
+                              [--required]
+
+Collect GitHub Actions run URLs for a head SHA
+
+options:
+  -h, --help   show this help message and exit
+  --repo REPO
+  --sha SHA
+  --out OUT
+  --required
+
+[27] $ python -m scripts.collect_ci_run_urls --sha "a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a" --output artifacts/readiness/ci_runs.json
+exit_code: 2
+stderr:
+usage: collect_ci_run_urls.py [-h] [--repo REPO] [--sha SHA] [--out OUT]
+                              [--required]
+collect_ci_run_urls.py: error: unrecognized arguments: --output artifacts/readiness/ci_runs.json
+
+[POST] $ python -m scripts.collect_ci_run_urls --sha "$(git rev-parse HEAD)" --out artifacts/readiness/ci_runs.json
+exit_code: 0
+stdout:
+
+[POST] $ cat artifacts/readiness/ci_runs.json | sed -n "1,260p"
+exit_code: 0
+stdout:
+{
+  "repo": "neuron7x/bnsyn-phase-controlled-emergent-dynamics",
+  "head_sha": "a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a",
+  "collected_at_utc": "2026-02-15T17:51:49.472261+00:00",
+  "required_workflows": [
+    {
+      "key": "ci-pr-atomic",
+      "name": "ci-pr-atomic",
+      "workflow_path": ".github/workflows/ci-pr-atomic.yml"
+    },
+    {
+      "key": "workflow-integrity",
+      "name": "Workflow Integrity",
+      "workflow_path": ".github/workflows/workflow-integrity.yml"
+    },
+    {
+      "key": "math-quality-gate",
+      "name": "Math Quality Gate",
+      "workflow_path": ".github/workflows/math-quality-gate.yml"
+    },
+    {
+      "key": "dependency-review",
+      "name": "dependency-review",
+      "workflow_path": ".github/workflows/dependency-review.yml"
+    }
+  ],
+  "query": {
+    "url": "https://api.github.com/repos/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/runs?head_sha=a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a&per_page=100",
+    "total_count": 0
+  },
+  "runs": [
+    {
+      "key": "ci-pr-atomic",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "ci-pr-atomic",
+      "workflow_path": ".github/workflows/ci-pr-atomic.yml"
+    },
+    {
+      "key": "workflow-integrity",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "Workflow Integrity",
+      "workflow_path": ".github/workflows/workflow-integrity.yml"
+    },
+    {
+      "key": "math-quality-gate",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "Math Quality Gate",
+      "workflow_path": ".github/workflows/math-quality-gate.yml"
+    },
+    {
+      "key": "dependency-review",
+      "status": "NOT_TRIGGERED",
+      "reason": "path-filter",
+      "name": "dependency-review",
+      "workflow_path": ".github/workflows/dependency-review.yml"
+    }
+  ],
+  "summary": {
+    "success": 0,
+    "not_triggered": 1,
+    "missing": 3,
+    "required_total": 4,
+    "pass": false
+  }
+}
+
