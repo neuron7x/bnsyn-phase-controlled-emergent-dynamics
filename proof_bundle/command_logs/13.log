@@ -1,0 +1,558 @@
+COMMAND: rg -n "(Flask|FastAPI|Django|aiohttp|click|argparse|uvicorn|gunicorn|postgres|sqlite|redis|jwt|auth|oauth|token|webhook|idempot|transaction|retry|rate limit|CORS|HSTS|CSP|tenant|PII|email|password|api key|secret|logging|metrics|prometheus|opentelemetry|sentry)" README.md docs src tests pyproject.toml requirements-lock.txt
+START_UTC: 2026-02-15T19:39:07.025408Z
+END_UTC: 2026-02-15T19:39:07.065518Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+pyproject.toml:9:authors = [{name="BN-Syn Contributors"}]
+src/bnsyn/viz/interactive.py:104:            metrics_history = []
+src/bnsyn/viz/interactive.py:108:                metrics = net.step()
+src/bnsyn/viz/interactive.py:111:                spikes = np.where(metrics.get("spikes", np.zeros(N, dtype=bool)))[0]
+src/bnsyn/viz/interactive.py:117:                # Record metrics
+src/bnsyn/viz/interactive.py:118:                metrics_history.append(metrics)
+src/bnsyn/viz/interactive.py:143:            fig = create_firing_rate_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:148:            fig = create_stats_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:151:            # Summary metrics
+src/bnsyn/viz/interactive.py:154:                mean_rate = np.mean([m.get("spike_rate_hz", 0) for m in metrics_history])
+src/bnsyn/viz/interactive.py:157:                mean_sigma = np.mean([m.get("sigma", 0) for m in metrics_history])
+src/bnsyn/viz/interactive.py:160:                mean_V = np.mean([m.get("V_mean_mV", -60) for m in metrics_history])
+src/bnsyn/viz/interactive.py:164:                    np.sum(m.get("spikes", np.zeros(N, dtype=bool))) for m in metrics_history
+src/bnsyn/viz/interactive.py:169:        st.info("👈 Configure parameters in the sidebar and click 'Run Simulation'")
+src/bnsyn/viz/interactive.py:279:def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:284:    metrics_history : list[dict]
+src/bnsyn/viz/interactive.py:285:        History of network metrics
+src/bnsyn/viz/interactive.py:305:    times = np.arange(len(metrics_history)) * dt_ms
+src/bnsyn/viz/interactive.py:306:    rates = [m.get("spike_rate_hz", 0) for m in metrics_history]
+src/bnsyn/viz/interactive.py:319:def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:324:    metrics_history : list[dict]
+src/bnsyn/viz/interactive.py:325:        History of network metrics
+src/bnsyn/viz/interactive.py:347:    times = np.arange(len(metrics_history)) * dt_ms
+src/bnsyn/viz/interactive.py:348:    sigmas = [m.get("sigma", 0) for m in metrics_history]
+src/bnsyn/viz/interactive.py:349:    voltages = [m.get("V_mean_mV", -60) for m in metrics_history]
+src/bnsyn/viz/dashboard.py:101:    ...     metrics = collect_metrics()
+src/bnsyn/viz/dashboard.py:102:    ...     dashboard.update(metrics)
+src/bnsyn/viz/dashboard.py:176:    def update(self, metrics: dict[str, Any]) -> None:
+src/bnsyn/viz/dashboard.py:177:        """Update dashboard with new metrics.
+src/bnsyn/viz/dashboard.py:181:        metrics : dict[str, Any]
+src/bnsyn/viz/dashboard.py:182:            Dictionary containing current metrics with keys:
+src/bnsyn/viz/dashboard.py:201:        if "sigma" in metrics:
+src/bnsyn/viz/dashboard.py:202:            self._sigma_history.append(float(metrics["sigma"]))
+src/bnsyn/viz/dashboard.py:204:        if "temperature" in metrics:
+src/bnsyn/viz/dashboard.py:205:            self._temp_history.append(float(metrics["temperature"]))
+src/bnsyn/viz/dashboard.py:207:        if "sleep_stage" in metrics:
+src/bnsyn/viz/dashboard.py:208:            self._stage_history.append((self._step_count, str(metrics["sleep_stage"])))
+src/bnsyn/viz/dashboard.py:210:        if "consolidation" in metrics:
+src/bnsyn/viz/dashboard.py:211:            self._consol_history.append(float(metrics["consolidation"]))
+src/bnsyn/viz/dashboard.py:213:        if "avalanche_size" in metrics and metrics["avalanche_size"] > 0:
+src/bnsyn/viz/dashboard.py:214:            self._avalanche_sizes.append(int(metrics["avalanche_size"]))
+src/bnsyn/viz/dashboard.py:216:        if "attractor_point" in metrics:
+src/bnsyn/viz/dashboard.py:217:            point = metrics["attractor_point"]
+tests/test_experiments_declarative.py:102:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_experiments_declarative.py:116:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_cli_sleep_stack_backend_and_N_unit.py:3:import argparse
+tests/test_cli_sleep_stack_backend_and_N_unit.py:44:    args = argparse.Namespace(
+tests/test_cli_sleep_stack_backend_and_N_unit.py:58:    metrics = json.loads((tmp_path / "out" / "metrics.json").read_text())
+tests/test_cli_sleep_stack_backend_and_N_unit.py:60:    assert metrics["backend"] == "accelerated"
+src/bnsyn/experiments/declarative.py:84:        Experiment results with metrics for each seed
+src/bnsyn/experiments/declarative.py:114:        metrics = run_simulation(
+src/bnsyn/experiments/declarative.py:117:        results["runs"].append({"seed": seed, "metrics": metrics})
+tests/benchmarks/test_regression.py:8:from benchmarks.metrics import metrics_to_dict, run_benchmark
+tests/benchmarks/test_regression.py:26:    metrics_first = metrics_to_dict(run_benchmark(scenario))
+tests/benchmarks/test_regression.py:27:    metrics_second = metrics_to_dict(run_benchmark(scenario))
+tests/benchmarks/test_regression.py:29:    for metric_name in metrics_first:
+tests/benchmarks/test_regression.py:32:        first_raw = metrics_first[metric_name]
+tests/benchmarks/test_regression.py:33:        second_raw = metrics_second[metric_name]
+src/bnsyn/cli.py:24:import argparse
+src/bnsyn/cli.py:63:def _cmd_demo(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:64:    """Run a deterministic demo simulation and print metrics.
+src/bnsyn/cli.py:68:    args : argparse.Namespace
+src/bnsyn/cli.py:121:    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+src/bnsyn/cli.py:122:    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+src/bnsyn/cli.py:126:def _cmd_dtcheck(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:127:    """Run dt vs dt/2 invariance check and print metrics.
+src/bnsyn/cli.py:131:    args : argparse.Namespace
+src/bnsyn/cli.py:141:    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+src/bnsyn/cli.py:155:def _cmd_run_experiment(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:160:    args : argparse.Namespace
+src/bnsyn/cli.py:187:def _cmd_sleep_stack(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:192:    args : argparse.Namespace
+src/bnsyn/cli.py:265:    wake_metrics = []
+src/bnsyn/cli.py:268:        wake_metrics.append(m)
+src/bnsyn/cli.py:271:        if len(wake_metrics) % 20 == 0:
+src/bnsyn/cli.py:277:        phase_detector.observe(m["sigma"], len(wake_metrics))
+src/bnsyn/cli.py:301:    # Collect metrics
+src/bnsyn/cli.py:307:    metrics: dict[str, Any] = {
+src/bnsyn/cli.py:311:            "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
+src/bnsyn/cli.py:313:                sum(m["spike_rate_hz"] for m in wake_metrics) / len(wake_metrics)
+src/bnsyn/cli.py:337:    # Write metrics
+src/bnsyn/cli.py:338:    metrics_path = out_dir / "metrics.json"
+src/bnsyn/cli.py:339:    with open(metrics_path, "w") as f:
+src/bnsyn/cli.py:340:        json.dump(metrics, f, indent=2)
+src/bnsyn/cli.py:341:    print(f"Metrics written to {metrics_path}")
+src/bnsyn/cli.py:368:        wake_sigmas = [m["sigma"] for m in wake_metrics]
+src/bnsyn/cli.py:379:        wake_rates = [m["spike_rate_hz"] for m in wake_metrics]
+src/bnsyn/cli.py:421:    print(f"Wake: {args.steps_wake} steps, {metrics['wake']['memories_recorded']} memories")
+src/bnsyn/cli.py:472:    p = argparse.ArgumentParser(prog="bnsyn", description="BN-Syn CLI")
+tests/test_update_manifest_tools.py:78:    target = tmp_path / "secret.txt"
+tests/test_update_manifest_tools.py:79:    target.write_text("secret", encoding="utf-8")
+tests/test_integration_examples.py:21:    assert "sigma_mean" in payload["metrics"]
+src/bnsyn/emergence/crystallizer.py:23:import logging
+src/bnsyn/emergence/crystallizer.py:34:logger = logging.getLogger(__name__)
+src/bnsyn/emergence/crystallizer.py:61:    """Attractor representation with stability metrics.
+src/bnsyn/emergence/crystallizer.py:560:        Based on number of attractors and their stability metrics.
+tests/test_mutation_counts_contract.py:1:"""Contract tests for canonical mutation metrics module."""
+tests/test_mutation_counts_contract.py:29:        "metrics",
+tests/test_mutation_counts_contract.py:41:    metrics = baseline["metrics"]
+tests/test_mutation_counts_contract.py:43:        metrics["total_mutants"] > 0
+tests/test_mutation_counts_contract.py:44:        or metrics["killed_mutants"] > 0
+tests/test_mutation_counts_contract.py:45:        or metrics["survived_mutants"] > 0
+tests/test_mutation_counts_contract.py:51:    assert metrics["total_mutants"] == (
+tests/test_mutation_counts_contract.py:52:        metrics["killed_mutants"]
+tests/test_mutation_counts_contract.py:53:        + metrics["survived_mutants"]
+tests/test_mutation_counts_contract.py:54:        + metrics.get("timeout_mutants", 0)
+tests/test_mutation_counts_contract.py:55:        + metrics.get("suspicious_mutants", 0)
+tests/test_mutation_counts_contract.py:57:    assert 0.0 <= metrics["score_percent"] <= 100.0
+tests/test_mutation_counts_contract.py:104:                "metrics": {"total_mutants": 42},
+tests/test_mutation_counts_contract.py:117:def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
+tests/test_mutation_counts_contract.py:188:                "metrics": {
+tests/test_mutation_counts_contract.py:256:                "metrics": {
+tests/test_mutation_counts_contract.py:296:                "metrics": {
+tests/test_cli_smoke.py:104:        metrics_path = out_dir / "metrics.json"
+tests/test_cli_smoke.py:107:        assert metrics_path.exists(), "metrics.json not created"
+tests/test_cli_smoke.py:117:        with open(metrics_path) as f:
+tests/test_cli_smoke.py:118:            metrics = json.load(f)
+tests/test_cli_smoke.py:120:        assert metrics["backend"] == "reference"
+tests/test_cli_smoke.py:121:        assert "wake" in metrics
+tests/test_cli_smoke.py:122:        assert "sleep" in metrics
+tests/test_cli_smoke.py:123:        assert "transitions" in metrics
+tests/test_cli_smoke.py:124:        assert "attractors" in metrics
+tests/test_cli_smoke.py:125:        assert "consolidation" in metrics
+tests/test_cli_smoke.py:127:        assert "steps" in metrics["wake"]
+tests/test_cli_smoke.py:128:        assert "memories_recorded" in metrics["wake"]
+tests/test_cli_smoke.py:130:        assert "count" in metrics["consolidation"]
+tests/test_cli_smoke.py:131:        assert "consolidated_count" in metrics["consolidation"]
+tests/test_cli_sleep_stack_branches.py:5:import argparse
+tests/test_cli_sleep_stack_branches.py:55:    args = argparse.Namespace(
+tests/test_cli_sleep_stack_branches.py:88:    args = argparse.Namespace(
+tests/test_tools_scaled_sleep_stack_smoke.py:58:    metrics_path = out_dir / "scaled_run1" / "metrics.json"
+tests/test_tools_scaled_sleep_stack_smoke.py:60:    assert metrics_path.exists()
+tests/test_tools_scaled_sleep_stack_smoke.py:68:    metrics = json.loads(metrics_path.read_text())
+tests/test_tools_scaled_sleep_stack_smoke.py:69:    assert "backend" in metrics
+tests/test_tools_scaled_sleep_stack_smoke.py:71:    summary_path = out_dir / "metrics.json"
+tests/test_manifest_tooling_regression.py:31:                "metrics:",
+tests/test_manifest_tooling_regression.py:59:        '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+tests/test_manifest_tooling_regression.py:91:    payload["metrics"]["workflow_total"] = 999
+tests/test_manifest_tooling_regression.py:147:            '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+src/bnsyn/calibration/accuracy_speed.py:38:    """Accuracy and speed metrics for a numerical integrator.
+tests/validation/test_sleep_stack_effectiveness.py:243:    Runs same experiment twice with same seed, expects identical metrics.
+tests/validation/test_sleep_stack_effectiveness.py:248:        """Run a sleep-stack experiment and return metrics."""
+tests/validation/test_sleep_stack_effectiveness.py:295:    metrics1 = run_sleep_stack(seed)
+tests/validation/test_sleep_stack_effectiveness.py:298:    metrics2 = run_sleep_stack(seed)
+tests/validation/test_sleep_stack_effectiveness.py:301:    assert metrics1["sleep_steps"] == metrics2["sleep_steps"]
+tests/validation/test_sleep_stack_effectiveness.py:302:    assert metrics1["mean_sigma"] == pytest.approx(metrics2["mean_sigma"], abs=1e-9)
+tests/validation/test_sleep_stack_effectiveness.py:303:    assert metrics1["consolidated_count"] == metrics2["consolidated_count"]
+tests/validation/test_sleep_stack_effectiveness.py:304:    assert metrics1["mean_strength"] == pytest.approx(metrics2["mean_strength"], abs=1e-9)
+tests/validation/test_sleep_cycle_long.py:51:        wake_metrics = cycle.wake(duration_steps=100, record_memories=True, record_interval=10)
+tests/validation/test_sleep_cycle_long.py:52:        assert len(wake_metrics) == 100
+tests/validation/test_sleep_cycle_long.py:110:    metrics = cycle.dream(
+tests/validation/test_sleep_cycle_long.py:115:    assert len(metrics) == 100
+src/bnsyn/criticality/analysis.py:13:Provides deterministic estimators used to evaluate criticality metrics.
+tests/validation/test_claims_validation.py:48:        metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/validation/test_claims_validation.py:49:        results.append(metrics)
+tests/validation/test_claims_validation.py:70:    metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/validation/test_claims_validation.py:72:    # Simulation should produce metrics (basic functionality check)
+tests/validation/test_claims_validation.py:73:    assert metrics is not None, "AdEx-based simulation should produce metrics"
+tests/validation/test_claims_validation.py:76:    assert isinstance(metrics, dict), "Metrics should be a dictionary"
+tests/validation/test_claims_validation.py:119:    metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/validation/test_claims_validation.py:121:    # Validate returned metrics match actual API contract
+tests/validation/test_claims_validation.py:122:    assert "rate_mean_hz" in metrics, (
+tests/validation/test_claims_validation.py:123:        f"Network metrics should include rate_mean_hz. Available keys: {list(metrics.keys())}"
+tests/validation/test_claims_validation.py:125:    assert metrics["rate_mean_hz"] >= 0, (
+tests/validation/test_claims_validation.py:126:        f"rate_mean_hz should be non-negative, got {metrics['rate_mean_hz']}"
+tests/validation/test_claims_validation.py:181:    key metrics should remain in similar ranges.
+tests/validation/test_claims_validation.py:192:        metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/validation/test_claims_validation.py:193:        results.append(metrics)
+tests/validation/test_claims_validation.py:257:    metrics = run_simulation(steps=steps, dt_ms=0.1, seed=seed, N=N)
+tests/validation/test_claims_validation.py:260:    assert metrics is not None, "Long simulation should complete"
+tests/validation/test_claims_validation.py:264:    assert metrics == m2, "Long simulation not reproducible"
+src/bnsyn/connectivity/__init__.py:13:Exports deterministic sparse connectivity builders and metrics.
+tests/validation/test_cli_validation.py:11:def test_cli_dtcheck_outputs_metrics() -> None:
+tests/validation/test_viz_dashboard.py:43:    """Test attaching components and updating with metrics."""
+tests/validation/test_viz_dashboard.py:90:    # Update with sample metrics
+tests/validation/test_viz_dashboard.py:92:        metrics = {
+tests/validation/test_viz_dashboard.py:100:        dashboard.update(metrics)
+tests/validation/test_viz_dashboard.py:120:        metrics = {
+tests/validation/test_viz_dashboard.py:128:        dashboard.update(metrics)
+tests/validation/test_viz_dashboard.py:156:def test_dashboard_partial_metrics() -> None:
+tests/validation/test_viz_dashboard.py:157:    """Test dashboard with partial metrics (not all keys present)."""
+tests/validation/test_viz_dashboard.py:160:    # Update with only some metrics
+src/bnsyn/connectivity/sparse.py:13:Implements deterministic connectivity construction and metrics for SPEC P2-11.
+src/bnsyn/connectivity/sparse.py:35:    """Sparsity metrics and performance estimates.
+src/bnsyn/connectivity/sparse.py:119:        Normalizes all numeric storage to float64 and computes stable metrics
+src/bnsyn/connectivity/sparse.py:144:        self.metrics = SparseConnectivityMetrics(
+src/bnsyn/connectivity/sparse.py:227:            f"format={self.format}, density={self.metrics.density:.1%}, "
+src/bnsyn/connectivity/sparse.py:228:            f"memory={self.metrics.memory_sparse_mb:.2f}MB)"
+tests/validation/test_network_validation.py:8:def test_network_metrics_are_finite() -> None:
+tests/validation/test_network_validation.py:9:    metrics = run_simulation(steps=200, dt_ms=0.1, seed=7, N=60)
+tests/validation/test_network_validation.py:10:    assert np.isfinite(metrics["sigma_mean"])
+tests/validation/test_network_validation.py:11:    assert np.isfinite(metrics["rate_mean_hz"])
+src/bnsyn/tools/run_scaled_sleep_stack.py:4:import argparse
+src/bnsyn/tools/run_scaled_sleep_stack.py:90:    metrics: dict[str, Any] = {
+src/bnsyn/tools/run_scaled_sleep_stack.py:117:    return manifest, metrics, raster
+src/bnsyn/tools/run_scaled_sleep_stack.py:171:    ap = argparse.ArgumentParser()
+src/bnsyn/tools/run_scaled_sleep_stack.py:201:    b_metrics: dict[str, Any] | None
+src/bnsyn/tools/run_scaled_sleep_stack.py:203:        b_metrics = None
+src/bnsyn/tools/run_scaled_sleep_stack.py:205:        b_manifest, b_metrics, _ = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:215:        (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:218:    first_metrics: dict[str, Any] | None = None
+src/bnsyn/tools/run_scaled_sleep_stack.py:221:        manifest, metrics, raster = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:231:        kp = rdir / "metrics.json"
+src/bnsyn/tools/run_scaled_sleep_stack.py:233:        kp.write_text(json.dumps(metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:234:        hashes.append({"manifest": _sha(mp), "metrics": _sha(kp)})
+src/bnsyn/tools/run_scaled_sleep_stack.py:235:        if first_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:236:            first_metrics = metrics
+src/bnsyn/tools/run_scaled_sleep_stack.py:275:    if first_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:280:    if b_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:285:            (b_metrics["wake"]["std_sigma"] - first_metrics["wake"]["std_sigma"])
+src/bnsyn/tools/run_scaled_sleep_stack.py:286:            / max(b_metrics["wake"]["std_sigma"], 1e-12)
+src/bnsyn/tools/run_scaled_sleep_stack.py:289:            "wake_std_sigma": b_metrics["wake"]["std_sigma"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:290:            "transitions": b_metrics["transitions"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:291:            "attractors": b_metrics["attractors"]["count"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:313:            "wake_std_sigma": first_metrics["wake"]["std_sigma"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:314:            "transitions": first_metrics["transitions"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:315:            "attractors": first_metrics["attractors"]["count"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:316:            "crystallization_progress": first_metrics["attractors"]["crystallization_progress"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:324:    (out / "metrics.json").write_text(json.dumps(summary, indent=2))
+tests/validation/test_experiments_temperature_ablation_stats.py:67:def test_all_conditions_produce_valid_metrics() -> None:
+tests/validation/test_experiments_temperature_ablation_stats.py:68:    """Validate that all temperature conditions produce non-negative metrics."""
+tests/validation/test_experiments_temperature_ablation_stats.py:179:def test_v2_all_conditions_produce_valid_metrics() -> None:
+tests/validation/test_experiments_temperature_ablation_stats.py:180:    """Validate that all v2 temperature conditions produce valid metrics."""
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:50:    (out / "metrics.json").write_text(json.dumps(data, indent=2))
+tests/test_release_readiness.py:15:                "metrics": {
+tests/test_release_readiness.py:31:def test_check_entropy_gate_passes_when_metrics_match(tmp_path: Path) -> None:
+tests/test_release_readiness.py:57:    original = release_readiness.compute_metrics
+tests/test_release_readiness.py:59:        release_readiness.compute_metrics = lambda _repo_root: {
+tests/test_release_readiness.py:67:        release_readiness.compute_metrics = original
+tests/test_run_simulation_external_current.py:9:    metrics = run_simulation(
+tests/test_run_simulation_external_current.py:16:    assert set(metrics.keys()) == {
+tests/test_run_simulation_external_current.py:22:    assert all(isinstance(value, float) for value in metrics.values())
+tests/test_integration_experiment_flow.py:45:        metrics = run["metrics"]
+tests/test_integration_experiment_flow.py:46:        assert isinstance(metrics["sigma_mean"], float)
+tests/test_integration_experiment_flow.py:47:        assert isinstance(metrics["sigma_std"], float)
+tests/test_integration_experiment_flow.py:48:        assert isinstance(metrics["rate_mean_hz"], float)
+tests/test_integration_experiment_flow.py:49:        assert isinstance(metrics["rate_std"], float)
+src/bnsyn/neuron/adex.py:231:        Tuple of (updated state, integration metrics).
+src/bnsyn/neuron/adex.py:271:    metrics = IntegrationMetrics(
+src/bnsyn/neuron/adex.py:276:    return full, metrics
+tests/test_cli_interactive.py:5:import argparse
+tests/test_cli_interactive.py:20:    args = argparse.Namespace(interactive=True)
+tests/test_cli_interactive.py:31:    args = argparse.Namespace(interactive=True)
+tests/test_cli_interactive.py:43:    args = argparse.Namespace(interactive=True)
+tests/test_cli_interactive.py:55:    args = argparse.Namespace(interactive=True)
+tests/test_cli_interactive.py:63:    args = argparse.Namespace(interactive=True)
+tests/test_cli_interactive.py:76:    args = argparse.Namespace(interactive=True)
+src/bnsyn/sleep/cycle.py:181:            List of step metrics.
+src/bnsyn/sleep/cycle.py:208:        metrics = []
+src/bnsyn/sleep/cycle.py:215:            metrics.append(m)
+src/bnsyn/sleep/cycle.py:225:        return metrics
+src/bnsyn/sleep/cycle.py:238:            Summary metrics from sleep cycle.
+src/bnsyn/sleep/cycle.py:253:        total_metrics: list[dict[str, float]] = []
+src/bnsyn/sleep/cycle.py:268:            stage_metrics = []
+src/bnsyn/sleep/cycle.py:272:                stage_metrics.append(m)
+src/bnsyn/sleep/cycle.py:279:            total_metrics.extend(stage_metrics)
+src/bnsyn/sleep/cycle.py:295:            "total_steps": len(total_metrics),
+src/bnsyn/sleep/cycle.py:296:            "mean_sigma": float(np.mean([m["sigma"] for m in total_metrics])),
+src/bnsyn/sleep/cycle.py:297:            "mean_spike_rate": float(np.mean([m["spike_rate_hz"] for m in total_metrics])),
+src/bnsyn/sleep/cycle.py:320:            List of step metrics during replay.
+src/bnsyn/sleep/cycle.py:338:        metrics = []
+src/bnsyn/sleep/cycle.py:371:            metrics.append(m)
+src/bnsyn/sleep/cycle.py:374:        return metrics
+tests/test_interactive_smoke.py:54:    metrics_history = [{"spike_rate_hz": float(i % 10)} for i in range(100)]
+tests/test_interactive_smoke.py:55:    fig = create_firing_rate_plot(metrics_history, dt_ms=0.1)
+tests/test_interactive_smoke.py:59:    metrics_history = [{"sigma": 1.0 + 0.01 * i, "V_mean_mV": -60.0 - 0.1 * i} for i in range(100)]
+tests/test_interactive_smoke.py:60:    fig = create_stats_plot(metrics_history, dt_ms=0.1)
+tests/test_interactive_smoke.py:217:    """Test simulation runs when button clicked."""
+tests/test_mutation_ci_summary_contract.py:50:            {"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}
+tests/test_mutation_ci_summary_contract.py:86:            {"baseline_score": 70.0, "tolerance_delta": 5.0, "metrics": {"total_mutants": 1}}
+tests/test_mutation_ci_summary_contract.py:146:    baseline_path.write_text(json.dumps({"metrics": {"total_mutants": 1}}), encoding="utf-8")
+tests/test_mutation_ci_summary_contract.py:186:                "metrics": {
+tests/test_mutation_ci_summary_contract.py:259:                "metrics": {
+tests/test_cli_unit.py:22:import argparse
+tests/test_cli_unit.py:32:    args = argparse.Namespace(
+tests/test_cli_unit.py:44:    args = argparse.Namespace(
+tests/test_cli_unit.py:60:        args = argparse.Namespace(
+tests/test_cli_unit.py:74:        metrics_path = out_dir / "metrics.json"
+tests/test_cli_unit.py:77:        assert metrics_path.exists()
+tests/test_cli_unit.py:84:        with open(metrics_path) as f:
+tests/test_cli_unit.py:85:            metrics = json.load(f)
+tests/test_cli_unit.py:86:        assert "wake" in metrics
+tests/test_cli_unit.py:87:        assert "sleep" in metrics
+tests/test_cli_unit.py:88:        assert "transitions" in metrics
+tests/test_cli_unit.py:89:        assert "attractors" in metrics
+tests/test_cli_unit.py:90:        assert "consolidation" in metrics
+tests/test_cli_unit.py:98:        args = argparse.Namespace(
+src/bnsyn/sim/network.py:229:            Dictionary of metrics including sigma, gain, and spike rate.
+src/bnsyn/sim/network.py:359:            Dictionary of metrics including sigma, gain, and spike rate.
+src/bnsyn/sim/network.py:480:    """Run a deterministic simulation and return summary metrics.
+src/bnsyn/sim/network.py:502:        Summary metrics with mean and standard deviation for sigma and firing rate.
+README.md:8:[![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
+README.md:98:*Multi-panel view: temperature profiles, weight dynamics, protein synthesis, and stability metrics.*
+README.md:144:- `results/demo1/metrics.json`: Metrics (phase transitions, attractors, consolidation stats)
+README.md:174:The generated `<out>/metrics.json` contains fields:
+README.md:176:- `determinism_hashes` (per-run manifest/metrics hashes)
+README.md:183:Benchmark output is written to `artifacts/local_runs/benchmarks_scale/metrics.json` and is machine-dependent.
+README.md:486:Coverage history entry point: download the stable `coverage-trend-metrics` artifact from the latest `tests-smoke` run in GitHub Actions (contains compact `coverage-trend.json` + `coverage-trend.csv` with timestamp/SHA/branch/total coverage (normalized to 0..100%) and quantized `coverage_state` (critical/low/moderate/high/excellent)).
+README.md:492:- **gitleaks** (secret scanning)
+README.md:495:PR-gate vs long-running workflows (authoritative metadata in [`.github/WORKFLOW_CONTRACTS.md`](.github/WORKFLOW_CONTRACTS.md)):
+README.md:534:See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/SPEC.md`](docs/SPEC.md) for the authoritative architecture and equations.
+tests/test_tools_run_scaled_sleep_stack_unit.py:16:    metrics = {
+tests/test_tools_run_scaled_sleep_stack_unit.py:35:    return manifest, metrics, raster
+tests/test_tools_run_scaled_sleep_stack_unit.py:67:    summary = json.loads((out_dir / "metrics.json").read_text())
+tests/test_tools_run_scaled_sleep_stack_unit.py:121:    summary = json.loads((out_dir / "metrics.json").read_text())
+tests/test_tools_run_scaled_sleep_stack_unit.py:332:    manifest, metrics, raster = tool._run_once(
+tests/test_tools_run_scaled_sleep_stack_unit.py:340:    assert metrics["backend"] == "reference"
+tests/test_tools_run_scaled_sleep_stack_unit.py:341:    assert metrics["sleep"]["total_steps"] == 1
+tests/test_tools_run_scaled_sleep_stack_unit.py:344:    _, metrics2, _ = tool._run_once(
+tests/test_tools_run_scaled_sleep_stack_unit.py:351:    assert metrics2["sleep"]["total_steps"] == 0
+tests/test_benchmark_regression_gate.py:82:    regression_metrics = [result for result in results if result.status == "regression"]
+tests/test_benchmark_regression_gate.py:83:    assert any("performance.updates_per_sec" == result.name for result in regression_metrics)
+tests/test_tools_benchmark_sleep_stack_scale_unit.py:32:def test_main_writes_metrics(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+tests/test_tools_benchmark_sleep_stack_scale_unit.py:48:    out = Path("artifacts/local_runs/benchmarks_scale/metrics.json")
+tests/test_viz_interactive.py:113:    metrics = [{"spike_rate_hz": 1.5, "sigma": 1.1, "V_mean_mV": -60.0}]
+tests/test_viz_interactive.py:114:    firing = module.create_firing_rate_plot(metrics, 0.1)
+tests/test_viz_interactive.py:117:    stats = module.create_stats_plot(metrics, 0.1)
+tests/test_network_external_input.py:47:    metrics1 = []
+tests/test_network_external_input.py:50:        metrics1.append(m)
+tests/test_network_external_input.py:62:    metrics2 = []
+tests/test_network_external_input.py:65:        metrics2.append(m)
+tests/test_network_external_input.py:67:    # compare metrics
+tests/test_network_external_input.py:69:        assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
+tests/test_network_external_input.py:70:        assert metrics1[i]["A_t1"] == metrics2[i]["A_t1"]
+tests/test_network_external_input.py:71:        assert metrics1[i]["sigma"] == pytest.approx(metrics2[i]["sigma"])
+tests/test_network_external_input.py:72:        assert metrics1[i]["gain"] == pytest.approx(metrics2[i]["gain"])
+tests/test_network_external_input.py:91:    metrics1 = []
+tests/test_network_external_input.py:93:        metrics1.append(net1.step_adaptive())
+tests/test_network_external_input.py:104:    metrics2 = []
+tests/test_network_external_input.py:106:        metrics2.append(net2.step_adaptive(external_current_pA=np.zeros(N, dtype=np.float64)))
+tests/test_network_external_input.py:109:        assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
+tests/test_network_external_input.py:110:        assert metrics1[i]["A_t1"] == metrics2[i]["A_t1"]
+tests/test_network_external_input.py:111:        assert metrics1[i]["sigma"] == pytest.approx(metrics2[i]["sigma"])
+tests/test_network_external_input.py:112:        assert metrics1[i]["gain"] == pytest.approx(metrics2[i]["gain"])
+tests/test_coverage_paths.py:1:import argparse
+tests/test_coverage_paths.py:18:    demo_args = argparse.Namespace(steps=5, dt_ms=0.1, seed=1, N=10)
+tests/test_coverage_paths.py:21:    dt_args = argparse.Namespace(steps=5, dt_ms=0.1, dt2_ms=0.05, seed=2, N=10)
+tests/test_coverage_paths.py:162:    full, metrics = adex_step_with_error_tracking(
+tests/test_coverage_paths.py:170:    assert metrics.recommended_dt_ms > 0
+tests/test_manifest_tooling.py:13:def test_workflow_metrics_supports_yml_yaml_and_on_shapes(tmp_path: Path) -> None:
+tests/test_manifest_tooling.py:32:    total, reusable, workflow_call = generate._workflow_metrics(workflows)
+tests/test_manifest_tooling.py:49:            '{"baseline_score": 0.0, "metrics": {"total_mutants": 103}}\n',
+tests/test_spec_mapping_guard.py:14:    for token in ("INV-1", "INV-2", "INV-3", "GainClamp", "TemperatureBounds", "GateBounds"):
+tests/test_spec_mapping_guard.py:15:        assert token in tla_text, f"Missing TLA+ identifier: {token}"
+tests/test_spec_mapping_guard.py:20:    for token in ("I1", "I2", "I3", "I4", "A1", "A2", "A3", "A4"):
+tests/test_spec_mapping_guard.py:21:        assert token in vcg_text, f"Missing VCG identifier: {token}"
+tests/properties/test_manifest_tooling_properties.py:33:def test_workflow_metrics_property_matches_declared_triggers(
+tests/properties/test_manifest_tooling_properties.py:64:        total, reusable, workflow_call = generate._workflow_metrics(workflows)
+tests/properties/test_manifest_tooling_properties.py:104:def test_workflow_metrics_fuzz_ignores_non_yaml_extensions(exts: list[str]) -> None:
+tests/properties/test_manifest_tooling_properties.py:115:        total, _, _ = generate._workflow_metrics(workflows)
+tests/test_network_smoke.py:25:        metrics = net.step_adaptive(atol=1e-8, rtol=1e-6)
+tests/test_network_smoke.py:26:        assert "sigma" in metrics
+tests/test_network_smoke.py:27:        assert "gain" in metrics
+tests/test_network_smoke.py:28:        assert "A_t" in metrics
+tests/test_sleep_cycle_integration.py:32:    metrics = cycle.dream(memories=[], noise_level=0.2, duration_steps=5)
+tests/test_sleep_cycle_integration.py:34:    assert metrics == []
+tests/test_sleep_cycle_integration.py:45:    metrics = cycle.dream(memories=memories, noise_level=0.0, duration_steps=4)
+tests/test_sleep_cycle_integration.py:47:    assert len(metrics) == 4
+tests/test_sleep_cycle_integration.py:48:    assert all("sigma" in metric for metric in metrics)
+tests/test_sleep_cycle_integration.py:87:    wake_metrics = cycle.wake(duration_steps=8, record_memories=True, record_interval=2)
+tests/test_sleep_cycle_integration.py:107:    assert len(wake_metrics) == 8
+tests/properties/test_properties_bnsyn.py:74:        metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/properties/test_properties_bnsyn.py:76:        # All numeric metrics should be finite
+tests/properties/test_properties_bnsyn.py:77:        for key, value in metrics.items():
+tests/properties/test_properties_bnsyn.py:133:    metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/properties/test_properties_bnsyn.py:136:    assert metrics is not None, f"Simulation failed for N={N}, seed={seed}"
+tests/properties/test_properties_bnsyn.py:228:    metrics = run_simulation(steps=steps, dt_ms=dt_ms, seed=seed, N=N)
+tests/properties/test_properties_bnsyn.py:230:    assert metrics is not None, f"Simulation unstable with dt={dt_ms}, N={N}, seed={seed}"
+tests/properties/test_properties_bnsyn.py:233:    for key, value in metrics.items():
+tests/test_entropy_gate.py:6:from tools.entropy_gate.compute_metrics import compute_metrics, flatten
+tests/test_entropy_gate.py:24:    current = compute_metrics(repo_root)
+tests/test_adex_smoke.py:17:def test_adex_step_with_error_tracking_reports_metrics() -> None:
+tests/test_adex_smoke.py:22:    out, metrics = adex_step_with_error_tracking(
+tests/test_adex_smoke.py:31:    assert metrics.lte_estimate >= 0.0
+tests/test_adex_smoke.py:32:    assert metrics.global_error_bound >= 0.0
+tests/test_adex_smoke.py:33:    assert metrics.recommended_dt_ms > 0.0
+tests/test_manifest_tools.py:117:    unreadable.write_text("secret", encoding="utf-8")
+tests/test_connectivity_sparse.py:69:def test_sparse_connectivity_repr_contains_metrics() -> None:
+tests/test_connectivity_sparse.py:94:    assert conn.metrics.nnz >= 0
+tests/test_manifest_builder.py:72:    data_path = output_dir / "metrics.json"
+tests/test_manifest_builder.py:90:    assert manifest["result_files"] == {"metrics.json": expected_hash}
+tests/test_determinism.py:6:def test_determinism_same_seed_same_metrics() -> None:
+tests/test_viz_smoke_coverage.py:22:    and accumulate metrics data.
+tests/test_viz_smoke_coverage.py:41:    # Test update with various metrics (deterministic)
+tests/test_viz_smoke_coverage.py:42:    metrics = {
+tests/test_viz_smoke_coverage.py:50:    dashboard.update(metrics)
+tests/test_viz_smoke_coverage.py:111:            metrics = {
+tests/test_viz_smoke_coverage.py:119:            dashboard.update(metrics)
+tests/test_viz_smoke_coverage.py:246:            metrics = {
+tests/test_viz_smoke_coverage.py:254:            dashboard.update(metrics)
+tests/test_viz_smoke_coverage.py:329:def test_dashboard_ensure_figure_idempotent() -> None:
+tests/test_viz_smoke_coverage.py:330:    """Test that _ensure_figure is idempotent.
+tests/test_sleep_cycle.py:135:    metrics1 = cycle1.wake(duration_steps=steps, record_memories=True, record_interval=5)
+tests/test_sleep_cycle.py:149:    metrics2 = cycle2.wake(duration_steps=steps, record_memories=True, record_interval=5)
+tests/test_sleep_cycle.py:151:    # compare metrics
+tests/test_sleep_cycle.py:152:    assert len(metrics1) == len(metrics2)
+tests/test_sleep_cycle.py:153:    for i in range(len(metrics1)):
+tests/test_sleep_cycle.py:154:        assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
+tests/test_sleep_cycle.py:155:        assert metrics1[i]["sigma"] == pytest.approx(metrics2[i]["sigma"])
+tests/test_sleep_cycle.py:235:    metrics1 = cycle1.dream(
+tests/test_sleep_cycle.py:260:    metrics2 = cycle2.dream(
+tests/test_sleep_cycle.py:267:    assert len(metrics1) == len(metrics2)
+tests/test_sleep_cycle.py:268:    for i in range(len(metrics1)):
+tests/test_sleep_cycle.py:269:        assert metrics1[i]["A_t"] == metrics2[i]["A_t"]
+tests/test_cli_sleep_stack_figure.py:5:import argparse
+tests/test_cli_sleep_stack_figure.py:63:    args = argparse.Namespace(
+docs/emergence_tracking.md:118:    metrics = network.step()
+docs/emergence_tracking.md:119:    new_phase = detector.observe(metrics["sigma"], step)
+docs/SSOT.md:4:This document is a human summary of SSOT governance. The authoritative, machine-readable
+docs/SSOT.md:37:  - Both regimes degrade tracked metrics in the ablation protocol: `stability_w_total_var_end`, `stability_w_cons_var_end`, `protein_mean_end`, `tag_activity_mean`.
+docs/conf.py:14:author = "BN-Syn Contributors"
+docs/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+docs/AUDIT_LEDGER.md:7:- **Fix decision:** **FIX** — Moved the authoritative governed docs list to `docs/INVENTORY.md` and upgraded `scan_governed_docs.py` to enforce keyword + tag requirements.
+docs/SPEC.md:3:This document is the **authoritative** spec for the reference implementation in `src/bnsyn/`.
+docs/SPEC.md:29:| P2-12 | Bench harness contract (CLI + metrics) | `bnsyn/cli.py` | `test_cli_smoke.py` |
+docs/SPEC.md:137:- Both regimes degrade temperature-ablation metrics: `stability_w_total_var_end`, `stability_w_cons_var_end`, and consolidation activity (`protein_mean_end`, `tag_activity_mean`).
+docs/SPEC.md:197:## P2-12: Bench harness contract (CLI + metrics)
+docs/SPEC.md:200:metrics for reproducibility checks.
+docs/benchmarks/PROTOCOL.md:22:- OS-level caches are not explicitly flushed; performance metrics should be interpreted with this in mind.
+docs/benchmarks/PROTOCOL.md:159:- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+docs/benchmarks/PROTOCOL.md:169:- Stability metrics change unexpectedly (determinism violation)
+docs/benchmarks/PROTOCOL.md:179:- Stricter overrides for deterministic metrics:
+docs/benchmarks/PROTOCOL.md:185:Performance metrics are excluded from this deterministic regression check.
+docs/benchmarks/SCHEMA.md:98:All base metrics from a single run are aggregated across repeats using the suffixes
+docs/benchmarks/SCHEMA.md:118:- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+docs/benchmarks/SCHEMA.md:185:All metrics report 5 aggregation statistics:
+docs/THROUGHPUT_SCALING.md:21:- Measures: spikes, updates/sec, wall time, σ, gain, attractor metrics
+docs/THROUGHPUT_SCALING.md:27:- 14 physics metrics tracked
+docs/THROUGHPUT_SCALING.md:95:- Compares 14 physics metrics between backends
+docs/THROUGHPUT_SCALING.md:106:- ✅ 14/14 metrics within 1% tolerance
+docs/THROUGHPUT_SCALING.md:220:1. `benchmarks/physics_baseline.json` - Reference backend metrics
+docs/THROUGHPUT_SCALING.md:221:2. `benchmarks/physics_accelerated.json` - Accelerated backend metrics
+docs/THROUGHPUT_SCALING.md:309:- Pass physics equivalence tests (14/14 metrics)
+docs/THROUGHPUT_SCALING.md:320:2. ✅ **Emergent dynamics unchanged**: 14/14 metrics within tolerance
+docs/GOVERNANCE.md:4:It links to all authoritative governance artifacts without duplicating their content.
+docs/GOVERNANCE.md:22:| **Rules** | [SSOT_RULES.md](SSOT_RULES.md) | Machine-readable rule registry (authoritative) |
+docs/GOVERNANCE.md:45:- Claim IDs are authoritative in [claims/claims.yml](../claims/claims.yml)
+docs/BENCHMARK_MAP.md:3:This document maps benchmark metrics to SPEC components so every metric has a SPEC-anchored validation target.
+docs/BENCHMARK_MAP.md:13:| P2-9 Determinism protocol | `reproducibility_bitwise_delta` | Bitwise determinism of core state metrics. |
+docs/sleep_stack.md:50:- Transition event logging
+docs/sleep_stack.md:130:- `results/demo1/metrics.json`: Metrics (transitions, attractors, consolidation)
+docs/sleep_stack.md:171:- Pure observation and logging
+docs/QUALITY_INDEX.md:48:cat quality/mutation_baseline.json | jq '.metrics'
+docs/QUALITY_INDEX.md:174:- Otherwise: metrics MUST match real mutmut output ✅
+docs/QUALITY_INDEX.md:176:**To populate baseline**: Run `make mutation-baseline` to generate real metrics (~30 minutes).
+docs/QUALITY_INDEX.md:217:- Scans for secrets in code and commit history
+docs/QUALITY_INDEX.md:274:cat quality/mutation_baseline.json | jq '.metrics.total_mutants'
+docs/MUTATION_GATE.md:8:All mutation metrics are defined and derived in:
+docs/MUTATION_GATE.md:59:- `metrics`
+docs/MUTATION_GATE.md:66:Required `metrics` keys:
+docs/VCG.md:20:### 3) Inputs and observable metrics (SSOT)
+docs/VCG.md:27:- Define effort proxy (optional, non-normative): `cost_i(t)` (e.g., CPU seconds, tokens, wall-time).
+docs/NORMATIVE_LABELING.md:17:- Claim IDs are authoritative in `claims/claims.yml` and map in `bibliography/mapping.yml`.
+docs/ENTROPY_LEDGER.md:16:### Baseline metrics
+docs/ENTROPY_LEDGER.md:20:| M1 | Dependency pin ratio (`==`) in `pyproject.toml` dependency surfaces | 0.9459 | >= 0.94 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:21:| M1b | SHA-pinned GitHub Actions ratio in `.github/workflows` | 0.0 | informational | risk | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:22:| M2 | Determinism controls (`hypothesis.derandomize`, `PYTHONHASHSEED`) | 2 | >= 2 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:23:| M3 | Contract validation signals (typed validation boundary modules present) | 2 | >= 2 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:30:2. Missing machine-readable entropy metrics (`entropy/metrics.json`) — process entropy.
+docs/ENTROPY_LEDGER.md:47:- Fix: add canonical entropy artifacts (`A-F`) with baseline/final metrics and acceptance map.
+docs/ENTROPY_LEDGER.md:49:- Evidence: `entropy/metrics.json`, `entropy/commands.log`, `evidence/entropy/per_cycle/CYCLE_1.json`.
+docs/RELEASE_READINESS.md:36:   must have `status="active"`, `metrics.total_mutants > 0`, and `metrics.killed_mutants > 0`.
+docs/RELEASE_READINESS.md:37:7. **Entropy gate consistency**: current repository entropy metrics must satisfy
+docs/QUALITY_INFRASTRUCTURE.md:226:- `clamp_idempotent` - Clamp is idempotent
+docs/QUALITY_INFRASTRUCTURE.md:306:- No secrets required for most workflows
+docs/appendix/codebase_readiness_audit_2026-02-15.json:138:        "cmd:rg -n \"import logging|logger\\.|structlog|prometheus|opentelemetry|health\" src/bnsyn ...: only limited standard logging use detected",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:140:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging listed as future work"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:146:        "Ops telemetry stack (structured logs/metrics/tracing/alerts) is not release-grade in evidence-backed form."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:173:        "Introduce structured JSON logging across runtime paths with correlation IDs.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:174:        "Add health/readiness probes and export metrics for core simulation and CLI flows.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:178:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging still marked TODO",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:179:        "cmd:rg -n \"prometheus|opentelemetry|alert\" src/bnsyn docs: no concrete production telemetry implementation evidence"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:185:      "impact": "Developers cannot reliably reproduce secret-scan security checks before merge, increasing late-stage failures and risk leakage.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:211:  "exec_summary": "Readiness is 66% (confidence: medium). Biggest blockers are weak observability/ops evidence, non-reproducible local security gate execution (missing gitleaks plus pip-audit finding), and current lint failures at HEAD. Fastest +15 path: (1) implement structured logging + health/metrics baseline with runbook and CI validation, (2) make security tooling self-installing and enforce clean local security run, (3) clear ruff violations and lock zero-warning static checks. Build, tests, coverage, and release automation are strong and mostly deterministic, but production-grade operations evidence is insufficient."
+docs/appendix/EXECUTIVE_SUMMARY.md:27:- ❌ **Observability:** No logging, profiling, or error tracking
+docs/appendix/EXECUTIVE_SUMMARY.md:40:- P1-HIGH: GPU acceleration, functional API, logging
+docs/appendix/EXECUTIVE_SUMMARY.md:47:- Acceptance criteria (quantifiable success metrics)
+docs/appendix/EXECUTIVE_SUMMARY.md:274:- Ad-hoc → Systematic (logging, profiling, checkpointing)
+docs/appendix/EXECUTIVE_SUMMARY.md:317:3. **Week 3:** Production hardening (logging, checkpoints)
+docs/appendix/PRODUCTION_ROADMAP.md:156:1. ⬜ Structured logging (structlog)
+docs/appendix/PRODUCTION_ROADMAP.md:231:│       ├── logging.py        (structured logging)
+docs/appendix/PRODUCTION_AUDIT.md:247:    metrics = net.step()  # Mutates net.state, net.g_ampa, etc.
+docs/appendix/PRODUCTION_AUDIT.md:336:**Current:** No logging at all, only exceptions
+docs/appendix/PRODUCTION_AUDIT.md:517:- [ ] ISSUE-009: Structured logging
+docs/CI_GATES.md:82:- Artifact name (stable): `coverage-trend-metrics`
+docs/CI_GATES.md:92:3. Download artifact `coverage-trend-metrics`.
+docs/INVENTORY.md:3:This document is the **authoritative list** of governed and non-governed paths in the BN-Syn repository.
+docs/INVENTORY.md:19:## Governed documents (authoritative list)
+docs/INVENTORY.md:140:See [SSOT_RULES.md](SSOT_RULES.md) for the authoritative rule registry.
+docs/ARCHITECTURE.md:5:traceability index, not an independent source of truth. The authoritative definition
+docs/ARCHITECTURE.md:12:- **Spec authority**: equations, invariants, and parameters are defined in `docs/SPEC.md`.
+docs/ARCHITECTURE.md:13:- **Evidence authority**: claim IDs and bibliographic provenance are defined in
+docs/ARCHITECTURE.md:45:the authoritative claim IDs that substantiate them. For full equations and
+docs/DEMO.md:28:- `results/demo_rc/metrics.json`
+docs/CONSTITUTIONAL_AUDIT.md:18:The authoritative claim record lives in `claims/claims.yml`.
+docs/COMPONENT_AUDIT.md:16:| P2-12 | P2-12 | VERIFIED | src/bnsyn/cli.py | tests/test_cli_smoke.py; tests/validation/test_cli_validation.py | CLM-0026 | CLI bench harness outputs deterministic metrics. |
+docs/ACTIONS_TEST_PROTOCOL.md:87:   - No GitHub tokens needed for core functionality
+docs/ACTIONS_TEST_PROTOCOL.md:91:   - Artifacts accessible to PR authors
+docs/TROUBLESHOOTING.md:220:     author = {Example, Ada and Researcher, Lin},
+docs/TROUBLESHOOTING.md:259:### Gitleaks secret detection false positive
+docs/TROUBLESHOOTING.md:261:**Cause:** Test data or commit message triggers secret pattern.
+docs/HYPOTHESIS.md:55:Stability metrics are computed across the `seeds` trials for each condition:
+docs/HYPOTHESIS.md:118:- **results/temp_ablation_v2/**: Per-condition JSON files with per-seed metrics + aggregates.
+docs/HYPOTHESIS.md:121:- **figures/temp_ablation_v2/temperature_vs_stability.png**: Temperature profile vs stability metrics.
+docs/SECURITY_GITLEAKS.md:5:This repository uses [Gitleaks](https://github.com/gitleaks/gitleaks) to detect hardcoded secrets in the codebase. Secret scanning is enforced via GitHub Actions CI and runs on every push and pull request.
+docs/SECURITY_GITLEAKS.md:14:Both scans pass for the CI job to succeed. If either scan detects secrets, the job fails.
+docs/SECURITY_GITLEAKS.md:26:| `bibkey:\s+[a-z]+\d{4}[a-z]+` | `bibliography/mapping.yml`, `claims/claims.yml` | Bibliography reference keys (e.g., `bibkey: axelrod1981cooperation`) trigger the `generic-api-key` rule but are not secrets |
+docs/SECURITY_GITLEAKS.md:38:2. **Fail-gate is active**: CI fails if any scan finds secrets not covered by the allowlist
+docs/SECURITY_GITLEAKS.md:40:4. **Real secrets fail CI**: Any actual secret (API keys, passwords, tokens) will be detected and fail CI
+docs/SECURITY_GITLEAKS.md:44:If gitleaks detects a real secret:
+docs/SECURITY_GITLEAKS.md:47:2. **Remove the secret** from the codebase
+docs/SECURITY_GITLEAKS.md:48:3. **Rotate the secret** immediately (assume it's compromised)
+docs/SECURITY_GITLEAKS.md:49:4. **Consider history cleanup** if the secret was committed (contact repo maintainers)
+docs/REPO_STRUCTURE.md:5:This document defines the authoritative structure of the BN-Syn repository. Governed document
+docs/AUDIT_FINDINGS.md:84:- **Symptom:** Gitleaks CI job failing with 22 detected "secrets".
+docs/AUDIT_FINDINGS.md:124:- **Symptom:** None — no real secrets found in repository.
+docs/AUDIT_FINDINGS.md:126:- **Status:** ✅ No real secrets detected
+docs/INDEX.md:124:1. **Single source**: Each concept has exactly one authoritative document.
+docs/INTEGRATION.md:15:| `bnsyn.sim.network.run_simulation` | Deterministic network simulator producing metrics | Python 3.11+ | Python API | Explicit args (steps, dt_ms, seed, N, backend) |
+docs/INTEGRATION.md:58:- `run_simulation(steps, dt_ms, seed, N, backend, external_current_pA) -> metrics`
+docs/INTEGRATION.md:92:- Output JSON includes per-seed metrics and aggregated config details.
+docs/INTEGRATION.md:134:- [ ] Output JSON contains config metadata and per-seed metrics.
+docs/CONFERENCE_RUNBOOK.md:39:- `results/demo_rc/metrics.json`
+docs/CONFERENCE_RUNBOOK.md:51:- `results/demo_smoke/metrics.json`
+docs/CONFERENCE_RUNBOOK.md:56:Re-run the primary demo with the same seed and confirm that metrics match:
+docs/CONFERENCE_RUNBOOK.md:62:Compare `results/demo_rc/metrics.json` and `results/demo_rc_repeat/metrics.json`.
+docs/CONFERENCE_RUNBOOK.md:68:- If visual output is unavailable (missing `matplotlib`), present the JSON metrics and manifest files.
+docs/PR40_EVIDENCE_REPORT.md:61:**Independent Audit Results** (script: `scripts/_audit_metrics_pr40.py`):
+docs/PR40_EVIDENCE_REPORT.md:275:- scripts/_audit_metrics_pr40.py (this audit)
+docs/PR40_EVIDENCE_REPORT.md:344:**Audit Script:** scripts/_audit_metrics_pr40.py  
+docs/TESTING_MUTATION.md:74:- **metrics**: Total mutants, killed, survived, timeout counts (all non-zero, factual)
+docs/TESTING_MUTATION.md:75:- **metrics_per_module**: Per-module mutation statistics
+docs/TESTING_MUTATION.md:95:   - Update `metrics_per_module` if available
+docs/DOCUMENTATION_FORMALIZATION.md:4:binds documentation to authoritative sources, specifies traceability requirements, and
+docs/DOCUMENTATION_FORMALIZATION.md:12:## 1) Scope and authority chain
+docs/DOCUMENTATION_FORMALIZATION.md:14:BN-Syn uses a layered authority chain to keep documentation deterministic, auditable, and
+docs/DOCUMENTATION_FORMALIZATION.md:18:1. **Formal specification (authoritative)**
+docs/DOCUMENTATION_FORMALIZATION.md:25:   - `docs/SSOT_RULES.md` is the authoritative rule registry.
+docs/DOCUMENTATION_FORMALIZATION.md:26:   - `docs/SSOT.md` documents the authority chain and lists validators under `scripts/`.
+docs/DOCUMENTATION_FORMALIZATION.md:35:All normative statements in documentation must link back to the authority chain above.
+docs/DOCUMENTATION_FORMALIZATION.md:95:  authoritative and cannot be bypassed by narrative documents.
+docs/DOCUMENTATION_FORMALIZATION.md:118:## 7) Cross-reference map (authoritative entry points)
+docs/api/conf.py:14:author = "BN-Syn Contributors"
+docs/api/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+docs/api/_static/tools/update_manifest.py:5:import argparse
+docs/api/_static/tools/update_manifest.py:150:    parser = argparse.ArgumentParser(description="Update or validate manifest.json")
+docs/api/_templates/tools/update_manifest.py:5:import argparse
+docs/api/_templates/tools/update_manifest.py:150:    parser = argparse.ArgumentParser(description="Update or validate manifest.json")
+
+--- STDERR ---
+

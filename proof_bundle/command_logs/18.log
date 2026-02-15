@@ -1,0 +1,67 @@
+COMMAND: rg -n "(auth|authorization|rbac|role|permission|jwt|session|token)" src docs tests
+START_UTC: 2026-02-15T19:39:07.143820Z
+END_UTC: 2026-02-15T19:39:07.166356Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+docs/SSOT.md:4:This document is a human summary of SSOT governance. The authoritative, machine-readable
+docs/conf.py:14:author = "BN-Syn Contributors"
+docs/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+docs/AUDIT_LEDGER.md:7:- **Fix decision:** **FIX** — Moved the authoritative governed docs list to `docs/INVENTORY.md` and upgraded `scan_governed_docs.py` to enforce keyword + tag requirements.
+docs/SPEC.md:3:This document is the **authoritative** spec for the reference implementation in `src/bnsyn/`.
+docs/GOVERNANCE.md:4:It links to all authoritative governance artifacts without duplicating their content.
+docs/GOVERNANCE.md:22:| **Rules** | [SSOT_RULES.md](SSOT_RULES.md) | Machine-readable rule registry (authoritative) |
+docs/GOVERNANCE.md:45:- Claim IDs are authoritative in [claims/claims.yml](../claims/claims.yml)
+tests/validation/test_sleep_cycle_long.py:86:def test_long_replay_session() -> None:
+tests/validation/test_sleep_cycle_long.py:87:    """Test longer replay session with many memories."""
+tests/validation/test_sleep_cycle_long.py:109:    # long replay session
+docs/VCG.md:27:- Define effort proxy (optional, non-normative): `cost_i(t)` (e.g., CPU seconds, tokens, wall-time).
+docs/NORMATIVE_LABELING.md:17:- Claim IDs are authoritative in `claims/claims.yml` and map in `bibliography/mapping.yml`.
+docs/QUALITY_INFRASTRUCTURE.md:305:- All workflows have explicit `permissions: contents: read` at minimum
+docs/QUALITY_INFRASTRUCTURE.md:307:- Write permissions guarded and minimized
+docs/QUALITY_INFRASTRUCTURE.md:388:# Fix workflows: remove || true, add explicit permissions, remove unused inputs
+docs/QUALITY_INFRASTRUCTURE.md:422:- ✅ All workflows have explicit permissions
+docs/appendix/codebase_readiness_audit_2026-02-15.json:47:        "Mutation score was not executed in this audit session."
+docs/INVENTORY.md:3:This document is the **authoritative list** of governed and non-governed paths in the BN-Syn repository.
+docs/INVENTORY.md:19:## Governed documents (authoritative list)
+docs/INVENTORY.md:140:See [SSOT_RULES.md](SSOT_RULES.md) for the authoritative rule registry.
+docs/ARCHITECTURE.md:5:traceability index, not an independent source of truth. The authoritative definition
+docs/ARCHITECTURE.md:12:- **Spec authority**: equations, invariants, and parameters are defined in `docs/SPEC.md`.
+docs/ARCHITECTURE.md:13:- **Evidence authority**: claim IDs and bibliographic provenance are defined in
+docs/ARCHITECTURE.md:45:the authoritative claim IDs that substantiate them. For full equations and
+tests/test_spec_mapping_guard.py:14:    for token in ("INV-1", "INV-2", "INV-3", "GainClamp", "TemperatureBounds", "GateBounds"):
+tests/test_spec_mapping_guard.py:15:        assert token in tla_text, f"Missing TLA+ identifier: {token}"
+tests/test_spec_mapping_guard.py:20:    for token in ("I1", "I2", "I3", "I4", "A1", "A2", "A3", "A4"):
+tests/test_spec_mapping_guard.py:21:        assert token in vcg_text, f"Missing VCG identifier: {token}"
+docs/CONSTITUTIONAL_AUDIT.md:18:The authoritative claim record lives in `claims/claims.yml`.
+docs/ACTIONS_TEST_PROTOCOL.md:87:   - No GitHub tokens needed for core functionality
+docs/ACTIONS_TEST_PROTOCOL.md:91:   - Artifacts accessible to PR authors
+docs/TROUBLESHOOTING.md:220:     author = {Example, Ada and Researcher, Lin},
+docs/SECURITY_GITLEAKS.md:40:4. **Real secrets fail CI**: Any actual secret (API keys, passwords, tokens) will be detected and fail CI
+docs/REPO_STRUCTURE.md:5:This document defines the authoritative structure of the BN-Syn repository. Governed document
+docs/INDEX.md:124:1. **Single source**: Each concept has exactly one authoritative document.
+docs/DOCUMENTATION_FORMALIZATION.md:4:binds documentation to authoritative sources, specifies traceability requirements, and
+docs/DOCUMENTATION_FORMALIZATION.md:12:## 1) Scope and authority chain
+docs/DOCUMENTATION_FORMALIZATION.md:14:BN-Syn uses a layered authority chain to keep documentation deterministic, auditable, and
+docs/DOCUMENTATION_FORMALIZATION.md:18:1. **Formal specification (authoritative)**
+docs/DOCUMENTATION_FORMALIZATION.md:25:   - `docs/SSOT_RULES.md` is the authoritative rule registry.
+docs/DOCUMENTATION_FORMALIZATION.md:26:   - `docs/SSOT.md` documents the authority chain and lists validators under `scripts/`.
+docs/DOCUMENTATION_FORMALIZATION.md:35:All normative statements in documentation must link back to the authority chain above.
+docs/DOCUMENTATION_FORMALIZATION.md:95:  authoritative and cannot be bypassed by narrative documents.
+docs/DOCUMENTATION_FORMALIZATION.md:118:## 7) Cross-reference map (authoritative entry points)
+docs/api/conf.py:14:author = "BN-Syn Contributors"
+docs/api/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+docs/api/_static/manifest.json:6:      "role": "contract",
+docs/api/_static/manifest.json:12:      "role": "tool",
+docs/api/_static/tools/update_manifest.py:67:def _role_for(relpath: str) -> str:
+docs/api/_static/tools/update_manifest.py:68:    """Return the manifest role for a relative path."""
+docs/api/_static/tools/update_manifest.py:87:                "role": _role_for(relpath),
+docs/api/_templates/manifest.json:6:      "role": "contract",
+docs/api/_templates/manifest.json:12:      "role": "tool",
+docs/api/_templates/tools/update_manifest.py:67:def _role_for(relpath: str) -> str:
+docs/api/_templates/tools/update_manifest.py:68:    """Return the manifest role for a relative path."""
+docs/api/_templates/tools/update_manifest.py:87:                "role": _role_for(relpath),
+
+--- STDERR ---
+

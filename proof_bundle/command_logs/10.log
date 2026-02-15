@@ -1,0 +1,58 @@
+COMMAND: du -sh ./* | sort -h
+START_UTC: 2026-02-15T19:39:06.303540Z
+END_UTC: 2026-02-15T19:39:06.321543Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+4.0K	./BENCHMARK_PROTOCOL.md
+4.0K	./CHANGELOG.md
+4.0K	./CITATION.cff
+4.0K	./CODEBASE_READINESS.md
+4.0K	./Dockerfile
+4.0K	./FINAL_REPORT.md
+4.0K	./GAP_TABLE.md
+4.0K	./GOVERNANCE_VERIFICATION_REPORT.md
+4.0K	./INVENTORY.json
+4.0K	./LICENSE
+4.0K	./README_CLAIMS_GATE.md
+4.0K	./SECURITY.md
+4.0K	./acceptance_map.yaml
+4.0K	./docker-compose.yml
+4.0K	./plan.md
+4.0K	./pyproject.toml
+4.0K	./readiness_summary.md
+4.0K	./worklist.json
+8.0K	./CONTRIBUTING.md
+8.0K	./Makefile
+8.0K	./PR_DESCRIPTION.md
+8.0K	./VERIFICATION_REPORT.md
+8.0K	./schemas
+12K	./HARDENING_SUMMARY.md
+16K	./PR_DESCRIPTION_EVIDENCE.md
+16K	./manifest
+20K	./quality
+20K	./tests_inventory.json
+24K	./README.md
+28K	./claims
+28K	./readiness_report.json
+32K	./bibliography
+32K	./examples
+44K	./entropy
+44K	./experiments
+44K	./specs
+84K	./tools
+104K	./requirements-lock.txt
+172K	./proof_bundle
+256K	./benchmarks
+340K	./evidence
+484K	./scripts
+560K	./src
+676K	./docs
+920K	./tests
+1.1M	./figures
+1.6M	./artifacts
+2.0M	./results
+
+--- STDERR ---
+

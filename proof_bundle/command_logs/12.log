@@ -1,0 +1,11 @@
+COMMAND: pip --version
+START_UTC: 2026-02-15T19:39:06.344434Z
+END_UTC: 2026-02-15T19:39:07.024860Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+
+--- STDERR ---
+

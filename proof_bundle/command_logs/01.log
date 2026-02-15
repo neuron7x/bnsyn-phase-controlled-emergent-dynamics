@@ -1,0 +1,11 @@
+COMMAND: pwd
+START_UTC: 2026-02-15T19:39:06.166264Z
+END_UTC: 2026-02-15T19:39:06.173750Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+/workspace/bnsyn-phase-controlled-emergent-dynamics
+
+--- STDERR ---
+

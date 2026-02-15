@@ -1,0 +1,40 @@
+   1: [project]
+   2: name = "bnsyn"
+   3: version = "0.2.0"
+   4: description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+   5: requires-python = ">=3.11"
+   6: readme = "README.md"
+   7: license = "MIT"
+   8: license-files = ["LICENSE"]
+   9: authors = [{name="BN-Syn Contributors"}]
+  10: dependencies = [
+  11:   "numpy==2.4.1",
+  12:   "pydantic==2.12.5",
+  13:   "scipy==1.17.0",
+  14:   "jsonschema==4.26.0",
+  15:   "joblib==1.4.2",
+  16: ]
+  17: 
+  18: [project.optional-dependencies]
+  19: dev = [
+  20:   "hypothesis==6.151.5",
+  21:   "pytest==9.0.2",
+  22:   "pytest-cov==7.0.0",
+  23:   "pyyaml==6.0.3",
+  24:   "ruff==0.15.0",
+  25:   "mypy==1.19.1",
+  26:   "pylint==3.3.5",
+  27:   "pydocstyle==6.3.0",
+  28:   "bandit==1.9.3",
+  29:   "validate-pyproject==0.25",
+  30:   "pre-commit==4.5.1",
+  31:   "pip-audit==2.10.0",
+  32:   "psutil==7.2.2",
+  33:   "sphinx==9.0.4",
+  34:   "sphinx-autodoc-typehints==3.6.1",
+  35:   "myst-parser==5.0.0",
+  36:   "furo==2025.12.19",
+  37:   "sphinx-copybutton==0.5.2",
+  38: ]
+  39: 
+  40: test = [

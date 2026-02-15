@@ -1,0 +1,33 @@
+   1: # NON-PR-GATE: long-running workflow; must not run on pull_request/push.
+   2: name: CodeQL
+   3: 
+   4: on:
+   5:   schedule:
+   6:     - cron: "0 4 * * 0"
+   7:   workflow_dispatch:
+   8: 
+   9: permissions:
+  10:   actions: read
+  11:   contents: read
+  12:   pull-requests: write
+  13:   security-events: write
+  14: 
+  15: concurrency:
+  16:   group: codeql-${{ github.ref }}
+  17:   cancel-in-progress: true
+  18: 
+  19: jobs:
+  20:   analyze:
+  21:     name: Analyze
+  22:     runs-on: ubuntu-latest
+  23:     timeout-minutes: 15
+  24:     steps:
+  25:       - name: Checkout
+  26:         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+  27:       - name: Initialize CodeQL
+  28:         uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+  29:         with:
+  30:           languages: "python"
+  31:           build-mode: none
+  32:       - name: Analyze
+  33:         uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
