@@ -51,8 +51,8 @@
     ],
     "coverage_baseline_percent": 99.57,
     "coverage_minimum_percent": 99.0,
-    "mutation_baseline_score": 0.0,
-    "mutation_total_mutants": 103,
+    "mutation_baseline_score": 51.61,
+    "mutation_total_mutants": 31,
     "required_pr_gate_total": 4,
     "workflow_call_total": 11,
     "workflow_reusable_total": 9,
@@ -67,7 +67,7 @@
     ],
     "generated_files_are_readonly": true
   },
-  "repo_ref": "f214a3b2960a63df5e15dcaf1aa4f15f7c5d3b5c019f1f6a8b2587243a788eb1",
+  "repo_ref": "67d2399bf7a028591307d89f2f9d83afc64dd753a4186b9972096b4d8ae4b8a5",
   "required_pr_gates": {
     "required_pr_gate_total": 4,
     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",
