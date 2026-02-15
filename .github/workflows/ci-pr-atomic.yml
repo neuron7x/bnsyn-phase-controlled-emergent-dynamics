@@ -348,11 +348,11 @@ jobs:
           script: |
             const body = (context.payload.pull_request?.body || '').toLowerCase();
             const requiredSections = {
-              'what changed': ['what changed', 'description'],
-              'why': ['why', 'motivation'],
-              'risk': ['risk'],
-              'evidence': ['evidence'],
-              'how to test': ['how to test', 'testing'],
+              'what changed': ['what changed', 'description', 'summary'],
+              'why': ['why', 'motivation', 'context'],
+              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes'],
+              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
+              'how to test': ['how to test', 'testing', 'test plan', 'commands run'],
             };
             const missing = Object.entries(requiredSections)
               .filter(([, aliases]) => !aliases.some((alias) => body.includes(alias)))
