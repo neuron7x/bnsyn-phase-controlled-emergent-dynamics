@@ -20,6 +20,10 @@ Use this index to find any document, specification, or governance artifact.
 | **SSOT Policy** | [SSOT.md](SSOT.md) |
 | **Documentation Formalization** | [DOCUMENTATION_FORMALIZATION.md](DOCUMENTATION_FORMALIZATION.md) |
 | **Inventory** | [INVENTORY.md](INVENTORY.md) |
+| **CLI Reference** | [CLI_REFERENCE.md](CLI_REFERENCE.md) |
+| **Configuration Reference** | [CONFIGURATION.md](CONFIGURATION.md) |
+| **Change Management** | [CHANGE_MANAGEMENT.md](CHANGE_MANAGEMENT.md) |
+| **Decision Log (ADR Index)** | [DECISIONS.md](DECISIONS.md) |
 | **Release Readiness** | [RELEASE_READINESS.md](RELEASE_READINESS.md) |
 | **Demo Runbook** | [DEMO.md](DEMO.md) |
 | **Release Notes** | [RELEASE_NOTES.md](RELEASE_NOTES.md) |
@@ -52,6 +56,17 @@ Use this index to find any document, specification, or governance artifact.
 | [NORMATIVE_LABELING.md](NORMATIVE_LABELING.md) | Normative vs non-normative labeling policy |
 | [CONSTITUTIONAL_AUDIT.md](CONSTITUTIONAL_AUDIT.md) | Constitutional constraints for claims |
 | [INVENTORY.md](INVENTORY.md) | Governed path inventory |
+
+---
+
+## Project and Community Docs
+
+| Document | Purpose |
+|----------|---------|
+| <a href="../CODE_OF_CONDUCT.md">CODE_OF_CONDUCT.md</a> | Collaboration behavior baseline |
+| <a href="../MAINTAINERS.md">MAINTAINERS.md</a> | Maintainer role and operations links |
+| <a href="../SUPPORT.md">SUPPORT.md</a> | Support and reporting entry points |
+| <a href="../ROADMAP.md">ROADMAP.md</a> | Summary of currently tracked roadmap items |
 
 ---
 

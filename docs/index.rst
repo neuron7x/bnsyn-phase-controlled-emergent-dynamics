@@ -10,3 +10,15 @@ deterministic neural dynamics and control loops.
 
    api/index
    modules
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Project Docs
+
+   INDEX
+   SPEC
+   ARCHITECTURE
+   GOVERNANCE
+   CLI_REFERENCE
+   CONFIGURATION
+
