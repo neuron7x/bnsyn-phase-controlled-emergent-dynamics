@@ -1,0 +1,8 @@
+$ python -m build
+[exit_code]=1
+[duration_sec]=2.08
+--- STDOUT ---
+
+--- STDERR ---
+/root/.pyenv/versions/3.12.12/bin/python: No module named build
+

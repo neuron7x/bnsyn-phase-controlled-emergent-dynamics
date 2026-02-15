@@ -1,0 +1,8 @@
+$ git status --short --branch
+[exit_code]=0
+[duration_sec]=1.84
+--- STDOUT ---
+## work
+
+--- STDERR ---
+

@@ -1,0 +1,106 @@
+[
+  {
+    "type": "command_log",
+    "path": "proof_bundle/git_status.log",
+    "sha256": "0760ece653f50bef86a52db6d7a4f1c568af67710a504d71b5902305c9129691",
+    "cmd": "git status --short --branch",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/git_log.log",
+    "sha256": "aadb129abc2abd4f80cc22f4860d9c478555dad3e1cf63fad928432bf474882a",
+    "cmd": "git log -1 --pretty=fuller",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/python_version.log",
+    "sha256": "610288646e3ba9e5778a1c38a8545506708338f312147ead2f559e33a93c9859",
+    "cmd": "python --version",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/pip_version.log",
+    "sha256": "98703989e9adf5c07cfc6bd32d807ff3e314e5cc6dd7e94ed95b19b4f4953e2d",
+    "cmd": "python -m pip --version",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/pytest_version.log",
+    "sha256": "8f716cc642d4fcb11ab6b3aa91427638fb1c18eeb67522147caa56f1229f53b6",
+    "cmd": "python -m pytest --version",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/uname.log",
+    "sha256": "4218ba56b76881f76e366b30aca75b3d10d0fc8b2f7610f818e1d6ad8f428be9",
+    "cmd": "uname -a",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/cpu.log",
+    "sha256": "74d562f438a1db06a97513d1ed3167e2d519a03c9447caefea5d3ca85a9c8fd8",
+    "cmd": "lscpu",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/mem.log",
+    "sha256": "412ce4e8e0799b56cf42ce1219b213e6e90755366e4268a73995dd9b4c9696af",
+    "cmd": "free -h",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/find_top.log",
+    "sha256": "bff57f84b4f92657fd3f4e33119555365dc9a6d34dedcf190d0e8b9e1eaa9f9a",
+    "cmd": "find . -maxdepth 2 -mindepth 1 -type d | sort",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/ext_counts.log",
+    "sha256": "48a212bf9e574e4b724274f980164a2fc9825c310654198c2bcf24340c2e1baa",
+    "cmd": "python - <<'P2'\nfrom pathlib import Path\nfrom collections import Counter\nroot=Path('.')\nc=Counter(p.suffix or '<noext>' for p in root.rglob('*') if p.is_file() and '.git/' not in str(p))\nfor k,v in c.most_common(40):\n print(f'{k}\t{v}')\nP2",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/manifests.log",
+    "sha256": "ecdc92ff80b6e9d79cb7a9e5e2d59c938f507b6ec75b3a05d0756b4dda8f3cf4",
+    "cmd": "find . -maxdepth 3 -type f \\( -name 'pyproject.toml' -o -name 'requirements-lock.txt' -o -name 'Dockerfile' -o -name 'docker-compose.yml' -o -name '.pre-commit-config.yaml' -o -path './.github/workflows/*.yml' \\) | sort",
+    "exit": 0,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/build.log",
+    "sha256": "9fe2de255e88064364829a400664d0432aae6ed8a1df363f94074561874549e8",
+    "cmd": "python -m build",
+    "exit": 1,
+    "timeout_sec": 600
+  },
+  {
+    "type": "command_log",
+    "path": "proof_bundle/test_non_validation.log",
+    "sha256": "a63f290315d7bc1eac9f4cdb47953338e80e1b4d255aeedcf1654f69046631c9",
+    "cmd": "python -m pytest -m \"not validation\" -q",
+    "exit": 2,
+    "timeout_sec": 600
+  }
+]

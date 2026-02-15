@@ -1,0 +1,762 @@
+{
+  "meta": {
+    "timestamp_utc": "2026-02-15T19:22:57Z",
+    "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+    "git": {
+      "commit": "bc415cdeeb96599908f9ef693aef75ee9f21b635",
+      "branch": "work",
+      "dirty": true
+    },
+    "platform": {
+      "os": "Linux",
+      "arch": "x86_64"
+    },
+    "assumptions": [
+      "target_platform defaulted to Linux x86_64",
+      "target_env defaulted to dev-like local shell environment",
+      "time_budget_sec defaulted per command timeout 600s",
+      "baseline_slo and target_load not provided by runner"
+    ]
+  },
+  "representator": {
+    "inventory": {
+      "top_level_dirs": [
+        ".github",
+        "artifacts",
+        "benchmarks",
+        "bibliography",
+        "claims",
+        "docs",
+        "entropy",
+        "evidence",
+        "examples",
+        "experiments",
+        "figures",
+        "manifest",
+        "quality",
+        "results",
+        "schemas",
+        "scripts",
+        "specs",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "file_counts_by_ext_top": [
+        {
+          "ext": ".py",
+          "count": 349
+        },
+        {
+          "ext": ".md",
+          "count": 118
+        },
+        {
+          "ext": ".json",
+          "count": 75
+        },
+        {
+          "ext": ".txt",
+          "count": 54
+        },
+        {
+          "ext": ".yml",
+          "count": 42
+        }
+      ],
+      "hotspots": [
+        "docs/",
+        "tests/",
+        "src/bnsyn/"
+      ],
+      "evidence": [
+        "Command: \"cmd:find . -maxdepth 2 -mindepth 1 -type d | sort\" log:proof_bundle/find_top.log exit:0 sha256:bff57f84b4f92657fd3f4e33119555365dc9a6d34dedcf190d0e8b9e1eaa9f9a",
+        "Command: \"cmd:python - <<'P2' ...\" log:proof_bundle/ext_counts.log exit:0 sha256:48a212bf9e574e4b724274f980164a2fc9825c310654198c2bcf24340c2e1baa"
+      ]
+    },
+    "languages": {
+      "primary": "Python",
+      "secondary": [
+        "TLA+",
+        "Coq",
+        "YAML/Markdown docs"
+      ],
+      "frameworks": [
+        "pytest",
+        "pydantic",
+        "setuptools"
+      ],
+      "runtime_targets": [
+        "CLI/library package bnsyn"
+      ],
+      "evidence": [
+        "File: \"pyproject.toml:1-17\" snippet:\"project metadata and python dependencies\"",
+        "File: \"pyproject.toml:63-67\" snippet:\"project.scripts bnsyn and setuptools build-system\"",
+        "File: \"specs/tla/BNsyn.tla:1-20\" snippet:\"formal TLA+ specification\""
+      ]
+    },
+    "dependencies": {
+      "manifests": [
+        "pyproject.toml",
+        "requirements-lock.txt"
+      ],
+      "lockfiles_present": true,
+      "lock_enforced_in_ci": true,
+      "private_registries": "No evidence",
+      "toolchain_pins": [
+        "setuptools==79.0.1",
+        "Python 3.11 in CI workflows"
+      ],
+      "evidence": [
+        "File: \"requirements-lock.txt:2-6\" snippet:\"pip-compile with --generate-hashes\"",
+        "File: \".github/workflows/ci-pr-atomic.yml:220-225\" snippet:\"verify lockfile freshness\""
+      ]
+    },
+    "entrypoints": {
+      "build": [
+        "python -m build",
+        "make release-readiness"
+      ],
+      "test": [
+        "make test",
+        "python -m pytest -m \"not validation\" -q"
+      ],
+      "lint": [
+        "ruff check .",
+        "pylint src/bnsyn"
+      ],
+      "typecheck": [
+        "mypy src --strict --config-file pyproject.toml"
+      ],
+      "run": [
+        "bnsyn ... (CLI)",
+        "python -m experiments.runner ..."
+      ]
+    },
+    "architecture": {
+      "modules": [
+        "src/bnsyn core simulation modules",
+        "tests (smoke/validation/property)",
+        "scripts/tools for governance and reproducibility"
+      ],
+      "critical_paths": [
+        "deterministic simulation loop",
+        "temperature-controlled consolidation experiments",
+        "release/readiness governance checks"
+      ]
+    },
+    "data_model": {
+      "db": "No database layer detected",
+      "migrations": "No DB migration framework detected",
+      "evidence": [
+        "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"top-level directories list has no db service\"",
+        "Command: \"cmd:find . -maxdepth 3 -type f ...\" log:proof_bundle/manifests.log exit:0 sha256:ecdc92ff80b6e9d79cb7a9e5e2d59c938f507b6ec75b3a05d0756b4dda8f3cf4"
+      ]
+    },
+    "api_contracts": {
+      "type": "Python module API contract (non-HTTP)",
+      "versioning": "package version in pyproject.toml",
+      "error_model": "Python exceptions in modules",
+      "evidence": [
+        "File: \"docs/API_CONTRACT.md:1-23\" snippet:\"public API is module list\"",
+        "File: \"pyproject.toml:3-3\" snippet:\"version = 0.2.0\""
+      ]
+    },
+    "security_privacy": {
+      "signals": [
+        "gitleaks config",
+        "bandit + pip-audit in make target",
+        "dependency-review + codeql workflows"
+      ],
+      "gaps": [
+        "no authN/authZ surface for SaaS",
+        "no multi-tenant controls"
+      ],
+      "evidence": [
+        "File: \".gitleaks.toml:19-35\" snippet:\"gitleaks allowlist policy\"",
+        "File: \"Makefile:145-148\" snippet:\"security target commands\"",
+        "File: \".github/workflows/dependency-review.yml:1-29\" snippet:\"dependency review in PR\""
+      ]
+    },
+    "observability_reliability": {
+      "signals": [
+        "benchmark/profiling artifacts",
+        "determinism workflows"
+      ],
+      "gaps": [
+        "no web/API health endpoints",
+        "no p95/error-budget instrumentation"
+      ],
+      "evidence": [
+        "File: \"benchmarks/kernel_profile.json:1-20\" snippet:\"profiling baseline present\"",
+        "File: \".github/workflows/ci-pr-atomic.yml:88-119\" snippet:\"determinism repeated test runs\""
+      ]
+    },
+    "release_ops": {
+      "signals": [
+        "release pipeline workflow",
+        "dockerfile and docker compose"
+      ],
+      "gaps": [
+        "limited rollback/incident runbook detail"
+      ],
+      "evidence": [
+        "File: \".github/workflows/release-pipeline.yml:27-53\" snippet:\"release dry-run artifact\"",
+        "File: \"Dockerfile:1-24\" snippet:\"containerized test/run path\"",
+        "File: \"docker-compose.yml:1-6\" snippet:\"benchmark service\""
+      ]
+    },
+    "lovable_to_prod_delta": [
+      "Repository is not a marketplace monorepo; lacks frontend/backend/account/payment components.",
+      "No auth/RBAC/multi-tenant boundaries for SaaS workflows.",
+      "No purchase-entitlement-download path to harden.",
+      "No DB schema/migrations for user/content/transactions.",
+      "No API contract for web clients (OpenAPI/GraphQL) corresponding to marketplace flows."
+    ]
+  },
+  "scoring": {
+    "total_score": 43,
+    "readiness_level": "Dev-Ready (unstable)",
+    "confidence": 1.0,
+    "categories": [
+      {
+        "name": "Build & Reproducibility",
+        "max_points": 15,
+        "earned_points": 9,
+        "criteria": [
+          {
+            "id": "B1",
+            "title": "Toolchain pinned (node/python/go + package managers)",
+            "max": 5,
+            "earned": 4,
+            "status": "PARTIAL",
+            "rationale": "Python and tooling are pinned for CI/release (3.11, setuptools), but local runtime observed is Python 3.12.12 so full hermetic pinning is not demonstrated.",
+            "evidence": [
+              "File: \"pyproject.toml:6-6\" snippet:\"requires-python = >=3.11\"",
+              "File: \"pyproject.toml:65-67\" snippet:\"[build-system] requires = [setuptools==79.0.1]\"",
+              "File: \".github/workflows/ci-pr-atomic.yml:97-103\" snippet:\"python-version ... 3.11 + pin pip\"",
+              "Command: \"cmd:python --version\" log:proof_bundle/python_version.log exit:0 sha256:610288646e3ba9e5778a1c38a8545506708338f312147ead2f559e33a93c9859"
+            ]
+          },
+          {
+            "id": "B2",
+            "title": "Lockfiles present + enforced in install/build",
+            "max": 5,
+            "earned": 5,
+            "status": "PASS",
+            "rationale": "A hash-pinned lockfile exists and CI explicitly recompiles and checks for drift.",
+            "evidence": [
+              "File: \"requirements-lock.txt:2-6\" snippet:\"autogenerated by pip-compile ... --generate-hashes\"",
+              "File: \".github/workflows/ci-pr-atomic.yml:220-225\" snippet:\"pip-compile ... git diff --exit-code requirements-lock.txt\"",
+              "Command: \"cmd:find . -maxdepth 3 -type f ...\" log:proof_bundle/manifests.log exit:0 sha256:ecdc92ff80b6e9d79cb7a9e5e2d59c938f507b6ec75b3a05d0756b4dda8f3cf4"
+            ]
+          },
+          {
+            "id": "B3",
+            "title": "Clean build succeeds with proof",
+            "max": 5,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "Local build execution failed because the build module is missing in the current environment.",
+            "evidence": [
+              "Command: \"cmd:python -m build\" log:proof_bundle/build.log exit:1 sha256:9fe2de255e88064364829a400664d0432aae6ed8a1df363f94074561874549e8"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Tests & Verification",
+        "max_points": 15,
+        "earned_points": 5,
+        "criteria": [
+          {
+            "id": "T1",
+            "title": "Unit tests exist + runnable",
+            "max": 6,
+            "earned": 3,
+            "status": "PARTIAL",
+            "rationale": "A substantial pytest suite exists, but local run failed during collection due missing dependencies (hypothesis/pyyaml/psutil).",
+            "evidence": [
+              "File: \"pyproject.toml:19-51\" snippet:\"optional dependencies include pytest, hypothesis, pyyaml, psutil\"",
+              "File: \"docs/TESTING.md:15-25\" snippet:\"canonical test command make test / pytest\"",
+              "Command: \"cmd:python -m pytest -m \"not validation\" -q\" log:proof_bundle/test_non_validation.log exit:2 sha256:a63f290315d7bc1eac9f4cdb47953338e80e1b4d255aeedcf1654f69046631c9"
+            ]
+          },
+          {
+            "id": "T2",
+            "title": "Integration/e2e for critical paths (auth + purchase/entitlement + download)",
+            "max": 5,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "Repository scope is a deterministic neuroscience simulation library; no evidence of marketplace auth/purchase/download e2e flows.",
+            "evidence": [
+              "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"top-level dirs are src/tests/scripts/docs etc.\"",
+              "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"stable API is Python modules, not web endpoints\""
+            ]
+          },
+          {
+            "id": "T3",
+            "title": "Coverage signal or justified absence",
+            "max": 4,
+            "earned": 2,
+            "status": "PARTIAL",
+            "rationale": "Coverage commands and gates exist (coverage.xml generation and threshold checks), but no passing local coverage execution was captured in this run.",
+            "evidence": [
+              "File: \"Makefile:49-60\" snippet:\"coverage and coverage-gate targets\"",
+              "File: \"docs/TESTING.md:85-124\" snippet:\"coverage artifact and gate behavior\""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "CI/CD & Release Engineering",
+        "max_points": 10,
+        "earned_points": 9,
+        "criteria": [
+          {
+            "id": "C1",
+            "title": "PR checks run (build+tests+lint/typecheck)",
+            "max": 6,
+            "earned": 6,
+            "status": "PASS",
+            "rationale": "PR workflow includes build, tests, lint, mypy, pylint, determinism, and smoke matrix jobs.",
+            "evidence": [
+              "File: \".github/workflows/ci-pr-atomic.yml:4-8\" snippet:\"pull_request + push triggers\"",
+              "File: \".github/workflows/ci-pr-atomic.yml:192-277\" snippet:\"quality, build, tests-smoke jobs\"",
+              "File: \".github/workflows/_reusable_quality.yml:24-236\" snippet:\"ruff/mypy/pylint jobs\""
+            ]
+          },
+          {
+            "id": "C2",
+            "title": "Release/versioning strategy + artifacts",
+            "max": 4,
+            "earned": 3,
+            "status": "PARTIAL",
+            "rationale": "Release dry-run pipeline and version-bump checks are defined; rollback/runbook specifics are limited.",
+            "evidence": [
+              "File: \"docs/RELEASE_PIPELINE.md:3-34\" snippet:\"deterministic release stages and bump flow\"",
+              "File: \".github/workflows/release-pipeline.yml:27-53\" snippet:\"build and upload release dry-run artifacts\""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Security, Privacy, Multi-tenancy",
+        "max_points": 20,
+        "earned_points": 6,
+        "criteria": [
+          {
+            "id": "S1",
+            "title": "Secret hygiene: no plaintext secrets + scanning configured",
+            "max": 5,
+            "earned": 4,
+            "status": "PARTIAL",
+            "rationale": "Gitleaks policy and security targets are configured, but no successful local security scan execution evidence was captured in this run.",
+            "evidence": [
+              "File: \".gitleaks.toml:1-35\" snippet:\"strict gitleaks policy with bounded allowlist\"",
+              "File: \"Makefile:145-148\" snippet:\"gitleaks detect, pip-audit, bandit\""
+            ]
+          },
+          {
+            "id": "S2",
+            "title": "AuthN/AuthZ correctness signals (RBAC, guards, API authorization)",
+            "max": 6,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No server-side authN/authZ or RBAC implementation is evident for marketplace workflows.",
+            "evidence": [
+              "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"library-focused structure\"",
+              "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"module-level API surface only\""
+            ]
+          },
+          {
+            "id": "S3",
+            "title": "Multi-tenant isolation + data access scoping evidence",
+            "max": 4,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No tenant data model, tenant scoping middleware, or tenant-aware persistence layer was found.",
+            "evidence": [
+              "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"no backend/db service directories\"",
+              "Command: \"cmd:find . -maxdepth 3 -type f ...\" log:proof_bundle/manifests.log exit:0 sha256:ecdc92ff80b6e9d79cb7a9e5e2d59c938f507b6ec75b3a05d0756b4dda8f3cf4"
+            ]
+          },
+          {
+            "id": "S4",
+            "title": "Payment security/entitlements integrity (no trust-on-client)",
+            "max": 3,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No payment processor integration or entitlement state handling exists in repository artifacts.",
+            "evidence": [
+              "File: \"docs/API_CONTRACT.md:1-4\" snippet:\"BN-Syn API contract for library modules\""
+            ]
+          },
+          {
+            "id": "S5",
+            "title": "Security policy + dependency vuln scanning",
+            "max": 2,
+            "earned": 2,
+            "status": "PASS",
+            "rationale": "Dependency review and CodeQL workflows are present in CI.",
+            "evidence": [
+              "File: \".github/workflows/dependency-review.yml:1-29\" snippet:\"dependency review action on dependency diffs\"",
+              "File: \".github/workflows/codeql.yml:1-33\" snippet:\"scheduled CodeQL analysis\""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Product Critical Paths & Data Integrity",
+        "max_points": 15,
+        "earned_points": 0,
+        "criteria": [
+          {
+            "id": "P1",
+            "title": "Browse/search/catalog correctness + pagination/filtering contract",
+            "max": 4,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No marketplace browse/search/catalog API contracts were found.",
+            "evidence": [
+              "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"Python package modules listed as API\""
+            ]
+          },
+          {
+            "id": "P2",
+            "title": "Purchase \u2192 entitlement \u2192 download is atomic/idempotent",
+            "max": 6,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No purchase, entitlement, or download transaction flow exists in the detected architecture.",
+            "evidence": [
+              "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"no ecommerce service boundaries\""
+            ]
+          },
+          {
+            "id": "P3",
+            "title": "Custom request workflow state machine (status transitions, auditability)",
+            "max": 3,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No custom-request lifecycle state machine or audit trail for such workflow found.",
+            "evidence": [
+              "File: \"docs/ARCHITECTURE.md:20-27\" snippet:\"control loops are neuroscience simulation loops\""
+            ]
+          },
+          {
+            "id": "P4",
+            "title": "Admin/moderation controls + abuse handling",
+            "max": 2,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No admin moderation control plane or abuse workflow artifacts were detected.",
+            "evidence": [
+              "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"project structure lacks admin web/backend modules\""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Performance, Reliability, Observability, Cost",
+        "max_points": 15,
+        "earned_points": 5,
+        "criteria": [
+          {
+            "id": "R1",
+            "title": "p95 latency & error budget instrumentation exists (or measurement harness)",
+            "max": 4,
+            "earned": 1,
+            "status": "PARTIAL",
+            "rationale": "Performance harness exists for simulation benchmarks, but no web/API SLO instrumentation for p95/error budgets is present.",
+            "evidence": [
+              "File: \"benchmarks/README.md:1-20\" snippet:\"benchmark harness documentation\"",
+              "File: \"docs/PERFORMANCE.md:1-20\" snippet:\"performance tracking context\""
+            ]
+          },
+          {
+            "id": "R2",
+            "title": "Profiling/critical path analysis capability (server + DB query visibility)",
+            "max": 4,
+            "earned": 3,
+            "status": "PARTIAL",
+            "rationale": "Kernel profiling/benchmark artifacts exist for simulation pathways, but no service/DB profiling stack is present.",
+            "evidence": [
+              "File: \"benchmarks/kernel_profile.json:1-20\" snippet:\"kernel profile baseline artifact\"",
+              "File: \"scripts/profile_kernels.py:1-40\" snippet:\"profiling script\""
+            ]
+          },
+          {
+            "id": "R3",
+            "title": "Rate limiting, retries/timeouts, backpressure signals",
+            "max": 4,
+            "earned": 0,
+            "status": "FAIL",
+            "rationale": "No API gateway/server middleware evidence for rate limits/retries/backpressure in marketplace context.",
+            "evidence": [
+              "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"module API only\""
+            ]
+          },
+          {
+            "id": "R4",
+            "title": "Cost controls (caching, pagination limits, storage policies)",
+            "max": 3,
+            "earned": 1,
+            "status": "PARTIAL",
+            "rationale": "Some workload controls exist in benchmark scenarios, but no production SaaS cost-control policy (pagination/storage TTL/cache strategy) was found.",
+            "evidence": [
+              "File: \"benchmarks/scenarios/ci_smoke.py:1-60\" snippet:\"bounded benchmark scenario inputs\""
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Documentation & Governance",
+        "max_points": 10,
+        "earned_points": 9,
+        "criteria": [
+          {
+            "id": "D1",
+            "title": "README: setup/run/test + env config",
+            "max": 4,
+            "earned": 4,
+            "status": "PASS",
+            "rationale": "README and testing docs provide setup/run/test guidance with explicit commands.",
+            "evidence": [
+              "File: \"README.md:1-40\" snippet:\"project overview and quality links\"",
+              "File: \"docs/TESTING.md:5-25\" snippet:\"install and test commands\""
+            ]
+          },
+          {
+            "id": "D2",
+            "title": "Architecture notes/ADR + onboarding",
+            "max": 3,
+            "earned": 3,
+            "status": "PASS",
+            "rationale": "Architecture and governance documentation is extensive and cross-referenced.",
+            "evidence": [
+              "File: \"docs/ARCHITECTURE.md:1-19\" snippet:\"architecture scope/traceability\"",
+              "File: \"docs/INDEX.md:1-30\" snippet:\"documentation index\""
+            ]
+          },
+          {
+            "id": "D3",
+            "title": "Ops runbook (deploy/rollback/incident)",
+            "max": 3,
+            "earned": 2,
+            "status": "PARTIAL",
+            "rationale": "Release pipeline documentation exists, but comprehensive incident/rollback operational runbooks are limited for SaaS operations.",
+            "evidence": [
+              "File: \"docs/RELEASE_PIPELINE.md:1-34\" snippet:\"release dry-run and bump workflow\"",
+              "File: \".github/workflows/release-pipeline.yml:27-53\" snippet:\"artifact-producing release workflow\""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "top_blockers": [
+    {
+      "title": "Repository scope mismatch vs target product (no marketplace stack)",
+      "lost_points": 15,
+      "fix": "Create/ingest dedicated marketplace backend/frontend modules (catalog, auth, payments, entitlements, downloads) and wire tests for critical flows.",
+      "evidence": [
+        "File: \"docs/REPO_STRUCTURE.md:10-18\" snippet:\"current structure is simulation-centric\""
+      ],
+      "criteria": [
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ]
+    },
+    {
+      "title": "Build reproducibility unproven in current environment",
+      "lost_points": 5,
+      "fix": "Install pinned build dependencies and re-run clean `python -m build` with artifact hash capture in proof bundle.",
+      "evidence": [
+        "Command: \"cmd:python -m build\" log:proof_bundle/build.log exit:1 sha256:9fe2de255e88064364829a400664d0432aae6ed8a1df363f94074561874549e8"
+      ],
+      "criteria": [
+        "B3"
+      ]
+    },
+    {
+      "title": "Tests not runnable in local gate due missing dependencies",
+      "lost_points": 3,
+      "fix": "Run `python -m pip install -e \".[test]\"` (or lockfile install) before pytest and record passing output + coverage.",
+      "evidence": [
+        "Command: \"cmd:python -m pytest -m \"not validation\" -q\" log:proof_bundle/test_non_validation.log exit:2 sha256:a63f290315d7bc1eac9f4cdb47953338e80e1b4d255aeedcf1654f69046631c9"
+      ],
+      "criteria": [
+        "T1"
+      ]
+    },
+    {
+      "title": "No authN/authZ and multi-tenant controls for SaaS",
+      "lost_points": 10,
+      "fix": "Implement server-side auth, RBAC policy checks, and tenant-scoped persistence with automated authorization tests.",
+      "evidence": [
+        "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"module API only\""
+      ],
+      "criteria": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "title": "No payment/entitlement integrity path",
+      "lost_points": 9,
+      "fix": "Introduce server-authoritative purchase\u2192entitlement transaction model with idempotency keys and downloadable asset authorization.",
+      "evidence": [
+        "File: \"docs/API_CONTRACT.md:1-4\" snippet:\"non-commerce API scope\""
+      ],
+      "criteria": [
+        "S4",
+        "P2"
+      ]
+    },
+    {
+      "title": "Reliability controls for API traffic absent",
+      "lost_points": 7,
+      "fix": "Add API-layer rate limiting, timeout/retry policies, health checks, and SLO dashboards (p95 latency/error rate).",
+      "evidence": [
+        "File: \"docs/API_CONTRACT.md:5-23\" snippet:\"no HTTP service contract\""
+      ],
+      "criteria": [
+        "R1",
+        "R3"
+      ]
+    }
+  ],
+  "next_actions": [
+    {
+      "action": "Stand up minimal production marketplace service boundaries (auth, catalog, orders, entitlements, downloads).",
+      "expected_gain_points": 24,
+      "steps": [
+        "Define OpenAPI contracts for critical paths.",
+        "Implement server-side handlers with idempotency + authorization.",
+        "Add integration tests for auth and purchase\u2192download flows."
+      ],
+      "evidence_targets": [
+        "OpenAPI file with versioned endpoints",
+        "Passing integration/e2e command logs",
+        "Server-side policy checks in code + tests"
+      ]
+    },
+    {
+      "action": "Restore reproducible local build/test gate with lockfile-based environment bootstrap.",
+      "expected_gain_points": 8,
+      "steps": [
+        "Install dependencies from requirements-lock.txt.",
+        "Run python -m build and pytest/coverage commands.",
+        "Record outputs and artifact hashes in proof bundle."
+      ],
+      "evidence_targets": [
+        "proof_bundle/build.log exit 0",
+        "proof_bundle/test*.log exit 0",
+        "coverage.xml hash + gate output"
+      ]
+    },
+    {
+      "action": "Introduce production observability/reliability baseline.",
+      "expected_gain_points": 7,
+      "steps": [
+        "Add health/readiness endpoints and structured logs.",
+        "Export request latency/error metrics.",
+        "Define and validate rate limiting/timeout behavior under load tests."
+      ],
+      "evidence_targets": [
+        "Health endpoint contract and tests",
+        "Metrics dashboards or exported samples",
+        "Load-test command logs with p95/error-rate"
+      ]
+    },
+    {
+      "action": "Formalize security posture for SaaS workloads.",
+      "expected_gain_points": 6,
+      "steps": [
+        "Add authz tests for protected endpoints.",
+        "Enable continuous vulnerability scanning and secret scanning in required checks.",
+        "Document incident response and key rotation runbook."
+      ],
+      "evidence_targets": [
+        "Authz test logs",
+        "CI required-check config including security jobs",
+        "Security runbook docs"
+      ]
+    }
+  ],
+  "proof_bundle_index": [
+    {
+      "type": "command_log",
+      "path": "proof_bundle/build.log",
+      "sha256": "9fe2de255e88064364829a400664d0432aae6ed8a1df363f94074561874549e8"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/cpu.log",
+      "sha256": "74d562f438a1db06a97513d1ed3167e2d519a03c9447caefea5d3ca85a9c8fd8"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/ext_counts.log",
+      "sha256": "48a212bf9e574e4b724274f980164a2fc9825c310654198c2bcf24340c2e1baa"
+    },
+    {
+      "type": "file_excerpt",
+      "path": "proof_bundle/file_excerpts.md",
+      "sha256": "1802a6932a7d25f2ab7a5f941231baed00988833be26d106def9b6a0ecd1d451"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/find_top.log",
+      "sha256": "bff57f84b4f92657fd3f4e33119555365dc9a6d34dedcf190d0e8b9e1eaa9f9a"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/git_log.log",
+      "sha256": "aadb129abc2abd4f80cc22f4860d9c478555dad3e1cf63fad928432bf474882a"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/git_status.log",
+      "sha256": "0760ece653f50bef86a52db6d7a4f1c568af67710a504d71b5902305c9129691"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/manifests.log",
+      "sha256": "ecdc92ff80b6e9d79cb7a9e5e2d59c938f507b6ec75b3a05d0756b4dda8f3cf4"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/mem.log",
+      "sha256": "412ce4e8e0799b56cf42ce1219b213e6e90755366e4268a73995dd9b4c9696af"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/pip_version.log",
+      "sha256": "98703989e9adf5c07cfc6bd32d807ff3e314e5cc6dd7e94ed95b19b4f4953e2d"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/pytest_version.log",
+      "sha256": "8f716cc642d4fcb11ab6b3aa91427638fb1c18eeb67522147caa56f1229f53b6"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/python_version.log",
+      "sha256": "610288646e3ba9e5778a1c38a8545506708338f312147ead2f559e33a93c9859"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/test_non_validation.log",
+      "sha256": "a63f290315d7bc1eac9f4cdb47953338e80e1b4d255aeedcf1654f69046631c9"
+    },
+    {
+      "type": "command_log",
+      "path": "proof_bundle/uname.log",
+      "sha256": "4218ba56b76881f76e366b30aca75b3d10d0fc8b2f7610f818e1d6ad8f428be9"
+    }
+  ]
+}
