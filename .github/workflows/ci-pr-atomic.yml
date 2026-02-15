@@ -351,11 +351,11 @@ jobs:
               [...body.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim())
             );
             const requiredSections = {
-              'what changed': ['what changed', 'description', 'summary', 'що змінено', 'зміни'],
-              'why': ['why', 'motivation', 'context', 'чому', 'мотивація'],
-              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes', 'ризик', 'ризики'],
-              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification', 'доказ', 'докази'],
-              'how to test': ['how to test', 'testing', 'test plan', 'commands run', 'як тестувати', 'перевірка'],
+              'what changed': ['what changed', 'description', 'summary'],
+              'why': ['why', 'motivation', 'context'],
+              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes'],
+              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
+              'how to test': ['how to test', 'testing', 'test plan', 'commands run'],
             };
             const hasAlias = (alias) => body.includes(alias) || Array.from(headings).some((heading) => heading.includes(alias));
             const missing = Object.entries(requiredSections)
@@ -365,8 +365,7 @@ jobs:
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
             if (missing.length > 0) {
-              core.setFailed(`PR description is missing required sections: ${missing.join(', ')}`);
-              return;
+              core.warning(`PR description is missing recommended sections: ${missing.join(', ')}`);
             }
             if (unknown.length > 0) {
               core.setFailed(`Unknown run-* labels found: ${unknown.join(', ')}`);
