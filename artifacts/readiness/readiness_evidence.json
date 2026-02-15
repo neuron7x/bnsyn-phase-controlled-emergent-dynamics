@@ -1,0 +1,249 @@
+{
+  "meta": {
+    "repo": "bnsyn-phase-controlled-emergent-dynamics",
+    "head_sha": "a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a",
+    "timestamp_utc": "2026-02-15T17:51:35.870473+00:00"
+  },
+  "discovery": {
+    "ls_root": {
+      "exit_code": 0,
+      "snippet": "total 468\ndrwxr-xr-x 26 root root   4096 Feb 15 17:35 .\ndrwxr-xr-x  3 root root   4096 Feb 15 11:56 ..\ndrwxr-xr-x  3 root root   4096 Feb 15 17:30 .cache\n-rw-r--r--  1 root root  69632 Feb 15 17:34 .coverage\ndrwxr-xr-x  8 root root   4096 Feb 15 17:46 .git\ndrwxr-xr-x  4 root root   4096 Feb 15 17:29 .github\n-rw-r--r--  1 root root    645 Feb 15 11:56 .gitignore\n-rw-r--r--  1 root root   1378 Feb 15 11:56 .gitleaks.toml\ndrwxr-xr-x  4 root root   4096 Feb 15 17:31 .hypothesis\n-rw-r--r--  1 root root   2648 Feb 15 11:56 .pre-commit-config.yaml\ndrwxr-xr-x  3 root root   4096 Feb 15 17:29 .pytest_cache\n-rw-r--r--  1 root root   2074 Feb 15 11:56 BENCHMARK_PROTOCOL.md\n-rw-r--r--  1 root root    331 Feb 15 11:56 CHANGELOG.md\n-rw-r--r--  1 root root    240 Feb 15 11:56 CITATION.cff\n-rw-r--r--  1 root root   2691 Feb 15 11:56 CODEBASE_READINESS.md\n-rw-r--r--  1 root root   7874 Feb 15 11:56 CONTRIBUTING.md\n-rw-r--r--  1 root root    554 Feb 15 11:56 Dockerfile\n-rw-r--r--  1 root root   1476 Feb 15 17:29 FINAL_REPORT.md\n-rw-r--r--  1 root root    948 Feb 15 17:29 GAP_TABLE.md\n-rw-r--r--  1 root root   1325 Feb 15 11:56 GOVERNANCE_VERIFICATION_REPORT.md\n-rw-r--r--  1 root root   9048 Feb 15 11:56 HARDENING_SUMMARY.md\n-rw-r--r--  1 root root   1137 Feb 15 17:29 INVENTORY.json\n-rw-r--r--  1 root root   1076 Feb 15 11:56 LICENSE\n-rw-r--r--  1 root root   6479 Feb 15 17:29 Makefile\n-rw-r--r--  1 root root   4583 Feb 15 11:56 PR_DESCRIPTION.md\n-rw-r--r--  1 root root  14423 Feb 15 11:56 PR_DESCRIPTION_EVIDENCE.md\n-rw-r--r--  1 root root  22390 Feb 15 17:29 README.md\n-rw-r--r--  1 root root    861 Feb 15 11:56 README_CLAIMS_GATE.md\n-rw-r--r--  1 root root    272 Feb 15 11:56 SECURITY.md\n-rw-r--r--  1 root root   6639 Feb 15 11:56 VERIFICATION_REPORT.md\n-rw-r--r--  1 root root   2293 Feb 15 17:29 acceptance_map.yaml\ndrwxr-xr-x  8 root root   4096 Feb 15 17:46 artifacts\ndrwxr-xr-x  5 root root   4096 Feb 15 17:30 benchmarks\ndrwxr-xr-x  2 root root   4096 Feb 15 11:56 bibliography\ndrwxr-xr-x  2 root root   4096 Feb 15 11:56 claims\n-rw-r--r--  1 root root    195 Feb 15 11:56 docker-compose.yml\ndrwxr-xr-x  8 root root   4096 Feb 15 17:29 docs\ndrwxr-xr-x  4 root root   4096 Feb 15 17:30 entropy\ndrwxr-xr-x 10 root root   4096 Feb 15 11:56 evidence"
+    },
+    "scripts_py": {
+      "exit_code": 0,
+      "count": 61,
+      "snippet": "scripts/check_quickstart_consistency.py\nscripts/benchmark_physics.py\nscripts/build_wheelhouse.py\nscripts/run_scaled_sleep_stack.py\nscripts/validate_required_status_contexts.py\nscripts/scan_governed_docs.py\nscripts/lint_ci_truthfulness.py\nscripts/release_pipeline.py\nscripts/generate_math_data.py\nscripts/calculate_throughput_gain.py\nscripts/bench_ci_smoke.py\nscripts/sync_required_status_contexts.py\nscripts/mutation_ci_summary.py\nscripts/validate_workflow_contracts.py\nscripts/validate_required_checks.py\nscripts/validate_api_maturity.py\nscripts/collect_ci_run_urls.py\nscripts/run_benchmarks.py\nscripts/profile_kernels.py\nscripts/generate_coverage_baseline.py\nscripts/generate_coverage_trend.py\nscripts/validate_mutation_baseline.py\nscripts/benchmark_production.py\nscripts/validate_claims.py\nscripts/ssot_rules.py\nscripts/mutation_counts.py\nscripts/orchestrate_throughput_scaling.py\nscripts/math_validate.py\nscripts/verify_equivalence.py\nscripts/release_readiness.py\nscripts/visualize_experiment.py\nscripts/verify_formal_constants.py\nscripts/render_workflow_policy_docs.py\nscripts/intelligence_cycle.py\nscripts/generate_evidence_coverage.py\nscripts/scan_tierS_misuse.py\nscripts/validate_long_running_triggers.py\nscripts/scan_normative_tags.py\nscripts/validate_branch_protection_governance.py\nscripts/generate_mutation_baseline.py"
+    },
+    "workflows": {
+      "exit_code": 0,
+      "snippet": "total 184\ndrwxr-xr-x 2 root root  4096 Feb 15 17:29 .\ndrwxr-xr-x 4 root root  4096 Feb 15 17:29 ..\n-rw-r--r-- 1 root root 11339 Feb 15 11:56 _reusable_benchmarks.yml\n-rw-r--r-- 1 root root  2863 Feb 15 11:56 _reusable_chaos_tests.yml\n-rw-r--r-- 1 root root 14073 Feb 15 11:56 _reusable_formal_science.yml\n-rw-r--r-- 1 root root  3287 Feb 15 11:56 _reusable_gate_profile.yml\n-rw-r--r-- 1 root root  4262 Feb 15 11:56 _reusable_property_tests.yml\n-rw-r--r-- 1 root root  9190 Feb 15 11:56 _reusable_pytest.yml\n-rw-r--r-- 1 root root  7307 Feb 15 11:56 _reusable_quality.yml\n-rw-r--r-- 1 root root  1083 Feb 15 11:56 _reusable_ssot.yml\n-rw-r--r-- 1 root root  3214 Feb 15 11:56 _reusable_validation_tests.yml\n-rw-r--r-- 1 root root  1331 Feb 15 11:56 benchmarks.yml\n-rw-r--r-- 1 root root   513 Feb 15 11:56 ci-benchmarks-elite.yml\n-rw-r--r-- 1 root root  1919 Feb 15 11:56 ci-benchmarks.yml\n-rw-r--r-- 1 root root 18898 Feb 15 17:29 ci-pr-atomic.yml\n-rw-r--r-- 1 root root   858 Feb 15 11:56 ci-pr.yml\n-rw-r--r-- 1 root root  1455 Feb 15 11:56 ci-smoke.yml\n-rw-r--r-- 1 root root  6818 Feb 15 11:56 ci-validation.yml\n-rw-r--r-- 1 root root   907 Feb 15 11:56 codecov-health.yml\n-rw-r--r-- 1 root root   801 Feb 15 11:56 codeql.yml\n-rw-r--r-- 1 root root   637 Feb 15 11:56 dependency-review.yml\n-rw-r--r-- 1 root root  1405 Feb 15 11:56 dependency-watch.yml\n-rw-r--r-- 1 root root  1089 Feb 15 11:56 docs.yml\n-rw-r--r-- 1 root root   511 Feb 15 11:56 formal-coq.yml\n-rw-r--r-- 1 root root   753 Feb 15 11:56 formal-tla.yml\n-rw-r--r-- 1 root root  1452 Feb 15 11:56 math-quality-gate.yml\n-rw-r--r-- 1 root root  2701 Feb 15 11:56 physics-equivalence.yml\n-rw-r--r-- 1 root root  2329 Feb 15 11:56 quality-mutation.yml\n-rw-r--r-- 1 root root  1576 Feb 15 11:56 release-pipeline.yml\n-rw-r--r-- 1 root root   455 Feb 15 11:56 science.yml\n-rw-r--r-- 1 root root  7651 Feb 15 17:29 workflow-integrity.yml"
+    },
+    "build_metadata": {
+      "exit_code": 0,
+      "snippet": "-rw-r--r-- 1 root root   6479 Feb 15 17:29 Makefile\n-rw-r--r-- 1 root root   3520 Feb 15 11:56 pyproject.toml\n-rw-r--r-- 1 root root 103848 Feb 15 11:56 requirements-lock.txt"
+    },
+    "docs_hits": {
+      "exit_code": 0,
+      "count": 481,
+      "snippet": "README.md:5:[![ci-pr](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)\nREADME.md:6:[![ci-validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)\nREADME.md:7:[![codeql](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml)\nREADME.md:8:[![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)\nREADME.md:9:[![ci-pr-atomic](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)\nREADME.md:23:- [Quickstart](#quickstart)\nREADME.md:53:Canonical commands for install, test, coverage, and coverage gate live in [`docs/TESTING.md`](docs/TESTING.md).\nREADME.md:104:pip install -e \".[dev,viz]\"\nREADME.md:139:bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1\nREADME.md:145:- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)\nREADME.md:152:python -m bnsyn.tools.run_scaled_sleep_stack \\\nREADME.md:160:python -m bnsyn.tools.benchmark_sleep_stack_scale\nREADME.md:166:python -m bnsyn.tools.run_scaled_sleep_stack \\\nREADME.md:167:  --out /tmp/bnsyn_scaled_smoke \\\nREADME.md:188:from bnsyn.rng import seed_all\nREADME.md:189:from bnsyn.sim.network import Network, NetworkParams\nREADME.md:190:from bnsyn.config import AdExParams, SynapseParams, CriticalityParams, TemperatureParams\nREADME.md:191:from bnsyn.temperature.schedule import TemperatureSchedule\nREADME.md:192:from bnsyn.sleep import SleepCycle, default_human_sleep_cycle\nREADME.md:193:from bnsyn.memory import MemoryConsolidator\nREADME.md:194:from bnsyn.criticality import PhaseTransitionDetector\nREADME.md:195:from bnsyn.emergence import AttractorCrystallizer\nREADME.md:236:- **Lazy Visualization**: Optional matplotlib-based dashboard (install with `pip install -e \".[viz]\"`)\nREADME.md:267:pip install -e \".[viz]\"\nREADME.md:270:bnsyn demo --interactive\nREADME.md:286:bnsyn run examples/configs/quickstart.yaml\nREADME.md:289:bnsyn run examples/configs/quickstart.yaml -o results/my_experiment.json\nREADME.md:292:**Example config** (`examples/configs/quickstart.yaml`):\nREADME.md:295:  name: quickstart\nREADME.md:322:from bnsyn.incremental import cached\nREADME.md:352:- All randomness flows through `numpy.random.Generator` created by `bnsyn.rng.seed_all(seed)`.\nREADME.md:371:- Source-first install from this repository (editable mode).\nREADME.md:372:- PyPI is not the canonical install path for this repository.\nREADME.md:379:python -m pip install -e .\nREADME.md:382:**Verify installation**\nREADME.md:384:python -m bnsyn --help\nREADME.md:387:**Run the deterministic quickstart demo**\nREADME.md:389:bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32\nREADME.md:392:**Run the quickstart smoke contract**\nREADME.md:394:make quickstart-smoke\nREADME.md:403:- All random state is seeded via `bnsyn.rng.seed_all(seed)`.\nREADME.md:465:docker build -t bnsyn-dev .\nREADME.md:466:docker run bnsyn-dev\nREADME.md:539:- **Source artifacts:** [`bibliography/bnsyn.bib`](bibliography/bnsyn.bib), [`bibliography/mapping.yml`](bibliography/mapping.yml), [`bibliography/sources.lock`](bibliography/sources.lock)\ndocs/ENTROPY_LEDGER.md:4:- Repository: `bnsyn-phase-controlled-emergent-dynamics`\ndocs/sleep_stack.md:73:from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams\ndocs/sleep_stack.md:74:from bnsyn.criticality import PhaseTransitionDetector\ndocs/sleep_stack.md:75:from bnsyn.emergence import AttractorCrystallizer\ndocs/sleep_stack.md:76:from bnsyn.memory import MemoryConsolidator\ndocs/sleep_stack.md:77:from bnsyn.rng import seed_all\ndocs/sleep_stack.md:78:from bnsyn.sim.network import Network, NetworkParams\ndocs/sleep_stack.md:79:from bnsyn.sleep import SleepCycle, default_human_sleep_cycle\ndocs/sleep_stack.md:80:from bnsyn.temperature.schedule import TemperatureSchedule\ndocs/sleep_stack.md:125:bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1\ndocs/sleep_stack.md:131:- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)\ndocs/sleep_stack.md:176:- `src/bnsyn/sleep/`: Sleep cycle implementation\ndocs/sleep_stack.md:177:- `src/bnsyn/memory/`: Memory consolidation and trace\ndocs/sleep_stack.md:178:- `src/bnsyn/criticality/`: Phase transition detection\ndocs/sleep_stack.md:179:- `src/bnsyn/emergence/`: Attractor crystallization\ndocs/LEGENDARY_QUICKSTART.md:5:## Canonical install path"
+    }
+  },
+  "checks": {
+    "A1_install_clean_venv": {
+      "exit_code": 0,
+      "stdout_snippet": "Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Getting requirements to build editable: started\n  Getting requirements to build editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nCollecting numpy==2.4.1 (from bnsyn==0.2.0)\n  Downloading numpy-2.4.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)\nCollecting pydantic==2.12.5 (from bnsyn==0.2.0)\n  Downloading pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)\nCollecting scipy==1.17.0 (from bnsyn==0.2.0)\n  Downloading scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)\nCollecting jsonschema==4.26.0 (from bnsyn==0.2.0)\n  Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)\nCollecting joblib==1.4.2 (from bnsyn==0.2.0)\n  Downloading joblib-1.4.2-py3-none-any.whl.metadata (5.4 kB)\nCollecting attrs>=22.2.0 (from jsonschema==4.26.0->bnsyn==0.2.0)",
+      "stderr_snippet": ""
+    },
+    "A2_import_smoke": {
+      "exit_code": 0,
+      "stdout_snippet": "import_ok 0.2.0"
+    },
+    "A3_cli_smoke": {
+      "exit_code": 0,
+      "stdout_snippet": "usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...\n\nBN-Syn CLI\n\npositional arguments:\n  {demo,run,dtcheck,sleep-stack}\n    demo                Run a small deterministic demo simulation\n    run                 Run experiment from YAML config\n    dtcheck             Run dt vs dt/2 invariance harness\n    sleep-stack         Run sleep-stack demo with emergence tracking\n\noptions:\n  -h, --help            show this help message and exit"
+    },
+    "B1_make_test": {
+      "exit_code": 0,
+      "stdout_snippet": "python -m pytest -m \"not validation\" -q\n[Hypothesis] Using default profile\n........................................................................ [ 10%]\n........................................................................ [ 21%]\n........................................................................ [ 32%]\n..................................................ss....ss.............. [ 42%]\n........................................................................ [ 53%]\n........................................................................ [ 64%]\n........................................................................ [ 74%]\n........................................................................ [ 85%]\n........................................................................ [ 96%]\n...........................                                              [100%]\n=============================== warnings summary ===============================\ntests/test_cli_interactive.py::test_cli_module_main_executes\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour\n\ntests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+      "stderr_snippet": ""
+    },
+    "B2_subset_marker": {
+      "exit_code": 0,
+      "stdout_snippet": "........................................................................ [ 11%]\n........................................................................ [ 22%]\n........................................................................ [ 33%]\n......................ss....ss.......................................... [ 44%]\n........................................................................ [ 55%]\n........................................................................ [ 66%]\n........................................................................ [ 77%]\n........................................................................ [ 89%]\n.......................................................................  [100%]\n=============================== warnings summary ===============================\ntests/test_cli_interactive.py::test_cli_module_main_executes\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour\n\ntests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html",
+      "stderr_snippet": ""
+    },
+    "C1_validate_required_checks": {
+      "exit_code": 0,
+      "stdout_snippet": "OK: required_checks=4 contract_pr_gates=4 validated",
+      "stderr_snippet": ""
+    },
+    "C2_validate_required_status_contexts": {
+      "exit_code": 0,
+      "stdout_snippet": "OK: required_status_contexts=13 validated",
+      "stderr_snippet": ""
+    },
+    "C3_validate_mutation_baseline": {
+      "exit_code": 0,
+      "stdout_snippet": "\u2705 Mutation baseline valid: quality/mutation_baseline.json",
+      "stderr_snippet": ""
+    },
+    "D1_release_readiness": {
+      "exit_code": 0,
+      "stdout_snippet": "Release readiness: READY\nJSON report: /workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/release_readiness.json\nMarkdown report: /workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/release_readiness.md",
+      "stderr_snippet": ""
+    },
+    "E1_quickstart_exact_commands": {
+      "install_exit": 0,
+      "help_exit": 0,
+      "demo_exit": 0,
+      "demo_stdout_snippet": "{\n  \"demo\": {\n    \"rate_mean_hz\": 0.0,\n    \"rate_std\": 0.0,\n    \"sigma_mean\": 1.0,\n    \"sigma_std\": 0.0\n  }\n}",
+      "demo_stderr_snippet": ""
+    },
+    "E2_quickstart_smoke_target": {
+      "exit_code": 0,
+      "stdout_snippet": "python -m scripts.check_quickstart_consistency\nquickstart consistency check PASSED\npython -m pip install -e .\nObtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics\n  Installing build dependencies: started\n  Installing build dependencies: finished with status 'done'\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Getting requirements to build editable: started\n  Getting requirements to build editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nRequirement already satisfied: numpy==2.4.1 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)\nRequirement already satisfied: pydantic==2.12.5 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)\nRequirement already satisfied: scipy==1.17.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)\nRequirement already satisfied: jsonschema==4.26.0 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)\nRequirement already satisfied: joblib==1.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)\nRequirement already satisfied: attrs>=22.2.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)\nRequirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)\nRequirement already satisfied: referencing>=0.28.4 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)\nRequirement already satisfied: rpds-py>=0.25.0 in ./.venv_readiness/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)\nRequirement already satisfied: annotated-types>=0.6.0 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)\nRequirement already satisfied: pydantic-core==2.41.5 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)\nRequirement already satisfied: typing-extensions>=4.14.1 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)\nRequirement already satisfied: typing-inspection>=0.4.2 in ./.venv_readiness/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)",
+      "stderr_snippet": ""
+    },
+    "F1_ci_proof": {
+      "collector_exists": true,
+      "help_exit": 0,
+      "help_stdout": "usage: collect_ci_run_urls.py [-h] [--repo REPO] [--sha SHA] [--out OUT]\n                              [--required]\n\nCollect GitHub Actions run URLs for a head SHA\n\noptions:\n  -h, --help   show this help message and exit\n  --repo REPO\n  --sha SHA\n  --out OUT\n  --required",
+      "help_stderr": "",
+      "run_exit": 2,
+      "run_stdout": "",
+      "run_stderr": "usage: collect_ci_run_urls.py [-h] [--repo REPO] [--sha SHA] [--out OUT]\n                              [--required]\ncollect_ci_run_urls.py: error: unrecognized arguments: --output artifacts/readiness/ci_runs.json",
+      "token_present": false,
+      "ci_runs_file": "artifacts/readiness/ci_runs.json",
+      "ci_summary": {
+        "success": 0,
+        "not_triggered": 1,
+        "missing": 3,
+        "required_total": 4,
+        "pass": false
+      },
+      "query_total_count": 0
+    },
+    "G_files": {
+      "pyproject_exists": true,
+      "requirements_lock_exists": true,
+      "license_exists": true,
+      "security_exists": true
+    }
+  },
+  "scoring": {
+    "items": [
+      {
+        "id": "A1",
+        "points_max": 10,
+        "status": "PASS",
+        "points_awarded": 10,
+        "evidence_ref": "checks.A1_install_clean_venv",
+        "notes": ""
+      },
+      {
+        "id": "A2",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.A2_import_smoke",
+        "notes": ""
+      },
+      {
+        "id": "A3",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.A3_cli_smoke",
+        "notes": ""
+      },
+      {
+        "id": "B1",
+        "points_max": 15,
+        "status": "PASS",
+        "points_awarded": 15,
+        "evidence_ref": "checks.B1_make_test",
+        "notes": ""
+      },
+      {
+        "id": "B2",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.B2_subset_marker",
+        "notes": ""
+      },
+      {
+        "id": "C1",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.C1_validate_required_checks",
+        "notes": ""
+      },
+      {
+        "id": "C2",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.C2_validate_required_status_contexts",
+        "notes": ""
+      },
+      {
+        "id": "C3",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.C3_validate_mutation_baseline",
+        "notes": ""
+      },
+      {
+        "id": "D1",
+        "points_max": 10,
+        "status": "PASS",
+        "points_awarded": 10,
+        "evidence_ref": "checks.D1_release_readiness",
+        "notes": ""
+      },
+      {
+        "id": "E1",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.E1_quickstart_exact_commands",
+        "notes": ""
+      },
+      {
+        "id": "E2",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.E2_quickstart_smoke_target",
+        "notes": ""
+      },
+      {
+        "id": "F1",
+        "points_max": 15,
+        "status": "FAIL",
+        "points_awarded": 0,
+        "evidence_ref": "checks.F1_ci_proof",
+        "notes": "Required workflow runs missing/success criteria unmet for HEAD (summary={'success': 0, 'not_triggered': 1, 'missing': 3, 'required_total': 4, 'pass': False})."
+      },
+      {
+        "id": "G1",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.G_files",
+        "notes": "Explicit dependency metadata and lock file present."
+      },
+      {
+        "id": "G2",
+        "points_max": 5,
+        "status": "PASS",
+        "points_awarded": 5,
+        "evidence_ref": "checks.G_files",
+        "notes": "LICENSE present; SECURITY.md also present."
+      }
+    ],
+    "earned_points": 85,
+    "verified_percent": 85,
+    "unknown_points": 0,
+    "potential_max_percent": 85,
+    "artifacts_sha256": {
+      "artifacts/readiness/env_snapshot.json": "b90aea1d070b25c849046520f31d7f6898e8a808ff9131a616579020f14b003c",
+      "artifacts/readiness/command_log.txt": "b9eb0fd571dbcdb7dea1fb2eee6ee7ba6fafdec1342361bfd2e413933d6b122d",
+      "artifacts/readiness/readiness_evidence.json": "7eb4bc2bb259d2ea25543054d3acdd506fbd814787966a8f5b14e49b4be1f4db",
+      "artifacts/readiness/ci_runs.json": "3cf74f939f75b99c251e754804638429919d94c496fdd2a795815c759f050b0f"
+    }
+  },
+  "top_blockers": [
+    {
+      "id": "F1",
+      "points_max": 15,
+      "status": "FAIL",
+      "points_awarded": 0,
+      "evidence_ref": "checks.F1_ci_proof",
+      "notes": "Required workflow runs missing/success criteria unmet for HEAD (summary={'success': 0, 'not_triggered': 1, 'missing': 3, 'required_total': 4, 'pass': False})."
+    }
+  ]
+}

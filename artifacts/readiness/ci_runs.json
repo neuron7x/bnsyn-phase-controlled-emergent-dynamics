@@ -1,0 +1,68 @@
+{
+  "repo": "neuron7x/bnsyn-phase-controlled-emergent-dynamics",
+  "head_sha": "a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a",
+  "collected_at_utc": "2026-02-15T17:51:49.472261+00:00",
+  "required_workflows": [
+    {
+      "key": "ci-pr-atomic",
+      "name": "ci-pr-atomic",
+      "workflow_path": ".github/workflows/ci-pr-atomic.yml"
+    },
+    {
+      "key": "workflow-integrity",
+      "name": "Workflow Integrity",
+      "workflow_path": ".github/workflows/workflow-integrity.yml"
+    },
+    {
+      "key": "math-quality-gate",
+      "name": "Math Quality Gate",
+      "workflow_path": ".github/workflows/math-quality-gate.yml"
+    },
+    {
+      "key": "dependency-review",
+      "name": "dependency-review",
+      "workflow_path": ".github/workflows/dependency-review.yml"
+    }
+  ],
+  "query": {
+    "url": "https://api.github.com/repos/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/runs?head_sha=a9a4c9b24bde5de8c8f6ff12d1ce19295500c22a&per_page=100",
+    "total_count": 0
+  },
+  "runs": [
+    {
+      "key": "ci-pr-atomic",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "ci-pr-atomic",
+      "workflow_path": ".github/workflows/ci-pr-atomic.yml"
+    },
+    {
+      "key": "workflow-integrity",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "Workflow Integrity",
+      "workflow_path": ".github/workflows/workflow-integrity.yml"
+    },
+    {
+      "key": "math-quality-gate",
+      "status": "MISSING",
+      "reason": "no runs for head_sha",
+      "name": "Math Quality Gate",
+      "workflow_path": ".github/workflows/math-quality-gate.yml"
+    },
+    {
+      "key": "dependency-review",
+      "status": "NOT_TRIGGERED",
+      "reason": "path-filter",
+      "name": "dependency-review",
+      "workflow_path": ".github/workflows/dependency-review.yml"
+    }
+  ],
+  "summary": {
+    "success": 0,
+    "not_triggered": 1,
+    "missing": 3,
+    "required_total": 4,
+    "pass": false
+  }
+}
