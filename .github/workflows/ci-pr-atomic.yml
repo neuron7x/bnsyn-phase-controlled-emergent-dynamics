@@ -347,8 +347,16 @@ jobs:
         with:
           script: |
             const body = (context.payload.pull_request?.body || '').toLowerCase();
-            const requiredSections = ['what changed', 'why', 'risk', 'evidence', 'how to test'];
-            const missing = requiredSections.filter((section) => !body.includes(section));
+            const requiredSections = {
+              'what changed': ['what changed', 'description'],
+              'why': ['why', 'motivation'],
+              'risk': ['risk'],
+              'evidence': ['evidence'],
+              'how to test': ['how to test', 'testing'],
+            };
+            const missing = Object.entries(requiredSections)
+              .filter(([, aliases]) => !aliases.some((alias) => body.includes(alias)))
+              .map(([section]) => section);
             const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
             const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
             const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
