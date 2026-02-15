@@ -31,6 +31,12 @@ bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 
 Expected output contract: JSON with top-level key `"demo"`.
 
+## Reproducible smoke target
+
+```bash
+make quickstart-smoke
+```
+
 ## Optional: sleep-stack command discovery
 
 ```bash

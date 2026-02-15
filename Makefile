@@ -12,6 +12,7 @@ dev-setup:
 	pre-commit autoupdate
 
 quickstart-smoke:
+	python -m scripts.check_quickstart_consistency
 	python -m pip install -e .
 	python -m pip show bnsyn
 	bnsyn --help

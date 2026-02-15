@@ -389,6 +389,11 @@ python -m bnsyn --help
 bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 ```
 
+**Run the quickstart smoke contract**
+```bash
+make quickstart-smoke
+```
+
 **Run the default PR test suite**
 ```bash
 make test
