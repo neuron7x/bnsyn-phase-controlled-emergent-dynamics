@@ -1,0 +1,15 @@
+COMMAND: rg -n "(retention|delete|erasure|privacy|GDPR|PII|encrypt|TLS|HSTS)" docs src README.md
+START_UTC: 2026-02-15T19:39:07.220171Z
+END_UTC: 2026-02-15T19:39:07.242191Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:21:    post_fix_expectation: "passes with deterministic fallback retention behavior"
+docs/placeholder_cycles/cycle1/plan.md:37:| PH-0001 | `src/bnsyn/emergence/crystallizer.py` | `guard_fail_closed` | `regression` | Replace implicit `pass` fallback with deterministic explicit state retention branch and auditable warning path. |
+src/bnsyn/memory/consolidator.py:195:        self._storage.importance = np.delete(self._storage.importance, idx)
+src/bnsyn/memory/consolidator.py:196:        self._storage.timestamps = np.delete(self._storage.timestamps, idx)
+src/bnsyn/memory/consolidator.py:197:        self._storage.recall_counters = np.delete(self._storage.recall_counters, idx)
+
+--- STDERR ---
+

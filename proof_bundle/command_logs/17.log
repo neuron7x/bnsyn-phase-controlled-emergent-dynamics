@@ -1,0 +1,256 @@
+COMMAND: rg -n "(idempot|transaction|atomic|webhook|replay|dedup|unique|constraint)" src docs tests
+START_UTC: 2026-02-15T19:39:07.120159Z
+END_UTC: 2026-02-15T19:39:07.143201Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+tests/test_pr_description_policy_workflow.py:7:    workflow = Path('.github/workflows/ci-pr-atomic.yml').read_text(encoding='utf-8').lower()
+docs/SSOT.md:11:1) **Rules**: `docs/SSOT_RULES.md` defines the normative constraints.
+docs/SSOT.md:12:2) **Data**: `bibliography/` and `claims/` instantiate those constraints.
+docs/ARCHITECTURE_INVARIANTS.md:22:- Raises `ValueError` for dtype/shape/non-finite constraint violations.
+docs/ARCHITECTURE_INVARIANTS.md:28:- `experiment.seeds` must be unique positive integers.
+docs/ARCHITECTURE_INVARIANTS.md:33:- Raises `pydantic.ValidationError` with explicit constraint message.
+tests/test_schema_contracts.py:33:    assert required_checks == ["ci-pr-atomic", "workflow-integrity", "determinism", "contracts"]
+tests/test_vcg_invariants_guard.py:37:    def test_deterministic_replay_identical_logs(self, default_vcg_params: VCGParams) -> None:
+tests/test_vcg_invariants_guard.py:97:        assert support_trace_1 == support_trace_2, "I1 violated: deterministic replay failed"
+tests/test_vcg_invariants_guard.py:310:        support_replay = 1.0
+tests/test_vcg_invariants_guard.py:311:        support_trace_replay = []
+tests/test_vcg_invariants_guard.py:313:            support_replay = update_support_level(contrib, support_replay, default_vcg_params)
+tests/test_vcg_invariants_guard.py:314:            support_trace_replay.append(support_replay)
+tests/test_vcg_invariants_guard.py:316:        assert support_trace == support_trace_replay, (
+tests/test_vcg_invariants_guard.py:330:    def test_A1_bitwise_replay(self, default_vcg_params: VCGParams) -> None:
+tests/test_vcg_invariants_guard.py:346:        assert trace1 == trace2, "A1 violated: bitwise replay failed"
+tests/test_sync_required_status_contexts.py:15:    assert "ci-pr-atomic / gate-profile" in contexts
+tests/test_sync_required_status_contexts.py:40:    assert "ci-pr-atomic / gate-profile" in saved
+docs/PLACEHOLDER_REGISTRY.md:10:- CI workflow: `.github/workflows/ci-pr-atomic.yml`
+docs/THROUGHPUT_SCALING.md:172:All physics constraints from the problem statement are maintained:
+tests/test_cli_sleep_stack_branches.py:48:                replay_active=False,
+tests/test_cli_sleep_stack_branches.py:49:                replay_noise=0.0,
+tests/test_cli_sleep_stack_branches.py:81:                replay_active=False,
+tests/test_cli_sleep_stack_branches.py:82:                replay_noise=0.0,
+docs/GOVERNANCE.md:27:| **Audit** | [CONSTITUTIONAL_AUDIT.md](CONSTITUTIONAL_AUDIT.md) | Constitutional constraints |
+docs/math/CONTRACTS.md:30:- **Column range constraints** for structured arrays via `assert_column_ranges`.
+docs/sleep_stack.md:11:Orchestrates sleep-wake transitions with stage-specific temperature control and optional replay.
+docs/sleep_stack.md:21:- Pattern replay with noise during REM
+docs/sleep_stack.md:22:- Configurable stage durations, temperature ranges, and replay settings
+docs/sleep_stack.md:163:- SleepCycle controls wake/sleep staging and replay timing
+docs/VCG.md:56:- **Collusion / reputation manipulation** → use signed logs, reviewer diversity constraints, and anomaly detection (non-core).
+docs/ENTROPY_LEDGER.md:13:- BUILD_CMD: `python -m build` (from `.github/workflows/ci-pr-atomic.yml`)
+docs/ENTROPY_LEDGER.md:14:- SCAN_CMD: `python -m scripts.scan_governed_docs` (from `.github/workflows/ci-pr-atomic.yml`)
+docs/QUALITY_INFRASTRUCTURE.md:226:- `clamp_idempotent` - Clamp is idempotent
+docs/QUALITY_INFRASTRUCTURE.md:404:# Add examples or constraints to fix failures
+tests/validation/test_sleep_stack_effectiveness.py:13:Compares "no-sleep" vs "sleep with consolidation+replay" on recall performance.
+tests/validation/test_sleep_stack_effectiveness.py:103:                replay_active=stage.replay_active,
+tests/validation/test_sleep_stack_effectiveness.py:104:                replay_noise=stage.replay_noise,
+tests/validation/test_sleep_stack_effectiveness.py:133:def test_replay_increases_recall() -> None:
+tests/validation/test_sleep_stack_effectiveness.py:134:    """Test that replay during REM sleep increases recall success rate.
+tests/validation/test_sleep_stack_effectiveness.py:138:    Compares wake-only vs wake+REM-replay on recall from noisy cues.
+tests/validation/test_sleep_stack_effectiveness.py:142:    no_replay_recalls = []
+tests/validation/test_sleep_stack_effectiveness.py:143:    with_replay_recalls = []
+tests/validation/test_sleep_stack_effectiveness.py:177:        no_replay_recalls.append(recall_count)
+tests/validation/test_sleep_stack_effectiveness.py:203:        # replay during REM (strengthens patterns)
+tests/validation/test_sleep_stack_effectiveness.py:210:        # consolidate after replay
+tests/validation/test_sleep_stack_effectiveness.py:222:        with_replay_recalls.append(recall_count)
+tests/validation/test_sleep_stack_effectiveness.py:225:    mean_no_replay = float(np.mean(no_replay_recalls))
+tests/validation/test_sleep_stack_effectiveness.py:226:    mean_with_replay = float(np.mean(with_replay_recalls))
+tests/validation/test_sleep_stack_effectiveness.py:228:    # Expect replay to improve recall (at least modestly)
+tests/validation/test_sleep_stack_effectiveness.py:230:    # We just check that replay doesn't hurt and ideally helps
+tests/validation/test_sleep_stack_effectiveness.py:231:    assert mean_with_replay >= mean_no_replay, (
+tests/validation/test_sleep_stack_effectiveness.py:233:        f"no-replay={mean_no_replay:.1f}, with-replay={mean_with_replay:.1f}"
+tests/validation/test_sleep_stack_effectiveness.py:277:                replay_active=stage.replay_active,
+tests/validation/test_sleep_stack_effectiveness.py:278:                replay_noise=stage.replay_noise,
+docs/appendix/intelligence_cycle_report.json:555:      "constraint := normative statement with MUST|SHALL|DO NOT|NEVER",
+docs/appendix/intelligence_cycle_report.json:801:    "constraints": [],
+docs/appendix/intelligence_cycle_report.json:805:      "compression must preserve all constraint axioms"
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:14:- `.github/workflows/ci-pr-atomic.yml` — PR SSOT gate з `make api-contract`.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:51:| Stability & determinism | 25 | PARTIAL | 0.5 | Є pass subset determinism тестів, але не проведено повний контур validation/property/CI replay в межах цього аудиту. |
+docs/appendix/codebase_readiness_audit_2026-02-15.json:12:        "file:.github/workflows/ci-pr-atomic.yml#L187-L224: CI build job installs locked deps, verifies lock freshness, runs python -m build and wheel install test"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:28:        "file:.github/workflows/ci-pr-atomic.yml#L79-L125: determinism tests run three times plus RNG isolation"
+tests/validation/test_sleep_cycle_long.py:60:                replay_active=False,
+tests/validation/test_sleep_cycle_long.py:61:                replay_noise=0.0,
+tests/validation/test_sleep_cycle_long.py:67:                replay_active=False,
+tests/validation/test_sleep_cycle_long.py:68:                replay_noise=0.0,
+tests/validation/test_sleep_cycle_long.py:74:                replay_active=True,
+tests/validation/test_sleep_cycle_long.py:75:                replay_noise=0.3,
+tests/validation/test_sleep_cycle_long.py:86:def test_long_replay_session() -> None:
+tests/validation/test_sleep_cycle_long.py:87:    """Test longer replay session with many memories."""
+tests/validation/test_sleep_cycle_long.py:109:    # long replay session
+tests/validation/test_sleep_cycle_long.py:124:        "replay_active",
+tests/validation/test_sleep_cycle_long.py:125:        "replay_noise",
+docs/appendix/PRODUCTION_AUDIT.md:251:- Cannot replay from arbitrary state
+docs/CI_GATES.md:90:1. Open GitHub Actions run for `ci-pr-atomic` or `ci-smoke`.
+tests/validation/test_chaos_stochastic.py:81:        unique_seeds = set(seeds)
+tests/validation/test_chaos_stochastic.py:82:        assert len(unique_seeds) > 1
+docs/INVENTORY.md:103:├── CONSTITUTIONAL_AUDIT.md     # Constitutional constraints
+tests/validation/test_chaos_timing.py:118:        unique_values = set(values)
+tests/validation/test_chaos_timing.py:119:        assert len(unique_values) > 1
+docs/TRACEABILITY_MAP.md:3:Requirements and safety constraints are mapped to code entrypoints, tests, and CI gates.
+docs/TRACEABILITY_MAP.md:7:| Reject malformed external numeric inputs (shape/dtype/non-finite) | Prevent undefined numerical state propagation | `src/bnsyn/validation/inputs.py` | `tests/test_validation_inputs.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:8:| Enforce admissible simulation grid (`dt_ms`, duration multiple) | Prevent unstable/undefined integration schedules | `src/bnsyn/schemas/experiment.py` | `tests/test_schema_experiment_contracts.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:9:| Wake-cycle API must reject invalid recording cadence | Prevent silent memory-capture corruption | `src/bnsyn/sleep/cycle.py` | `tests/test_sleep_cycle.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:10:| Provenance generation must be deterministic without git availability | Preserve auditability in non-git execution contexts | `src/bnsyn/provenance/manifest_builder.py` | `tests/test_manifest_builder.py` | `ci-pr-atomic` → `tests-smoke` |
+docs/TRACEABILITY_MAP.md:11:| Coverage must not regress below baseline/floor | Prevent quality drift | `scripts/check_coverage_gate.py`, `quality/coverage_gate.json` | `make coverage-gate` execution path | `ci-pr-atomic` reusable pytest + local gate command |
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:9:   - `.github/workflows/ci-pr-atomic.yml`
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:15:3. Current HEAD run query evidence is exported in `artifacts/audit/runs_for_head.json`; required workflows are recorded as success for `ci-pr-atomic`, `Workflow Integrity`, `Math Quality Gate`, and `dependency-review=NOT_TRIGGERED (path filter)`.
+tests/test_coverage_gap_extensions.py:393:        replay_active=False,
+tests/test_coverage_gap_extensions.py:394:        replay_noise=0.0,
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:9:    rule: "Registry must validate structure, unique PH IDs, and allowed statuses"
+docs/placeholder_cycles/cycle1/plan.md:52:- Registry schema and uniqueness checks pass.
+docs/safety/hazard_log.yml:10:    safety_constraints:
+docs/safety/hazard_log.yml:39:    safety_constraints:
+docs/safety/hazard_log.yml:71:    safety_constraints:
+docs/safety/hazard_log.yml:100:    safety_constraints:
+docs/safety/hazard_log.yml:121:    safety_constraints:
+docs/safety/traceability.yml:6:    safety_constraints:
+docs/safety/traceability.yml:28:    safety_constraints:
+docs/safety/traceability.yml:55:    safety_constraints:
+docs/safety/traceability.yml:79:    safety_constraints:
+docs/safety/traceability.yml:95:    safety_constraints:
+docs/safety/stpa.md:55:Safety constraints are enforced at API boundaries to prevent invalid data from
+tests/test_tla_invariants_guard.py:137:        """Temperature must remain positive (physical constraint)."""
+tests/test_tools_run_scaled_sleep_stack_unit.py:326:                replay_active=False,
+tests/test_tools_run_scaled_sleep_stack_unit.py:327:                replay_noise=0.0,
+docs/CONSTITUTIONAL_AUDIT.md:3:This document defines the **constitutional constraints** for the BN‑Syn specification:
+docs/INDEX.md:41:| [TRACEABILITY_MAP.md](TRACEABILITY_MAP.md) | Requirement/constraint to code, tests, and CI gates |
+docs/INDEX.md:53:| [CONSTITUTIONAL_AUDIT.md](CONSTITUTIONAL_AUDIT.md) | Constitutional constraints for claims |
+docs/INDEX.md:62:| [safety/stpa.md](safety/stpa.md) | System-theoretic process analysis (losses, hazards, constraints) |
+docs/INDEX.md:64:| [safety/traceability.yml](safety/traceability.yml) | Requirement → hazard → constraint → test traceability |
+tests/test_sleep_cycle_integration.py:51:def test_dream_rejects_negative_importance_via_replay_helper() -> None:
+tests/test_sleep_cycle_integration.py:63:def test_dream_rejects_nonfinite_importance_via_replay_helper() -> None:
+tests/test_sleep_cycle_integration.py:94:                replay_active=False,
+tests/test_sleep_cycle_integration.py:95:                replay_noise=0.0,
+tests/test_sleep_cycle_integration.py:101:                replay_active=True,
+tests/test_sleep_cycle_integration.py:102:                replay_noise=0.1,
+tests/test_sleep_cycle_integration.py:124:                    replay_active=False,
+tests/test_sleep_cycle_integration.py:125:                    replay_noise=0.0,
+tests/test_sleep_cycle_integration.py:131:                    replay_active=True,
+tests/test_sleep_cycle_integration.py:132:                    replay_noise=0.2,
+tests/test_viz_smoke_coverage.py:329:def test_dashboard_ensure_figure_idempotent() -> None:
+tests/test_viz_smoke_coverage.py:330:    """Test that _ensure_figure is idempotent.
+tests/test_validate_pr_gates.py:71:                "workflow_file": "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:72:                "workflow_name": "ci-pr-atomic",
+tests/test_validate_pr_gates.py:81:            "| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request` | NO |",
+tests/test_validate_pr_gates.py:85:    assert any("MISSING_WORKFLOW_FILE ci-pr-atomic.yml" in v for v in violations)
+tests/test_validate_pr_gates.py:93:        workflows_dir / "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:104:                "workflow_file": "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:105:                "workflow_name": "ci-pr-atomic",
+tests/test_validate_pr_gates.py:114:            "| `ci-pr-atomic.yml` | `wrong-name` | PR-gate | `pull_request` | NO |",
+tests/test_validate_pr_gates.py:118:    assert any("NAME_MISMATCH ci-pr-atomic.yml" in v for v in violations)
+tests/test_validate_pr_gates.py:126:        workflows_dir / "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:127:        name="ci-pr-atomic",
+tests/test_validate_pr_gates.py:137:                "workflow_file": "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:138:                "workflow_name": "ci-pr-atomic",
+tests/test_validate_pr_gates.py:147:            "| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request` | NO |",
+tests/test_validate_pr_gates.py:151:    assert any("MISSING_JOB_IDS ci-pr-atomic.yml" in v for v in violations)
+tests/test_validate_pr_gates.py:159:        workflows_dir / "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:160:        name="ci-pr-atomic",
+tests/test_validate_pr_gates.py:170:                "workflow_file": "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:171:                "workflow_name": "ci-pr-atomic",
+tests/test_validate_pr_gates.py:180:            "| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `workflow_dispatch` | NO |",
+tests/test_validate_pr_gates.py:184:    assert any("NO_PULL_REQUEST ci-pr-atomic.yml" in v for v in violations)
+tests/test_validate_pr_gates.py:192:        workflows_dir / "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:193:        name="ci-pr-atomic",
+tests/test_validate_pr_gates.py:209:                "workflow_file": "ci-pr-atomic.yml",
+tests/test_validate_pr_gates.py:210:                "workflow_name": "ci-pr-atomic",
+tests/test_validate_pr_gates.py:219:            "| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request` | NO |",
+tests/test_sleep_replay.py:1:"""Unit tests for sleep replay utilities."""
+tests/test_sleep_replay.py:8:from bnsyn.sleep.replay import (
+tests/test_sleep_replay.py:9:    add_replay_noise,
+tests/test_sleep_replay.py:92:def test_add_replay_noise_zero_level_returns_copy() -> None:
+tests/test_sleep_replay.py:96:    noisy = add_replay_noise(pattern, noise_level=0.0, noise_scale=1.0, rng=rng)
+tests/test_sleep_replay.py:102:def test_add_replay_noise_rejects_out_of_range_level() -> None:
+tests/test_sleep_replay.py:107:        add_replay_noise(pattern, noise_level=1.1, noise_scale=1.0, rng=rng)
+tests/test_sleep_replay.py:110:def test_add_replay_noise_applies_noise() -> None:
+tests/test_sleep_replay.py:114:    noisy = add_replay_noise(pattern, noise_level=0.5, noise_scale=1.0, rng=rng)
+tests/test_sleep_cycle.py:13:Tests sleep stages, memory recording, and replay functionality.
+tests/test_sleep_cycle.py:37:        replay_active=False,
+tests/test_sleep_cycle.py:38:        replay_noise=0.0,
+tests/test_sleep_cycle.py:49:            replay_active=False,
+tests/test_sleep_cycle.py:50:            replay_noise=0.0,
+tests/test_sleep_cycle.py:53:    # invalid replay_noise
+tests/test_sleep_cycle.py:54:    with pytest.raises(ValueError, match="replay_noise must be in"):
+tests/test_sleep_cycle.py:59:            replay_active=False,
+tests/test_sleep_cycle.py:60:            replay_noise=1.5,
+tests/test_sleep_cycle.py:183:            replay_active=False,
+tests/test_sleep_cycle.py:184:            replay_noise=0.0,
+tests/test_sleep_cycle.py:190:            replay_active=False,
+tests/test_sleep_cycle.py:191:            replay_noise=0.0,
+tests/test_sleep_cycle.py:197:            replay_active=True,
+tests/test_sleep_cycle.py:198:            replay_noise=0.3,
+tests/test_sleep_cycle.py:210:def test_replay_determinism() -> None:
+tests/test_sleep_cycle.py:211:    """Test replay with RNGPack produces deterministic results."""
+tests/test_sleep_cycle.py:234:    # replay
+tests/test_sleep_cycle.py:259:    # replay
+tests/test_sleep_cycle.py:301:            replay_active=False,
+tests/test_sleep_cycle.py:302:            replay_noise=0.0,
+tests/test_sleep_cycle.py:330:def test_dream_noise_validation_matches_replay_helper() -> None:
+tests/test_sleep_cycle.py:353:        "replay_active",
+tests/test_sleep_cycle.py:354:        "replay_noise",
+tests/properties/test_properties_bnsyn.py:127:    No neuron should spike at rates >1kHz (biological constraint).
+tests/test_cli_sleep_stack_figure.py:55:                replay_active=False,
+tests/test_cli_sleep_stack_figure.py:56:                replay_noise=0.0,
+tests/test_sleep_stage_validation.py:10:def test_sleep_stage_replay_noise_bounds() -> None:
+tests/test_sleep_stage_validation.py:11:    with pytest.raises(ValueError, match="replay_noise must be in \\[0, 1\\]"):
+tests/test_sleep_stage_validation.py:16:            replay_active=True,
+tests/test_sleep_stage_validation.py:17:            replay_noise=1.5,
+src/contracts/math_contracts.py:164:    unique = {str(v) for v in dtypes.values()}
+src/contracts/math_contracts.py:165:    if len(unique) > 1:
+src/contracts/math_contracts.py:179:    unique_rows = np.unique(arr, axis=0)
+src/contracts/math_contracts.py:180:    if unique_rows.shape[0] != arr.shape[0]:
+src/bnsyn/schemas/experiment.py:28:        Random seeds for reproducibility (1-100 unique positive integers)
+src/bnsyn/schemas/experiment.py:38:        """Validate that seeds are unique positive integers."""
+src/bnsyn/schemas/experiment.py:42:            raise ValueError("seeds must be unique positive integers")
+src/bnsyn/validation/inputs.py:127:        If dtype, shape, or NaN constraints are violated.
+src/bnsyn/validation/inputs.py:159:        If dtype or shape constraints are violated.
+src/bnsyn/validation/inputs.py:191:        If dtype, shape, or NaN constraints are violated.
+src/bnsyn/cli.py:202:    Runs wake→sleep cycle with memory recording, consolidation, replay,
+src/bnsyn/cli.py:293:                replay_active=stage.replay_active,
+src/bnsyn/cli.py:294:                replay_noise=stage.replay_noise,
+src/bnsyn/provenance/manifest.py:291:        This hash can be used to uniquely identify a run configuration.
+src/bnsyn/incremental.py:90:            # This only runs once per unique data
+src/bnsyn/tools/run_scaled_sleep_stack.py:77:                    replay_active=s.replay_active,
+src/bnsyn/tools/run_scaled_sleep_stack.py:78:                    replay_noise=s.replay_noise,
+src/bnsyn/sleep/stages.py:59:    replay_active : bool
+src/bnsyn/sleep/stages.py:60:        Whether memory replay is active in this stage.
+src/bnsyn/sleep/stages.py:61:    replay_noise : float
+src/bnsyn/sleep/stages.py:62:        Noise level for replay (0 = exact, 1 = high noise).
+src/bnsyn/sleep/stages.py:69:    replay_active: bool
+src/bnsyn/sleep/stages.py:70:    replay_noise: float
+src/bnsyn/sleep/stages.py:75:        if not 0.0 <= self.replay_noise <= 1.0:
+src/bnsyn/sleep/stages.py:76:            raise ValueError("replay_noise must be in [0, 1]")
+src/bnsyn/sleep/cycle.py:1:"""Sleep-cycle orchestration for wake, staged sleep, and deterministic replay.
+src/bnsyn/sleep/cycle.py:5:- ``SleepCycle``: wake/sleep state machine with memory capture and dream replay.
+src/bnsyn/sleep/cycle.py:25:from .replay import add_replay_noise, validate_noise_level, weighted_pattern_selection
+src/bnsyn/sleep/cycle.py:49:    """Sleep cycle controller with memory recording and replay.
+src/bnsyn/sleep/cycle.py:60:        Random number generator for replay noise. If None, uses network's RNG.
+src/bnsyn/sleep/cycle.py:248:        optional replay.
+src/bnsyn/sleep/cycle.py:281:            # replay if configured
+src/bnsyn/sleep/cycle.py:282:            if stage_config.replay_active and len(self.memories) > 0:
+src/bnsyn/sleep/cycle.py:283:                replay_steps = min(20, stage_config.duration_steps // 2)
+src/bnsyn/sleep/cycle.py:286:                    noise_level=stage_config.replay_noise,
+src/bnsyn/sleep/cycle.py:287:                    duration_steps=replay_steps,
+src/bnsyn/sleep/cycle.py:311:            Memories to replay.
+src/bnsyn/sleep/cycle.py:315:            Number of steps to replay.
+src/bnsyn/sleep/cycle.py:320:            List of step metrics during replay.
+src/bnsyn/sleep/cycle.py:331:        # Keep noise-level validation aligned with replay helper API.
+src/bnsyn/sleep/cycle.py:357:            I_replay = (V_pattern - self.network.adex.EL_mV) * 10.0
+src/bnsyn/sleep/cycle.py:360:            I_replay = add_replay_noise(
+src/bnsyn/sleep/cycle.py:361:                np.asarray(I_replay, dtype=np.float64),
+src/bnsyn/sleep/cycle.py:367:            I_replay = np.asarray(I_replay, dtype=np.float64)
+src/bnsyn/sleep/cycle.py:370:            m = self.network.step(external_current_pA=I_replay)
+src/bnsyn/sleep/cycle.py:404:    - REM: 100 steps, temperature 0.9-1.2 (replay active)
+src/bnsyn/sleep/cycle.py:417:            replay_active=False,
+src/bnsyn/sleep/cycle.py:418:            replay_noise=0.0,
+src/bnsyn/sleep/cycle.py:424:            replay_active=False,
+src/bnsyn/sleep/cycle.py:425:            replay_noise=0.0,
+src/bnsyn/sleep/cycle.py:431:            replay_active=True,
+src/bnsyn/sleep/cycle.py:432:            replay_noise=0.3,
+src/bnsyn/sleep/__init__.py:13:Implements sleep stages, cycles, memory recording, and replay functionality.
+src/bnsyn/sleep/replay.py:5:- ``add_replay_noise``: bounded Gaussian perturbation with explicit noise controls.
+src/bnsyn/sleep/replay.py:21:    """Validate replay noise level.
+src/bnsyn/sleep/replay.py:91:def add_replay_noise(
+src/bnsyn/sleep/replay.py:97:    """Add noise to a replay pattern.
+
+--- STDERR ---
+

@@ -1,0 +1,12 @@
+COMMAND: find . -maxdepth 3 -type f | sed "s#^./##" | awk -F. "NF>1{print tolower($NF)}" | sort | uniq -c | sort -nr | head -n 100
+START_UTC: 2026-02-15T19:39:06.266914Z
+END_UTC: 2026-02-15T19:39:06.303069Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+
+--- STDERR ---
+awk: cmd. line:1: NF>1{print tolower()}
+awk: cmd. line:1:                    ^ 0 is invalid as number of arguments for tolower
+

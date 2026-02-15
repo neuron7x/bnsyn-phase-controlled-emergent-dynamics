@@ -1,0 +1,1936 @@
+{
+  "meta": {
+    "timestamp_utc": "2026-02-15T19:41:44.423777Z",
+    "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+    "git": {
+      "commit": "d475c1d0fe86ae4d84ab2fb6aaa544dbfec6cc9f",
+      "branch": "work",
+      "dirty": false
+    },
+    "platform": {
+      "os": "linux",
+      "arch": "x86_64"
+    },
+    "assumptions": [
+      "No runtime deployment target provided; assessed as codebase-only static audit.",
+      "Repository appears to be research simulator, not internet-facing SaaS service."
+    ],
+    "command_policy": {
+      "timeouts_sec_default": 600,
+      "notes": "Read-only commands only; failures logged verbatim."
+    }
+  },
+  "representator": {
+    "R0_identity_platform": {
+      "timestamp_utc": "2026-02-15T19:41:44.423823Z",
+      "git": {
+        "commit": "d475c1d0fe86ae4d84ab2fb6aaa544dbfec6cc9f",
+        "branch": "work",
+        "dirty": false
+      },
+      "evidence": [
+        "Git: git:d475c1d0fe86ae4d84ab2fb6aaa544dbfec6cc9f branch:work status:clean",
+        "Command: cmd:git rev-parse HEAD log:proof_bundle/command_logs/06.log exit:0",
+        "Command: cmd:git status --short log:proof_bundle/command_logs/04.log exit:0"
+      ]
+    },
+    "R1_inventory": {
+      "top_level_dirs": [
+        "src",
+        "tests",
+        "docs",
+        ".github",
+        "benchmarks",
+        "artifacts"
+      ],
+      "size_hotspots": [
+        "results",
+        "artifacts",
+        "figures",
+        "tests",
+        "docs",
+        "src"
+      ],
+      "extension_counts_command": "proof_bundle/command_logs/29.log",
+      "evidence": [
+        "Command: cmd:find . -maxdepth 2 -type d | sort log:proof_bundle/command_logs/08.log exit:0",
+        "Command: cmd:du -sh ./* | sort -h log:proof_bundle/command_logs/10.log exit:0",
+        "Command: cmd:find . -maxdepth 3 -type f | sed ... | awk ... log:proof_bundle/command_logs/29.log exit:0"
+      ]
+    },
+    "R2_stack_detection": {
+      "languages": [
+        "Python"
+      ],
+      "frameworks": [
+        "pytest",
+        "hypothesis",
+        "pydantic"
+      ],
+      "runtime_targets": [
+        "CLI",
+        "batch simulation"
+      ],
+      "evidence": [
+        "File: path:pyproject.toml:1-16 snippet:\"project metadata and pinned runtime dependencies\"",
+        "File: path:pyproject.toml:69-81 snippet:\"CLI entrypoint and pytest configuration\"",
+        "Command: cmd:cat pyproject.toml log:proof_bundle/command_logs/14.log exit:0",
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+      ]
+    },
+    "R3_dependencies": {
+      "manifests": [
+        "pyproject.toml",
+        "requirements-lock.txt"
+      ],
+      "lockfiles": [
+        "requirements-lock.txt"
+      ],
+      "integrity": "pip hashes present",
+      "evidence": [
+        "File: path:requirements-lock.txt:2-9 snippet:\"pip-compile with --generate-hashes and pinned packages\"",
+        "Command: cmd:cat requirements-lock.txt log:proof_bundle/command_logs/15.log exit:0",
+        "Command: cmd:sha256sum requirements-lock.txt pyproject.toml log:proof_bundle/command_logs/30.log exit:0"
+      ]
+    },
+    "R4_entry_points": {
+      "scripts": [
+        "bnsyn cli entrypoint",
+        "make test / pytest"
+      ],
+      "ci_configs": [
+        ".github/workflows/*.yml"
+      ],
+      "containers": [
+        "Dockerfile",
+        "docker-compose.yml"
+      ],
+      "evidence": [
+        "File: path:pyproject.toml:1-16 snippet:\"project metadata and pinned runtime dependencies\"",
+        "File: path:pyproject.toml:69-81 snippet:\"CLI entrypoint and pytest configuration\"",
+        "Command: cmd:cat pyproject.toml log:proof_bundle/command_logs/14.log exit:0",
+        "File: path:Dockerfile:1-24 snippet:\"containerized test image\"",
+        "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0"
+      ]
+    },
+    "R5_architecture_map": {
+      "modules": [
+        "sim",
+        "sleep",
+        "criticality",
+        "emergence",
+        "tools",
+        "validation"
+      ],
+      "dependency_direction": "core simulation modules imported by cli/tools",
+      "evidence": [
+        "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+        "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+        "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0",
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+      ]
+    },
+    "R6_data_apis": {
+      "db": "UNKNOWN",
+      "api_surface": "No HTTP API files detected in src listing",
+      "jobs": "GitHub Actions workflows for validation/benchmarks",
+      "evidence": [
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+        "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+        "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+        "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0"
+      ]
+    },
+    "R7_security_observability_release_signals": {
+      "security": [
+        "CodeQL workflow",
+        "dependency review",
+        "gitleaks config present"
+      ],
+      "observability": [
+        "CI SLO doc"
+      ],
+      "release": [
+        "release-pipeline workflow exists"
+      ],
+      "evidence": [
+        "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+        "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+        "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+        "File: path:.github/CI_SLO.md:1-4 snippet:\"pipeline SLO thresholds\"",
+        "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0"
+      ]
+    }
+  },
+  "modules": {
+    "M1_zero_trust_threat_modeling": {
+      "status": "PARTIAL",
+      "score_0_100": 28,
+      "confidence_0_1": 0.45,
+      "key_findings": [
+        {
+          "title": "No explicit trust-boundary model for internet-facing services",
+          "severity": "HIGH",
+          "risk_score_0_100": 64,
+          "likelihood": 4,
+          "impact": 4,
+          "evidence": [
+            "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+            "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+            "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+            "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+            "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+          ]
+        },
+        {
+          "title": "Repository positioned as simulator, not hardened SaaS boundary",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+            "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0"
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No explicit trust-boundary model for internet-facing services",
+            "severity": "HIGH",
+            "risk_score_0_100": 64,
+            "likelihood": 4,
+            "impact": 4,
+            "evidence": [
+              "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+              "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+              "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+              "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+              "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+            ]
+          },
+          {
+            "title": "Repository positioned as simulator, not hardened SaaS boundary",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+              "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0"
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 1,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Document formal DFD + trust boundaries (actors/assets/flows)",
+          "roi": 12.0,
+          "risk_reduction_points": 18,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit trust model doc for CLI, artifacts, CI supply chain.",
+            "Map data flows and privileged execution boundaries."
+          ],
+          "evidence_targets": [
+            "docs/ARCHITECTURE.md",
+            "docs/SECURITY.md"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/excerpts/architecture_excerpt.txt",
+          "sha256": "b312074b144f6fb2b4e1f4bb55a34795490aa3c7f3d228d0972bcfcfc9982350",
+          "description": "Architecture excerpts"
+        }
+      ]
+    },
+    "M2_supply_chain_sbom": {
+      "status": "PARTIAL",
+      "score_0_100": 62,
+      "confidence_0_1": 0.8,
+      "key_findings": [
+        {
+          "title": "Pinned lockfile with hashes present",
+          "severity": "LOW",
+          "risk_score_0_100": 16,
+          "likelihood": 2,
+          "impact": 2,
+          "evidence": [
+            "File: path:requirements-lock.txt:2-9 snippet:\"pip-compile with --generate-hashes and pinned packages\"",
+            "Command: cmd:cat requirements-lock.txt log:proof_bundle/command_logs/15.log exit:0",
+            "Command: cmd:sha256sum requirements-lock.txt pyproject.toml log:proof_bundle/command_logs/30.log exit:0"
+          ]
+        },
+        {
+          "title": "No SBOM artifact generated in repo baseline",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0"
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Pinned lockfile with hashes present",
+            "severity": "LOW",
+            "risk_score_0_100": 16,
+            "likelihood": 2,
+            "impact": 2,
+            "evidence": [
+              "File: path:requirements-lock.txt:2-9 snippet:\"pip-compile with --generate-hashes and pinned packages\"",
+              "Command: cmd:cat requirements-lock.txt log:proof_bundle/command_logs/15.log exit:0",
+              "Command: cmd:sha256sum requirements-lock.txt pyproject.toml log:proof_bundle/command_logs/30.log exit:0"
+            ]
+          },
+          {
+            "title": "No SBOM artifact generated in repo baseline",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0"
+            ]
+          }
+        ],
+        "summary": {
+          "low": 1,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Automate CycloneDX SBOM generation in CI",
+          "roi": 7.5,
+          "risk_reduction_points": 15,
+          "effort_points": 2,
+          "steps": [
+            "Add SBOM generator job and upload artifact.",
+            "Fail PR on missing SBOM for release tags."
+          ],
+          "evidence_targets": [
+            ".github/workflows/ci-pr.yml",
+            ".github/workflows/dependency-review.yml"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/excerpts/requirements_excerpt.txt",
+          "sha256": "51c2f571dde50b3ba4f508ae24e2c61f42faed893aec39660c81ce3a7b265900",
+          "description": "Lockfile excerpt with hashes"
+        }
+      ]
+    },
+    "M3_authn_authz_correctness": {
+      "status": "UNKNOWN",
+      "score_0_100": 0,
+      "confidence_0_1": 0.0,
+      "key_findings": [
+        {
+          "title": "No AuthN/AuthZ surface detected in scientific CLI codebase",
+          "severity": "HIGH",
+          "risk_score_0_100": 64,
+          "likelihood": 4,
+          "impact": 4,
+          "evidence": [
+            "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+            "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+            "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+            "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+            "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No AuthN/AuthZ surface detected in scientific CLI codebase",
+            "severity": "HIGH",
+            "risk_score_0_100": 64,
+            "likelihood": 4,
+            "impact": 4,
+            "evidence": [
+              "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+              "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+              "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+              "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+              "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 0,
+          "elevated": 0,
+          "high": 1,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "If converted to service, add mandatory authz/idempotency design gates",
+          "roi": 6.0,
+          "risk_reduction_points": 12,
+          "effort_points": 2,
+          "steps": [
+            "Define role matrix for any future HTTP endpoints.",
+            "Require idempotency keys and replay protection for mutating APIs."
+          ],
+          "evidence_targets": [
+            "docs/ARCHITECTURE.md",
+            "docs/TESTING.md"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/25.log",
+          "sha256": "94c743ab2b9eee0f8a62385f84edf435c7a590f8c9b389d63b728dbf0bcc3d96",
+          "description": "Source inventory"
+        }
+      ]
+    },
+    "M4_atomicity_idempotency": {
+      "status": "PARTIAL",
+      "score_0_100": 8,
+      "confidence_0_1": 0.2,
+      "key_findings": [
+        {
+          "title": "No payment/webhook transaction path detected; atomicity controls not evidenced",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+            "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+            "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+            "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+            "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No payment/webhook transaction path detected; atomicity controls not evidenced",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+              "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+              "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+              "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+              "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "If converted to service, add mandatory authz/idempotency design gates",
+          "roi": 6.0,
+          "risk_reduction_points": 12,
+          "effort_points": 2,
+          "steps": [
+            "Define role matrix for any future HTTP endpoints.",
+            "Require idempotency keys and replay protection for mutating APIs."
+          ],
+          "evidence_targets": [
+            "docs/ARCHITECTURE.md",
+            "docs/TESTING.md"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/25.log",
+          "sha256": "94c743ab2b9eee0f8a62385f84edf435c7a590f8c9b389d63b728dbf0bcc3d96",
+          "description": "Source inventory"
+        }
+      ]
+    },
+    "M5_performance_profiling": {
+      "status": "PARTIAL",
+      "score_0_100": 55,
+      "confidence_0_1": 0.7,
+      "key_findings": [
+        {
+          "title": "Benchmark and performance tests exist but no p95/p99 service latency budget",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Benchmark and performance tests exist but no p95/p99 service latency budget",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M6_multi_tenancy_isolation": {
+      "status": "UNKNOWN",
+      "score_0_100": 0,
+      "confidence_0_1": 0.0,
+      "key_findings": [
+        {
+          "title": "No tenant concept detected in repository scope",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No tenant concept detected in repository scope",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M7_deploy_rollback_resilience": {
+      "status": "PARTIAL",
+      "score_0_100": 42,
+      "confidence_0_1": 0.6,
+      "key_findings": [
+        {
+          "title": "Containerized test execution present; rollback/migration runbooks not evidenced",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Containerized test execution present; rollback/migration runbooks not evidenced",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M8_observability_incident_readiness": {
+      "status": "PARTIAL",
+      "score_0_100": 40,
+      "confidence_0_1": 0.6,
+      "key_findings": [
+        {
+          "title": "CI SLOs documented but runtime telemetry stack absent",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "CI SLOs documented but runtime telemetry stack absent",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M9_data_governance_privacy": {
+      "status": "PARTIAL",
+      "score_0_100": 18,
+      "confidence_0_1": 0.4,
+      "key_findings": [
+        {
+          "title": "No explicit PII schema; privacy controls largely out of scope for simulator",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No explicit PII schema; privacy controls largely out of scope for simulator",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M10_fraud_abuse_detector": {
+      "status": "UNKNOWN",
+      "score_0_100": 0,
+      "confidence_0_1": 0.0,
+      "key_findings": [
+        {
+          "title": "No commerce or entitlement flows detected",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "No commerce or entitlement flows detected",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M11_arch_complexity_refactor": {
+      "status": "PASS",
+      "score_0_100": 64,
+      "confidence_0_1": 0.75,
+      "key_findings": [
+        {
+          "title": "Architecture mapping and modular package layout are documented",
+          "severity": "LOW",
+          "risk_score_0_100": 16,
+          "likelihood": 2,
+          "impact": 2,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Architecture mapping and modular package layout are documented",
+            "severity": "LOW",
+            "risk_score_0_100": 16,
+            "likelihood": 2,
+            "impact": 2,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 1,
+          "guarded": 0,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M12_cost_scalability": {
+      "status": "PARTIAL",
+      "score_0_100": 46,
+      "confidence_0_1": 0.6,
+      "key_findings": [
+        {
+          "title": "Benchmark tooling present, but production cost model absent",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Benchmark tooling present, but production cost model absent",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M13_security_policy_enforcement": {
+      "status": "PARTIAL",
+      "score_0_100": 58,
+      "confidence_0_1": 0.7,
+      "key_findings": [
+        {
+          "title": "CodeQL, dependency review, and gitleaks signals exist",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "CodeQL, dependency review, and gitleaks signals exist",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M14_failure_simulation_plan": {
+      "status": "PARTIAL",
+      "score_0_100": 52,
+      "confidence_0_1": 0.65,
+      "key_findings": [
+        {
+          "title": "Chaos and validation workflows exist but not tied to service dependencies",
+          "severity": "MEDIUM",
+          "risk_score_0_100": 36,
+          "likelihood": 3,
+          "impact": 3,
+          "evidence": [
+            "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+            "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+            "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+            "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+            "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+            "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+            "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+            "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+            "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Chaos and validation workflows exist but not tied to service dependencies",
+            "severity": "MEDIUM",
+            "risk_score_0_100": 36,
+            "likelihood": 3,
+            "impact": 3,
+            "evidence": [
+              "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+              "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+              "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+              "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+              "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+              "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+              "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+              "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+              "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 1,
+          "elevated": 0,
+          "high": 0,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Strengthen module-specific controls",
+          "roi": 5.0,
+          "risk_reduction_points": 10,
+          "effort_points": 2,
+          "steps": [
+            "Add explicit policy/runbook docs and executable checks for this area."
+          ],
+          "evidence_targets": [
+            "docs/",
+            ".github/workflows/"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "proof_bundle/command_logs/31.log",
+          "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b",
+          "description": "Validation workflow evidence"
+        }
+      ]
+    },
+    "M15_board_report": {
+      "status": "FAIL",
+      "score_0_100": 30,
+      "confidence_0_1": 0.7,
+      "key_findings": [
+        {
+          "title": "Executive risk remains above conditional-go threshold",
+          "severity": "HIGH",
+          "risk_score_0_100": 72,
+          "likelihood": 4,
+          "impact": 4,
+          "evidence": [
+            "Artifact: artifact:audit_suite_report.json sha256:e87846f48891191b58c9a1fe0f965fbe27015fe59af3f0cd0addbe7d4d87e59c",
+            "Command: cmd:jq \".executive\" audit_suite_report.json log:proof_bundle/command_logs/34.log exit:0"
+          ]
+        }
+      ],
+      "risk_matrix": {
+        "items": [
+          {
+            "title": "Executive risk remains above conditional-go threshold",
+            "severity": "HIGH",
+            "risk_score_0_100": 72,
+            "likelihood": 4,
+            "impact": 4,
+            "evidence": [
+              "Artifact: artifact:audit_suite_report.json sha256:eb8ff14038a719cec8807764e6c3673d3954a06851cde3492baf6f4719e41e01",
+              "Command: cmd:jq \".executive\" audit_suite_report.json log:proof_bundle/command_logs/34.log exit:0"
+            ]
+          }
+        ],
+        "summary": {
+          "low": 0,
+          "guarded": 0,
+          "elevated": 0,
+          "high": 1,
+          "critical": 0
+        }
+      },
+      "top_mitigations_roi": [
+        {
+          "title": "Publish threat model + trust boundaries",
+          "roi": 12.0,
+          "risk_reduction_points": 18,
+          "effort_points": 2,
+          "steps": [
+            "Create DFD with actors/assets/boundaries.",
+            "Add security controls matrix mapped to code/tests."
+          ],
+          "evidence_targets": [
+            "docs/ARCHITECTURE.md",
+            "docs/SECURITY.md"
+          ]
+        },
+        {
+          "title": "Implement CI SBOM generation + retention",
+          "roi": 7.5,
+          "risk_reduction_points": 15,
+          "effort_points": 2,
+          "steps": [
+            "Generate CycloneDX artifact each release pipeline.",
+            "Gate release on SBOM presence and signature."
+          ],
+          "evidence_targets": [
+            ".github/workflows/release-pipeline.yml"
+          ]
+        },
+        {
+          "title": "Install test extras in CI/local bootstrap",
+          "roi": 6.0,
+          "risk_reduction_points": 12,
+          "effort_points": 2,
+          "steps": [
+            "Enforce `pip install -e \".[test]\"` before pytest.",
+            "Add dependency preflight check."
+          ],
+          "evidence_targets": [
+            "docs/TESTING.md",
+            "Makefile"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "audit_suite_report.json",
+          "sha256": "e87846f48891191b58c9a1fe0f965fbe27015fe59af3f0cd0addbe7d4d87e59c",
+          "description": "Consolidated board-level report"
+        }
+      ]
+    }
+  },
+  "executive": {
+    "weighted_executive_risk_index_0_100": 70,
+    "confidence_0_1": 0.7,
+    "go_no_go": "NO_GO",
+    "top_board_risks": [
+      {
+        "title": "Auth/AuthZ control plane undefined for potential service exposure",
+        "risk_score": 64,
+        "likelihood": 4,
+        "impact": 4,
+        "evidence": [
+          "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+          "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+          "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+          "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0"
+        ],
+        "owner_hint": "Platform security"
+      },
+      {
+        "title": "Transactional idempotency/webhook controls not evidenced",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+          "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+        ],
+        "owner_hint": "Backend architecture"
+      },
+      {
+        "title": "No formal trust-boundary DFD",
+        "risk_score": 64,
+        "likelihood": 4,
+        "impact": 4,
+        "evidence": [
+          "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+          "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+          "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+        ],
+        "owner_hint": "Security architecture"
+      },
+      {
+        "title": "SBOM automation gap",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+          "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+          "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+          "File: path:requirements-lock.txt:2-9 snippet:\"pip-compile with --generate-hashes and pinned packages\"",
+          "Command: cmd:cat requirements-lock.txt log:proof_bundle/command_logs/15.log exit:0",
+          "Command: cmd:sha256sum requirements-lock.txt pyproject.toml log:proof_bundle/command_logs/30.log exit:0"
+        ],
+        "owner_hint": "DevSecOps"
+      },
+      {
+        "title": "Test run failed in environment due missing deps",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+          "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+          "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+        ],
+        "owner_hint": "Build engineering"
+      },
+      {
+        "title": "Observability primarily CI-oriented, not runtime SLO telemetry",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+          "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+          "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+          "File: path:.github/CI_SLO.md:1-4 snippet:\"PR SLO targets only\""
+        ],
+        "owner_hint": "Reliability"
+      },
+      {
+        "title": "Rollback and backup runbooks not explicit",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+          "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+          "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+          "Command: cmd:rg -n \"(rollback|backup)\" README.md docs infra Dockerfile docker-compose.yml log:proof_bundle/command_logs/22.log exit:2"
+        ],
+        "owner_hint": "Operations"
+      },
+      {
+        "title": "Privacy controls not mapped to data classes",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+          "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0",
+          "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+          "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+        ],
+        "owner_hint": "Compliance"
+      },
+      {
+        "title": "Cost/scaling model missing for production runtime",
+        "risk_score": 36,
+        "likelihood": 3,
+        "impact": 3,
+        "evidence": [
+          "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+          "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+          "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0"
+        ],
+        "owner_hint": "Performance engineering"
+      },
+      {
+        "title": "Multi-tenancy isolation not applicable/undefined",
+        "risk_score": 64,
+        "likelihood": 4,
+        "impact": 4,
+        "evidence": [
+          "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+          "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+        ],
+        "owner_hint": "Platform architecture"
+      }
+    ],
+    "top_mitigations_roi": [
+      {
+        "title": "Publish threat model + trust boundaries",
+        "roi": 12.0,
+        "risk_reduction_points": 18,
+        "effort_points": 2,
+        "steps": [
+          "Create DFD with actors/assets/boundaries.",
+          "Add security controls matrix mapped to code/tests."
+        ],
+        "evidence_targets": [
+          "docs/ARCHITECTURE.md",
+          "docs/SECURITY.md"
+        ]
+      },
+      {
+        "title": "Implement CI SBOM generation + retention",
+        "roi": 7.5,
+        "risk_reduction_points": 15,
+        "effort_points": 2,
+        "steps": [
+          "Generate CycloneDX artifact each release pipeline.",
+          "Gate release on SBOM presence and signature."
+        ],
+        "evidence_targets": [
+          ".github/workflows/release-pipeline.yml"
+        ]
+      },
+      {
+        "title": "Install test extras in CI/local bootstrap",
+        "roi": 6.0,
+        "risk_reduction_points": 12,
+        "effort_points": 2,
+        "steps": [
+          "Enforce `pip install -e \".[test]\"` before pytest.",
+          "Add dependency preflight check."
+        ],
+        "evidence_targets": [
+          "docs/TESTING.md",
+          "Makefile"
+        ]
+      },
+      {
+        "title": "Define production observability baseline",
+        "roi": 5.0,
+        "risk_reduction_points": 10,
+        "effort_points": 2,
+        "steps": [
+          "Add structured logs/metrics/traces requirements.",
+          "Codify incident runbook templates."
+        ],
+        "evidence_targets": [
+          "docs/",
+          ".github/CI_SLO.md"
+        ]
+      },
+      {
+        "title": "Document rollback/backup procedures",
+        "roi": 4.0,
+        "risk_reduction_points": 8,
+        "effort_points": 2,
+        "steps": [
+          "Create restore drill runbook with RTO/RPO."
+        ],
+        "evidence_targets": [
+          "docs/DEMO.md",
+          "README.md"
+        ]
+      },
+      {
+        "title": "Add authz/idempotency design guardrails for future APIs",
+        "roi": 4.0,
+        "risk_reduction_points": 8,
+        "effort_points": 2,
+        "steps": [
+          "Introduce architecture ADR and tests before adding endpoints."
+        ],
+        "evidence_targets": [
+          "docs/ARCHITECTURE.md",
+          "docs/TESTING.md"
+        ]
+      },
+      {
+        "title": "Define data classification and privacy handling",
+        "roi": 3.0,
+        "risk_reduction_points": 9,
+        "effort_points": 3,
+        "steps": [
+          "Map data classes and retention/deletion policy."
+        ],
+        "evidence_targets": [
+          "SECURITY.md"
+        ]
+      },
+      {
+        "title": "Create scalability budget and benchmark SLOs",
+        "roi": 3.0,
+        "risk_reduction_points": 9,
+        "effort_points": 3,
+        "steps": [
+          "Set p95/p99 targets and regression thresholds."
+        ],
+        "evidence_targets": [
+          "docs/BENCHMARKS.md"
+        ]
+      },
+      {
+        "title": "Formalize failure simulations for dependency outages",
+        "roi": 2.5,
+        "risk_reduction_points": 5,
+        "effort_points": 2,
+        "steps": [
+          "Add DB/cache/token-expiry playbooks and tests."
+        ],
+        "evidence_targets": [
+          ".github/workflows/ci-validation.yml"
+        ]
+      },
+      {
+        "title": "Establish tenant isolation policy template",
+        "roi": 2.0,
+        "risk_reduction_points": 4,
+        "effort_points": 2,
+        "steps": [
+          "Template controls for future multi-tenant deployments."
+        ],
+        "evidence_targets": [
+          "docs/ARCHITECTURE.md"
+        ]
+      }
+    ],
+    "timeline_to_production_hardening": {
+      "estimate": "~4-6 weeks for service-grade hardening if API/auth/data planes are introduced.",
+      "critical_path": [
+        "Threat model + authz architecture",
+        "Idempotency/transaction controls",
+        "Observability + incident runbooks",
+        "SBOM and release gates"
+      ],
+      "assumptions": [
+        "Scope expansion from simulator to production SaaS would require net-new service architecture."
+      ]
+    }
+  },
+  "proof_bundle_index": [
+    {
+      "path": "proof_bundle/build.log",
+      "type": "generated",
+      "sha256": "1707cc96c6ae877d9a39e003b37d4aeb08081dcb11afd1545edbd7a412964fc7"
+    },
+    {
+      "path": "proof_bundle/command_logs/01.log",
+      "type": "command_log",
+      "sha256": "b2604bc6ca8c5d06fbc885ea87f81b1db14b5a724596a491c93387aee2cd07be"
+    },
+    {
+      "path": "proof_bundle/command_logs/02.log",
+      "type": "command_log",
+      "sha256": "a82d5f7c9d8774245fc8b7e5b03b3638493145e79632c357a0a3a8761ffb1df9"
+    },
+    {
+      "path": "proof_bundle/command_logs/03.log",
+      "type": "command_log",
+      "sha256": "73d34c9982b8ae28d756789b28812090fd2e486523b83cd68c050d9d4c6312c3"
+    },
+    {
+      "path": "proof_bundle/command_logs/04.log",
+      "type": "command_log",
+      "sha256": "cfe4fc93a1650e9bd98865d250e36569ae8ca05d5af64557fa65db2836d12010"
+    },
+    {
+      "path": "proof_bundle/command_logs/05.log",
+      "type": "command_log",
+      "sha256": "801ec1623626966c7aa92adf7ca6ebea4a03e3899bc2f603ddf3431eaeaa7ab5"
+    },
+    {
+      "path": "proof_bundle/command_logs/06.log",
+      "type": "command_log",
+      "sha256": "649e2c1850c4e84923362829a09dbb2e6704aadd3618d17d94732c3a6348c935"
+    },
+    {
+      "path": "proof_bundle/command_logs/07.log",
+      "type": "command_log",
+      "sha256": "a1036ba4a272b9d70f5f23777d9a6b1e47f17466d09432c25ef174e9767a9ee3"
+    },
+    {
+      "path": "proof_bundle/command_logs/08.log",
+      "type": "command_log",
+      "sha256": "b56f4741c5a24b7065f6aaff606b13f469bac01a1ffb018764d70af89390c9f2"
+    },
+    {
+      "path": "proof_bundle/command_logs/09.log",
+      "type": "command_log",
+      "sha256": "880114d4fb11d70c2761dd546cdaf871dc891b6c6d42acf5b7cf28f25b08ceed"
+    },
+    {
+      "path": "proof_bundle/command_logs/10.log",
+      "type": "command_log",
+      "sha256": "59ce74f9b7aa0b800e30baebe59e64b6c5d663863b4536ff9829ad26c4f86dba"
+    },
+    {
+      "path": "proof_bundle/command_logs/11.log",
+      "type": "command_log",
+      "sha256": "2dcc8df6176acddde1ce6a5d07aca030a294426690547a362c114e0877c0b238"
+    },
+    {
+      "path": "proof_bundle/command_logs/12.log",
+      "type": "command_log",
+      "sha256": "517b3d6b54fca3a4f211ffd293239e19acdabc70426ec41bf95f3ae18030be96"
+    },
+    {
+      "path": "proof_bundle/command_logs/13.log",
+      "type": "command_log",
+      "sha256": "e86d035202301f4cb80aa1b4a2d48807efddc822a6a592e62194619dd02a9a98"
+    },
+    {
+      "path": "proof_bundle/command_logs/14.log",
+      "type": "command_log",
+      "sha256": "5b47c2edceaccd4e6fd4fe268b68fc17f783946ac5ec23bc049df972bf7f4a16"
+    },
+    {
+      "path": "proof_bundle/command_logs/15.log",
+      "type": "command_log",
+      "sha256": "e3ebe761838092a612c2addfeff9fda2dea10bf7ece685c2acc803ff7a55501b"
+    },
+    {
+      "path": "proof_bundle/command_logs/16.log",
+      "type": "command_log",
+      "sha256": "f47a8cf19e47d1c2664964c2f70ed2bb4257a7a02dca47ab1ee8969481d2e4ee"
+    },
+    {
+      "path": "proof_bundle/command_logs/17.log",
+      "type": "command_log",
+      "sha256": "8a3ae2a2bcd041b8d9387e2f166dd0cd741e6034c427f383cbb13d5ef003474a"
+    },
+    {
+      "path": "proof_bundle/command_logs/18.log",
+      "type": "command_log",
+      "sha256": "1459442654a61fe8ff3cb441b9966aa5fbaee0022af38329475fb396cf76a6a4"
+    },
+    {
+      "path": "proof_bundle/command_logs/19.log",
+      "type": "command_log",
+      "sha256": "ba0b8015b6cce8210b7db6dc7167a4a02cec6ba6607252eb2a78882add653b68"
+    },
+    {
+      "path": "proof_bundle/command_logs/20.log",
+      "type": "command_log",
+      "sha256": "15a21bc462b94396d45fc6c00f61113edb937d7581cb7d73e2f230c6b9a5fd57"
+    },
+    {
+      "path": "proof_bundle/command_logs/21.log",
+      "type": "command_log",
+      "sha256": "cf98bb7057e2bb85cd6fe52520eb0c91c313e25aa5c144e7e1f6d8e0c2675f51"
+    },
+    {
+      "path": "proof_bundle/command_logs/22.log",
+      "type": "command_log",
+      "sha256": "6847f0aeb47ae3c2d29498961d338cce995efb06cbf9f1b7cc0fffd1b1854823"
+    },
+    {
+      "path": "proof_bundle/command_logs/23.log",
+      "type": "command_log",
+      "sha256": "e1581b4fa21033be70f225e4031e77920116413d770d06cd51d3cbf3eea38336"
+    },
+    {
+      "path": "proof_bundle/command_logs/24.log",
+      "type": "command_log",
+      "sha256": "22590996ee96ae31b065199c8279a0872532d0e6df3dbcd9b9255b29711b025a"
+    },
+    {
+      "path": "proof_bundle/command_logs/25.log",
+      "type": "command_log",
+      "sha256": "94c743ab2b9eee0f8a62385f84edf435c7a590f8c9b389d63b728dbf0bcc3d96"
+    },
+    {
+      "path": "proof_bundle/command_logs/26.log",
+      "type": "command_log",
+      "sha256": "bdb3c79b430e66622318410b2030f0b088b8c22dd191052c3bc1104b9fd9d2e0"
+    },
+    {
+      "path": "proof_bundle/command_logs/27.log",
+      "type": "command_log",
+      "sha256": "5eda0aa2e093667e1fc17d9b400cb67564b4fce812487d93f6a88f4120cb0111"
+    },
+    {
+      "path": "proof_bundle/command_logs/28.log",
+      "type": "command_log",
+      "sha256": "92b48a25080f80deb16c30a80ecbf05bc5c1c1ef8957f5785f640db23aa3f214"
+    },
+    {
+      "path": "proof_bundle/command_logs/29.log",
+      "type": "command_log",
+      "sha256": "d1cd98e3b4f1f047e1ef5c3927a15e5b501750a4c9b91c467b0f98e3f3d467df"
+    },
+    {
+      "path": "proof_bundle/command_logs/30.log",
+      "type": "command_log",
+      "sha256": "f09fb01c44f338793a7e396bde730c7614899210d9cb82414e9b73112a0eaad3"
+    },
+    {
+      "path": "proof_bundle/command_logs/31.log",
+      "type": "command_log",
+      "sha256": "9af2344604126b3dbe5003cd9f24e2367b396158d90e443e66047bdb90b75b1b"
+    },
+    {
+      "path": "proof_bundle/command_logs/32.log",
+      "type": "command_log",
+      "sha256": "a8c685fb54848c59b8f881c51a968e1b55c728a7ff4c71c7be37f816a9d5f4ed"
+    },
+    {
+      "path": "proof_bundle/command_logs/33.log",
+      "type": "command_log",
+      "sha256": "62b5f1d3098265640ba7a982e108f01e677e8f0b4a58923fa79b7e7d8373e857"
+    },
+    {
+      "path": "proof_bundle/command_logs/34.log",
+      "type": "command_log",
+      "sha256": "3782aca29181506fcf63623689655a0f494cf09c8d4a2781aee47b4ec34e7af6"
+    },
+    {
+      "path": "proof_bundle/commands_index.json",
+      "type": "generated",
+      "sha256": "0d619bc2e94f49158760f043964bb0f17238b3063e97eb8e47ccb37397a1222c"
+    },
+    {
+      "path": "proof_bundle/cpu.log",
+      "type": "generated",
+      "sha256": "c1f3e06ee1ccb3f7eff5f89ce0d39fa5ccc2f9faeb8fba882a0f3e28eec3c719"
+    },
+    {
+      "path": "proof_bundle/excerpts/architecture_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "b312074b144f6fb2b4e1f4bb55a34795490aa3c7f3d228d0972bcfcfc9982350"
+    },
+    {
+      "path": "proof_bundle/excerpts/docker_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "b0693e180554bc03c7c74de8f50abba7baec62d9e1685498fd3d9b914272a04b"
+    },
+    {
+      "path": "proof_bundle/excerpts/pyproject_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "03a3b315eb992c4bcf908e6b8c8b1ca07f95c560e79223811d9d8ec0fa27528f"
+    },
+    {
+      "path": "proof_bundle/excerpts/readme_security_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "f3c7c3570fc6b3dbbf803c12d39a7ebb503a0ccaf4d5ed9a36224bb6ff5babf7"
+    },
+    {
+      "path": "proof_bundle/excerpts/requirements_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "51c2f571dde50b3ba4f508ae24e2c61f42faed893aec39660c81ce3a7b265900"
+    },
+    {
+      "path": "proof_bundle/excerpts/security_policy_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "33611076385b2eeb3fbe2aec984fa23e62dedd8a11f83f77767eaf9cc1595825"
+    },
+    {
+      "path": "proof_bundle/excerpts/testing_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "b585b4456447e123fb55ca5fd27afb6130634bb97e5c588e7fdaf88ead6593d9"
+    },
+    {
+      "path": "proof_bundle/excerpts/workflow_dependency_review_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "7fae5e1a8993b72bfad6c8d17f4bf70580c521371fbb30d7f021225c8e37378b"
+    },
+    {
+      "path": "proof_bundle/excerpts/workflow_security_excerpt.txt",
+      "type": "excerpt",
+      "sha256": "68ae63f20059ee8c9ddef4344634fb4cbac57685cf3d785bb3f97a746d1a757d"
+    },
+    {
+      "path": "proof_bundle/ext_counts.log",
+      "type": "generated",
+      "sha256": "bb6a17d4febfa5954bc38aa4e5777a0c28750fc0c3bbd93805daceea20899d87"
+    },
+    {
+      "path": "proof_bundle/file_excerpts.md",
+      "type": "generated",
+      "sha256": "4f2c6ffe3828de8d9b23a5c6e3167ae850011bb0e597b5781faaa006128c18de"
+    },
+    {
+      "path": "proof_bundle/find_top.log",
+      "type": "generated",
+      "sha256": "1905d53dac6e114def169c16140b781bba6b5114bbe14b817ee1de9f088e8141"
+    },
+    {
+      "path": "proof_bundle/generated/command_manifest.json",
+      "type": "generated",
+      "sha256": "7b77b5226edc74b98b7258a3ffeb8a5e0e8b86f4bcd3cc7847e9e946818d6b09"
+    },
+    {
+      "path": "proof_bundle/git_log.log",
+      "type": "generated",
+      "sha256": "dac6330a0755ead14b114a9f6aa2a0b5919d97b29a235a8816fd8add19df7175"
+    },
+    {
+      "path": "proof_bundle/git_status.log",
+      "type": "generated",
+      "sha256": "ab13706f0ce8be94c1452c04acd69e371fde5f01deac8c9a864cb1eae0699386"
+    },
+    {
+      "path": "proof_bundle/index.json",
+      "type": "generated",
+      "sha256": "2b828ff79d15073215da64351381063c3f1ffc93d815134b1242b9647c35a037"
+    },
+    {
+      "path": "proof_bundle/install_build.log",
+      "type": "generated",
+      "sha256": "d7c5ccf54332f258b92dc0afeec31062a588b4e228f88a1cba33abd1d94ea961"
+    },
+    {
+      "path": "proof_bundle/install_dev_test.log",
+      "type": "generated",
+      "sha256": "6762445b1c99d9c118feb39b5d2dc70410f4e8918453434f0e3b9e0af2c17278"
+    },
+    {
+      "path": "proof_bundle/manifests.log",
+      "type": "generated",
+      "sha256": "395c045bc54f0cce8f55f15fdd997050aee5debb838dc03e680ac342d1abd89d"
+    },
+    {
+      "path": "proof_bundle/mem.log",
+      "type": "generated",
+      "sha256": "c4df150251de34ea5f301788c6849652395205268f13e7467d4a7236faacc328"
+    },
+    {
+      "path": "proof_bundle/pip_version.log",
+      "type": "generated",
+      "sha256": "acf32fee7a32aa49f548f056bcbf2b89b42e62454c144a2ad8db41b53ac1895d"
+    },
+    {
+      "path": "proof_bundle/pytest_version.log",
+      "type": "generated",
+      "sha256": "7eefb56b8603b033e5b2d018412784ba0e721719641f8cf1a02dcb83f3e8389e"
+    },
+    {
+      "path": "proof_bundle/python_version.log",
+      "type": "generated",
+      "sha256": "e925235452b18521f223da6c5c94ce026f0bdb61938737a49b2e2afdb2c5bb13"
+    },
+    {
+      "path": "proof_bundle/test_all.log",
+      "type": "generated",
+      "sha256": "cc5a8375a5b10620c71d19e13a31112f23becd3c10f4b630a1a13553da3dd728"
+    },
+    {
+      "path": "proof_bundle/test_non_validation.log",
+      "type": "generated",
+      "sha256": "a63f290315d7bc1eac9f4cdb47953338e80e1b4d255aeedcf1654f69046631c9"
+    },
+    {
+      "path": "proof_bundle/uname.log",
+      "type": "generated",
+      "sha256": "c78c5ad7853e6e324a0a48930cacf3c8b9e9f9c39c1ef3bc47415fdffe65309b"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+  20: ## Control loops (timescale-segregated)
+  21: 
+  22: - **Micro (per timestep)**: AdEx + conductance synapses update neuron and synapse state.
+  23: - **Meso (per learning event)**: three-factor plasticity accumulates eligibility and
+  24:   applies neuromodulated updates.
+  25: - **Macro (slow control)**: criticality controller adjusts global gain to keep σ near target.
+  26: - **Meta (schedule)**: temperature gating switches exploration ↔ consolidation phases.
+  27: 
+  28: ## Evidence crosswalk (core components)
+  29: 
+  30: | Component | SPEC section | Claim IDs |
+  31: | --- | --- | --- |
+  32: | AdEx neuron dynamics | P0-1 | CLM-0001, CLM-0002 |
+  33: | Conductance synapses + NMDA Mg²⁺ block | P0-2 | CLM-0003 |
+  34: | Three-factor learning | P0-3 | CLM-0004 |
+  35: | Neuromodulated STDP + eligibility traces | P0-3 | CLM-0005 |
+  36: | Criticality σ tracking | P0-4 | CLM-0006, CLM-0007 |
+  37: | Subsampling-corrected σ estimation | P0-4 | CLM-0008 |
+  38: | Power-law validation for avalanches | P0-4 | CLM-0009 |
+  39: | Temperature schedule + gating | P1-5 | CLM-0019 |
+  40: | Dual-weight consolidation | P1-6 | CLM-0010 |
+  41: | Governance SSOT policy | P2-8..P2-12 | CLM-0011 |
+  42: | Reproducibility process anchors | P2-8..P2-12 | CLM-0012, CLM-0013, CLM-0014 |
+  43: 
+  44: The table is intentionally minimal: it enumerates the canonical components and
+  45: the authoritative claim IDs that substantiate them. For full equations and
+  46: parameterization, consult the cited SPEC sections.
+  47: 
+  48: ## State layout (reference simulator)
+  49: 
+  50: - neuron state: (V, w, spiked)
+  51: - synapse state: (g_ampa, g_nmda, g_gabaa)
+  52: - criticality: (σ estimator, gain controller)
+  53: 
+  54: ## Optional governance extension: Verified Contribution Gating (VCG)
+  55: 
+  56: VCG is an **engineering-contract** module that enforces result-based reciprocity at the system boundary:
+  57: agents that repeatedly match a social/interaction pattern without measurable contribution are
+  58: deprioritized by withdrawing future routing priority and resource budget. VCG is specified
+  59: as a non-core extension (does not change the 12 core neurodynamics components) and is documented
+  60: in `docs/VCG.md`.

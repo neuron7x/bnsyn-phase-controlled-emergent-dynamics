@@ -1,0 +1,11 @@
+COMMAND: git status --short
+START_UTC: 2026-02-15T19:39:06.197235Z
+END_UTC: 2026-02-15T19:39:06.215289Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+?? proof_bundle/command_logs/
+
+--- STDERR ---
+

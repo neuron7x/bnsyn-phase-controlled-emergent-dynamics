@@ -1,0 +1,18 @@
+COMMAND: rg -n "(Dockerfile|docker-compose|kubernetes|helm|deploy|rollback|migration|backup)" README.md docs infra Dockerfile docker-compose.yml
+START_UTC: 2026-02-15T19:39:07.242606Z
+END_UTC: 2026-02-15T19:39:07.265038Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 2
+TIMED_OUT: false
+--- STDOUT ---
+docs/STATUS.md:9:- Production adoption, external deployment, and battle-tested usage are not claimed in this repository unless accompanied by explicit external evidence artifacts.
+docs/INTEGRATION.md:116:  and explicit schema validation. No external services or deployment orchestration exist
+docs/INTEGRATION.md:150:- No runtime behavior changes; rollback removes documentation/test only.
+docs/appendix/codebase_readiness_audit_2026-02-15.json:150:      "category": "J Release Engineering (versioning, changelog, artifacts, rollback)",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:160:        "No explicit rollback procedure or migration rollback test artifact was located."
+docs/appendix/PRODUCTION_ROADMAP.md:397:3. Risk-aware planning (migration strategy, compatibility)
+docs/DEMO.md:6:For full conference preparation (release readiness + backup plan), see
+
+--- STDERR ---
+rg: infra: No such file or directory (os error 2)
+
