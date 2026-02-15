@@ -1,11 +1,12 @@
-COMMAND: python --version
-START_UTC: 2026-02-15T19:39:06.321912Z
-END_UTC: 2026-02-15T19:39:06.344077Z
-TIMEOUT_SEC: 600
-EXIT_CODE: 0
+COMMAND: sed -n "1,260p" .github/workflows/ci.yml
+START_UTC: 2026-02-15T20:06:08.645825Z
+END_UTC: 2026-02-15T20:06:08.660584Z
+TIMEOUT_SEC: 30
+EXIT_CODE: 2
 TIMED_OUT: false
 --- STDOUT ---
-Python 3.12.12
 
 --- STDERR ---
+sed: can't read .github/workflows/ci.yml: No such file or directory
 
+LOG_SHA256: 173263f4ec9e2d0f293e48968510035da078cd4b57aa9b7d01c4ab4371f29b10

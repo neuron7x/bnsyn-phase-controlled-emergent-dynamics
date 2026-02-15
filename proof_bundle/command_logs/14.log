@@ -1,177 +1,41 @@
-COMMAND: cat pyproject.toml
-START_UTC: 2026-02-15T19:39:07.068080Z
-END_UTC: 2026-02-15T19:39:07.078709Z
-TIMEOUT_SEC: 600
+COMMAND: git log --oneline -n 30
+START_UTC: 2026-02-15T20:06:08.716525Z
+END_UTC: 2026-02-15T20:06:08.735385Z
+TIMEOUT_SEC: 30
 EXIT_CODE: 0
 TIMED_OUT: false
 --- STDOUT ---
-[project]
-name = "bnsyn"
-version = "0.2.0"
-description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
-requires-python = ">=3.11"
-readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
-authors = [{name="BN-Syn Contributors"}]
-dependencies = [
-  "numpy==2.4.1",
-  "pydantic==2.12.5",
-  "scipy==1.17.0",
-  "jsonschema==4.26.0",
-  "joblib==1.4.2",
-]
-
-[project.optional-dependencies]
-dev = [
-  "hypothesis==6.151.5",
-  "pytest==9.0.2",
-  "pytest-cov==7.0.0",
-  "pyyaml==6.0.3",
-  "ruff==0.15.0",
-  "mypy==1.19.1",
-  "pylint==3.3.5",
-  "pydocstyle==6.3.0",
-  "bandit==1.9.3",
-  "validate-pyproject==0.25",
-  "pre-commit==4.5.1",
-  "pip-audit==2.10.0",
-  "psutil==7.2.2",
-  "sphinx==9.0.4",
-  "sphinx-autodoc-typehints==3.6.1",
-  "myst-parser==5.0.0",
-  "furo==2025.12.19",
-  "sphinx-copybutton==0.5.2",
-]
-
-test = [
-  "hypothesis==6.151.5",
-  "pytest==9.0.2",
-  "pytest-cov==7.0.0",
-  "pyyaml==6.0.3",
-  "psutil==7.2.2",
-]
-
-viz = [
-  "matplotlib==3.10.8",
-  "pillow==12.1.0",
-  "streamlit==1.42.1",
-  "plotly==6.5.2",
-]
-
-jax = [
-  "jax==0.6.0",
-  "jaxlib==0.9.0",
-]
-
-torch = [
-  "torch==2.10.0",
-]
-
-accelerators = [
-  "bnsyn[jax]",
-  "bnsyn[torch]",
-]
-
-[project.scripts]
-bnsyn = "bnsyn.cli:main"
-
-[build-system]
-requires = ["setuptools==79.0.1"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.pytest.ini_options]
-addopts = "-q --strict-markers"
-testpaths = ["tests"]
-markers = [
-  "smoke: fast critical-path tests",
-  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
-  "benchmark: benchmark regression tests (excluded from mutation runs)",
-  "performance: performance regression tests with timing assertions",
-  "integration: integration tests requiring multiple components",
-  "property: property-based tests using Hypothesis",
-  "chaos: chaos engineering tests with fault injection",
-]
-
-[tool.hypothesis]
-derandomize = true
-
-[tool.hypothesis.profiles.ci]
-max_examples = 200
-deadline = 10000
-print_blob = true
-
-[tool.hypothesis.profiles.quick]
-max_examples = 100
-deadline = 5000
-print_blob = true
-
-[tool.hypothesis.profiles.thorough]
-max_examples = 1000
-deadline = 20000
-print_blob = true
-
-[tool.ruff]
-line-length = 100
-target-version = "py311"
-
-[tool.mypy]
-python_version = "3.11"
-strict = true
-warn_return_any = true
-disallow_untyped_defs = true
-disallow_untyped_calls = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unused_configs = true
-plugins = ["pydantic.mypy"]
-
-# Optional visualization dependencies (no type stubs available)
-[[tool.mypy.overrides]]
-module = ["plotly.*", "streamlit.*", "matplotlib.*"]
-ignore_missing_imports = true
-
-[tool.pylint.main]
-recursive = true
-ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
-fail-under = 7.5
-
-[tool.pylint.messages_control]
-disable = [
-  "import-error",
-  "invalid-name",
-  "broad-exception-caught",
-  "useless-import-alias",
-  "missing-function-docstring",
-]
-
-[tool.pylint.basic]
-good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
-
-[tool.pylint.design]
-max-args = 15
-
-[[tool.mypy.overrides]]
-module = "scipy.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "torch"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "jax.*"
-ignore_missing_imports = true
-
-[tool.setuptools.packages.find]
-where = ["src"]
+c84ec61 Merge pull request #239 from neuron7x/codex/conduct-full-zero-trust-repository-audit
+44fa015 Regenerate INVENTORY.json to satisfy inventory check
+c2164e8 Add audit artifact validation tests and fix proof index consistency
+62b3448 Add evidence-backed elite audit suite outputs
+d475c1d Merge pull request #238 from neuron7x/codex/generate-codebase-readiness-report
+fce84bc Refresh readiness audit with passing build and full test evidence
+700cfea Add evidence-backed codebase readiness gate report
+bc415cd Merge pull request #237 from neuron7x/codex/audit-codebase-readiness
+d5262d6 Regenerate INVENTORY.json to satisfy inventory check
+9d9c0fa Add strict audit report validator with regression tests
+169e910 Add evidence-based codebase readiness audit report
+c9b2bd4 Merge pull request #236 from neuron7x/codex/align-installation-and-quickstart-documentation
+366b89a audit: add readiness proof bundle for current head
+0d2509c Merge pull request #235 from neuron7x/codex/align-installation-and-quickstart-documentation
+37c87f1 test: cover package __main__ entrypoint for coverage gate
+d2f5223 docs: align install/quickstart with real distribution
+ac627fd docs: align install/quickstart with real distribution
+5ceda27 docs: align install/quickstart with real distribution
+c22ca1a Merge pull request #234 from neuron7x/codex/close-ci-executability-proof
+5350c41 chore(ci): close CI executability proof for HEAD
+cca307f Merge pull request #233 from neuron7x/codex/fix-mutation-baseline-to-be-non-trivial
+a5424ef chore(repo): regenerate manifest and inventory
+0b0287f fix(quality): make mutation baseline non-trivial
+7f1ca72 Merge pull request #232 from neuron7x/codex/find-and-fix-important-code-error
+b59b401 Validate run_simulation external current input
+787e85a Merge pull request #231 from neuron7x/codex/fix-implementation-gaps-in-project
+4273fe5 Stabilize subprocess CLI tests and refresh entropy baseline
+f4f4f20 Close determinism/docs gaps and add markdown link guard
+52ad6c7 Merge pull request #230 from neuron7x/codex/find-automation-strategies-for-pr-testing
+c065db8 Sync manifest artifacts and enforce manifest-check pre-push
 
 --- STDERR ---
 
+LOG_SHA256: 526a460a86743a67b3ee6f2910bd1e38e962dbc5e66151eb70cb1acf3a2fda56

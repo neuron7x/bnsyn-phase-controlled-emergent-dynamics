@@ -1,12 +1,231 @@
-COMMAND: find . -maxdepth 3 -type f | sed "s#^./##" | awk -F. "NF>1{print tolower($NF)}" | sort | uniq -c | sort -nr | head -n 100
-START_UTC: 2026-02-15T19:39:06.266914Z
-END_UTC: 2026-02-15T19:39:06.303069Z
-TIMEOUT_SEC: 600
+COMMAND: sed -n "1,220p" README.md
+START_UTC: 2026-02-15T20:06:08.606014Z
+END_UTC: 2026-02-15T20:06:08.620091Z
+TIMEOUT_SEC: 30
 EXIT_CODE: 0
 TIMED_OUT: false
 --- STDOUT ---
+# BN-Syn Thermostated Bio-AI System
+
+BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated Bio-AI System defined by the specification and governance artifacts in this repository.
+
+[![ci-pr](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
+[![ci-validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)
+[![codeql](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
+[![ci-pr-atomic](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg?branch=main)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
+
+BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-controlled emergent dynamics with strict evidence and governance controls. This repository is the *single source of truth* for specifications, experiments, validation, and compliance artifacts.
+
+## Contents
+
+- [Quality Assurance](#quality-assurance)
+- [Project Status](#project-status)
+- [Validation & Testing Strategy](#validation--testing-strategy)
+- [Results: Temperature-Controlled Consolidation](#results-temperature-controlled-consolidation)
+- [Sleep–Emergence Stack](#sleepemergence-stack)
+- [Interactive Demo](#-interactive-demo)
+- [Start Here](#start-here)
+- [Repository Contract](#repository-contract)
+- [Quickstart](#quickstart)
+- [Codebase Readiness](#codebase-readiness)
+- [Demo Runbook](#demo-runbook)
+- [Release Notes](#release-notes)
+- [Development Workflow](#development-workflow)
+- [CI on Pull Requests](#ci-on-pull-requests)
+- [Architecture at a Glance](#architecture-at-a-glance)
+- [Evidence & Bibliography](#evidence--bibliography)
+- [How to Cite](#how-to-cite)
+- [License / Security / Contributing](#license--security--contributing)
+
+## Quality Assurance
+
+Quality gates are command-verifiable and documented in one place:
+
+- Canonical local test/coverage commands: [`docs/TESTING.md`](docs/TESTING.md)
+- CI gate definitions: [`docs/CI_GATES.md`](docs/CI_GATES.md)
+- Workflow contracts: [`.github/WORKFLOW_CONTRACTS.md`](.github/WORKFLOW_CONTRACTS.md)
+- Evidence mapping: [`docs/EVIDENCE_COVERAGE.md`](docs/EVIDENCE_COVERAGE.md)
+
+No aggregate quality percentages are published in README; only reproducible command outputs and artifacts are considered normative.
+
+---
+
+## Project Status
+
+Official status declaration: [`docs/STATUS.md`](docs/STATUS.md).
+
+## Validation & Testing Strategy
+
+Canonical commands for install, test, coverage, and coverage gate live in [`docs/TESTING.md`](docs/TESTING.md).
+
+BN-Syn implements a **3-tier test selection strategy** for optimal coverage without blocking development:
+
+### Tier 1: BLOCKING (PR Gates) ⚡
+**Every PR, ~8 min** — Fast smoke tests, SSOT validation, claims coverage enforcement (CLM-0011), security scans
+
+### Tier 2: NON-BLOCKING Validation 🔬
+**Daily 2 AM UTC** — 10 scientific validation tests + 8 property-based invariants (Hypothesis)
+
+### Tier 3: Performance Tracking 📊
+**Weekly Sunday 3 AM UTC** — Benchmark regression detection against golden baseline
+
+**Learn More:**
+- [CI Gates](docs/CI_GATES.md) — Test selection strategy
+- [Test Protocol](docs/ACTIONS_TEST_PROTOCOL.md) — GitHub Actions testing guide
+- [Evidence Coverage](docs/EVIDENCE_COVERAGE.md) — Claims→Evidence traceability
+
+---
+
+## Results: Temperature-Controlled Consolidation
+
+BN-Syn demonstrates **phase-controlled emergent dynamics** through temperature-gated synaptic consolidation. Our flagship experiment (v2) validates that piecewise cooling schedules improve consolidation stability while maintaining active protein synthesis and consolidation, demonstrating stability gains without trivially suppressing plasticity.
+
+### Key Findings (v2: Piecewise Cooling with Non-Trivial Consolidation)
+
+| Condition | w_cons Variance | w_total Variance | Protein Level | Reduction vs Fixed-High |
+|-----------|-----------------|------------------|---------------|-------------------------|
+| **cooling_piecewise** | 0.003039 | 0.010302 | 0.9999 | **18.77%** ✓ |
+| fixed_high | 0.003600 | 0.012683 | 0.9999 | baseline |
+| fixed_low | 0.000000 | 0.000000 | 0.0002 | — |
+| random_T | 0.004736 | 0.016460 | 0.9999 | worse |
+
+**Hypothesis H1 SUPPORTED**: Piecewise cooling reduces w_total stability variance by **18.77%** while maintaining active consolidation (protein=0.9999, |w_cons|=0.0012), exceeding the ≥10% target without trivially disabling plasticity.
+
+**v1 showed extreme variance reduction (99.996%) but achieved this by suppressing consolidation; v2 demonstrates stability gains with protein synthesis active.**
+
+### Visualizations
+
+![Stability Comparison](figures/temp_ablation_v2/hero.png)
+
+*Stability variance across temperature conditions (20 seeds). Lower variance indicates more reproducible consolidation.*
+
+![Comparison Grid](figures/temp_ablation_v2/comparison_grid.png)
+
+*Multi-panel view: temperature profiles, weight dynamics, protein synthesis, and stability metrics.*
+
+### Reproduce the Flagship Experiment
+
+```bash
+# Install with visualization dependencies
+pip install -e ".[dev,viz]"
+
+# Run full validation experiment v2 (20 seeds, ~2-3 minutes)
+python -m experiments.runner temp_ablation_v2
+
+# Generate visualizations
+python -m scripts.visualize_experiment --run-id temp_ablation_v2
+
+# Verify hypothesis
+python -m experiments.verify_hypothesis docs/HYPOTHESIS.md results/temp_ablation_v2
+```
+
+**Fast smoke test** (5 seeds):
+```bash
+python -m experiments.runner temp_ablation_v2 --seeds 5 --out results/_smoke
+```
+
+**Baseline v1 experiment** (extreme variance reduction but suppresses consolidation):
+```bash
+python -m experiments.runner temp_ablation_v1
+```
+
+See [`docs/HYPOTHESIS.md`](docs/HYPOTHESIS.md) for experimental design and acceptance criteria.
+
+---
+
+## Sleep–Emergence Stack
+
+BN-Syn now includes a **Sleep–Emergence Stack** that integrates sleep-wake cycles, memory consolidation, attractor crystallization, and phase transition tracking. This provides a cohesive framework for studying emergent dynamics with deterministic guarantees.
+
+### Quick Demo
+
+Run the end-to-end sleep-stack demo:
+
+```bash
+bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600 --out results/demo1
+```
+
+**Outputs:**
+- `results/demo1/manifest.json`: Reproducibility metadata (seed, params, git SHA)
+- `results/demo1/metrics.json`: Metrics (phase transitions, attractors, consolidation stats)
+- `figures/demo1/summary.png`: Summary figure (if matplotlib installed)
+
+**Expected runtime:** ~5-10 seconds
+
+**Scaled flagship run (N=2000, extended wake/sleep):**
+
+```bash
+python -m bnsyn.tools.run_scaled_sleep_stack \
+  --out artifacts/local_runs/scaled_sleep_stack_n2000 \
+  --seed 123 --n 2000 --steps-wake 2400 --steps-sleep 1800
+```
+
+**Optional scale benchmark:**
+
+```bash
+python -m bnsyn.tools.benchmark_sleep_stack_scale
+```
+
+For CI/quick smoke runs, use fast flags to reduce workload:
+
+```bash
+python -m bnsyn.tools.run_scaled_sleep_stack \
+  --out /tmp/bnsyn_scaled_smoke \
+  --seed 42 --n 80 --steps-wake 30 --steps-sleep 30 \
+  --baseline-steps-wake 20 --baseline-steps-sleep 10 \
+  --determinism-runs 1 --skip-backend-equivalence --skip-baseline \
+  --no-raster --no-plots
+```
+
+The generated `<out>/metrics.json` contains fields:
+- `seed`, `N_scaled`, `steps_wake_scaled`, `steps_sleep_scaled`
+- `determinism_hashes` (per-run manifest/metrics hashes)
+- `determinism_runs` (int) and `determinism_identical` (bool or null when runs < 2)
+- `backend_equivalence` (`atol`, `equivalent`, `max_abs_sigma_diff`, `skipped`; values may be null when skipped)
+- `baseline_skipped` (bool) and `baseline` (`wake_std_sigma`, `transitions`, `attractors` or null when baseline skipped)
+- `scaled` (`wake_std_sigma`, `transitions`, `attractors`, `crystallization_progress`)
+- `benchmark` (`elapsed_s`, `memory_current_bytes`, `memory_peak_bytes`)
+
+Benchmark output is written to `artifacts/local_runs/benchmarks_scale/metrics.json` and is machine-dependent.
+
+### Minimal Usage Example
+
+```python
+from bnsyn.rng import seed_all
+from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.config import AdExParams, SynapseParams, CriticalityParams, TemperatureParams
+from bnsyn.temperature.schedule import TemperatureSchedule
+from bnsyn.sleep import SleepCycle, default_human_sleep_cycle
+from bnsyn.memory import MemoryConsolidator
+from bnsyn.criticality import PhaseTransitionDetector
+from bnsyn.emergence import AttractorCrystallizer
+
+# Initialize with deterministic seed
+pack = seed_all(42)
+net = Network(NetworkParams(N=64), AdExParams(), SynapseParams(), 
+              CriticalityParams(), dt_ms=0.5, rng=pack.np_rng)
+
+# Setup sleep-emergence stack
+temp_schedule = TemperatureSchedule(TemperatureParams())
+sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=pack.np_rng)
+consolidator = MemoryConsolidator(capacity=100)
+phase_detector = PhaseTransitionDetector()
+crystallizer = AttractorCrystallizer(state_dim=64, snapshot_dim=50)
+
+# Wake phase: run network and record memories
+for _ in range(500):
+    m = net.step()
+    if _ % 20 == 0:
+        consolidator.tag(net.state.V_mV, importance=0.8)
+        sleep_cycle.record_memory(importance=0.8)
+    phase_detector.observe(m["sigma"], _)
+    crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+
+# Sleep phase: consolidation + replay
+sleep_cycle.sleep(default_human_sleep_cycle())
+consolidator.consolidate(protein_level=0.9, temperature=0.8)
 
 --- STDERR ---
-awk: cmd. line:1: NF>1{print tolower()}
-awk: cmd. line:1:                    ^ 0 is invalid as number of arguments for tolower
 
+LOG_SHA256: e7b14c825e43b4ea963c0f00af44aeffca331417fa957e414b0f0acaf019a290
