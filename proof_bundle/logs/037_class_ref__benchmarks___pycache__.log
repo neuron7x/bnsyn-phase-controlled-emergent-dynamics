@@ -1,0 +1,13 @@
+[2026-02-16T11:18:59Z]
+CMD: rg -n --fixed-strings './benchmarks/__pycache__' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:2:CMD: git ls-files --error-unmatch './benchmarks/__pycache__' || true
+./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:6:error: pathspec './benchmarks/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:2:CMD: git check-ignore -v './benchmarks/__pycache__' || true
+./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:5:.gitignore:1:__pycache__/	./benchmarks/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:8:./benchmarks/__pycache__
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:2:CMD: rg -n --fixed-strings './benchmarks/__pycache__' . || true
+./proof_bundle/logs/023_final_noise_scan.log:13:./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+STDERR:

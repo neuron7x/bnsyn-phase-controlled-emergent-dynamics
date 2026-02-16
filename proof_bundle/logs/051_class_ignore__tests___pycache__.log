@@ -1,0 +1,6 @@
+[2026-02-16T11:19:17Z]
+CMD: git check-ignore -v './tests/__pycache__' || true
+EXIT: 0
+STDOUT:
+.gitignore:1:__pycache__/	./tests/__pycache__
+STDERR:

@@ -1,0 +1,6 @@
+[2026-02-16T11:20:18Z]
+CMD: pylint src/bnsyn || true
+EXIT: 0
+STDOUT:
+STDERR:
+bash: command not found: pylint

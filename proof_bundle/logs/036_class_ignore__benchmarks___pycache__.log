@@ -1,0 +1,6 @@
+[2026-02-16T11:18:58Z]
+CMD: git check-ignore -v './benchmarks/__pycache__' || true
+EXIT: 0
+STDOUT:
+.gitignore:1:__pycache__/	./benchmarks/__pycache__
+STDERR:

@@ -1,0 +1,5 @@
+[2026-02-16T11:21:46Z]
+CMD: rm -f proof_bundle/logs/.counter
+EXIT: 0
+STDOUT:
+STDERR:

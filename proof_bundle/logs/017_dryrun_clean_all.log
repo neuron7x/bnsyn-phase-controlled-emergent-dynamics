@@ -1,0 +1,23 @@
+[2026-02-16T11:17:52Z]
+CMD: git clean -nd
+EXIT: 0
+STDOUT:
+Would remove proof_bundle/logs/.counter
+Would remove proof_bundle/logs/001_read_agents.log
+Would remove proof_bundle/logs/002_baseline_git_status.log
+Would remove proof_bundle/logs/003_baseline_head.log
+Would remove proof_bundle/logs/004_baseline_branch.log
+Would remove proof_bundle/logs/005_baseline_remote.log
+Would remove proof_bundle/logs/006_baseline_python.log
+Would remove proof_bundle/logs/007_baseline_pip.log
+Would remove proof_bundle/logs/008_baseline_pytest_ver.log
+Would remove proof_bundle/logs/009_baseline_ruff_ver.log
+Would remove proof_bundle/logs/010_baseline_mypy_ver.log
+Would remove proof_bundle/logs/011_find_agents.log
+Would remove proof_bundle/logs/012_status_porcelain.log
+Would remove proof_bundle/logs/013_ls_untracked_ignored.log
+Would remove proof_bundle/logs/014_find_cache_dirs.log
+Would remove proof_bundle/logs/015_find_noise_files.log
+Would remove proof_bundle/logs/016_dryrun_clean_ignored.log
+Would remove proof_bundle/logs/017_dryrun_clean_all.log
+STDERR:

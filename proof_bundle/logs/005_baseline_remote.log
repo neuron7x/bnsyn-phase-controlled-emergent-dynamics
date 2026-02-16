@@ -1,0 +1,5 @@
+[2026-02-16T11:17:07Z]
+CMD: git remote -v || true
+EXIT: 0
+STDOUT:
+STDERR:

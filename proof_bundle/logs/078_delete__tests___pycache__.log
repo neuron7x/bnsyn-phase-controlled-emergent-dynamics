@@ -1,0 +1,5 @@
+[2026-02-16T11:20:05Z]
+CMD: rm -rf './tests/__pycache__'
+EXIT: 0
+STDOUT:
+STDERR:

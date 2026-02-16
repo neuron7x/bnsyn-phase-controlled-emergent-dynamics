@@ -1,0 +1,6 @@
+[2026-02-16T11:20:30Z]
+CMD: python -m build || true
+EXIT: 0
+STDOUT:
+STDERR:
+/root/.pyenv/versions/3.12.12/bin/python: No module named build

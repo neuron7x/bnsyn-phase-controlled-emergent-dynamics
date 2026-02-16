@@ -1,0 +1,227 @@
+{
+  "run_mode": "audit-grade fail-closed",
+  "summary": {
+    "candidates": 9,
+    "approved_for_delete": 9,
+    "deleted": 9,
+    "kept": 0
+  },
+  "items": [
+    {
+      "path": "./experiments/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/27_class_ignore__experiments___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/26_class_track__experiments___pycache__.log",
+        "proof_bundle/logs/27_class_ignore__experiments___pycache__.log",
+        "proof_bundle/logs/53_class_refscope__experiments___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./.pytest_cache",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/30_class_ignore___pytest_cache.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/29_class_track___pytest_cache.log",
+        "proof_bundle/logs/30_class_ignore___pytest_cache.log",
+        "proof_bundle/logs/54_class_refscope___pytest_cache.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./entropy/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/33_class_ignore__entropy___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/32_class_track__entropy___pycache__.log",
+        "proof_bundle/logs/33_class_ignore__entropy___pycache__.log",
+        "proof_bundle/logs/55_class_refscope__entropy___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./benchmarks/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/36_class_ignore__benchmarks___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/35_class_track__benchmarks___pycache__.log",
+        "proof_bundle/logs/36_class_ignore__benchmarks___pycache__.log",
+        "proof_bundle/logs/56_class_refscope__benchmarks___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./tools/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/39_class_ignore__tools___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/38_class_track__tools___pycache__.log",
+        "proof_bundle/logs/39_class_ignore__tools___pycache__.log",
+        "proof_bundle/logs/57_class_refscope__tools___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./.ruff_cache",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/42_class_ignore___ruff_cache.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/41_class_track___ruff_cache.log",
+        "proof_bundle/logs/42_class_ignore___ruff_cache.log",
+        "proof_bundle/logs/58_class_refscope___ruff_cache.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./scripts/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/45_class_ignore__scripts___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/44_class_track__scripts___pycache__.log",
+        "proof_bundle/logs/45_class_ignore__scripts___pycache__.log",
+        "proof_bundle/logs/59_class_refscope__scripts___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./.mypy_cache",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/48_class_ignore___mypy_cache.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/47_class_track___mypy_cache.log",
+        "proof_bundle/logs/48_class_ignore___mypy_cache.log",
+        "proof_bundle/logs/60_class_refscope___mypy_cache.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    },
+    {
+      "path": "./tests/__pycache__",
+      "status": "DELETED",
+      "reason_code": "python_or_tool_cache_artifact",
+      "confidence": 1.0,
+      "git_status": {
+        "tracked": false,
+        "ignored_or_pattern": true,
+        "ignored_evidence_log": "proof_bundle/logs/51_class_ignore__tests___pycache__.log"
+      },
+      "rubric": {
+        "T1_not_tracked": true,
+        "T2_ignored_or_deterministic_byproduct": true,
+        "T3_reproducible_or_os_detritus": true,
+        "T4_not_referenced_in_docs_scripts_config_ci": true
+      },
+      "evidence_logs": [
+        "proof_bundle/logs/50_class_track__tests___pycache__.log",
+        "proof_bundle/logs/51_class_ignore__tests___pycache__.log",
+        "proof_bundle/logs/61_class_refscope__tests___pycache__.log",
+        "proof_bundle/logs/087_final_delete_noise.log",
+        "proof_bundle/logs/088_final_verify_noise_absent.log"
+      ]
+    }
+  ]
+}

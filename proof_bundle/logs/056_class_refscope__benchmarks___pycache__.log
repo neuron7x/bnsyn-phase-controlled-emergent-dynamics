@@ -1,0 +1,5 @@
+[2026-02-16T11:19:32Z]
+CMD: rg -n --fixed-strings './benchmarks/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+EXIT: 0
+STDOUT:
+STDERR:

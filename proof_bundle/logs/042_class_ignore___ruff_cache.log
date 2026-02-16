@@ -1,0 +1,5 @@
+[2026-02-16T11:19:05Z]
+CMD: git check-ignore -v './.ruff_cache' || true
+EXIT: 0
+STDOUT:
+STDERR:

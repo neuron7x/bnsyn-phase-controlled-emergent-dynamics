@@ -1,0 +1,13 @@
+[2026-02-16T11:18:56Z]
+CMD: rg -n --fixed-strings './entropy/__pycache__' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/logs/032_class_track__entropy___pycache__.log:2:CMD: git ls-files --error-unmatch './entropy/__pycache__' || true
+./proof_bundle/logs/032_class_track__entropy___pycache__.log:6:error: pathspec './entropy/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/025_check_top_noise.log:7:./entropy/__pycache__
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:2:CMD: rg -n --fixed-strings './entropy/__pycache__' . || true
+./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:2:CMD: git check-ignore -v './entropy/__pycache__' || true
+./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:5:.gitignore:1:__pycache__/	./entropy/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:14:./proof_bundle/find_top.log:44:./entropy/__pycache__
+STDERR:

@@ -1,0 +1,5 @@
+[2026-02-16T11:18:30Z]
+CMD: git diff --name-status HEAD
+EXIT: 0
+STDOUT:
+STDERR:
