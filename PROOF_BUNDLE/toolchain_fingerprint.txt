@@ -1,0 +1,9 @@
+git_sha=7cb483441d0bd086c395e13f1110ad1aa5caab90
+branch=work
+os=Linux 6.12.47 x86_64
+python=Python 3.12.12
+pip=pip 25.3
+pytest=pytest 9.0.2
+git=git version 2.43.0
+lockfile_sha256:
+  pyproject.toml=6475233c8b897d52e3a7e3cf3c640f2d4dcf8f9adbdc12f07ea81cd0553bdd22

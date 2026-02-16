@@ -18,6 +18,8 @@ jobs:
           python -m pip install --upgrade "pip==${PIP_VERSION}"
           python -m pip --version
           python -m pip install -e ".[test]"
+      - name: Import contracts sanity check
+        run: python -c "import contracts; print('import ok')"
       - name: Run math validator
         run: python scripts/math_validate.py
       - name: Run math invariant tests
