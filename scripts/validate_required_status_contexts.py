@@ -5,7 +5,7 @@ import re
 import sys
 from typing import Iterable
 
-import yaml
+from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,22 +14,18 @@ class RequiredStatusContextsParseError(RuntimeError):
     """Raised when REQUIRED_STATUS_CONTEXTS.yml cannot be validated."""
 
 
-
 def _load_yaml(path: Path) -> dict[str, object]:
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise RequiredStatusContextsParseError(f"{path} must be a mapping.")
-    return data
+    return load_yaml_mapping(path, RequiredStatusContextsParseError)
 
 
 def load_required_status_contexts(path: Path) -> list[str]:
     data = _load_yaml(path)
-    allowed_keys = {"version", "required_status_contexts"}
-    unknown_keys = set(data.keys()) - allowed_keys
-    if unknown_keys:
-        raise RequiredStatusContextsParseError(
-            f"Unknown keys in {path.name}: {sorted(unknown_keys)}"
-        )
+    reject_unknown_keys(
+        data,
+        {"version", "required_status_contexts"},
+        RequiredStatusContextsParseError,
+        context=path.name,
+    )
     if data.get("version") != "1":
         raise RequiredStatusContextsParseError(f"{path.name} version must be '1'.")
     entries_raw = data.get("required_status_contexts")
@@ -41,7 +37,7 @@ def load_required_status_contexts(path: Path) -> list[str]:
             raise RequiredStatusContextsParseError(
                 "required_status_contexts entries must be non-empty strings."
             )
-        entries.append(item)
+        entries.append(item.strip())
     if len(entries) != len(set(entries)):
         raise RequiredStatusContextsParseError("required_status_contexts contains duplicates.")
     return entries
@@ -57,24 +53,49 @@ def _render_matrix_name(job_name: str, key: str, value: str) -> str:
 
 
 def expected_required_status_contexts(pr_gates_path: Path, workflows_dir: Path) -> list[str]:
-    pr_gates = _load_yaml(pr_gates_path)
+    pr_gates = load_yaml_mapping(
+        pr_gates_path, RequiredStatusContextsParseError, label="PR_GATES.yml"
+    )
+    reject_unknown_keys(
+        pr_gates,
+        {"version", "required_pr_gates"},
+        RequiredStatusContextsParseError,
+        context="PR_GATES.yml",
+    )
+    if pr_gates.get("version") != "1":
+        raise RequiredStatusContextsParseError("PR_GATES.yml version must be '1'.")
     entries = pr_gates.get("required_pr_gates")
     if not isinstance(entries, list):
         raise RequiredStatusContextsParseError("required_pr_gates must be a list.")
 
     expected: list[str] = []
+    seen_workflows: set[str] = set()
     for entry in entries:
         if not isinstance(entry, dict):
             raise RequiredStatusContextsParseError("required_pr_gates entry must be a mapping.")
         workflow_file = entry.get("workflow_file")
         workflow_name = entry.get("workflow_name")
         required_job_ids = entry.get("required_job_ids")
-        if not isinstance(workflow_file, str) or not isinstance(workflow_name, str):
+        if not isinstance(workflow_file, str) or not workflow_file:
             raise RequiredStatusContextsParseError("workflow_file/workflow_name must be strings.")
+        if not isinstance(workflow_name, str) or not workflow_name.strip():
+            raise RequiredStatusContextsParseError("workflow_file/workflow_name must be strings.")
+        if workflow_file in seen_workflows:
+            raise RequiredStatusContextsParseError(
+                f"Duplicate workflow_file in PR_GATES.yml: {workflow_file}"
+            )
+        seen_workflows.add(workflow_file)
         if not isinstance(required_job_ids, list) or any(
             not isinstance(job, str) or not job for job in required_job_ids
         ):
-            raise RequiredStatusContextsParseError("required_job_ids must be a list of non-empty strings.")
+            raise RequiredStatusContextsParseError(
+                "required_job_ids must be a list of non-empty strings."
+            )
+        normalized_job_ids = [job.strip() for job in required_job_ids]
+        if len(set(normalized_job_ids)) != len(normalized_job_ids):
+            raise RequiredStatusContextsParseError(
+                f"required_job_ids contains duplicates in {workflow_file}."
+            )
 
         wf_path = workflows_dir / workflow_file
         wf = _load_yaml(wf_path)
@@ -82,7 +103,7 @@ def expected_required_status_contexts(pr_gates_path: Path, workflows_dir: Path) 
         if not isinstance(jobs, dict):
             raise RequiredStatusContextsParseError(f"jobs missing in {workflow_file}.")
 
-        for job_id in required_job_ids:
+        for job_id in normalized_job_ids:
             job = jobs.get(job_id)
             if not isinstance(job, dict):
                 raise RequiredStatusContextsParseError(
@@ -98,7 +119,11 @@ def expected_required_status_contexts(pr_gates_path: Path, workflows_dir: Path) 
             else:
                 matrix = None
 
-            if isinstance(matrix, dict) and "python-version" in matrix and isinstance(job_name, str):
+            if (
+                isinstance(matrix, dict)
+                and "python-version" in matrix
+                and isinstance(job_name, str)
+            ):
                 versions = matrix["python-version"]
                 if isinstance(versions, list):
                     for version in versions:
@@ -130,8 +155,7 @@ def validate_required_status_contexts(
         missing = sorted(expected_set - declared_set)
         extra = sorted(declared_set - expected_set)
         violations.append(
-            "VIOLATION: REQUIRED_STATUS_CONTEXTS_MISMATCH "
-            f"expected={expected} declared={declared}"
+            f"VIOLATION: REQUIRED_STATUS_CONTEXTS_MISMATCH expected={expected} declared={declared}"
         )
         if missing:
             violations.append(f"VIOLATION: REQUIRED_STATUS_CONTEXTS_MISSING contexts={missing}")
