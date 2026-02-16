@@ -1,0 +1,5 @@
+[2026-02-16T11:39:42Z]
+CMD: git clean -ndX
+EXIT: 0
+STDOUT:
+STDERR:

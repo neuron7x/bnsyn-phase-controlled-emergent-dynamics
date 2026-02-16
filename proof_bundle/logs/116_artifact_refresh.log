@@ -1,0 +1,17 @@
+[2026-02-16T11:40:59Z]
+CMD: python - <<'PY2'
+import json, hashlib, datetime
+from pathlib import Path
+proof=Path('proof_bundle')
+files=sorted([p for p in proof.rglob('*') if p.is_file() and p.name!='sha256sums.txt'])
+entries=[]
+for p in files:
+    rel=str(p).replace(chr(92),'/')
+    entries.append({'path':rel,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+Path('proof_bundle/index.json').write_text(json.dumps({'generated_at_utc':datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'),'artifacts':entries},indent=2)+'\n')
+files2=sorted([p for p in proof.rglob('*') if p.is_file() and p.name!='sha256sums.txt'])
+Path('proof_bundle/hashes/sha256sums.txt').write_text('\n'.join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {str(p).replace(chr(92),'/')}" for p in files2)+'\n')
+PY2
+EXIT: 0
+STDOUT:
+STDERR:

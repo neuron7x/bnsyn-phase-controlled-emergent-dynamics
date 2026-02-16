@@ -1,0 +1,29 @@
+[2026-02-16T11:39:42Z]
+CMD: git clean -nd
+EXIT: 0
+STDOUT:
+Would remove proof_bundle/logs/.counter
+Would remove proof_bundle/logs/01_git_status.log
+Would remove proof_bundle/logs/02_git_rev.log
+Would remove proof_bundle/logs/03_git_branch.log
+Would remove proof_bundle/logs/04_git_remote.log
+Would remove proof_bundle/logs/05_python_v.log
+Would remove proof_bundle/logs/06_pip_v.log
+Would remove proof_bundle/logs/07_pytest_v.log
+Would remove proof_bundle/logs/08_ruff_v.log
+Would remove proof_bundle/logs/093_baseline_git_status.log
+Would remove proof_bundle/logs/094_baseline_head.log
+Would remove proof_bundle/logs/095_baseline_branch.log
+Would remove proof_bundle/logs/096_baseline_remote.log
+Would remove proof_bundle/logs/097_baseline_python.log
+Would remove proof_bundle/logs/098_baseline_pip.log
+Would remove proof_bundle/logs/099_baseline_pytest_ver.log
+Would remove proof_bundle/logs/09_mypy_v.log
+Would remove proof_bundle/logs/100_baseline_ruff_ver.log
+Would remove proof_bundle/logs/101_baseline_mypy_ver.log
+Would remove proof_bundle/logs/102_status_porcelain.log
+Would remove proof_bundle/logs/103_ls_untracked_ignored.log
+Would remove proof_bundle/logs/104_find_cache_dirs.log
+Would remove proof_bundle/logs/105_find_noise_files.log
+Would remove proof_bundle/logs/106_dryrun_clean_ignored.log
+STDERR:

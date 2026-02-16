@@ -1,0 +1,6 @@
+[2026-02-16T11:39:48Z]
+CMD: pylint src/bnsyn
+EXIT: 127
+STDOUT:
+STDERR:
+/bin/bash: line 1: pylint: command not found

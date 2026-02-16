@@ -1,0 +1,6 @@
+[2026-02-16T11:39:14Z]
+CMD: git branch --show-current || true
+EXIT: 0
+STDOUT:
+work
+STDERR:

@@ -1,0 +1,6 @@
+[2026-02-16T11:39:14Z]
+CMD: python -m pip --version
+EXIT: 0
+STDOUT:
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+STDERR:
