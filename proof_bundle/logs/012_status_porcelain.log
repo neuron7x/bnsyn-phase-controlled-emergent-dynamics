@@ -1,0 +1,18 @@
+[2026-02-16T11:17:34Z]
+CMD: git status --porcelain=v1
+EXIT: 0
+STDOUT:
+?? proof_bundle/logs/.counter
+?? proof_bundle/logs/001_read_agents.log
+?? proof_bundle/logs/002_baseline_git_status.log
+?? proof_bundle/logs/003_baseline_head.log
+?? proof_bundle/logs/004_baseline_branch.log
+?? proof_bundle/logs/005_baseline_remote.log
+?? proof_bundle/logs/006_baseline_python.log
+?? proof_bundle/logs/007_baseline_pip.log
+?? proof_bundle/logs/008_baseline_pytest_ver.log
+?? proof_bundle/logs/009_baseline_ruff_ver.log
+?? proof_bundle/logs/010_baseline_mypy_ver.log
+?? proof_bundle/logs/011_find_agents.log
+?? proof_bundle/logs/012_status_porcelain.log
+STDERR:

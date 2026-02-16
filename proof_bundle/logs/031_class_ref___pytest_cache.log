@@ -1,0 +1,15 @@
+[2026-02-16T11:18:52Z]
+CMD: rg -n --fixed-strings './.pytest_cache' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/logs/023_final_noise_scan.log:11:./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/logs/023_final_noise_scan.log:12:./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/logs/031_class_ref___pytest_cache.log:2:CMD: rg -n --fixed-strings './.pytest_cache' . || true
+./proof_bundle/logs/030_class_ignore___pytest_cache.log:2:CMD: git check-ignore -v './.pytest_cache' || true
+./proof_bundle/logs/030_class_ignore___pytest_cache.log:5:.gitignore:6:.pytest_cache/	./.pytest_cache
+./proof_bundle/logs/029_class_track___pytest_cache.log:2:CMD: git ls-files --error-unmatch './.pytest_cache' || true
+./proof_bundle/logs/029_class_track___pytest_cache.log:6:error: pathspec './.pytest_cache' did not match any file(s) known to git
+./proof_bundle/logs/025_check_top_noise.log:6:./.pytest_cache
+STDERR:

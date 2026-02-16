@@ -1,0 +1,5 @@
+[2026-02-16T11:17:35Z]
+CMD: git ls-files -o -i --exclude-standard
+EXIT: 0
+STDOUT:
+STDERR:

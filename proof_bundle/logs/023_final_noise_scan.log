@@ -1,0 +1,21 @@
+[2026-02-16T11:18:29Z]
+CMD: rg -n "__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache" . || true
+EXIT: 0
+STDOUT:
+./Makefile:176:	find . -type d -name __pycache__ -exec rm -rf {} +
+./Makefile:177:	find . -type d -name .pytest_cache -exec rm -rf {} +
+./Makefile:178:	find . -type d -name .mypy_cache -exec rm -rf {} +
+./docs/api/_templates/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+./docs/api/_static/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+./scripts/math_validate.py:121:                and "__pycache__" not in p.parts
+./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/find_top.log:59:./experiments/__pycache__
+./proof_bundle/find_top.log:70:./scripts/__pycache__
+./proof_bundle/find_top.log:79:./tests/__pycache__
+./proof_bundle/find_top.log:84:./tools/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:2:CMD: rg -n "__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache" . || true
+./proof_bundle/logs/014_find_cache_dirs.log:2:CMD: find . -maxdepth 6 \( -type d -name "__pycache__" -o -type d -name ".pytest_cache" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) 2>/dev/null || true
+STDERR:

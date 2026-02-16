@@ -1,0 +1,5 @@
+[2026-02-16T11:20:48Z]
+CMD: find . -maxdepth 2 \( -type d -name ".pytest_cache" -o -type d -name "__pycache__" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) -print
+EXIT: 0
+STDOUT:
+STDERR:

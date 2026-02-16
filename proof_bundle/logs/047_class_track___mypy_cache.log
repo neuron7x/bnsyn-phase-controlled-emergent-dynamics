@@ -1,0 +1,7 @@
+[2026-02-16T11:19:12Z]
+CMD: git ls-files --error-unmatch './.mypy_cache' || true
+EXIT: 0
+STDOUT:
+STDERR:
+error: pathspec './.mypy_cache' did not match any file(s) known to git
+Did you forget to 'git add'?

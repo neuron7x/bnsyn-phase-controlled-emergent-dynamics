@@ -1,0 +1,6 @@
+[2026-02-16T11:17:26Z]
+CMD: rg --files -g "**/AGENTS.md"
+EXIT: 0
+STDOUT:
+AGENTS.md
+STDERR:

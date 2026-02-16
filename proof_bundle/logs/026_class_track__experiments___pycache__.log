@@ -1,0 +1,7 @@
+[2026-02-16T11:18:46Z]
+CMD: git ls-files --error-unmatch './experiments/__pycache__' || true
+EXIT: 0
+STDOUT:
+STDERR:
+error: pathspec './experiments/__pycache__' did not match any file(s) known to git
+Did you forget to 'git add'?

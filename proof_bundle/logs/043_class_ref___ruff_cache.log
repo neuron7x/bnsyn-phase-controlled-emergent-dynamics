@@ -1,0 +1,10 @@
+[2026-02-16T11:19:07Z]
+CMD: rg -n --fixed-strings './.ruff_cache' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/logs/025_check_top_noise.log:10:./.ruff_cache
+./proof_bundle/logs/042_class_ignore___ruff_cache.log:2:CMD: git check-ignore -v './.ruff_cache' || true
+./proof_bundle/logs/043_class_ref___ruff_cache.log:2:CMD: rg -n --fixed-strings './.ruff_cache' . || true
+./proof_bundle/logs/041_class_track___ruff_cache.log:2:CMD: git ls-files --error-unmatch './.ruff_cache' || true
+./proof_bundle/logs/041_class_track___ruff_cache.log:6:error: pathspec './.ruff_cache' did not match any file(s) known to git
+STDERR:

@@ -1,0 +1,10 @@
+[2026-02-16T11:19:14Z]
+CMD: rg -n --fixed-strings './.mypy_cache' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/logs/048_class_ignore___mypy_cache.log:2:CMD: git check-ignore -v './.mypy_cache' || true
+./proof_bundle/logs/047_class_track___mypy_cache.log:2:CMD: git ls-files --error-unmatch './.mypy_cache' || true
+./proof_bundle/logs/047_class_track___mypy_cache.log:6:error: pathspec './.mypy_cache' did not match any file(s) known to git
+./proof_bundle/logs/025_check_top_noise.log:12:./.mypy_cache
+./proof_bundle/logs/049_class_ref___mypy_cache.log:2:CMD: rg -n --fixed-strings './.mypy_cache' . || true
+STDERR:
