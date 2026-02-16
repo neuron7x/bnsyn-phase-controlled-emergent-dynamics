@@ -8,9 +8,9 @@
   ],
   "counts": {
     "src": 73,
-    "tests": 168,
-    "docs": 266,
-    ".github": 41
+    "tests": 174,
+    "docs": 274,
+    ".github": 43
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -37,9 +37,11 @@
     "formal-coq.yml",
     "formal-tla.yml",
     "math-quality-gate.yml",
+    "perf-budgets.yml",
     "physics-equivalence.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
+    "release-readiness.yml",
     "science.yml",
     "workflow-integrity.yml"
   ],

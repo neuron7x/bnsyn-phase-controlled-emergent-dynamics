@@ -2955,3 +2955,28 @@ cmd: python -m scripts.validate_required_status_contexts
 OK: required_status_contexts=13 validated
 cmd: python -m scripts.validate_long_running_triggers
 OK: long_running_trigger_policy workflows=31 violations=0
+cmd: git status --short
+cmd: python tools/generate_inventory.py --check
+INVENTORY.json is out of date. Run: python tools/generate_inventory.py && git add INVENTORY.json
+cmd: python tools/generate_inventory.py
+UPDATED: INVENTORY.json
+cmd: python tools/generate_inventory.py --check
+OK: INVENTORY.json is up to date
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers && python -m tools.manifest validate && python tools/generate_inventory.py --check
+cmd: python -m pip install pyyaml
+Collecting pyyaml
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 19.3 MB/s  0:00:00
+Installing collected packages: pyyaml
+Successfully installed pyyaml-6.0.3
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers && python -m tools.manifest validate && python tools/generate_inventory.py --check
+OK: INVENTORY.json is up to date
+cmd: rg -n "generate_inventory|INVENTORY.json" tests
+tests/test_generate_inventory.py:7:from tools.generate_inventory import build_inventory, render_inventory
+tests/test_generate_inventory.py:28:        "_generated_by": "python tools/generate_inventory.py",
+tests/test_generate_inventory.py:35:    inventory = json.loads((root / "INVENTORY.json").read_text(encoding="utf-8"))
+tests/test_generate_inventory.py:42:    assert (root / "INVENTORY.json").read_text(encoding="utf-8") == rendered
+tests/test_principal_test_hardening.py:28:    def test_generate_inventory_is_deterministic(self, tmp_path: Path) -> None:
+cmd: python -m pytest tests/test_generate_inventory.py tests/test_principal_test_hardening.py -q
+.....                                                                    [100%]
