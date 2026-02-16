@@ -1,0 +1,19 @@
+[2026-02-16T10:52:04.246841Z]
+CMD: python scripts/lint_ci_truthfulness.py --help
+EXIT: 0
+STDOUT:
+usage: lint_ci_truthfulness.py [-h] [--workflows-dir WORKFLOWS_DIR]
+                               [--out OUT] [--md MD] [--strict]
+
+Lint CI workflows for truthfulness
+
+options:
+  -h, --help            show this help message and exit
+  --workflows-dir WORKFLOWS_DIR
+                        Directory containing workflow files
+  --out OUT             Output JSON report path
+  --md MD               Output Markdown report path
+  --strict              Treat warnings as errors
+
+STDERR:
+

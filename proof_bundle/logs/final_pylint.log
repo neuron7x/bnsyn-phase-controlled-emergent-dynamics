@@ -1,4 +1,7 @@
+[2026-02-16T11:00:54.628688Z]
 CMD: pylint src/bnsyn
+EXIT: 0
+STDOUT:
 ************* Module bnsyn.cli
 src/bnsyn/cli.py:88:8: W0621: Redefining name 'importlib' from outer scope (line 25) (redefined-outer-name)
 src/bnsyn/cli.py:88:8: C0415: Import outside toplevel (importlib.util) (import-outside-toplevel)
@@ -108,16 +111,16 @@ src/bnsyn/experiments/declarative.py:161:13: W1514: Using open without explicitl
 src/bnsyn/benchmarks/regime.py:1:0: R0801: Similar lines in 2 files
 ==bnsyn.provenance.manifest:[129:139]
 ==bnsyn.provenance.manifest_builder:[37:47]
-    try:
-        git_path = shutil.which("git")
-        if not git_path:
-            raise FileNotFoundError("git executable not found")
-        # Fixed git command without shell; inputs are constant.
-        result = subprocess.run(  # nosec B603
-            [git_path, "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True, (duplicate-code)
+        try:
+            git_path = shutil.which("git")
+            if not git_path:
+                raise FileNotFoundError("git executable not found")
+            # Fixed git command without shell; inputs are constant.
+            result = subprocess.run(  # nosec B603
+                [git_path, "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True, (duplicate-code)
 src/bnsyn/benchmarks/regime.py:1:0: R0801: Similar lines in 2 files
 ==bnsyn.cli:[231:237]
 ==bnsyn.sim.network:[528:534]
@@ -150,4 +153,6 @@ src/bnsyn/benchmarks/regime.py:1:0: R0801: Similar lines in 2 files
 ------------------------------------------------------------------
 Your code has been rated at 9.68/10 (previous run: 9.68/10, +0.00)
 
-EXIT:0
+
+STDERR:
+

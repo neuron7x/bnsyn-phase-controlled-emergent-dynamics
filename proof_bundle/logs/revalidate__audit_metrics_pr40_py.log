@@ -1,0 +1,8 @@
+[2026-02-16T10:51:42.929108Z]
+CMD: python scripts/_audit_metrics_pr40.py --help
+EXIT: 1
+STDOUT:
+Error: results/_verify_runA not found
+
+STDERR:
+

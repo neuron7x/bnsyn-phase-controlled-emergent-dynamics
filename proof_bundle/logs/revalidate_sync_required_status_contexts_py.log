@@ -1,0 +1,11 @@
+[2026-02-16T10:52:07.703689Z]
+CMD: python scripts/sync_required_status_contexts.py --help
+EXIT: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/sync_required_status_contexts.py", line 9, in <module>
+    from scripts.validate_required_status_contexts import expected_required_status_contexts
+ModuleNotFoundError: No module named 'scripts'
+

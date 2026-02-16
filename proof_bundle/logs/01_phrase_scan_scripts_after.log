@@ -1,0 +1,7 @@
+[2026-02-16T10:52:15.896118Z]
+CMD: rg -n "Scan code/docs trees for placeholder signals" scripts/ || true
+EXIT: 0
+STDOUT:
+
+STDERR:
+

@@ -188,6 +188,18 @@
     "sha256": "51c2f571dde50b3ba4f508ae24e2c61f42faed893aec39660c81ce3a7b265900"
   },
   {
+    "path": "proof_bundle/excerpts/revalidate_unavailable_summary.json",
+    "sha256": "004e361359e4a839452a09f3d5723c7412536cd9caf7f3ab23fd1bfc2cd30e5d"
+  },
+  {
+    "path": "proof_bundle/excerpts/scripts_README.md_intent.md",
+    "sha256": "ab0886414892ecc554112ab98feafc410dd3fa65c795660b42a01cd12016dff6"
+  },
+  {
+    "path": "proof_bundle/excerpts/scripts_scan_placeholders.py_intent.md",
+    "sha256": "1f9936f8b38f4635eeeed327d52db663b5ce506bfcf1de1e181238636d18abbe"
+  },
+  {
     "path": "proof_bundle/excerpts/security_policy_excerpt.txt",
     "sha256": "33611076385b2eeb3fbe2aec984fa23e62dedd8a11f83f77767eaf9cc1595825"
   },
@@ -256,10 +268,6 @@
     "sha256": "33f20ff037fff9fa5beb6c6bf307c52e3c9ab19531bd71e70c208af04b51ace1"
   },
   {
-    "path": "proof_bundle/index.json",
-    "sha256": "SELF_REFERENTIAL"
-  },
-  {
     "path": "proof_bundle/install_build.log",
     "sha256": "d7c5ccf54332f258b92dc0afeec31062a588b4e228f88a1cba33abd1d94ea961"
   },
@@ -301,10 +309,14 @@
   },
   {
     "path": "proof_bundle/toolchain_fingerprint.json",
-    "sha256": "31de6a7d8c2e49441aa65fcac6a9d3c3e2de31cb26b35c4ab2d1d200dea1807f"
+    "sha256": "182233259e6eb8a675501b4959a660efa3ec420d4e27cf2ad8f87b98c0045643"
   },
   {
     "path": "proof_bundle/uname.log",
     "sha256": "c78c5ad7853e6e324a0a48930cacf3c8b9e9f9c39c1ef3bc47415fdffe65309b"
+  },
+  {
+    "path": "proof_bundle/index.json",
+    "sha256": "SELF_REFERENTIAL"
   }
 ]

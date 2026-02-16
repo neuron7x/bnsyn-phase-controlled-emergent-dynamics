@@ -1,4 +1,4 @@
-"""Scan code/docs trees for placeholder signals used by governance gates.
+"""Detect pseudo-structure markers across governed code and documentation trees.
 
 The scanner is intentionally conservative: it detects explicit pseudo-structure
 signals (e.g., pass-in-except, NotImplementedError, and template markers) and

@@ -1,8 +1,8 @@
 {
   "meta": {
-    "timestamp_utc": "2026-02-16T10:35:08.135141Z",
+    "timestamp_utc": "2026-02-16T10:55:12.427914Z",
     "git": {
-      "commit": "4cdb981d937db717ca6260aa5fa149361e32b836",
+      "commit": "ff36ff0f33f34be6f940f0b0eb8cf8cdfa23c1c6",
       "branch": "work",
       "dirty": true
     },
@@ -18,23 +18,13 @@
   "discovery": {
     "scan_commands": [
       {
-        "cmd": "python sync purposes script",
-        "log_path": "proof_bundle/logs/postaudit_sync_purposes_20260216T103124Z.log",
-        "exit_code": 0
-      },
-      {
-        "cmd": "rg -n \"Scan code/docs trees for placeholder signals used by governance gates\" docs/SCRIPTS/index.md",
-        "log_path": "proof_bundle/logs/postaudit_duplicate_scan_20260216T103130Z.log",
-        "exit_code": 0
-      },
-      {
-        "cmd": "recheck unavailable scripts with --help",
-        "log_path": "proof_bundle/logs/postaudit_recheck_unavailable_20260216T103142Z.log",
+        "cmd": "rg -n \"Scan code/docs trees for placeholder signals\" scripts/ || true",
+        "log_path": "proof_bundle/logs/01_phrase_scan_scripts_after.log",
         "exit_code": 0
       }
     ],
     "patterns": [
-      "duplicated generic purpose text",
+      "Scan code/docs trees for placeholder signals",
       "unavailable (exit 1)"
     ]
   },
@@ -43,47 +33,46 @@
       "id": "PS-0001",
       "kind": "OTHER",
       "severity": "LOW",
-      "module_path": "docs/SCRIPTS/index.md",
-      "symbol": "duplicated_generic_purpose_text",
+      "module_path": "scripts/scan_placeholders.py",
+      "symbol": "docstring_phrase_dedup",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/postaudit_duplicate_scan_*.log",
-          "snippet": "duplicate phrase scan retained only script-specific occurrences",
-          "type": "dynamic",
-          "strength_score": 5,
+          "pointer": "scripts/scan_placeholders.py:1-1",
+          "snippet": "Docstring reworded to file-specific intent text.",
+          "type": "static",
+          "strength_score": 4,
           "reproducible": true
         },
         {
-          "pointer": "proof_bundle/logs/postaudit_sync_purposes_*.log",
-          "snippet": "sections_replaced=25 via page-purpose synchronization",
+          "pointer": "proof_bundle/logs/01_phrase_scan_scripts_after.log",
+          "snippet": "No matches for duplicated phrase inside scripts/.",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script purpose text in docs/SCRIPTS/index.md should reflect each script page, not a duplicated generic phrase.",
+      "expected_real_behavior": "No duplicated template phrase remains in scripts/ descriptions.",
       "implementation_plan": {
         "constraints": [
-          "Documentation-only edits",
-          "No runtime logic modifications"
+          "No runtime logic changes"
         ],
         "steps": [
-          "Parse docs/scripts pages for purpose text",
-          "Rewrite docs/SCRIPTS purpose lines per script"
+          "Replace duplicated phrase with script-specific description"
         ],
         "tests_to_add_or_update": [
-          "No code tests required"
+          "N/A"
         ],
         "acceptance": [
-          "Generic phrase is no longer duplicated across unrelated script sections"
+          "rg scan over scripts returns no matches for target phrase"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "docs/SCRIPTS/index.md",
-          "proof_bundle/excerpts/taskA_unique_descriptions.md"
+          "scripts/scan_placeholders.py",
+          "scripts/README.md",
+          "proof_bundle/excerpts/scripts_scan_placeholders.py_intent.md",
+          "proof_bundle/excerpts/scripts_README.md_intent.md"
         ],
         "commits": []
       }
@@ -93,38 +82,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/_audit_metrics_pr40.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck__audit_metrics_pr40_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate__audit_metrics_pr40_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck__audit_metrics_pr40_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate__audit_metrics_pr40_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -134,38 +122,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/audit_spec_implementation.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_audit_spec_implementation_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_audit_spec_implementation_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_audit_spec_implementation_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_audit_spec_implementation_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -175,38 +162,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/benchmark_physics.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_benchmark_physics_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_benchmark_physics_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_benchmark_physics_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_benchmark_physics_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -216,38 +202,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/benchmark_production.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_benchmark_production_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_benchmark_production_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_benchmark_production_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_benchmark_production_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -257,38 +242,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/benchmark_sleep_stack_scale.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_benchmark_sleep_stack_scale_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_benchmark_sleep_stack_scale_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_benchmark_sleep_stack_scale_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_benchmark_sleep_stack_scale_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -298,38 +282,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/check_benchmark_regressions.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_check_benchmark_regressions_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_check_benchmark_regressions_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_check_benchmark_regressions_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_check_benchmark_regressions_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -339,38 +322,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/compare_benchmarks.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_compare_benchmarks_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_compare_benchmarks_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_compare_benchmarks_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_compare_benchmarks_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -380,38 +362,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/generate_benchmark_baseline.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_generate_benchmark_baseline_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_generate_benchmark_baseline_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_generate_benchmark_baseline_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_generate_benchmark_baseline_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -421,38 +402,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/generate_evidence_coverage.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_generate_evidence_coverage_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_generate_evidence_coverage_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_generate_evidence_coverage_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_generate_evidence_coverage_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -462,38 +442,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/lint_ci_truthfulness.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_lint_ci_truthfulness_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_lint_ci_truthfulness_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_lint_ci_truthfulness_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_lint_ci_truthfulness_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -503,38 +482,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/mutation_survivors_summary.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_mutation_survivors_summary_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_mutation_survivors_summary_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_mutation_survivors_summary_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_mutation_survivors_summary_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -544,38 +522,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/orchestrate_throughput_scaling.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_orchestrate_throughput_scaling_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_orchestrate_throughput_scaling_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_orchestrate_throughput_scaling_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_orchestrate_throughput_scaling_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -585,38 +562,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/profile_kernels.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_profile_kernels_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_profile_kernels_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_profile_kernels_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_profile_kernels_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -626,38 +602,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/rebuild_sources_lock.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_rebuild_sources_lock_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_rebuild_sources_lock_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_rebuild_sources_lock_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_rebuild_sources_lock_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -667,38 +642,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/run_benchmarks.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_run_benchmarks_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_run_benchmarks_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_run_benchmarks_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_run_benchmarks_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -708,38 +682,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/run_scaled_sleep_stack.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_run_scaled_sleep_stack_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_run_scaled_sleep_stack_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_run_scaled_sleep_stack_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_run_scaled_sleep_stack_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -749,38 +722,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/scan_governed_docs.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_scan_governed_docs_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_scan_governed_docs_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_scan_governed_docs_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_scan_governed_docs_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -790,38 +762,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/scan_normative_tags.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_scan_normative_tags_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_scan_normative_tags_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_scan_normative_tags_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_scan_normative_tags_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -831,38 +802,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/scan_tierS_misuse.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_scan_tierS_misuse_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_scan_tierS_misuse_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_scan_tierS_misuse_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_scan_tierS_misuse_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -872,38 +842,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/ssot_rules.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_ssot_rules_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_ssot_rules_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_ssot_rules_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_ssot_rules_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -913,38 +882,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/sync_required_status_contexts.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_sync_required_status_contexts_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_sync_required_status_contexts_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_sync_required_status_contexts_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_sync_required_status_contexts_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -954,38 +922,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/validate_bibliography.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_bibliography_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_validate_bibliography_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_bibliography_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_bibliography_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -995,38 +962,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_branch_protection_governance.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_branch_protection_governance_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_branch_protection_governance_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_branch_protection_governance_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_branch_protection_governance_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1036,38 +1002,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/validate_claims.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_claims_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_validate_claims_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_claims_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_claims_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1077,38 +1042,37 @@
       "kind": "OTHER",
       "severity": "LOW",
       "module_path": "scripts/validate_claims_coverage.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_claims_coverage_py.log",
-          "snippet": "--help recheck exit_code=0",
+          "pointer": "proof_bundle/logs/revalidate_validate_claims_coverage_py.log",
+          "snippet": "help-mode exit code=0",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "DONE",
-      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_claims_coverage_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_claims_coverage_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1118,38 +1082,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_long_running_triggers.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_long_running_triggers_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_long_running_triggers_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_long_running_triggers_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_long_running_triggers_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1159,38 +1122,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_pr_gates.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_pr_gates_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_pr_gates_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_pr_gates_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_pr_gates_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1200,38 +1162,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_required_checks.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_required_checks_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_required_checks_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_required_checks_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_required_checks_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1241,38 +1202,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_required_status_contexts.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_required_status_contexts_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_required_status_contexts_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_required_status_contexts_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_required_status_contexts_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1282,38 +1242,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/validate_workflow_contracts.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_validate_workflow_contracts_py.log",
-          "snippet": "--help recheck exit_code=3",
+          "pointer": "proof_bundle/logs/revalidate_validate_workflow_contracts_py.log",
+          "snippet": "help-mode exit code=3",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_validate_workflow_contracts_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_validate_workflow_contracts_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1323,38 +1282,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/verify_equivalence.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_verify_equivalence_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_verify_equivalence_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_verify_equivalence_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_verify_equivalence_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1364,38 +1322,37 @@
       "kind": "OTHER",
       "severity": "MEDIUM",
       "module_path": "scripts/visualize_experiment.py",
-      "symbol": "help_mode_revalidation",
+      "symbol": "exit_code_revalidation",
       "evidence": [
         {
-          "pointer": "proof_bundle/logs/recheck_visualize_experiment_py.log",
-          "snippet": "--help recheck exit_code=1",
+          "pointer": "proof_bundle/logs/revalidate_visualize_experiment_py.log",
+          "snippet": "help-mode exit code=1",
           "type": "dynamic",
           "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "expected_real_behavior": "Script availability state is re-verified and recorded.",
       "implementation_plan": {
         "constraints": [
-          "No script logic changes"
+          "No business logic rewrites"
         ],
         "steps": [
-          "Run help mode",
-          "Record exit code"
+          "Run --help for script",
+          "Record exit code and status"
         ],
         "tests_to_add_or_update": [
           "N/A"
         ],
         "acceptance": [
-          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+          "Status set to DONE/STILL_FAILING/UNKNOWN from observed exit code"
         ]
       },
       "status": "OPEN",
-      "recheck_status": "STILL_FAILING",
       "pr_links": {
         "files_changed": [
-          "proof_bundle/logs/recheck_visualize_experiment_py.log",
-          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+          "proof_bundle/logs/revalidate_visualize_experiment_py.log",
+          "proof_bundle/excerpts/revalidate_unavailable_summary.json"
         ],
         "commits": []
       }
@@ -1405,10 +1362,10 @@
     "total_items": 33,
     "done_items": 19,
     "risk_notes": [
-      "Some scripts intentionally return non-zero with missing args even in --help paths; marked STILL_FAILING in recheck_status."
+      "Some scripts remain non-zero in help mode and are tracked as OPEN items with evidence."
     ],
     "side_effects_detected": [
-      "No runtime logic changed; documentation + audit artifacts only."
+      "Documentation and audit artifacts only; no domain logic changes."
     ]
   }
 }

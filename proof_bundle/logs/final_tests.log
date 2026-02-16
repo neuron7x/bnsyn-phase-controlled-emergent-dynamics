@@ -1,4 +1,7 @@
+[2026-02-16T11:00:16.347356Z]
 CMD: python -m pytest -m "not validation" -q
+EXIT: 0
+STDOUT:
 [Hypothesis] Using default profile
 ........................................................................ [ 10%]
 ........................................................................ [ 20%]
@@ -26,4 +29,6 @@ tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_
     "git_commit": _get_git_commit(resolved_root, resolved_version),
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-EXIT:0
+
+STDERR:
+

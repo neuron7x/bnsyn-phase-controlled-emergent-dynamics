@@ -1,8 +1,9 @@
 {
-  "python_version": "3.12.12",
-  "ruff_version": "0.15.0",
-  "mypy_version": "1.19.1",
+  "python_version": "Python 3.12.12",
+  "pip_version": "pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)",
+  "ruff_version": "ruff 0.15.0",
+  "mypy_version": "mypy 1.19.1 (compiled: yes)",
   "os": "Linux",
   "arch": "x86_64",
-  "git_commit": "4cdb981d937db717ca6260aa5fa149361e32b836"
+  "git_commit": "ff36ff0f33f34be6f940f0b0eb8cf8cdfa23c1c6"
 }

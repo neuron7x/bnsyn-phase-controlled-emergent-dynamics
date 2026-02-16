@@ -1,0 +1,8 @@
+[2026-02-16T10:52:08.939605Z]
+CMD: python scripts/validate_workflow_contracts.py --help
+EXIT: 3
+STDOUT:
+Usage: python -m scripts.validate_workflow_contracts
+
+STDERR:
+

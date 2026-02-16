@@ -1,0 +1,55 @@
+[2026-02-16T10:52:05.569398Z]
+CMD: python scripts/profile_kernels.py --help
+EXIT: 0
+STDOUT:
+usage: profile_kernels.py [-h] [--output OUTPUT] [--seed SEED]
+                          [--neurons NEURONS] [--dt DT] [--steps STEPS]
+                          [--warmup WARMUP] [--repeats REPEATS]
+
+BN-Syn kernel profiler
+
+options:
+  -h, --help         show this help message and exit
+  --output OUTPUT    Output JSON path (default:
+                     benchmarks/kernel_profile.json)
+  --seed SEED        Random seed (default: 42)
+  --neurons NEURONS  Number of neurons (default: 200)
+  --dt DT            Timestep in ms (default: 0.1)
+  --steps STEPS      Number of steps (default: 1000)
+  --warmup WARMUP    Warmup runs before profiling (default: 2)
+  --repeats REPEATS  Number of profiling repeats (default: 5)
+
+Kernel profiler for BN-Syn throughput analysis.
+
+This script instruments and profiles major computational kernels to identify
+bottlenecks and scaling surfaces for optimization.
+
+Parameters
+----------
+--output : str
+    Path to output JSON file (default: benchmarks/kernel_profile.json)
+--seed : int
+    Random seed for deterministic reproduction (default: 42)
+--neurons : int
+    Number of neurons in the network (default: 200)
+--dt : float
+    Timestep in milliseconds (default: 0.1)
+--steps : int
+    Number of simulation steps (default: 1000)
+
+Returns
+-------
+None
+    Writes JSON with kernel metrics to file or stdout
+
+Notes
+-----
+This creates the "Performance Jacobian" - the gradient of computational cost
+with respect to each kernel operation.
+
+References
+----------
+Problem statement STEP 2
+
+STDERR:
+

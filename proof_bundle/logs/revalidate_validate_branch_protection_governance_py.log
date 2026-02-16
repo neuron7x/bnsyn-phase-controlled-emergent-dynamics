@@ -1,0 +1,8 @@
+[2026-02-16T10:52:07.990672Z]
+CMD: python scripts/validate_branch_protection_governance.py --help
+EXIT: 3
+STDOUT:
+Usage: python -m scripts.validate_branch_protection_governance
+
+STDERR:
+
