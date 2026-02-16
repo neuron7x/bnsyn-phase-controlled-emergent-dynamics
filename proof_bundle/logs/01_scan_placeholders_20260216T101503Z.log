@@ -1,0 +1,3 @@
+$ python -m scripts.scan_placeholders --format json
+[]
+exit_code=0

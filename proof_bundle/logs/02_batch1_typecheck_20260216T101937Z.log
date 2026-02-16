@@ -1,0 +1,3 @@
+$ mypy src --strict --config-file pyproject.toml
+Success: no issues found in 72 source files
+exit_code=0

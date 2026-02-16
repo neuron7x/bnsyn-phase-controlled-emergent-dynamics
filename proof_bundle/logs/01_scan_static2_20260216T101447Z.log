@@ -1,0 +1,368 @@
+$ rg -n --hidden -g !.git -e TODO -e FIXME -e WIP -e stub -e placeholder -e NotImplemented -e NotImplementedError -e "pass\\s*$" -e "return None\\s*$" -e "return \\\\{\\\\}\\s*$" -e "return \\\\[\\\\]\\s*$" -e "throw new Error\\(" -e unimplemented -e mock -e dummy -e "fake data" -e "example only" -e TEMP -e HACK -e sketch -e scaffold .
+./pyproject.toml:129:# Optional visualization dependencies (no type stubs available)
+./benchmarks/run_benchmarks.py:89:        return None
+./benchmarks/run_benchmarks.py:92:        return None
+./benchmarks/run_benchmarks.py:101:        return {}
+./benchmarks/run_benchmarks.py:134:        return None
+./benchmarks/scenarios/__init__.py:14:from benchmarks.scenarios.temperature_sweep import SCENARIOS as TEMPERATURE_SCENARIOS
+./benchmarks/scenarios/__init__.py:32:    "temperature_sweep": _merge(TEMPERATURE_SCENARIOS),
+./benchmarks/scenarios/__init__.py:39:        TEMPERATURE_SCENARIOS,
+./benchmarks/metrics.py:251:        return None
+./tests_inventory.json:600:      "path": "tests/test_scan_placeholders.py"
+./plan.md:5:Touch only placeholder registry, placeholder validation tests, and required closure artifacts.
+./plan.md:9:- SCAN_CMD: `python -m scripts.scan_placeholders --format text`
+./tools/safety/check_safety_artifacts.py:190:    return []
+./tools/entropy_gate/compute_metrics.py:9:TODO_RE = re.compile(r"\b(TODO|FIXME)\b")
+./tools/entropy_gate/compute_metrics.py:201:        count += len(TODO_RE.findall(text))
+./tests/test_viz_interactive_main.py:14:        return None
+./tests/test_viz_interactive_main.py:17:        return None
+./tests/test_viz_interactive_main.py:28:            return None
+./tests/test_viz_interactive_main.py:34:            return None
+./tests/test_viz_interactive_main.py:37:            return None
+./tests/test_viz_interactive_main.py:40:            return None
+./tests/test_viz_interactive_main.py:78:            return None
+./tests/test_viz_interactive_main.py:81:            return None
+./.github/QUALITY_LEDGER.md:309:2. Updated `.github/PULL_REQUEST_TEMPLATE.md`
+./.github/QUALITY_LEDGER.md:442:     ├─ PULL_REQUEST_TEMPLATE.md
+./tests/test_manifest_tools.py:33:    (root / "tools" / "update_manifest.py").write_text("# tool placeholder\n", encoding="utf-8")
+./tests/test_cli_interactive.py:12:from unittest.mock import MagicMock
+./tests/test_cli_interactive.py:21:    run_mock = MagicMock(return_value=subprocess.CompletedProcess(["streamlit"], returncode=0))
+./tests/test_cli_interactive.py:23:    monkeypatch.setattr(subprocess, "run", run_mock)
+./tests/test_cli_interactive.py:27:    run_mock.assert_called_once()
+./tests/test_experiments_declarative.py:102:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+./tests/test_experiments_declarative.py:105:        return stub_result
+./tests/test_experiments_declarative.py:111:    assert payload == stub_result
+./tests/test_experiments_declarative.py:116:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+./tests/test_experiments_declarative.py:119:    monkeypatch.setattr(declarative, "run_experiment", lambda _: stub_result)
+./tests/test_experiments_declarative.py:124:    assert json.dumps(stub_result, indent=2, sort_keys=True) in captured
+./tests/test_tools_run_scaled_sleep_stack_unit.py:278:        return None
+./tests/test_tools_run_scaled_sleep_stack_unit.py:295:        return None
+./proof_bundle/logs/01_scan_static_20260216T101440Z.log:1:$ rg -n --hidden -g '!.git' -e "TODO|FIXME|WIP|stub|placeholder|NotImplemented|NotImplementedError|pass\\s*$|return None\\s*$|return \\{\\}\\s*$|return \\[\\]\\s*$|throw new Error\\(|unimplemented|mock|dummy|fake data|example only|TEMP|HACK|sketch|scaffold" .
+./proof_bundle/logs/01_scan_static_20260216T101440Z.log:3:    (?:TODO|FIXME|WIP|stub|placeholder|NotImplemented|NotImplementedError|pass\\s*$|return None\\s*$|return \\{\\}\\s*$|return \\[\\]\\s*$|throw new Error\\(|unimplemented|mock|dummy|fake data|example only|TEMP|HACK|sketch|scaffold)
+./proof_bundle/logs/01_scan_static2_20260216T101447Z.log:1:$ rg -n --hidden -g !.git -e TODO -e FIXME -e WIP -e stub -e placeholder -e NotImplemented -e NotImplementedError -e "pass\\s*$" -e "return None\\s*$" -e "return \\\\{\\\\}\\s*$" -e "return \\\\[\\\\]\\s*$" -e "throw new Error\\(" -e unimplemented -e mock -e dummy -e "fake data" -e "example only" -e TEMP -e HACK -e sketch -e scaffold .
+./proof_bundle/logs/01_scan_static2_20260216T101447Z.log:2:./pyproject.toml:129:# Optional visualization dependencies (no type stubs available)
+./tests/test_viz_interactive.py:27:            return None
+./tests/test_viz_interactive.py:30:            return None
+./tests/test_viz_interactive.py:53:            return None
+./tests/test_viz_interactive.py:56:            return None
+./tests/test_viz_interactive.py:59:            return None
+./tests/test_coverage_gap_extensions.py:257:    dummy_importlib_metadata = types.ModuleType("importlib_metadata")
+./tests/test_coverage_gap_extensions.py:258:    dummy_importlib_metadata.distributions = lambda: []
+./tests/test_coverage_gap_extensions.py:259:    monkeypatch.setitem(sys.modules, "importlib_metadata", dummy_importlib_metadata)
+./tests/test_coverage_gap_extensions.py:282:    dummy_torch = _DummyTorch()
+./tests/test_coverage_gap_extensions.py:283:    monkeypatch.setitem(sys.modules, "torch", dummy_torch)
+./tests/test_coverage_gap_extensions.py:290:    assert module.torch is dummy_torch
+./tests/test_coverage_gap_extensions.py:296:    dummy_torch = _DummyTorch()
+./tests/test_coverage_gap_extensions.py:297:    monkeypatch.setattr(network, "torch", dummy_torch)
+./tests/test_no_escape_tripwires.py:48:    needles = ("TODO", "FIXME")
+./tests/test_verify_hypothesis_v2.py:44:    # Check consolidation gates pass
+./tests/test_viz_optional_import.py:5:from unittest.mock import MagicMock, patch
+./tests/test_viz_optional_import.py:58:    # Create a mock that raises ModuleNotFoundError when matplotlib.pyplot is imported
+./tests/test_viz_optional_import.py:59:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_optional_import.py:62:        # For any other module, return a mock
+./tests/test_viz_optional_import.py:66:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_optional_import.py:97:    mock_plt = MagicMock()
+./tests/test_viz_optional_import.py:98:    mock_animation = MagicMock()
+./tests/test_viz_optional_import.py:99:    mock_mplot3d = MagicMock()
+./tests/test_viz_optional_import.py:101:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_optional_import.py:103:            return mock_plt
+./tests/test_viz_optional_import.py:105:            return mock_animation
+./tests/test_viz_optional_import.py:107:            return mock_mplot3d
+./tests/test_viz_optional_import.py:111:        "bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module
+./tests/test_viz_optional_import.py:112:    ) as mock_import:
+./tests/test_viz_optional_import.py:115:        assert plt1 is mock_plt
+./tests/test_viz_optional_import.py:116:        assert anim1 is mock_animation
+./tests/test_viz_optional_import.py:117:        first_call_count = mock_import.call_count
+./tests/test_viz_optional_import.py:121:        assert plt2 is mock_plt
+./tests/test_viz_optional_import.py:122:        assert anim2 is mock_animation
+./tests/test_viz_optional_import.py:124:        assert mock_import.call_count == first_call_count
+./tests/test_viz_optional_import.py:153:    # Create a mock that raises ModuleNotFoundError
+./tests/test_viz_optional_import.py:154:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_optional_import.py:159:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./proof_bundle/command_logs/32.log:84:docs/placeholder_cycles/cycle1/acceptance_map.yaml:21:    post_fix_expectation: "passes with deterministic fallback retention behavior"
+./proof_bundle/command_logs/32.log:85:docs/placeholder_cycles/cycle1/plan.md:37:| PH-0001 | `src/bnsyn/emergence/crystallizer.py` | `guard_fail_closed` | `regression` | Replace implicit `pass` fallback with deterministic explicit state retention branch and auditable warning path. |
+./proof_bundle/command_logs/08.log:21:129:# Optional visualization dependencies (no type stubs available)
+./proof_bundle/command_logs/20.log:309:docs/appendix/codebase_readiness_audit_2026-02-15.json:178:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging still marked TODO",
+./proof_bundle/command_logs/20.log:398:docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:17:   - `pip_install.log` => pass
+./proof_bundle/command_logs/20.log:400:docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:19:   - `ruff_check.log` => pass
+./proof_bundle/command_logs/20.log:402:docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:21:   - `pytest_q.log` => pass
+./proof_bundle/command_logs/20.log:403:docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:22:   - `validate_status_claims.log` => pass
+./proof_bundle/command_logs/20.log:404:docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:23:   - `manifest_generate.log` + `manifest_validate.log` + manifest drift check (`manifest_diff.exit=0`) => pass
+./tests/test_viz_smoke_coverage.py:5:These tests mock matplotlib to avoid display requirements while ensuring
+./tests/test_viz_smoke_coverage.py:11:from unittest.mock import MagicMock, patch
+./tests/test_viz_smoke_coverage.py:28:    # Create mock components
+./tests/test_viz_smoke_coverage.py:29:    mock_network = MagicMock()
+./tests/test_viz_smoke_coverage.py:30:    mock_crystallizer = MagicMock()
+./tests/test_viz_smoke_coverage.py:31:    mock_sleep_cycle = MagicMock()
+./tests/test_viz_smoke_coverage.py:32:    mock_consolidator = MagicMock()
+./tests/test_viz_smoke_coverage.py:35:    dashboard.attach(mock_network, mock_crystallizer, mock_sleep_cycle, mock_consolidator)
+./tests/test_viz_smoke_coverage.py:36:    assert dashboard._network is mock_network
+./tests/test_viz_smoke_coverage.py:37:    assert dashboard._crystallizer is mock_crystallizer
+./tests/test_viz_smoke_coverage.py:38:    assert dashboard._sleep_cycle is mock_sleep_cycle
+./tests/test_viz_smoke_coverage.py:39:    assert dashboard._consolidator is mock_consolidator
+./tests/test_viz_smoke_coverage.py:60:def test_dashboard_full_cycle_mocked() -> None:
+./tests/test_viz_smoke_coverage.py:61:    """Test full dashboard lifecycle with mocked matplotlib.
+./tests/test_viz_smoke_coverage.py:71:    mock_plt = MagicMock()
+./tests/test_viz_smoke_coverage.py:72:    mock_animation = MagicMock()
+./tests/test_viz_smoke_coverage.py:73:    mock_fig = MagicMock()
+./tests/test_viz_smoke_coverage.py:74:    mock_ax = MagicMock()
+./tests/test_viz_smoke_coverage.py:76:    # Configure mock figure to return mock axes
+./tests/test_viz_smoke_coverage.py:77:    mock_fig.add_subplot.return_value = mock_ax
+./tests/test_viz_smoke_coverage.py:79:    # Configure mock plt to return mock figure
+./tests/test_viz_smoke_coverage.py:80:    mock_plt.figure.return_value = mock_fig
+./tests/test_viz_smoke_coverage.py:82:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_smoke_coverage.py:84:            return mock_plt
+./tests/test_viz_smoke_coverage.py:86:            return mock_animation
+./tests/test_viz_smoke_coverage.py:91:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_smoke_coverage.py:101:        # Create mock components with get_attractors method (deterministic attractors)
+./tests/test_viz_smoke_coverage.py:102:        mock_crystallizer = MagicMock()
+./tests/test_viz_smoke_coverage.py:103:        mock_attractor = MagicMock()
+./tests/test_viz_smoke_coverage.py:104:        mock_attractor.center = np.linspace(-1.0, 1.0, num=10)
+./tests/test_viz_smoke_coverage.py:105:        mock_crystallizer.get_attractors.return_value = [mock_attractor]
+./tests/test_viz_smoke_coverage.py:107:        dashboard.attach(MagicMock(), mock_crystallizer, MagicMock(), MagicMock())
+./tests/test_viz_smoke_coverage.py:125:        mock_plt.figure.assert_called_once()
+./tests/test_viz_smoke_coverage.py:126:        assert mock_fig.add_subplot.call_count == 6  # 6 panels
+./tests/test_viz_smoke_coverage.py:127:        mock_plt.tight_layout.assert_called()
+./tests/test_viz_smoke_coverage.py:128:        mock_plt.show.assert_called_once()
+./tests/test_viz_smoke_coverage.py:139:def test_dashboard_save_animation_mocked() -> None:
+./tests/test_viz_smoke_coverage.py:140:    """Test save_animation method with mocked matplotlib.
+./tests/test_viz_smoke_coverage.py:149:    mock_plt = MagicMock()
+./tests/test_viz_smoke_coverage.py:150:    mock_animation = MagicMock()
+./tests/test_viz_smoke_coverage.py:151:    mock_fig = MagicMock()
+./tests/test_viz_smoke_coverage.py:152:    mock_ax = MagicMock()
+./tests/test_viz_smoke_coverage.py:154:    mock_fig.add_subplot.return_value = mock_ax
+./tests/test_viz_smoke_coverage.py:155:    mock_plt.figure.return_value = mock_fig
+./tests/test_viz_smoke_coverage.py:157:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_smoke_coverage.py:159:            return mock_plt
+./tests/test_viz_smoke_coverage.py:161:            return mock_animation
+./tests/test_viz_smoke_coverage.py:166:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_smoke_coverage.py:190:        mock_plt.figure.assert_called_once()
+./tests/test_viz_smoke_coverage.py:191:        mock_plt.tight_layout.assert_called()
+./tests/test_viz_smoke_coverage.py:192:        mock_fig.savefig.assert_called_once_with("test.png", dpi=150, bbox_inches="tight")
+./tests/test_viz_smoke_coverage.py:205:    mock_plt = MagicMock()
+./tests/test_viz_smoke_coverage.py:206:    mock_animation = MagicMock()
+./tests/test_viz_smoke_coverage.py:207:    mock_fig = MagicMock()
+./tests/test_viz_smoke_coverage.py:208:    mock_ax = MagicMock()
+./tests/test_viz_smoke_coverage.py:210:    mock_fig.add_subplot.return_value = mock_ax
+./tests/test_viz_smoke_coverage.py:211:    mock_plt.figure.return_value = mock_fig
+./tests/test_viz_smoke_coverage.py:213:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_smoke_coverage.py:215:            return mock_plt
+./tests/test_viz_smoke_coverage.py:217:            return mock_animation
+./tests/test_viz_smoke_coverage.py:222:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_smoke_coverage.py:232:        mock_crystallizer = MagicMock()
+./tests/test_viz_smoke_coverage.py:233:        mock_attractor1 = MagicMock()
+./tests/test_viz_smoke_coverage.py:234:        mock_attractor1.center = np.array([1.0, 2.0, 3.0])
+./tests/test_viz_smoke_coverage.py:235:        mock_attractor2 = MagicMock()
+./tests/test_viz_smoke_coverage.py:236:        mock_attractor2.center = np.array([4.0, 5.0, 6.0])
+./tests/test_viz_smoke_coverage.py:237:        mock_crystallizer.get_attractors.return_value = [
+./tests/test_viz_smoke_coverage.py:238:            mock_attractor1,
+./tests/test_viz_smoke_coverage.py:239:            mock_attractor2,
+./tests/test_viz_smoke_coverage.py:242:        dashboard.attach(MagicMock(), mock_crystallizer, MagicMock(), MagicMock())
+./tests/test_viz_smoke_coverage.py:269:        assert mock_ax.clear.call_count >= 6  # At least once per panel
+./tests/test_viz_smoke_coverage.py:282:    mock_plt = MagicMock()
+./tests/test_viz_smoke_coverage.py:283:    mock_animation = MagicMock()
+./tests/test_viz_smoke_coverage.py:284:    mock_fig = MagicMock()
+./tests/test_viz_smoke_coverage.py:285:    mock_ax = MagicMock()
+./tests/test_viz_smoke_coverage.py:287:    mock_fig.add_subplot.return_value = mock_ax
+./tests/test_viz_smoke_coverage.py:288:    mock_plt.figure.return_value = mock_fig
+./tests/test_viz_smoke_coverage.py:290:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_smoke_coverage.py:292:            return mock_plt
+./tests/test_viz_smoke_coverage.py:294:            return mock_animation
+./tests/test_viz_smoke_coverage.py:299:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_smoke_coverage.py:309:        mock_crystallizer = MagicMock()
+./tests/test_viz_smoke_coverage.py:310:        mock_crystallizer.get_attractors.return_value = []
+./tests/test_viz_smoke_coverage.py:312:        dashboard.attach(MagicMock(), mock_crystallizer, MagicMock(), MagicMock())
+./tests/test_viz_smoke_coverage.py:326:        assert mock_ax.clear.call_count >= 6
+./tests/test_viz_smoke_coverage.py:339:    mock_plt = MagicMock()
+./tests/test_viz_smoke_coverage.py:340:    mock_animation = MagicMock()
+./tests/test_viz_smoke_coverage.py:341:    mock_fig = MagicMock()
+./tests/test_viz_smoke_coverage.py:342:    mock_ax = MagicMock()
+./tests/test_viz_smoke_coverage.py:344:    mock_fig.add_subplot.return_value = mock_ax
+./tests/test_viz_smoke_coverage.py:345:    mock_plt.figure.return_value = mock_fig
+./tests/test_viz_smoke_coverage.py:347:    def mock_import_module(name: str) -> MagicMock:
+./tests/test_viz_smoke_coverage.py:349:            return mock_plt
+./tests/test_viz_smoke_coverage.py:351:            return mock_animation
+./tests/test_viz_smoke_coverage.py:356:    with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
+./tests/test_viz_smoke_coverage.py:371:        mock_plt.figure.assert_called_once()
+./tests/test_cli_sleep_stack_branches.py:9:from unittest.mock import MagicMock
+./tests/test_cli_sleep_stack_branches.py:30:        return None
+./proof_bundle/command_logs/26.log:59:docs/placeholder_cycles/cycle1/worklist.json
+./proof_bundle/command_logs/26.log:60:docs/placeholder_cycles/cycle1/plan.md
+./proof_bundle/command_logs/26.log:61:docs/placeholder_cycles/cycle1/acceptance_map.yaml
+./tests/test_jax_backend.py:30:            return None
+./proof_bundle/command_logs/07.log:117:tests/test_scan_placeholders.py
+./proof_bundle/command_logs/07.log:287:docs/placeholder_cycles/cycle1/acceptance_map.yaml
+./proof_bundle/command_logs/07.log:288:docs/placeholder_cycles/cycle1/worklist.json
+./proof_bundle/command_logs/07.log:289:docs/placeholder_cycles/cycle1/plan.md
+./proof_bundle/command_logs/07.log:545:evidence/placeholder_closure/scan_baseline.txt
+./proof_bundle/command_logs/07.log:546:evidence/placeholder_closure/ci.json
+./proof_bundle/command_logs/07.log:547:evidence/placeholder_closure/scan_final.json
+./proof_bundle/command_logs/07.log:548:evidence/placeholder_closure/post_fix_tests.log
+./proof_bundle/command_logs/07.log:549:evidence/placeholder_closure/scan_final.txt
+./proof_bundle/command_logs/07.log:550:evidence/placeholder_closure/baseline.json
+./proof_bundle/command_logs/07.log:551:evidence/placeholder_closure/pre_fix_failure.log
+./proof_bundle/command_logs/07.log:559:evidence/placeholder_closure/per_batch/PH_BATCH_02.json
+./proof_bundle/command_logs/07.log:560:evidence/placeholder_closure/per_batch/PH_BATCH_01.json
+./proof_bundle/command_logs/07.log:561:evidence/placeholder_closure/ph_regression_tests.log
+./proof_bundle/command_logs/07.log:562:evidence/placeholder_closure/test_cmd.log
+./proof_bundle/command_logs/07.log:639:scripts/scan_placeholders.py
+./tests/test_interactive_smoke.py:191:    from unittest.mock import patch
+./tests/test_interactive_smoke.py:195:        patch("streamlit.title") as mock_title,
+./tests/test_interactive_smoke.py:198:        patch("streamlit.sidebar.slider", return_value=100) as mock_slider,
+./tests/test_interactive_smoke.py:207:        mock_title.assert_called_once()
+./tests/test_interactive_smoke.py:208:        assert mock_slider.call_count >= 1
+./tests/test_interactive_smoke.py:218:    from unittest.mock import Mock, patch
+./tests/test_interactive_smoke.py:220:    # Create context manager mocks
+./tests/test_interactive_smoke.py:221:    mock_spinner_context = Mock()
+./tests/test_interactive_smoke.py:222:    mock_spinner_context.__enter__ = Mock(return_value=mock_spinner_context)
+./tests/test_interactive_smoke.py:223:    mock_spinner_context.__exit__ = Mock(return_value=None)
+./tests/test_interactive_smoke.py:225:    mock_progress_obj = Mock()
+./tests/test_interactive_smoke.py:226:    mock_progress_obj.progress = Mock()
+./tests/test_interactive_smoke.py:227:    mock_progress_obj.empty = Mock()
+./tests/test_interactive_smoke.py:230:    mock_tab = Mock()
+./tests/test_interactive_smoke.py:231:    mock_tab.__enter__ = Mock(return_value=mock_tab)
+./tests/test_interactive_smoke.py:232:    mock_tab.__exit__ = Mock(return_value=None)
+./tests/test_interactive_smoke.py:235:    mock_col = Mock()
+./tests/test_interactive_smoke.py:236:    mock_col.__enter__ = Mock(return_value=mock_col)
+./tests/test_interactive_smoke.py:237:    mock_col.__exit__ = Mock(return_value=None)
+./tests/test_interactive_smoke.py:238:    mock_col.metric = Mock()
+./tests/test_interactive_smoke.py:249:        patch("streamlit.spinner", return_value=mock_spinner_context),
+./tests/test_interactive_smoke.py:250:        patch("streamlit.sidebar.progress", return_value=mock_progress_obj),
+./tests/test_interactive_smoke.py:251:        patch("streamlit.tabs", return_value=[mock_tab, mock_tab, mock_tab, mock_tab]),
+./tests/test_interactive_smoke.py:253:        patch("streamlit.plotly_chart") as mock_chart,
+./tests/test_interactive_smoke.py:254:        patch("streamlit.columns", return_value=[mock_col, mock_col, mock_col, mock_col]),
+./tests/test_interactive_smoke.py:261:        assert mock_chart.call_count >= 4  # 4 tabs with charts
+./tests/test_cli_sleep_stack_figure.py:9:from unittest.mock import MagicMock
+./tests/test_cli_sleep_stack_figure.py:30:        return None
+./proof_bundle/command_logs/21.log:8:docs/placeholder_cycles/cycle1/acceptance_map.yaml:21:    post_fix_expectation: "passes with deterministic fallback retention behavior"
+./proof_bundle/command_logs/21.log:9:docs/placeholder_cycles/cycle1/plan.md:37:| PH-0001 | `src/bnsyn/emergence/crystallizer.py` | `guard_fail_closed` | `regression` | Replace implicit `pass` fallback with deterministic explicit state retention branch and auditable warning path. |
+./tests/test_scan_placeholders.py:8:from scripts import scan_placeholders
+./tests/test_scan_placeholders.py:13:def test_scan_placeholders_json_contract() -> None:
+./tests/test_scan_placeholders.py:14:    findings = scan_placeholders.collect_findings()
+./tests/test_scan_placeholders.py:44:    findings = scan_placeholders.collect_findings()
+./tests/test_scan_placeholders.py:92:def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:
+./tests/test_scan_placeholders.py:93:    monkeypatch.setattr(sys, "argv", ["scan_placeholders", "--format", "json"])
+./tests/test_scan_placeholders.py:94:    exit_code = scan_placeholders.main()
+./tests/test_scan_placeholders.py:102:def test_placeholder_scan_and_registry_have_no_open_entries() -> None:
+./tests/test_scan_placeholders.py:103:    findings = scan_placeholders.collect_findings()
+./proof_bundle/command_logs/17.log:98:docs/placeholder_cycles/cycle1/acceptance_map.yaml:9:    rule: "Registry must validate structure, unique PH IDs, and allowed statuses"
+./proof_bundle/command_logs/17.log:99:docs/placeholder_cycles/cycle1/plan.md:52:- Registry schema and uniqueness checks pass.
+./proof_bundle/command_logs/27.log:91:tests/test_scan_placeholders.py: 5
+./proof_bundle/command_logs/19.log:28:docs/placeholder_cycles/cycle1/plan.md:3:## Scope Compression (minimum viable scope)
+./proof_bundle/command_logs/19.log:29:docs/placeholder_cycles/cycle1/plan.md:16:No additional modules are in scope unless required to keep tests deterministic and CI-green.
+./proof_bundle/command_logs/19.log:30:docs/placeholder_cycles/cycle1/worklist.json:3:  "scope_policy": "only PH files and direct dependencies for fixes/tests",
+./evidence/pr_216/after.commands.log:253:copying tests/test_scan_placeholders.py -> bnsyn-0.2.0/tests
+./evidence/pr_216/before.commands.log:235:copying tests/test_scan_placeholders.py -> bnsyn-0.2.0/tests
+./evidence/placeholder_closure/baseline.json:3:  "scan_cmd": "python -m scripts.scan_placeholders --format text",
+./evidence/placeholder_closure/per_batch/PH_BATCH_01.json:5:    "tests/test_scan_placeholders.py",
+./evidence/placeholder_closure/per_batch/PH_BATCH_01.json:11:    "command": "python -m pytest -q tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref",
+./evidence/placeholder_closure/per_batch/PH_BATCH_01.json:14:    "log": "evidence/placeholder_closure/pre_fix_failure.log"
+./evidence/placeholder_closure/per_batch/PH_BATCH_01.json:17:    "tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref",
+./evidence/placeholder_closure/per_batch/PH_BATCH_02.json:5:    "tests/test_scan_placeholders.py",
+./evidence/placeholder_closure/per_batch/PH_BATCH_02.json:13:    "tests/test_scan_placeholders.py::test_registry_covers_all_scan_findings"
+./evidence/placeholder_closure/per_batch/PH_BATCH_02.json:16:  "log": "evidence/placeholder_closure/ph_regression_tests.log"
+./evidence/placeholder_closure/pre_fix_failure.log:1:ERROR: not found: /tmp/tmp.3tA7mR6dag/tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref
+./evidence/placeholder_closure/pre_fix_failure.log:2:(no match in any of [<Module test_scan_placeholders.py>])
+./proof_bundle/build.log:225:copying tests/test_scan_placeholders.py -> bnsyn-0.2.0/tests
+./proof_bundle/find_top.log:41:./docs/placeholder_cycles
+./proof_bundle/find_top.log:51:./evidence/placeholder_closure
+./evidence/zqsg_2026_02_12/escape_analysis.md:6:2. Bare-except or TODO/FIXME drift in production paths.
+./experiments/verify_hypothesis.py:143:    h1_supported = consolidation_gates_pass and w_total_pass
+./PR_DESCRIPTION_EVIDENCE.md:87:# Verify strict markers pass
+./GOVERNANCE_VERIFICATION_REPORT.md:1:# BN-SYN GOVERNANCE VERIFICATION REPORT (TEMPLATE)
+./scripts/scan_placeholders.py:17:    r"\(TEMPLATE\)|\bfill in when generating\b|\bcoming soon\b", re.IGNORECASE
+./scripts/scan_placeholders.py:73:            if isinstance(func, ast.Name) and func.id == "NotImplementedError":
+./scripts/scan_placeholders.py:79:                        signature="raise_NotImplementedError",
+./scripts/scan_placeholders.py:99:        return []
+./scripts/scan_placeholders.py:137:    parser = argparse.ArgumentParser(description="Scan repository for placeholder signals.")
+./scripts/rebuild_sources_lock.py:55:        return {}
+./scripts/verify_formal_constants.py:64:            return {}
+./scripts/verify_formal_constants.py:135:            return {}
+./scripts/verify_formal_constants.py:180:            return {}
+./scripts/check_benchmark_regressions.py:50:            return None
+./scripts/check_benchmark_regressions.py:54:    return None
+./scripts/validate_branch_protection_governance.py:12:    pass
+./scripts/validate_workflow_contracts.py:23:    pass
+./scripts/validate_long_running_triggers.py:20:    pass
+./scripts/validate_required_checks.py:17:    pass
+./scripts/validate_pr_gates.py:18:    pass
+./scripts/scan_governed_docs.py:12:- 0: All checks pass
+./scripts/README.md:49:| `scan_placeholders.py` | UNKNOWN/TBD: missing module docstring. | `--format` | See page | See page | Writes artifacts only | `python -m scripts.scan_placeholders --help` |
+./scripts/validate_bibliography.py:39:    pass
+./scripts/validate_required_status_contexts.py:14:    pass
+./scripts/math_validate.py:165:    return None
+./scripts/track_quality.py:21:        return None
+./scripts/track_quality.py:30:        return None
+./scripts/track_quality.py:39:        return None
+./scripts/track_quality.py:41:        return None
+./PROOF_BUNDLE/logs/python_build.log:233:copying tests/test_scan_placeholders.py -> bnsyn-0.2.0/tests
+./docs/api/_static/tools/update_manifest.py:106:        return {}
+./docs/api/_templates/tools/update_manifest.py:106:        return {}
+./docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:17:   - `pip_install.log` => pass
+./docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:19:   - `ruff_check.log` => pass
+./docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:21:   - `pytest_q.log` => pass
+./docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:22:   - `validate_status_claims.log` => pass
+./docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:23:   - `manifest_generate.log` + `manifest_validate.log` + manifest drift check (`manifest_diff.exit=0`) => pass
+./docs/AUDIT_TASKS_2026-02-15.md:37:- Спостереження: поточний guard перевіряє лише bare `except` і `TODO/FIXME` у Python-коді, але не валідність документації.
+./docs/THROUGHPUT_SCALING.md:166:- Exit code 0 only if all steps pass
+./docs/THROUGHPUT_SCALING.md:187:- All 94 smoke tests pass
+./docs/THROUGHPUT_SCALING.md:189:- Determinism tests pass
+./src/bnsyn/emergence/crystallizer.py:334:            return []
+./src/bnsyn/emergence/crystallizer.py:394:            return []
+./docs/scripts/index.md:51:| `scan_placeholders.py` | UNKNOWN/TBD: missing module docstring. | Writes artifacts only | [scan-placeholders.md](./scan-placeholders.md) |
+./src/bnsyn/viz/dashboard.py:50:    Imports matplotlib at runtime to avoid mypy checking missing stubs.
+./docs/scripts/scan-placeholders.md:1:# `scan_placeholders.py`
+./docs/scripts/scan-placeholders.md:7:- Invocation: `python -m scripts.scan_placeholders --help`
+./docs/scripts/scan-placeholders.md:23:python -m scripts.scan_placeholders --help
+./src/bnsyn/sleep/cycle.py:336:            return []
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:7:    rule: "placeholder-scan must return 0 findings OR all findings status=RESOLVED with evidence"
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:50:  - name: placeholder_scan_text
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:51:    command: python -m scripts.scan_placeholders --format text
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:53:  - name: placeholder_scan_json
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:54:    command: python -m scripts.scan_placeholders --format json
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:57:    command: pytest -q tests/test_scan_placeholders.py
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:64:  - docs/placeholder_cycles/cycle1/plan.md
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:65:  - docs/placeholder_cycles/cycle1/acceptance_map.yaml
+./docs/placeholder_cycles/cycle1/acceptance_map.yaml:66:  - docs/placeholder_cycles/cycle1/worklist.json
+./docs/placeholder_cycles/cycle1/plan.md:12:   - `scripts/scan_placeholders.py`
+./docs/placeholder_cycles/cycle1/plan.md:13:   - `tests/test_scan_placeholders.py`
+./docs/placeholder_cycles/cycle1/plan.md:26:### PH_BATCH_02 — Test harness placeholder guards
+./src/bnsyn/memory/consolidator.py:291:            return None
+./src/bnsyn/memory/trace.py:147:            return []
+./src/bnsyn/testing/faults.py:188:            return None
+./docs/_generated/script_help/scan_placeholders.txt:1:usage: scan_placeholders.py [-h] [--format {text,json}]
+./docs/_generated/script_help/scan_placeholders.txt:3:Scan repository for placeholder signals.
+./src/bnsyn/provenance/manifest.py:197:            return {}
+./docs/QUALITY_INDEX.md:299:    pass
+./src/bnsyn/criticality/phase_transition.py:218:        return None
+./src/bnsyn/criticality/phase_transition.py:253:            return None
+./src/bnsyn/criticality/phase_transition.py:263:            return None
+./docs/SCRIPTS/index.md:54:| `scan_placeholders.py` | UNKNOWN/TBD: no module docstring. | available |
+./docs/SCRIPTS/index.md:1350:## `scan_placeholders.py`
+./docs/SCRIPTS/index.md:1359:python -m scripts.scan_placeholders --help
+./docs/PLACEHOLDER_REGISTRY.md:3:Canonical registry for placeholder remediation cycles.
+./docs/PLACEHOLDER_REGISTRY.md:7:- Placeholder scan (text): `python -m scripts.scan_placeholders --format text`
+./docs/PLACEHOLDER_REGISTRY.md:8:- Placeholder scan (json): `python -m scripts.scan_placeholders --format json`
+./docs/appendix/PRODUCTION_AUDIT.md:120:    pass
+./docs/appendix/codebase_readiness_audit_2026-02-15.json:178:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging still marked TODO",
+./docs/PLACEHOLDER_BASELINE_CYCLE0.md:22:python -m scripts.scan_placeholders --format text
+./docs/PLACEHOLDER_BASELINE_CYCLE0.md:34:python -m scripts.scan_placeholders --format json
+./docs/ENTROPY_LEDGER.md:67:- AC1: pass
+./docs/ENTROPY_LEDGER.md:68:- AC2: pass
+./docs/ENTROPY_LEDGER.md:69:- AC3: pass
+./docs/ENTROPY_LEDGER.md:70:- AC4: pass
+./AGENTS.md:14:- Any placeholder that suggests intended capability but is not implemented or is non-functional:
+./AGENTS.md:15:  TODO/FIXME/WIP, NotImplementedError, stub returns, mocked production paths, empty handlers, “pass”, placeholder configs, fake data pipelines, skeleton modules without integration, unhooked CLI commands, dead code behind flags with no path.
+./assessment_logs/pyproject.nl:129:   129	# Optional visualization dependencies (no type stubs available)
+./acceptance_map.yaml:5:      - pytest -q tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref
+./acceptance_map.yaml:9:      - evidence/placeholder_closure/per_batch/PH_BATCH_01.json
+./acceptance_map.yaml:10:      - evidence/placeholder_closure/per_batch/PH_BATCH_02.json
+./acceptance_map.yaml:12:    description: Meta-scan enforces no OPEN placeholders.
+./acceptance_map.yaml:14:      - python -m scripts.scan_placeholders --format text
+./acceptance_map.yaml:15:      - pytest -q tests/test_scan_placeholders.py::test_scan_placeholders_cli_json_output
+./acceptance_map.yaml:19:      - pytest -q tests/test_scan_placeholders.py::test_registry_covers_all_scan_findings
+./acceptance_map.yaml:20:      - pytest -q tests/test_scan_placeholders.py::test_registry_closed_entries_include_evidence_ref
+./acceptance_map.yaml:35:      - evidence/placeholder_closure/per_batch/PH_BATCH_01.json
+./acceptance_map.yaml:40:      - evidence/placeholder_closure/per_batch/PH_BATCH_02.json
+./acceptance_map.yaml:45:      - evidence/placeholder_closure/per_batch/PH_BATCH_02.json
+exit_code=0

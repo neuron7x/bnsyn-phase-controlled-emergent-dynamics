@@ -1,0 +1,4 @@
+$ rg --files | wc -l
+923
+$ rg --files -g "*.py" | xargs wc -l | tail -n 1
+  43329 total

@@ -1,3 +1,10 @@
+"""Scan code/docs trees for placeholder signals used by governance gates.
+
+The scanner is intentionally conservative: it detects explicit pseudo-structure
+signals (e.g., pass-in-except, NotImplementedError, and template markers) and
+emits deterministic findings for registry reconciliation.
+"""
+
 from __future__ import annotations
 
 import argparse

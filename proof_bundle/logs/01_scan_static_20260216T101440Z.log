@@ -1,0 +1,6 @@
+$ rg -n --hidden -g '!.git' -e "TODO|FIXME|WIP|stub|placeholder|NotImplemented|NotImplementedError|pass\\s*$|return None\\s*$|return \\{\\}\\s*$|return \\[\\]\\s*$|throw new Error\\(|unimplemented|mock|dummy|fake data|example only|TEMP|HACK|sketch|scaffold" .
+rg: regex parse error:
+    (?:TODO|FIXME|WIP|stub|placeholder|NotImplemented|NotImplementedError|pass\\s*$|return None\\s*$|return \\{\\}\\s*$|return \\[\\]\\s*$|throw new Error\\(|unimplemented|mock|dummy|fake data|example only|TEMP|HACK|sketch|scaffold)
+                                                                                                               ^
+error: repetition quantifier expects a valid decimal
+exit_code=2

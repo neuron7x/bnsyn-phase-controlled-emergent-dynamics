@@ -48,7 +48,7 @@ This section formalizes every executable in `scripts/` using static source inspe
 | `run_scaled_sleep_stack.py` | UNKNOWN/TBD: missing module docstring. | Safe (read-only checks) | [run-scaled-sleep-stack.md](./run-scaled-sleep-stack.md) |
 | `scan_governed_docs.py` | Scan governed docs for untagged normative language. This script reads the authoritative governed docs list from docs/INV... | Writes artifacts only | [scan-governed-docs.md](./scan-governed-docs.md) |
 | `scan_normative_tags.py` | Scan governed docs for normative tags and claim compliance. | Writes artifacts only | [scan-normative-tags.md](./scan-normative-tags.md) |
-| `scan_placeholders.py` | UNKNOWN/TBD: missing module docstring. | Writes artifacts only | [scan-placeholders.md](./scan-placeholders.md) |
+| `scan_placeholders.py` | Scan code/docs trees for placeholder signals used by governance gates. | Writes artifacts only | [scan-placeholders.md](./scan-placeholders.md) |
 | `scan_tierS_misuse.py` | Scan for misuse of Tier-S bibkeys in normative contexts. This script enforces the governance rule that Tier-S sources (b... | Writes artifacts only | [scan-tierS-misuse.md](./scan-tierS-misuse.md) |
 | `ssot_rules.py` | UNKNOWN/TBD: missing module docstring. | Safe (read-only checks) | [ssot-rules.md](./ssot-rules.md) |
 | `sync_required_status_contexts.py` | UNKNOWN/TBD: missing module docstring. | Mutates repository state | [sync-required-status-contexts.md](./sync-required-status-contexts.md) |
