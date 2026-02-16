@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-import sys
 
 REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
     "README.md": (
@@ -35,13 +34,21 @@ def main() -> int:
     failures: list[str] = []
 
     for rel_path, snippets in REQUIRED_SNIPPETS.items():
-        text = Path(rel_path).read_text(encoding="utf-8")
+        path = Path(rel_path)
+        if not path.exists():
+            failures.append(f"{rel_path}: file not found")
+            continue
+        text = path.read_text(encoding="utf-8")
         missing = [snippet for snippet in snippets if snippet not in text]
         if missing:
             failures.append(f"{rel_path}: missing required snippets: {missing}")
 
     for rel_path, snippets in FORBIDDEN_SNIPPETS.items():
-        text = Path(rel_path).read_text(encoding="utf-8")
+        path = Path(rel_path)
+        if not path.exists():
+            failures.append(f"{rel_path}: file not found")
+            continue
+        text = path.read_text(encoding="utf-8")
         present = [snippet for snippet in snippets if snippet in text]
         if present:
             failures.append(f"{rel_path}: contains forbidden snippets: {present}")

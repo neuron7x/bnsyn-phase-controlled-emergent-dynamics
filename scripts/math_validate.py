@@ -4,9 +4,7 @@ import ast
 import csv
 import hashlib
 import json
-import math
 import statistics
-import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -14,10 +12,6 @@ from pathlib import Path
 from typing import Any, Callable
 
 import numpy as np
-
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 from src.contracts import (
     assert_dt_stability,
@@ -38,6 +32,7 @@ from src.contracts import (
     assert_state_finite_after_step,
     assert_timeseries_monotonic_time,
 )
+ROOT = Path(__file__).resolve().parents[1]
 
 AUDIT_DIR = ROOT / "artifacts" / "math_audit"
 MANIFEST_PATH = AUDIT_DIR / "manifest.json"
