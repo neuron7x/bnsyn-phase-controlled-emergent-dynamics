@@ -1,4 +1,5 @@
 {
+  "generated_at_utc": "2026-02-16T11:40:59Z",
   "artifacts": [
     {
       "path": "proof_bundle/build.log",
@@ -270,7 +271,7 @@
     },
     {
       "path": "proof_bundle/index.json",
-      "sha256": "087e2bd586090a1c6605c35b040abb9a2041e12be05b1cf6499f62e880e0c3b9"
+      "sha256": "251331f54471098548c3d2fe426c5afee7c74bb1242428efd35eb2aa18d01276"
     },
     {
       "path": "proof_bundle/install_build.log",
@@ -731,6 +732,98 @@
     {
       "path": "proof_bundle/logs/092_remove_counter.log",
       "sha256": "7c229c239812d4780735c7e30a8b948040569109ef9d686eab0140a1f71b33be"
+    },
+    {
+      "path": "proof_bundle/logs/093_baseline_git_status.log",
+      "sha256": "efaeecb3549217ff3ef6559d9f6bc62561aa31d63ca30d2ecf016e8ffe18ca90"
+    },
+    {
+      "path": "proof_bundle/logs/094_baseline_head.log",
+      "sha256": "54156c82e0074a9b8d0cded41201764291c9f7b0c580215663ced3efb6b6b15b"
+    },
+    {
+      "path": "proof_bundle/logs/095_baseline_branch.log",
+      "sha256": "0d374c7a2f4d89e72f4664c8ee74e3f00bf9e3f436a331eab65c65cb3c643f86"
+    },
+    {
+      "path": "proof_bundle/logs/096_baseline_remote.log",
+      "sha256": "a304f2909a8fcca1605729759ab58c8b8d1234808e712d91c35757a43e8fcd38"
+    },
+    {
+      "path": "proof_bundle/logs/097_baseline_python.log",
+      "sha256": "481f5efbf6bda59f62e928d5f3fe97618ebc375a8022aa4b0362cd1f0b2dc81c"
+    },
+    {
+      "path": "proof_bundle/logs/098_baseline_pip.log",
+      "sha256": "7d63d14667bada8d48e37e1d39cc5eb3d83f5b3d48489500e1185d2b32dc87a2"
+    },
+    {
+      "path": "proof_bundle/logs/099_baseline_pytest_ver.log",
+      "sha256": "215d558a9684c8a6327c838e82d272b407cc4850a59d5eb1941c9f72cdd73b7c"
+    },
+    {
+      "path": "proof_bundle/logs/100_baseline_ruff_ver.log",
+      "sha256": "be8fa6ea7326376350e44efe274b208a577c7f4d6b9c3791092368e38ed5ceb4"
+    },
+    {
+      "path": "proof_bundle/logs/101_baseline_mypy_ver.log",
+      "sha256": "ec87381e0ca28b36e93935d01cd2bb3414f5c8b20c3c1fe1ef65748ddc9b6781"
+    },
+    {
+      "path": "proof_bundle/logs/102_status_porcelain.log",
+      "sha256": "6ea5e601abb7d36780a0970b4cbdec0b8a004bcc4c4672222273f250b7ec5299"
+    },
+    {
+      "path": "proof_bundle/logs/103_ls_untracked_ignored.log",
+      "sha256": "74e30f69d6875ee2f370e11e8fe17eae2ed46af5209b1b39cb79b16148400727"
+    },
+    {
+      "path": "proof_bundle/logs/104_find_cache_dirs.log",
+      "sha256": "21318c4d12c178f94b775cdfade73eef016af57d6214f7eebc38417379733b8d"
+    },
+    {
+      "path": "proof_bundle/logs/105_find_noise_files.log",
+      "sha256": "781288a390cac58d778cb7da83188aaba2e333f54caeb097ef627f69159dbdc5"
+    },
+    {
+      "path": "proof_bundle/logs/106_dryrun_clean_ignored.log",
+      "sha256": "91627eb09bb7345256aa38cd005d8c661bbc079f694628129edcb078cdd64b15"
+    },
+    {
+      "path": "proof_bundle/logs/107_dryrun_clean_all.log",
+      "sha256": "6cd4381ce8411a589657d93b0e082f0e012743df56385c871c7c39e6ee264bec"
+    },
+    {
+      "path": "proof_bundle/logs/108_test_cmd.log",
+      "sha256": "85e105d1beb08882143b0fee544b201f4424b80800128e94fe553dbf4085102e"
+    },
+    {
+      "path": "proof_bundle/logs/109_lint_ruff.log",
+      "sha256": "d0bd872314d5dfe88ff8ad10182285ce9832ff3e42e9cd64978845675074f554"
+    },
+    {
+      "path": "proof_bundle/logs/110_lint_pylint.log",
+      "sha256": "bc37d9366f6796b18c5d8b202f7a87910ac0f05c035fbb9091aee9a805bb5757"
+    },
+    {
+      "path": "proof_bundle/logs/111_typecheck_mypy.log",
+      "sha256": "115f6517fdfa7014a994bf41ede2f74f6a12c995b5b71a81e60d3aa4e114b83d"
+    },
+    {
+      "path": "proof_bundle/logs/112_build_cmd.log",
+      "sha256": "b84804f1bd64d718b50a367f04c6223b73d37cb372abc3756b895f37f1a36c24"
+    },
+    {
+      "path": "proof_bundle/logs/113_final_noise_scan.log",
+      "sha256": "ce797d6b848749555215c5dd6f22c22721637ae3e18bc03751c8bdf36de9d7f4"
+    },
+    {
+      "path": "proof_bundle/logs/114_final_status.log",
+      "sha256": "556aeb268fbb39a20727562048cea13efe61fdb01a0bb24b7e1578e7bf408da3"
+    },
+    {
+      "path": "proof_bundle/logs/115_cleanup_temp_logs.log",
+      "sha256": "b5a3e376a6179928910c37ad4b65522e89bfde7d290d0ec25e72ad1ff39fc5cb"
     },
     {
       "path": "proof_bundle/logs/commands.log",

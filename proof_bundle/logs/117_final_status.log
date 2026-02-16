@@ -1,0 +1,34 @@
+[2026-02-16T11:40:59Z]
+CMD: git status --porcelain=v1
+EXIT: 0
+STDOUT:
+ M PR_FINAL_DESCRIPTION.md
+ M noise_cleanup_manifest.json
+ M noise_cleanup_report.md
+ M proof_bundle/hashes/sha256sums.txt
+ M proof_bundle/index.json
+?? proof_bundle/logs/093_baseline_git_status.log
+?? proof_bundle/logs/094_baseline_head.log
+?? proof_bundle/logs/095_baseline_branch.log
+?? proof_bundle/logs/096_baseline_remote.log
+?? proof_bundle/logs/097_baseline_python.log
+?? proof_bundle/logs/098_baseline_pip.log
+?? proof_bundle/logs/099_baseline_pytest_ver.log
+?? proof_bundle/logs/100_baseline_ruff_ver.log
+?? proof_bundle/logs/101_baseline_mypy_ver.log
+?? proof_bundle/logs/102_status_porcelain.log
+?? proof_bundle/logs/103_ls_untracked_ignored.log
+?? proof_bundle/logs/104_find_cache_dirs.log
+?? proof_bundle/logs/105_find_noise_files.log
+?? proof_bundle/logs/106_dryrun_clean_ignored.log
+?? proof_bundle/logs/107_dryrun_clean_all.log
+?? proof_bundle/logs/108_test_cmd.log
+?? proof_bundle/logs/109_lint_ruff.log
+?? proof_bundle/logs/110_lint_pylint.log
+?? proof_bundle/logs/111_typecheck_mypy.log
+?? proof_bundle/logs/112_build_cmd.log
+?? proof_bundle/logs/113_final_noise_scan.log
+?? proof_bundle/logs/114_final_status.log
+?? proof_bundle/logs/115_cleanup_temp_logs.log
+?? proof_bundle/logs/116_artifact_refresh.log
+STDERR:

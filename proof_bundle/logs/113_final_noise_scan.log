@@ -1,0 +1,655 @@
+[2026-02-16T11:40:01Z]
+CMD: rg -n "__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache" . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/index.json:440:      "path": "proof_bundle/logs/026_class_track__experiments___pycache__.log",
+./proof_bundle/index.json:444:      "path": "proof_bundle/logs/027_class_ignore__experiments___pycache__.log",
+./proof_bundle/index.json:448:      "path": "proof_bundle/logs/028_class_ref__experiments___pycache__.log",
+./proof_bundle/index.json:488:      "path": "proof_bundle/logs/032_class_track__entropy___pycache__.log",
+./proof_bundle/index.json:492:      "path": "proof_bundle/logs/033_class_ignore__entropy___pycache__.log",
+./proof_bundle/index.json:496:      "path": "proof_bundle/logs/034_class_ref__entropy___pycache__.log",
+./proof_bundle/index.json:500:      "path": "proof_bundle/logs/035_class_track__benchmarks___pycache__.log",
+./proof_bundle/index.json:504:      "path": "proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log",
+./proof_bundle/index.json:508:      "path": "proof_bundle/logs/037_class_ref__benchmarks___pycache__.log",
+./proof_bundle/index.json:512:      "path": "proof_bundle/logs/038_class_track__tools___pycache__.log",
+./proof_bundle/index.json:516:      "path": "proof_bundle/logs/039_class_ignore__tools___pycache__.log",
+./proof_bundle/index.json:520:      "path": "proof_bundle/logs/040_class_ref__tools___pycache__.log",
+./proof_bundle/index.json:536:      "path": "proof_bundle/logs/044_class_track__scripts___pycache__.log",
+./proof_bundle/index.json:540:      "path": "proof_bundle/logs/045_class_ignore__scripts___pycache__.log",
+./proof_bundle/index.json:544:      "path": "proof_bundle/logs/046_class_ref__scripts___pycache__.log",
+./proof_bundle/index.json:560:      "path": "proof_bundle/logs/050_class_track__tests___pycache__.log",
+./proof_bundle/index.json:564:      "path": "proof_bundle/logs/051_class_ignore__tests___pycache__.log",
+./proof_bundle/index.json:568:      "path": "proof_bundle/logs/052_class_ref__tests___pycache__.log",
+./proof_bundle/index.json:572:      "path": "proof_bundle/logs/053_class_refscope__experiments___pycache__.log",
+./proof_bundle/index.json:580:      "path": "proof_bundle/logs/055_class_refscope__entropy___pycache__.log",
+./proof_bundle/index.json:584:      "path": "proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log",
+./proof_bundle/index.json:588:      "path": "proof_bundle/logs/057_class_refscope__tools___pycache__.log",
+./proof_bundle/index.json:596:      "path": "proof_bundle/logs/059_class_refscope__scripts___pycache__.log",
+./proof_bundle/index.json:608:      "path": "proof_bundle/logs/061_class_refscope__tests___pycache__.log",
+./proof_bundle/index.json:612:      "path": "proof_bundle/logs/062_delete__experiments___pycache__.log",
+./proof_bundle/index.json:616:      "path": "proof_bundle/logs/063_status_after__experiments___pycache__.log",
+./proof_bundle/index.json:628:      "path": "proof_bundle/logs/066_delete__entropy___pycache__.log",
+./proof_bundle/index.json:632:      "path": "proof_bundle/logs/067_status_after__entropy___pycache__.log",
+./proof_bundle/index.json:636:      "path": "proof_bundle/logs/068_delete__benchmarks___pycache__.log",
+./proof_bundle/index.json:640:      "path": "proof_bundle/logs/069_status_after__benchmarks___pycache__.log",
+./proof_bundle/index.json:644:      "path": "proof_bundle/logs/070_delete__tools___pycache__.log",
+./proof_bundle/index.json:648:      "path": "proof_bundle/logs/071_status_after__tools___pycache__.log",
+./proof_bundle/index.json:660:      "path": "proof_bundle/logs/074_delete__scripts___pycache__.log",
+./proof_bundle/index.json:664:      "path": "proof_bundle/logs/075_status_after__scripts___pycache__.log",
+./proof_bundle/index.json:676:      "path": "proof_bundle/logs/078_delete__tests___pycache__.log",
+./proof_bundle/index.json:680:      "path": "proof_bundle/logs/079_status_after__tests___pycache__.log",
+./proof_bundle/hashes/sha256sums.txt:110:16eedb426ce7864175b466b92c3118c1eb3d7a15c3e73dd9c0ef9b6a05aed8f4  proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:111:57b8f2124a69a75022a634897130318e90cef9e8afced691733839c138fcf0f9  proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:112:c19d10028bd5e1cb2b54d902cbcda74c4009f667e31b4f0732f535bd255688fd  proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:122:2829338afc50f7e87da153ab2aea35e63f89b4e8464cc35d71b81652b24032ca  proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:123:746f72b52069b5fdba7031023da742beb94bab251886a9f856027593348f07a8  proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:124:ef36f1947d18a2a5eacc4c3d5dd2d7e4868a1e0e2486afe15cb176fc898e9d6b  proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:125:24a086368af3771577ff4135b1e5331b10f4f6fbc51e67eae2436c77a0a7f456  proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:126:5dce8a24f8d9becc7deece7ee0e83d8b628977516af6b9e351e9988f8f8a1339  proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:127:5a91423aeb343fe2b50e93329102cceb9844ea83b42b15a10b0e3cde360c93e0  proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:128:fb47412d938fe4626bccee04e23891bf53c97f6033045a96c24605d0d2821ebb  proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:129:acc9445c13a8095363c9e9371e219d03da4bea7fdddf24dd2c1a74dc9a36953f  proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:130:1b8a1a162079016658342fca767de23f56ad60b6ec29e7b1a5cb5dae8f5c456d  proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:134:abe3cd70761b8e455319d1255b098d24a063870f9a99f9fb3413a4280fbb4f0b  proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:135:2488b3a6b137f2fd83819c4ab09fc9888fdbbf9394448cec1220275e992436f4  proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:136:c11d10246d6bdffa782cf75dc2ded9671df23800267e2e81341d600b6bb39513  proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:140:22ee91f7a8801309d5f2d18982f1e0ce7d7bb9bb0d857ccaa74f0dca210df94f  proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:141:905ae7d7402cbfa655f2e134cda8ba2f10abcc95e401f376cfdcd46d140ff9ab  proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:142:eecc7aa0743772bed930c3b2192baf2f819fdc438c083ac76e1e582833c7a76c  proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:143:a6c00744a78583e0df3feb8439f33b25a5a22432f94b7a916875aa9fdada189b  proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:145:05c7587f4b3e8477ea1c58d5bcc15e24890cecdd84eefabaf70e4e5811e62cd6  proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:146:ef4ac649b805c689f8092a99457713ce4c06611980e38723fbdfdcdcda0000ef  proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:147:2815a7e53b70fb42ee7487c4788c6039808974b589d508b664a5749dc2b564c1  proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:149:dc7c9f6ecb1d04a03ca996738cdbb81ed3e136f5bcc126463ff36b22271465e8  proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:152:81a47e663b43864881ebe7b239fd0140f7407a135642d5ac37bd809664eda73b  proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:153:3e6b7c8e0b8a91f6143f0c1558bb35783014a1173ed1795413e886911d571d10  proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:154:78ff7e5bbb382ed72aea46367dbcc24a22d3d178507593babf51b30bdd5236a8  proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:157:9ef158a2f32c8e3597175ab9fe9080fa8630d9dda26ef991661c3662c3b0afe8  proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:158:d5593911958753a8c77901a74b6f2917b098030ee4b5c745f06638e74af021aa  proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:159:d44ed47babd738e5af66955d0a3b67aee712d2a2b58a7d67c7f8472424ad6b00  proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:160:a1790e41a87aeae3446764775417d459f8004f7d233068579e72179e139ec682  proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:161:fc06b7cc5b2a9b69555fe46600d055ef9787ea4ecc9158ec983ea3363dbb549c  proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:162:f25bc36142d3b409db7a5133929a6c18f905bc504d17640156be0502bd7b66f4  proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:165:a6280ccbea9fee78af3a9e2a5081e9a090dcf5c858581f291389ee084df470fd  proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:166:f60868ef74bcea705e8bfd798d9f6c30b9f5842afa6088c9eda28c794503892f  proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:169:8b325b421337ef8047fe0135b698edb78e1530946ad914ce5b67a043c2c49b04  proof_bundle/logs/078_delete__tests___pycache__.log
+./proof_bundle/hashes/sha256sums.txt:170:3a010e0155c9b5f4ab98150fbcd0fed8ccb2f95c6940741b064053dec1e9a361  proof_bundle/logs/079_status_after__tests___pycache__.log
+./PR_FINAL_DESCRIPTION.md:20:find . -maxdepth 2 \( -type d -name "__pycache__" -o -name ".pytest_cache" -o -name ".mypy_cache" -o -name ".ruff_cache" \)
+./Makefile:176:	find . -type d -name __pycache__ -exec rm -rf {} +
+./Makefile:177:	find . -type d -name .pytest_cache -exec rm -rf {} +
+./Makefile:178:	find . -type d -name .mypy_cache -exec rm -rf {} +
+./proof_bundle/logs/030_class_ignore___pytest_cache.log:2:CMD: git check-ignore -v './.pytest_cache' || true
+./proof_bundle/logs/030_class_ignore___pytest_cache.log:5:.gitignore:6:.pytest_cache/	./.pytest_cache
+./proof_bundle/logs/070_delete__tools___pycache__.log:2:CMD: rm -rf './tools/__pycache__'
+./proof_bundle/logs/086_final_status.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/086_final_status.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/086_final_status.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/086_final_status.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/086_final_status.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/086_final_status.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/086_final_status.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/086_final_status.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/086_final_status.log:79:?? proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:80:?? proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/logs/086_final_status.log:83:?? proof_bundle/logs/078_delete__tests___pycache__.log
+./proof_bundle/logs/086_final_status.log:84:?? proof_bundle/logs/079_status_after__tests___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/065_status_after___pytest_cache.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/025_check_top_noise.log:2:CMD: find . -maxdepth 2 \( -type d -name ".pytest_cache" -o -type d -name "__pycache__" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) -print
+./proof_bundle/logs/025_check_top_noise.log:5:./experiments/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:6:./.pytest_cache
+./proof_bundle/logs/025_check_top_noise.log:7:./entropy/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:8:./benchmarks/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:9:./tools/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:10:./.ruff_cache
+./proof_bundle/logs/025_check_top_noise.log:11:./scripts/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:12:./.mypy_cache
+./proof_bundle/logs/025_check_top_noise.log:13:./tests/__pycache__
+./proof_bundle/logs/051_class_ignore__tests___pycache__.log:2:CMD: git check-ignore -v './tests/__pycache__' || true
+./proof_bundle/logs/051_class_ignore__tests___pycache__.log:5:.gitignore:1:__pycache__/	./tests/__pycache__
+./proof_bundle/logs/039_class_ignore__tools___pycache__.log:2:CMD: git check-ignore -v './tools/__pycache__' || true
+./proof_bundle/logs/039_class_ignore__tools___pycache__.log:5:.gitignore:1:__pycache__/	./tools/__pycache__
+./proof_bundle/logs/043_class_ref___ruff_cache.log:2:CMD: rg -n --fixed-strings './.ruff_cache' . || true
+./proof_bundle/logs/043_class_ref___ruff_cache.log:5:./proof_bundle/logs/025_check_top_noise.log:10:./.ruff_cache
+./proof_bundle/logs/043_class_ref___ruff_cache.log:6:./proof_bundle/logs/042_class_ignore___ruff_cache.log:2:CMD: git check-ignore -v './.ruff_cache' || true
+./proof_bundle/logs/043_class_ref___ruff_cache.log:7:./proof_bundle/logs/043_class_ref___ruff_cache.log:2:CMD: rg -n --fixed-strings './.ruff_cache' . || true
+./proof_bundle/logs/043_class_ref___ruff_cache.log:8:./proof_bundle/logs/041_class_track___ruff_cache.log:2:CMD: git ls-files --error-unmatch './.ruff_cache' || true
+./proof_bundle/logs/043_class_ref___ruff_cache.log:9:./proof_bundle/logs/041_class_track___ruff_cache.log:6:error: pathspec './.ruff_cache' did not match any file(s) known to git
+./proof_bundle/logs/064_delete___pytest_cache.log:2:CMD: rm -rf './.pytest_cache'
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:79:?? proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/logs/075_status_after__scripts___pycache__.log:80:?? proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/logs/031_class_ref___pytest_cache.log:2:CMD: rg -n --fixed-strings './.pytest_cache' . || true
+./proof_bundle/logs/031_class_ref___pytest_cache.log:5:./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/logs/031_class_ref___pytest_cache.log:6:./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/logs/031_class_ref___pytest_cache.log:7:./proof_bundle/logs/023_final_noise_scan.log:11:./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/logs/031_class_ref___pytest_cache.log:8:./proof_bundle/logs/023_final_noise_scan.log:12:./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/logs/031_class_ref___pytest_cache.log:9:./proof_bundle/logs/031_class_ref___pytest_cache.log:2:CMD: rg -n --fixed-strings './.pytest_cache' . || true
+./proof_bundle/logs/031_class_ref___pytest_cache.log:10:./proof_bundle/logs/030_class_ignore___pytest_cache.log:2:CMD: git check-ignore -v './.pytest_cache' || true
+./proof_bundle/logs/031_class_ref___pytest_cache.log:11:./proof_bundle/logs/030_class_ignore___pytest_cache.log:5:.gitignore:6:.pytest_cache/	./.pytest_cache
+./proof_bundle/logs/031_class_ref___pytest_cache.log:12:./proof_bundle/logs/029_class_track___pytest_cache.log:2:CMD: git ls-files --error-unmatch './.pytest_cache' || true
+./proof_bundle/logs/031_class_ref___pytest_cache.log:13:./proof_bundle/logs/029_class_track___pytest_cache.log:6:error: pathspec './.pytest_cache' did not match any file(s) known to git
+./proof_bundle/logs/031_class_ref___pytest_cache.log:14:./proof_bundle/logs/025_check_top_noise.log:6:./.pytest_cache
+./proof_bundle/logs/032_class_track__entropy___pycache__.log:2:CMD: git ls-files --error-unmatch './entropy/__pycache__' || true
+./proof_bundle/logs/032_class_track__entropy___pycache__.log:6:error: pathspec './entropy/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/078_delete__tests___pycache__.log:2:CMD: rm -rf './tests/__pycache__'
+./proof_bundle/logs/059_class_refscope__scripts___pycache__.log:2:CMD: rg -n --fixed-strings './scripts/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:2:CMD: rg -n --fixed-strings './tests/__pycache__' . || true
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:5:./proof_bundle/find_top.log:79:./tests/__pycache__
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:6:./proof_bundle/logs/052_class_ref__tests___pycache__.log:2:CMD: rg -n --fixed-strings './tests/__pycache__' . || true
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:7:./proof_bundle/logs/050_class_track__tests___pycache__.log:2:CMD: git ls-files --error-unmatch './tests/__pycache__' || true
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:8:./proof_bundle/logs/050_class_track__tests___pycache__.log:6:error: pathspec './tests/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:9:./proof_bundle/logs/051_class_ignore__tests___pycache__.log:2:CMD: git check-ignore -v './tests/__pycache__' || true
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:10:./proof_bundle/logs/051_class_ignore__tests___pycache__.log:5:.gitignore:1:__pycache__/	./tests/__pycache__
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:11:./proof_bundle/logs/025_check_top_noise.log:13:./tests/__pycache__
+./proof_bundle/logs/052_class_ref__tests___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:17:./proof_bundle/find_top.log:79:./tests/__pycache__
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:2:CMD: rg -n --fixed-strings './benchmarks/__pycache__' . || true
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:5:./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:6:./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:2:CMD: git ls-files --error-unmatch './benchmarks/__pycache__' || true
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:7:./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:6:error: pathspec './benchmarks/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:8:./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:2:CMD: git check-ignore -v './benchmarks/__pycache__' || true
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:9:./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:5:.gitignore:1:__pycache__/	./benchmarks/__pycache__
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:10:./proof_bundle/logs/025_check_top_noise.log:8:./benchmarks/__pycache__
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:11:./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:2:CMD: rg -n --fixed-strings './benchmarks/__pycache__' . || true
+./proof_bundle/logs/037_class_ref__benchmarks___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:13:./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/logs/071_status_after__tools___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/071_status_after__tools___pycache__.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/044_class_track__scripts___pycache__.log:2:CMD: git ls-files --error-unmatch './scripts/__pycache__' || true
+./proof_bundle/logs/044_class_track__scripts___pycache__.log:6:error: pathspec './scripts/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/053_class_refscope__experiments___pycache__.log:2:CMD: rg -n --fixed-strings './experiments/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/088_final_verify_noise_absent.log:2:CMD: find . -maxdepth 2 \( -type d -name ".pytest_cache" -o -type d -name "__pycache__" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) -print
+./proof_bundle/logs/087_final_delete_noise.log:2:CMD: rm -rf ./experiments/__pycache__ ./.pytest_cache ./entropy/__pycache__ ./benchmarks/__pycache__ ./tools/__pycache__ ./.ruff_cache ./scripts/__pycache__ ./.mypy_cache ./tests/__pycache__
+./proof_bundle/logs/014_find_cache_dirs.log:2:CMD: find . -maxdepth 6 \( -type d -name "__pycache__" -o -type d -name ".pytest_cache" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) 2>/dev/null || true
+./proof_bundle/logs/050_class_track__tests___pycache__.log:2:CMD: git ls-files --error-unmatch './tests/__pycache__' || true
+./proof_bundle/logs/050_class_track__tests___pycache__.log:6:error: pathspec './tests/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/055_class_refscope__entropy___pycache__.log:2:CMD: rg -n --fixed-strings './entropy/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:2:CMD: git check-ignore -v './benchmarks/__pycache__' || true
+./proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log:5:.gitignore:1:__pycache__/	./benchmarks/__pycache__
+./noise_cleanup_manifest.json:11:      "path": "./experiments/__pycache__",
+./noise_cleanup_manifest.json:18:        "ignored_evidence_log": "proof_bundle/logs/27_class_ignore__experiments___pycache__.log"
+./noise_cleanup_manifest.json:27:        "proof_bundle/logs/26_class_track__experiments___pycache__.log",
+./noise_cleanup_manifest.json:28:        "proof_bundle/logs/27_class_ignore__experiments___pycache__.log",
+./noise_cleanup_manifest.json:29:        "proof_bundle/logs/53_class_refscope__experiments___pycache__.log",
+./noise_cleanup_manifest.json:35:      "path": "./.pytest_cache",
+./noise_cleanup_manifest.json:59:      "path": "./entropy/__pycache__",
+./noise_cleanup_manifest.json:66:        "ignored_evidence_log": "proof_bundle/logs/33_class_ignore__entropy___pycache__.log"
+./noise_cleanup_manifest.json:75:        "proof_bundle/logs/32_class_track__entropy___pycache__.log",
+./noise_cleanup_manifest.json:76:        "proof_bundle/logs/33_class_ignore__entropy___pycache__.log",
+./noise_cleanup_manifest.json:77:        "proof_bundle/logs/55_class_refscope__entropy___pycache__.log",
+./noise_cleanup_manifest.json:83:      "path": "./benchmarks/__pycache__",
+./noise_cleanup_manifest.json:90:        "ignored_evidence_log": "proof_bundle/logs/36_class_ignore__benchmarks___pycache__.log"
+./noise_cleanup_manifest.json:99:        "proof_bundle/logs/35_class_track__benchmarks___pycache__.log",
+./noise_cleanup_manifest.json:100:        "proof_bundle/logs/36_class_ignore__benchmarks___pycache__.log",
+./noise_cleanup_manifest.json:101:        "proof_bundle/logs/56_class_refscope__benchmarks___pycache__.log",
+./noise_cleanup_manifest.json:107:      "path": "./tools/__pycache__",
+./noise_cleanup_manifest.json:114:        "ignored_evidence_log": "proof_bundle/logs/39_class_ignore__tools___pycache__.log"
+./noise_cleanup_manifest.json:123:        "proof_bundle/logs/38_class_track__tools___pycache__.log",
+./noise_cleanup_manifest.json:124:        "proof_bundle/logs/39_class_ignore__tools___pycache__.log",
+./noise_cleanup_manifest.json:125:        "proof_bundle/logs/57_class_refscope__tools___pycache__.log",
+./noise_cleanup_manifest.json:131:      "path": "./.ruff_cache",
+./noise_cleanup_manifest.json:155:      "path": "./scripts/__pycache__",
+./noise_cleanup_manifest.json:162:        "ignored_evidence_log": "proof_bundle/logs/45_class_ignore__scripts___pycache__.log"
+./noise_cleanup_manifest.json:171:        "proof_bundle/logs/44_class_track__scripts___pycache__.log",
+./noise_cleanup_manifest.json:172:        "proof_bundle/logs/45_class_ignore__scripts___pycache__.log",
+./noise_cleanup_manifest.json:173:        "proof_bundle/logs/59_class_refscope__scripts___pycache__.log",
+./noise_cleanup_manifest.json:179:      "path": "./.mypy_cache",
+./noise_cleanup_manifest.json:203:      "path": "./tests/__pycache__",
+./noise_cleanup_manifest.json:210:        "ignored_evidence_log": "proof_bundle/logs/51_class_ignore__tests___pycache__.log"
+./noise_cleanup_manifest.json:219:        "proof_bundle/logs/50_class_track__tests___pycache__.log",
+./noise_cleanup_manifest.json:220:        "proof_bundle/logs/51_class_ignore__tests___pycache__.log",
+./noise_cleanup_manifest.json:221:        "proof_bundle/logs/61_class_refscope__tests___pycache__.log",
+./proof_bundle/logs/057_class_refscope__tools___pycache__.log:2:CMD: rg -n --fixed-strings './tools/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/041_class_track___ruff_cache.log:2:CMD: git ls-files --error-unmatch './.ruff_cache' || true
+./proof_bundle/logs/041_class_track___ruff_cache.log:6:error: pathspec './.ruff_cache' did not match any file(s) known to git
+./proof_bundle/logs/077_status_after___mypy_cache.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:79:?? proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/logs/077_status_after___mypy_cache.log:80:?? proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/logs/054_class_refscope___pytest_cache.log:2:CMD: rg -n --fixed-strings './.pytest_cache' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/049_class_ref___mypy_cache.log:2:CMD: rg -n --fixed-strings './.mypy_cache' . || true
+./proof_bundle/logs/049_class_ref___mypy_cache.log:5:./proof_bundle/logs/048_class_ignore___mypy_cache.log:2:CMD: git check-ignore -v './.mypy_cache' || true
+./proof_bundle/logs/049_class_ref___mypy_cache.log:6:./proof_bundle/logs/047_class_track___mypy_cache.log:2:CMD: git ls-files --error-unmatch './.mypy_cache' || true
+./proof_bundle/logs/049_class_ref___mypy_cache.log:7:./proof_bundle/logs/047_class_track___mypy_cache.log:6:error: pathspec './.mypy_cache' did not match any file(s) known to git
+./proof_bundle/logs/049_class_ref___mypy_cache.log:8:./proof_bundle/logs/025_check_top_noise.log:12:./.mypy_cache
+./proof_bundle/logs/049_class_ref___mypy_cache.log:9:./proof_bundle/logs/049_class_ref___mypy_cache.log:2:CMD: rg -n --fixed-strings './.mypy_cache' . || true
+./proof_bundle/logs/073_status_after___ruff_cache.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/073_status_after___ruff_cache.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./scripts/math_validate.py:121:                and "__pycache__" not in p.parts
+./proof_bundle/logs/027_class_ignore__experiments___pycache__.log:2:CMD: git check-ignore -v './experiments/__pycache__' || true
+./proof_bundle/logs/027_class_ignore__experiments___pycache__.log:5:.gitignore:1:__pycache__/	./experiments/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:2:CMD: rg -n "__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache" . || true
+./proof_bundle/logs/023_final_noise_scan.log:5:./Makefile:176:	find . -type d -name __pycache__ -exec rm -rf {} +
+./proof_bundle/logs/023_final_noise_scan.log:6:./Makefile:177:	find . -type d -name .pytest_cache -exec rm -rf {} +
+./proof_bundle/logs/023_final_noise_scan.log:7:./Makefile:178:	find . -type d -name .mypy_cache -exec rm -rf {} +
+./proof_bundle/logs/023_final_noise_scan.log:8:./docs/api/_templates/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+./proof_bundle/logs/023_final_noise_scan.log:9:./docs/api/_static/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+./proof_bundle/logs/023_final_noise_scan.log:10:./scripts/math_validate.py:121:                and "__pycache__" not in p.parts
+./proof_bundle/logs/023_final_noise_scan.log:11:./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/logs/023_final_noise_scan.log:12:./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/logs/023_final_noise_scan.log:13:./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:14:./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:15:./proof_bundle/find_top.log:59:./experiments/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:16:./proof_bundle/find_top.log:70:./scripts/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:17:./proof_bundle/find_top.log:79:./tests/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:18:./proof_bundle/find_top.log:84:./tools/__pycache__
+./proof_bundle/logs/023_final_noise_scan.log:19:./proof_bundle/logs/023_final_noise_scan.log:2:CMD: rg -n "__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache" . || true
+./proof_bundle/logs/023_final_noise_scan.log:20:./proof_bundle/logs/014_find_cache_dirs.log:2:CMD: find . -maxdepth 6 \( -type d -name "__pycache__" -o -type d -name ".pytest_cache" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) 2>/dev/null || true
+./proof_bundle/logs/091_show_git_status.log:36:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:37:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:38:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:42:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:43:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:44:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:45:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:46:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:47:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:48:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:49:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:50:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:54:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:55:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:56:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:60:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:61:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:62:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:63:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:65:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:66:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:67:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:69:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:71:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:72:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:73:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:76:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:77:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:78:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:79:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:80:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:81:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:84:?? proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:85:?? proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:88:?? proof_bundle/logs/078_delete__tests___pycache__.log
+./proof_bundle/logs/091_show_git_status.log:89:?? proof_bundle/logs/079_status_after__tests___pycache__.log
+./proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log:2:CMD: rg -n --fixed-strings './benchmarks/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/104_find_cache_dirs.log:2:CMD: find . -maxdepth 6 -type d \( -name "__pycache__" -o -name ".pytest_cache" -o -name ".mypy_cache" -o -name ".ruff_cache" \) 2>/dev/null || true
+./proof_bundle/logs/026_class_track__experiments___pycache__.log:2:CMD: git ls-files --error-unmatch './experiments/__pycache__' || true
+./proof_bundle/logs/026_class_track__experiments___pycache__.log:6:error: pathspec './experiments/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/069_status_after__benchmarks___pycache__.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/062_delete__experiments___pycache__.log:2:CMD: rm -rf './experiments/__pycache__'
+./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:2:CMD: git check-ignore -v './entropy/__pycache__' || true
+./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:5:.gitignore:1:__pycache__/	./entropy/__pycache__
+./proof_bundle/logs/074_delete__scripts___pycache__.log:2:CMD: rm -rf './scripts/__pycache__'
+./proof_bundle/logs/076_delete___mypy_cache.log:2:CMD: rm -rf './.mypy_cache'
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:2:CMD: rg -n --fixed-strings './scripts/__pycache__' . || true
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:5:./proof_bundle/find_top.log:70:./scripts/__pycache__
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:6:./proof_bundle/logs/046_class_ref__scripts___pycache__.log:2:CMD: rg -n --fixed-strings './scripts/__pycache__' . || true
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:7:./proof_bundle/logs/025_check_top_noise.log:11:./scripts/__pycache__
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:8:./proof_bundle/logs/044_class_track__scripts___pycache__.log:2:CMD: git ls-files --error-unmatch './scripts/__pycache__' || true
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:9:./proof_bundle/logs/044_class_track__scripts___pycache__.log:6:error: pathspec './scripts/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:10:./proof_bundle/logs/045_class_ignore__scripts___pycache__.log:2:CMD: git check-ignore -v './scripts/__pycache__' || true
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:11:./proof_bundle/logs/045_class_ignore__scripts___pycache__.log:5:.gitignore:1:__pycache__/	./scripts/__pycache__
+./proof_bundle/logs/046_class_ref__scripts___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:16:./proof_bundle/find_top.log:70:./scripts/__pycache__
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/063_status_after__experiments___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/066_delete__entropy___pycache__.log:2:CMD: rm -rf './entropy/__pycache__'
+./proof_bundle/logs/045_class_ignore__scripts___pycache__.log:2:CMD: git check-ignore -v './scripts/__pycache__' || true
+./proof_bundle/logs/045_class_ignore__scripts___pycache__.log:5:.gitignore:1:__pycache__/	./scripts/__pycache__
+./proof_bundle/logs/048_class_ignore___mypy_cache.log:2:CMD: git check-ignore -v './.mypy_cache' || true
+./proof_bundle/logs/068_delete__benchmarks___pycache__.log:2:CMD: rm -rf './benchmarks/__pycache__'
+./proof_bundle/logs/061_class_refscope__tests___pycache__.log:2:CMD: rg -n --fixed-strings './tests/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:2:CMD: rg -n --fixed-strings './tools/__pycache__' . || true
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:5:./proof_bundle/find_top.log:84:./tools/__pycache__
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:6:./proof_bundle/logs/025_check_top_noise.log:9:./tools/__pycache__
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:7:./proof_bundle/logs/039_class_ignore__tools___pycache__.log:2:CMD: git check-ignore -v './tools/__pycache__' || true
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:8:./proof_bundle/logs/039_class_ignore__tools___pycache__.log:5:.gitignore:1:__pycache__/	./tools/__pycache__
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:9:./proof_bundle/logs/040_class_ref__tools___pycache__.log:2:CMD: rg -n --fixed-strings './tools/__pycache__' . || true
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:10:./proof_bundle/logs/038_class_track__tools___pycache__.log:2:CMD: git ls-files --error-unmatch './tools/__pycache__' || true
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:11:./proof_bundle/logs/038_class_track__tools___pycache__.log:6:error: pathspec './tools/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:18:./proof_bundle/find_top.log:84:./tools/__pycache__
+./proof_bundle/logs/042_class_ignore___ruff_cache.log:2:CMD: git check-ignore -v './.ruff_cache' || true
+./proof_bundle/logs/038_class_track__tools___pycache__.log:2:CMD: git ls-files --error-unmatch './tools/__pycache__' || true
+./proof_bundle/logs/038_class_track__tools___pycache__.log:6:error: pathspec './tools/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/060_class_refscope___mypy_cache.log:2:CMD: rg -n --fixed-strings './.mypy_cache' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:2:CMD: rg -n --fixed-strings './entropy/__pycache__' . || true
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:5:./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:6:./proof_bundle/logs/032_class_track__entropy___pycache__.log:2:CMD: git ls-files --error-unmatch './entropy/__pycache__' || true
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:7:./proof_bundle/logs/032_class_track__entropy___pycache__.log:6:error: pathspec './entropy/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:8:./proof_bundle/logs/025_check_top_noise.log:7:./entropy/__pycache__
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:9:./proof_bundle/logs/034_class_ref__entropy___pycache__.log:2:CMD: rg -n --fixed-strings './entropy/__pycache__' . || true
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:10:./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:2:CMD: git check-ignore -v './entropy/__pycache__' || true
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:11:./proof_bundle/logs/033_class_ignore__entropy___pycache__.log:5:.gitignore:1:__pycache__/	./entropy/__pycache__
+./proof_bundle/logs/034_class_ref__entropy___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:14:./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/logs/047_class_track___mypy_cache.log:2:CMD: git ls-files --error-unmatch './.mypy_cache' || true
+./proof_bundle/logs/047_class_track___mypy_cache.log:6:error: pathspec './.mypy_cache' did not match any file(s) known to git
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:2:CMD: rg -n --fixed-strings './experiments/__pycache__' . || true
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:5:./proof_bundle/find_top.log:59:./experiments/__pycache__
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:6:./proof_bundle/logs/027_class_ignore__experiments___pycache__.log:2:CMD: git check-ignore -v './experiments/__pycache__' || true
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:7:./proof_bundle/logs/027_class_ignore__experiments___pycache__.log:5:.gitignore:1:__pycache__/	./experiments/__pycache__
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:8:./proof_bundle/logs/025_check_top_noise.log:5:./experiments/__pycache__
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:9:./proof_bundle/logs/028_class_ref__experiments___pycache__.log:2:CMD: rg -n --fixed-strings './experiments/__pycache__' . || true
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:10:./proof_bundle/logs/026_class_track__experiments___pycache__.log:2:CMD: git ls-files --error-unmatch './experiments/__pycache__' || true
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:11:./proof_bundle/logs/026_class_track__experiments___pycache__.log:6:error: pathspec './experiments/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/028_class_ref__experiments___pycache__.log:12:./proof_bundle/logs/023_final_noise_scan.log:15:./proof_bundle/find_top.log:59:./experiments/__pycache__
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/067_status_after__entropy___pycache__.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:2:CMD: git ls-files --error-unmatch './benchmarks/__pycache__' || true
+./proof_bundle/logs/035_class_track__benchmarks___pycache__.log:6:error: pathspec './benchmarks/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/085_final_check_top_noise.log:2:CMD: find . -maxdepth 2 \( -type d -name ".pytest_cache" -o -type d -name "__pycache__" -o -type d -name ".mypy_cache" -o -type d -name ".ruff_cache" \) -print
+./proof_bundle/logs/085_final_check_top_noise.log:5:./experiments/__pycache__
+./proof_bundle/logs/085_final_check_top_noise.log:6:./.pytest_cache
+./proof_bundle/logs/085_final_check_top_noise.log:7:./entropy/__pycache__
+./proof_bundle/logs/085_final_check_top_noise.log:8:./benchmarks/__pycache__
+./proof_bundle/logs/085_final_check_top_noise.log:9:./tools/__pycache__
+./proof_bundle/logs/085_final_check_top_noise.log:10:./.ruff_cache
+./proof_bundle/logs/085_final_check_top_noise.log:11:./scripts/__pycache__
+./proof_bundle/logs/085_final_check_top_noise.log:12:./.mypy_cache
+./proof_bundle/logs/085_final_check_top_noise.log:13:./tests/__pycache__
+./proof_bundle/logs/058_class_refscope___ruff_cache.log:2:CMD: rg -n --fixed-strings './.ruff_cache' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+./proof_bundle/logs/072_delete___ruff_cache.log:2:CMD: rm -rf './.ruff_cache'
+./proof_bundle/logs/079_status_after__tests___pycache__.log:31:?? proof_bundle/logs/026_class_track__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:32:?? proof_bundle/logs/027_class_ignore__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:33:?? proof_bundle/logs/028_class_ref__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:37:?? proof_bundle/logs/032_class_track__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:38:?? proof_bundle/logs/033_class_ignore__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:39:?? proof_bundle/logs/034_class_ref__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:40:?? proof_bundle/logs/035_class_track__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:41:?? proof_bundle/logs/036_class_ignore__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:42:?? proof_bundle/logs/037_class_ref__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:43:?? proof_bundle/logs/038_class_track__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:44:?? proof_bundle/logs/039_class_ignore__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:45:?? proof_bundle/logs/040_class_ref__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:49:?? proof_bundle/logs/044_class_track__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:50:?? proof_bundle/logs/045_class_ignore__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:51:?? proof_bundle/logs/046_class_ref__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:55:?? proof_bundle/logs/050_class_track__tests___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:56:?? proof_bundle/logs/051_class_ignore__tests___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:57:?? proof_bundle/logs/052_class_ref__tests___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:58:?? proof_bundle/logs/053_class_refscope__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:60:?? proof_bundle/logs/055_class_refscope__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:61:?? proof_bundle/logs/056_class_refscope__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:62:?? proof_bundle/logs/057_class_refscope__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:64:?? proof_bundle/logs/059_class_refscope__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:66:?? proof_bundle/logs/061_class_refscope__tests___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:67:?? proof_bundle/logs/062_delete__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:68:?? proof_bundle/logs/063_status_after__experiments___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:71:?? proof_bundle/logs/066_delete__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:72:?? proof_bundle/logs/067_status_after__entropy___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:73:?? proof_bundle/logs/068_delete__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:74:?? proof_bundle/logs/069_status_after__benchmarks___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:75:?? proof_bundle/logs/070_delete__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:76:?? proof_bundle/logs/071_status_after__tools___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:79:?? proof_bundle/logs/074_delete__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:80:?? proof_bundle/logs/075_status_after__scripts___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:83:?? proof_bundle/logs/078_delete__tests___pycache__.log
+./proof_bundle/logs/079_status_after__tests___pycache__.log:84:?? proof_bundle/logs/079_status_after__tests___pycache__.log
+./proof_bundle/logs/029_class_track___pytest_cache.log:2:CMD: git ls-files --error-unmatch './.pytest_cache' || true
+./proof_bundle/logs/029_class_track___pytest_cache.log:6:error: pathspec './.pytest_cache' did not match any file(s) known to git
+./proof_bundle/logs/089_write_artifacts.log:7:  find . -maxdepth 2 \( -type d -name "__pycache__" -o -name ".pytest_cache" -o -name ".mypy_cache" -o -name ".ruff_cache" \)
+./proof_bundle/find_top.log:20:./.pytest_cache
+./proof_bundle/find_top.log:21:./.pytest_cache/v
+./proof_bundle/find_top.log:30:./benchmarks/__pycache__
+./proof_bundle/find_top.log:44:./entropy/__pycache__
+./proof_bundle/find_top.log:59:./experiments/__pycache__
+./proof_bundle/find_top.log:70:./scripts/__pycache__
+./proof_bundle/find_top.log:79:./tests/__pycache__
+./proof_bundle/find_top.log:84:./tools/__pycache__
+./noise_cleanup_report.md:17:- `./experiments/__pycache__`
+./noise_cleanup_report.md:18:- `./.pytest_cache`
+./noise_cleanup_report.md:19:- `./entropy/__pycache__`
+./noise_cleanup_report.md:20:- `./benchmarks/__pycache__`
+./noise_cleanup_report.md:21:- `./tools/__pycache__`
+./noise_cleanup_report.md:22:- `./.ruff_cache`
+./noise_cleanup_report.md:23:- `./scripts/__pycache__`
+./noise_cleanup_report.md:24:- `./.mypy_cache`
+./noise_cleanup_report.md:25:- `./tests/__pycache__`
+./docs/api/_templates/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+./docs/api/_static/tools/update_manifest.py:59:        if "__pycache__" in path.parts:
+STDERR:

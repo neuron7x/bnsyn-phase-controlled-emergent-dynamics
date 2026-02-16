@@ -1,0 +1,6 @@
+[2026-02-16T11:39:14Z]
+CMD: python -V
+EXIT: 0
+STDOUT:
+Python 3.12.12
+STDERR:

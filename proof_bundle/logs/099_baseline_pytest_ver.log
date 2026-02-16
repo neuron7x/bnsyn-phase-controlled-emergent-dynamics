@@ -1,0 +1,6 @@
+[2026-02-16T11:39:15Z]
+CMD: python -m pytest --version || true
+EXIT: 0
+STDOUT:
+pytest 9.0.2
+STDERR:
