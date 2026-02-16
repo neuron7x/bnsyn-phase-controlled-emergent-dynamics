@@ -1,0 +1,5 @@
+[2026-02-16T11:19:31Z]
+CMD: rg -n --fixed-strings './entropy/__pycache__' docs scripts .github AGENTS.md Makefile pyproject.toml README.md 2>/dev/null || true
+EXIT: 0
+STDOUT:
+STDERR:

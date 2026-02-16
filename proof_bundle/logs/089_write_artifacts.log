@@ -1,0 +1,7 @@
+[2026-02-16T11:21:18Z]
+CMD: python /tmp/write_cleanup_artifacts.py
+EXIT: 0
+STDOUT:
+STDERR:
+/tmp/write_cleanup_artifacts.py:105: SyntaxWarning: invalid escape sequence '\('
+  find . -maxdepth 2 \( -type d -name "__pycache__" -o -name ".pytest_cache" -o -name ".mypy_cache" -o -name ".ruff_cache" \)

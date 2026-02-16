@@ -1,0 +1,6 @@
+[2026-02-16T11:17:16Z]
+CMD: python -m mypy --version || true
+EXIT: 0
+STDOUT:
+mypy 1.19.1 (compiled: yes)
+STDERR:

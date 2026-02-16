@@ -1,0 +1,6 @@
+[2026-02-16T11:18:51Z]
+CMD: git check-ignore -v './.pytest_cache' || true
+EXIT: 0
+STDOUT:
+.gitignore:6:.pytest_cache/	./.pytest_cache
+STDERR:

@@ -1,0 +1,6 @@
+[2026-02-16T11:17:14Z]
+CMD: python -m ruff --version || true
+EXIT: 0
+STDOUT:
+ruff 0.14.11
+STDERR:

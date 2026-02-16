@@ -1,0 +1,13 @@
+[2026-02-16T11:19:03Z]
+CMD: rg -n --fixed-strings './tools/__pycache__' . || true
+EXIT: 0
+STDOUT:
+./proof_bundle/find_top.log:84:./tools/__pycache__
+./proof_bundle/logs/025_check_top_noise.log:9:./tools/__pycache__
+./proof_bundle/logs/039_class_ignore__tools___pycache__.log:2:CMD: git check-ignore -v './tools/__pycache__' || true
+./proof_bundle/logs/039_class_ignore__tools___pycache__.log:5:.gitignore:1:__pycache__/	./tools/__pycache__
+./proof_bundle/logs/040_class_ref__tools___pycache__.log:2:CMD: rg -n --fixed-strings './tools/__pycache__' . || true
+./proof_bundle/logs/038_class_track__tools___pycache__.log:2:CMD: git ls-files --error-unmatch './tools/__pycache__' || true
+./proof_bundle/logs/038_class_track__tools___pycache__.log:6:error: pathspec './tools/__pycache__' did not match any file(s) known to git
+./proof_bundle/logs/023_final_noise_scan.log:18:./proof_bundle/find_top.log:84:./tools/__pycache__
+STDERR:

@@ -1,0 +1,5 @@
+[2026-02-16T11:20:03Z]
+CMD: rm -rf './.mypy_cache'
+EXIT: 0
+STDOUT:
+STDERR:
