@@ -61,7 +61,12 @@ def _scan_python(path: Path) -> list[PlaceholderFinding]:
             parent_map[child] = parent
 
     rel_path = path.relative_to(ROOT).as_posix()
-    kind = "test" if rel_path.startswith("tests/") else "code"
+    if rel_path.startswith("tests/"):
+        kind = "test"
+    elif rel_path.startswith("scripts/"):
+        kind = "script"
+    else:
+        kind = "code"
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Pass):
@@ -75,9 +80,18 @@ def _scan_python(path: Path) -> list[PlaceholderFinding]:
                         signature="pass_in_except",
                     )
                 )
-        elif isinstance(node, ast.Raise) and isinstance(node.exc, ast.Call):
-            func = node.exc.func
-            if isinstance(func, ast.Name) and func.id == "NotImplementedError":
+        elif isinstance(node, ast.Raise):
+            if isinstance(node.exc, ast.Call):
+                func = node.exc.func
+            else:
+                func = node.exc
+
+            is_not_implemented = (
+                (isinstance(func, ast.Name) and func.id == "NotImplementedError")
+                or (isinstance(func, ast.Attribute) and func.attr == "NotImplementedError")
+            )
+
+            if is_not_implemented:
                 findings.append(
                     PlaceholderFinding(
                         path=rel_path,

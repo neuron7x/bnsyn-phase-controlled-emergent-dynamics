@@ -72,9 +72,7 @@ def test_registry_closed_entries_include_evidence_ref() -> None:
         status_match = re.search(r"^- Status: ([A-Z_]+)$", entry, flags=re.MULTILINE)
         assert status_match is not None
         status = status_match.group(1)
-        evidence_ref_match = re.search(
-            r"^- evidence_ref: `([^`]+)`$", entry, flags=re.MULTILINE
-        )
+        evidence_ref_match = re.search(r"^- evidence_ref: `([^`]+)`$", entry, flags=re.MULTILINE)
 
         if status == "CLOSED":
             assert evidence_ref_match is not None
@@ -87,6 +85,38 @@ def test_registry_closed_entries_include_evidence_ref() -> None:
             )
             assert fix_strategy_match is not None
             assert test_strategy_match is not None
+
+
+def test_scan_python_detects_not_implemented_variants_and_script_kind(tmp_path: Path) -> None:
+    scan_root = tmp_path / "repo"
+    script_file = scan_root / "scripts" / "sample.py"
+    script_file.parent.mkdir(parents=True, exist_ok=True)
+    script_file.write_text(
+        "import builtins\n"
+        "def f():\n"
+        "    raise NotImplementedError\n"
+        "def g():\n"
+        "    raise NotImplementedError()\n"
+        "def h():\n"
+        "    raise builtins.NotImplementedError()\n",
+        encoding="utf-8",
+    )
+
+    original_root = scan_placeholders.ROOT
+    original_targets = scan_placeholders.TARGET_DIRS
+    try:
+        scan_placeholders.ROOT = scan_root
+        scan_placeholders.TARGET_DIRS = ("scripts",)
+        findings = scan_placeholders.collect_findings()
+    finally:
+        scan_placeholders.ROOT = original_root
+        scan_placeholders.TARGET_DIRS = original_targets
+
+    assert len(findings) == 3
+    assert all(item.path == "scripts/sample.py" for item in findings)
+    assert all(item.kind == "script" for item in findings)
+    assert all(item.signature == "raise_NotImplementedError" for item in findings)
+    assert [item.line for item in findings] == [3, 5, 7]
 
 
 def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:
