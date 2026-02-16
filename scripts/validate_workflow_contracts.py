@@ -6,7 +6,7 @@ import re
 import sys
 from typing import Iterable
 
-import yaml
+from scripts.yaml_contracts import load_yaml_mapping
 
 ALLOWED_GATE_CLASSES = {"PR-gate", "long-running"}
 ALLOWED_REUSABLE_VALUES = {"YES", "NO"}
@@ -20,7 +20,7 @@ TRIGGER_ORDER = (
 
 
 class ContractParseError(RuntimeError):
-    pass
+    """Raised when workflow contracts cannot be parsed deterministically."""
 
 
 @dataclass(frozen=True)
@@ -71,6 +71,7 @@ def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
         raise ContractParseError("Workflow Inventory Table header not found.") from exc
 
     rows: dict[str, InventoryRow] = {}
+    duplicate_rows: set[str] = set()
     last_row: str | None = None
     for line in lines[header_index + 1 :]:
         stripped = line.strip()
@@ -108,6 +109,8 @@ def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
                 f"Invalid reusable value '{reusable_raw}' for {workflow_file}."
             )
         triggers = tuple(trigger.strip() for trigger in triggers_raw.split(",") if trigger.strip())
+        if workflow_file in rows:
+            duplicate_rows.add(workflow_file)
         rows[workflow_file] = InventoryRow(
             workflow_file=workflow_file,
             workflow_name=workflow_name,
@@ -119,15 +122,24 @@ def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
         last_row = workflow_file
     if not rows:
         raise ContractParseError("Workflow Inventory Table has no rows.")
+    if duplicate_rows:
+        raise ContractParseError(f"Duplicate workflow rows: {sorted(duplicate_rows)}")
     return rows
 
 
 def load_workflow_inventory(workflows_dir: Path) -> dict[str, dict[str, object]]:
     inventory: dict[str, dict[str, object]] = {}
     for workflow_path in sorted(workflows_dir.glob("*.yml")):
-        data = yaml.safe_load(workflow_path.read_text(encoding="utf-8")) or {}
+        data = load_yaml_mapping(
+            workflow_path,
+            ContractParseError,
+            label=f"workflow file {workflow_path.name}",
+        )
         on_section = data.get("on", data.get(True, {}))
         triggers = normalize_on_section(on_section)
+        jobs_raw = data.get("jobs")
+        if not isinstance(jobs_raw, dict):
+            raise ContractParseError(f"jobs missing or invalid in workflow: {workflow_path.name}")
         name = data.get("name", "UNKNOWN")
         reusable = "workflow_call" in triggers or workflow_path.name.startswith("_reusable_")
         inventory[workflow_path.name] = {

@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from scripts.validate_pr_gates import validate_pr_gates
+import pytest
+from scripts.validate_pr_gates import PrGateParseError, load_workflow_data
 
 
 def write_workflow(
@@ -222,3 +224,15 @@ def test_extra_pr_gate_in_contracts_violation(tmp_path: Path) -> None:
     )
     violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
     assert any("CONTRACT_PR_GATES_MISMATCH" in v for v in violations)
+
+
+def test_load_workflow_data_rejects_missing_jobs_mapping(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / ".github" / "workflows"
+    workflows_dir.mkdir(parents=True)
+    (workflows_dir / "ci-pr-atomic.yml").write_text(
+        "name: ci-pr-atomic\non:\n  pull_request:\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(PrGateParseError, match="jobs must be a mapping"):
+        load_workflow_data(workflows_dir)

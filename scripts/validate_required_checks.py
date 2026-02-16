@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 from typing import Iterable
 
-import yaml
+from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -14,19 +14,21 @@ from scripts.validate_workflow_contracts import ContractParseError, parse_invent
 
 
 class RequiredChecksParseError(RuntimeError):
-    pass
+    """Raised when REQUIRED_CHECKS.yml violates the governance schema."""
 
 
 def load_required_checks(required_checks_path: Path) -> list[str]:
-    data = yaml.safe_load(required_checks_path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise RequiredChecksParseError("REQUIRED_CHECKS.yml must be a mapping.")
-    allowed_keys = {"version", "required_checks"}
-    unknown_keys = set(data.keys()) - allowed_keys
-    if unknown_keys:
-        raise RequiredChecksParseError(
-            f"Unknown keys in REQUIRED_CHECKS.yml: {sorted(unknown_keys)}"
-        )
+    data = load_yaml_mapping(
+        required_checks_path,
+        RequiredChecksParseError,
+        label="REQUIRED_CHECKS.yml",
+    )
+    reject_unknown_keys(
+        data,
+        {"version", "required_checks"},
+        RequiredChecksParseError,
+        context="REQUIRED_CHECKS.yml",
+    )
     version = data.get("version")
     if version != "1":
         raise RequiredChecksParseError("REQUIRED_CHECKS.yml version must be '1'.")
@@ -34,6 +36,7 @@ def load_required_checks(required_checks_path: Path) -> list[str]:
     if not isinstance(entries_raw, list):
         raise RequiredChecksParseError("required_checks must be a list.")
     entries: list[str] = []
+    seen_workflows: set[str] = set()
     for entry in entries_raw:
         if not isinstance(entry, dict):
             raise RequiredChecksParseError("Each required_checks entry must be a mapping.")
@@ -45,6 +48,9 @@ def load_required_checks(required_checks_path: Path) -> list[str]:
         workflow_file = entry["workflow_file"]
         if not isinstance(workflow_file, str) or not workflow_file:
             raise RequiredChecksParseError("workflow_file must be a non-empty string.")
+        if workflow_file in seen_workflows:
+            raise RequiredChecksParseError(f"Duplicate workflow_file: {workflow_file}")
+        seen_workflows.add(workflow_file)
         entries.append(workflow_file)
     if not entries:
         raise RequiredChecksParseError("required_checks must not be empty.")

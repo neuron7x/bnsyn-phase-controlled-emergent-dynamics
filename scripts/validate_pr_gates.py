@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 from typing import Iterable
 
-import yaml
+from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -15,7 +15,7 @@ from scripts.validate_workflow_contracts import ContractParseError, parse_invent
 
 
 class PrGateParseError(RuntimeError):
-    pass
+    """Raised when PR gate workflow contracts fail parsing or validation."""
 
 
 @dataclass(frozen=True)
@@ -26,13 +26,13 @@ class PrGateEntry:
 
 
 def load_pr_gates(pr_gates_path: Path) -> list[PrGateEntry]:
-    data = yaml.safe_load(pr_gates_path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise PrGateParseError("PR_GATES.yml must be a mapping.")
-    allowed_keys = {"version", "required_pr_gates"}
-    unknown_keys = set(data.keys()) - allowed_keys
-    if unknown_keys:
-        raise PrGateParseError(f"Unknown keys in PR_GATES.yml: {sorted(unknown_keys)}")
+    data = load_yaml_mapping(pr_gates_path, PrGateParseError, label="PR_GATES.yml")
+    reject_unknown_keys(
+        data,
+        {"version", "required_pr_gates"},
+        PrGateParseError,
+        context="PR_GATES.yml",
+    )
     version = data.get("version")
     if version != "1":
         raise PrGateParseError("PR_GATES.yml version must be '1'.")
@@ -90,11 +90,18 @@ def has_pull_request(on_section: object) -> bool:
 def load_workflow_data(workflows_dir: Path) -> dict[str, dict[str, object]]:
     workflow_data: dict[str, dict[str, object]] = {}
     for workflow_path in sorted(workflows_dir.glob("*.yml")):
-        data = yaml.safe_load(workflow_path.read_text(encoding="utf-8")) or {}
+        data = load_yaml_mapping(
+            workflow_path,
+            PrGateParseError,
+            label=f"workflow file {workflow_path.name}",
+        )
         on_section = data.get("on", data.get(True, {}))
+        jobs_raw = data.get("jobs")
+        if not isinstance(jobs_raw, dict):
+            raise PrGateParseError(f"jobs must be a mapping in workflow: {workflow_path.name}")
         workflow_data[workflow_path.name] = {
             "name": str(data.get("name", workflow_path.stem)),
-            "jobs": sorted((data.get("jobs") or {}).keys()),
+            "jobs": sorted(jobs_raw.keys()),
             "has_pr": has_pull_request(on_section),
         }
     return workflow_data
