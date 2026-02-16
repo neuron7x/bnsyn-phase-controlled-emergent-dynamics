@@ -1,4 +1,4 @@
-﻿bnsyn.synapse.conductance
+bnsyn.synapse.conductance
 =========================
 
 .. automodule:: bnsyn.synapse.conductance

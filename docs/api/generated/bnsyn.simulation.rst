@@ -1,4 +1,4 @@
-﻿bnsyn.simulation
+bnsyn.simulation
 ================
 
 .. automodule:: bnsyn.simulation

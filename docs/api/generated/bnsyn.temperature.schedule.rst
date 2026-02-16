@@ -1,4 +1,4 @@
-﻿bnsyn.temperature.schedule
+bnsyn.temperature.schedule
 ==========================
 
 .. automodule:: bnsyn.temperature.schedule

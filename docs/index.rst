@@ -9,11 +9,14 @@ operations, scripts, and API surfaces.
    :caption: Documentation Spine
 
    START_HERE
+   repo_map
+   usage_workflows
    QUICKSTART
    ARCHITECTURE
    MODULE_RESPONSIBILITY_MATRIX
    TESTING
    BUILD_DOCS
-   SCRIPTS/index
+   scripts/index
+   contracts/index
    api/index
    INDEX

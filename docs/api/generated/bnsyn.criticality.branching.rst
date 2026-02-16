@@ -1,4 +1,4 @@
-﻿bnsyn.criticality.branching
+bnsyn.criticality.branching
 ===========================
 
 .. automodule:: bnsyn.criticality.branching

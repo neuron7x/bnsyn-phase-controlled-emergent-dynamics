@@ -1,4 +1,4 @@
-﻿bnsyn.synapses
+bnsyn.synapses
 ==============
 
 .. automodule:: bnsyn.synapses

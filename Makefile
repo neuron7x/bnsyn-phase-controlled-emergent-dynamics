@@ -151,8 +151,8 @@ check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
 
 docs:
-	sphinx-build docs docs/_build
-	@echo "Docs built at docs/_build"
+	python -m sphinx -b html docs docs/_build/html
+	@echo "Docs built at docs/_build/html"
 
 release-readiness:
 	python -m scripts.release_readiness

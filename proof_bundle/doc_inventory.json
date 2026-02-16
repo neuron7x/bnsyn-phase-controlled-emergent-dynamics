@@ -1,0 +1,24 @@
+{
+  "produced_docs": [
+    "README.md",
+    "docs/repo_map.md",
+    "docs/usage_workflows.md",
+    "scripts/README.md",
+    "docs/scripts/index.md",
+    "docs/contracts/index.md",
+    "docs/index.rst",
+    "docs/modules.rst",
+    "docs/api/index.md",
+    "DOC_CHANGELOG.md",
+    "proof_bundle/repo_state.txt",
+    "proof_bundle/commands.log",
+    "proof_bundle/doc_inventory.json",
+    "proof_bundle/hashes.sha256"
+  ],
+  "script_coverage": {
+    "scripts_total": 64,
+    "script_pages_total": 64,
+    "missing_pages": [],
+    "scope": "scripts/*.py and scripts/*.sh"
+  }
+}

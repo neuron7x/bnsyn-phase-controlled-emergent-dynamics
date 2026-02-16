@@ -1,4 +1,4 @@
-﻿bnsyn.sim.network
+bnsyn.sim.network
 =================
 
 .. automodule:: bnsyn.sim.network

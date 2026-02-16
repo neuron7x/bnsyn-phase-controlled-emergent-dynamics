@@ -1,4 +1,4 @@
-﻿bnsyn.cli
+bnsyn.cli
 =========
 
 .. automodule:: bnsyn.cli

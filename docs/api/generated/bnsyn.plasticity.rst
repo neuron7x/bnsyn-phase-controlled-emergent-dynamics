@@ -1,4 +1,4 @@
-﻿bnsyn.plasticity
+bnsyn.plasticity
 ================
 
 .. automodule:: bnsyn.plasticity
