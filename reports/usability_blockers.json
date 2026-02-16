@@ -1,10 +1,10 @@
 {
   "meta": {
-    "timestamp_utc": "2026-02-16T12:09:48.563936+00:00",
+    "timestamp_utc": "2026-02-16T12:38:03Z",
     "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
     "git": {
-      "branch": "work",
-      "commit": "cc4fd03aaf0de7c54fd395056f14eea3178954e0",
+      "branch": "chore/usability-blocker-audit",
+      "commit": "b67c6e3663fb43ff0545685a56d1a4758aae036d",
       "dirty": true
     },
     "platform": {
@@ -12,86 +12,91 @@
       "arch": "x86_64"
     },
     "intended_use_inference": {
-      "statement": "Deterministic Bio-AI research/validation platform where contributors install dev deps, run CLI/simulation workflows, execute tests/lint/type checks, and build docs/wheels.",
-      "evidence_min_sources": 3,
+      "statement": "BN-Syn is intended to be a deterministic Bio-AI research/validation platform with a primary CLI workflow (sleep-stack/demo) plus reproducible verification gates (tests/lint/typecheck/build).",
+      "evidence_sources_count": 4,
       "sources": [
-        "path:README.md",
-        "path:docs/usage_workflows.md",
-        "path:.github/workflows/ci-pr-atomic.yml"
+        "README.md Start Here + canonical commands",
+        "docs/usage_workflows.md golden-path steps",
+        "pyproject.toml [project.scripts] bnsyn CLI entrypoint",
+        ".github/workflows/ci-pr-atomic.yml quality/build jobs"
       ]
     }
   },
   "coverage": {
-    "files_scanned_ratio_estimate": 0.12,
-    "commands_executed": 48,
+    "files_scanned_ratio_estimate": 0.72,
+    "commands_executed": 31,
     "notes": [
-      "Focused on onboarding docs, build/test configs, and canonical new-user workflow commands."
+      "Coverage estimate based on mandatory docs/CI/manifests + representative source layout inspection, not full-file exhaustive read."
     ]
   },
   "blockers": [
     {
       "id": "BLK-001",
       "severity": "P0",
-      "title": "Canonical test command fails after setup due incompatible proof_bundle/index.json structure",
+      "title": "Verification gate fails: proof bundle hash index is internally inconsistent",
       "category": "tests",
-      "symptom": "Pytest stops with TypeError in tests/test_audit_suite_artifacts.py::test_proof_bundle_index_hashes_match_files.",
-      "expected": "Canonical test suites should exit 0 after documented install path.",
-      "actual": "`python -m pytest tests -q` and `python -m pytest -m \"not validation\" -q` both fail with `TypeError: string indices must be integers, not 'str'` when iterating proof index entries.",
+      "symptom": "Running the canonical test suite fails in test_audit_suite_artifacts due to SHA mismatch.",
+      "expected": "python -m pytest -m \"not validation\" -q should pass for contributor verification workflow.",
+      "actual": "pytest exits 1 at tests/test_audit_suite_artifacts.py::test_proof_bundle_index_hashes_match_files; index records hash 4eb6... but file hash is baa4....",
       "repro_steps": [
-        "python -m pip install -e '.[dev]'",
-        "python -m pytest tests -q"
+        "python -m pip install -e \".[dev]\"",
+        "python -m pytest -m \"not validation\" -q"
       ],
-      "root_cause_hypothesis": "tests/test_audit_suite_artifacts.py expects proof_bundle/index.json to be a list of objects, but file is an object with top-level artifacts array; format drift likely between producer and test contract.",
+      "root_cause_hypothesis": "proof_bundle/index.json is stale relative to proof_bundle/command_index.json.",
       "fix_minimal_plan": [
-        "Align producer and test contract for proof_bundle/index.json (choose list schema or update test parser).",
-        "Add contract check to prevent future schema drift."
+        "Regenerate proof bundle index with current SHA256 values.",
+        "Add CI/pre-commit check to fail when proof_bundle/index.json is stale."
       ],
       "scope_constraints": [
-        "no logic changes",
-        "artifact/schema alignment only"
+        "Do not change runtime code.",
+        "Only refresh evidence artifact index and related checks."
       ],
       "evidence": [
-        "cmd:python -m pytest tests -q | log:proof_bundle/logs/250_20260216T120237Z.log | exit:1",
-        "cmd:python -m pytest -m 'not validation' -q | log:proof_bundle/logs/253_20260216T120524Z.log | exit:1",
-        "cmd:sed -n '1,220p' proof_bundle/index.json | log:proof_bundle/logs/264_20260216T120811Z.log | exit:0"
+        "cmd:python -m pytest -m \"not validation\" -q | log:proof_bundle/logs/04_verification.log | exit:1",
+        "cmd:python - <<\"PY\" ... command_index hash check ... | log:proof_bundle/logs/05_post_test_state.log | exit:0",
+        "file:proof_bundle/index.json:3-6 | snippet: \"path\": \"proof_bundle/command_index.json\", \"sha256\": \"4eb6...\""
       ],
-      "confidence": 0.91
+      "confidence": 0.98
     },
     {
       "id": "BLK-002",
       "severity": "P0",
-      "title": "Build gate command unavailable in documented dev environment",
+      "title": "Build command unavailable after documented development install",
       "category": "build",
-      "symptom": "`python -m build` fails because module `build` is not installed after canonical dev install.",
-      "expected": "Build verification command should run after following onboarding install instructions.",
-      "actual": "`python -m build` returns `/python: No module named build`.",
+      "symptom": "python -m build fails with ModuleNotFoundError in a freshly prepared dev environment.",
+      "expected": "Build command should run after following documented setup path and AGENTS build instruction.",
+      "actual": "After python -m pip install -e \".[dev]\", running python -m build exits 1: No module named build.",
       "repro_steps": [
-        "python -m pip install -e '.[dev]'",
+        "python -m pip install -e \".[dev]\"",
         "python -m build"
       ],
-      "root_cause_hypothesis": "The [dev] extra in pyproject.toml does not include `build`, while AGENTS and CI build gate require `python -m build`.",
+      "root_cause_hypothesis": "build dependency is not included in project dependencies or dev extra; CI works only because workflow installs build explicitly.",
       "fix_minimal_plan": [
-        "Include `build` in the extra/profile used by local build checks (e.g., dev/test) or adjust documented build prerequisite command.",
-        "Keep CI and local docs/install path consistent."
+        "Add build to dev dependency set or docs setup command.",
+        "Align AGENTS/README/Makefile instructions with CI install line."
       ],
       "scope_constraints": [
-        "no logic changes",
-        "dependency declaration/docs consistency only"
+        "Avoid changing package runtime requirements.",
+        "Prefer tooling/docs parity update only."
       ],
       "evidence": [
-        "cmd:python -m build | log:proof_bundle/logs/257_20260216T120748Z.log | exit:1",
-        "cmd:python -m pip install -e ' .[dev] ' | log:proof_bundle/logs/248_20260216T120209Z.log | exit:0",
-        "cmd:sed -n '220,360p' .github/workflows/ci-pr-atomic.yml | log:proof_bundle/logs/270_20260216T120835Z.log | exit:0"
+        "cmd:python -m pip install -e \".[dev]\" | log:proof_bundle/logs/03_new_user_path.log | exit:0",
+        "cmd:python -m build | log:proof_bundle/logs/04_verification.log | exit:1",
+        "cmd:python -m pip install build && python -m build | log:proof_bundle/logs/04_verification.log | exit:0",
+        "file:AGENTS.md:31-35 | snippet: Build: `python -m build`"
       ],
-      "confidence": 0.88
+      "confidence": 0.97
     }
   ],
   "improvements": [
     {
       "id": "IMP-001",
-      "severity": "P2",
-      "title": "AGENTS-recommended pylint command depends on pre-install state",
-      "note": "Before install pylint is missing, after install command passes."
+      "title": "Test run mutates repository working tree (tests_inventory.json) which adds friction for contributors",
+      "evidence": [
+        "cmd:python -m pytest -m \"not validation\" -q | log:proof_bundle/logs/04_verification.log | exit:1",
+        "cmd:git status --short | log:proof_bundle/logs/05_post_test_state.log | exit:0",
+        "cmd:git diff -- tests_inventory.json | log:proof_bundle/logs/05_post_test_state.log | exit:0"
+      ]
     }
   ],
   "recommendation": {
@@ -101,8 +106,9 @@
       "BLK-002"
     ],
     "fastest_unblock_sequence": [
-      "BLK-002",
-      "BLK-001"
+      "Repair proof_bundle/index.json hash entries and rerun pytest gate.",
+      "Make build tool available by default in contributor setup path.",
+      "Rerun canonical gates: pytest(not validation), ruff, pylint, mypy, python -m build."
     ]
   }
 }

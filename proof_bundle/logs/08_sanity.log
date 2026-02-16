@@ -1,0 +1,27 @@
+timestamp_utc: 2026-02-16T12:38:20Z
+cmd: git status --short
+exit: 0
+stdout:
+ M proof_bundle/hashes/sha256sums.txt
+ M proof_bundle/index.json
+ M proof_bundle/toolchain_fingerprint.json
+ M reports/PR_DESCRIPTION.md
+ M reports/repo_representator.json
+ M reports/usability_blockers.json
+ M reports/usability_blockers_report.md
+?? proof_bundle/logs/00_baseline.log
+?? proof_bundle/logs/01_discovery.log
+?? proof_bundle/logs/02_docs_ci.log
+?? proof_bundle/logs/03_new_user_path.log
+?? proof_bundle/logs/04_verification.log
+?? proof_bundle/logs/05_post_test_state.log
+?? proof_bundle/logs/06_finalize_inputs.log
+?? proof_bundle/logs/07_hash_index.log
+stderr:
+---
+timestamp_utc: 2026-02-16T12:38:21Z
+cmd: git status --short | awk "{print \$2}" | (grep -v "^reports/" | grep -v "^proof_bundle/" || true)
+exit: 0
+stdout:
+stderr:
+---
