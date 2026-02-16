@@ -3724,3 +3724,17 @@ cmd: git status --short
 cmd: python -m scripts.generate_tests_inventory
 cmd: python -m pytest tests/test_generate_inventory.py tests/test_principal_test_hardening.py -q
 .....                                                                    [100%]
+cmd: git status --short
+
+cmd: python tools/generate_inventory.py --check
+INVENTORY.json is out of date. Run: python tools/generate_inventory.py && git add INVENTORY.json
+cmd: python tools/generate_inventory.py
+UPDATED: INVENTORY.json
+cmd: python tools/generate_inventory.py --check
+OK: INVENTORY.json is up to date
+cmd: python -m pytest tests/test_generate_inventory.py tests/test_principal_test_hardening.py -q
+.....                                                                    [100%]
+cmd: python -m tools.manifest validate
+Manifest validation passed.
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+OK: long_running_trigger_policy workflows=31 violations=0
