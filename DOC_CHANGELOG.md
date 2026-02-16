@@ -42,3 +42,5 @@
 - Standardized script page section heading to `## Examples` across `docs/scripts/*.md` to match required template wording.
 - Regenerated `proof_bundle/commands.log` with strict per-command metadata (`timestamp`, `cwd`, `command`, `timeout_sec`, `duration_sec`, `exit_code`, `stdout`, `stderr`).
 - Refreshed `proof_bundle/doc_inventory.json`, `proof_bundle/repo_state.txt`, and `proof_bundle/hashes.sha256` for consistency after fixes.
+
+- Fixed CI inventory gate failure by regenerating `INVENTORY.json` and verifying with `python tools/generate_inventory.py --check`.

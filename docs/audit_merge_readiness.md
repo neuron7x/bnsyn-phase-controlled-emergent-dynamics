@@ -14,13 +14,20 @@ This report validates the documentation formalization PR against merge gates A�
 | F — Proof Bundle Validity | PASS | `proof_bundle/` includes commands, inventory, repo state, and current SHA256 manifest. |
 | G — PR Hygiene | PASS | `DOC_CHANGELOG.md` includes explicit docs-only statement and meta-audit notes. |
 
+## Main-vs-PR Parity Check
+
+- Reviewed local history around merge baseline (`4c40310`) and follow-up docs commits; the concrete missing artifact gate in this PR was stale `INVENTORY.json`.
+- Implemented missing parity item by regenerating `INVENTORY.json` and validating with `python tools/generate_inventory.py --check` (exit 0).
+
 ## Fixed Issues in This Pass
 
 1. **Standardized script page template heading to required plural section name.**
    - Fixed `## Example Invocation` → `## Examples` across all `docs/scripts/*.md` pages.
 2. **Added explicit merge-readiness audit artifact.**
    - Added this file (`docs/audit_merge_readiness.md`) with gate-by-gate PASS table.
-3. **Regenerated proof bundle for coherence and strict logging schema.**
+3. **Fixed inventory gate failure from CI (`generate_inventory.py --check`).**
+   - Regenerated `INVENTORY.json` and re-ran check to pass.
+4. **Regenerated proof bundle for coherence and strict logging schema.**
    - `proof_bundle/commands.log` now records timestamp, cwd, command, timeout, duration, exit, stdout, stderr for each executed command.
    - `proof_bundle/doc_inventory.json` and `proof_bundle/hashes.sha256` refreshed to match current repository state.
 

@@ -82,3 +82,16 @@ Expected outputs:
 - `docs/_build/html/index.html`
 - `docs/_build/linkcheck/output.txt`
 
+
+## 7) Repository inventory consistency
+
+```bash
+python tools/generate_inventory.py --check
+```
+
+If this fails, regenerate and stage inventory:
+
+```bash
+python tools/generate_inventory.py
+git add INVENTORY.json
+```

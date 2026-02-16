@@ -1,20 +1,20 @@
-timestamp: 2026-02-16T09:48:15.180459+00:00
+timestamp: 2026-02-16T09:59:06.812806+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: git rev-parse HEAD
 timeout_sec: 60
-duration_sec: 0.015
+duration_sec: 0.014
 exit_code: 0
 stdout:
-85d298fb581c2ca7aff8f4f00baf657b527b250e
+615d6d4055f8fc0015f892eff0b69c23677b22ba
 
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:15.195403+00:00
+timestamp: 2026-02-16T09:59:06.826873+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: git branch --show-current
 timeout_sec: 60
-duration_sec: 0.013
+duration_sec: 0.012
 exit_code: 0
 stdout:
 work
@@ -22,22 +22,22 @@ work
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:15.208254+00:00
+timestamp: 2026-02-16T09:59:06.838898+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: git status --short
 timeout_sec: 60
-duration_sec: 0.020
+duration_sec: 0.017
 exit_code: 0
 stdout:
 
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:15.227874+00:00
+timestamp: 2026-02-16T09:59:06.856405+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: python --version
 timeout_sec: 60
-duration_sec: 0.017
+duration_sec: 0.016
 exit_code: 0
 stdout:
 Python 3.12.12
@@ -45,11 +45,11 @@ Python 3.12.12
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:15.244633+00:00
+timestamp: 2026-02-16T09:59:06.872038+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: python -m pip --version
 timeout_sec: 60
-duration_sec: 0.457
+duration_sec: 0.426
 exit_code: 0
 stdout:
 pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
@@ -57,11 +57,23 @@ pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (py
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:15.701446+00:00
+timestamp: 2026-02-16T09:59:07.298068+00:00
+cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
+command: python tools/generate_inventory.py --check
+timeout_sec: 120
+duration_sec: 0.139
+exit_code: 0
+stdout:
+OK: INVENTORY.json is up to date
+
+stderr:
+
+---
+timestamp: 2026-02-16T09:59:07.436809+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: python -m pip install -e ".[dev]"
 timeout_sec: 1200
-duration_sec: 5.867
+duration_sec: 5.627
 exit_code: 0
 stdout:
 Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
@@ -171,8 +183,8 @@ Requirement already satisfied: soupsieve>=1.6.1 in /root/.pyenv/versions/3.12.12
 Building wheels for collected packages: bnsyn
   Building editable for bnsyn (pyproject.toml): started
   Building editable for bnsyn (pyproject.toml): finished with status 'done'
-  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=11167 sha256=859edc477a18660eda28c41af61c5beabcb1cf8a4d561b805f55149fd46c8646
-  Stored in directory: /tmp/pip-ephem-wheel-cache-wz_bgmxq/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=11167 sha256=cc2a990fd998131c85dde15240dc06d984506919cb15ed96f2371d80b5af6afc
+  Stored in directory: /tmp/pip-ephem-wheel-cache-k0g569gj/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
 Successfully built bnsyn
 Installing collected packages: bnsyn
   Attempting uninstall: bnsyn
@@ -188,11 +200,11 @@ WARNING: Running pip as the 'root' user can result in broken permissions and con
 [notice] To update, run: pip install --upgrade pip
 
 ---
-timestamp: 2026-02-16T09:48:21.568409+00:00
+timestamp: 2026-02-16T09:59:13.063565+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: make docs
 timeout_sec: 1200
-duration_sec: 3.889
+duration_sec: 4.049
 exit_code: 0
 stdout:
 python -m sphinx -b html docs docs/_build/html
@@ -282,7 +294,7 @@ Docs built at docs/_build/html
 stderr:
 
 ---
-timestamp: 2026-02-16T09:48:25.457775+00:00
+timestamp: 2026-02-16T09:59:17.112443+00:00
 cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
 command: python - <<'PYC'
 from pathlib import Path
@@ -292,35 +304,10 @@ expected={Path(s).stem.replace('_','-')+'.md' for s in scripts}
 print({'scripts_total':len(scripts),'pages_total':len(pages),'missing_pages':sorted(expected-set(pages))})
 PYC
 timeout_sec: 120
-duration_sec: 0.078
+duration_sec: 0.081
 exit_code: 0
 stdout:
 {'scripts_total': 64, 'pages_total': 64, 'missing_pages': []}
-
-stderr:
-
----
-timestamp: 2026-02-16T09:48:25.535874+00:00
-cwd: /workspace/bnsyn-phase-controlled-emergent-dynamics
-command: python - <<'PYC'
-from pathlib import Path
-missing=[]
-for p in Path('docs/scripts').glob('*.md'):
-    if p.name=='index.md':
-        continue
-    txt=p.read_text()
-    for h in ['## Purpose','## Inputs','## Outputs','## Examples','## Failure Modes']:
-        if h not in txt:
-            missing.append((p.name,h))
-print({'missing_sections':len(missing)})
-if missing:
-    raise SystemExit(1)
-PYC
-timeout_sec: 120
-duration_sec: 0.071
-exit_code: 0
-stdout:
-{'missing_sections': 0}
 
 stderr:
 
