@@ -181,7 +181,7 @@ jobs:
           python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
       - name: Upload contract artifacts
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: no-escape-contracts-${{ github.sha }}
           path: |
@@ -441,7 +441,7 @@ jobs:
           pip-audit --desc --format json --output artifacts/pip-audit.json
       - name: bandit
         run: bandit -r src/ -ll
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         if: always()
         with:
           name: security-report-${{ github.sha }}
@@ -516,7 +516,7 @@ jobs:
           JSON
 
       - name: Upload CI run evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: ci-evidence-ci-pr-atomic-${{ github.sha }}
           path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
