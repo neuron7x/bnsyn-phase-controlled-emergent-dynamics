@@ -17,7 +17,8 @@ BEGIN_MARKER = "| Workflow file | Workflow name | Gate Class | Trigger set | Reu
 
 
 class PolicyParseError(RuntimeError):
-    pass
+    """Raised when governance policy inputs cannot be parsed safely."""
+
 
 
 @dataclass(frozen=True)

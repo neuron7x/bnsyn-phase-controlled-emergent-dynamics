@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class RequiredStatusContextsParseError(RuntimeError):
-    pass
+    """Raised when REQUIRED_STATUS_CONTEXTS.yml cannot be validated."""
+
 
 
 def _load_yaml(path: Path) -> dict[str, object]:

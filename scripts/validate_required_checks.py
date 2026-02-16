@@ -14,7 +14,8 @@ from scripts.validate_workflow_contracts import ContractParseError, parse_invent
 
 
 class RequiredChecksParseError(RuntimeError):
-    pass
+    """Raised when REQUIRED_CHECKS.yml violates the governance schema."""
+
 
 
 def load_required_checks(required_checks_path: Path) -> list[str]:

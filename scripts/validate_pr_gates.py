@@ -15,7 +15,8 @@ from scripts.validate_workflow_contracts import ContractParseError, parse_invent
 
 
 class PrGateParseError(RuntimeError):
-    pass
+    """Raised when PR gate workflow contracts fail parsing or validation."""
+
 
 
 @dataclass(frozen=True)

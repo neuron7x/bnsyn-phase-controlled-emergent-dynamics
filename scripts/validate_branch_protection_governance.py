@@ -9,7 +9,8 @@ import yaml
 
 
 class GovernanceParseError(RuntimeError):
-    pass
+    """Raised when governance files cannot be parsed into policy inputs."""
+
 
 
 def _load_required_status_contexts(path: Path) -> list[str]:

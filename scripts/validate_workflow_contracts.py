@@ -20,7 +20,8 @@ TRIGGER_ORDER = (
 
 
 class ContractParseError(RuntimeError):
-    pass
+    """Raised when workflow contracts cannot be parsed deterministically."""
+
 
 
 @dataclass(frozen=True)

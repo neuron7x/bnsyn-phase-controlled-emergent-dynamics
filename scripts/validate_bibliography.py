@@ -36,7 +36,8 @@ ALLOWED_TIERS = {"Tier-A", "Tier-S", "Tier-B", "Tier-C"}
 
 
 class ValidationError(Exception):
-    pass
+    """Raised when bibliography validation invariants are violated."""
+
 
 
 def sha256_hex(s: str) -> str:
