@@ -1,0 +1,7 @@
+usage: scan_placeholders.py [-h] [--format {text,json}]
+
+Scan repository for placeholder signals.
+
+options:
+  -h, --help            show this help message and exit
+  --format {text,json}

@@ -1,0 +1,11 @@
+usage: generate_coverage_baseline.py [-h] [--coverage-xml COVERAGE_XML]
+                                     [--output OUTPUT]
+                                     [--minimum-percent MINIMUM_PERCENT]
+
+Generate coverage baseline from coverage.xml
+
+options:
+  -h, --help            show this help message and exit
+  --coverage-xml COVERAGE_XML
+  --output OUTPUT
+  --minimum-percent MINIMUM_PERCENT

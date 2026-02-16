@@ -1,0 +1,13 @@
+usage: check_mutation_score.py [-h] [--strict] [--advisory] [current_score]
+
+Check mutation score against baseline
+
+positional arguments:
+  current_score  Current mutation score (optional, will read mutmut result-ids
+                 if not provided)
+
+options:
+  -h, --help     show this help message and exit
+  --strict       Fail if baseline is uninitialized (for CI/nightly)
+  --advisory     Warn but don't fail if baseline is uninitialized (for PR
+                 checks)

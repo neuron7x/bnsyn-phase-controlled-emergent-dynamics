@@ -5,7 +5,7 @@ and the SSOT evidence registry (`bibliography/*`, `claims/claims.yml`). It is a
 traceability index, not an independent source of truth. The authoritative definition
 of behavior remains the specification, while evidence provenance is governed by SSOT.
 
-**Navigation**: [INDEX.md](INDEX.md) | [GOVERNANCE.md](GOVERNANCE.md) | [SPEC.md](SPEC.md)
+**Navigation**: [INDEX.md](INDEX.md) | [GOVERNANCE.md](GOVERNANCE.md) | [SPEC.md](SPEC.md) | [MODULE_RESPONSIBILITY_MATRIX.md](MODULE_RESPONSIBILITY_MATRIX.md)
 
 ## Scope and traceability
 

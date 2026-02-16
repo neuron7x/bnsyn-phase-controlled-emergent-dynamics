@@ -1,0 +1,24 @@
+usage: build_wheelhouse.py [-h] [--lock-file LOCK_FILE]
+                           [--wheelhouse WHEELHOUSE]
+                           [--python-version PYTHON_VERSION]
+                           [--implementation IMPLEMENTATION] [--abi ABI]
+                           [--platform-tag PLATFORM_TAG] [--report REPORT]
+                           {build,validate} ...
+
+Build and validate offline wheelhouse artifacts.
+
+positional arguments:
+  {build,validate}
+    build               Download pinned wheels for the configured target.
+    validate            Validate wheelhouse covers applicable pinned
+                        dependencies.
+
+options:
+  -h, --help            show this help message and exit
+  --lock-file LOCK_FILE
+  --wheelhouse WHEELHOUSE
+  --python-version PYTHON_VERSION
+  --implementation IMPLEMENTATION
+  --abi ABI
+  --platform-tag PLATFORM_TAG
+  --report REPORT
