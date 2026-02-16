@@ -56,7 +56,7 @@
     "required_pr_gate_total": 4,
     "workflow_call_total": 11,
     "workflow_reusable_total": 9,
-    "workflow_total": 29
+    "workflow_total": 31
   },
   "policies": {
     "deterministic_sorting": true,
@@ -67,7 +67,7 @@
     ],
     "generated_files_are_readonly": true
   },
-  "repo_ref": "7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67",
+  "repo_ref": "5d59fed5f988477f7ea5322dab236cfe0583f279faaed20a5f5ad9cbe6312990",
   "required_pr_gates": {
     "required_pr_gate_total": 4,
     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",

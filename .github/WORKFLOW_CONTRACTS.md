@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 29
-**Breakdown:** 18 primary + 11 reusable
+**Total workflows:** 31
+**Breakdown:** 20 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -42,7 +42,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 
 | Workflow File | Workflow Name | Required Job IDs |
 | --- | --- | --- |
-| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `smoke-wheel-matrix`, `tests-smoke`, `ssot`, `security`, `finalize` |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `smoke-wheel-matrix`, `tests-smoke`, `ssot`, `security`, `production-baseline`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
 | `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
 | `dependency-review.yml` | `dependency-review` | `dependency-review` |
@@ -94,8 +94,10 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
 | `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
 | `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
+| `perf-budgets.yml` | `perf-budgets` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
+| `release-readiness.yml` | `release-readiness` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
 | `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
 

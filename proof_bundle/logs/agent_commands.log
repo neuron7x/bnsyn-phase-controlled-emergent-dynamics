@@ -2247,3 +2247,711 @@ cmd: git status --short
 ?? tests/test_public_api_compat_gate.py
 ?? tests/test_release_readiness_report.py
 cmd: python cleanup quality artifacts
+cmd: git status --short
+cmd: python -m tools.manifest generate
+cmd: python -m pip install pyyaml
+Collecting pyyaml
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 17.9 MB/s  0:00:00
+Installing collected packages: pyyaml
+Successfully installed pyyaml-6.0.3
+cmd: python -m tools.manifest generate
+manifest.generate computed_sha256=a87061cda099634b14817737fe5b0655753fbf69b857a3bc2d1b9abf980ff699 rendered_sha256=5a526ad22406a9d13c96258326b2235d44fe3c0941aee09f339612c67a83bf76 workflow_total=31 workflow_call_total=11 ci_manifest_reference_count=0
+cmd: rg -n "REPO_MANIFEST|repo_manifest.computed" tests scripts
+tests/test_manifest_tooling_regression.py:38:                '    - ".github/REPO_MANIFEST.md"',
+tests/test_manifest_tooling_regression.py:39:                '    - "manifest/repo_manifest.computed.json"',
+tests/test_manifest_tooling_regression.py:72:    monkeypatch.setattr(generate, "COMPUTED_PATH", root / "manifest/repo_manifest.computed.json")
+tests/test_manifest_tooling_regression.py:73:    monkeypatch.setattr(generate, "RENDERED_PATH", root / ".github/REPO_MANIFEST.md")
+tests/test_manifest_tooling_regression.py:78:    monkeypatch.setattr(validate, "COMPUTED_PATH", root / "manifest/repo_manifest.computed.json")
+tests/test_manifest_tooling_regression.py:89:    computed_path = root / "manifest/repo_manifest.computed.json"
+tests/test_manifest_tooling_regression.py:113:    computed_text = (root / "manifest/repo_manifest.computed.json").read_text(encoding="utf-8")
+tests/test_manifest_tooling_regression.py:114:    rendered_text = (root / ".github/REPO_MANIFEST.md").read_text(encoding="utf-8")
+tests/test_principal_test_hardening.py:45:            (REPO_ROOT / "manifest" / "repo_manifest.computed.json").read_text(encoding="utf-8")
+cmd: sed -n '1,260p' .github/workflows/workflow-integrity.yml
+name: Workflow Integrity
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflows:
+    name: Validate workflow files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Enforce non-PR workflow triggers
+        shell: bash
+        run: |
+          set -euo pipefail
+          allowlist=(
+            "ci-pr-atomic.yml"
+            "ci-pr.yml"
+            "ci-smoke.yml"
+            "codeql.yml"
+            "docs.yml"
+            "dependency-review.yml"
+            "workflow-integrity.yml"
+            "_reusable_benchmarks.yml"
+            "_reusable_chaos_tests.yml"
+            "_reusable_formal_science.yml"
+            "_reusable_gate_profile.yml"
+            "_reusable_property_tests.yml"
+            "_reusable_pytest.yml"
+            "_reusable_quality.yml"
+            "_reusable_ssot.yml"
+            "_reusable_validation_tests.yml"
+          )
+          declare -A allowed
+          for name in "${allowlist[@]}"; do
+            allowed["$name"]=1
+          done
+          mapfile -t files < <(ls .github/workflows/*.yml)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No workflow files found."
+            exit 1
+          fi
+          echo "Scanned ${#files[@]} workflows."
+          echo "Allowed PR-trigger workflows: ${allowlist[*]}"
+          violations=0
+          for file in "${files[@]}"; do
+            base="$(basename "$file")"
+            is_allowed="${allowed[$base]-}"
+            status=0
+            if ! awk '
+              BEGIN { in_on=0; found=0 }
+
+              /^on:[[:space:]]*\[/ {
+                if ($0 ~ /pull_request/ || $0 ~ /push/ ||
+                    $0 ~ /workflow_call/) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+                next
+              }
+
+              /^on:[[:space:]]*(pull_request|push|workflow_call)[[:space:]]*$/ {
+                print FILENAME ":" NR ":" $0
+                found=1
+                next
+              }
+
+              /^on:[[:space:]]*$/ { in_on=1; next }
+
+              in_on {
+                if ($0 ~ /^[^[:space:]]/) { exit }
+                pattern = "^[[:space:]]*(pull_request|push|workflow_call)"
+                pattern = pattern "[[:space:]]*:"
+                if ($0 ~ pattern) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+              }
+
+              END { if (found) exit 2 }
+            ' "$file"; then
+              status=$?
+            fi
+            if [ "$status" -eq 2 ]; then
+              if [ -z "$is_allowed" ]; then
+                violations=1
+              fi
+            elif [ "$status" -ne 0 ]; then
+              violations=1
+            fi
+          done
+          if [ "$violations" -ne 0 ]; then
+            echo "Non-PR workflow trigger violations detected."
+            echo "Workflows outside the allowlist MUST NOT declare"
+            echo "pull_request/push/workflow_call under on:."
+            exit 1
+          fi
+          echo "Guarded workflows: trigger policy OK."
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Lint workflows with actionlint
+        uses: rhysd/actionlint@03d0035246f3e81f36aed592ffb4bebf33a03106
+        with:
+          args: -shellcheck=shellcheck -verbose
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - name: Scan workflow files for tabs or non-ASCII
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import unicodedata
+
+          workflow_dir = Path(".github/workflows")
+          md_files = sorted(Path(".github").rglob("*.md"))
+          offenders = []
+
+          def scan_text(
+              path: Path,
+              allow_non_ascii: bool,
+          ) -> None:
+              text = path.read_text(encoding="utf-8", errors="replace")
+              for line_no, line in enumerate(text.splitlines(), 1):
+                  if "\t" in line:
+                      offenders.append((path, line_no, "TAB"))
+                  for ch in line:
+                      codepoint = ord(ch)
+                      category = unicodedata.category(ch)
+                      if category in {"Cf", "Cc"} and ch not in {"\n", "\r"}:
+                          detail = (
+                              f"CONTROL_OR_BIDI {category} "
+                              f"U+{codepoint:04X}"
+                          )
+                          offenders.append((path, line_no, detail))
+                      if not allow_non_ascii and codepoint > 0x7F:
+                          detail = f"NON_ASCII U+{codepoint:04X}"
+                          offenders.append((path, line_no, detail))
+
+          for path in sorted(workflow_dir.glob("*.yml")):
+              scan_text(path, allow_non_ascii=False)
+
+          for path in md_files:
+              scan_text(path, allow_non_ascii=True)
+
+          if offenders:
+              for path, line_no, detail in offenders:
+                  print(f"{path}:{line_no}:{detail}")
+              raise SystemExit(1)
+
+          print("Workflow integrity checks passed.")
+          PY
+      - name: Install safety checker dependencies
+        run: python -m pip install pyyaml jsonschema
+      - name: Validate PR gate definition
+        run: python -m scripts.validate_pr_gates
+      - name: Validate required checks
+        run: python -m scripts.validate_required_checks
+      - name: Validate required status contexts
+        run: python -m scripts.validate_required_status_contexts
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "workflow-integrity",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-workflow-integrity-${{ github.sha }}
+          path: artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Validate branch protection governance document
+        run: python -m scripts.validate_branch_protection_governance
+      - name: Validate workflow contracts
+        run: python -m scripts.validate_workflow_contracts
+      - name: Validate long-running workflow triggers
+        run: python -m scripts.validate_long_running_triggers
+      - name: Render workflow policy documentation
+        run: python -m scripts.render_workflow_policy_docs
+      - name: Verify workflow policy documentation
+        run: git diff --exit-code -- .github/WORKFLOW_CONTRACTS.md
+      - name: Validate safety artifacts
+        run: python tools/safety/check_safety_artifacts.py
+      - name: Validate inventory snapshot
+        run: python tools/generate_inventory.py --check
+cmd: python -m scripts.validate_pr_gates && python -m scripts.validate_required_checks && python -m scripts.validate_required_status_contexts && python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+cmd: rg -n "WORKFLOW_CONTRACTS|COUNT_MISMATCH|MISSING_ROW" scripts
+scripts/validate_workflow_contracts.py:166:        violations.append(f"VIOLATION: MISSING_ROW {workflow}")
+scripts/validate_workflow_contracts.py:176:            "VIOLATION: COUNT_MISMATCH "
+scripts/validate_workflow_contracts.py:222:    contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
+scripts/validate_required_checks.py:96:    contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
+scripts/scan_placeholders.py:28:    ".github/WORKFLOW_CONTRACTS.md",
+scripts/validate_long_running_triggers.py:291:    contracts_path = project_root / ".github/WORKFLOW_CONTRACTS.md"
+scripts/render_workflow_policy_docs.py:44:    path = Path(".github/WORKFLOW_CONTRACTS.md")
+scripts/validate_pr_gates.py:182:    contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
+cmd: python -m scripts.render_workflow_policy_docs
+Workflow policy documentation block already up to date.
+cmd: sed -n '1,320p' .github/WORKFLOW_CONTRACTS.md
+# CI/CD Workflow Contracts
+
+**Version:** 1.1
+**Date (UTC):** 2026-02-03
+**Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
+**Total workflows:** 29
+**Breakdown:** 18 primary + 11 reusable
+
+## Axiom Dictionary
+
+* **A1 — Determinism & Toolchain Pinning**
+* **A2 — CI Correctness & Regression Safety**
+* **A3 — Workflow Integrity & Provenance (branch/sha correctness, tamper resistance)**
+* **A4 — Performance & Benchmark Fidelity**
+* **A5 — Chaos / Robustness / Fault Injection**
+* **A6 — Quality / Mutation / Adversarial Testing**
+* **A7 — Formal Verification – Proof Assistants (e.g., Coq)**
+* **A8 — Formal Verification – Temporal Logic / Model Checking (e.g., TLA)**
+* **A9 — Security & Permissions Hygiene (least privilege, untrusted code boundaries)**
+
+## Migration Notes (v1.1)
+
+* Expanded axiom dictionary from prior legend to include A1–A9 with explicit names; all uses in this document map to the dictionary above.
+
+## Global Notes
+
+* Workflow-level timeouts are not supported in GitHub Actions; only job-level `timeout-minutes` are recorded.
+* Timeout notation: use **Not set** when `timeout-minutes` is absent in the workflow YAML.
+* Branch protection rules are defined in **PR-Gate Definition (Authoritative)**.
+* This contract is normative even if current branch protection temporarily deviates.
+
+## PR-Gate Definition (Authoritative)
+
+* Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `dependency-review.yml`.
+* Required checks MUST NOT include any workflow other than the PR-gates listed above.
+* If any other section conflicts with this, this section wins.
+
+## Required PR Gates
+
+The workflows below are the required PR gates that must pass on pull requests. Source: `.github/PR_GATES.yml`.
+
+| Workflow File | Workflow Name | Required Job IDs |
+| --- | --- | --- |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `smoke-wheel-matrix`, `tests-smoke`, `ssot`, `security`, `finalize` |
+| `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
+| `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
+| `dependency-review.yml` | `dependency-review` | `dependency-review` |
+
+## Gate Class Policy (Normative)
+
+* PR-gate workflows MAY be required checks.
+* Long-running workflows MUST NOT be required checks and MUST NOT block merge.
+* If a workflow is not explicitly labeled PR-gate, it MUST NOT be required in branch protection.
+* EXCEPTION format (only when a PR-gate lacks `pull_request`): `EXCEPTION: <workflow file> - <reason>` on the line immediately following the workflow row in the inventory table.
+
+<!-- BEGIN: AUTO-GENERATED WORKFLOW POLICIES -->
+## Workflow Policy Rules (Auto-generated)
+
+| Rule ID | Statement | Enforcement |
+| --- | --- | --- |
+| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}` with `workflow_call` required. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R3 | Workflows named `_reusable_*.yml` MUST declare `on: workflow_call` only. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+| R4 | Workflows with Gate Class `PR-gate` MUST include `pull_request` unless an explicit `EXCEPTION:` line is present in the inventory table. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+<!-- END: AUTO-GENERATED WORKFLOW POLICIES -->
+
+## Workflow Inventory Table (Authoritative)
+
+| Workflow file | Workflow name | Gate Class | Trigger set | Reusable? |
+| --- | --- | --- | --- | --- |
+| `_reusable_benchmarks.yml` | `reusable-benchmarks` | long-running | `workflow_call` | YES |
+| `_reusable_chaos_tests.yml` | `Reusable Chaos Tests` | long-running | `workflow_call` | YES |
+| `_reusable_formal_science.yml` | `_reusable_formal_science` | long-running | `workflow_call` | YES |
+| `_reusable_gate_profile.yml` | `Reusable Gate Profile` | long-running | `workflow_call` | YES |
+| `_reusable_property_tests.yml` | `Reusable Property Tests` | long-running | `workflow_call` | YES |
+| `_reusable_pytest.yml` | `Reusable Pytest` | long-running | `workflow_call` | YES |
+| `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
+| `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
+| `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
+| `benchmarks.yml` | `benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
+| `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
+| `ci-smoke.yml` | `ci-smoke` | long-running | `schedule, workflow_dispatch` | NO |
+| `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
+| `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
+| `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
+| `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
+| `dependency-review.yml` | `dependency-review` | PR-gate | `pull_request` | NO |
+| `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
+| `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
+| `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
+| `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
+| `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
+| `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
+| `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
+| `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
+| `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
+
+---
+
+## _reusable_pytest.yml
+
+**Path:** `.github/workflows/_reusable_pytest.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* Reusable workflow invoked by callers; gating is defined by the parent workflow, so it is not a standalone PR gate despite enforcing A2.
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable pytest job with coverage enforcement and optional Codecov uploads for caller workflows.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `markers`, `coverage-threshold`, `timeout-minutes`, `upload-codecov`) and optional secret `CODECOV_TOKEN`.
+
+**Timeout(s):**
+
+* `pytest`: `${{ inputs.timeout-minutes }}`
+
+**Jobs:**
+
+* `pytest` — Runs pytest with coverage thresholds, generates summaries, and uploads artifacts/Codecov if configured.
+
+**Evidence:**
+
+* `./workflows/_reusable_pytest.yml`
+
+---
+
+## _reusable_quality.yml
+
+**Path:** `.github/workflows/_reusable_quality.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* Reusable lint/type checks are enforced by caller workflows; this template supports A6/A2 but is not a direct PR gate.
+
+**Intent (1–2 sentences):**
+
+* Provide reusable lint/type/quality checks (ruff, mypy, pylint) for CI callers.
+
+**Axiom focus:**
+
+* A6 — Quality / Mutation / Adversarial Testing
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `mypy-strict`, `pylint-threshold`).
+
+**Timeout(s):**
+
+* `ruff`: Not set
+* `mypy`: Not set
+* `pylint`: Not set
+
+**Jobs:**
+
+* `ruff` — Format and lint checks.
+* `mypy` — Type checking (strict optional).
+* `pylint` — Enforces pylint score threshold.
+
+**Evidence:**
+
+* `./workflows/_reusable_quality.yml`
+
+---
+
+## _reusable_chaos_tests.yml
+
+**Path:** `.github/workflows/_reusable_chaos_tests.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* Chaos suite is invoked by scheduled or dispatch workflows; it supports A5/A2 without being a direct PR gate.
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable chaos test matrix job with fault-type fan-out and artifact capture.
+
+**Axiom focus:**
+
+* A5 — Chaos / Robustness / Fault Injection
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `test-subset`, `timeout-minutes`, `upload-artifacts`).
+
+**Timeout(s):**
+
+* `chaos-tests`: `${{ inputs['timeout-minutes'] }}`
+
+**Jobs:**
+
+* `chaos-tests` — Runs chaos tests per fault type with summaries and optional artifacts.
+
+**Evidence:**
+
+* `./workflows/_reusable_chaos_tests.yml`
+
+---
+
+## _reusable_property_tests.yml
+
+**Path:** `.github/workflows/_reusable_property_tests.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* Property-based tests are executed by caller workflows, so this reusable job is not a standalone PR gate even though it enforces A2.
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable property-based test job with optional Hypothesis profiles and artifact capture.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`, `markers`, `extra-args`, `hypothesis-profile`, `log-file`, `junit-file`, `junit-enabled`, `summary-title`, `upload-artifacts`, `upload-hypothesis-cache`, `artifact-name`, `timeout-minutes`).
+
+**Timeout(s):**
+
+* `property-tests`: `${{ inputs['timeout-minutes'] }}`
+
+**Jobs:**
+
+* `property-tests` — Runs property tests, writes summaries, and uploads artifacts if configured.
+
+**Evidence:**
+
+* `./workflows/_reusable_property_tests.yml`
+
+---
+
+## _reusable_ssot.yml
+
+**Path:** `.github/workflows/_reusable_ssot.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* SSOT checks are consumed by caller workflows; this reusable job supports A2 but has no independent PR-gate status.
+
+**Intent (1–2 sentences):**
+
+* Provide reusable SSOT validation gates for bibliography, claims, and governance scans.
+
+**Axiom focus:**
+
+* A2 — CI Correctness & Regression Safety
+
+**Trigger(s):**
+
+* `workflow_call` with inputs (`python-version`).
+
+**Timeout(s):**
+
+* `ssot`: Not set
+
+**Jobs:**
+
+* `ssot` — Runs SSOT validation scripts.
+
+**Evidence:**
+
+* `./workflows/_reusable_ssot.yml`
+
+---
+
+## _reusable_validation_tests.yml
+
+**Path:** `.github/workflows/_reusable_validation_tests.yml`
+**Status:** Active
+
+**Gate Class:** long-running
+
+**Gate Rationale:**
+
+* Reusable non-PR gate; must not run on pull_request/push.
+
+* Validation tests are driven by parent workflows; this reusable job enforces A2 but is not a PR gate on its own.
+
+**Intent (1–2 sentences):**
+
+* Provide a reusable validation test job with optional artifacts and summaries.
+cmd: git status --short
+cmd: python update .github/WORKFLOW_CONTRACTS.md
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers && python -m tools.manifest validate
+cmd: python patch release-readiness + workflow contracts gate class
+cmd: python -m scripts.validate_pr_gates && python -m scripts.validate_required_checks && python -m scripts.validate_required_status_contexts && python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+cmd: python patch perf-budgets trigger + contracts row
+cmd: python -m scripts.validate_pr_gates && python -m scripts.validate_required_checks && python -m scripts.validate_required_status_contexts && python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+cmd: python update release-readiness row in .github/WORKFLOW_CONTRACTS.md
+cmd: rg -n "ssot:|tools.manifest|REPO_MANIFEST|validate_.*status|validate_claims" .github/workflows/ci-pr-atomic.yml
+376:  ssot:
+396:      - run: python -m scripts.validate_claims
+400:      - run: python -m scripts.validate_status_claims
+402:      - run: python -m tools.manifest generate
+403:      - run: python -m tools.manifest validate
+406:          if ! git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json; then
+407:            echo "::error::.github/REPO_MANIFEST.md and/or manifest/repo_manifest.computed.json are out of date. Run: python -m tools.manifest generate && git add .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json"
+408:            git --no-pager diff -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+cmd: python -m scripts.validate_claims && python -m scripts.validate_claims_coverage && python -m scripts.validate_status_claims && python -m tools.manifest generate && python -m tools.manifest validate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+diff --git a/.github/REPO_MANIFEST.md b/.github/REPO_MANIFEST.md
+index 15f472c..f0d646d 100644
+--- a/.github/REPO_MANIFEST.md
++++ b/.github/REPO_MANIFEST.md
+@@ -2,13 +2,13 @@
+ 
+ - Manifest version: `1.0`
+ - Generated marker: `deterministic`
+-- Repository fingerprint: `7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67`
++- Repository fingerprint: `5d59fed5f988477f7ea5322dab236cfe0583f279faaed20a5f5ad9cbe6312990`
+ - Required PR gates source: `.github/PR_GATES.yml`
+ - Required PR gates SHA-256: `cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9`
+ 
+ ## Metrics
+ 
+-- Workflow files (`.github/workflows/*.yml`): **29**
++- Workflow files (`.github/workflows/*.yml`): **31**
+ - Reusable workflow files (`_reusable_*.yml`): **9**
+ - Workflows declaring `workflow_call`: **11**
+ - Required PR gates (`.github/PR_GATES.yml`): **4**
+diff --git a/manifest/repo_manifest.computed.json b/manifest/repo_manifest.computed.json
+index b15acf0..5c43bb8 100644
+--- a/manifest/repo_manifest.computed.json
++++ b/manifest/repo_manifest.computed.json
+@@ -56,7 +56,7 @@
+     "required_pr_gate_total": 4,
+     "workflow_call_total": 11,
+     "workflow_reusable_total": 9,
+-    "workflow_total": 29
++    "workflow_total": 31
+   },
+   "policies": {
+     "deterministic_sorting": true,
+@@ -67,7 +67,7 @@
+     ],
+     "generated_files_are_readonly": true
+   },
+-  "repo_ref": "7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67",
++  "repo_ref": "5d59fed5f988477f7ea5322dab236cfe0583f279faaed20a5f5ad9cbe6312990",
+   "required_pr_gates": {
+     "required_pr_gate_total": 4,
+     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+OK: long_running_trigger_policy workflows=31 violations=0
+cmd: python -m pytest tests/test_validate_workflow_contracts.py tests/test_validate_long_running_triggers.py tests/test_manifest_tooling_regression.py tests/test_validate_pr_gates.py tests/test_validate_required_checks.py tests/test_sync_required_status_contexts.py -q
+.................................................                        [100%]
+cmd: python -m pytest tests/test_ops_validators.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+........                                                                 [100%]
+cmd: ruff check .github/workflows/perf-budgets.yml .github/workflows/release-readiness.yml scripts/validate_workflow_contracts.py scripts/validate_long_running_triggers.py
+E402 Module level import not at top of file
+  --> scripts/run_perf_smoke.py:10:1
+   |
+ 8 |     sys.path.insert(0, str(REPO_ROOT))
+ 9 |
+10 | from benchmarks.perf_smoke import main
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+11 |
+12 | if __name__ == "__main__":
+   |
+
+Found 1 error.
+cmd: rewrite scripts/run_perf_smoke.py to satisfy import order lint
+cmd: ruff check scripts/run_perf_smoke.py benchmarks/perf_smoke.py scripts/check_public_api_compat.py scripts/release_readiness_report.py
+All checks passed!
+cmd: python -m pytest tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+..                                                                       [100%]
+cmd: python -m tools.manifest generate && python -m tools.manifest validate
+Manifest validation passed.
+cmd: git status --short
+cmd: python remove generated quality artifacts
+cmd: python -m tools.manifest generate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+diff --git a/.github/REPO_MANIFEST.md b/.github/REPO_MANIFEST.md
+index 15f472c..f0d646d 100644
+--- a/.github/REPO_MANIFEST.md
++++ b/.github/REPO_MANIFEST.md
+@@ -2,13 +2,13 @@
+ 
+ - Manifest version: `1.0`
+ - Generated marker: `deterministic`
+-- Repository fingerprint: `7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67`
++- Repository fingerprint: `5d59fed5f988477f7ea5322dab236cfe0583f279faaed20a5f5ad9cbe6312990`
+ - Required PR gates source: `.github/PR_GATES.yml`
+ - Required PR gates SHA-256: `cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9`
+ 
+ ## Metrics
+ 
+-- Workflow files (`.github/workflows/*.yml`): **29**
++- Workflow files (`.github/workflows/*.yml`): **31**
+ - Reusable workflow files (`_reusable_*.yml`): **9**
+ - Workflows declaring `workflow_call`: **11**
+ - Required PR gates (`.github/PR_GATES.yml`): **4**
+diff --git a/manifest/repo_manifest.computed.json b/manifest/repo_manifest.computed.json
+index b15acf0..5c43bb8 100644
+--- a/manifest/repo_manifest.computed.json
++++ b/manifest/repo_manifest.computed.json
+@@ -56,7 +56,7 @@
+     "required_pr_gate_total": 4,
+     "workflow_call_total": 11,
+     "workflow_reusable_total": 9,
+-    "workflow_total": 29
++    "workflow_total": 31
+   },
+   "policies": {
+     "deterministic_sorting": true,
+@@ -67,7 +67,7 @@
+     ],
+     "generated_files_are_readonly": true
+   },
+-  "repo_ref": "7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67",
++  "repo_ref": "5d59fed5f988477f7ea5322dab236cfe0583f279faaed20a5f5ad9cbe6312990",
+   "required_pr_gates": {
+     "required_pr_gate_total": 4,
+     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",
+cmd: python -m scripts.validate_workflow_contracts
+Workflow contracts validation passed.
+cmd: python -m scripts.validate_pr_gates
+OK: pr_gates=4 workflows=31 validated
+cmd: python -m scripts.validate_required_checks
+OK: required_checks=4 contract_pr_gates=4 validated
+cmd: python -m scripts.validate_required_status_contexts
+OK: required_status_contexts=13 validated
+cmd: python -m scripts.validate_long_running_triggers
+OK: long_running_trigger_policy workflows=31 violations=0
