@@ -1,0 +1,42 @@
+timestamp_utc: 2026-02-16T12:37:12Z
+cmd: git rev-parse HEAD
+exit: 0
+stdout:
+b67c6e3663fb43ff0545685a56d1a4758aae036d
+stderr:
+---
+timestamp_utc: 2026-02-16T12:37:12Z
+cmd: git branch --show-current
+exit: 0
+stdout:
+chore/usability-blocker-audit
+stderr:
+---
+timestamp_utc: 2026-02-16T12:37:13Z
+cmd: uname -s
+exit: 0
+stdout:
+Linux
+stderr:
+---
+timestamp_utc: 2026-02-16T12:37:13Z
+cmd: uname -m
+exit: 0
+stdout:
+x86_64
+stderr:
+---
+timestamp_utc: 2026-02-16T12:37:14Z
+cmd: git status --short --branch
+exit: 0
+stdout:
+## chore/usability-blocker-audit
+?? proof_bundle/logs/00_baseline.log
+?? proof_bundle/logs/01_discovery.log
+?? proof_bundle/logs/02_docs_ci.log
+?? proof_bundle/logs/03_new_user_path.log
+?? proof_bundle/logs/04_verification.log
+?? proof_bundle/logs/05_post_test_state.log
+?? proof_bundle/logs/06_finalize_inputs.log
+stderr:
+---

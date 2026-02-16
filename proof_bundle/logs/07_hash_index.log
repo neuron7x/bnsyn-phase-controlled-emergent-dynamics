@@ -1,0 +1,60 @@
+timestamp_utc: 2026-02-16T12:38:16Z
+cmd: python - <<"PY"
+import hashlib, json
+from pathlib import Path
+root=Path("proof_bundle")
+files=sorted([p for p in root.rglob("*") if p.is_file()])
+# sha256sums file excludes itself for fixed-point
+sha_lines=[]
+for p in files:
+    if p.as_posix()=="proof_bundle/hashes/sha256sums.txt":
+        continue
+    h=hashlib.sha256(p.read_bytes()).hexdigest()
+    sha_lines.append(f"{h}  {p.as_posix()}")
+Path("proof_bundle/hashes").mkdir(parents=True,exist_ok=True)
+Path("proof_bundle/hashes/sha256sums.txt").write_text("\n".join(sha_lines)+"\n",encoding="utf-8")
+# include sha256sums hash as last line
+sha_file=Path("proof_bundle/hashes/sha256sums.txt")
+sha_hash=hashlib.sha256(sha_file.read_bytes()).hexdigest()
+with sha_file.open("a",encoding="utf-8") as f:
+    f.write(f"{sha_hash}  proof_bundle/hashes/sha256sums.txt\n")
+# build index entries
+index=[]
+for p in sorted([q for q in root.rglob("*") if q.is_file()]):
+    h=hashlib.sha256(p.read_bytes()).hexdigest()
+    index.append({"path":p.as_posix(),"sha256":h})
+Path("proof_bundle/index.json").write_text(json.dumps(index,indent=2)+"\n",encoding="utf-8")
+print(f"indexed_files={len(index)}")
+PY
+exit: 0
+stdout:
+indexed_files=361
+stderr:
+---
+timestamp_utc: 2026-02-16T12:38:37Z
+cmd: python - <<"PY"
+import hashlib, json
+from pathlib import Path
+root=Path("proof_bundle")
+files=sorted([p for p in root.rglob("*") if p.is_file()])
+sha_lines=[]
+for p in files:
+    if p.as_posix()=="proof_bundle/hashes/sha256sums.txt":
+        continue
+    sha_lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.as_posix()}")
+sha_file=Path("proof_bundle/hashes/sha256sums.txt")
+sha_file.write_text("\n".join(sha_lines)+"\n",encoding="utf-8")
+sha_file_hash=hashlib.sha256(sha_file.read_bytes()).hexdigest()
+with sha_file.open("a",encoding="utf-8") as f:
+    f.write(f"{sha_file_hash}  proof_bundle/hashes/sha256sums.txt\n")
+index=[]
+for p in sorted([q for q in root.rglob("*") if q.is_file()]):
+    index.append({"path":p.as_posix(),"sha256":hashlib.sha256(p.read_bytes()).hexdigest()})
+Path("proof_bundle/index.json").write_text(json.dumps(index,indent=2)+"\n",encoding="utf-8")
+print(len(index))
+PY
+exit: 0
+stdout:
+363
+stderr:
+---

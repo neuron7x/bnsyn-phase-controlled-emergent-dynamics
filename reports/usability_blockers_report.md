@@ -1,41 +1,57 @@
 # Practical Usability Blockers Report
 
+## Audit scope
+- Mode: evidence-bound usability blocker audit.
+- Scope lock honored: only `reports/**` and `proof_bundle/**` artifacts added.
+- Timestamp (UTC): 2026-02-16T12:38:03Z
+
 ## Intended use inference
-- **Inferred intended use**: Deterministic Bio-AI research/validation workflow with CLI execution, reproducible experiments, and CI-like verification gates.
-- **Evidence sources (>=2 required, met with 3)**:
-  1. `README.md` canonical onboarding commands.
-  2. `docs/usage_workflows.md` golden-path workflow steps.
-  3. `.github/workflows/ci-pr-atomic.yml` verification/build gates.
+**Inferred intended use:** BN-Syn is a deterministic Bio-AI research and validation platform where a new contributor should be able to install dependencies, run CLI workflows (demo/sleep-stack), and pass verification gates (tests, lint, typecheck, build).
 
-## Go/No-Go
-- **Recommendation: NO-GO** until P0 blockers BLK-001 and BLK-002 are resolved.
+**Evidence sources (>=2 met):**
+1. `README.md` Start Here and canonical command block.
+2. `docs/usage_workflows.md` golden-path workflows.
+3. `pyproject.toml` CLI entrypoint (`bnsyn = bnsyn.cli:main`).
+4. `.github/workflows/ci-pr-atomic.yml` quality/build jobs.
 
-## Top blockers (P0/P1 first)
+## Go/No-Go recommendation
+**NO-GO** — P0 blockers prevent reliable verification/build completion from the documented contributor path.
 
-### BLK-001 (P0) — Canonical test command fails after setup
-- **Symptom**: test suite fails with `TypeError: string indices must be integers, not 'str'`.
-- **Repro commands**:
-  1. `python -m pip install -e '.[dev]'`
-  2. `python -m pytest tests -q`
-- **Evidence**:
-  - `cmd:python -m pytest tests -q` → `proof_bundle/logs/250_20260216T120237Z.log` (exit 1)
-  - `cmd:python -m pytest -m 'not validation' -q` → `proof_bundle/logs/253_20260216T120524Z.log` (exit 1)
-  - `cmd:sed -n '1,220p' proof_bundle/index.json` → `proof_bundle/logs/264_20260216T120811Z.log` (shape is object with `artifacts`, not list)
+## P0/P1 blockers
 
-### BLK-002 (P0) — Build gate command unavailable after documented install
-- **Symptom**: `python -m build` fails with missing module.
-- **Repro commands**:
-  1. `python -m pip install -e '.[dev]'`
-  2. `python -m build`
-- **Evidence**:
-  - `cmd:python -m build` → `proof_bundle/logs/257_20260216T120748Z.log` (exit 1)
-  - `cmd:python -m pip install -e '.[dev]'` → `proof_bundle/logs/248_20260216T120209Z.log` (exit 0)
-  - CI build gate requires the same command (`python -m build`) in `.github/workflows/ci-pr-atomic.yml` via `proof_bundle/logs/270_20260216T120835Z.log`
+### BLK-001 (P0) — Verification gate fails due to stale proof bundle index hash
+- **Category:** tests
+- **Symptom:** `python -m pytest -m "not validation" -q` fails.
+- **Expected:** Canonical test command exits 0.
+- **Actual:** Fails at `tests/test_audit_suite_artifacts.py::test_proof_bundle_index_hashes_match_files` with SHA mismatch for `proof_bundle/command_index.json`.
+- **Repro:**
+  1) `python -m pip install -e ".[dev]"`
+  2) `python -m pytest -m "not validation" -q`
+- **Evidence:**
+  - `cmd:python -m pytest -m "not validation" -q` | `log:proof_bundle/logs/04_verification.log` | `exit:1`
+  - `cmd:python - <<"PY" ...` hash comparison | `log:proof_bundle/logs/05_post_test_state.log` | `exit:0`
+  - `file:proof_bundle/index.json:3-6` snippet shows recorded SHA for `proof_bundle/command_index.json`
+- **Minimal fix plan (analysis only):** regenerate `proof_bundle/index.json` with current hashes; enforce freshness in CI.
+
+### BLK-002 (P0) — Build command unavailable after documented dev setup
+- **Category:** build
+- **Symptom:** `python -m build` fails after documented install command.
+- **Expected:** Build should run from standard contributor environment setup.
+- **Actual:** `No module named build` until installing `build` separately.
+- **Repro:**
+  1) `python -m pip install -e ".[dev]"`
+  2) `python -m build`
+- **Evidence:**
+  - `cmd:python -m pip install -e ".[dev]"` | `log:proof_bundle/logs/03_new_user_path.log` | `exit:0`
+  - `cmd:python -m build` | `log:proof_bundle/logs/04_verification.log` | `exit:1`
+  - `cmd:python -m pip install build && python -m build` | `log:proof_bundle/logs/04_verification.log` | `exit:0`
+  - `file:AGENTS.md:31-35` indicates build command expectation.
+- **Minimal fix plan (analysis only):** add `build` to documented/dev setup path or include it in dev extras.
+
+## Improvements (non-blocker)
+- Repository becomes dirty after test run due to `tests_inventory.json` mutation (adds contributor friction and can confuse validation workflows).
 
 ## Fastest unblock sequence
-1. **BLK-002**: make build prerequisite deterministic and aligned between docs/CI (install `build` where required).
-2. **BLK-001**: reconcile `proof_bundle/index.json` contract between producer and tests.
-
-## Additional observations (non-blocking)
-- `ruff check .`, `pylint src/bnsyn`, and `mypy src --strict --config-file pyproject.toml` pass after dev install (`proof_bundle/logs/254_20260216T120711Z.log`, `255_...`, `256_...`).
-- Primary CLI/discovery workflows run (`python -m bnsyn.cli --help`, `python -m scripts.check_quickstart_consistency`, `make docs`).
+1. Refresh stale proof bundle hash index and rerun canonical tests.
+2. Align contributor setup so `python -m build` is available without manual extra install.
+3. Re-run verification gates in order: tests → lint → typecheck → build.

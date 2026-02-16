@@ -1,0 +1,840 @@
+timestamp_utc: 2026-02-16T12:33:48Z
+cmd: python -m pytest -m "not validation" -q
+exit: 1
+stdout:
+[Hypothesis] Using default profile
+...........................................................F............ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+........................................................ss....ss........ [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 73%]
+........................................................................ [ 83%]
+........................................................................ [ 93%]
+..........................................                               [100%]
+=================================== FAILURES ===================================
+__________________ test_proof_bundle_index_hashes_match_files __________________
+
+    def test_proof_bundle_index_hashes_match_files() -> None:
+        proof_entries = json.loads(PROOF_INDEX_PATH.read_text(encoding="utf-8"))
+        assert proof_entries, "proof bundle index is empty"
+    
+        for entry in proof_entries:
+            rel_path = entry["path"]
+            recorded_sha = entry["sha256"]
+            artifact_path = REPO_ROOT / rel_path
+    
+            assert artifact_path.exists(), f"Indexed artifact does not exist: {rel_path}"
+            if rel_path == "proof_bundle/index.json":
+                # Self-referential hash cannot be validated without fixed-point encoding.
+                continue
+>           assert _sha256(artifact_path) == recorded_sha, f"SHA mismatch for {rel_path}"
+E           AssertionError: SHA mismatch for proof_bundle/command_index.json
+E           assert 'baa45269dde4...ba718293f4163' == '4eb64284d345...eaecef05f2c6e'
+E             
+E             - 4eb64284d3452d0fc11644dafe54e753d94378a55a5cfd16d9beaecef05f2c6e
+E             + baa45269dde44c803719959765f6a7d99e87992de01237e18c7ba718293f4163
+
+tests/test_audit_suite_artifacts.py:84: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_audit_suite_artifacts.py::test_proof_bundle_index_hashes_match_files
+stderr:
+---
+timestamp_utc: 2026-02-16T12:35:28Z
+cmd: ruff check .
+exit: 0
+stdout:
+All checks passed!
+stderr:
+---
+timestamp_utc: 2026-02-16T12:35:29Z
+cmd: pylint src/bnsyn
+exit: 0
+stdout:
+************* Module bnsyn.cli
+src/bnsyn/cli.py:88:8: W0621: Redefining name 'importlib' from outer scope (line 25) (redefined-outer-name)
+src/bnsyn/cli.py:88:8: C0415: Import outside toplevel (importlib.util) (import-outside-toplevel)
+src/bnsyn/cli.py:91:8: C0415: Import outside toplevel (subprocess) (import-outside-toplevel)
+src/bnsyn/cli.py:92:8: C0415: Import outside toplevel (sys) (import-outside-toplevel)
+src/bnsyn/cli.py:107:21: W1510: 'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)
+src/bnsyn/cli.py:63:0: R0911: Too many return statements (7/6) (too-many-return-statements)
+src/bnsyn/cli.py:177:4: C0415: Import outside toplevel (bnsyn.experiments.declarative.run_from_yaml) (import-outside-toplevel)
+src/bnsyn/cli.py:187:0: R0914: Too many local variables (57/15) (too-many-locals)
+src/bnsyn/cli.py:211:4: C0415: Import outside toplevel (bnsyn.config.AdExParams, bnsyn.config.CriticalityParams, bnsyn.config.SynapseParams, bnsyn.config.TemperatureParams) (import-outside-toplevel)
+src/bnsyn/cli.py:212:4: C0415: Import outside toplevel (bnsyn.criticality.PhaseTransitionDetector) (import-outside-toplevel)
+src/bnsyn/cli.py:213:4: C0415: Import outside toplevel (bnsyn.emergence.AttractorCrystallizer) (import-outside-toplevel)
+src/bnsyn/cli.py:214:4: C0415: Import outside toplevel (bnsyn.memory.MemoryConsolidator) (import-outside-toplevel)
+src/bnsyn/cli.py:215:4: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+src/bnsyn/cli.py:216:4: C0415: Import outside toplevel (bnsyn.sim.network.Network, bnsyn.sim.network.NetworkParams) (import-outside-toplevel)
+src/bnsyn/cli.py:217:4: C0415: Import outside toplevel (bnsyn.sleep.SleepCycle, bnsyn.sleep.SleepStageConfig, bnsyn.sleep.default_human_sleep_cycle) (import-outside-toplevel)
+src/bnsyn/cli.py:218:4: C0415: Import outside toplevel (bnsyn.temperature.schedule.TemperatureSchedule) (import-outside-toplevel)
+src/bnsyn/cli.py:339:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/cli.py:354:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/cli.py:360:8: C0415: Import outside toplevel (matplotlib.pyplot) (import-outside-toplevel)
+src/bnsyn/cli.py:361:8: W0404: Reimport 'Any' (imported line 30) (reimported)
+src/bnsyn/cli.py:361:8: C0415: Import outside toplevel (typing.Any) (import-outside-toplevel)
+src/bnsyn/cli.py:187:0: R0915: Too many statements (106/50) (too-many-statements)
+src/bnsyn/cli.py:363:8: W0612: Unused variable 'fig' (unused-variable)
+************* Module bnsyn.testing.faults
+src/bnsyn/testing/faults.py:39:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+src/bnsyn/testing/faults.py:179:18: W0613: Unused argument 'rng_state' (unused-argument)
+src/bnsyn/testing/faults.py:234:8: R1720: Unnecessary "elif" after "raise", remove the leading "el" from "elif" (no-else-raise)
+************* Module bnsyn.experiments.declarative
+src/bnsyn/experiments/declarative.py:56:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/experiments/declarative.py:161:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+************* Module bnsyn.provenance.manifest
+src/bnsyn/provenance/manifest.py:37:4: C0412: Imports from package importlib are not grouped (ungrouped-imports)
+************* Module bnsyn.provenance.manifest_builder
+src/bnsyn/provenance/manifest_builder.py:121:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+src/bnsyn/provenance/manifest_builder.py:159:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module bnsyn.criticality.phase_transition
+src/bnsyn/criticality/phase_transition.py:77:0: R0902: Too many instance attributes (9/7) (too-many-instance-attributes)
+src/bnsyn/criticality/phase_transition.py:154:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+src/bnsyn/criticality/phase_transition.py:188:11: R1714: Consider merging these comparisons with 'in' by using 'self._current_phase not in (new_phase, CriticalPhase.UNKNOWN)'. Use a set instead if elements are hashable. (consider-using-in)
+************* Module bnsyn.emergence.crystallizer
+src/bnsyn/emergence/crystallizer.py:126:0: R0902: Too many instance attributes (17/7) (too-many-instance-attributes)
+src/bnsyn/emergence/crystallizer.py:280:12: W0612: Unused variable 'U' (unused-variable)
+src/bnsyn/emergence/crystallizer.py:280:15: W0612: Unused variable 'S' (unused-variable)
+************* Module bnsyn.sim.network
+src/bnsyn/sim/network.py:57:0: R0902: Too many instance attributes (9/7) (too-many-instance-attributes)
+src/bnsyn/sim/network.py:99:0: R0902: Too many instance attributes (24/7) (too-many-instance-attributes)
+src/bnsyn/sim/network.py:132:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+src/bnsyn/sim/network.py:132:4: R0914: Too many local variables (17/15) (too-many-locals)
+src/bnsyn/sim/network.py:132:4: R0915: Too many statements (54/50) (too-many-statements)
+src/bnsyn/sim/network.py:214:4: R0914: Too many local variables (22/15) (too-many-locals)
+src/bnsyn/sim/network.py:270:12: W0621: Redefining name 'torch_module' from outer scope (line 41) (redefined-outer-name)
+src/bnsyn/sim/network.py:336:4: R0914: Too many local variables (24/15) (too-many-locals)
+src/bnsyn/sim/network.py:397:12: W0621: Redefining name 'torch_module' from outer scope (line 41) (redefined-outer-name)
+src/bnsyn/sim/network.py:472:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+src/bnsyn/sim/network.py:472:0: R0914: Too many local variables (16/15) (too-many-locals)
+src/bnsyn/sim/network.py:514:4: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+************* Module bnsyn.viz.interactive
+src/bnsyn/viz/interactive.py:32:0: R0914: Too many local variables (33/15) (too-many-locals)
+src/bnsyn/viz/interactive.py:86:12: C0415: Import outside toplevel (bnsyn.config.AdExParams, bnsyn.config.CriticalityParams, bnsyn.config.SynapseParams) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:87:12: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:88:12: C0415: Import outside toplevel (bnsyn.sim.network.Network, bnsyn.sim.network.NetworkParams) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:32:0: R0915: Too many statements (63/50) (too-many-statements)
+src/bnsyn/viz/interactive.py:215:19: R1735: Consider using '{"size": 2, "color": 'black'}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:222:14: R1735: Consider using '{"range": [-1, N]}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:173:58: W0613: Unused argument 'duration_ms' (unused-argument)
+src/bnsyn/viz/interactive.py:266:21: R1735: Consider using '{"width": 1}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:345:4: C0415: Import outside toplevel (plotly.subplots.make_subplots) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:359:71: R1735: Consider using '{"color": 'blue'}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:367:74: R1735: Consider using '{"color": 'orange'}' instead of a call to 'dict'. (use-dict-literal)
+************* Module bnsyn.viz.dashboard
+src/bnsyn/viz/dashboard.py:53:4: W0603: Using the global statement (global-statement)
+src/bnsyn/viz/dashboard.py:71:0: R0902: Too many instance attributes (14/7) (too-many-instance-attributes)
+************* Module bnsyn.memory.consolidator
+src/bnsyn/memory/consolidator.py:235:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+************* Module bnsyn.memory.ledger
+src/bnsyn/memory/ledger.py:82:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module bnsyn.calibration.accuracy_speed
+src/bnsyn/calibration/accuracy_speed.py:37:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+src/bnsyn/calibration/accuracy_speed.py:79:0: R0914: Too many local variables (18/15) (too-many-locals)
+************* Module bnsyn.connectivity.sparse
+src/bnsyn/connectivity/sparse.py:278:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+************* Module bnsyn.tools.run_scaled_sleep_stack
+src/bnsyn/tools/run_scaled_sleep_stack.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/bnsyn/tools/run_scaled_sleep_stack.py:25:0: R0914: Too many local variables (29/15) (too-many-locals)
+src/bnsyn/tools/run_scaled_sleep_stack.py:147:8: C0415: Import outside toplevel (matplotlib.pyplot) (import-outside-toplevel)
+src/bnsyn/tools/run_scaled_sleep_stack.py:145:0: R1711: Useless return at end of function or method (useless-return)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0914: Too many local variables (29/15) (too-many-locals)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0912: Too many branches (16/12) (too-many-branches)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0915: Too many statements (82/50) (too-many-statements)
+************* Module bnsyn.tools.benchmark_sleep_stack_scale
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module bnsyn.production.adex
+src/bnsyn/production/adex.py:35:0: R0902: Too many instance attributes (11/7) (too-many-instance-attributes)
+************* Module bnsyn.production.connectivity
+src/bnsyn/production/connectivity.py:86:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+************* Module bnsyn.production.jax_backend
+src/bnsyn/production/jax_backend.py:48:0: R0914: Too many local variables (21/15) (too-many-locals)
+************* Module bnsyn.plasticity.three_factor
+src/bnsyn/plasticity/three_factor.py:100:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module bnsyn.sleep.cycle
+src/bnsyn/sleep/cycle.py:48:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+************* Module bnsyn.neuron.adex
+src/bnsyn/neuron/adex.py:199:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/bnsyn/neuron/adex.py:279:0: R0914: Too many local variables (19/15) (too-many-locals)
+src/bnsyn/neuron/adex.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.provenance.manifest:[129:139]
+==bnsyn.provenance.manifest_builder:[37:47]
+    try:
+        git_path = shutil.which("git")
+        if not git_path:
+            raise FileNotFoundError("git executable not found")
+        # Fixed git command without shell; inputs are constant.
+        result = subprocess.run(  # nosec B603
+            [git_path, "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True, (duplicate-code)
+src/bnsyn/neuron/adex.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.cli:[231:237]
+==bnsyn.sim.network:[528:534]
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(), (duplicate-code)
+src/bnsyn/neuron/adex.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.provenance.manifest:[152:170]
+==bnsyn.provenance.manifest_builder:[62:70]
+    try:
+        version = metadata.version("bnsyn")
+    except metadata.PackageNotFoundError:
+        version = "0.0.0"
+    return f"release-{version}"
+
+
+def _resolve_package_version(repo_root: Path) -> str: (duplicate-code)
+src/bnsyn/neuron/adex.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.cli:[234:239]
+==bnsyn.tools.run_scaled_sleep_stack:[36:41]
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=rng, (duplicate-code)
+
+-----------------------------------
+Your code has been rated at 9.68/10
+
+stderr:
+---
+timestamp_utc: 2026-02-16T12:35:55Z
+cmd: mypy src --strict --config-file pyproject.toml
+exit: 0
+stdout:
+Success: no issues found in 72 source files
+stderr:
+---
+timestamp_utc: 2026-02-16T12:36:06Z
+cmd: python -m build
+exit: 1
+stdout:
+stderr:
+/root/.pyenv/versions/3.12.12/bin/python: No module named build
+---
+timestamp_utc: 2026-02-16T12:36:11Z
+cmd: python -m pip install build
+exit: 0
+stdout:
+Collecting build
+  Downloading build-1.4.0-py3-none-any.whl.metadata (5.8 kB)
+Requirement already satisfied: packaging>=24.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from build) (25.0)
+Collecting pyproject_hooks (from build)
+  Downloading pyproject_hooks-1.2.0-py3-none-any.whl.metadata (1.3 kB)
+Downloading build-1.4.0-py3-none-any.whl (24 kB)
+Downloading pyproject_hooks-1.2.0-py3-none-any.whl (10 kB)
+Installing collected packages: pyproject_hooks, build
+
+Successfully installed build-1.4.0 pyproject_hooks-1.2.0
+stderr:
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+---
+timestamp_utc: 2026-02-16T12:36:13Z
+cmd: python -m build
+exit: 0
+stdout:
+running egg_info
+writing src/bnsyn.egg-info/PKG-INFO
+writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
+writing entry points to src/bnsyn.egg-info/entry_points.txt
+writing requirements to src/bnsyn.egg-info/requires.txt
+writing top-level names to src/bnsyn.egg-info/top_level.txt
+reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+running sdist
+running egg_info
+writing src/bnsyn.egg-info/PKG-INFO
+writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
+writing entry points to src/bnsyn.egg-info/entry_points.txt
+writing requirements to src/bnsyn.egg-info/requires.txt
+writing top-level names to src/bnsyn.egg-info/top_level.txt
+reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+running check
+creating bnsyn-0.2.0
+creating bnsyn-0.2.0/src/bnsyn
+creating bnsyn-0.2.0/src/bnsyn.egg-info
+creating bnsyn-0.2.0/src/bnsyn/benchmarks
+creating bnsyn-0.2.0/src/bnsyn/calibration
+creating bnsyn-0.2.0/src/bnsyn/connectivity
+creating bnsyn-0.2.0/src/bnsyn/consolidation
+creating bnsyn-0.2.0/src/bnsyn/criticality
+creating bnsyn-0.2.0/src/bnsyn/emergence
+creating bnsyn-0.2.0/src/bnsyn/energy
+creating bnsyn-0.2.0/src/bnsyn/experiments
+creating bnsyn-0.2.0/src/bnsyn/memory
+creating bnsyn-0.2.0/src/bnsyn/neuron
+creating bnsyn-0.2.0/src/bnsyn/numerics
+creating bnsyn-0.2.0/src/bnsyn/plasticity
+creating bnsyn-0.2.0/src/bnsyn/production
+creating bnsyn-0.2.0/src/bnsyn/provenance
+creating bnsyn-0.2.0/src/bnsyn/schemas
+creating bnsyn-0.2.0/src/bnsyn/sim
+creating bnsyn-0.2.0/src/bnsyn/sleep
+creating bnsyn-0.2.0/src/bnsyn/synapse
+creating bnsyn-0.2.0/src/bnsyn/temperature
+creating bnsyn-0.2.0/src/bnsyn/testing
+creating bnsyn-0.2.0/src/bnsyn/tools
+creating bnsyn-0.2.0/src/bnsyn/validation
+creating bnsyn-0.2.0/src/bnsyn/viz
+creating bnsyn-0.2.0/src/contracts
+creating bnsyn-0.2.0/tests
+copying files to bnsyn-0.2.0...
+copying LICENSE -> bnsyn-0.2.0
+copying README.md -> bnsyn-0.2.0
+copying pyproject.toml -> bnsyn-0.2.0
+copying src/bnsyn/__init__.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/__main__.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/cli.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/config.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/control.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/incremental.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/neurons.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/py.typed -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/rng.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/simulation.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/synapses.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn/vcg.py -> bnsyn-0.2.0/src/bnsyn
+copying src/bnsyn.egg-info/PKG-INFO -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn.egg-info/SOURCES.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn.egg-info/dependency_links.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn.egg-info/entry_points.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn.egg-info/requires.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn.egg-info/top_level.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+copying src/bnsyn/benchmarks/__init__.py -> bnsyn-0.2.0/src/bnsyn/benchmarks
+copying src/bnsyn/benchmarks/regime.py -> bnsyn-0.2.0/src/bnsyn/benchmarks
+copying src/bnsyn/calibration/__init__.py -> bnsyn-0.2.0/src/bnsyn/calibration
+copying src/bnsyn/calibration/accuracy_speed.py -> bnsyn-0.2.0/src/bnsyn/calibration
+copying src/bnsyn/calibration/fit.py -> bnsyn-0.2.0/src/bnsyn/calibration
+copying src/bnsyn/connectivity/__init__.py -> bnsyn-0.2.0/src/bnsyn/connectivity
+copying src/bnsyn/connectivity/sparse.py -> bnsyn-0.2.0/src/bnsyn/connectivity
+copying src/bnsyn/consolidation/__init__.py -> bnsyn-0.2.0/src/bnsyn/consolidation
+copying src/bnsyn/consolidation/dual_weight.py -> bnsyn-0.2.0/src/bnsyn/consolidation
+copying src/bnsyn/criticality/__init__.py -> bnsyn-0.2.0/src/bnsyn/criticality
+copying src/bnsyn/criticality/analysis.py -> bnsyn-0.2.0/src/bnsyn/criticality
+copying src/bnsyn/criticality/branching.py -> bnsyn-0.2.0/src/bnsyn/criticality
+copying src/bnsyn/criticality/phase_transition.py -> bnsyn-0.2.0/src/bnsyn/criticality
+copying src/bnsyn/emergence/__init__.py -> bnsyn-0.2.0/src/bnsyn/emergence
+copying src/bnsyn/emergence/crystallizer.py -> bnsyn-0.2.0/src/bnsyn/emergence
+copying src/bnsyn/energy/__init__.py -> bnsyn-0.2.0/src/bnsyn/energy
+copying src/bnsyn/energy/regularization.py -> bnsyn-0.2.0/src/bnsyn/energy
+copying src/bnsyn/experiments/__init__.py -> bnsyn-0.2.0/src/bnsyn/experiments
+copying src/bnsyn/experiments/declarative.py -> bnsyn-0.2.0/src/bnsyn/experiments
+copying src/bnsyn/memory/__init__.py -> bnsyn-0.2.0/src/bnsyn/memory
+copying src/bnsyn/memory/consolidator.py -> bnsyn-0.2.0/src/bnsyn/memory
+copying src/bnsyn/memory/ledger.py -> bnsyn-0.2.0/src/bnsyn/memory
+copying src/bnsyn/memory/trace.py -> bnsyn-0.2.0/src/bnsyn/memory
+copying src/bnsyn/neuron/__init__.py -> bnsyn-0.2.0/src/bnsyn/neuron
+copying src/bnsyn/neuron/adex.py -> bnsyn-0.2.0/src/bnsyn/neuron
+copying src/bnsyn/numerics/__init__.py -> bnsyn-0.2.0/src/bnsyn/numerics
+copying src/bnsyn/numerics/integrators.py -> bnsyn-0.2.0/src/bnsyn/numerics
+copying src/bnsyn/plasticity/__init__.py -> bnsyn-0.2.0/src/bnsyn/plasticity
+copying src/bnsyn/plasticity/stdp.py -> bnsyn-0.2.0/src/bnsyn/plasticity
+copying src/bnsyn/plasticity/three_factor.py -> bnsyn-0.2.0/src/bnsyn/plasticity
+copying src/bnsyn/production/__init__.py -> bnsyn-0.2.0/src/bnsyn/production
+copying src/bnsyn/production/adex.py -> bnsyn-0.2.0/src/bnsyn/production
+copying src/bnsyn/production/connectivity.py -> bnsyn-0.2.0/src/bnsyn/production
+copying src/bnsyn/production/jax_backend.py -> bnsyn-0.2.0/src/bnsyn/production
+copying src/bnsyn/provenance/__init__.py -> bnsyn-0.2.0/src/bnsyn/provenance
+copying src/bnsyn/provenance/manifest.py -> bnsyn-0.2.0/src/bnsyn/provenance
+copying src/bnsyn/provenance/manifest_builder.py -> bnsyn-0.2.0/src/bnsyn/provenance
+copying src/bnsyn/schemas/__init__.py -> bnsyn-0.2.0/src/bnsyn/schemas
+copying src/bnsyn/schemas/experiment.py -> bnsyn-0.2.0/src/bnsyn/schemas
+copying src/bnsyn/sim/__init__.py -> bnsyn-0.2.0/src/bnsyn/sim
+copying src/bnsyn/sim/network.py -> bnsyn-0.2.0/src/bnsyn/sim
+copying src/bnsyn/sleep/__init__.py -> bnsyn-0.2.0/src/bnsyn/sleep
+copying src/bnsyn/sleep/cycle.py -> bnsyn-0.2.0/src/bnsyn/sleep
+copying src/bnsyn/sleep/replay.py -> bnsyn-0.2.0/src/bnsyn/sleep
+copying src/bnsyn/sleep/stages.py -> bnsyn-0.2.0/src/bnsyn/sleep
+copying src/bnsyn/synapse/__init__.py -> bnsyn-0.2.0/src/bnsyn/synapse
+copying src/bnsyn/synapse/conductance.py -> bnsyn-0.2.0/src/bnsyn/synapse
+copying src/bnsyn/temperature/__init__.py -> bnsyn-0.2.0/src/bnsyn/temperature
+copying src/bnsyn/temperature/schedule.py -> bnsyn-0.2.0/src/bnsyn/temperature
+copying src/bnsyn/testing/__init__.py -> bnsyn-0.2.0/src/bnsyn/testing
+copying src/bnsyn/testing/faults.py -> bnsyn-0.2.0/src/bnsyn/testing
+copying src/bnsyn/tools/__init__.py -> bnsyn-0.2.0/src/bnsyn/tools
+copying src/bnsyn/tools/benchmark_sleep_stack_scale.py -> bnsyn-0.2.0/src/bnsyn/tools
+copying src/bnsyn/tools/run_scaled_sleep_stack.py -> bnsyn-0.2.0/src/bnsyn/tools
+copying src/bnsyn/validation/__init__.py -> bnsyn-0.2.0/src/bnsyn/validation
+copying src/bnsyn/validation/inputs.py -> bnsyn-0.2.0/src/bnsyn/validation
+copying src/bnsyn/viz/__init__.py -> bnsyn-0.2.0/src/bnsyn/viz
+copying src/bnsyn/viz/dashboard.py -> bnsyn-0.2.0/src/bnsyn/viz
+copying src/bnsyn/viz/interactive.py -> bnsyn-0.2.0/src/bnsyn/viz
+copying src/contracts/__init__.py -> bnsyn-0.2.0/src/contracts
+copying src/contracts/math_contracts.py -> bnsyn-0.2.0/src/contracts
+copying tests/test_actions_pinning.py -> bnsyn-0.2.0/tests
+copying tests/test_adex_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_api_contract_command.py -> bnsyn-0.2.0/tests
+copying tests/test_api_contract_semver.py -> bnsyn-0.2.0/tests
+copying tests/test_api_maturity.py -> bnsyn-0.2.0/tests
+copying tests/test_api_surface_reexports.py -> bnsyn-0.2.0/tests
+copying tests/test_attractor_crystallizer.py -> bnsyn-0.2.0/tests
+copying tests/test_audit_suite_artifacts.py -> bnsyn-0.2.0/tests
+copying tests/test_benchmark_regression_gate.py -> bnsyn-0.2.0/tests
+copying tests/test_benchmarks_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_calibration_accuracy_speed.py -> bnsyn-0.2.0/tests
+copying tests/test_calibration_fit_edge.py -> bnsyn-0.2.0/tests
+copying tests/test_calibration_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_claims_enforcement.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_interactive.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_sleep_stack_backend_and_N_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_sleep_stack_branches.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_sleep_stack_figure.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_cli_versioning.py -> bnsyn-0.2.0/tests
+copying tests/test_connectivity_sparse.py -> bnsyn-0.2.0/tests
+copying tests/test_consolidation_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_coverage_gap_extensions.py -> bnsyn-0.2.0/tests
+copying tests/test_coverage_gate.py -> bnsyn-0.2.0/tests
+copying tests/test_coverage_paths.py -> bnsyn-0.2.0/tests
+copying tests/test_criticality_analysis_edge.py -> bnsyn-0.2.0/tests
+copying tests/test_criticality_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_crystallizer_edge_cases.py -> bnsyn-0.2.0/tests
+copying tests/test_determinism.py -> bnsyn-0.2.0/tests
+copying tests/test_dt_invariance.py -> bnsyn-0.2.0/tests
+copying tests/test_edge_cases_adex.py -> bnsyn-0.2.0/tests
+copying tests/test_edge_cases_criticality.py -> bnsyn-0.2.0/tests
+copying tests/test_edge_cases_synapse.py -> bnsyn-0.2.0/tests
+copying tests/test_edge_cases_temperature.py -> bnsyn-0.2.0/tests
+copying tests/test_energy_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_entropy_artifacts_guard.py -> bnsyn-0.2.0/tests
+copying tests/test_entropy_gate.py -> bnsyn-0.2.0/tests
+copying tests/test_experiment_manifest.py -> bnsyn-0.2.0/tests
+copying tests/test_experiments_declarative.py -> bnsyn-0.2.0/tests
+copying tests/test_experiments_temperature_ablation.py -> bnsyn-0.2.0/tests
+copying tests/test_faults.py -> bnsyn-0.2.0/tests
+copying tests/test_generate_coverage_trend.py -> bnsyn-0.2.0/tests
+copying tests/test_generate_inventory.py -> bnsyn-0.2.0/tests
+copying tests/test_imports.py -> bnsyn-0.2.0/tests
+copying tests/test_incremental_cache.py -> bnsyn-0.2.0/tests
+copying tests/test_integration_examples.py -> bnsyn-0.2.0/tests
+copying tests/test_integration_experiment_flow.py -> bnsyn-0.2.0/tests
+copying tests/test_intelligence_cycle.py -> bnsyn-0.2.0/tests
+copying tests/test_interactive_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_jax_backend.py -> bnsyn-0.2.0/tests
+copying tests/test_manifest_builder.py -> bnsyn-0.2.0/tests
+copying tests/test_manifest_consistency.py -> bnsyn-0.2.0/tests
+copying tests/test_manifest_tooling.py -> bnsyn-0.2.0/tests
+copying tests/test_manifest_tooling_regression.py -> bnsyn-0.2.0/tests
+copying tests/test_manifest_tools.py -> bnsyn-0.2.0/tests
+copying tests/test_math_invariants.py -> bnsyn-0.2.0/tests
+copying tests/test_memory.py -> bnsyn-0.2.0/tests
+copying tests/test_memory_consolidator.py -> bnsyn-0.2.0/tests
+copying tests/test_memory_ledger_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_memory_trace_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_mutation_ci_summary_contract.py -> bnsyn-0.2.0/tests
+copying tests/test_mutation_counts_contract.py -> bnsyn-0.2.0/tests
+copying tests/test_mutation_killers.py -> bnsyn-0.2.0/tests
+copying tests/test_mutation_run_pipeline_contract.py -> bnsyn-0.2.0/tests
+copying tests/test_mutation_survivors_summary.py -> bnsyn-0.2.0/tests
+copying tests/test_network_allocation_buffers.py -> bnsyn-0.2.0/tests
+copying tests/test_network_external_input.py -> bnsyn-0.2.0/tests
+copying tests/test_network_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_network_validation_edges.py -> bnsyn-0.2.0/tests
+copying tests/test_neuron_adex_validation.py -> bnsyn-0.2.0/tests
+copying tests/test_no_escape_tripwires.py -> bnsyn-0.2.0/tests
+copying tests/test_performance.py -> bnsyn-0.2.0/tests
+copying tests/test_phase_transition.py -> bnsyn-0.2.0/tests
+copying tests/test_phase_transition_detector.py -> bnsyn-0.2.0/tests
+copying tests/test_plasticity_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_plasticity_three_factor_edge.py -> bnsyn-0.2.0/tests
+copying tests/test_pr_description_policy_template.py -> bnsyn-0.2.0/tests
+copying tests/test_pr_description_policy_workflow.py -> bnsyn-0.2.0/tests
+copying tests/test_principal_test_hardening.py -> bnsyn-0.2.0/tests
+copying tests/test_production_adex_spike.py -> bnsyn-0.2.0/tests
+copying tests/test_provenance_manifest.py -> bnsyn-0.2.0/tests
+copying tests/test_pytest_collection_contract.py -> bnsyn-0.2.0/tests
+copying tests/test_quickstart_consistency_script.py -> bnsyn-0.2.0/tests
+copying tests/test_quickstart_contract.py -> bnsyn-0.2.0/tests
+copying tests/test_readiness_artifact_schemas.py -> bnsyn-0.2.0/tests
+copying tests/test_release_pipeline.py -> bnsyn-0.2.0/tests
+copying tests/test_release_readiness.py -> bnsyn-0.2.0/tests
+copying tests/test_run_simulation_external_current.py -> bnsyn-0.2.0/tests
+copying tests/test_run_simulation_validation.py -> bnsyn-0.2.0/tests
+copying tests/test_scan_governed_docs_script.py -> bnsyn-0.2.0/tests
+copying tests/test_scan_placeholders.py -> bnsyn-0.2.0/tests
+copying tests/test_schema_contracts.py -> bnsyn-0.2.0/tests
+copying tests/test_schema_experiment_contracts.py -> bnsyn-0.2.0/tests
+copying tests/test_sleep_cycle.py -> bnsyn-0.2.0/tests
+copying tests/test_sleep_cycle_integration.py -> bnsyn-0.2.0/tests
+copying tests/test_sleep_replay.py -> bnsyn-0.2.0/tests
+copying tests/test_sleep_stage_validation.py -> bnsyn-0.2.0/tests
+copying tests/test_spec_mapping_guard.py -> bnsyn-0.2.0/tests
+copying tests/test_synapse_conductance_edge.py -> bnsyn-0.2.0/tests
+copying tests/test_synapse_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_sync_required_status_contexts.py -> bnsyn-0.2.0/tests
+copying tests/test_temperature_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_tla_invariants_guard.py -> bnsyn-0.2.0/tests
+copying tests/test_tools_benchmark_sleep_stack_scale_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_tools_run_scaled_sleep_stack_unit.py -> bnsyn-0.2.0/tests
+copying tests/test_tools_scaled_sleep_stack_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_update_manifest_tools.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_bibliography_script.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_codebase_readiness_audit.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_long_running_triggers.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_pr_gates.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_status_claims.py -> bnsyn-0.2.0/tests
+copying tests/test_validate_workflow_contracts.py -> bnsyn-0.2.0/tests
+copying tests/test_validation_inputs.py -> bnsyn-0.2.0/tests
+copying tests/test_vcg_invariants_guard.py -> bnsyn-0.2.0/tests
+copying tests/test_vcg_smoke.py -> bnsyn-0.2.0/tests
+copying tests/test_vcg_validation.py -> bnsyn-0.2.0/tests
+copying tests/test_verify_hypothesis_v2.py -> bnsyn-0.2.0/tests
+copying tests/test_verify_reproducible_artifacts.py -> bnsyn-0.2.0/tests
+copying tests/test_viz_interactive.py -> bnsyn-0.2.0/tests
+copying tests/test_viz_interactive_main.py -> bnsyn-0.2.0/tests
+copying tests/test_viz_optional_import.py -> bnsyn-0.2.0/tests
+copying tests/test_viz_smoke_coverage.py -> bnsyn-0.2.0/tests
+copying tests/test_wheelhouse_tools.py -> bnsyn-0.2.0/tests
+copying src/bnsyn.egg-info/SOURCES.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
+Writing bnsyn-0.2.0/setup.cfg
+Creating tar archive
+removing 'bnsyn-0.2.0' (and everything under it)
+running egg_info
+writing src/bnsyn.egg-info/PKG-INFO
+writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
+writing entry points to src/bnsyn.egg-info/entry_points.txt
+writing requirements to src/bnsyn.egg-info/requires.txt
+writing top-level names to src/bnsyn.egg-info/top_level.txt
+reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+running bdist_wheel
+running build
+running build_py
+creating build/lib/bnsyn
+copying src/bnsyn/__init__.py -> build/lib/bnsyn
+copying src/bnsyn/config.py -> build/lib/bnsyn
+copying src/bnsyn/cli.py -> build/lib/bnsyn
+copying src/bnsyn/rng.py -> build/lib/bnsyn
+copying src/bnsyn/synapses.py -> build/lib/bnsyn
+copying src/bnsyn/vcg.py -> build/lib/bnsyn
+copying src/bnsyn/incremental.py -> build/lib/bnsyn
+copying src/bnsyn/neurons.py -> build/lib/bnsyn
+copying src/bnsyn/control.py -> build/lib/bnsyn
+copying src/bnsyn/simulation.py -> build/lib/bnsyn
+copying src/bnsyn/__main__.py -> build/lib/bnsyn
+creating build/lib/contracts
+copying src/contracts/__init__.py -> build/lib/contracts
+copying src/contracts/math_contracts.py -> build/lib/contracts
+creating build/lib/bnsyn/numerics
+copying src/bnsyn/numerics/__init__.py -> build/lib/bnsyn/numerics
+copying src/bnsyn/numerics/integrators.py -> build/lib/bnsyn/numerics
+creating build/lib/bnsyn/consolidation
+copying src/bnsyn/consolidation/__init__.py -> build/lib/bnsyn/consolidation
+copying src/bnsyn/consolidation/dual_weight.py -> build/lib/bnsyn/consolidation
+creating build/lib/bnsyn/validation
+copying src/bnsyn/validation/__init__.py -> build/lib/bnsyn/validation
+copying src/bnsyn/validation/inputs.py -> build/lib/bnsyn/validation
+creating build/lib/bnsyn/testing
+copying src/bnsyn/testing/__init__.py -> build/lib/bnsyn/testing
+copying src/bnsyn/testing/faults.py -> build/lib/bnsyn/testing
+creating build/lib/bnsyn/experiments
+copying src/bnsyn/experiments/__init__.py -> build/lib/bnsyn/experiments
+copying src/bnsyn/experiments/declarative.py -> build/lib/bnsyn/experiments
+creating build/lib/bnsyn/provenance
+copying src/bnsyn/provenance/__init__.py -> build/lib/bnsyn/provenance
+copying src/bnsyn/provenance/manifest.py -> build/lib/bnsyn/provenance
+copying src/bnsyn/provenance/manifest_builder.py -> build/lib/bnsyn/provenance
+creating build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/__init__.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/phase_transition.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/branching.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/analysis.py -> build/lib/bnsyn/criticality
+creating build/lib/bnsyn/emergence
+copying src/bnsyn/emergence/__init__.py -> build/lib/bnsyn/emergence
+copying src/bnsyn/emergence/crystallizer.py -> build/lib/bnsyn/emergence
+creating build/lib/bnsyn/schemas
+copying src/bnsyn/schemas/__init__.py -> build/lib/bnsyn/schemas
+copying src/bnsyn/schemas/experiment.py -> build/lib/bnsyn/schemas
+creating build/lib/bnsyn/sim
+copying src/bnsyn/sim/__init__.py -> build/lib/bnsyn/sim
+copying src/bnsyn/sim/network.py -> build/lib/bnsyn/sim
+creating build/lib/bnsyn/energy
+copying src/bnsyn/energy/__init__.py -> build/lib/bnsyn/energy
+copying src/bnsyn/energy/regularization.py -> build/lib/bnsyn/energy
+creating build/lib/bnsyn/viz
+copying src/bnsyn/viz/__init__.py -> build/lib/bnsyn/viz
+copying src/bnsyn/viz/interactive.py -> build/lib/bnsyn/viz
+copying src/bnsyn/viz/dashboard.py -> build/lib/bnsyn/viz
+creating build/lib/bnsyn/memory
+copying src/bnsyn/memory/__init__.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/consolidator.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/ledger.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/trace.py -> build/lib/bnsyn/memory
+creating build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/__init__.py -> build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/accuracy_speed.py -> build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/fit.py -> build/lib/bnsyn/calibration
+creating build/lib/bnsyn/connectivity
+copying src/bnsyn/connectivity/__init__.py -> build/lib/bnsyn/connectivity
+copying src/bnsyn/connectivity/sparse.py -> build/lib/bnsyn/connectivity
+creating build/lib/bnsyn/tools
+copying src/bnsyn/tools/run_scaled_sleep_stack.py -> build/lib/bnsyn/tools
+copying src/bnsyn/tools/__init__.py -> build/lib/bnsyn/tools
+copying src/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/lib/bnsyn/tools
+creating build/lib/bnsyn/production
+copying src/bnsyn/production/__init__.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/adex.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/connectivity.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/jax_backend.py -> build/lib/bnsyn/production
+creating build/lib/bnsyn/synapse
+copying src/bnsyn/synapse/__init__.py -> build/lib/bnsyn/synapse
+copying src/bnsyn/synapse/conductance.py -> build/lib/bnsyn/synapse
+creating build/lib/bnsyn/plasticity
+copying src/bnsyn/plasticity/__init__.py -> build/lib/bnsyn/plasticity
+copying src/bnsyn/plasticity/stdp.py -> build/lib/bnsyn/plasticity
+copying src/bnsyn/plasticity/three_factor.py -> build/lib/bnsyn/plasticity
+creating build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/__init__.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/cycle.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/replay.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/stages.py -> build/lib/bnsyn/sleep
+creating build/lib/bnsyn/temperature
+copying src/bnsyn/temperature/__init__.py -> build/lib/bnsyn/temperature
+copying src/bnsyn/temperature/schedule.py -> build/lib/bnsyn/temperature
+creating build/lib/bnsyn/benchmarks
+copying src/bnsyn/benchmarks/__init__.py -> build/lib/bnsyn/benchmarks
+copying src/bnsyn/benchmarks/regime.py -> build/lib/bnsyn/benchmarks
+creating build/lib/bnsyn/neuron
+copying src/bnsyn/neuron/__init__.py -> build/lib/bnsyn/neuron
+copying src/bnsyn/neuron/adex.py -> build/lib/bnsyn/neuron
+running egg_info
+writing src/bnsyn.egg-info/PKG-INFO
+writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
+writing entry points to src/bnsyn.egg-info/entry_points.txt
+writing requirements to src/bnsyn.egg-info/requires.txt
+writing top-level names to src/bnsyn.egg-info/top_level.txt
+reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
+copying src/bnsyn/py.typed -> build/lib/bnsyn
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/bnsyn
+copying build/lib/bnsyn/py.typed -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/numerics
+copying build/lib/bnsyn/numerics/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/numerics
+copying build/lib/bnsyn/numerics/integrators.py -> build/bdist.linux-x86_64/wheel/./bnsyn/numerics
+creating build/bdist.linux-x86_64/wheel/bnsyn/consolidation
+copying build/lib/bnsyn/consolidation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
+copying build/lib/bnsyn/consolidation/dual_weight.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
+copying build/lib/bnsyn/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/validation
+copying build/lib/bnsyn/validation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
+copying build/lib/bnsyn/validation/inputs.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
+copying build/lib/bnsyn/config.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/testing
+copying build/lib/bnsyn/testing/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/testing
+copying build/lib/bnsyn/testing/faults.py -> build/bdist.linux-x86_64/wheel/./bnsyn/testing
+copying build/lib/bnsyn/cli.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/experiments
+copying build/lib/bnsyn/experiments/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
+copying build/lib/bnsyn/experiments/declarative.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
+creating build/bdist.linux-x86_64/wheel/bnsyn/provenance
+copying build/lib/bnsyn/provenance/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
+copying build/lib/bnsyn/provenance/manifest.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
+copying build/lib/bnsyn/provenance/manifest_builder.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
+creating build/bdist.linux-x86_64/wheel/bnsyn/criticality
+copying build/lib/bnsyn/criticality/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/phase_transition.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/branching.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/analysis.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+creating build/bdist.linux-x86_64/wheel/bnsyn/emergence
+copying build/lib/bnsyn/emergence/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/emergence
+copying build/lib/bnsyn/emergence/crystallizer.py -> build/bdist.linux-x86_64/wheel/./bnsyn/emergence
+copying build/lib/bnsyn/rng.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/schemas
+copying build/lib/bnsyn/schemas/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/schemas
+copying build/lib/bnsyn/schemas/experiment.py -> build/bdist.linux-x86_64/wheel/./bnsyn/schemas
+creating build/bdist.linux-x86_64/wheel/bnsyn/sim
+copying build/lib/bnsyn/sim/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sim
+copying build/lib/bnsyn/sim/network.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sim
+copying build/lib/bnsyn/synapses.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/energy
+copying build/lib/bnsyn/energy/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
+copying build/lib/bnsyn/energy/regularization.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
+creating build/bdist.linux-x86_64/wheel/bnsyn/viz
+copying build/lib/bnsyn/viz/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+copying build/lib/bnsyn/viz/interactive.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+copying build/lib/bnsyn/viz/dashboard.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+creating build/bdist.linux-x86_64/wheel/bnsyn/memory
+copying build/lib/bnsyn/memory/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/consolidator.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/ledger.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/trace.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/vcg.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/calibration
+copying build/lib/bnsyn/calibration/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+copying build/lib/bnsyn/calibration/accuracy_speed.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+copying build/lib/bnsyn/calibration/fit.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+copying build/lib/bnsyn/incremental.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/connectivity
+copying build/lib/bnsyn/connectivity/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
+copying build/lib/bnsyn/connectivity/sparse.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
+copying build/lib/bnsyn/neurons.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/control.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/tools
+copying build/lib/bnsyn/tools/run_scaled_sleep_stack.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+copying build/lib/bnsyn/tools/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+copying build/lib/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+creating build/bdist.linux-x86_64/wheel/bnsyn/production
+copying build/lib/bnsyn/production/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/adex.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/connectivity.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/jax_backend.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+creating build/bdist.linux-x86_64/wheel/bnsyn/synapse
+copying build/lib/bnsyn/synapse/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
+copying build/lib/bnsyn/synapse/conductance.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
+creating build/bdist.linux-x86_64/wheel/bnsyn/plasticity
+copying build/lib/bnsyn/plasticity/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
+copying build/lib/bnsyn/plasticity/stdp.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
+copying build/lib/bnsyn/plasticity/three_factor.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
+copying build/lib/bnsyn/simulation.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/sleep
+copying build/lib/bnsyn/sleep/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/cycle.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/replay.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/stages.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+creating build/bdist.linux-x86_64/wheel/bnsyn/temperature
+copying build/lib/bnsyn/temperature/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
+copying build/lib/bnsyn/temperature/schedule.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
+creating build/bdist.linux-x86_64/wheel/bnsyn/benchmarks
+copying build/lib/bnsyn/benchmarks/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
+copying build/lib/bnsyn/benchmarks/regime.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
+copying build/lib/bnsyn/__main__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/neuron
+copying build/lib/bnsyn/neuron/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/neuron
+copying build/lib/bnsyn/neuron/adex.py -> build/bdist.linux-x86_64/wheel/./bnsyn/neuron
+creating build/bdist.linux-x86_64/wheel/contracts
+copying build/lib/contracts/__init__.py -> build/bdist.linux-x86_64/wheel/./contracts
+copying build/lib/contracts/math_contracts.py -> build/bdist.linux-x86_64/wheel/./contracts
+running install_egg_info
+Copying src/bnsyn.egg-info to build/bdist.linux-x86_64/wheel/./bnsyn-0.2.0-py3.12.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/bnsyn-0.2.0.dist-info/WHEEL
+creating '/workspace/bnsyn-phase-controlled-emergent-dynamics/dist/.tmp-2595zh8e/bnsyn-0.2.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'bnsyn/__init__.py'
+adding 'bnsyn/__main__.py'
+adding 'bnsyn/cli.py'
+adding 'bnsyn/config.py'
+adding 'bnsyn/control.py'
+adding 'bnsyn/incremental.py'
+adding 'bnsyn/neurons.py'
+adding 'bnsyn/py.typed'
+adding 'bnsyn/rng.py'
+adding 'bnsyn/simulation.py'
+adding 'bnsyn/synapses.py'
+adding 'bnsyn/vcg.py'
+adding 'bnsyn/benchmarks/__init__.py'
+adding 'bnsyn/benchmarks/regime.py'
+adding 'bnsyn/calibration/__init__.py'
+adding 'bnsyn/calibration/accuracy_speed.py'
+adding 'bnsyn/calibration/fit.py'
+adding 'bnsyn/connectivity/__init__.py'
+adding 'bnsyn/connectivity/sparse.py'
+adding 'bnsyn/consolidation/__init__.py'
+adding 'bnsyn/consolidation/dual_weight.py'
+adding 'bnsyn/criticality/__init__.py'
+adding 'bnsyn/criticality/analysis.py'
+adding 'bnsyn/criticality/branching.py'
+adding 'bnsyn/criticality/phase_transition.py'
+adding 'bnsyn/emergence/__init__.py'
+adding 'bnsyn/emergence/crystallizer.py'
+adding 'bnsyn/energy/__init__.py'
+adding 'bnsyn/energy/regularization.py'
+adding 'bnsyn/experiments/__init__.py'
+adding 'bnsyn/experiments/declarative.py'
+adding 'bnsyn/memory/__init__.py'
+adding 'bnsyn/memory/consolidator.py'
+adding 'bnsyn/memory/ledger.py'
+adding 'bnsyn/memory/trace.py'
+adding 'bnsyn/neuron/__init__.py'
+adding 'bnsyn/neuron/adex.py'
+adding 'bnsyn/numerics/__init__.py'
+adding 'bnsyn/numerics/integrators.py'
+adding 'bnsyn/plasticity/__init__.py'
+adding 'bnsyn/plasticity/stdp.py'
+adding 'bnsyn/plasticity/three_factor.py'
+adding 'bnsyn/production/__init__.py'
+adding 'bnsyn/production/adex.py'
+adding 'bnsyn/production/connectivity.py'
+adding 'bnsyn/production/jax_backend.py'
+adding 'bnsyn/provenance/__init__.py'
+adding 'bnsyn/provenance/manifest.py'
+adding 'bnsyn/provenance/manifest_builder.py'
+adding 'bnsyn/schemas/__init__.py'
+adding 'bnsyn/schemas/experiment.py'
+adding 'bnsyn/sim/__init__.py'
+adding 'bnsyn/sim/network.py'
+adding 'bnsyn/sleep/__init__.py'
+adding 'bnsyn/sleep/cycle.py'
+adding 'bnsyn/sleep/replay.py'
+adding 'bnsyn/sleep/stages.py'
+adding 'bnsyn/synapse/__init__.py'
+adding 'bnsyn/synapse/conductance.py'
+adding 'bnsyn/temperature/__init__.py'
+adding 'bnsyn/temperature/schedule.py'
+adding 'bnsyn/testing/__init__.py'
+adding 'bnsyn/testing/faults.py'
+adding 'bnsyn/tools/__init__.py'
+adding 'bnsyn/tools/benchmark_sleep_stack_scale.py'
+adding 'bnsyn/tools/run_scaled_sleep_stack.py'
+adding 'bnsyn/validation/__init__.py'
+adding 'bnsyn/validation/inputs.py'
+adding 'bnsyn/viz/__init__.py'
+adding 'bnsyn/viz/dashboard.py'
+adding 'bnsyn/viz/interactive.py'
+adding 'bnsyn-0.2.0.dist-info/licenses/LICENSE'
+adding 'contracts/__init__.py'
+adding 'contracts/math_contracts.py'
+adding 'bnsyn-0.2.0.dist-info/METADATA'
+adding 'bnsyn-0.2.0.dist-info/WHEEL'
+adding 'bnsyn-0.2.0.dist-info/entry_points.txt'
+adding 'bnsyn-0.2.0.dist-info/top_level.txt'
+adding 'bnsyn-0.2.0.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+Successfully built bnsyn-0.2.0.tar.gz and bnsyn-0.2.0-py3-none-any.whl
+stderr:
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools==79.0.1
+* Getting build dependencies for sdist...
+* Building sdist...
+* Building wheel from sdist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools==79.0.1
+* Getting build dependencies for wheel...
+* Building wheel...
+---

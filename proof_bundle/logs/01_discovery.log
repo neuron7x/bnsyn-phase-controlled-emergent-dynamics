@@ -1,0 +1,760 @@
+timestamp_utc: 2026-02-16T12:32:43Z
+cmd: find . -maxdepth 2 -type f | sed "s#^./##" | sort
+exit: 0
+stdout:
+.git/FETCH_HEAD
+.git/HEAD
+.git/config
+.git/description
+.git/index
+.git/packed-refs
+.github/BRANCH_PROTECTION_GOVERNANCE.md
+.github/CI_SLO.md
+.github/CODEOWNERS
+.github/PR_GATES.yml
+.github/QUALITY_LEDGER.md
+.github/REPO_MANIFEST.md
+.github/REQUIRED_CHECKS.yml
+.github/REQUIRED_STATUS_CONTEXTS.yml
+.github/WORKFLOW_CONTRACTS.md
+.github/dependabot.yml
+.github/pull_request_template.md
+.gitignore
+.gitleaks.toml
+.pre-commit-config.yaml
+AGENTS.md
+ARCH_ASSESSMENT.md
+BENCHMARK_PROTOCOL.md
+CALIBRATION_REPORT.json
+CALIBRATION_SUMMARY.md
+CHANGELOG.md
+CHANGESET_PLAN.yaml
+CITATION.cff
+CODEBASE_READINESS.md
+CONTRIBUTING.md
+DECISION_MEMO.md
+DOC_CHANGELOG.md
+Dockerfile
+EVIDENCE_INDEX.md
+EXECUTION_PLAN.md
+EXEC_SUMMARY.md
+FINAL_REPORT.md
+GAP_TABLE.md
+GOVERNANCE_VERIFICATION_REPORT.md
+HARDENING_SUMMARY.md
+IMPLEMENTATION_SUMMARY.md
+INVENTORY.json
+LICENSE
+Makefile
+PROOF_BUNDLE/audit_hash.txt
+PROOF_BUNDLE/commands_executed.txt
+PROOF_BUNDLE/toolchain_fingerprint.txt
+PR_DESCRIPTION.md
+PR_DESCRIPTION_EVIDENCE.md
+PR_FINAL_DESCRIPTION.md
+PR_READY_CHECKLIST.md
+README.md
+README_CLAIMS_GATE.md
+RISK_REGISTER.md
+SECURITY.md
+VERIFICATION_REPORT.md
+acceptance_map.yaml
+artifacts/coverage.json
+artifacts/coverage_backlog.md
+artifacts/coverage_term_missing.txt
+artifacts/rwu_log.md
+assessment_logs/ARCHITECTURE.nl
+assessment_logs/ARCH_INV.nl
+assessment_logs/CI_GATES.nl
+assessment_logs/README.nl
+assessment_logs/SECURITY.nl
+assessment_logs/TESTING.nl
+assessment_logs/git_branch.log
+assessment_logs/git_sha.log
+assessment_logs/git_status.log
+assessment_logs/git_status_after.log
+assessment_logs/platform.log
+assessment_logs/pyproject.nl
+assessment_logs/pytest.exit
+assessment_logs/pytest.log
+assessment_logs/pytest.nl
+attack_paths_graph.json
+audit_reproducibility.json
+audit_suite_report.json
+benchmarks/README.md
+benchmarks/__init__.py
+benchmarks/baseline.json
+benchmarks/bench_adex.py
+benchmarks/bench_criticality.py
+benchmarks/bench_dt_invariance.py
+benchmarks/bench_plasticity.py
+benchmarks/bench_synapses.py
+benchmarks/benchmark_dt.py
+benchmarks/benchmark_plasticity.py
+benchmarks/benchmark_scale.py
+benchmarks/common.py
+benchmarks/criticality.py
+benchmarks/determinism.py
+benchmarks/equivalence_report.md
+benchmarks/kernel_profile.json
+benchmarks/metrics.py
+benchmarks/performance_utils.py
+benchmarks/physics_accelerated.json
+benchmarks/physics_baseline.json
+benchmarks/report.py
+benchmarks/run_benchmarks.py
+benchmarks/scalability.py
+benchmarks/scaling.py
+benchmarks/scaling_plan.md
+benchmarks/throughput_gain.json
+bibliography/bnsyn.bib
+bibliography/mapping.yml
+bibliography/sources.lock
+calibration_pack/audit_hash.txt
+calibration_pack/toolchain_fingerprint.txt
+claims/README.md
+claims/claims.yml
+docker-compose.yml
+docs/ACTIONS_TEST_PROTOCOL.md
+docs/API_CONTRACT.md
+docs/ARCHITECTURE.md
+docs/ARCHITECTURE_INVARIANTS.md
+docs/AUDIT_FINDINGS.md
+docs/AUDIT_LEDGER.md
+docs/AUDIT_TASKS_2026-02-15.md
+docs/BENCHMARKS.md
+docs/BENCHMARK_MAP.md
+docs/BIBLIOGRAPHY.md
+docs/BUILD_DOCS.md
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md
+docs/CI_GATES.md
+docs/COMPONENT_AUDIT.md
+docs/CONFERENCE_RUNBOOK.md
+docs/CONSTITUTIONAL_AUDIT.md
+docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md
+docs/DEMO.md
+docs/DOCUMENTATION_FORMALIZATION.md
+docs/ENTROPY_LEDGER.md
+docs/EVIDENCE_COVERAGE.md
+docs/GOVERNANCE.md
+docs/HYPOTHESIS.md
+docs/INDEX.md
+docs/INTEGRATION.md
+docs/INVENTORY.md
+docs/LEGENDARY_QUICKSTART.md
+docs/MODULE_RESPONSIBILITY_MATRIX.md
+docs/MUTATION_GATE.md
+docs/NORMATIVE_LABELING.md
+docs/PERFORMANCE.md
+docs/PERFORMANCE_REPORT.md
+docs/PHYSICAL_VALIDITY.md
+docs/PLACEHOLDER_BASELINE_CYCLE0.md
+docs/PLACEHOLDER_REGISTRY.md
+docs/PR40_EVIDENCE_REPORT.md
+docs/PR_AUTOMATION_VECTORS.md
+docs/QUALITY_INDEX.md
+docs/QUALITY_INFRASTRUCTURE.md
+docs/QUICKSTART.md
+docs/RELEASE_NOTES.md
+docs/RELEASE_PIPELINE.md
+docs/RELEASE_READINESS.md
+docs/REPO_STRUCTURE.md
+docs/REPRODUCIBILITY.md
+docs/REPRODUCIBILITY_ENVELOPE.md
+docs/SCALABILITY.md
+docs/SCALABILITY_REPORT.md
+docs/SECURITY_GITLEAKS.md
+docs/SPEC.md
+docs/SSOT.md
+docs/SSOT_RULES.md
+docs/START_HERE.md
+docs/STATUS.md
+docs/TESTING.md
+docs/TESTING_MUTATION.md
+docs/THROUGHPUT_SCALING.md
+docs/TRACEABILITY_MAP.md
+docs/TROUBLESHOOTING.md
+docs/VCG.md
+docs/api_maturity.json
+docs/audit_merge_readiness.md
+docs/conf.py
+docs/emergence_tracking.md
+docs/index.rst
+docs/modules.rst
+docs/repo_map.md
+docs/sleep_stack.md
+docs/spec_to_code.yml
+docs/usage_workflows.md
+entropy/__init__.py
+entropy/acceptance_map.yaml
+entropy/baseline.json
+entropy/commands.log
+entropy/current.json
+entropy/metrics.json
+entropy/policy.json
+examples/scaled_flagship.sh
+executive_summary.md
+experiments/__init__.py
+experiments/registry.py
+experiments/runner.py
+experiments/temperature_ablation_consolidation.py
+experiments/verify_hypothesis.py
+figures/comparison_grid.png
+figures/hero.png
+figures/tag_activity.png
+figures/temperature_vs_stability.png
+manifest/repo_manifest.computed.json
+manifest/repo_manifest.schema.json
+manifest/repo_manifest.yml
+noise_cleanup_manifest.json
+noise_cleanup_report.md
+plan.md
+proof_bundle/build.log
+proof_bundle/command_index.json
+proof_bundle/commands.log
+proof_bundle/commands_index.json
+proof_bundle/cpu.log
+proof_bundle/doc_inventory.json
+proof_bundle/ext_counts.log
+proof_bundle/file_excerpts.md
+proof_bundle/find_top.log
+proof_bundle/git_log.log
+proof_bundle/git_status.log
+proof_bundle/hashes.sha256
+proof_bundle/index.json
+proof_bundle/install_build.log
+proof_bundle/install_dev_test.log
+proof_bundle/manifests.log
+proof_bundle/mem.log
+proof_bundle/pip_version.log
+proof_bundle/pytest_version.log
+proof_bundle/python_version.log
+proof_bundle/repo_state.txt
+proof_bundle/test_all.log
+proof_bundle/test_non_validation.log
+proof_bundle/toolchain_fingerprint.json
+proof_bundle/uname.log
+pseudostructure_inventory.json
+pyproject.toml
+quality/api_contract_baseline.json
+quality/coverage_gate.json
+quality/mutation_baseline.json
+readiness_report.json
+readiness_summary.md
+reports/PR_DESCRIPTION.md
+reports/repo_representator.json
+reports/usability_blockers.json
+reports/usability_blockers_report.md
+requirements-lock.txt
+schemas/attack_paths_graph.schema.json
+schemas/audit_reproducibility.schema.json
+schemas/experiment.schema.json
+schemas/readiness_report.schema.json
+scripts/README.md
+scripts/__init__.py
+scripts/_audit_metrics_pr40.py
+scripts/audit_spec_implementation.py
+scripts/bench_ci_smoke.py
+scripts/benchmark_physics.py
+scripts/benchmark_production.py
+scripts/benchmark_sleep_stack_scale.py
+scripts/build_readiness_artifacts.py
+scripts/build_wheelhouse.py
+scripts/calculate_throughput_gain.py
+scripts/check_api_contract.py
+scripts/check_benchmark_regressions.py
+scripts/check_coverage_gate.py
+scripts/check_mutation_score.py
+scripts/check_quickstart_consistency.py
+scripts/collect_ci_run_urls.py
+scripts/compare_benchmarks.py
+scripts/generate_benchmark_baseline.py
+scripts/generate_coverage_baseline.py
+scripts/generate_coverage_trend.py
+scripts/generate_evidence_coverage.py
+scripts/generate_math_data.py
+scripts/generate_mutation_baseline.py
+scripts/generate_tests_inventory.py
+scripts/intelligence_cycle.py
+scripts/lint_ci_truthfulness.py
+scripts/math_validate.py
+scripts/mutation_ci_summary.py
+scripts/mutation_counts.py
+scripts/mutation_survivors_summary.py
+scripts/orchestrate_throughput_scaling.py
+scripts/pre-push.sh
+scripts/profile_kernels.py
+scripts/rebuild_sources_lock.py
+scripts/release_pipeline.py
+scripts/release_readiness.py
+scripts/render_workflow_policy_docs.py
+scripts/run_benchmarks.py
+scripts/run_mutation_pipeline.py
+scripts/run_scaled_sleep_stack.py
+scripts/scan_governed_docs.py
+scripts/scan_normative_tags.py
+scripts/scan_placeholders.py
+scripts/scan_tierS_misuse.py
+scripts/ssot_rules.py
+scripts/sync_required_status_contexts.py
+scripts/track_quality.py
+scripts/validate_api_maturity.py
+scripts/validate_bibliography.py
+scripts/validate_branch_protection_governance.py
+scripts/validate_claims.py
+scripts/validate_claims_coverage.py
+scripts/validate_codebase_readiness_audit.py
+scripts/validate_long_running_triggers.py
+scripts/validate_mutation_baseline.py
+scripts/validate_pr_gates.py
+scripts/validate_required_checks.py
+scripts/validate_required_status_contexts.py
+scripts/validate_status_claims.py
+scripts/validate_workflow_contracts.py
+scripts/verify_equivalence.py
+scripts/verify_formal_constants.py
+scripts/verify_reproducible_artifacts.py
+scripts/visualize_experiment.py
+tests/__init__.py
+tests/conftest.py
+tests/test_actions_pinning.py
+tests/test_adex_smoke.py
+tests/test_api_contract_command.py
+tests/test_api_contract_semver.py
+tests/test_api_maturity.py
+tests/test_api_surface_reexports.py
+tests/test_attractor_crystallizer.py
+tests/test_audit_suite_artifacts.py
+tests/test_benchmark_regression_gate.py
+tests/test_benchmarks_smoke.py
+tests/test_calibration_accuracy_speed.py
+tests/test_calibration_fit_edge.py
+tests/test_calibration_smoke.py
+tests/test_claims_enforcement.py
+tests/test_cli_interactive.py
+tests/test_cli_sleep_stack_backend_and_N_unit.py
+tests/test_cli_sleep_stack_branches.py
+tests/test_cli_sleep_stack_figure.py
+tests/test_cli_smoke.py
+tests/test_cli_unit.py
+tests/test_cli_versioning.py
+tests/test_connectivity_sparse.py
+tests/test_consolidation_smoke.py
+tests/test_coverage_gap_extensions.py
+tests/test_coverage_gate.py
+tests/test_coverage_paths.py
+tests/test_criticality_analysis_edge.py
+tests/test_criticality_smoke.py
+tests/test_crystallizer_edge_cases.py
+tests/test_determinism.py
+tests/test_dt_invariance.py
+tests/test_edge_cases_adex.py
+tests/test_edge_cases_criticality.py
+tests/test_edge_cases_synapse.py
+tests/test_edge_cases_temperature.py
+tests/test_energy_smoke.py
+tests/test_entropy_artifacts_guard.py
+tests/test_entropy_gate.py
+tests/test_experiment_manifest.py
+tests/test_experiments_declarative.py
+tests/test_experiments_temperature_ablation.py
+tests/test_faults.py
+tests/test_generate_coverage_trend.py
+tests/test_generate_inventory.py
+tests/test_imports.py
+tests/test_incremental_cache.py
+tests/test_integration_examples.py
+tests/test_integration_experiment_flow.py
+tests/test_intelligence_cycle.py
+tests/test_interactive_smoke.py
+tests/test_jax_backend.py
+tests/test_manifest_builder.py
+tests/test_manifest_consistency.py
+tests/test_manifest_tooling.py
+tests/test_manifest_tooling_regression.py
+tests/test_manifest_tools.py
+tests/test_math_invariants.py
+tests/test_memory.py
+tests/test_memory_consolidator.py
+tests/test_memory_ledger_unit.py
+tests/test_memory_trace_unit.py
+tests/test_mutation_ci_summary_contract.py
+tests/test_mutation_counts_contract.py
+tests/test_mutation_killers.py
+tests/test_mutation_run_pipeline_contract.py
+tests/test_mutation_survivors_summary.py
+tests/test_network_allocation_buffers.py
+tests/test_network_external_input.py
+tests/test_network_smoke.py
+tests/test_network_validation_edges.py
+tests/test_neuron_adex_validation.py
+tests/test_no_escape_tripwires.py
+tests/test_performance.py
+tests/test_phase_transition.py
+tests/test_phase_transition_detector.py
+tests/test_plasticity_smoke.py
+tests/test_plasticity_three_factor_edge.py
+tests/test_pr_description_policy_template.py
+tests/test_pr_description_policy_workflow.py
+tests/test_principal_test_hardening.py
+tests/test_production_adex_spike.py
+tests/test_provenance_manifest.py
+tests/test_pytest_collection_contract.py
+tests/test_quickstart_consistency_script.py
+tests/test_quickstart_contract.py
+tests/test_readiness_artifact_schemas.py
+tests/test_release_pipeline.py
+tests/test_release_readiness.py
+tests/test_run_simulation_external_current.py
+tests/test_run_simulation_validation.py
+tests/test_scan_governed_docs_script.py
+tests/test_scan_placeholders.py
+tests/test_schema_contracts.py
+tests/test_schema_experiment_contracts.py
+tests/test_sleep_cycle.py
+tests/test_sleep_cycle_integration.py
+tests/test_sleep_replay.py
+tests/test_sleep_stage_validation.py
+tests/test_spec_mapping_guard.py
+tests/test_synapse_conductance_edge.py
+tests/test_synapse_smoke.py
+tests/test_sync_required_status_contexts.py
+tests/test_temperature_smoke.py
+tests/test_tla_invariants_guard.py
+tests/test_tools_benchmark_sleep_stack_scale_unit.py
+tests/test_tools_run_scaled_sleep_stack_unit.py
+tests/test_tools_scaled_sleep_stack_smoke.py
+tests/test_update_manifest_tools.py
+tests/test_validate_bibliography_script.py
+tests/test_validate_codebase_readiness_audit.py
+tests/test_validate_long_running_triggers.py
+tests/test_validate_pr_gates.py
+tests/test_validate_status_claims.py
+tests/test_validate_workflow_contracts.py
+tests/test_validation_inputs.py
+tests/test_vcg_invariants_guard.py
+tests/test_vcg_smoke.py
+tests/test_vcg_validation.py
+tests/test_verify_hypothesis_v2.py
+tests/test_verify_reproducible_artifacts.py
+tests/test_viz_interactive.py
+tests/test_viz_interactive_main.py
+tests/test_viz_optional_import.py
+tests/test_viz_smoke_coverage.py
+tests/test_wheelhouse_tools.py
+tests/tolerances.py
+tests_inventory.json
+tools/__init__.py
+tools/generate_inventory.py
+worklist.json
+stderr:
+---
+timestamp_utc: 2026-02-16T12:32:45Z
+cmd: find .github/workflows -maxdepth 2 -type f | sort
+exit: 0
+stdout:
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/_reusable_chaos_tests.yml
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/_reusable_ssot.yml
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/benchmarks.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/ci-benchmarks.yml
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/ci-pr.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/ci-validation.yml
+.github/workflows/codecov-health.yml
+.github/workflows/codeql.yml
+.github/workflows/dependency-review.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/docs.yml
+.github/workflows/formal-coq.yml
+.github/workflows/formal-tla.yml
+.github/workflows/math-quality-gate.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/release-pipeline.yml
+.github/workflows/science.yml
+.github/workflows/workflow-integrity.yml
+stderr:
+---
+timestamp_utc: 2026-02-16T12:33:06Z
+cmd: find . -maxdepth 2 -type d | sed "s#^./##" | sort
+exit: 0
+stdout:
+.
+.git
+.git/branches
+.git/hooks
+.git/info
+.git/logs
+.git/objects
+.git/refs
+.github
+.github/actions
+.github/workflows
+PROOF_BUNDLE
+PROOF_BUNDLE/logs
+artifacts
+artifacts/audit
+artifacts/ci_logs
+artifacts/manifest
+artifacts/math_audit
+artifacts/readiness
+artifacts/release_rc
+assessment_logs
+benchmarks
+benchmarks/baselines
+benchmarks/scenarios
+bibliography
+calibration_pack
+calibration_pack/golden
+calibration_pack/harness
+calibration_pack/logs
+calibration_pack/prompts
+calibration_pack/schemas
+claims
+docs
+docs/SCRIPTS
+docs/_generated
+docs/api
+docs/appendix
+docs/benchmarks
+docs/contracts
+docs/math
+docs/placeholder_cycles
+docs/safety
+docs/scripts
+entropy
+entropy/guards
+evidence
+evidence/entropy
+evidence/entropy_gate
+evidence/inventory_fix
+evidence/manifest_fix
+evidence/placeholder_closure
+evidence/pr_216
+evidence/tests_upgrade
+evidence/zqsg_2026_02_12
+examples
+examples/configs
+examples/integration
+experiments
+figures
+figures/temp_ablation_v2
+manifest
+proof_bundle
+proof_bundle/command_logs
+proof_bundle/excerpts
+proof_bundle/generated
+proof_bundle/hashes
+proof_bundle/logs
+quality
+reports
+results
+results/temp_ablation_v1
+results/temp_ablation_v2
+schemas
+scripts
+specs
+specs/coq
+specs/tla
+src
+src/bnsyn
+src/contracts
+tests
+tests/benchmarks
+tests/properties
+tests/validation
+tools
+tools/entropy_gate
+tools/manifest
+tools/safety
+stderr:
+---
+timestamp_utc: 2026-02-16T12:33:06Z
+cmd: sed -n "1,260p" pyproject.toml
+exit: 0
+stdout:
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.0",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "psutil==7.2.2",
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "psutil==7.2.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.0",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.6.0",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+stderr:
+---
+timestamp_utc: 2026-02-16T12:33:07Z
+cmd: ls requirements*.txt 2>/dev/null || true
+exit: 0
+stdout:
+requirements-lock.txt
+stderr:
+---
