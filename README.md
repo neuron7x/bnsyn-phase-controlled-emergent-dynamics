@@ -118,5 +118,6 @@ Additional references:
 
 - Testing strategy: [`docs/TESTING.md`](docs/TESTING.md)
 - CI gate matrix: [`docs/CI_GATES.md`](docs/CI_GATES.md)
+- Project status: [`docs/STATUS.md`](docs/STATUS.md)
 - Contributing: [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Security policy: [`SECURITY.md`](SECURITY.md)
