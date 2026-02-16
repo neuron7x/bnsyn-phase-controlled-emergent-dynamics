@@ -5,15 +5,21 @@ import csv
 import hashlib
 import json
 import statistics
+import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-import numpy as np
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
-from src.contracts import (
+import numpy as np  # noqa: E402
+
+from contracts import (  # noqa: E402
     assert_dt_stability,
     assert_dtype_consistency,
     assert_energy_bounded,
@@ -32,8 +38,6 @@ from src.contracts import (
     assert_state_finite_after_step,
     assert_timeseries_monotonic_time,
 )
-ROOT = Path(__file__).resolve().parents[1]
-
 AUDIT_DIR = ROOT / "artifacts" / "math_audit"
 MANIFEST_PATH = AUDIT_DIR / "manifest.json"
 REPORT_JSON_PATH = AUDIT_DIR / "validator_report.json"

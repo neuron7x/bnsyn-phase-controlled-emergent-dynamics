@@ -17,7 +17,7 @@ except ModuleNotFoundError:  # pragma: no cover - exercised in subprocess contra
     _HYPOTHESIS_AVAILABLE = False
 
 from scripts.math_validate import build_manifest, iter_scope_files, validate_manifest
-from src.contracts import (
+from contracts import (
     assert_adjacency_binary,
     assert_column_ranges,
     assert_coupling_matrix_properties,
