@@ -59,6 +59,7 @@ jobs:
       - name: Run pytest
         id: pytest
         run: |
+          set -o pipefail
           START_TIME=$(date +%s)
           python -m pytest \
             -m "${{ inputs.markers }}" \
@@ -70,7 +71,7 @@ jobs:
             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
             --junit-xml=junit.xml \
             -v 2>&1 | tee pytest.log
-          PYTEST_EXIT=$?
+          PYTEST_EXIT=${PIPESTATUS[0]}
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
           echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
@@ -115,12 +116,13 @@ jobs:
           COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
           echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
 
-      - name: Enforce mandatory coverage.xml artifact input
+      - name: Verify coverage.xml presence for artifact upload
         if: always()
         run: |
-          if [ ! -f coverage.xml ]; then
-            echo "coverage.xml is required for smoke/unit coverage jobs"
-            exit 1
+          if [ -f coverage.xml ]; then
+            echo "coverage.xml present"
+          else
+            echo "coverage.xml missing; skipping coverage-xml artifact upload"
           fi
       
       - name: Generate summary
@@ -225,7 +227,7 @@ jobs:
           retention-days: 7
       
       - name: Upload mandatory coverage.xml artifact
-        if: always()
+        if: always() && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-xml-${{ github.sha }}

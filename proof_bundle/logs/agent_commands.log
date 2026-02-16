@@ -2980,3 +2980,572 @@ tests/test_generate_inventory.py:42:    assert (root / "INVENTORY.json").read_te
 tests/test_principal_test_hardening.py:28:    def test_generate_inventory_is_deterministic(self, tmp_path: Path) -> None:
 cmd: python -m pytest tests/test_generate_inventory.py tests/test_principal_test_hardening.py -q
 .....                                                                    [100%]
+cmd: git status --short
+
+cmd: sed -n '1,260p' .github/workflows/_reusable_pytest.yml
+# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+name: Reusable Pytest
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: 'Python version to use'
+        type: string
+        default: '3.11'
+      markers:
+        description: 'Pytest marker expression'
+        type: string
+        default: 'not (validation or property)'
+      coverage-threshold:
+        description: 'Minimum coverage percentage'
+        type: number
+        default: 85
+      timeout-minutes:
+        description: 'Timeout in minutes'
+        type: number
+        default: 10
+      upload-codecov:
+        description: 'Upload coverage to Codecov'
+        type: boolean
+        default: false
+    secrets:
+      CODECOV_TOKEN:
+        description: 'Codecov token (required if upload-codecov is true)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    name: Pytest (Coverage ${{ inputs['coverage-threshold'] }}%)
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs['timeout-minutes'] }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] }}
+          cache: 'pip'
+      
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
+
+      - name: Install dependencies
+        run: python -m pip install -e ".[test]"
+      
+      - name: Run pytest
+        id: pytest
+        run: |
+          START_TIME=$(date +%s)
+          python -m pytest \
+            -m "${{ inputs.markers }}" \
+            --cov=bnsyn \
+            --cov-report=term-missing:skip-covered \
+            --cov-report=json \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html \
+            --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
+            --junit-xml=junit.xml \
+            -v 2>&1 | tee pytest.log
+          PYTEST_EXIT=$?
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+          echo "DURATION=$DURATION" >> "$GITHUB_ENV"
+          exit "$PYTEST_EXIT"
+      
+      - name: Coverage regression gate
+        if: success()
+        run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+      - name: Parse coverage
+        if: always()
+        id: coverage
+        run: |
+          if [ -f coverage.json ]; then
+            COVERAGE=$(python -c "import json; print(round(float(json.load(open('coverage.json'))['totals']['percent_covered']), 4))")
+            echo "COVERAGE=$COVERAGE" >> "$GITHUB_ENV"
+          else
+            echo "COVERAGE=N/A" >> "$GITHUB_ENV"
+          fi
+
+          if [ -f junit.xml ]; then
+            TEST_COUNT=$(grep -c '<testcase' junit.xml || echo "0")
+            echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
+          else
+            echo "TEST_COUNT=0" >> "$GITHUB_ENV"
+          fi
+
+      - name: Generate coverage trend artifact
+        if: always() && hashFiles('coverage.json') != ''
+        run: |
+          python -m scripts.generate_coverage_trend \
+            --coverage-json coverage.json \
+            --output-json artifacts/coverage-trend/coverage-trend.json \
+            --output-csv artifacts/coverage-trend/coverage-trend.csv \
+            --sha "${{ github.sha }}" \
+            --branch "${{ github.ref_name }}"
+
+      - name: Parse coverage state
+        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+        run: |
+          COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+          echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
+
+      - name: Enforce mandatory coverage.xml artifact input
+        if: always()
+        run: |
+          if [ ! -f coverage.xml ]; then
+            echo "coverage.xml is required for smoke/unit coverage jobs"
+            exit 1
+          fi
+      
+      - name: Generate summary
+        if: always()
+        run: |
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Pytest Results"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|--------|-------|"
+            if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+              echo "| Status |  PASS |"
+            else
+              echo "| Status |  FAIL |"
+            fi
+            echo "| Tests Run | ${{ env.TEST_COUNT }} |"
+            echo "| Coverage | ${{ env.COVERAGE }}% |"
+            echo "| Coverage State | ${{ env.COVERAGE_STATE || 'N/A' }} |"
+            echo "| Threshold | ${{ inputs['coverage-threshold'] }}% |"
+            echo "| Duration | ${{ env.DURATION }}s |"
+            echo "| Markers | \`${{ inputs.markers }}\` |"
+            echo "| Python | ${{ inputs['python-version'] }} |"
+            echo ""
+            
+            # Show failure details if tests failed
+            if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+              echo "###  Failure Details"
+              echo ""
+              
+              # Extract failed tests
+              if [ -f pytest.log ]; then
+                echo "**Failed Tests:**"
+                echo "\`\`\`"
+                if grep "FAILED" pytest.log | head -10; then
+                  true
+                else
+                  echo "No FAILED markers found"
+                fi
+                echo "\`\`\`"
+                echo ""
+              fi
+              
+              # Show coverage hotspots (lowest 5 files)
+              if [ -f coverage.json ]; then
+                echo "**Coverage Hotspots (Lowest 5 Files):**"
+                echo "\`\`\`"
+                if python -c 'import json; data = json.load(open("coverage.json")); files = [(k, v["summary"]["percent_covered"]) for k, v in data.get("files", {}).items()]; files.sort(key=lambda x: x[1]); [print(f"{file}: {cov:.1f}%") for file, cov in files[:5]]' 2>/dev/null; then
+                  true
+                else
+                  echo "Could not parse coverage"
+                fi
+                echo "\`\`\`"
+                echo ""
+              fi
+              
+              # Reproduction commands
+              echo "###  Reproduction Commands"
+              echo ""
+              echo "\`\`\`bash"
+              echo "# Clone and setup"
+              echo "git clone https://github.com/${{ github.repository }}.git"
+              echo "cd ${{ github.event.repository.name }}"
+              echo "git checkout ${{ github.sha }}"
+              echo ""
+              echo "# Install dependencies"
+              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test]\""
+              echo ""
+              echo "# Run tests"
+              echo "python -m pytest -m \"${{ inputs.markers }}\" \\"
+              echo "  --cov=bnsyn \\"
+              echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
+              echo "  -v"
+              echo "\`\`\`"
+            fi
+          } >> "$summary_file"
+      
+      - name: Upload coverage to Codecov
+        if: inputs['upload-codecov'] && always()
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+          flags: pytest-${{ inputs.markers }}
+          name: pytest-coverage-${{ github.sha }}
+        timeout-minutes: 5
+      
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pytest-failure-${{ github.sha }}
+          path: |
+            pytest.log
+            junit.xml
+            htmlcov/
+            coverage.json
+            coverage.xml
+          if-no-files-found: ignore
+          retention-days: 7
+      
+      - name: Upload mandatory coverage.xml artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: coverage-xml-${{ github.sha }}
+          path: coverage.xml
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload coverage HTML report artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: coverage-html-${{ github.sha }}
+          path: htmlcov/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload coverage trend metrics artifact
+        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: coverage-trend-metrics
+          path: artifacts/coverage-trend/
+          if-no-files-found: error
+          retention-days: 90
+      
+      - name: Fail if tests failed
+        if: env.PYTEST_RESULT != '0'
+        run: exit 1
+cmd: python patch .github/workflows/_reusable_pytest.yml for robust pytest exit and artifact upload
+cmd: rg -n "name: Run pytest|PYTEST_EXIT=|Enforce mandatory coverage.xml|Upload mandatory coverage.xml artifact" .github/workflows/_reusable_pytest.yml
+59:      - name: Run pytest
+73:          PYTEST_EXIT=$?
+118:      - name: Enforce mandatory coverage.xml artifact input
+227:      - name: Upload mandatory coverage.xml artifact
+
+cmd: sed -n '44,210p' .github/workflows/_reusable_pytest.yml
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] }}
+          cache: 'pip'
+      
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
+
+      - name: Install dependencies
+        run: python -m pip install -e ".[test]"
+      
+      - name: Run pytest
+        id: pytest
+        run: |
+          START_TIME=$(date +%s)
+          python -m pytest \
+            -m "${{ inputs.markers }}" \
+            --cov=bnsyn \
+            --cov-report=term-missing:skip-covered \
+            --cov-report=json \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html \
+            --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
+            --junit-xml=junit.xml \
+            -v 2>&1 | tee pytest.log
+          PYTEST_EXIT=$?
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+          echo "DURATION=$DURATION" >> "$GITHUB_ENV"
+          exit "$PYTEST_EXIT"
+      
+      - name: Coverage regression gate
+        if: success()
+        run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+      - name: Parse coverage
+        if: always()
+        id: coverage
+        run: |
+          if [ -f coverage.json ]; then
+            COVERAGE=$(python -c "import json; print(round(float(json.load(open('coverage.json'))['totals']['percent_covered']), 4))")
+            echo "COVERAGE=$COVERAGE" >> "$GITHUB_ENV"
+          else
+            echo "COVERAGE=N/A" >> "$GITHUB_ENV"
+          fi
+
+          if [ -f junit.xml ]; then
+            TEST_COUNT=$(grep -c '<testcase' junit.xml || echo "0")
+            echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
+          else
+            echo "TEST_COUNT=0" >> "$GITHUB_ENV"
+          fi
+
+      - name: Generate coverage trend artifact
+        if: always() && hashFiles('coverage.json') != ''
+        run: |
+          python -m scripts.generate_coverage_trend \
+            --coverage-json coverage.json \
+            --output-json artifacts/coverage-trend/coverage-trend.json \
+            --output-csv artifacts/coverage-trend/coverage-trend.csv \
+            --sha "${{ github.sha }}" \
+            --branch "${{ github.ref_name }}"
+
+      - name: Parse coverage state
+        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+        run: |
+          COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+          echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
+
+      - name: Enforce mandatory coverage.xml artifact input
+        if: always()
+        run: |
+          if [ ! -f coverage.xml ]; then
+            echo "coverage.xml is required for smoke/unit coverage jobs"
+            exit 1
+          fi
+      
+      - name: Generate summary
+        if: always()
+        run: |
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Pytest Results"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|--------|-------|"
+            if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+              echo "| Status |  PASS |"
+            else
+              echo "| Status |  FAIL |"
+            fi
+            echo "| Tests Run | ${{ env.TEST_COUNT }} |"
+            echo "| Coverage | ${{ env.COVERAGE }}% |"
+            echo "| Coverage State | ${{ env.COVERAGE_STATE || 'N/A' }} |"
+            echo "| Threshold | ${{ inputs['coverage-threshold'] }}% |"
+            echo "| Duration | ${{ env.DURATION }}s |"
+            echo "| Markers | \`${{ inputs.markers }}\` |"
+            echo "| Python | ${{ inputs['python-version'] }} |"
+            echo ""
+            
+            # Show failure details if tests failed
+            if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+              echo "###  Failure Details"
+              echo ""
+              
+              # Extract failed tests
+              if [ -f pytest.log ]; then
+                echo "**Failed Tests:**"
+                echo "\`\`\`"
+                if grep "FAILED" pytest.log | head -10; then
+                  true
+                else
+                  echo "No FAILED markers found"
+                fi
+                echo "\`\`\`"
+                echo ""
+              fi
+              
+              # Show coverage hotspots (lowest 5 files)
+              if [ -f coverage.json ]; then
+                echo "**Coverage Hotspots (Lowest 5 Files):**"
+                echo "\`\`\`"
+                if python -c 'import json; data = json.load(open("coverage.json")); files = [(k, v["summary"]["percent_covered"]) for k, v in data.get("files", {}).items()]; files.sort(key=lambda x: x[1]); [print(f"{file}: {cov:.1f}%") for file, cov in files[:5]]' 2>/dev/null; then
+                  true
+                else
+                  echo "Could not parse coverage"
+                fi
+                echo "\`\`\`"
+                echo ""
+              fi
+              
+              # Reproduction commands
+              echo "###  Reproduction Commands"
+              echo ""
+              echo "\`\`\`bash"
+              echo "# Clone and setup"
+              echo "git clone https://github.com/${{ github.repository }}.git"
+              echo "cd ${{ github.event.repository.name }}"
+              echo "git checkout ${{ github.sha }}"
+              echo ""
+              echo "# Install dependencies"
+              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test]\""
+              echo ""
+              echo "# Run tests"
+              echo "python -m pytest -m \"${{ inputs.markers }}\" \\"
+              echo "  --cov=bnsyn \\"
+              echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
+              echo "  -v"
+              echo "\`\`\`"
+            fi
+          } >> "$summary_file"
+      
+      - name: Upload coverage to Codecov
+        if: inputs['upload-codecov'] && always()
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+          flags: pytest-${{ inputs.markers }}
+          name: pytest-coverage-${{ github.sha }}
+cmd: python patch _reusable_pytest.yml for pipefail and conditional coverage artifact upload
+cmd: rg -n "coverage.xml|_reusable_pytest|Upload mandatory coverage.xml artifact|pipefail|PYTEST_EXIT" tests scripts
+scripts/generate_coverage_baseline.py:26:    parser = argparse.ArgumentParser(description="Generate coverage baseline from coverage.xml")
+scripts/generate_coverage_baseline.py:27:    parser.add_argument("--coverage-xml", type=Path, default=Path("coverage.xml"))
+scripts/generate_coverage_baseline.py:32:    current = read_coverage_percent(args.coverage_xml)
+tests/test_coverage_gate.py:18:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:32:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:113:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:121:            "--coverage-xml",
+tests/test_coverage_gate.py:131:def test_main_fails_when_coverage_xml_missing(tmp_path: Path, monkeypatch) -> None:
+tests/test_coverage_gate.py:139:                "metric": "coverage.xml line-rate",
+tests/test_coverage_gate.py:149:            "--coverage-xml",
+tests/test_coverage_gate.py:160:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:169:            "--coverage-xml",
+scripts/check_coverage_gate.py:10:METRIC_NAME = "coverage.xml line-rate"
+scripts/check_coverage_gate.py:20:        raise ValueError("coverage.xml missing line-rate attribute")
+scripts/check_coverage_gate.py:72:    parser.add_argument("--coverage-xml", type=Path, default=Path("coverage.xml"))
+scripts/check_coverage_gate.py:78:        current = read_coverage_percent(args.coverage_xml)
+scripts/README.md:19:| `check_coverage_gate.py` | UNKNOWN/TBD: missing module docstring. | `--baseline | --coverage-xml | --tolerance` | See page | See page | Safe (read-only checks) | `python -m scripts.check_coverage_gate --help` |
+scripts/README.md:25:| `generate_coverage_baseline.py` | UNKNOWN/TBD: missing module docstring. | `--coverage-xml | --minimum-percent | --output` | See page | See page | Writes artifacts only | `python -m scripts.generate_coverage_baseline --help` |
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+cmd: python -m pytest tests/test_validate_workflow_contracts.py tests/test_validate_long_running_triggers.py tests/test_validate_pr_gates.py -q
+
+==================================== ERRORS ====================================
+__________ ERROR collecting tests/test_validate_workflow_contracts.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_workflow_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_workflow_contracts.py:7: in <module>
+    from scripts.validate_workflow_contracts import (
+scripts/validate_workflow_contracts.py:9: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________ ERROR collecting tests/test_validate_long_running_triggers.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_long_running_triggers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_long_running_triggers.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_validate_pr_gates.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_pr_gates.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_pr_gates.py:5: in <module>
+    from scripts.validate_pr_gates import validate_pr_gates
+scripts/validate_pr_gates.py:8: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR tests/test_validate_workflow_contracts.py
+ERROR tests/test_validate_long_running_triggers.py
+ERROR tests/test_validate_pr_gates.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
+cmd: ruff check .github/workflows/_reusable_pytest.yml
+All checks passed!
+cmd: python -m pip install pyyaml
+Collecting pyyaml
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 20.0 MB/s  0:00:00
+Installing collected packages: pyyaml
+Successfully installed pyyaml-6.0.3
+cmd: python -m scripts.validate_workflow_contracts && python -m scripts.validate_long_running_triggers
+OK: long_running_trigger_policy workflows=31 violations=0
+cmd: python -m pytest tests/test_validate_workflow_contracts.py tests/test_validate_long_running_triggers.py tests/test_validate_pr_gates.py -q
+.......................................                                  [100%]
+cmd: git status --short
+
+cmd: git diff -- .github/workflows/_reusable_pytest.yml | sed -n '1,220p'
+diff --git a/.github/workflows/_reusable_pytest.yml b/.github/workflows/_reusable_pytest.yml
+index 1e550f8..55e39eb 100644
+--- a/.github/workflows/_reusable_pytest.yml
++++ b/.github/workflows/_reusable_pytest.yml
+@@ -59,6 +59,7 @@ jobs:
+       - name: Run pytest
+         id: pytest
+         run: |
++          set -o pipefail
+           START_TIME=$(date +%s)
+           python -m pytest \
+             -m "${{ inputs.markers }}" \
+@@ -70,7 +71,7 @@ jobs:
+             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
+             --junit-xml=junit.xml \
+             -v 2>&1 | tee pytest.log
+-          PYTEST_EXIT=$?
++          PYTEST_EXIT=${PIPESTATUS[0]}
+           END_TIME=$(date +%s)
+           DURATION=$((END_TIME - START_TIME))
+           echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+@@ -115,12 +116,13 @@ jobs:
+           COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+           echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
+ 
+-      - name: Enforce mandatory coverage.xml artifact input
++      - name: Verify coverage.xml presence for artifact upload
+         if: always()
+         run: |
+-          if [ ! -f coverage.xml ]; then
+-            echo "coverage.xml is required for smoke/unit coverage jobs"
+-            exit 1
++          if [ -f coverage.xml ]; then
++            echo "coverage.xml present"
++          else
++            echo "coverage.xml missing; skipping coverage-xml artifact upload"
+           fi
+       
+       - name: Generate summary
+@@ -225,7 +227,7 @@ jobs:
+           retention-days: 7
+       
+       - name: Upload mandatory coverage.xml artifact
+-        if: always()
++        if: always() && hashFiles('coverage.xml') != ''
+         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+         with:
+           name: coverage-xml-${{ github.sha }}
+cmd: python -m scripts.validate_workflow_contracts
+Workflow contracts validation passed.
+cmd: python -m scripts.validate_long_running_triggers
+OK: long_running_trigger_policy workflows=31 violations=0
