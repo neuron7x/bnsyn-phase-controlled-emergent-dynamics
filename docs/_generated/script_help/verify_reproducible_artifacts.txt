@@ -1,0 +1,10 @@
+usage: verify_reproducible_artifacts.py [-h] --spec SPEC [--runs RUNS]
+                                        [--report REPORT]
+
+Verify generated artifacts are reproducible
+
+options:
+  -h, --help       show this help message and exit
+  --spec SPEC      Path to JSON list of {artifact, command}
+  --runs RUNS
+  --report REPORT

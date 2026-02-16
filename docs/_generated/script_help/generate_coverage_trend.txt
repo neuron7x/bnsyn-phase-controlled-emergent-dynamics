@@ -1,0 +1,13 @@
+usage: generate_coverage_trend.py [-h] --coverage-json COVERAGE_JSON
+                                  --output-json OUTPUT_JSON --output-csv
+                                  OUTPUT_CSV --sha SHA --branch BRANCH
+
+Generate compact coverage trend artifacts for CI observability.
+
+options:
+  -h, --help            show this help message and exit
+  --coverage-json COVERAGE_JSON
+  --output-json OUTPUT_JSON
+  --output-csv OUTPUT_CSV
+  --sha SHA
+  --branch BRANCH

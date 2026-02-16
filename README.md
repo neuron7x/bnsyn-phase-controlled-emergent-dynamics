@@ -10,6 +10,28 @@ BN-Syn is the deterministic reference implementation of the BN-Syn Thermostated 
 
 BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-controlled emergent dynamics with strict evidence and governance controls. This repository is the *single source of truth* for specifications, experiments, validation, and compliance artifacts.
 
+## Start Here (Canonical Onboarding)
+
+- Documentation entrypoint: [`docs/START_HERE.md`](docs/START_HERE.md)
+- Scripts registry (100% `scripts/*.py` coverage): [`docs/SCRIPTS/index.md`](docs/SCRIPTS/index.md)
+- API reference: [`docs/api/index.md`](docs/api/index.md)
+
+Canonical local commands:
+
+```bash
+# Install
+python -m pip install -e ".[dev]"
+
+# Run
+python -m bnsyn.cli --help
+
+# Test
+pytest -q
+
+# Build docs
+python -m sphinx -b html docs docs/_build/html
+```
+
 ## Contents
 
 - [Quality Assurance](#quality-assurance)

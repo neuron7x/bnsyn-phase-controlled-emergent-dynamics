@@ -1,4 +1,4 @@
-﻿bnsyn.plasticity.three\_factor
+bnsyn.plasticity.three\_factor
 ==============================
 
 .. automodule:: bnsyn.plasticity.three_factor

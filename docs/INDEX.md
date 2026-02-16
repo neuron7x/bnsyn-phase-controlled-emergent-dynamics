@@ -10,6 +10,7 @@ Use this index to find any document, specification, or governance artifact.
 | Purpose | Document |
 |---------|----------|
 | **What is BN-Syn** | <a href="../README.md">README.md</a> |
+| **Start Here (onboarding)** | [START_HERE.md](START_HERE.md) |
 | **Formal Specification** | [SPEC.md](SPEC.md) |
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | **Testing & Coverage (Canonical)** | [TESTING.md](TESTING.md) |
@@ -25,6 +26,9 @@ Use this index to find any document, specification, or governance artifact.
 | **Release Notes** | [RELEASE_NOTES.md](RELEASE_NOTES.md) |
 | **Experimental Hypothesis** | [HYPOTHESIS.md](HYPOTHESIS.md) (NON-NORMATIVE) |
 | **Troubleshooting** | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
+| **Scripts Reference** | [SCRIPTS/index.md](SCRIPTS/index.md) |
+| **Build Docs** | [BUILD_DOCS.md](BUILD_DOCS.md) |
+| **Module Responsibility Matrix** | [MODULE_RESPONSIBILITY_MATRIX.md](MODULE_RESPONSIBILITY_MATRIX.md) |
 | **Contributing** | <a href="../CONTRIBUTING.md">CONTRIBUTING.md</a> |
 
 ---

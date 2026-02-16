@@ -1,0 +1,19 @@
+usage: run_mutation_pipeline.py [-h] [--paths-to-mutate PATHS_TO_MUTATE]
+                                [--runner RUNNER] [--tests-dir TESTS_DIR]
+                                [--results-file RESULTS_FILE]
+                                [--results-stderr-file RESULTS_STDERR_FILE]
+                                [--survivors-file SURVIVORS_FILE]
+
+Execute mutation run and export artifacts
+
+options:
+  -h, --help            show this help message and exit
+  --paths-to-mutate PATHS_TO_MUTATE
+                        Comma-separated paths passed to mutmut --paths-to-
+                        mutate
+  --runner RUNNER       mutmut runner command
+  --tests-dir TESTS_DIR
+                        mutmut tests directory
+  --results-file RESULTS_FILE
+  --results-stderr-file RESULTS_STDERR_FILE
+  --survivors-file SURVIVORS_FILE
