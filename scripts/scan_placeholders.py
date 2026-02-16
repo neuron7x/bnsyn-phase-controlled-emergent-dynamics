@@ -83,11 +83,13 @@ def _scan_python(path: Path) -> list[PlaceholderFinding]:
         elif isinstance(node, ast.Raise):
             if isinstance(node.exc, ast.Call):
                 func = node.exc.func
-                is_not_implemented = isinstance(func, ast.Name) and func.id == "NotImplementedError"
             else:
-                is_not_implemented = (
-                    isinstance(node.exc, ast.Name) and node.exc.id == "NotImplementedError"
-                )
+                func = node.exc
+
+            is_not_implemented = (
+                (isinstance(func, ast.Name) and func.id == "NotImplementedError")
+                or (isinstance(func, ast.Attribute) and func.attr == "NotImplementedError")
+            )
 
             if is_not_implemented:
                 findings.append(
