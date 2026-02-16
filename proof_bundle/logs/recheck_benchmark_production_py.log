@@ -1,0 +1,17 @@
+CMD: python scripts/benchmark_production.py --help
+EXIT: 1
+STDOUT:
+AdEx: n=50000 steps=2000 elapsed_s=4.859458 step_us=2429.73 spikes=50000
+
+STDERR:
+Traceback (most recent call last):
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/benchmark_production.py", line 54, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/benchmark_production.py", line 49, in main
+    bench_connectivity()
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/benchmark_production.py", line 42, in bench_connectivity
+    adj = build_connectivity(cfg, seed=42)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: build_connectivity() got an unexpected keyword argument 'seed'
+

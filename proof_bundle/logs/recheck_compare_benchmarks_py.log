@@ -1,0 +1,17 @@
+CMD: python scripts/compare_benchmarks.py --help
+EXIT: 0
+STDOUT:
+usage: compare_benchmarks.py [-h] [--baseline BASELINE] [--current CURRENT]
+                             [--format {json,markdown}]
+
+Compare benchmarks against golden baseline
+
+options:
+  -h, --help            show this help message and exit
+  --baseline BASELINE   Path to golden baseline YAML
+  --current CURRENT     Path to current benchmark results JSON
+  --format {json,markdown}
+                        Output format (default: markdown)
+
+STDERR:
+

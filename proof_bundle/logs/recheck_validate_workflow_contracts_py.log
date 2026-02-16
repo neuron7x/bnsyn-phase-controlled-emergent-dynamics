@@ -1,0 +1,7 @@
+CMD: python scripts/validate_workflow_contracts.py --help
+EXIT: 3
+STDOUT:
+Usage: python -m scripts.validate_workflow_contracts
+
+STDERR:
+

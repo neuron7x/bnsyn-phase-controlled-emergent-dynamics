@@ -1,0 +1,4 @@
+CMD: rg -n "Scan code/docs trees for placeholder signals used by governance gates" docs/SCRIPTS/index.md
+54:| `scan_placeholders.py` | Scan code/docs trees for placeholder signals used by governance gates. | available |
+1352:**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+EXIT:0

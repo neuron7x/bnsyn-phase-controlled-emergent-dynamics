@@ -140,7 +140,7 @@ python -m scripts._audit_metrics_pr40 --help
 
 ## `audit_spec_implementation.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -264,7 +264,7 @@ python -m scripts.benchmark_production --help
 
 ## `benchmark_sleep_stack_scale.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -295,7 +295,7 @@ python -m scripts.benchmark_sleep_stack_scale --help
 
 ## `build_readiness_artifacts.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -326,7 +326,7 @@ python -m scripts.build_readiness_artifacts --help
 
 ## `build_wheelhouse.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -450,7 +450,7 @@ python -m scripts.check_benchmark_regressions --help
 
 ## `check_coverage_gate.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -543,7 +543,7 @@ python -m scripts.check_quickstart_consistency --help
 
 ## `collect_ci_run_urls.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -636,7 +636,7 @@ python -m scripts.generate_benchmark_baseline --help
 
 ## `generate_coverage_baseline.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -729,7 +729,7 @@ python -m scripts.generate_evidence_coverage --help
 
 ## `generate_math_data.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -791,7 +791,7 @@ python -m scripts.generate_mutation_baseline --help
 
 ## `generate_tests_inventory.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -822,7 +822,7 @@ python -m scripts.generate_tests_inventory --help
 
 ## `intelligence_cycle.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -884,7 +884,7 @@ python -m scripts.lint_ci_truthfulness --help
 
 ## `math_validate.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1070,7 +1070,7 @@ python -m scripts.profile_kernels --help
 
 ## `rebuild_sources_lock.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1163,7 +1163,7 @@ python -m scripts.release_readiness --help
 
 ## `render_workflow_policy_docs.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1256,7 +1256,7 @@ python -m scripts.run_mutation_pipeline --help
 
 ## `run_scaled_sleep_stack.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1411,7 +1411,7 @@ python -m scripts.scan_tierS_misuse --help
 
 ## `ssot_rules.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1442,7 +1442,7 @@ python -m scripts.ssot_rules --help
 
 ## `sync_required_status_contexts.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1473,7 +1473,7 @@ python -m scripts.sync_required_status_contexts --help
 
 ## `track_quality.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1566,7 +1566,7 @@ python -m scripts.validate_bibliography --help
 
 ## `validate_branch_protection_governance.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1597,7 +1597,7 @@ python -m scripts.validate_branch_protection_governance --help
 
 ## `validate_claims.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1690,7 +1690,7 @@ python -m scripts.validate_codebase_readiness_audit --help
 
 ## `validate_long_running_triggers.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1752,7 +1752,7 @@ python -m scripts.validate_mutation_baseline --help
 
 ## `validate_pr_gates.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1783,7 +1783,7 @@ python -m scripts.validate_pr_gates --help
 
 ## `validate_required_checks.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1814,7 +1814,7 @@ python -m scripts.validate_required_checks --help
 
 ## `validate_required_status_contexts.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1876,7 +1876,7 @@ python -m scripts.validate_status_claims --help
 
 ## `validate_workflow_contracts.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.
@@ -1969,7 +1969,7 @@ python -m scripts.verify_formal_constants --help
 
 ## `verify_reproducible_artifacts.py`
 
-**Purpose:** Scan code/docs trees for placeholder signals used by governance gates.
+**Purpose:** UNKNOWN/TBD: missing module docstring.
 
 **When to use:** Use when this script's named workflow needs to run from repository root.  
 **When not to use:** Do not use for runtime library integration; import `src/` modules directly for programmatic use.

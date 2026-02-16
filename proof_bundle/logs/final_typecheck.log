@@ -1,0 +1,3 @@
+CMD: python -m mypy src --strict
+Success: no issues found in 72 source files
+EXIT:0

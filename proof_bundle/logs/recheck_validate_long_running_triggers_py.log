@@ -1,0 +1,7 @@
+CMD: python scripts/validate_long_running_triggers.py --help
+EXIT: 3
+STDOUT:
+Usage: python -m scripts.validate_long_running_triggers [--dry-run]
+
+STDERR:
+

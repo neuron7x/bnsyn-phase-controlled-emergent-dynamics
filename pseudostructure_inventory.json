@@ -1,8 +1,8 @@
 {
   "meta": {
-    "timestamp_utc": "2026-02-16T10:22:42Z",
+    "timestamp_utc": "2026-02-16T10:35:08.135141Z",
     "git": {
-      "commit": "dbb6be4a5af3675e79c15b7debbcb022dae6c1f7",
+      "commit": "4cdb981d937db717ca6260aa5fa149361e32b836",
       "branch": "work",
       "dirty": true
     },
@@ -18,30 +18,24 @@
   "discovery": {
     "scan_commands": [
       {
-        "cmd": "rg -n --hidden -g !.git -e TODO ... -e scaffold .",
-        "log_path": "proof_bundle/logs/01_scan_static2_20260216T101447Z.log",
+        "cmd": "python sync purposes script",
+        "log_path": "proof_bundle/logs/postaudit_sync_purposes_20260216T103124Z.log",
         "exit_code": 0
       },
       {
-        "cmd": "rg -n \"TODO|FIXME|NotImplemented|pass$|return None$|return {}$|return []$\" src scripts tools",
-        "log_path": "proof_bundle/logs/01_scan_codefocused_20260216T101453Z.log",
+        "cmd": "rg -n \"Scan code/docs trees for placeholder signals used by governance gates\" docs/SCRIPTS/index.md",
+        "log_path": "proof_bundle/logs/postaudit_duplicate_scan_20260216T103130Z.log",
         "exit_code": 0
       },
       {
-        "cmd": "python -m scripts.scan_placeholders --format json",
-        "log_path": "proof_bundle/logs/01_scan_placeholders_20260216T101503Z.log",
+        "cmd": "recheck unavailable scripts with --help",
+        "log_path": "proof_bundle/logs/postaudit_recheck_unavailable_20260216T103142Z.log",
         "exit_code": 0
       }
     ],
     "patterns": [
-      "TODO",
-      "FIXME",
-      "WIP",
-      "stub",
-      "placeholder",
-      "NotImplementedError",
-      "pass in except",
-      "doc template markers"
+      "duplicated generic purpose text",
+      "unavailable (exit 1)"
     ]
   },
   "items": [
@@ -49,64 +43,1372 @@
       "id": "PS-0001",
       "kind": "OTHER",
       "severity": "LOW",
-      "module_path": "scripts/scan_placeholders.py",
-      "symbol": "module_docstring",
+      "module_path": "docs/SCRIPTS/index.md",
+      "symbol": "duplicated_generic_purpose_text",
       "evidence": [
         {
-          "pointer": "scripts/scan_placeholders.py:1-1",
-          "snippet": "(pre-fix) missing module docstring caused UNKNOWN/TBD script documentation entries",
-          "type": "inferred",
-          "strength_score": 2,
+          "pointer": "proof_bundle/logs/postaudit_duplicate_scan_*.log",
+          "snippet": "duplicate phrase scan retained only script-specific occurrences",
+          "type": "dynamic",
+          "strength_score": 5,
           "reproducible": true
         },
         {
-          "pointer": "docs/scripts/index.md:51-51",
-          "snippet": "`scan_placeholders.py` documented as UNKNOWN/TBD: missing module docstring",
-          "type": "static",
-          "strength_score": 3,
+          "pointer": "proof_bundle/logs/postaudit_sync_purposes_*.log",
+          "snippet": "sections_replaced=25 via page-purpose synchronization",
+          "type": "dynamic",
+          "strength_score": 5,
           "reproducible": true
         }
       ],
-      "expected_real_behavior": "`scan_placeholders.py` exposes an explicit purpose contract so script indexes do not require UNKNOWN/TBD for this module.",
+      "expected_real_behavior": "Script purpose text in docs/SCRIPTS/index.md should reflect each script page, not a duplicated generic phrase.",
       "implementation_plan": {
         "constraints": [
-          "Preserve scanner logic and CLI behavior",
-          "Minimal diff confined to scanner + generated script docs"
+          "Documentation-only edits",
+          "No runtime logic modifications"
         ],
         "steps": [
-          "Add module docstring in scripts/scan_placeholders.py",
-          "Update script documentation entries that depended on missing docstring"
+          "Parse docs/scripts pages for purpose text",
+          "Rewrite docs/SCRIPTS purpose lines per script"
         ],
         "tests_to_add_or_update": [
-          "Run existing test/lint/typecheck suite used by project"
+          "No code tests required"
         ],
         "acceptance": [
-          "scanner command remains passing",
-          "tests pass",
-          "lint/typecheck pass"
+          "Generic phrase is no longer duplicated across unrelated script sections"
         ]
       },
       "status": "DONE",
+      "recheck_status": "DONE",
       "pr_links": {
         "files_changed": [
-          "scripts/scan_placeholders.py",
-          "scripts/README.md",
-          "docs/scripts/index.md",
           "docs/SCRIPTS/index.md",
-          "docs/scripts/scan-placeholders.md"
+          "proof_bundle/excerpts/taskA_unique_descriptions.md"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0002",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/_audit_metrics_pr40.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck__audit_metrics_pr40_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck__audit_metrics_pr40_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0003",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/audit_spec_implementation.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_audit_spec_implementation_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_audit_spec_implementation_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0004",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/benchmark_physics.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_benchmark_physics_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_benchmark_physics_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0005",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/benchmark_production.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_benchmark_production_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_benchmark_production_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0006",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/benchmark_sleep_stack_scale.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_benchmark_sleep_stack_scale_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_benchmark_sleep_stack_scale_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0007",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/check_benchmark_regressions.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_check_benchmark_regressions_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_check_benchmark_regressions_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0008",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/compare_benchmarks.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_compare_benchmarks_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_compare_benchmarks_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0009",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/generate_benchmark_baseline.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_generate_benchmark_baseline_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_generate_benchmark_baseline_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0010",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/generate_evidence_coverage.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_generate_evidence_coverage_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_generate_evidence_coverage_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0011",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/lint_ci_truthfulness.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_lint_ci_truthfulness_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_lint_ci_truthfulness_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0012",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/mutation_survivors_summary.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_mutation_survivors_summary_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_mutation_survivors_summary_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0013",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/orchestrate_throughput_scaling.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_orchestrate_throughput_scaling_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_orchestrate_throughput_scaling_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0014",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/profile_kernels.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_profile_kernels_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_profile_kernels_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0015",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/rebuild_sources_lock.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_rebuild_sources_lock_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_rebuild_sources_lock_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0016",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/run_benchmarks.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_run_benchmarks_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_run_benchmarks_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0017",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/run_scaled_sleep_stack.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_run_scaled_sleep_stack_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_run_scaled_sleep_stack_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0018",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/scan_governed_docs.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_scan_governed_docs_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_scan_governed_docs_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0019",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/scan_normative_tags.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_scan_normative_tags_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_scan_normative_tags_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0020",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/scan_tierS_misuse.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_scan_tierS_misuse_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_scan_tierS_misuse_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0021",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/ssot_rules.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_ssot_rules_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_ssot_rules_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0022",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/sync_required_status_contexts.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_sync_required_status_contexts_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_sync_required_status_contexts_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0023",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/validate_bibliography.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_bibliography_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_bibliography_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0024",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_branch_protection_governance.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_branch_protection_governance_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_branch_protection_governance_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0025",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/validate_claims.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_claims_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_claims_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0026",
+      "kind": "OTHER",
+      "severity": "LOW",
+      "module_path": "scripts/validate_claims_coverage.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_claims_coverage_py.log",
+          "snippet": "--help recheck exit_code=0",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "DONE",
+      "recheck_status": "DONE",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_claims_coverage_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0027",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_long_running_triggers.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_long_running_triggers_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_long_running_triggers_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0028",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_pr_gates.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_pr_gates_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_pr_gates_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0029",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_required_checks.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_required_checks_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_required_checks_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0030",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_required_status_contexts.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_required_status_contexts_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_required_status_contexts_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0031",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/validate_workflow_contracts.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_validate_workflow_contracts_py.log",
+          "snippet": "--help recheck exit_code=3",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_validate_workflow_contracts_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0032",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/verify_equivalence.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_verify_equivalence_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_verify_equivalence_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
+        ],
+        "commits": []
+      }
+    },
+    {
+      "id": "PS-0033",
+      "kind": "OTHER",
+      "severity": "MEDIUM",
+      "module_path": "scripts/visualize_experiment.py",
+      "symbol": "help_mode_revalidation",
+      "evidence": [
+        {
+          "pointer": "proof_bundle/logs/recheck_visualize_experiment_py.log",
+          "snippet": "--help recheck exit_code=1",
+          "type": "dynamic",
+          "strength_score": 5,
+          "reproducible": true
+        }
+      ],
+      "expected_real_behavior": "Script help invocation should return deterministic exit code for audit validation.",
+      "implementation_plan": {
+        "constraints": [
+          "No script logic changes"
+        ],
+        "steps": [
+          "Run help mode",
+          "Record exit code"
+        ],
+        "tests_to_add_or_update": [
+          "N/A"
+        ],
+        "acceptance": [
+          "Inventory records DONE/STILL_FAILING/UNKNOWN recheck status"
+        ]
+      },
+      "status": "OPEN",
+      "recheck_status": "STILL_FAILING",
+      "pr_links": {
+        "files_changed": [
+          "proof_bundle/logs/recheck_visualize_experiment_py.log",
+          "proof_bundle/excerpts/recheck_unavailable_summary.json"
         ],
         "commits": []
       }
     }
   ],
   "summary": {
-    "total_items": 1,
-    "done_items": 1,
+    "total_items": 33,
+    "done_items": 19,
     "risk_notes": [
-      "Repository-wide regex scan contains many contextual mentions not representing actionable pseudo-structures; focused scanner remained empty."
+      "Some scripts intentionally return non-zero with missing args even in --help paths; marked STILL_FAILING in recheck_status."
     ],
     "side_effects_detected": [
-      "Installed local dev/test dependencies in environment only; no dependency file changes committed."
+      "No runtime logic changed; documentation + audit artifacts only."
     ]
   }
 }

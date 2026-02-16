@@ -1,0 +1,12 @@
+CMD: python scripts/scan_governed_docs.py --help
+EXIT: 0
+STDOUT:
+[governed-docs] Governed docs listed: 32
+[governed-docs] Files scanned: 32
+[governed-docs] Normative lines: 5
+[governed-docs] Orphan normative lines: 0
+[governed-docs] Missing governed files: 0
+[governed-docs] OK: governed docs have no orphan normative statements.
+
+STDERR:
+

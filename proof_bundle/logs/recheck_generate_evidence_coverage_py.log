@@ -1,0 +1,11 @@
+CMD: python scripts/generate_evidence_coverage.py --help
+EXIT: 0
+STDOUT:
+[evidence-coverage] Generated /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/EVIDENCE_COVERAGE.md
+[evidence-coverage] Claims: 26
+[evidence-coverage] Tier-A: 22
+[evidence-coverage] Tier-S: 4
+[evidence-coverage] Normative: 22
+
+STDERR:
+

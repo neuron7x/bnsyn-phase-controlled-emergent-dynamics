@@ -1,0 +1,7 @@
+CMD: python scripts/validate_claims.py --help
+EXIT: 0
+STDOUT:
+[claims-gate] OK: 26 claims validated; 22 normative.
+
+STDERR:
+

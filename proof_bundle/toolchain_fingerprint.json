@@ -1,13 +1,8 @@
 {
-  "os": "Linux-6.12.47-x86_64-with-glibc2.39",
+  "python_version": "3.12.12",
+  "ruff_version": "0.15.0",
+  "mypy_version": "1.19.1",
+  "os": "Linux",
   "arch": "x86_64",
-  "python": "3.12.12",
-  "pip": "pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)",
-  "tools": {
-    "pytest": "9.0.2",
-    "ruff": "0.15.0",
-    "mypy": "1.19.1",
-    "pylint": "3.3.5",
-    "pyyaml": "6.0.3"
-  }
+  "git_commit": "4cdb981d937db717ca6260aa5fa149361e32b836"
 }

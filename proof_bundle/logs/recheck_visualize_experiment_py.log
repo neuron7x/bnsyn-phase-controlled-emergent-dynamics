@@ -1,0 +1,10 @@
+CMD: python scripts/visualize_experiment.py --help
+EXIT: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/visualize_experiment.py", line 20, in <module>
+    import matplotlib
+ModuleNotFoundError: No module named 'matplotlib'
+
