@@ -22,7 +22,7 @@ Master orchestrator for BN-Syn throughput scaling validation. This script execut
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.orchestrate_throughput_scaling --help
 ```

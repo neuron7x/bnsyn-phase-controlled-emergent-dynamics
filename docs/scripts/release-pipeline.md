@@ -16,7 +16,7 @@ Deterministic release pipeline helper (changelog + version + build + dry-run pub
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.release_pipeline --help
 ```

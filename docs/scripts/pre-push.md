@@ -16,7 +16,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 bash scripts/pre-push.sh
 ```

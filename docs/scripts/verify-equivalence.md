@@ -16,7 +16,7 @@ Physical equivalence verification for BN-Syn backends. This script compares refe
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.verify_equivalence --help
 ```

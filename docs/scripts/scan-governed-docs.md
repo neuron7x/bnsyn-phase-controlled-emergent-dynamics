@@ -16,7 +16,7 @@ Scan governed docs for untagged normative language. This script reads the author
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.scan_governed_docs --help
 ```

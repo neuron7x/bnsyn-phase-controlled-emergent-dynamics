@@ -16,7 +16,7 @@ Canonical mutation metrics model and extraction for CI and gates.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.mutation_counts --help
 ```

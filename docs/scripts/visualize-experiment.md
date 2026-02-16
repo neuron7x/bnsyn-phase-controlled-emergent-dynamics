@@ -16,7 +16,7 @@ Visualize temperature ablation experiment results. This script generates publica
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.visualize_experiment --help
 ```

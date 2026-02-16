@@ -17,7 +17,7 @@ Generate EVIDENCE_COVERAGE.md from claims.yml and bibliography. This script prod
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.generate_evidence_coverage --help
 ```

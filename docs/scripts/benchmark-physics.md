@@ -16,7 +16,7 @@ Ground-truth physics benchmark for BN-Syn throughput scaling. This script establ
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.benchmark_physics --help
 ```

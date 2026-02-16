@@ -16,7 +16,7 @@ Semver-aware API contract gate for BN-Syn public modules.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.check_api_contract --help
 ```

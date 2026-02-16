@@ -16,7 +16,7 @@ Validate Claims→Evidence Coverage (CLM-0011 Enforcement). Ensures all claims i
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_claims_coverage --help
 ```

@@ -18,5 +18,6 @@ operations, scripts, and API surfaces.
    BUILD_DOCS
    scripts/index
    contracts/index
+   audit_merge_readiness
    api/index
    INDEX

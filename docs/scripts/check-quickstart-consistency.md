@@ -18,7 +18,7 @@ Validate canonical install/quickstart commands stay consistent across docs.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.check_quickstart_consistency --help
 ```

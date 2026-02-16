@@ -17,7 +17,7 @@ Scan governed docs for normative tags and claim compliance.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.scan_normative_tags --help
 ```

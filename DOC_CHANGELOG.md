@@ -35,3 +35,10 @@
 ## Build/Verification Notes
 - `make docs` executed successfully in this run (see `proof_bundle/commands.log`).
 - Any future script interface drift should be synchronized by regenerating script docs from source.
+
+
+## Quality-Gate Fix Pass (Post-Review)
+- Added `docs/audit_merge_readiness.md` with pass/fail table for Gates A–G and explicit merge-readiness determination.
+- Standardized script page section heading to `## Examples` across `docs/scripts/*.md` to match required template wording.
+- Regenerated `proof_bundle/commands.log` with strict per-command metadata (`timestamp`, `cwd`, `command`, `timeout_sec`, `duration_sec`, `exit_code`, `stdout`, `stderr`).
+- Refreshed `proof_bundle/doc_inventory.json`, `proof_bundle/repo_state.txt`, and `proof_bundle/hashes.sha256` for consistency after fixes.

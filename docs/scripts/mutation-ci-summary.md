@@ -16,7 +16,7 @@ Emit canonical mutation CI outputs and GitHub summary.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.mutation_ci_summary --help
 ```

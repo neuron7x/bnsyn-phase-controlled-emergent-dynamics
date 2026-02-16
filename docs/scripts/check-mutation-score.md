@@ -16,7 +16,7 @@ Check mutation score against baseline with tolerance.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.check_mutation_score --help
 ```

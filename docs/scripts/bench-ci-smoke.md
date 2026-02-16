@@ -17,7 +17,7 @@ CI smoke test for benchmark harness. Runs minimal benchmark scenario to validate
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.bench_ci_smoke --help
 ```

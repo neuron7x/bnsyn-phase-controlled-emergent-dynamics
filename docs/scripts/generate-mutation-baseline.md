@@ -17,7 +17,7 @@ Generate mutation testing baseline with real data.
 ## Safety Level
 - Mutates repository state
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.generate_mutation_baseline --help
 ```

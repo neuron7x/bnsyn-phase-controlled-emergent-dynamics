@@ -16,7 +16,7 @@ SSOT tooling package for CI and quality automation scripts.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.__init__ --help
 ```

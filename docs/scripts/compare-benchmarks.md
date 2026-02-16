@@ -17,7 +17,7 @@ Compare benchmark results against golden baseline. Detects performance regressio
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.compare_benchmarks --help
 ```

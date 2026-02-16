@@ -18,7 +18,7 @@ Run deterministic BN-Syn performance benchmarks.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.run_benchmarks --help
 ```

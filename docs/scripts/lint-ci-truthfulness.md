@@ -16,7 +16,7 @@ Lint CI workflows for truthfulness and quality. This governance gate scans GitHu
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.lint_ci_truthfulness --help
 ```

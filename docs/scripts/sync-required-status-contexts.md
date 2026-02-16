@@ -18,7 +18,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Mutates repository state
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.sync_required_status_contexts --help
 ```

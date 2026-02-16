@@ -16,7 +16,7 @@ Validate package maturity status mapping for public BN-Syn modules.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_api_maturity --help
 ```

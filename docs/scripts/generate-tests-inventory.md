@@ -16,7 +16,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.generate_tests_inventory --help
 ```

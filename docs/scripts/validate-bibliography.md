@@ -17,7 +17,7 @@ Validate BN-Syn bibliography SSOT: - bnsyn.bib entries include DOI for Tier-A so
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_bibliography --help
 ```

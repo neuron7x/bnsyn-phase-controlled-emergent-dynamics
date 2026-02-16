@@ -19,7 +19,7 @@ Regression gate for physics and kernel benchmarks. Compares current benchmark re
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.check_benchmark_regressions --help
 ```

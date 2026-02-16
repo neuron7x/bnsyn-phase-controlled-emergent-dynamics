@@ -16,7 +16,7 @@ Independent metric audit for PR #40 temperature ablation experiment. This script
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts._audit_metrics_pr40 --help
 ```

@@ -17,7 +17,7 @@ Scan for misuse of Tier-S bibkeys in normative contexts. This script enforces th
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.scan_tierS_misuse --help
 ```

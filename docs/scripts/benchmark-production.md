@@ -16,7 +16,7 @@ Local benchmark for BN-Syn production helpers. Not executed in CI. Intended for 
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.benchmark_production --help
 ```

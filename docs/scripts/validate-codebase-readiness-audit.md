@@ -16,7 +16,7 @@ Validate codebase readiness audit JSON structure and scoring invariants.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_codebase_readiness_audit --help
 ```

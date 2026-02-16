@@ -18,6 +18,7 @@ BN-Syn is a deterministic research/validation platform for phase-controlled emer
 - Usage workflows: [`docs/usage_workflows.md`](docs/usage_workflows.md)
 - Scripts index: [`docs/scripts/index.md`](docs/scripts/index.md)
 - Contracts docs: [`docs/contracts/index.md`](docs/contracts/index.md)
+- Merge-readiness audit: [`docs/audit_merge_readiness.md`](docs/audit_merge_readiness.md)
 - API reference: [`docs/api/index.md`](docs/api/index.md)
 
 Canonical local commands:

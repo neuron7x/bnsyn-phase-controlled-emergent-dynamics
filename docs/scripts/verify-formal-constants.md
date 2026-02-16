@@ -16,7 +16,7 @@ Verify formal specification constants match code reality. This governance gate e
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.verify_formal_constants --help
 ```

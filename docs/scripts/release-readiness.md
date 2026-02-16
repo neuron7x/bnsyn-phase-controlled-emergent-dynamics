@@ -27,7 +27,7 @@ Generate a release readiness report for BN-Syn.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.release_readiness --help
 ```

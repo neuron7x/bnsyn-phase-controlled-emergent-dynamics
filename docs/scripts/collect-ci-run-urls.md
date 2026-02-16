@@ -20,7 +20,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.collect_ci_run_urls --help
 ```

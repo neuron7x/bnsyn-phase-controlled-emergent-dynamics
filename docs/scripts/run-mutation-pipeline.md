@@ -18,7 +18,7 @@ Run mutmut with crash/survivor-aware fail-closed semantics.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.run_mutation_pipeline --help
 ```

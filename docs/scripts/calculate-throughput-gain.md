@@ -16,7 +16,7 @@ Throughput gain calculator for BN-Syn optimization. This script calculates and r
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.calculate_throughput_gain --help
 ```

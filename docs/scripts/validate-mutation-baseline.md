@@ -16,7 +16,7 @@ Validate mutation baseline schema contract (fail-closed).
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_mutation_baseline --help
 ```

@@ -16,7 +16,7 @@ Generate compact coverage trend artifacts for CI observability.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.generate_coverage_trend --help
 ```

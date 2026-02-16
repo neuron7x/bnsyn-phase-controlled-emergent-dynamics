@@ -16,7 +16,7 @@ Generate benchmark baselines for the active regime.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.generate_benchmark_baseline --help
 ```

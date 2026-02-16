@@ -18,7 +18,7 @@ Validate public status and anti-overclaim policy for battle usage.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_status_claims --help
 ```

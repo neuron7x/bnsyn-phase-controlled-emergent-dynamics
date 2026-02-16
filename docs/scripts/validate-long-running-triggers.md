@@ -16,7 +16,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.validate_long_running_triggers --help
 ```

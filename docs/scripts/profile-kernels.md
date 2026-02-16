@@ -16,7 +16,7 @@ Kernel profiler for BN-Syn throughput analysis. This script instruments and prof
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.profile_kernels --help
 ```

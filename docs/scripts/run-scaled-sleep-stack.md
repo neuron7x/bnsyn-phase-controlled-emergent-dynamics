@@ -16,7 +16,7 @@ UNKNOWN/TBD: missing module docstring.
 ## Safety Level
 - Safe (read-only checks)
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.run_scaled_sleep_stack --help
 ```

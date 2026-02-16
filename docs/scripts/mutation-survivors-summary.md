@@ -16,7 +16,7 @@ Append surviving mutants section to GitHub step summary.
 ## Safety Level
 - Writes artifacts only
 
-## Example Invocation
+## Examples
 ```bash
 python -m scripts.mutation_survivors_summary --help
 ```
