@@ -72,9 +72,7 @@ def test_registry_closed_entries_include_evidence_ref() -> None:
         status_match = re.search(r"^- Status: ([A-Z_]+)$", entry, flags=re.MULTILINE)
         assert status_match is not None
         status = status_match.group(1)
-        evidence_ref_match = re.search(
-            r"^- evidence_ref: `([^`]+)`$", entry, flags=re.MULTILINE
-        )
+        evidence_ref_match = re.search(r"^- evidence_ref: `([^`]+)`$", entry, flags=re.MULTILINE)
 
         if status == "CLOSED":
             assert evidence_ref_match is not None
@@ -87,6 +85,28 @@ def test_registry_closed_entries_include_evidence_ref() -> None:
             )
             assert fix_strategy_match is not None
             assert test_strategy_match is not None
+
+
+def test_scan_python_detects_bare_not_implemented_and_script_kind(tmp_path: Path) -> None:
+    scan_root = tmp_path / "repo"
+    script_file = scan_root / "scripts" / "sample.py"
+    script_file.parent.mkdir(parents=True, exist_ok=True)
+    script_file.write_text("def f():\n    raise NotImplementedError\n", encoding="utf-8")
+
+    original_root = scan_placeholders.ROOT
+    original_targets = scan_placeholders.TARGET_DIRS
+    try:
+        scan_placeholders.ROOT = scan_root
+        scan_placeholders.TARGET_DIRS = ("scripts",)
+        findings = scan_placeholders.collect_findings()
+    finally:
+        scan_placeholders.ROOT = original_root
+        scan_placeholders.TARGET_DIRS = original_targets
+
+    assert len(findings) == 1
+    assert findings[0].path == "scripts/sample.py"
+    assert findings[0].kind == "script"
+    assert findings[0].signature == "raise_NotImplementedError"
 
 
 def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:
