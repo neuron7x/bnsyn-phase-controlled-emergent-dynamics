@@ -7,6 +7,7 @@ from pathlib import Path
 
 REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
     "README.md": (
+        "make quickstart-smoke",
         "python -m pip install -e .",
         "python -m bnsyn --help",
         "bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32",

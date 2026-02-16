@@ -3,10 +3,10 @@
     "determinism": 1,
     "math_physics": 1,
     "mutation": 5,
-    "pytest": 117,
+    "pytest": 118,
     "workflow_integrity": 2
   },
-  "flaky_indicator_count": 76,
+  "flaky_indicator_count": 77,
   "generated_by": "python -m scripts.generate_tests_inventory",
   "reusable_workflow_jobs": [
     "_reusable_benchmarks.yml",
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 126,
+  "test_count": 127,
   "tests": [
     {
       "category": "pytest",
@@ -568,6 +568,13 @@
         "filesystem_io"
       ],
       "path": "tests/test_readiness_artifact_schemas.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_readme_quickstart_contract.py"
     },
     {
       "category": "pytest",
