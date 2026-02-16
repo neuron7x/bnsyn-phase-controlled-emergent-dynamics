@@ -1,4 +1,4 @@
-﻿bnsyn.neuron.adex
+bnsyn.neuron.adex
 =================
 
 .. automodule:: bnsyn.neuron.adex

@@ -1,4 +1,4 @@
-﻿bnsyn.connectivity.sparse
+bnsyn.connectivity.sparse
 =========================
 
 .. automodule:: bnsyn.connectivity.sparse

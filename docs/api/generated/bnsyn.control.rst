@@ -1,4 +1,4 @@
-﻿bnsyn.control
+bnsyn.control
 =============
 
 .. automodule:: bnsyn.control

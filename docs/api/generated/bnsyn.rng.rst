@@ -1,4 +1,4 @@
-﻿bnsyn.rng
+bnsyn.rng
 =========
 
 .. automodule:: bnsyn.rng

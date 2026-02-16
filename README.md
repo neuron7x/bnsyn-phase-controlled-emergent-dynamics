@@ -12,24 +12,23 @@ BN-Syn is a deterministic, research-grade Bio-AI system that formalizes phase-co
 
 ## Start Here (Canonical Onboarding)
 
-- Documentation entrypoint: [`docs/START_HERE.md`](docs/START_HERE.md)
-- Scripts registry (100% `scripts/*.py` coverage): [`docs/SCRIPTS/index.md`](docs/SCRIPTS/index.md)
+BN-Syn is a deterministic research/validation platform for phase-controlled emergent dynamics. The repository scope includes runtime simulation, contracts, verification scripts, and governance evidence artifacts. Non-goals: product UI, distributed serving infrastructure, and non-deterministic experimentation workflows.
+
+- Repository map: [`docs/repo_map.md`](docs/repo_map.md)
+- Usage workflows: [`docs/usage_workflows.md`](docs/usage_workflows.md)
+- Scripts index: [`docs/scripts/index.md`](docs/scripts/index.md)
+- Contracts docs: [`docs/contracts/index.md`](docs/contracts/index.md)
+- Merge-readiness audit: [`docs/audit_merge_readiness.md`](docs/audit_merge_readiness.md)
 - API reference: [`docs/api/index.md`](docs/api/index.md)
 
 Canonical local commands:
 
 ```bash
-# Install
 python -m pip install -e ".[dev]"
-
-# Run
 python -m bnsyn.cli --help
-
-# Test
-pytest -q
-
-# Build docs
-python -m sphinx -b html docs docs/_build/html
+python -m pytest tests -q
+python -m scripts.check_quickstart_consistency
+make docs
 ```
 
 ## Contents

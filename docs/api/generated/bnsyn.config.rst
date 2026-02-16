@@ -1,4 +1,4 @@
-﻿bnsyn.config
+bnsyn.config
 ============
 
 .. automodule:: bnsyn.config

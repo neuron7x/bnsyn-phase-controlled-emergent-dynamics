@@ -29,3 +29,9 @@ modules
 ## Determinism Contract
 
 See <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/REPRODUCIBILITY.md> for the determinism and seed protocol.
+
+## Related Documentation
+
+- [Contracts overview](../contracts/index.md)
+- [Repository map](../repo_map.md)
+- [Usage workflows](../usage_workflows.md)

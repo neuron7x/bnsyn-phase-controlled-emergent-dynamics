@@ -1,3 +1,9 @@
+"""Assertion-based mathematical contracts for deterministic validation.
+
+Each helper validates a narrowly scoped invariant and raises ``AssertionError``
+with a diagnostic token when the invariant is violated.
+"""
+
 from __future__ import annotations
 
 import math
@@ -7,11 +13,17 @@ import numpy as np
 
 
 def assert_non_empty_text(value: str) -> None:
+    """Require non-whitespace text content.
+
+    Raises:
+        AssertionError: If ``value`` is empty or whitespace-only.
+    """
     if not value.strip():
         raise AssertionError("empty_text")
 
 
 def assert_numeric_finite_and_bounded(values: Iterable[float], *, bound: float = 1e12) -> None:
+    """Require all numeric values to be finite and within ``±bound``."""
     for value in values:
         if not math.isfinite(value):
             raise AssertionError("non_finite_detected")
@@ -20,6 +32,10 @@ def assert_numeric_finite_and_bounded(values: Iterable[float], *, bound: float =
 
 
 def assert_dt_stability(dt: float, max_eigenvalue: float, *, method: str = "euler") -> None:
+    """Validate explicit-step stability using ``dt * |lambda_max|`` thresholds.
+
+    Supported methods are ``euler`` and ``rk4``.
+    """
     method_l = method.lower()
     threshold = 1.0 if method_l == "euler" else 2.785 if method_l == "rk4" else None
     if threshold is None:
@@ -32,12 +48,14 @@ def assert_dt_stability(dt: float, max_eigenvalue: float, *, method: str = "eule
 
 
 def assert_state_finite_after_step(state: np.ndarray, step_index: int) -> None:
+    """Require state vector to remain finite after a simulation step."""
     if not np.all(np.isfinite(state)):
         bad = np.argwhere(~np.isfinite(state)).flatten().tolist()
         raise AssertionError(f"state_non_finite:step={step_index}:indices={bad}")
 
 
 def assert_energy_bounded(energy_series: np.ndarray, max_energy: float) -> None:
+    """Require 1D finite energy trace to stay bounded and non-increasing."""
     energy = np.asarray(energy_series, dtype=np.float64)
     if energy.ndim != 1 or energy.size == 0:
         raise AssertionError("energy_series_invalid_shape")
@@ -55,6 +73,7 @@ def assert_energy_bounded(energy_series: np.ndarray, max_energy: float) -> None:
 
 
 def assert_integration_tolerance_consistency(atol: float, rtol: float, dt: float) -> None:
+    """Check tolerance scales against integration step size and float precision."""
     if not (atol < dt):
         raise AssertionError(f"atol_dt_inconsistent:atol={atol}:dt={dt}")
     if not (rtol > np.finfo(np.float64).eps):
@@ -62,6 +81,7 @@ def assert_integration_tolerance_consistency(atol: float, rtol: float, dt: float
 
 
 def assert_phase_range(phases: np.ndarray) -> None:
+    """Require phases to lie in either ``[0, 2π)`` or ``[-π, π)``."""
     vals = np.asarray(phases, dtype=np.float64)
     if vals.size == 0:
         raise AssertionError("phase_empty")
@@ -73,12 +93,14 @@ def assert_phase_range(phases: np.ndarray) -> None:
 
 
 def assert_order_parameter_range(r: float) -> None:
+    """Require Kuramoto order parameter ``r`` to be in ``[0, 1]`` (with epsilon)."""
     eps = 1e-10
     if not (-eps <= r <= 1.0 + eps):
         raise AssertionError(f"order_parameter_out_of_range:r={r}")
 
 
 def assert_order_parameter_computation(phases: np.ndarray, reported_r: float, tol: float = 1e-6) -> None:
+    """Cross-check reported order parameter against direct recomputation."""
     vals = np.asarray(phases, dtype=np.float64)
     recomputed = float(np.abs(np.mean(np.exp(1j * vals))))
     if abs(recomputed - reported_r) >= tol:
@@ -88,12 +110,14 @@ def assert_order_parameter_computation(phases: np.ndarray, reported_r: float, to
 
 
 def assert_phase_velocity_finite(dtheta_dt: np.ndarray) -> None:
+    """Require phase velocity array values to be finite."""
     vals = np.asarray(dtheta_dt, dtype=np.float64)
     if not np.all(np.isfinite(vals)):
         raise AssertionError("phase_velocity_non_finite")
 
 
 def assert_coupling_matrix_properties(K: np.ndarray, expected_symmetric: bool = True) -> None:
+    """Validate coupling matrix shape, finiteness, and optional symmetry."""
     arr = np.asarray(K)
     if arr.ndim != 2 or arr.shape[0] != arr.shape[1]:
         raise AssertionError(f"coupling_shape_invalid:shape={arr.shape}")
@@ -105,6 +129,7 @@ def assert_coupling_matrix_properties(K: np.ndarray, expected_symmetric: bool = 
 
 
 def assert_adjacency_binary(A: np.ndarray) -> None:
+    """Require square binary adjacency with zero diagonal (no self-loops)."""
     arr = np.asarray(A)
     if arr.ndim != 2 or arr.shape[0] != arr.shape[1]:
         raise AssertionError("adjacency_shape_invalid")
@@ -115,6 +140,7 @@ def assert_adjacency_binary(A: np.ndarray) -> None:
 
 
 def assert_weight_matrix_nonnegative(W: np.ndarray) -> None:
+    """Require all synaptic weights to be non-negative."""
     arr = np.asarray(W, dtype=np.float64)
     if np.any(arr < 0):
         idx = np.argwhere(arr < 0)[0].tolist()
@@ -124,6 +150,7 @@ def assert_weight_matrix_nonnegative(W: np.ndarray) -> None:
 def assert_no_catastrophic_cancellation(
     a: np.ndarray, b: np.ndarray, result: np.ndarray, context: str
 ) -> None:
+    """Guard subtraction-sensitive regions against catastrophic cancellation."""
     aa = np.asarray(a, dtype=np.float64)
     bb = np.asarray(b, dtype=np.float64)
     rr = np.asarray(result, dtype=np.float64)
@@ -139,6 +166,7 @@ def assert_no_catastrophic_cancellation(
 
 
 def assert_no_log_domain_violation(x: np.ndarray, context: str) -> None:
+    """Require strictly positive arguments for log-domain operations."""
     arr = np.asarray(x, dtype=np.float64)
     bad = np.where(arr <= 0)[0]
     if bad.size:
@@ -146,6 +174,7 @@ def assert_no_log_domain_violation(x: np.ndarray, context: str) -> None:
 
 
 def assert_no_exp_overflow_risk(x: np.ndarray, context: str) -> None:
+    """Flag exponent arguments with overflow risk in float64 arithmetic."""
     arr = np.asarray(x, dtype=np.float64)
     bad = np.where(np.abs(arr) > 500.0)[0]
     if bad.size:
@@ -153,6 +182,7 @@ def assert_no_exp_overflow_risk(x: np.ndarray, context: str) -> None:
 
 
 def assert_no_division_by_zero_risk(denominator: np.ndarray, context: str) -> None:
+    """Require denominators to remain away from near-zero machine underflow."""
     arr = np.asarray(denominator, dtype=np.float64)
     bad = np.where(np.abs(arr) < 1e-300)[0]
     if bad.size:
@@ -160,6 +190,7 @@ def assert_no_division_by_zero_risk(denominator: np.ndarray, context: str) -> No
 
 
 def assert_dtype_consistency(arrays: dict[str, np.ndarray]) -> None:
+    """Require all provided arrays to share the same dtype."""
     dtypes = {name: np.asarray(value).dtype for name, value in arrays.items()}
     unique = {str(v) for v in dtypes.values()}
     if len(unique) > 1:
@@ -167,12 +198,14 @@ def assert_dtype_consistency(arrays: dict[str, np.ndarray]) -> None:
 
 
 def assert_no_nan_in_dataset(data: np.ndarray, name: str) -> None:
+    """Reject datasets containing NaN values."""
     arr = np.asarray(data, dtype=np.float64)
     if np.isnan(arr).any():
         raise AssertionError(f"dataset_nan:{name}")
 
 
 def assert_no_duplicate_rows(data: np.ndarray, name: str) -> None:
+    """Require a 2D dataset with unique rows only."""
     arr = np.asarray(data)
     if arr.ndim != 2:
         raise AssertionError(f"dataset_not_2d:{name}")
@@ -184,6 +217,7 @@ def assert_no_duplicate_rows(data: np.ndarray, name: str) -> None:
 def assert_column_ranges(
     data: np.ndarray, column_specs: dict[str, tuple[float, float]], name: str
 ) -> None:
+    """Validate structured-array columns against inclusive numeric ranges."""
     if data.dtype.names is None:
         raise AssertionError(f"dataset_not_structured:{name}")
     for col, (lo, hi) in column_specs.items():
@@ -195,6 +229,7 @@ def assert_column_ranges(
 
 
 def assert_probability_normalization(probs: np.ndarray, axis: int, tol: float = 1e-8) -> None:
+    """Require probabilities to sum to one along the selected axis."""
     arr = np.asarray(probs, dtype=np.float64)
     sums = np.sum(arr, axis=axis)
     if not np.allclose(sums, 1.0, atol=tol, rtol=0.0):
@@ -202,6 +237,7 @@ def assert_probability_normalization(probs: np.ndarray, axis: int, tol: float = 
 
 
 def assert_timeseries_monotonic_time(t: np.ndarray) -> None:
+    """Require strictly increasing timestamps in a time series."""
     arr = np.asarray(t, dtype=np.float64)
     if np.any(np.diff(arr) <= 0):
         raise AssertionError("time_not_strictly_increasing")

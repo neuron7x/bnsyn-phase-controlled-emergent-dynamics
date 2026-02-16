@@ -5,9 +5,15 @@ API Modules
    :toctree: api/generated
    :recursive:
 
-   bnsyn.neurons
-   bnsyn.synapses
-   bnsyn.plasticity
-   bnsyn.control
-   bnsyn.simulation
+   bnsyn
    bnsyn.cli
+   bnsyn.config
+   bnsyn.control
+   bnsyn.incremental
+   bnsyn.neurons
+   bnsyn.rng
+   bnsyn.simulation
+   bnsyn.synapses
+   bnsyn.vcg
+   contracts
+   contracts.math_contracts

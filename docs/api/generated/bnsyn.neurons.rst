@@ -1,4 +1,4 @@
-﻿bnsyn.neurons
+bnsyn.neurons
 =============
 
 .. automodule:: bnsyn.neurons
