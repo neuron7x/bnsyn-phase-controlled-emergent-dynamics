@@ -825,7 +825,7 @@
   },
   {
     "path": "proof_bundle/logs/07_hash_index.log",
-    "sha256": "4c6d7560faa5c2d695b48bad80edb90c2ad1300a10565d56e7b9ee844fdde92e"
+    "sha256": "4c44c8f59526c74f78a66ebc85fc04a86074ac6a547ef3398ed89e1c15b26568"
   },
   {
     "path": "proof_bundle/logs/080_post_test_cmd.log",
