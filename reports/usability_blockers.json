@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "timestamp_utc": "2026-02-16T12:09:48.563936+00:00",
+    "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+    "git": {
+      "branch": "work",
+      "commit": "cc4fd03aaf0de7c54fd395056f14eea3178954e0",
+      "dirty": true
+    },
+    "platform": {
+      "os": "Linux",
+      "arch": "x86_64"
+    },
+    "intended_use_inference": {
+      "statement": "Deterministic Bio-AI research/validation platform where contributors install dev deps, run CLI/simulation workflows, execute tests/lint/type checks, and build docs/wheels.",
+      "evidence_min_sources": 3,
+      "sources": [
+        "path:README.md",
+        "path:docs/usage_workflows.md",
+        "path:.github/workflows/ci-pr-atomic.yml"
+      ]
+    }
+  },
+  "coverage": {
+    "files_scanned_ratio_estimate": 0.12,
+    "commands_executed": 48,
+    "notes": [
+      "Focused on onboarding docs, build/test configs, and canonical new-user workflow commands."
+    ]
+  },
+  "blockers": [
+    {
+      "id": "BLK-001",
+      "severity": "P0",
+      "title": "Canonical test command fails after setup due incompatible proof_bundle/index.json structure",
+      "category": "tests",
+      "symptom": "Pytest stops with TypeError in tests/test_audit_suite_artifacts.py::test_proof_bundle_index_hashes_match_files.",
+      "expected": "Canonical test suites should exit 0 after documented install path.",
+      "actual": "`python -m pytest tests -q` and `python -m pytest -m \"not validation\" -q` both fail with `TypeError: string indices must be integers, not 'str'` when iterating proof index entries.",
+      "repro_steps": [
+        "python -m pip install -e '.[dev]'",
+        "python -m pytest tests -q"
+      ],
+      "root_cause_hypothesis": "tests/test_audit_suite_artifacts.py expects proof_bundle/index.json to be a list of objects, but file is an object with top-level artifacts array; format drift likely between producer and test contract.",
+      "fix_minimal_plan": [
+        "Align producer and test contract for proof_bundle/index.json (choose list schema or update test parser).",
+        "Add contract check to prevent future schema drift."
+      ],
+      "scope_constraints": [
+        "no logic changes",
+        "artifact/schema alignment only"
+      ],
+      "evidence": [
+        "cmd:python -m pytest tests -q | log:proof_bundle/logs/250_20260216T120237Z.log | exit:1",
+        "cmd:python -m pytest -m 'not validation' -q | log:proof_bundle/logs/253_20260216T120524Z.log | exit:1",
+        "cmd:sed -n '1,220p' proof_bundle/index.json | log:proof_bundle/logs/264_20260216T120811Z.log | exit:0"
+      ],
+      "confidence": 0.91
+    },
+    {
+      "id": "BLK-002",
+      "severity": "P0",
+      "title": "Build gate command unavailable in documented dev environment",
+      "category": "build",
+      "symptom": "`python -m build` fails because module `build` is not installed after canonical dev install.",
+      "expected": "Build verification command should run after following onboarding install instructions.",
+      "actual": "`python -m build` returns `/python: No module named build`.",
+      "repro_steps": [
+        "python -m pip install -e '.[dev]'",
+        "python -m build"
+      ],
+      "root_cause_hypothesis": "The [dev] extra in pyproject.toml does not include `build`, while AGENTS and CI build gate require `python -m build`.",
+      "fix_minimal_plan": [
+        "Include `build` in the extra/profile used by local build checks (e.g., dev/test) or adjust documented build prerequisite command.",
+        "Keep CI and local docs/install path consistent."
+      ],
+      "scope_constraints": [
+        "no logic changes",
+        "dependency declaration/docs consistency only"
+      ],
+      "evidence": [
+        "cmd:python -m build | log:proof_bundle/logs/257_20260216T120748Z.log | exit:1",
+        "cmd:python -m pip install -e ' .[dev] ' | log:proof_bundle/logs/248_20260216T120209Z.log | exit:0",
+        "cmd:sed -n '220,360p' .github/workflows/ci-pr-atomic.yml | log:proof_bundle/logs/270_20260216T120835Z.log | exit:0"
+      ],
+      "confidence": 0.88
+    }
+  ],
+  "improvements": [
+    {
+      "id": "IMP-001",
+      "severity": "P2",
+      "title": "AGENTS-recommended pylint command depends on pre-install state",
+      "note": "Before install pylint is missing, after install command passes."
+    }
+  ],
+  "recommendation": {
+    "go_no_go": "NO-GO",
+    "top_5_blockers": [
+      "BLK-001",
+      "BLK-002"
+    ],
+    "fastest_unblock_sequence": [
+      "BLK-002",
+      "BLK-001"
+    ]
+  }
+}

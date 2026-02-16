@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:13.739242+00:00
+cmd: go version || true
+exit: 0
+stdout:
+go version go1.24.3 linux/amd64
+
+stderr:

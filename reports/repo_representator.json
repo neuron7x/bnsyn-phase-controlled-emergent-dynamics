@@ -1,0 +1,47 @@
+{
+  "repo_path": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "top_level": [
+    "src",
+    "tests",
+    "docs",
+    "scripts",
+    ".github/workflows",
+    "proof_bundle",
+    "reports"
+  ],
+  "languages": [
+    "Python"
+  ],
+  "frameworks_tools": [
+    "pytest",
+    "ruff",
+    "pylint",
+    "mypy",
+    "sphinx",
+    "setuptools"
+  ],
+  "manifests": {
+    "pyproject.toml": true,
+    "requirements-lock.txt": true,
+    "Makefile": true,
+    "package-lock/pnpm-lock": false
+  },
+  "entrypoints": {
+    "install": "python -m pip install -e '.[dev]'",
+    "cli": "python -m bnsyn.cli --help",
+    "tests": "python -m pytest -m 'not validation' -q",
+    "lint": [
+      "ruff check .",
+      "pylint src/bnsyn"
+    ],
+    "typecheck": "mypy src --strict --config-file pyproject.toml",
+    "build": "python -m build",
+    "docs": "make docs"
+  },
+  "evidence": [
+    "cmd:find . -maxdepth 1 -mindepth 1 -printf %P | sort log:proof_bundle/logs/259_20260216T120811Z.log",
+    "cmd:sed -n 1,220p README.md log:proof_bundle/logs/014_20260216T120113Z.log",
+    "cmd:sed -n 1,220p docs/usage_workflows.md log:proof_bundle/logs/260_20260216T120811Z.log",
+    "cmd:sed -n 1,260p .github/workflows/ci-pr-atomic.yml log:proof_bundle/logs/019_20260216T120114Z.log"
+  ]
+}

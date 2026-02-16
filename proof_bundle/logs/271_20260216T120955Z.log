@@ -1,0 +1,6 @@
+timestamp_utc: 2026-02-16T12:09:55.611892+00:00
+cmd: python <<PY (artifact generation script for reports/proof bundle)
+exit: 0
+stdout:
+artifacts generated
+stderr:

@@ -1,0 +1,6 @@
+timestamp_utc: 2026-02-16T12:10:09.742339+00:00
+cmd: python <<PY (recompute proof_bundle index/hashes)
+exit: 0
+stdout:
+rehash complete
+stderr:

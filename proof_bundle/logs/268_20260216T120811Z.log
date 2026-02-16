@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:08:11.183378+00:00
+cmd: uname -s
+exit: 0
+stdout:
+Linux
+
+stderr:

@@ -1,0 +1,8 @@
+timestamp_utc: 2026-02-16T12:01:13.692773+00:00
+cmd: npm -v || true
+exit: 0
+stdout:
+11.4.2
+
+stderr:
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.

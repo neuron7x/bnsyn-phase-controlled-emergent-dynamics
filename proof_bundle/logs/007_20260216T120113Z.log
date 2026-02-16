@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:13.445124+00:00
+cmd: node -v || true
+exit: 0
+stdout:
+v20.19.6
+
+stderr:
