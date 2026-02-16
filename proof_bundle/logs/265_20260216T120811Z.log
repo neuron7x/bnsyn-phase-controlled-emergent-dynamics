@@ -1,0 +1,52 @@
+timestamp_utc: 2026-02-16T12:08:11.153155+00:00
+cmd: git status --short
+exit: 0
+stdout:
+ M tests_inventory.json
+?? proof_bundle/command_index.json
+?? proof_bundle/logs/000_prelude.log
+?? proof_bundle/logs/001_20260216T120112Z.log
+?? proof_bundle/logs/002_20260216T120112Z.log
+?? proof_bundle/logs/003_20260216T120112Z.log
+?? proof_bundle/logs/004_20260216T120112Z.log
+?? proof_bundle/logs/005_20260216T120112Z.log
+?? proof_bundle/logs/006_20260216T120112Z.log
+?? proof_bundle/logs/007_20260216T120113Z.log
+?? proof_bundle/logs/008_20260216T120113Z.log
+?? proof_bundle/logs/009_20260216T120113Z.log
+?? proof_bundle/logs/010_20260216T120113Z.log
+?? proof_bundle/logs/011_20260216T120113Z.log
+?? proof_bundle/logs/012_20260216T120113Z.log
+?? proof_bundle/logs/013_20260216T120113Z.log
+?? proof_bundle/logs/014_20260216T120113Z.log
+?? proof_bundle/logs/015_20260216T120113Z.log
+?? proof_bundle/logs/016_20260216T120113Z.log
+?? proof_bundle/logs/017_20260216T120114Z.log
+?? proof_bundle/logs/018_20260216T120114Z.log
+?? proof_bundle/logs/019_20260216T120114Z.log
+?? proof_bundle/logs/020_20260216T120114Z.log
+?? proof_bundle/logs/021_20260216T120114Z.log
+?? proof_bundle/logs/022_20260216T120114Z.log
+?? proof_bundle/logs/023_20260216T120120Z.log
+?? proof_bundle/logs/024_20260216T120120Z.log
+?? proof_bundle/logs/025_20260216T120120Z.log
+?? proof_bundle/logs/026_20260216T120133Z.log
+?? proof_bundle/logs/248_20260216T120209Z.log
+?? proof_bundle/logs/249_20260216T120236Z.log
+?? proof_bundle/logs/250_20260216T120237Z.log
+?? proof_bundle/logs/251_20260216T120448Z.log
+?? proof_bundle/logs/252_20260216T120448Z.log
+?? proof_bundle/logs/253_20260216T120524Z.log
+?? proof_bundle/logs/254_20260216T120711Z.log
+?? proof_bundle/logs/255_20260216T120711Z.log
+?? proof_bundle/logs/256_20260216T120742Z.log
+?? proof_bundle/logs/257_20260216T120748Z.log
+?? proof_bundle/logs/258_20260216T120748Z.log
+?? proof_bundle/logs/259_20260216T120811Z.log
+?? proof_bundle/logs/260_20260216T120811Z.log
+?? proof_bundle/logs/261_20260216T120811Z.log
+?? proof_bundle/logs/262_20260216T120811Z.log
+?? proof_bundle/logs/263_20260216T120811Z.log
+?? proof_bundle/logs/264_20260216T120811Z.log
+
+stderr:

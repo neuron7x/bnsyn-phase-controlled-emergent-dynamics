@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:13.936216+00:00
+cmd: find .. -name AGENTS.md
+exit: 0
+stdout:
+../bnsyn-phase-controlled-emergent-dynamics/AGENTS.md
+
+stderr:

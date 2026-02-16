@@ -1,9 +1,19 @@
 {
-  "python_version": "Python 3.12.12",
-  "pip_version": "pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)",
-  "ruff_version": "ruff 0.15.0",
-  "mypy_version": "mypy 1.19.1 (compiled: yes)",
-  "os": "Linux",
-  "arch": "x86_64",
-  "git_commit": "ff36ff0f33f34be6f940f0b0eb8cf8cdfa23c1c6"
+  "timestamp_utc": "2026-02-16T12:09:48.563261+00:00",
+  "platform": {
+    "os": "Linux",
+    "arch": "x86_64"
+  },
+  "versions": {
+    "python": "Python 3.12.12",
+    "pip": "pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)",
+    "node": "v20.19.6",
+    "npm": "11.4.2",
+    "go": "go version go1.24.3 linux/amd64",
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)"
+  },
+  "git": {
+    "branch": "work",
+    "commit": "cc4fd03aaf0de7c54fd395056f14eea3178954e0"
+  }
 }

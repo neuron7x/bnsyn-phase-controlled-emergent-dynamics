@@ -1,0 +1,11 @@
+timestamp_utc: 2026-02-16T12:01:14.056854+00:00
+cmd: find . -maxdepth 3 -type d \( -name 'src' -o -name 'tests' -o -name 'examples' -o -name 'scripts' -o -name 'notebooks' \)
+exit: 0
+stdout:
+./src
+./scripts
+./examples
+./docs/scripts
+./tests
+
+stderr:

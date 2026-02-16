@@ -1,0 +1,9 @@
+timestamp_utc: 2026-02-16T12:01:14.041235+00:00
+cmd: find . -maxdepth 2 -type f \( -name 'pyproject.toml' -o -name 'setup.py' -o -name 'requirements*.txt' -o -name 'poetry.lock' -o -name 'Pipfile.lock' -o -name 'package.json' -o -name 'pnpm-lock.yaml' -o -name 'Makefile' \)
+exit: 0
+stdout:
+./Makefile
+./pyproject.toml
+./requirements-lock.txt
+
+stderr:

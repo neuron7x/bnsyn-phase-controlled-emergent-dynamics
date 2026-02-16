@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:07:48.101710+00:00
+cmd: python -m build
+exit: 1
+stdout:
+
+stderr:
+/root/.pyenv/versions/3.12.12/bin/python: No module named build

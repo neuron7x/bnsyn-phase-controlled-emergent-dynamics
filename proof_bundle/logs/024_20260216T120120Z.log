@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:20.990581+00:00
+cmd: pylint src/bnsyn
+exit: 127
+stdout:
+
+stderr:
+/bin/sh: 1: pylint: not found

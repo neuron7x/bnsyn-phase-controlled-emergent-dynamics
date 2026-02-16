@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:13.422865+00:00
+cmd: python -m pip --version || true
+exit: 0
+stdout:
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+
+stderr:

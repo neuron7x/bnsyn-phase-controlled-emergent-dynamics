@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:13.923964+00:00
+cmd: rustc --version || true
+exit: 0
+stdout:
+rustc 1.89.0 (29483883e 2025-08-04)
+
+stderr:

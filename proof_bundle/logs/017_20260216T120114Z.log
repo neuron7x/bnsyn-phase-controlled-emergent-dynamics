@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:01:14.009683+00:00
+cmd: sed -n '1,260p' docs/merge-gates.md
+exit: 2
+stdout:
+
+stderr:
+sed: can't read docs/merge-gates.md: No such file or directory

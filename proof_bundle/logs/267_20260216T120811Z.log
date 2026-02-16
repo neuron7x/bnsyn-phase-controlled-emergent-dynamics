@@ -1,0 +1,7 @@
+timestamp_utc: 2026-02-16T12:08:11.175601+00:00
+cmd: git branch --show-current
+exit: 0
+stdout:
+work
+
+stderr:

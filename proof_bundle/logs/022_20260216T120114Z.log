@@ -1,0 +1,199 @@
+timestamp_utc: 2026-02-16T12:01:20.860725+00:00
+cmd: python -m pytest -m 'not validation' -q
+exit: 2
+stdout:
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/benchmarks/test_regression.py _____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/benchmarks/test_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/benchmarks/test_regression.py:8: in <module>
+    from benchmarks.metrics import metrics_to_dict, run_benchmark
+benchmarks/metrics.py:12: in <module>
+    import psutil
+E   ModuleNotFoundError: No module named 'psutil'
+______________________ ERROR collecting tests/properties _______________________
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+/root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+tests/properties/conftest.py:5: in <module>
+    from hypothesis import Verbosity, settings
+E   ModuleNotFoundError: No module named 'hypothesis'
+______________ ERROR collecting tests/test_claims_enforcement.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_claims_enforcement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_claims_enforcement.py:21: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+____________ ERROR collecting tests/test_experiments_declarative.py ____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_experiments_declarative.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_experiments_declarative.py:10: in <module>
+    from bnsyn.experiments import declarative
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_integration_experiment_flow.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_integration_experiment_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_integration_experiment_flow.py:8: in <module>
+    from bnsyn.experiments.declarative import run_from_yaml
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_manifest_tooling.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling.py:5: in <module>
+    from tools.manifest import generate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_manifest_tooling_regression.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling_regression.py:9: in <module>
+    from tools.manifest import generate, validate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________ ERROR collecting tests/test_scan_governed_docs_script.py ___________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_scan_governed_docs_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_scan_governed_docs_script.py:10: in <module>
+    from scripts import scan_governed_docs  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/scan_governed_docs.py:22: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_schema_contracts.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_schema_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_schema_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_sync_required_status_contexts.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_sync_required_status_contexts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_sync_required_status_contexts.py:5: in <module>
+    from scripts.sync_required_status_contexts import build_payload, sync_required_status_contexts
+scripts/sync_required_status_contexts.py:7: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_validate_bibliography_script.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_bibliography_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_bibliography_script.py:12: in <module>
+    from scripts import validate_bibliography as vb  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/validate_bibliography.py:17: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________ ERROR collecting tests/test_validate_long_running_triggers.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_long_running_triggers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_long_running_triggers.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_validate_pr_gates.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_pr_gates.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_pr_gates.py:5: in <module>
+    from scripts.validate_pr_gates import validate_pr_gates
+scripts/validate_pr_gates.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_validate_workflow_contracts.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_workflow_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_workflow_contracts.py:5: in <module>
+    from scripts.validate_workflow_contracts import validate_contracts
+scripts/validate_workflow_contracts.py:9: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR tests/benchmarks/test_regression.py
+ERROR tests/properties - ModuleNotFoundError: No module named 'hypothesis'
+ERROR tests/test_claims_enforcement.py
+ERROR tests/test_experiments_declarative.py
+ERROR tests/test_integration_experiment_flow.py
+ERROR tests/test_manifest_tooling.py
+ERROR tests/test_manifest_tooling_regression.py
+ERROR tests/test_scan_governed_docs_script.py
+ERROR tests/test_schema_contracts.py
+ERROR tests/test_sync_required_status_contexts.py
+ERROR tests/test_validate_bibliography_script.py
+ERROR tests/test_validate_long_running_triggers.py
+ERROR tests/test_validate_pr_gates.py
+ERROR tests/test_validate_workflow_contracts.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 14 errors during collection !!!!!!!!!!!!!!!!!!!
+
+stderr:
