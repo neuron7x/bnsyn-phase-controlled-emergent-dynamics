@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bnsyn.dev/schemas/sleep_stack_metrics.schema.json",
+  "title": "Sleep Stack Metrics",
+  "type": "object",
+  "required": ["backend", "wake", "sleep", "transitions", "attractors", "consolidation"],
+  "properties": {
+    "backend": {"type": "string", "enum": ["reference", "accelerated"]},
+    "wake": {
+      "type": "object",
+      "required": ["steps", "mean_sigma", "mean_spike_rate", "memories_recorded"],
+      "properties": {
+        "steps": {"type": "integer", "minimum": 1},
+        "mean_sigma": {"type": "number"},
+        "mean_spike_rate": {"type": "number"},
+        "memories_recorded": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "sleep": {"type": "object"},
+    "transitions": {"type": "array"},
+    "attractors": {"type": "object"},
+    "consolidation": {"type": "object"}
+  },
+  "additionalProperties": true
+}

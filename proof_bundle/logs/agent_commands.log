@@ -1,0 +1,2249 @@
+[start]
+cmd: sed -n '1,220p' pyproject.toml
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.0",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "psutil==7.2.2",
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "psutil==7.2.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.0",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.6.0",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+cmd: test -f docs/ops/SLA_SLO.md; echo 0; test -d docs/ops/runbooks; echo 0; test -f docs/contracts/CLI_CONTRACT.md; echo 0; test -f contracts/cli_contract.v1.json; echo 0; test -f docs/API_STABILITY.md; echo 0; test -f scripts/snapshot_public_api.py; echo 0; test -f scripts/check_public_api_compat.py; echo 0; test -f quality/public_api_snapshot.json; echo 0; test -f quality/perf_budgets.yml; echo 0; test -f scripts/check_perf_budget.py; echo 0; test -f docs/RELEASE_POLICY.md; echo 0; test -f scripts/release_readiness_report.py; echo 0; test -f .github/workflows/release-readiness.yml; echo 0
+cmd: sed -n '1,260p' src/bnsyn/cli.py
+"""Command-line interface for BN-Syn demos and checks.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Provides deterministic demo runs, dt invariance checks, and sleep-stack experiments
+per SPEC P2-11/P2-12.
+
+References
+----------
+docs/SPEC.md#P2-11
+docs/SPEC.md#P2-12
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.metadata
+import json
+import tomllib
+import warnings
+from pathlib import Path
+from typing import Any
+
+from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+from bnsyn.sim.network import run_simulation
+
+
+def _get_package_version() -> str:
+    """Return the installed package version with a safe fallback."""
+    version: str | None = None
+    try:
+        version = importlib.metadata.version("bnsyn")
+    except importlib.metadata.PackageNotFoundError:
+        version = None
+    except Exception as exc:
+        warnings.warn(f"Failed to read package version: {exc}", stacklevel=2)
+        version = None
+
+    if version:
+        return version
+
+    pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    if pyproject_path.exists():
+        try:
+            data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        except (OSError, tomllib.TOMLDecodeError):
+            return "unknown"
+        version = data.get("project", {}).get("version")
+        if isinstance(version, str) and version:
+            return version
+
+    return "unknown"
+
+
+def _cmd_demo(args: argparse.Namespace) -> int:
+    """Run a deterministic demo simulation and print metrics.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the demo subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Calls the deterministic simulation harness with explicit dt and seed.
+    If --interactive flag is set, launches Streamlit dashboard instead.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    docs/LEGENDARY_QUICKSTART.md
+    """
+    if getattr(args, "interactive", False):
+        # Launch interactive Streamlit dashboard
+        import importlib.util
+
+        # subprocess used for controlled dashboard launch (no shell).
+        import subprocess  # nosec B404
+        import sys
+
+        # Find the interactive.py script
+        script_path = Path(__file__).parent / "viz" / "interactive.py"
+        if not script_path.exists():
+            print(f"Error: Interactive dashboard not found at {script_path}")
+            return 1
+        if importlib.util.find_spec("streamlit") is None:
+            print('Error: Streamlit is not installed. Install with: pip install -e ".[viz]"')
+            return 1
+
+        print("🚀 Launching interactive dashboard...")
+        print("   Press Ctrl+C to stop")
+        try:
+            # Fixed module invocation without shell; inputs are local paths only.
+            result = subprocess.run(  # nosec B603
+                [sys.executable, "-m", "streamlit", "run", str(script_path)]
+            )
+            if result.returncode != 0:
+                print(f"Error: Dashboard exited with code {result.returncode}")
+                return 1
+            return 0
+        except KeyboardInterrupt:
+            print("\n✓ Dashboard stopped")
+            return 0
+        except Exception as e:
+            print(f"Error launching dashboard: {e}")
+            return 1
+
+    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_dtcheck(args: argparse.Namespace) -> int:
+    """Run dt vs dt/2 invariance check and print metrics.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the dt invariance subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+
+    References
+    ----------
+    docs/SPEC.md#P2-12
+    """
+    m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+    m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
+    # compare mean rates and sigma; dt2 should be close
+    out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_run_experiment(args: argparse.Namespace) -> int:
+    """Run experiment from YAML configuration.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the run subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Loads YAML config, validates against schema, runs experiment.
+
+    References
+    ----------
+    docs/LEGENDARY_QUICKSTART.md
+    schemas/experiment.schema.json
+    """
+    from bnsyn.experiments.declarative import run_from_yaml
+
+    try:
+        run_from_yaml(args.config, args.output)
+        return 0
+    except Exception as e:
+        print(f"Error running experiment: {e}")
+        return 1
+
+
+def _cmd_sleep_stack(args: argparse.Namespace) -> int:
+    """Run sleep-stack demo with attractor crystallization and consolidation.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the sleep-stack subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Runs wake→sleep cycle with memory recording, consolidation, replay,
+    attractor tracking, and phase transition detection.
+
+    References
+    ----------
+    docs/sleep_stack.md
+    docs/emergence_tracking.md
+    """
+    # Import here to avoid circular dependencies and keep CLI fast
+    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+    from bnsyn.criticality import PhaseTransitionDetector
+    from bnsyn.emergence import AttractorCrystallizer
+    from bnsyn.memory import MemoryConsolidator
+    from bnsyn.rng import seed_all
+    from bnsyn.sim.network import Network, NetworkParams
+    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
+    from bnsyn.temperature.schedule import TemperatureSchedule
+
+    # Setup output directory
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    fig_dir = out_dir.parent / "figures" / out_dir.name
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    # Seed RNG
+    pack = seed_all(args.seed)
+    rng = pack.np_rng
+
+    # Create network
+    N = int(args.N)
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=rng,
+        backend=args.backend,
+    )
+
+    # Temperature schedule
+    temp_schedule = TemperatureSchedule(TemperatureParams())
+
+    # Sleep cycle
+    sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=rng)
+
+    # Memory consolidator
+    consolidator = MemoryConsolidator(capacity=100)
+
+    # Phase transition detector
+    phase_detector = PhaseTransitionDetector()
+
+    # Attractor crystallizer
+    crystallizer = AttractorCrystallizer(
+        state_dim=N,
+        max_buffer_size=500,
+        snapshot_dim=min(50, N),
+        pca_update_interval=50,
+cmd: sed -n '260,520p' src/bnsyn/cli.py
+        pca_update_interval=50,
+    )
+
+    # Wake phase
+    print(f"Running wake phase ({args.steps_wake} steps)...")
+    wake_metrics = []
+    for _ in range(args.steps_wake):
+        m = net.step()
+        wake_metrics.append(m)
+
+        # Record memory periodically
+        if len(wake_metrics) % 20 == 0:
+            importance = min(1.0, m["spike_rate_hz"] / 10.0)
+            sleep_cycle.record_memory(importance)
+            consolidator.tag(net.state.V_mV, importance)
+
+        # Track phase transitions
+        phase_detector.observe(m["sigma"], len(wake_metrics))
+
+        # Track attractor crystallization
+        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+
+    # Sleep phase
+    print(f"Running sleep phase ({args.steps_sleep} steps)...")
+    sleep_stages = default_human_sleep_cycle()
+    # Scale durations if requested
+    if args.steps_sleep != 600:
+        scale = args.steps_sleep / 450
+        sleep_stages = [
+            SleepStageConfig(
+                stage=stage.stage,
+                duration_steps=int(stage.duration_steps * scale),
+                temperature_range=stage.temperature_range,
+                replay_active=stage.replay_active,
+                replay_noise=stage.replay_noise,
+            )
+            for stage in sleep_stages
+        ]
+
+    sleep_summary = sleep_cycle.sleep(sleep_stages)
+
+    # Collect metrics
+    transitions = phase_detector.get_transitions()
+    attractors = crystallizer.get_attractors()
+    cryst_state = crystallizer.get_crystallization_state()
+    cons_stats = consolidator.stats()
+
+    metrics: dict[str, Any] = {
+        "backend": args.backend,
+        "wake": {
+            "steps": args.steps_wake,
+            "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
+            "mean_spike_rate": float(
+                sum(m["spike_rate_hz"] for m in wake_metrics) / len(wake_metrics)
+            ),
+            "memories_recorded": sleep_cycle.get_memory_count(),
+        },
+        "sleep": sleep_summary,
+        "transitions": [
+            {
+                "step": t.step,
+                "from": t.from_phase.name,
+                "to": t.to_phase.name,
+                "sigma_before": t.sigma_before,
+                "sigma_after": t.sigma_after,
+                "sharpness": t.sharpness,
+            }
+            for t in transitions
+        ],
+        "attractors": {
+            "count": len(attractors),
+            "crystallization_progress": cryst_state.progress,
+            "phase": cryst_state.phase.name,
+        },
+        "consolidation": cons_stats,
+    }
+
+    # Write metrics
+    metrics_path = out_dir / "metrics.json"
+    with open(metrics_path, "w") as f:
+        json.dump(metrics, f, indent=2)
+    print(f"Metrics written to {metrics_path}")
+
+    # Generate manifest
+    manifest = build_sleep_stack_manifest(
+        seed=args.seed,
+        steps_wake=args.steps_wake,
+        steps_sleep=args.steps_sleep,
+        N=N,
+        package_version=_get_package_version(),
+        repo_root=Path(__file__).parent.parent,
+    )
+
+    manifest_path = out_dir / "manifest.json"
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2)
+    print(f"Manifest written to {manifest_path}")
+
+    # Generate figure (optional, only if matplotlib available)
+    try:
+        import matplotlib.pyplot as plt
+        from typing import Any as _Any
+
+        fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
+        axes: _Any = axes_raw  # Type hint to satisfy mypy
+
+        # Sigma trace
+        ax = axes[0, 0]
+        wake_sigmas = [m["sigma"] for m in wake_metrics]
+        ax.plot(wake_sigmas, label="Wake", alpha=0.7)
+        ax.axhline(y=1.0, color="k", linestyle="--", alpha=0.3)
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Sigma")
+        ax.set_title("Criticality (Sigma)")
+        ax.legend()
+        ax.grid(alpha=0.3)
+
+        # Spike rate
+        ax = axes[0, 1]
+        wake_rates = [m["spike_rate_hz"] for m in wake_metrics]
+        ax.plot(wake_rates, alpha=0.7, color="orange")
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Spike Rate (Hz)")
+        ax.set_title("Network Activity")
+        ax.grid(alpha=0.3)
+
+        # Phase transitions
+        ax = axes[1, 0]
+        if transitions:
+            trans_steps = [t.step for t in transitions]
+            trans_phases = [t.to_phase.name for t in transitions]
+            ax.scatter(trans_steps, range(len(trans_steps)), s=100, alpha=0.7)
+            for i, (step, phase) in enumerate(zip(trans_steps, trans_phases)):
+                ax.text(step, i, phase, fontsize=8, ha="left")
+        ax.set_xlabel("Step")
+        ax.set_ylabel("Transition Index")
+        ax.set_title(f"Phase Transitions ({len(transitions)} total)")
+        ax.grid(alpha=0.3)
+
+        # Attractor crystallization
+        ax = axes[1, 1]
+        ax.bar(["Progress", "Count"], [cryst_state.progress, len(attractors) / 10.0])
+        ax.set_ylabel("Value")
+        ax.set_title(f"Crystallization ({cryst_state.phase.name})")
+        ax.set_ylim([0, 1.1])
+        ax.grid(alpha=0.3)
+
+        plt.tight_layout()
+        fig_path = fig_dir / "summary.png"
+        plt.savefig(fig_path, dpi=150, bbox_inches="tight")
+        plt.close()
+        print(f"Figure saved to {fig_path}")
+    except ImportError:
+        print(
+            "Matplotlib not installed; skipping figure generation. "
+            'Install with: pip install -e ".[viz]"'
+        )
+    except Exception as e:
+        print(f"Figure generation failed: {e}")
+
+    print("\n=== Sleep-Stack Demo Complete ===")
+    print(f"Wake: {args.steps_wake} steps, {metrics['wake']['memories_recorded']} memories")
+    print(f"Sleep: {sleep_summary['total_steps']} steps")
+    print(f"Transitions: {len(transitions)}")
+    print(f"Attractors: {len(attractors)}")
+    print(f"Consolidation: {cons_stats['consolidated_count']}/{cons_stats['count']} patterns")
+
+    return 0
+
+
+def main() -> None:
+    """Entry point for the BN-Syn CLI.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    Run a deterministic demo simulation::
+
+        $ bnsyn demo --steps 1000 --seed 42 --N 100
+
+    Check dt-invariance (dt vs dt/2 comparison)::
+
+        $ bnsyn dtcheck --dt-ms 0.1 --dt2-ms 0.05 --steps 2000
+
+    Run sleep-stack demo::
+
+        $ bnsyn sleep-stack --seed 123 --steps-wake 800 --steps-sleep 600
+
+    Output format (demo)::
+
+        {
+          "sigma": 1.02,
+          "spike_rate_hz": 3.45,
+          "V_mean_mV": -62.1,
+          "energy_cost_aJ": 1234.56
+        }
+
+    Notes
+    -----
+    Builds the CLI parser and dispatches to deterministic command handlers.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    """
+    p = argparse.ArgumentParser(prog="bnsyn", description="BN-Syn CLI")
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    demo = sub.add_parser("demo", help="Run a small deterministic demo simulation")
+    demo.add_argument("--steps", type=int, default=2000)
+    demo.add_argument("--dt-ms", type=float, default=0.1)
+    demo.add_argument("--seed", type=int, default=42)
+    demo.add_argument("--N", type=int, default=200)
+    demo.add_argument("--interactive", action="store_true", help="Launch interactive dashboard")
+    demo.set_defaults(func=_cmd_demo)
+
+    run_parser = sub.add_parser("run", help="Run experiment from YAML config")
+    run_parser.add_argument("config", help="Path to YAML configuration file")
+    run_parser.add_argument("-o", "--output", help="Output JSON path (default: stdout)")
+    run_parser.set_defaults(func=_cmd_run_experiment)
+
+    dtc = sub.add_parser("dtcheck", help="Run dt vs dt/2 invariance harness")
+    dtc.add_argument("--steps", type=int, default=2000)
+    dtc.add_argument("--dt-ms", type=float, default=0.1)
+    dtc.add_argument("--dt2-ms", type=float, default=0.05)
+    dtc.add_argument("--seed", type=int, default=42)
+    dtc.add_argument("--N", type=int, default=200)
+    dtc.set_defaults(func=_cmd_dtcheck)
+
+    sleep = sub.add_parser("sleep-stack", help="Run sleep-stack demo with emergence tracking")
+    sleep.add_argument("--seed", type=int, default=123, help="RNG seed")
+    sleep.add_argument("--N", type=int, default=64, help="Number of neurons")
+    sleep.add_argument(
+        "--backend",
+        choices=["reference", "accelerated"],
+        default="reference",
+        help="Simulation backend",
+    )
+    sleep.add_argument("--steps-wake", type=int, default=800, help="Wake phase steps")
+    sleep.add_argument("--steps-sleep", type=int, default=600, help="Sleep phase steps")
+    sleep.add_argument(
+        "--out",
+        type=str,
+        default="results/sleep_stack_v1",
+        help="Output directory for results",
+    )
+    sleep.set_defaults(func=_cmd_sleep_stack)
+
+    args = p.parse_args()
+    raise SystemExit(int(args.func(args)))
+
+
+if __name__ == "__main__":
+    main()
+cmd: sed -n '1,260p' tests/test_api_contract_semver.py
+from __future__ import annotations
+
+from scripts.check_api_contract import (
+    CONTRACT_SYMBOLS,
+    _normalize_signature_text,
+    check_api_changes,
+    collect_public_api,
+    semver_allows_breaking_change,
+)
+
+
+def test_api_contract_detects_breaking_changes() -> None:
+    baseline = {"bnsyn.demo": {"f": "(a, b)"}}
+    current = {"bnsyn.demo": {"f": "(a)"}}
+    ok, breaking = check_api_changes(baseline, current)
+    assert not ok
+    assert any("Signature changed" in item for item in breaking)
+
+
+def test_semver_major_bump_allows_breaking_change() -> None:
+    assert semver_allows_breaking_change("0.2.0", "1.0.0")
+    assert not semver_allows_breaking_change("0.2.0", "0.3.0")
+
+
+def test_collect_public_api_uses_contract_symbols_only() -> None:
+    snapshot = collect_public_api()
+    for module_name, symbols in CONTRACT_SYMBOLS.items():
+        assert set(snapshot[module_name]) == set(symbols)
+
+
+def test_signature_normalization_typing_prefix() -> None:
+    before = "(*, x: typing.Annotated[float, Gt(gt=0)] = 1.0) -> None"
+    after = "(*, x: Annotated[float, Gt(gt=0)] = 1.0) -> None"
+    assert _normalize_signature_text(before) == _normalize_signature_text(after)
+
+cmd: sed -n '1,260p' scripts/check_api_contract.py
+"""Semver-aware API contract gate for BN-Syn public modules."""
+
+from __future__ import annotations
+
+import argparse
+import importlib
+import inspect
+import json
+import re
+import sys
+from pathlib import Path
+from typing import Any
+
+CONTRACT_SYMBOLS: dict[str, tuple[str, ...]] = {
+    "bnsyn.config": (),
+    "bnsyn.rng": (),
+    "bnsyn.cli": (),
+    "bnsyn.neurons": (
+        "AdExState",
+        "IntegrationMetrics",
+        "adex_step",
+        "adex_step_adaptive",
+        "adex_step_with_error_tracking",
+    ),
+    "bnsyn.synapses": ("ConductanceState", "ConductanceSynapses", "nmda_mg_block"),
+    "bnsyn.control": (
+        "BranchingEstimator",
+        "SigmaController",
+        "TemperatureSchedule",
+        "gate_sigmoid",
+        "energy_cost",
+        "total_reward",
+    ),
+    "bnsyn.simulation": ("Network", "NetworkParams", "run_simulation"),
+    "bnsyn.sim.network": ("Network", "NetworkParams", "run_simulation"),
+    "bnsyn.neuron.adex": (
+        "AdExState",
+        "IntegrationMetrics",
+        "adex_step",
+        "adex_step_adaptive",
+        "adex_step_with_error_tracking",
+    ),
+    "bnsyn.synapse.conductance": ("ConductanceState", "ConductanceSynapses", "nmda_mg_block"),
+    "bnsyn.plasticity.three_factor": ("three_factor_update",),
+    "bnsyn.criticality.branching": ("BranchingEstimator", "SigmaController"),
+    "bnsyn.temperature.schedule": ("TemperatureSchedule", "gate_sigmoid"),
+    "bnsyn.connectivity.sparse": ("SparseConnectivity", "build_random_connectivity"),
+}
+SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+
+
+def _ensure_repo_src_on_path() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    src_path = repo_root / "src"
+    if src_path.is_dir():
+        src_text = str(src_path)
+        if src_text not in sys.path:
+            sys.path.insert(0, src_text)
+
+
+def _normalize_signature_text(signature_text: str) -> str:
+    normalized = signature_text
+    normalized = normalized.replace("typing.", "")
+    normalized = normalized.replace("collections.abc.", "")
+    return normalized
+
+
+def _safe_signature(obj: Any) -> str:
+    try:
+        return _normalize_signature_text(str(inspect.signature(obj)))
+    except (TypeError, ValueError):
+        return "<signature-unavailable>"
+
+
+def collect_public_api() -> dict[str, dict[str, str]]:
+    snapshot: dict[str, dict[str, str]] = {}
+    path_bootstrapped = False
+    for module_name, contract_symbols in CONTRACT_SYMBOLS.items():
+        try:
+            module = importlib.import_module(module_name)
+        except ModuleNotFoundError as exc:
+            missing_name = getattr(exc, "name", "")
+            missing_bnsyn_root = missing_name in {"bnsyn", "bnsyn.__init__"}
+            if path_bootstrapped or not module_name.startswith("bnsyn") or not missing_bnsyn_root:
+                raise
+            _ensure_repo_src_on_path()
+            path_bootstrapped = True
+            module = importlib.import_module(module_name)
+        module_snapshot: dict[str, str] = {}
+        for symbol_name in sorted(set(contract_symbols)):
+            if not hasattr(module, symbol_name):
+                module_snapshot[symbol_name] = "<missing-symbol>"
+                continue
+            obj = getattr(module, symbol_name)
+            module_snapshot[symbol_name] = _safe_signature(obj)
+        snapshot[module_name] = module_snapshot
+    return snapshot
+
+
+def _read_pyproject_version() -> str:
+    pyproject = Path("pyproject.toml")
+    payload = pyproject.read_text(encoding="utf-8")
+    match = re.search(r'^version\s*=\s*"([0-9]+\.[0-9]+\.[0-9]+)"', payload, flags=re.MULTILINE)
+    if not match:
+        raise ValueError("Could not parse project version from pyproject.toml")
+    return match.group(1)
+
+
+def _parse_semver(version: str) -> tuple[int, int, int]:
+    match = SEMVER_RE.match(version)
+    if not match:
+        raise ValueError(f"Invalid semver version: {version!r}")
+    return int(match.group(1)), int(match.group(2)), int(match.group(3))
+
+
+def check_api_changes(
+    baseline: dict[str, dict[str, str]],
+    current: dict[str, dict[str, str]],
+) -> tuple[bool, list[str]]:
+    breaking: list[str] = []
+    for module_name, baseline_symbols in baseline.items():
+        current_symbols = current.get(module_name)
+        if current_symbols is None:
+            breaking.append(f"Module removed from API: {module_name}")
+            continue
+        for symbol_name, baseline_signature in baseline_symbols.items():
+            if symbol_name not in current_symbols:
+                breaking.append(f"Symbol removed: {module_name}.{symbol_name}")
+                continue
+            current_signature = _normalize_signature_text(current_symbols[symbol_name])
+            baseline_signature_normalized = _normalize_signature_text(baseline_signature)
+            if baseline_signature_normalized != current_signature:
+                breaking.append(
+                    f"Signature changed: {module_name}.{symbol_name} "
+                    f"{baseline_signature_normalized} -> {current_signature}"
+                )
+    return len(breaking) == 0, breaking
+
+
+def semver_allows_breaking_change(previous: str, current: str) -> bool:
+    prev_major, _, _ = _parse_semver(previous)
+    cur_major, _, _ = _parse_semver(current)
+    return cur_major > prev_major
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Semver-aware API contract checker")
+    parser.add_argument("--baseline", type=Path, required=True)
+    parser.add_argument("--current-version", default=None)
+    parser.add_argument("--baseline-version", default=None)
+    parser.add_argument("--write-baseline", action="store_true")
+    args = parser.parse_args()
+
+    current_version = args.current_version or _read_pyproject_version()
+    current_snapshot = collect_public_api()
+
+    if args.write_baseline:
+        payload = {
+            "version": current_version,
+            "modules": current_snapshot,
+        }
+        args.baseline.parent.mkdir(parents=True, exist_ok=True)
+        args.baseline.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        print(f"Wrote baseline: {args.baseline}")
+        return 0
+
+    if not args.baseline.exists():
+        print(f"ERROR: Baseline not found: {args.baseline}")
+        return 1
+
+    baseline_payload = json.loads(args.baseline.read_text(encoding="utf-8"))
+    baseline_modules = baseline_payload.get("modules")
+    if not isinstance(baseline_modules, dict):
+        print("ERROR: Baseline payload missing 'modules' mapping")
+        return 1
+
+    baseline_version = args.baseline_version or str(baseline_payload.get("version", "0.0.0"))
+    try:
+        ok, breaking = check_api_changes(baseline_modules, current_snapshot)
+    except Exception as exc:  # pragma: no cover
+        print(f"ERROR: Failed to compare API snapshots: {exc}")
+        return 1
+
+    if ok:
+        print("API contract check passed")
+        return 0
+
+    for item in breaking:
+        print(f"BREAKING: {item}")
+
+    if semver_allows_breaking_change(baseline_version, current_version):
+        print(
+            "Detected breaking API changes, but semver major version bump allows this: "
+            f"{baseline_version} -> {current_version}"
+        )
+        return 0
+
+    print(
+        "ERROR: Breaking API changes detected without major semver bump: "
+        f"{baseline_version} -> {current_version}"
+    )
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+cmd: sed -n '1,260p' .github/workflows/ci-pr.yml
+# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+name: ci-pr
+
+on:
+  workflow_dispatch:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: string
+        default: "true"
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: string
+        default: "true"
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-pr-atomic:
+    uses: ./.github/workflows/ci-pr-atomic.yml
+    with:
+      python-version: ${{ inputs['python-version'] }}
+      upload-codecov: ${{ fromJSON(inputs['upload-codecov']) }}
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+cmd: sed -n '1,360p' .github/workflows/ci-pr-atomic.yml
+name: ci-pr-atomic
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: boolean
+        default: true
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-pr-atomic-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_CACHE_DIR: ~/.cache/pip
+  PYTHONHASHSEED: 0
+  PYTHONDONTWRITEBYTECODE: 1
+  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_NO_PYTHON_VERSION_WARNING: 1
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      validation: ${{ steps.filter.outputs.validation }}
+      property: ${{ steps.filter.outputs.property }}
+      docs: ${{ steps.filter.outputs.docs }}
+      dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'tests/**'
+            validation:
+              - 'src/**'
+              - 'tools/**'
+              - 'scripts/**'
+              - 'docs/**'
+              - 'tests/**'
+            property:
+              - 'src/**'
+              - 'tests/**'
+            docs:
+              - 'docs/**'
+              - 'README*'
+              - 'mkdocs.yml'
+              - 'pyproject.toml'
+            dependency_manifest:
+              - 'pyproject.toml'
+              - 'requirements*.txt'
+
+  gate-profile:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_gate_profile.yml
+    with:
+      profile: pr
+
+  determinism:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]"
+      - name: Test determinism (run 1)
+        id: run1
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Test determinism (run 2)
+        id: run2
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Test determinism (run 3)
+        id: run3
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Check RNG isolation
+        id: rng
+        run: pytest tests/test_determinism.py::test_no_global_numpy_rng_usage -v
+      - name: Generate summary
+        if: always()
+        run: |
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Determinism Verification (3x Runs)"
+            echo ""
+            echo "| Run | Status | Result |"
+            echo "|-----|--------|--------|"
+            if [ "${{ steps.run1.outcome }}" = "success" ]; then
+              echo "| 1 |  PASS | Identical outputs |"
+            else
+              echo "| 1 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run2.outcome }}" = "success" ]; then
+              echo "| 2 |  PASS | Identical outputs |"
+            else
+              echo "| 2 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "| 3 |  PASS | Identical outputs |"
+            else
+              echo "| 3 |  FAIL | Non-deterministic |"
+            fi
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ steps.rng.outcome }}" = "success" ]; then
+              echo "| RNG Isolation |  PASS |"
+            else
+              echo "| RNG Isolation |  FAIL |"
+            fi
+            echo ""
+            if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "** All runs produced identical outputs (A1: Determinism 96%)**"
+            else
+              echo "** Determinism check failed**"
+            fi
+          } >> "$summary_file"
+
+
+  contracts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[test]"
+      - name: Run no-escape contract tests
+        run: |
+          pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_schema_contracts.py             tests/test_verify_reproducible_artifacts.py
+      - name: Verify reproducible generated artifacts
+        run: |
+          python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
+      - name: Upload contract artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: no-escape-contracts-${{ github.sha }}
+          path: |
+            evidence/zqsg_2026_02_12/repro_report_ci.json
+          if-no-files-found: error
+          retention-days: 30
+
+  quality:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_quality.yml
+    with:
+      python-version: ${{ inputs['python-version'] || '3.11' }}
+      mypy-strict: true
+      pylint-threshold: 7.5
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]" build
+      - name: Verify lockfile freshness
+        run: |
+          python -m pip install pip-tools
+          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+          git diff --exit-code -- requirements-lock.txt
+      - run: python -m build
+      - name: Install from wheel in clean venv
+        run: |
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
+
+  smoke-wheel-matrix:
+    name: smoke-wheel-matrix (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]" build
+      - name: Smoke tests
+        run: pytest -m smoke -v --tb=short
+      - name: Build and install wheel
+        run: |
+          python -m build
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
+
+  tests-smoke:
+    needs: gate-profile
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_pytest.yml
+    with:
+      python-version: ${{ inputs['python-version'] || '3.11' }}
+      markers: ${{ needs.gate-profile.outputs.pytest-markers }}
+      coverage-threshold: ${{ fromJSON(needs.gate-profile.outputs.coverage-threshold) }}
+      upload-codecov: ${{ inputs['upload-codecov'] || true }}
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  validation-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.validation == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-validation') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_validation_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.validation-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
+      summary-title: PR Validation Suite
+      upload-artifacts: true
+      artifact-name: validation-logs-pr
+
+  property-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.property == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-property') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_property_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.property-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.property-timeout-minutes) }}
+      hypothesis-profile: ci
+      summary-title: PR Property-Based Invariants
+      upload-artifacts: true
+      artifact-name: property-logs-pr
+
+  docs-pr:
+    needs: changes
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.docs == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
+      - name: Build docs
+        run: make docs
+      - name: Link check
+        run: sphinx-build -b linkcheck docs docs/_build/linkcheck
+
+  pr-description-policy:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: Validate PR body sections and labels policy
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          script: |
+            const body = (context.payload.pull_request?.body || '').toLowerCase();
+            const headings = new Set(
+              [...body.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim())
+            );
+            const requiredSections = {
+              'what changed': ['what changed', 'description', 'summary'],
+              'why': ['why', 'motivation', 'context'],
+              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes'],
+              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
+              'how to test': ['how to test', 'testing', 'test plan', 'commands run'],
+            };
+            const hasAlias = (alias) => body.includes(alias) || Array.from(headings).some((heading) => heading.includes(alias));
+cmd: cat src/bnsyn/__init__.py
+"""BN-Syn package entry point and version metadata.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+This module exposes the package version and provides top-level access to
+core configuration and RNG utilities without modifying simulation behavior.
+
+References
+----------
+docs/SPEC.md
+"""
+
+from __future__ import annotations
+
+from importlib import metadata
+
+try:
+    __version__ = metadata.version("bnsyn")
+except metadata.PackageNotFoundError:  # pragma: no cover
+    __version__ = "0.0.0"
+
+__all__ = ["__version__", "rng", "config", "neurons", "synapses", "control", "simulation"]
+cmd: sed -n '1,260p' tests/test_cli_smoke.py
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+
+def _cli_env() -> dict[str, str]:
+    env = os.environ.copy()
+    existing_pythonpath = env.get("PYTHONPATH", "")
+    src_path = str(Path("src").resolve())
+    env["PYTHONPATH"] = (
+        f"{src_path}{os.pathsep}{existing_pythonpath}" if existing_pythonpath else src_path
+    )
+    return env
+
+
+def test_cli_demo_runs() -> None:
+    p = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "demo",
+            "--steps",
+            "100",
+            "--dt-ms",
+            "0.1",
+            "--seed",
+            "1",
+            "--N",
+            "80",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    out = json.loads(p.stdout)
+    assert "demo" in out
+
+
+def test_cli_dtcheck_runs() -> None:
+    p = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "dtcheck",
+            "--steps",
+            "50",
+            "--dt-ms",
+            "0.1",
+            "--dt2-ms",
+            "0.05",
+            "--seed",
+            "2",
+            "--N",
+            "50",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    out = json.loads(p.stdout)
+    assert "m_dt" in out
+    assert "m_dt2" in out
+
+
+def test_cli_sleep_stack_runs() -> None:
+    """Test sleep-stack CLI command."""
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_dir = Path(tmpdir) / "test_sleep_stack"
+
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "bnsyn.cli",
+                "sleep-stack",
+                "--seed",
+                "42",
+                "--N",
+                "80",
+                "--backend",
+                "reference",
+                "--steps-wake",
+                "50",
+                "--steps-sleep",
+                "50",
+                "--out",
+                str(out_dir),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+            env=_cli_env(),
+        )
+
+        manifest_path = out_dir / "manifest.json"
+        metrics_path = out_dir / "metrics.json"
+
+        assert manifest_path.exists(), "manifest.json not created"
+        assert metrics_path.exists(), "metrics.json not created"
+
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        assert "seed" in manifest
+        assert manifest["seed"] == 42
+        assert "steps_wake" in manifest
+        assert "steps_sleep" in manifest
+        assert manifest["N"] == 80
+
+        with open(metrics_path) as f:
+            metrics = json.load(f)
+
+        assert metrics["backend"] == "reference"
+        assert "wake" in metrics
+        assert "sleep" in metrics
+        assert "transitions" in metrics
+        assert "attractors" in metrics
+        assert "consolidation" in metrics
+
+        assert "steps" in metrics["wake"]
+        assert "memories_recorded" in metrics["wake"]
+
+        assert "count" in metrics["consolidation"]
+        assert "consolidated_count" in metrics["consolidation"]
+
+cmd: sed -n '1,260p' tests/test_cli_unit.py
+"""Unit tests for CLI commands to improve coverage.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Direct unit tests for CLI command functions.
+
+References
+----------
+docs/sleep_stack.md
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import tempfile
+from pathlib import Path
+
+from bnsyn.cli import _cmd_demo, _cmd_dtcheck, _cmd_sleep_stack
+
+
+def test_cmd_demo_direct() -> None:
+    """Test _cmd_demo function directly."""
+    args = argparse.Namespace(
+        steps=50,
+        dt_ms=0.1,
+        seed=42,
+        N=40,
+    )
+    result = _cmd_demo(args)
+    assert result == 0
+
+
+def test_cmd_dtcheck_direct() -> None:
+    """Test _cmd_dtcheck function directly."""
+    args = argparse.Namespace(
+        steps=50,
+        dt_ms=0.1,
+        dt2_ms=0.05,
+        seed=42,
+        N=40,
+    )
+    result = _cmd_dtcheck(args)
+    assert result == 0
+
+
+def test_cmd_sleep_stack_direct() -> None:
+    """Test _cmd_sleep_stack function directly."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_dir = Path(tmpdir) / "test_output"
+
+        args = argparse.Namespace(
+            seed=123,
+            N=64,
+            backend="reference",
+            steps_wake=50,
+            steps_sleep=50,
+            out=str(out_dir),
+        )
+
+        result = _cmd_sleep_stack(args)
+        assert result == 0
+
+        # Verify outputs
+        manifest_path = out_dir / "manifest.json"
+        metrics_path = out_dir / "metrics.json"
+
+        assert manifest_path.exists()
+        assert metrics_path.exists()
+
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        assert manifest["seed"] == 123
+        assert manifest["steps_wake"] == 50
+
+        with open(metrics_path) as f:
+            metrics = json.load(f)
+        assert "wake" in metrics
+        assert "sleep" in metrics
+        assert "transitions" in metrics
+        assert "attractors" in metrics
+        assert "consolidation" in metrics
+
+
+def test_cmd_sleep_stack_with_custom_sleep_duration() -> None:
+    """Test _cmd_sleep_stack with non-default sleep duration."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_dir = Path(tmpdir) / "test_output2"
+
+        args = argparse.Namespace(
+            seed=456,
+            N=64,
+            backend="reference",
+            steps_wake=30,
+            steps_sleep=300,  # Different from default 600
+            out=str(out_dir),
+        )
+
+        result = _cmd_sleep_stack(args)
+        assert result == 0
+
+        # Verify that manifest records the correct steps
+        manifest_path = out_dir / "manifest.json"
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        assert manifest["steps_sleep"] == 300
+cmd: mkdir -p docs/ops/runbooks docs/contracts contracts quality benchmarks scripts tests/contracts
+cmd: python scripts/snapshot_public_api.py
+wrote quality/public_api_snapshot.json
+cmd: tail -n 80 .github/workflows/ci-pr-atomic.yml
+        if: always()
+        with:
+          name: security-report-${{ github.sha }}
+          path: artifacts/pip-audit.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  codeql-pr:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (contains(github.event.pull_request.labels.*.name, 'run-codeql') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+        with:
+          languages: "python"
+          build-mode: none
+      - name: Analyze
+        uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+
+
+  finalize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    needs:
+      - gate-profile
+      - determinism
+      - quality
+      - build
+      - smoke-wheel-matrix
+      - tests-smoke
+      - ssot
+      - security
+    if: success()
+    steps:
+      - name: PR Quality Gate
+        run: |
+          echo " All PR checks passed!"
+          echo "   Determinism verified"
+          echo "   Code quality approved"
+          echo "   Build successful"
+          echo "   Tests passed (${{ needs.gate-profile.outputs.coverage-threshold }}% coverage)"
+          echo "   SSOT gates verified"
+          echo "   Security audit passed"
+          echo ""
+          echo "Ready for merge "
+
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "ci-pr-atomic",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-ci-pr-atomic-${{ github.sha }}
+          path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30
+cmd: python -m pytest tests/test_ops_validators.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+....FFFF                                                                 [100%]
+=================================== FAILURES ===================================
+_____________ test_sleep_stack_artifacts_validate_against_schemas ______________
+
+    def test_sleep_stack_artifacts_validate_against_schemas() -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_dir = Path(tmpdir) / "run"
+            Args.out = str(out_dir)
+            result = _cmd_sleep_stack(Args)
+            assert result == 0
+    
+            manifest = json.loads((out_dir / "manifest.json").read_text(encoding="utf-8"))
+            metrics = json.loads((out_dir / "metrics.json").read_text(encoding="utf-8"))
+    
+            manifest_schema = json.loads(Path("schemas/manifest.schema.json").read_text(encoding="utf-8"))
+            metrics_schema = json.loads(
+                Path("schemas/sleep_stack_metrics.schema.json").read_text(encoding="utf-8")
+            )
+    
+>           Draft202012Validator(manifest_schema).validate(manifest)
+
+tests/contracts/test_artifact_schemas.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Draft202012Validator(schema={'$id': 'https://bnsy...t.schema.json', '$schema': 'https://json...020-12/schema', 'additi...': {'minimum': 1, 'type': 'integer'}, 'steps_wake': {'minimum': 1, 'type': 'integer'}, ...}, ...}, format_checker=None)
+args = ({'N': 48, 'git_sha': '3e06cdada867b81227643408741c902f5fafc55f', 'package_version': '0.2.0', 'seed': 5, ...},)
+kwargs = {}, error = <ValidationError: "'version' is a required property">
+
+    def validate(self, *args, **kwargs):
+        for error in self.iter_errors(*args, **kwargs):
+>           raise error
+E           jsonschema.exceptions.ValidationError: 'version' is a required property
+E           
+E           Failed validating 'required' in schema:
+E               {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+E                '$id': 'https://bnsyn.dev/schemas/manifest.schema.json',
+E                'title': 'Sleep Stack Manifest',
+E                'type': 'object',
+E                'required': ['seed', 'steps_wake', 'steps_sleep', 'N', 'version'],
+E                'properties': {'seed': {'type': 'integer'},
+E                               'steps_wake': {'type': 'integer', 'minimum': 1},
+E                               'steps_sleep': {'type': 'integer', 'minimum': 1},
+E                               'N': {'type': 'integer', 'minimum': 1},
+E                               'version': {'type': 'string'}},
+E                'additionalProperties': True}
+E           
+E           On instance:
+E               {'seed': 5,
+E                'steps_wake': 30,
+E                'steps_sleep': 30,
+E                'N': 48,
+E                'package_version': '0.2.0',
+E                'git_sha': '3e06cdada867b81227643408741c902f5fafc55f'}
+
+/root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/jsonschema/validators.py:450: ValidationError
+----------------------------- Captured stdout call -----------------------------
+Running wake phase (30 steps)...
+Running sleep phase (30 steps)...
+Metrics written to /tmp/tmpocly7f71/run/metrics.json
+Manifest written to /tmp/tmpocly7f71/run/manifest.json
+Matplotlib not installed; skipping figure generation. Install with: pip install -e ".[viz]"
+
+=== Sleep-Stack Demo Complete ===
+Wake: 30 steps, 1 memories
+Sleep: 29 steps
+Transitions: 0
+Attractors: 0
+Consolidation: 0/1 patterns
+______________________ test_public_api_compat_gate_passes ______________________
+
+    def test_public_api_compat_gate_passes() -> None:
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "scripts/check_public_api_compat.py",
+                "--baseline",
+                "quality/public_api_snapshot.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+>       assert proc.returncode == 0, proc.stdout + proc.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/check_public_api_compat.py", line 8, in <module>
+E             from scripts.snapshot_public_api import collect_snapshot
+E         ModuleNotFoundError: No module named 'scripts'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', 'scripts/check_public_api_compat.py', '--baseline',...le>\n    from scripts.snapshot_public_api import collect_snapshot\nModuleNotFoundError: No module named \'scripts\'\n').returncode
+
+tests/test_public_api_compat_gate.py:19: AssertionError
+_________________________ test_perf_budget_gate_passes _________________________
+
+    def test_perf_budget_gate_passes() -> None:
+        run = subprocess.run(
+            [sys.executable, "scripts/run_perf_smoke.py", "--output", "quality/perf_results.json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+>       assert run.returncode == 0, run.stdout + run.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/run_perf_smoke.py", line 3, in <module>
+E             from benchmarks.perf_smoke import main
+E         ModuleNotFoundError: No module named 'benchmarks'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', 'scripts/run_perf_smoke.py', '--output', 'quality/p...ine 3, in <module>\n    from benchmarks.perf_smoke import main\nModuleNotFoundError: No module named \'benchmarks\'\n').returncode
+
+tests/test_perf_budget_gate.py:14: AssertionError
+___________________ test_release_readiness_report_generates ____________________
+
+    def test_release_readiness_report_generates() -> None:
+>       subprocess.run(
+            [sys.executable, "scripts/run_perf_smoke.py", "--output", "quality/perf_results.json"],
+            check=True,
+        )
+
+tests/test_release_readiness_report.py:9: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['/root/.pyenv/versions/3.12.12/bin/python', 'scripts/run_perf_smoke.py', '--output', 'quality/perf_results.json'],)
+kwargs = {}
+process = <Popen: returncode: 1 args: ['/root/.pyenv/versions/3.12.12/bin/python', 'sc...>
+stdout = None, stderr = None, retcode = 1
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output & stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['/root/.pyenv/versions/3.12.12/bin/python', 'scripts/run_perf_smoke.py', '--output', 'quality/perf_results.json']' returned non-zero exit status 1.
+
+/root/.pyenv/versions/3.12.12/lib/python3.12/subprocess.py:571: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/run_perf_smoke.py", line 3, in <module>
+    from benchmarks.perf_smoke import main
+ModuleNotFoundError: No module named 'benchmarks'
+=========================== short test summary info ============================
+FAILED tests/contracts/test_artifact_schemas.py::test_sleep_stack_artifacts_validate_against_schemas
+FAILED tests/test_public_api_compat_gate.py::test_public_api_compat_gate_passes
+FAILED tests/test_perf_budget_gate.py::test_perf_budget_gate_passes - Asserti...
+FAILED tests/test_release_readiness_report.py::test_release_readiness_report_generates
+cmd: python -m pytest tests/test_ops_validators.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+......F.                                                                 [100%]
+=================================== FAILURES ===================================
+_________________________ test_perf_budget_gate_passes _________________________
+
+    def test_perf_budget_gate_passes() -> None:
+        run = subprocess.run(
+            [sys.executable, "scripts/run_perf_smoke.py", "--output", "quality/perf_results.json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert run.returncode == 0, run.stdout + run.stderr
+    
+        check = subprocess.run(
+            [
+                sys.executable,
+                "scripts/check_perf_budget.py",
+                "--baseline",
+                "quality/perf_baseline.json",
+                "--budgets",
+                "quality/perf_budgets.yml",
+                "--results",
+                "quality/perf_results.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+>       assert check.returncode == 0, check.stdout + check.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/check_perf_budget.py", line 7, in <module>
+E             import yaml
+E         ModuleNotFoundError: No module named 'yaml'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', 'scripts/check_perf_budget.py', '--baseline', 'qual.../scripts/check_perf_budget.py", line 7, in <module>\n    import yaml\nModuleNotFoundError: No module named \'yaml\'\n').returncode
+
+tests/test_perf_budget_gate.py:31: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_perf_budget_gate.py::test_perf_budget_gate_passes - Asserti...
+cmd: python -m pytest tests/test_ops_validators.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+........                                                                 [100%]
+cmd: ruff check scripts/validate_ops_slo.py scripts/validate_runbooks.py scripts/snapshot_public_api.py scripts/check_public_api_compat.py scripts/check_perf_budget.py scripts/release_readiness_report.py benchmarks/perf_smoke.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_ops_validators.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py
+E402 Module level import not at top of file
+  --> benchmarks/perf_smoke.py:14:1
+   |
+12 |     sys.path.insert(0, str(SRC))
+13 |
+14 | from bnsyn.sim.network import run_simulation
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+
+E402 Module level import not at top of file
+  --> scripts/check_public_api_compat.py:13:1
+   |
+11 |     sys.path.insert(0, str(REPO_ROOT))
+12 |
+13 | from scripts.snapshot_public_api import collect_snapshot
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+14 |
+15 | SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+   |
+
+E702 Multiple statements on one line (semicolon)
+  --> scripts/release_readiness_report.py:45:38
+   |
+43 |     lines = ["# Release Readiness Report", "", f"- Version: `{_project_version()}`", ""]
+44 |     lines.append("## Gate status")
+45 |     lines.append("| Gate | Status |"); lines.append("|---|---|")
+   |                                      ^
+46 |
+47 |     for name, cmd in GATES:
+   |
+
+F401 [*] `sys` imported but unused
+ --> scripts/validate_runbooks.py:3:8
+  |
+1 | from __future__ import annotations
+2 |
+3 | import sys
+  |        ^^^
+4 | from pathlib import Path
+  |
+help: Remove unused import: `sys`
+
+Found 4 errors.
+[*] 1 fixable with the `--fix` option.
+cmd: ruff check scripts/validate_ops_slo.py scripts/validate_runbooks.py scripts/snapshot_public_api.py scripts/check_public_api_compat.py scripts/check_perf_budget.py scripts/release_readiness_report.py benchmarks/perf_smoke.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_ops_validators.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py
+All checks passed!
+cmd: python -m pytest tests/test_ops_validators.py tests/contracts/test_cli_contract.py tests/contracts/test_artifact_schemas.py tests/test_public_api_compat_gate.py tests/test_perf_budget_gate.py tests/test_release_readiness_report.py -q
+........                                                                 [100%]
+cmd: python scripts/validate_ops_slo.py docs/ops/SLA_SLO.md && python scripts/validate_runbooks.py && python scripts/check_public_api_compat.py --baseline quality/public_api_snapshot.json && python scripts/run_perf_smoke.py --output quality/perf_results.json && python scripts/check_perf_budget.py --baseline quality/perf_baseline.json --budgets quality/perf_budgets.yml --results quality/perf_results.json
+perf budget check passed (current=0.0229s baseline=0.7000s regression=-96.73%)
+cmd: python -m pytest -m 'not validation' -q
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/benchmarks/test_regression.py _____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/benchmarks/test_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/benchmarks/test_regression.py:8: in <module>
+    from benchmarks.metrics import metrics_to_dict, run_benchmark
+benchmarks/metrics.py:12: in <module>
+    import psutil
+E   ModuleNotFoundError: No module named 'psutil'
+______________________ ERROR collecting tests/properties _______________________
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+/root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+tests/properties/conftest.py:5: in <module>
+    from hypothesis import Verbosity, settings
+E   ModuleNotFoundError: No module named 'hypothesis'
+______________ ERROR collecting tests/test_claims_enforcement.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_claims_enforcement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_claims_enforcement.py:21: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+____________ ERROR collecting tests/test_experiments_declarative.py ____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_experiments_declarative.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_experiments_declarative.py:10: in <module>
+    from bnsyn.experiments import declarative
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_integration_experiment_flow.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_integration_experiment_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_integration_experiment_flow.py:8: in <module>
+    from bnsyn.experiments.declarative import run_from_yaml
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_manifest_tooling.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling.py:5: in <module>
+    from tools.manifest import generate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_manifest_tooling_regression.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling_regression.py:9: in <module>
+    from tools.manifest import generate, validate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________ ERROR collecting tests/test_scan_governed_docs_script.py ___________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_scan_governed_docs_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_scan_governed_docs_script.py:10: in <module>
+    from scripts import scan_governed_docs  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/scan_governed_docs.py:22: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_schema_contracts.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_schema_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_schema_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_sync_required_status_contexts.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_sync_required_status_contexts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_sync_required_status_contexts.py:6: in <module>
+    from scripts.sync_required_status_contexts import build_payload, sync_required_status_contexts
+scripts/sync_required_status_contexts.py:7: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_validate_bibliography_script.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_bibliography_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_bibliography_script.py:12: in <module>
+    from scripts import validate_bibliography as vb  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/validate_bibliography.py:17: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________ ERROR collecting tests/test_validate_long_running_triggers.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_long_running_triggers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_long_running_triggers.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_validate_pr_gates.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_pr_gates.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_pr_gates.py:5: in <module>
+    from scripts.validate_pr_gates import validate_pr_gates
+scripts/validate_pr_gates.py:8: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________ ERROR collecting tests/test_validate_required_checks.py ____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_required_checks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_required_checks.py:7: in <module>
+    from scripts.validate_required_checks import RequiredChecksParseError, load_required_checks
+scripts/validate_required_checks.py:7: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_validate_workflow_contracts.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_workflow_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_workflow_contracts.py:7: in <module>
+    from scripts.validate_workflow_contracts import (
+scripts/validate_workflow_contracts.py:9: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR tests/benchmarks/test_regression.py
+ERROR tests/properties - ModuleNotFoundError: No module named 'hypothesis'
+ERROR tests/test_claims_enforcement.py
+ERROR tests/test_experiments_declarative.py
+ERROR tests/test_integration_experiment_flow.py
+ERROR tests/test_manifest_tooling.py
+ERROR tests/test_manifest_tooling_regression.py
+ERROR tests/test_scan_governed_docs_script.py
+ERROR tests/test_schema_contracts.py
+ERROR tests/test_sync_required_status_contexts.py
+ERROR tests/test_validate_bibliography_script.py
+ERROR tests/test_validate_long_running_triggers.py
+ERROR tests/test_validate_pr_gates.py
+ERROR tests/test_validate_required_checks.py
+ERROR tests/test_validate_workflow_contracts.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 15 errors during collection !!!!!!!!!!!!!!!!!!!
+cmd: git status --short
+ M .github/workflows/ci-pr-atomic.yml
+?? .github/workflows/perf-budgets.yml
+?? .github/workflows/release-readiness.yml
+?? benchmarks/perf_smoke.py
+?? contracts/
+?? docs/API_STABILITY.md
+?? docs/RELEASE_POLICY.md
+?? docs/contracts/CLI_CONTRACT.md
+?? docs/ops/
+?? proof_bundle/logs/agent_commands.log
+?? quality/perf_baseline.json
+?? quality/perf_budgets.yml
+?? quality/perf_results.json
+?? quality/public_api_snapshot.json
+?? quality/release_readiness_report.md
+?? schemas/manifest.schema.json
+?? schemas/sleep_stack_metrics.schema.json
+?? scripts/check_perf_budget.py
+?? scripts/check_public_api_compat.py
+?? scripts/release_readiness_report.py
+?? scripts/run_perf_smoke.py
+?? scripts/snapshot_public_api.py
+?? scripts/validate_ops_slo.py
+?? scripts/validate_runbooks.py
+?? tests/contracts/
+?? tests/test_ops_validators.py
+?? tests/test_perf_budget_gate.py
+?? tests/test_public_api_compat_gate.py
+?? tests/test_release_readiness_report.py
+cmd: python cleanup quality artifacts

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "entrypoint": "python -m bnsyn.cli",
+  "help_sections": [
+    "usage:",
+    "positional arguments:",
+    "options:"
+  ],
+  "subcommands": [
+    "demo",
+    "run",
+    "dtcheck",
+    "sleep-stack"
+  ],
+  "error_invariants": {
+    "invalid_subcommand": {
+      "exit_code": 2,
+      "stderr_contains": "invalid choice"
+    }
+  }
+}

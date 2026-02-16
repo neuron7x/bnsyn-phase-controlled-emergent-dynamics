@@ -1,0 +1,3 @@
+profile: perf-smoke-v1
+max_duration_seconds: 2.5
+max_regression_percent: 20.0

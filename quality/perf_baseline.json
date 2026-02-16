@@ -1,0 +1,9 @@
+{
+  "profile": "perf-smoke-v1",
+  "result": {
+    "N": 64,
+    "duration_seconds": 0.7,
+    "seed": 7,
+    "steps": 120
+  }
+}

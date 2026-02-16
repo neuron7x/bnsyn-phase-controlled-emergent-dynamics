@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bnsyn.dev/schemas/manifest.schema.json",
+  "title": "Sleep Stack Manifest",
+  "type": "object",
+  "required": ["seed", "steps_wake", "steps_sleep", "N", "package_version"],
+  "properties": {
+    "seed": {"type": "integer"},
+    "steps_wake": {"type": "integer", "minimum": 1},
+    "steps_sleep": {"type": "integer", "minimum": 1},
+    "N": {"type": "integer", "minimum": 1},
+    "package_version": {"type": "string"}
+  },
+  "additionalProperties": true
+}
