@@ -1,0 +1,37 @@
+$ rg -n "TODO|FIXME|NotImplemented|pass$|return None$|return {}$|return \[\]$" src scripts tools
+tools/safety/check_safety_artifacts.py:190:    return []
+tools/entropy_gate/compute_metrics.py:9:TODO_RE = re.compile(r"\b(TODO|FIXME)\b")
+tools/entropy_gate/compute_metrics.py:201:        count += len(TODO_RE.findall(text))
+scripts/scan_placeholders.py:73:            if isinstance(func, ast.Name) and func.id == "NotImplementedError":
+scripts/scan_placeholders.py:79:                        signature="raise_NotImplementedError",
+scripts/scan_placeholders.py:99:        return []
+scripts/rebuild_sources_lock.py:55:        return {}
+scripts/verify_formal_constants.py:64:            return {}
+scripts/verify_formal_constants.py:135:            return {}
+scripts/verify_formal_constants.py:180:            return {}
+scripts/check_benchmark_regressions.py:50:            return None
+scripts/check_benchmark_regressions.py:54:    return None
+scripts/validate_branch_protection_governance.py:12:    pass
+scripts/validate_workflow_contracts.py:23:    pass
+scripts/validate_long_running_triggers.py:20:    pass
+scripts/validate_required_checks.py:17:    pass
+scripts/validate_pr_gates.py:18:    pass
+scripts/scan_governed_docs.py:12:- 0: All checks pass
+scripts/validate_bibliography.py:39:    pass
+scripts/validate_required_status_contexts.py:14:    pass
+src/bnsyn/emergence/crystallizer.py:334:            return []
+src/bnsyn/emergence/crystallizer.py:394:            return []
+scripts/math_validate.py:165:    return None
+scripts/track_quality.py:21:        return None
+scripts/track_quality.py:30:        return None
+scripts/track_quality.py:39:        return None
+scripts/track_quality.py:41:        return None
+src/bnsyn/testing/faults.py:188:            return None
+src/bnsyn/provenance/manifest.py:197:            return {}
+src/bnsyn/sleep/cycle.py:336:            return []
+src/bnsyn/criticality/phase_transition.py:218:        return None
+src/bnsyn/criticality/phase_transition.py:253:            return None
+src/bnsyn/criticality/phase_transition.py:263:            return None
+src/bnsyn/memory/consolidator.py:291:            return None
+src/bnsyn/memory/trace.py:147:            return []
+exit_code=0

@@ -1,0 +1,8 @@
+[2026-02-16T10:51:43.047442Z]
+CMD: python scripts/audit_spec_implementation.py --help
+EXIT: 0
+STDOUT:
+Spec implementation audit passed.
+
+STDERR:
+

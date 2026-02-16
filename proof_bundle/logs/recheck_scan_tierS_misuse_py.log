@@ -1,0 +1,7 @@
+CMD: python scripts/scan_tierS_misuse.py --help
+EXIT: 0
+STDOUT:
+OK: Tier-S misuse scan passed. No Tier-S bibkeys in normative contexts.
+
+STDERR:
+

@@ -1,0 +1,28 @@
+[2026-02-16T10:52:03.962099Z]
+CMD: python scripts/generate_benchmark_baseline.py --help
+EXIT: 0
+STDOUT:
+usage: generate_benchmark_baseline.py [-h] [--seed SEED] [--neurons NEURONS]
+                                      [--dt DT]
+                                      [--physics-steps PHYSICS_STEPS]
+                                      [--kernel-steps KERNEL_STEPS]
+                                      [--warmup WARMUP] [--runs RUNS]
+                                      [--output-dir OUTPUT_DIR]
+                                      [--raw-dir RAW_DIR]
+
+Generate benchmark baselines.
+
+options:
+  -h, --help            show this help message and exit
+  --seed SEED
+  --neurons NEURONS
+  --dt DT
+  --physics-steps PHYSICS_STEPS
+  --kernel-steps KERNEL_STEPS
+  --warmup WARMUP
+  --runs RUNS
+  --output-dir OUTPUT_DIR
+  --raw-dir RAW_DIR
+
+STDERR:
+

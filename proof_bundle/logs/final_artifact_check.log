@@ -1,0 +1,31 @@
+[2026-02-16T11:01:20.395897Z]
+CMD: test -s pseudostructure_inventory.json
+EXIT: 0
+STDOUT:
+
+STDERR:
+
+CMD: test -s proof_bundle/index.json
+EXIT: 0
+STDOUT:
+
+STDERR:
+
+CMD: test -s proof_bundle/hashes/sha256sums.txt
+EXIT: 0
+STDOUT:
+
+STDERR:
+
+CMD: test -s proof_bundle/logs/final_typecheck.log
+EXIT: 0
+STDOUT:
+
+STDERR:
+
+CMD: test -s PR_FINAL_DESCRIPTION.md
+EXIT: 0
+STDOUT:
+
+STDERR:
+

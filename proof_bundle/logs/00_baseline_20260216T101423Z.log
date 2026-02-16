@@ -1,0 +1,14 @@
+$ date -u
+Mon Feb 16 10:14:23 UTC 2026
+$ git status --short
+?? proof_bundle/logs/
+$ git rev-parse --abbrev-ref HEAD
+work
+$ git rev-parse HEAD
+dbb6be4a5af3675e79c15b7debbcb022dae6c1f7
+$ uname -a
+Linux df33e428bec9 6.12.47 #1 SMP Mon Oct 27 10:01:15 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+$ python -V
+Python 3.12.12
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)

@@ -1,0 +1,9 @@
+[2026-02-16T10:51:05.781383Z]
+CMD: rg -n "Scan code/docs trees for placeholder signals" scripts/ || true
+EXIT: 0
+STDOUT:
+scripts/scan_placeholders.py:1:"""Scan code/docs trees for placeholder signals used by governance gates.
+scripts/README.md:49:| `scan_placeholders.py` | Scan code/docs trees for placeholder signals used by governance gates. | `--format` | See page | See page | Writes artifacts only | `python -m scripts.scan_placeholders --help` |
+
+STDERR:
+

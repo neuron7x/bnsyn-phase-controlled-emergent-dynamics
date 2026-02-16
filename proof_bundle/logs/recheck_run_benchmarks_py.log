@@ -1,0 +1,20 @@
+CMD: python scripts/run_benchmarks.py --help
+EXIT: 0
+STDOUT:
+usage: run_benchmarks.py [-h] [--suite {ci,full}] [--seed SEED]
+                         [--output OUTPUT] [--summary SUMMARY]
+                         [--baseline BASELINE] [--write-baseline]
+
+Run BN-Syn benchmarks.
+
+options:
+  -h, --help           show this help message and exit
+  --suite {ci,full}
+  --seed SEED
+  --output OUTPUT
+  --summary SUMMARY
+  --baseline BASELINE
+  --write-baseline
+
+STDERR:
+

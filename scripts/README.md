@@ -46,7 +46,7 @@ This inventory covers every file in `scripts/` with purpose, interface hints, ou
 | `run_scaled_sleep_stack.py` | UNKNOWN/TBD: missing module docstring. | `none` | See page | See page | Safe (read-only checks) | `python -m scripts.run_scaled_sleep_stack --help` |
 | `scan_governed_docs.py` | Scan governed docs for untagged normative language. This script reads the authoritative go... | `none` | See page | See page | Writes artifacts only | `python -m scripts.scan_governed_docs --help` |
 | `scan_normative_tags.py` | Scan governed docs for normative tags and claim compliance. | `none` | See page | See page | Writes artifacts only | `python -m scripts.scan_normative_tags --help` |
-| `scan_placeholders.py` | UNKNOWN/TBD: missing module docstring. | `--format` | See page | See page | Writes artifacts only | `python -m scripts.scan_placeholders --help` |
+| `scan_placeholders.py` | Detect pseudo-structure markers across governed code and documentation trees. | `--format` | See page | See page | Writes artifacts only | `python -m scripts.scan_placeholders --help` |
 | `scan_tierS_misuse.py` | Scan for misuse of Tier-S bibkeys in normative contexts. This script enforces the governan... | `none` | See page | See page | Writes artifacts only | `python -m scripts.scan_tierS_misuse --help` |
 | `ssot_rules.py` | UNKNOWN/TBD: missing module docstring. | `none` | See page | See page | Safe (read-only checks) | `python -m scripts.ssot_rules --help` |
 | `sync_required_status_contexts.py` | UNKNOWN/TBD: missing module docstring. | `--check` | See page | See page | Mutates repository state | `python -m scripts.sync_required_status_contexts --help` |

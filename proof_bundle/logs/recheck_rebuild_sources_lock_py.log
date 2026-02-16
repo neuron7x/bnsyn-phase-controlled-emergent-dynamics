@@ -1,0 +1,7 @@
+CMD: python scripts/rebuild_sources_lock.py --help
+EXIT: 1
+STDOUT:
+
+STDERR:
+Bibkey tierS_3bs_materials_2026 missing tier in mapping.yml
+

@@ -1,0 +1,7 @@
+CMD: python scripts/mutation_survivors_summary.py --help
+EXIT: 1
+STDOUT:
+
+STDERR:
+❌ GITHUB_STEP_SUMMARY is not set.
+

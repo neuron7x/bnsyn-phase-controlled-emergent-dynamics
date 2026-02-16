@@ -1,0 +1,6 @@
+CMD: python scripts/benchmark_sleep_stack_scale.py --help
+EXIT: 0
+STDOUT:
+
+STDERR:
+

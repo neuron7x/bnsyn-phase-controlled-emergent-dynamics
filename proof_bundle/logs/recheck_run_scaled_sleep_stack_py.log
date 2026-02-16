@@ -1,0 +1,31 @@
+CMD: python scripts/run_scaled_sleep_stack.py --help
+EXIT: 0
+STDOUT:
+usage: run_scaled_sleep_stack.py [-h] [--out OUT] [--seed SEED] [--n N]
+                                 [--steps-wake STEPS_WAKE]
+                                 [--steps-sleep STEPS_SLEEP]
+                                 [--baseline-steps-wake BASELINE_STEPS_WAKE]
+                                 [--baseline-steps-sleep BASELINE_STEPS_SLEEP]
+                                 [--determinism-runs DETERMINISM_RUNS]
+                                 [--equivalence-steps-wake EQUIVALENCE_STEPS_WAKE]
+                                 [--skip-backend-equivalence]
+                                 [--skip-baseline] [--no-raster] [--no-plots]
+
+options:
+  -h, --help            show this help message and exit
+  --out OUT
+  --seed SEED
+  --n N
+  --steps-wake STEPS_WAKE
+  --steps-sleep STEPS_SLEEP
+  --baseline-steps-wake BASELINE_STEPS_WAKE
+  --baseline-steps-sleep BASELINE_STEPS_SLEEP
+  --determinism-runs DETERMINISM_RUNS
+  --equivalence-steps-wake EQUIVALENCE_STEPS_WAKE
+  --skip-backend-equivalence
+  --skip-baseline
+  --no-raster
+  --no-plots
+
+STDERR:
+

@@ -1,0 +1,7 @@
+CMD: python scripts/scan_normative_tags.py --help
+EXIT: 0
+STDOUT:
+OK: normative tag scan passed.
+
+STDERR:
+

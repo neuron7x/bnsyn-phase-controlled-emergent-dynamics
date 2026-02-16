@@ -1,22 +1,20 @@
 # `scan_placeholders.py`
 
 ## Purpose
-UNKNOWN/TBD: missing module docstring.
+Scan code/docs trees for placeholder signals used by governance gates.
 
 ## Inputs
 - Invocation: `python -m scripts.scan_placeholders --help`
 - CLI flags (static scan): --format
 
 ## Outputs
-- `.github/QUALITY_LEDGER.md`
-- `.github/WORKFLOW_CONTRACTS.md`
-- `docs/PLACEHOLDER_REGISTRY.md`
+- Writes findings to stdout (`--format text` prints text to stderr, `--format json` emits JSON to stdout).
 
 ## Side Effects
-- Writes files or directories during normal execution.
+- No repository file mutations; read-only scan.
 
 ## Safety Level
-- Writes artifacts only
+- Safe (read-only checks)
 
 ## Examples
 ```bash

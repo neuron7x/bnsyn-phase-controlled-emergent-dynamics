@@ -1,0 +1,52 @@
+CMD: python scripts/verify_equivalence.py --help
+EXIT: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/verify_equivalence.py", line 418, in <module>
+    main()
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/scripts/verify_equivalence.py", line 385, in main
+    args = parser.parse_args()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 1904, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 1914, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 1943, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 2184, in _parse_known_args
+    start_index = consume_optional(start_index)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 2113, in consume_optional
+    take_action(action, args, option_string)
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 2018, in take_action
+    action(self, namespace, argument_values, option_string)
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 1148, in __call__
+    parser.print_help()
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 2621, in print_help
+    self._print_message(self.format_help(), file)
+                        ^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 2605, in format_help
+    return formatter.format_help()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 286, in format_help
+    help = self._root_section.format_help()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 217, in format_help
+    item_help = join([func(*args) for func, args in self.items])
+                      ^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 217, in format_help
+    item_help = join([func(*args) for func, args in self.items])
+                      ^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 546, in _format_action
+    help_text = self._expand_help(action)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.pyenv/versions/3.12.12/lib/python3.12/argparse.py", line 640, in _expand_help
+    return self._get_help_string(action) % params
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+ValueError: unsupported format character ')' (0x29) at index 54
+

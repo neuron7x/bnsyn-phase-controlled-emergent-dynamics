@@ -1,0 +1,8 @@
+[2026-02-16T10:52:07.354103Z]
+CMD: python scripts/scan_normative_tags.py --help
+EXIT: 0
+STDOUT:
+OK: normative tag scan passed.
+
+STDERR:
+

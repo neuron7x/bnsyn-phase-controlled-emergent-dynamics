@@ -1,0 +1,7 @@
+CMD: python scripts/validate_required_status_contexts.py --help
+EXIT: 3
+STDOUT:
+Usage: python -m scripts.validate_required_status_contexts
+
+STDERR:
+

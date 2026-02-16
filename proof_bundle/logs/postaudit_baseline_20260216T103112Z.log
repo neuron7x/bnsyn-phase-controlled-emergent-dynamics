@@ -1,0 +1,6 @@
+[20260216T103112Z] CMD: git status --short
+?? proof_bundle/logs/postaudit_baseline_20260216T103112Z.log
+[20260216T103112Z] CMD: python -V
+Python 3.12.12
+[20260216T103112Z] CMD: git rev-parse HEAD
+4cdb981d937db717ca6260aa5fa149361e32b836

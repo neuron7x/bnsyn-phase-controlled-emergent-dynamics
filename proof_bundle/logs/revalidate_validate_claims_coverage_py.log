@@ -1,0 +1,15 @@
+[2026-02-16T10:52:08.283082Z]
+CMD: python scripts/validate_claims_coverage.py --help
+EXIT: 0
+STDOUT:
+usage: validate_claims_coverage.py [-h] [--format {json,markdown}]
+
+Validate claims→evidence coverage
+
+options:
+  -h, --help            show this help message and exit
+  --format {json,markdown}
+                        Output format (default: markdown)
+
+STDERR:
+

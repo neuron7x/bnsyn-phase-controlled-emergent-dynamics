@@ -1,0 +1,12 @@
+[2026-02-16T10:52:07.886551Z]
+CMD: python scripts/validate_bibliography.py --help
+EXIT: 0
+STDOUT:
+OK: bibliography SSOT validated.
+  Bibkeys: 31
+  Mapping entries: 26
+  Claim IDs: 26
+  Lock entries: 31
+
+STDERR:
+

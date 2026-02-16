@@ -1,0 +1,25 @@
+CMD: python scripts/check_benchmark_regressions.py --help
+EXIT: 0
+STDOUT:
+usage: check_benchmark_regressions.py [-h]
+                                      [--physics-baseline PHYSICS_BASELINE]
+                                      [--physics-current PHYSICS_CURRENT]
+                                      [--kernel-baseline KERNEL_BASELINE]
+                                      [--kernel-current KERNEL_CURRENT]
+                                      [--threshold THRESHOLD]
+                                      [--format {text,markdown,json}]
+
+Check benchmark regressions
+
+options:
+  -h, --help            show this help message and exit
+  --physics-baseline PHYSICS_BASELINE
+  --physics-current PHYSICS_CURRENT
+  --kernel-baseline KERNEL_BASELINE
+  --kernel-current KERNEL_CURRENT
+  --threshold THRESHOLD
+                        Regression threshold (default: 0.10 = 10%)
+  --format {text,markdown,json}
+
+STDERR:
+

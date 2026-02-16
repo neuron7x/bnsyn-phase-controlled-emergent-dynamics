@@ -1,0 +1,6 @@
+CMD: python scripts/ssot_rules.py --help
+EXIT: 0
+STDOUT:
+
+STDERR:
+
