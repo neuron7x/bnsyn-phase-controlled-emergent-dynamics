@@ -1,0 +1,78 @@
+     1	# BN-Syn Mathematical Surfaces (Implementation Scope Lock)
+     2	
+     3	## Inputs
+     4	
+     5	### A) Model types already defined in repo
+     6	- **BN-Syn Thermostated Bio-AI System** (`docs/SPEC.md` title; version v0.2.0).
+     7	- Component model surfaces explicitly defined by SPEC: AdEx neuron dynamics (P0-1), conductance synapses (P0-2), three-factor learning (P0-3), criticality control (P0-4), temperature gating (P1-5), consolidation (P1-6), energy regularization (P1-7), numerical methods (P2-8), determinism protocol (P2-9), calibration (P2-10), reference network simulator (P2-11), bench harness (P2-12).
+     8	
+     9	### B) Mathematical Core module list (ONLY math modules touched)
+    10	- `src/bnsyn/neuron/adex.py`
+    11	- `src/bnsyn/synapse/conductance.py`
+    12	- `src/bnsyn/numerics/integrators.py`
+    13	- `src/bnsyn/criticality/branching.py`
+    14	- `src/bnsyn/rng.py`
+    15	- `src/bnsyn/sim/network.py`
+    16	
+    17	### C) Artifact / metric formats relied upon
+    18	- `schemas/experiment.schema.json`
+    19	- `schemas/audit_reproducibility.schema.json`
+    20	- `schemas/readiness_report.schema.json`
+    21	- `schemas/attack_paths_graph.schema.json`
+    22	- Runtime summary metrics from `run_simulation()` (`sigma_mean`, `rate_mean_hz`, `sigma_std`, `rate_std`) in `src/bnsyn/sim/network.py`.
+    23	- Deterministic manifest + metrics artifacts under `artifacts/**` and `results/**` as documented in `docs/math/PROVENANCE.md`.
+    24	
+    25	### D) Supported execution environments
+    26	- CPU-first environment is normative for v0.2.0 (`docs/SPEC.md`: “Scaling to large-N / GPU is explicitly out-of-scope”).
+    27	- Optional accelerator toggles exist in implementation (PyTorch/JAX extras), but are non-normative for deterministic CI.
+    28	- Python requirement: `>=3.11` (`pyproject.toml`).
+    29	- CI target shown in workflows: Ubuntu (`runs-on: ubuntu-latest`).
+    30	- OS support matrix beyond CI: **UNKNOWN** (source gap: no explicit OS compatibility matrix in SSOT docs).
+    31	
+    32	### E) Explicit exclusions (scope guard)
+    33	- No UI/readme/branding edits.
+    34	- No dependency upgrades unless required by SSOT conflict.
+    35	- No new experiment families, metrics, invariants, or model parameters.
+    36	- No unrelated refactors/renames/format sweeps.
+    37	- No docs edits outside math/spec/ADR surfaces unless required for SSOT alignment.
+    38	
+    39	## SSOT Order Used for This Hardening Pass
+    40	1. `docs/spec/**` (normative spec): **UNKNOWN / missing directory**; fallback to `docs/SPEC.md` with conflict note.
+    41	2. `schemas/**` machine contracts.
+    42	3. `claims/**` + `bibliography/**` claim/evidence constraints.
+    43	4. `quality/**` + `.github/WORKFLOW_CONTRACTS.md` + `docs/CI_GATES.md`.
+    44	5. `src/**` implementation.
+    45	6. Other `docs/**`.
+    46	7. Code comments.
+    47	
+    48	## Numeric Environment Policy
+    49	- Default dtype for math core: `float64` (`numpy.float64`) in integration/state updates.
+    50	- Determinism policy uses explicit `numpy.random.Generator` seeding; no hidden global RNG.
+    51	- CI already sets `PYTHONHASHSEED=0` in PR workflows; deterministic behavior must not depend on hash-iteration randomness.
+    52	- No GPU required for conformance validation; CPU path is primary.
+    53	- Platform drift policy for tests:
+    54	  - use bounded `atol`/`rtol` from `tests/tolerances.py` for stochastic dt checks,
+    55	  - require exact-equality only for same-seed same-config deterministic summaries where implementation is purely deterministic.
+    56	
+    57	## Spec↔Code Map (Math behaviors to implementation)
+    58	- AdEx membrane/adaptation Euler update + spike reset: `src/bnsyn/neuron/adex.py::adex_step`.
+    59	- AdEx overflow guard `exp_arg<=20`: `src/bnsyn/neuron/adex.py::adex_step` and `adex_step_adaptive`.
+    60	- NMDA magnesium block equation: `src/bnsyn/synapse/conductance.py::nmda_mg_block`.
+    61	- Exponential conductance decay `g(t+dt)=g(t)exp(-dt/tau)`: `src/bnsyn/numerics/integrators.py::exp_decay_step`; used by network/synapse modules.
+    62	- Euler/RK2 integrators: `src/bnsyn/numerics/integrators.py::{euler_step,rk2_step}`.
+    63	- Deterministic RNG seeding/splitting: `src/bnsyn/rng.py::{seed_all,split}`.
+    64	- Small-N deterministic simulator and bounded voltage guard: `src/bnsyn/sim/network.py::{Network.step,Network._raise_if_voltage_out_of_bounds,run_simulation}`.
+    65	- Criticality sigma estimate + gain control update path: `src/bnsyn/criticality/branching.py` and `src/bnsyn/sim/network.py`.
+    66	
+    67	## Tolerance Triangle Policy (Operationalized)
+    68	- `rtol`: tied to relative comparison of stochastic summaries (`rate_mean_hz`) where scale varies with firing regime.
+    69	- `atol`: used on bounded sigma statistic (`sigma_mean`) where absolute drift is interpretable and expected to be small.
+    70	- dt-halving policy for current stochastic simulator:
+    71	  - Since Poisson drive and thresholded spiking reduce strict asymptotic order visibility in short runs, enforce bounded dt-vs-dt/2 deviation (existing CI-style invariant) instead of strict observed order ratio.
+    72	  - Exponential decay subcomponent still validated with exact half-step equivalence tests.
+    73	
+    74	## Acceptance Criteria Applied
+    75	- Zero NaN/Inf in canonical smoke path summary metrics.
+    76	- Determinism: same seed + same params => identical metric payload.
+    77	- dt-halving bounded deviation (`rate_mean_hz` rtol and `sigma_mean` atol).
+    78	- Integrator guards reject invalid timesteps and non-finite outputs.

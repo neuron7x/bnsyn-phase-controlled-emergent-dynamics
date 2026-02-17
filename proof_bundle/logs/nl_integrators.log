@@ -1,0 +1,171 @@
+     1	"""Numerical integration helpers for deterministic updates.
+     2	
+     3	Parameters
+     4	----------
+     5	None
+     6	
+     7	Returns
+     8	-------
+     9	None
+    10	
+    11	Notes
+    12	-----
+    13	Implements lightweight integration routines used across BN-Syn components.
+    14	
+    15	References
+    16	----------
+    17	docs/SPEC.md
+    18	"""
+    19	
+    20	from __future__ import annotations
+    21	
+    22	import math
+    23	from typing import Callable, TypeVar
+    24	
+    25	import numpy as np
+    26	from numpy.typing import NDArray
+    27	
+    28	State = TypeVar("State")
+    29	Float64Array = NDArray[np.float64]
+    30	
+    31	
+    32	def clamp_exp_arg(x: float, max_arg: float = 20.0) -> float:
+    33	    """Clamp exponential arguments to prevent overflow.
+    34	
+    35	    Parameters
+    36	    ----------
+    37	    x : float
+    38	        Exponential argument value.
+    39	    max_arg : float, optional
+    40	        Maximum allowable exponent argument.
+    41	
+    42	    Returns
+    43	    -------
+    44	    float
+    45	        Clamped exponent argument.
+    46	
+    47	    Notes
+    48	    -----
+    49	    Used to stabilize exponential terms in AdEx dynamics.
+    50	
+    51	    References
+    52	    ----------
+    53	    docs/SPEC.md#P0-1
+    54	    """
+    55	    return float(min(x, max_arg))
+    56	
+    57	
+    58	def euler_step(
+    59	    x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]
+    60	) -> Float64Array:
+    61	    """Perform an explicit Euler integration step.
+    62	
+    63	    Parameters
+    64	    ----------
+    65	    x : Float64Array
+    66	        Current state vector.
+    67	    dt : float
+    68	        Timestep size.
+    69	    f : Callable[[Float64Array], Float64Array]
+    70	        Derivative function evaluated at ``x``.
+    71	
+    72	    Returns
+    73	    -------
+    74	    Float64Array
+    75	        Updated state after one Euler step.
+    76	
+    77	    Notes
+    78	    -----
+    79	    Euler steps are used for deterministic integration in SPEC P0-1/P0-2.
+    80	
+    81	    References
+    82	    ----------
+    83	    docs/SPEC.md
+    84	    """
+    85	    if not math.isfinite(dt) or dt <= 0.0:
+    86	        raise ValueError("dt must be a finite positive value")
+    87	    x64 = np.asarray(x, dtype=np.float64)
+    88	    fx = np.asarray(f(x64), dtype=np.float64)
+    89	    out = x64 + dt * fx
+    90	    if not np.all(np.isfinite(out)):
+    91	        raise ValueError("euler_step produced non-finite values")
+    92	    return out
+    93	
+    94	
+    95	def rk2_step(
+    96	    x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]
+    97	) -> Float64Array:
+    98	    """Perform a second-order Runge-Kutta integration step.
+    99	
+   100	    Parameters
+   101	    ----------
+   102	    x : Float64Array
+   103	        Current state vector.
+   104	    dt : float
+   105	        Timestep size.
+   106	    f : Callable[[Float64Array], Float64Array]
+   107	        Derivative function evaluated at ``x``.
+   108	
+   109	    Returns
+   110	    -------
+   111	    Float64Array
+   112	        Updated state after one RK2 step.
+   113	
+   114	    Notes
+   115	    -----
+   116	    Used in optional integrations where higher accuracy is desired.
+   117	
+   118	    References
+   119	    ----------
+   120	    docs/SPEC.md
+   121	    """
+   122	    if not math.isfinite(dt) or dt <= 0.0:
+   123	        raise ValueError("dt must be a finite positive value")
+   124	    x64 = np.asarray(x, dtype=np.float64)
+   125	    k1 = np.asarray(f(x64), dtype=np.float64)
+   126	    k2 = np.asarray(f(x64 + 0.5 * dt * k1), dtype=np.float64)
+   127	    out = x64 + dt * k2
+   128	    if not np.all(np.isfinite(out)):
+   129	        raise ValueError("rk2_step produced non-finite values")
+   130	    return out
+   131	
+   132	
+   133	def exp_decay_step(g: Float64Array, dt: float, tau: float) -> Float64Array:
+   134	    """Apply unconditionally stable exponential decay.
+   135	
+   136	    Parameters
+   137	    ----------
+   138	    g : Float64Array
+   139	        Quantity to decay.
+   140	    dt : float
+   141	        Timestep size.
+   142	    tau : float
+   143	        Time constant for decay.
+   144	
+   145	    Returns
+   146	    -------
+   147	    Float64Array
+   148	        Decayed quantity after one timestep.
+   149	
+   150	    Raises
+   151	    ------
+   152	    ValueError
+   153	        If ``tau`` is non-positive.
+   154	
+   155	    Notes
+   156	    -----
+   157	    Applies ``g <- g * exp(-dt/tau)`` for dt-invariant decay.
+   158	
+   159	    References
+   160	    ----------
+   161	    docs/SPEC.md#P0-2
+   162	    """
+   163	    if not math.isfinite(dt) or dt < 0.0:
+   164	        raise ValueError("dt must be a finite non-negative value")
+   165	    if not math.isfinite(tau) or tau <= 0:
+   166	        raise ValueError("tau must be positive")
+   167	    g64 = np.asarray(g, dtype=np.float64)
+   168	    out = g64 * math.exp(-dt / tau)
+   169	    if not np.all(np.isfinite(out)):
+   170	        raise ValueError("exp_decay_step produced non-finite values")
+   171	    return out

@@ -1,0 +1,159 @@
+src/bnsyn/tools/run_scaled_sleep_stack.py:78:                    replay_noise=s.replay_noise,
+tests/test_sleep_replay.py:9:    add_replay_noise,
+tests/test_sleep_replay.py:10:    validate_noise_level,
+tests/test_sleep_replay.py:84:def test_validate_noise_level_rejects_out_of_range() -> None:
+tests/test_sleep_replay.py:85:    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+tests/test_sleep_replay.py:86:        validate_noise_level(-0.1)
+tests/test_sleep_replay.py:88:    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+tests/test_sleep_replay.py:89:        validate_noise_level(1.1)
+tests/test_sleep_replay.py:92:def test_add_replay_noise_zero_level_returns_copy() -> None:
+tests/test_sleep_replay.py:96:    noisy = add_replay_noise(pattern, noise_level=0.0, noise_scale=1.0, rng=rng)
+tests/test_sleep_replay.py:102:def test_add_replay_noise_rejects_out_of_range_level() -> None:
+tests/test_sleep_replay.py:106:    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+tests/test_sleep_replay.py:107:        add_replay_noise(pattern, noise_level=1.1, noise_scale=1.0, rng=rng)
+tests/test_sleep_replay.py:110:def test_add_replay_noise_applies_noise() -> None:
+tests/test_sleep_replay.py:114:    noisy = add_replay_noise(pattern, noise_level=0.5, noise_scale=1.0, rng=rng)
+tests/test_faults.py:13:    inject_stochastic_fault,
+tests/test_faults.py:74:def test_inject_stochastic_fault_behavior() -> None:
+tests/test_faults.py:76:    with inject_stochastic_fault(config) as reseed:
+tests/test_faults.py:81:    with inject_stochastic_fault(disabled) as reseed:
+src/bnsyn/testing/__init__.py:9:    inject_stochastic_fault,
+src/bnsyn/testing/__init__.py:19:    "inject_stochastic_fault",
+src/bnsyn/testing/faults.py:155:def inject_stochastic_fault(
+src/bnsyn/testing/faults.py:173:    >>> with inject_stochastic_fault(config) as reseed:
+tests/test_attractor_crystallizer.py:74:        state = cluster1_center + rng.normal(0, 0.5, 10)
+tests/test_attractor_crystallizer.py:79:        state = cluster2_center + rng.normal(0, 0.5, 10)
+tests/test_attractor_crystallizer.py:101:        obs_state = rng.normal(0, 1.0, 10)
+tests/test_attractor_crystallizer.py:124:        state = pack1.np_rng.normal(0, 1.0, dim)
+tests/test_attractor_crystallizer.py:132:        state = pack2.np_rng.normal(0, 1.0, dim)
+tests/test_attractor_crystallizer.py:164:        state = center + rng.normal(0, 0.3, 10)
+tests/test_dt_invariance.py:11:    # Loose invariance tolerances for a stochastic spiking system; tighter if you increase steps.
+src/bnsyn/emergence/crystallizer.py:330:        Uses cKDTree for efficient neighbor queries. Does not return noise
+tests/test_coverage_paths.py:86:    assert children[0].normal() == children_again[0].normal()
+src/bnsyn/connectivity/sparse.py:281:    weights = np.abs(rng.normal(weight_mean, weight_std, (n_pre, n_post)))
+tests/test_sleep_stage_validation.py:10:def test_sleep_stage_replay_noise_bounds() -> None:
+tests/test_sleep_stage_validation.py:11:    with pytest.raises(ValueError, match="replay_noise must be in \\[0, 1\\]"):
+tests/test_sleep_stage_validation.py:17:            replay_noise=1.5,
+tests/test_sleep_cycle.py:38:        replay_noise=0.0,
+tests/test_sleep_cycle.py:50:            replay_noise=0.0,
+tests/test_sleep_cycle.py:53:    # invalid replay_noise
+tests/test_sleep_cycle.py:54:    with pytest.raises(ValueError, match="replay_noise must be in"):
+tests/test_sleep_cycle.py:60:            replay_noise=1.5,
+tests/test_sleep_cycle.py:184:            replay_noise=0.0,
+tests/test_sleep_cycle.py:191:            replay_noise=0.0,
+tests/test_sleep_cycle.py:198:            replay_noise=0.3,
+tests/test_sleep_cycle.py:237:        noise_level=0.2,
+tests/test_sleep_cycle.py:262:        noise_level=0.2,
+tests/test_sleep_cycle.py:302:            replay_noise=0.0,
+tests/test_sleep_cycle.py:330:def test_dream_noise_validation_matches_replay_helper() -> None:
+tests/test_sleep_cycle.py:343:    with pytest.raises(ValueError, match="noise_level must be in \\[0, 1\\]"):
+tests/test_sleep_cycle.py:344:        cycle.dream(memories=[], noise_level=1.1, duration_steps=1)
+tests/test_sleep_cycle.py:354:        "replay_noise",
+tests/test_cli_sleep_stack_figure.py:56:                replay_noise=0.0,
+src/bnsyn/sleep/cycle.py:25:from .replay import add_replay_noise, validate_noise_level, weighted_pattern_selection
+src/bnsyn/sleep/cycle.py:60:        Random number generator for replay noise. If None, uses network's RNG.
+src/bnsyn/sleep/cycle.py:286:                    noise_level=stage_config.replay_noise,
+src/bnsyn/sleep/cycle.py:303:        noise_level: float,
+src/bnsyn/sleep/cycle.py:306:        """Replay memories with noise.
+src/bnsyn/sleep/cycle.py:312:        noise_level : float
+src/bnsyn/sleep/cycle.py:313:            Noise level in [0, 1] (0 = exact, 1 = high noise).
+src/bnsyn/sleep/cycle.py:325:            If noise_level is not in [0, 1] or duration_steps is not positive.
+src/bnsyn/sleep/cycle.py:331:        # Keep noise-level validation aligned with replay helper API.
+src/bnsyn/sleep/cycle.py:332:        validate_noise_level(noise_level)
+src/bnsyn/sleep/cycle.py:359:            # add noise
+src/bnsyn/sleep/cycle.py:360:            I_replay = add_replay_noise(
+src/bnsyn/sleep/cycle.py:362:                noise_level=noise_level,
+src/bnsyn/sleep/cycle.py:363:                noise_scale=50.0,
+src/bnsyn/sleep/cycle.py:418:            replay_noise=0.0,
+src/bnsyn/sleep/cycle.py:425:            replay_noise=0.0,
+src/bnsyn/sleep/cycle.py:432:            replay_noise=0.3,
+src/bnsyn/sleep/replay.py:5:- ``add_replay_noise``: bounded Gaussian perturbation with explicit noise controls.
+src/bnsyn/sleep/replay.py:20:def validate_noise_level(noise_level: float) -> None:
+src/bnsyn/sleep/replay.py:21:    """Validate replay noise level.
+src/bnsyn/sleep/replay.py:25:    noise_level : float
+src/bnsyn/sleep/replay.py:26:        Noise level in [0, 1] (0 = no noise, 1 = max noise).
+src/bnsyn/sleep/replay.py:31:        If noise_level is out of range.
+src/bnsyn/sleep/replay.py:33:    if not 0.0 <= noise_level <= 1.0:
+src/bnsyn/sleep/replay.py:34:        raise ValueError("noise_level must be in [0, 1]")
+src/bnsyn/sleep/replay.py:91:def add_replay_noise(
+src/bnsyn/sleep/replay.py:93:    noise_level: float,
+src/bnsyn/sleep/replay.py:94:    noise_scale: float,
+src/bnsyn/sleep/replay.py:97:    """Add noise to a replay pattern.
+src/bnsyn/sleep/replay.py:103:    noise_level : float
+src/bnsyn/sleep/replay.py:104:        Noise level in [0, 1] (0 = no noise, 1 = max noise).
+src/bnsyn/sleep/replay.py:105:    noise_scale : float
+src/bnsyn/sleep/replay.py:106:        Standard deviation scale for noise.
+src/bnsyn/sleep/replay.py:108:        Random number generator for noise.
+src/bnsyn/sleep/replay.py:118:        If noise_level is out of range.
+src/bnsyn/sleep/replay.py:122:    Adds Gaussian noise scaled by noise_level * noise_scale.
+src/bnsyn/sleep/replay.py:124:    validate_noise_level(noise_level)
+src/bnsyn/sleep/replay.py:126:    if noise_level == 0.0:
+src/bnsyn/sleep/replay.py:129:    noise = rng.normal(0.0, noise_level * noise_scale, pattern.shape)
+src/bnsyn/sleep/replay.py:130:    return np.asarray(pattern + noise, dtype=np.float64)
+src/bnsyn/sleep/stages.py:61:    replay_noise : float
+src/bnsyn/sleep/stages.py:62:        Noise level for replay (0 = exact, 1 = high noise).
+src/bnsyn/sleep/stages.py:70:    replay_noise: float
+src/bnsyn/sleep/stages.py:75:        if not 0.0 <= self.replay_noise <= 1.0:
+src/bnsyn/sleep/stages.py:76:            raise ValueError("replay_noise must be in [0, 1]")
+tests/test_tools_run_scaled_sleep_stack_unit.py:327:                replay_noise=0.0,
+tests/test_interactive_smoke.py:49:    voltage_history = [np.random.randn(10) for _ in range(100)]
+src/bnsyn/sim/network.py:186:            rng.normal(loc=adex.EL_mV, scale=INITIAL_V_STD_MV, size=N), dtype=np.float64
+src/bnsyn/cli.py:294:                replay_noise=stage.replay_noise,
+tests/test_sleep_cycle_integration.py:32:    metrics = cycle.dream(memories=[], noise_level=0.2, duration_steps=5)
+tests/test_sleep_cycle_integration.py:45:    metrics = cycle.dream(memories=memories, noise_level=0.0, duration_steps=4)
+tests/test_sleep_cycle_integration.py:60:        cycle.dream(memories=[memory], noise_level=0.0, duration_steps=1)
+tests/test_sleep_cycle_integration.py:72:        cycle.dream(memories=[memory], noise_level=0.0, duration_steps=1)
+tests/test_sleep_cycle_integration.py:95:                replay_noise=0.0,
+tests/test_sleep_cycle_integration.py:102:                replay_noise=0.1,
+tests/test_sleep_cycle_integration.py:125:                    replay_noise=0.0,
+tests/test_sleep_cycle_integration.py:132:                    replay_noise=0.2,
+tests/test_coverage_gap_extensions.py:394:        replay_noise=0.0,
+tests/test_coverage_gap_extensions.py:400:        cycle.dream(memories=[], noise_level=-0.1, duration_steps=1)
+tests/test_coverage_gap_extensions.py:402:        cycle.dream(memories=[], noise_level=0.5, duration_steps=0)
+tests/test_coverage_gap_extensions.py:404:    assert cycle.dream(memories=[], noise_level=0.0, duration_steps=1) == []
+tests/test_coverage_gap_extensions.py:407:    cycle.dream(memories=[memory], noise_level=0.0, duration_steps=1)
+tests/test_validation_inputs.py:73:        vec = rng.standard_normal(size).astype(np.float64)
+tests/validation/test_crystallizer_real.py:83:        noise_scale = 1.0 / (1.0 + i * 0.01)
+tests/validation/test_crystallizer_real.py:84:        state = center + rng.normal(0, noise_scale, 50)
+tests/validation/test_chaos_integration.py:180:    Chaos scenario: Small dt variations (±5%) simulating timing noise.
+tests/validation/test_chaos_timing.py:117:        # At least some should be different (stochastic test)
+tests/test_math_invariants.py:161:        K = rng.standard_normal((N, N))
+tests/validation/test_chaos_stochastic.py:1:"""Chaos engineering tests for stochastic fault resilience.
+tests/validation/test_chaos_stochastic.py:10:from bnsyn.testing import FaultConfig, inject_stochastic_fault
+tests/validation/test_chaos_stochastic.py:15:def test_stochastic_fault_injection() -> None:
+tests/validation/test_chaos_stochastic.py:16:    """Test that stochastic fault forces RNG reseed."""
+tests/validation/test_chaos_stochastic.py:19:    with inject_stochastic_fault(config) as reseed:
+tests/validation/test_chaos_stochastic.py:28:def test_stochastic_fault_deterministic() -> None:
+tests/validation/test_chaos_stochastic.py:29:    """Test that stochastic fault is deterministic with same seed."""
+tests/validation/test_chaos_stochastic.py:32:    with inject_stochastic_fault(config) as reseed1:
+tests/validation/test_chaos_stochastic.py:37:    with inject_stochastic_fault(config2) as reseed2:
+tests/validation/test_chaos_stochastic.py:46:def test_stochastic_fault_disabled() -> None:
+tests/validation/test_chaos_stochastic.py:47:    """Test that stochastic fault can be disabled."""
+tests/validation/test_chaos_stochastic.py:50:    with inject_stochastic_fault(config) as reseed:
+tests/validation/test_chaos_stochastic.py:58:def test_stochastic_fault_probability() -> None:
+tests/validation/test_chaos_stochastic.py:59:    """Test that stochastic fault respects probability."""
+tests/validation/test_chaos_stochastic.py:63:    with inject_stochastic_fault(config) as reseed:
+tests/validation/test_chaos_stochastic.py:71:def test_stochastic_fault_different_seeds() -> None:
+tests/validation/test_chaos_stochastic.py:72:    """Test that multiple stochastic faults produce different seeds."""
+tests/validation/test_chaos_stochastic.py:75:    with inject_stochastic_fault(config) as reseed:
+tests/test_performance.py:30:    I_ext = rng.normal(0, 10.0, size=N)
+tests/test_performance.py:61:    V = rng.normal(-60.0, 20.0, size=N)  # Voltages around -60mV
+tests/validation/test_sleep_cycle_long.py:61:                replay_noise=0.0,
+tests/validation/test_sleep_cycle_long.py:68:                replay_noise=0.0,
+tests/validation/test_sleep_cycle_long.py:75:                replay_noise=0.3,
+tests/validation/test_sleep_cycle_long.py:112:        noise_level=0.2,
+tests/validation/test_sleep_cycle_long.py:125:        "replay_noise",
+tests/validation/test_sleep_stack_effectiveness.py:104:                replay_noise=stage.replay_noise,
+tests/validation/test_sleep_stack_effectiveness.py:171:            noise = pack.np_rng.normal(0, 5.0, pattern.shape)
+tests/validation/test_sleep_stack_effectiveness.py:172:            noisy_cue = pattern + noise
+tests/validation/test_sleep_stack_effectiveness.py:206:            noise_level=0.2,
+tests/validation/test_sleep_stack_effectiveness.py:216:            noise = pack.np_rng.normal(0, 5.0, pattern.shape)
+tests/validation/test_sleep_stack_effectiveness.py:217:            noisy_cue = pattern + noise
+tests/validation/test_sleep_stack_effectiveness.py:229:    # Note: improvement may be small due to noise and small N
+tests/validation/test_sleep_stack_effectiveness.py:278:                replay_noise=stage.replay_noise,
+tests/properties/test_properties_determinism.py:29:    sample_a = rng_a.normal(size=5)
+tests/properties/test_properties_determinism.py:30:    sample_b = rng_b.normal(size=5)
+tests/validation/test_viz_dashboard.py:98:            "attractor_point": np.random.randn(20),
+tests/validation/test_viz_dashboard.py:126:            "attractor_point": np.random.randn(20),
+tests/test_cli_sleep_stack_branches.py:49:                replay_noise=0.0,
+tests/test_cli_sleep_stack_branches.py:82:                replay_noise=0.0,
