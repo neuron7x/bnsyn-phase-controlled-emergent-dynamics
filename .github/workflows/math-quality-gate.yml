@@ -2,6 +2,9 @@ name: Math Quality Gate
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 env:
   PIP_VERSION: "26.0"
 

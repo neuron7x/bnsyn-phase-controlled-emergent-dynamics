@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from _pytest.mark.expression import Expression
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -12,11 +13,18 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 
-def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool:
-    markexpr = (config.option.markexpr or "").strip()
-    if "not property" in markexpr and "tests/properties" in collection_path.as_posix():
+def _marker_selected(markexpr: str, marker: str) -> bool:
+    if not markexpr:
         return True
-    return False
+    expr = Expression.compile(markexpr)
+    return expr.evaluate(lambda candidate, *args: candidate == marker)
+
+
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool:
+    if "tests/properties" not in collection_path.as_posix():
+        return False
+    markexpr = (config.option.markexpr or "").strip()
+    return not _marker_selected(markexpr, "property")
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
