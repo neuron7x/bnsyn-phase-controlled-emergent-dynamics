@@ -1,0 +1,171 @@
+  notes: Validates BN-Syn numerical integration choices and dt-invariance checks.
+  bibkey: hairer1993solving
+  spec_section: P2-8 Numerical methods
+  implementation_paths:
+  - src/bnsyn/numerics/integrators.py
+  benchmark_paths:
+  - benchmarks/bench_dt_invariance.py
+  performance_metrics:
+  - dt_invariance_drift
+  verification_paths:
+  - tests/test_dt_invariance.py
+  - tests/validation/test_numerics_validation.py
+- id: CLM-0023
+  statement: Deterministic pseudorandom number generation is achieved through explicit
+    seeding of a well-defined generator.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Matsumoto & Nishimura (1998) ACM TOMACS 8(1):3–30
+  locator: Definition of a reproducible, seed-driven RNG (Mersenne Twister).
+  action: KEEP
+  notes: Supports explicit RNG injection in BN-Syn determinism protocol.
+  bibkey: matsumoto1998mersenne
+  spec_section: P2-9 Determinism protocol
+  implementation_paths:
+  - src/bnsyn/rng.py
+  - src/bnsyn/sim/network.py
+  verification_paths:
+  - tests/test_determinism.py
+  - tests/validation/test_determinism_validation.py
+- id: CLM-0024
+  statement: Least-squares regression provides a deterministic linear fit for
+    calibration of response curves.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Björck (1996) Numerical Methods for Least Squares Problems
+  locator: Linear least-squares formulation and solution methods.
+  action: KEEP
+  notes: Grounds deterministic f–I calibration utilities.
+  bibkey: bjorck1996least
+  spec_section: P2-10 Calibration utilities
+  implementation_paths:
+  - src/bnsyn/calibration/fit.py
+  verification_paths:
+  - tests/test_calibration_smoke.py
+  - tests/validation/test_calibration_validation.py
+- id: CLM-0025
+  statement: Reduced spiking neuron models support efficient small-N network
+    simulations for verification and analysis.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Izhikevich (2003) IEEE TNN 14(6):1569–1572
+  locator: Simple spiking neuron model enabling efficient network simulation.
+  action: KEEP
+  notes: Supports reference simulator expectations in BN-Syn.
+  bibkey: izhikevich2003simple
+  spec_section: P2-11 Reference network simulator
+  implementation_paths:
+  - src/bnsyn/sim/network.py
+  benchmark_paths:
+  - benchmarks/bench_adex.py
+  performance_metrics:
+  - memory_per_neuron_mb
+  verification_paths:
+  - tests/test_network_smoke.py
+  - tests/validation/test_network_validation.py
+- id: CLM-0026
+  statement: Command-line benchmark harnesses should expose deterministic metrics and
+    documented interfaces for reproducible evaluation.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: Command Line Interface Guidelines (2024)
+  locator: Guidance on consistent CLI interfaces and outputs.
+  action: KEEP
+  notes: Documents CLI expectations for BN-Syn bench harness.
+  bibkey: cliguidelines2024
+  spec_section: P2-12 Bench harness contract
+  implementation_paths:
+  - src/bnsyn/cli.py
+  verification_paths:
+  - tests/test_cli_smoke.py
+  - tests/validation/test_cli_validation.py
+- id: CLM-0011
+  statement: FAIR principles define data management requirements for Findability,
+    Accessibility, Interoperability, and Reuse.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Wilkinson et al. (2016) Scientific Data 3:160018
+  locator: FAIR principles definition section.
+  action: KEEP
+  notes: Process and documentation guidance; enforceable when cited.
+  bibkey: wilkinson2016fair
+  spec_section: P2-8..12 FAIR principles
+  implementation_paths:
+  - scripts/validate_bibliography.py
+  - scripts/validate_claims.py
+  - scripts/scan_normative_tags.py
+  verification_paths:
+  - scripts/validate_bibliography.py
+  - scripts/validate_claims.py
+  - scripts/scan_normative_tags.py
+- id: CLM-0012
+  statement: The NeurIPS paper checklist provides reproducibility guidance for machine
+    learning research artifacts.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: NeurIPS Paper Checklist Guidelines (2026)
+  locator: Official checklist documentation.
+  action: KEEP
+  notes: Process checklist reference.
+  bibkey: neurips2026checklist
+  spec_section: P2-8..12 Reproducibility checklist
+  implementation_paths:
+  - scripts/validate_claims.py
+  verification_paths:
+  - scripts/validate_claims.py
+- id: CLM-0013
+  statement: ACM artifact badging defines criteria for artifact evaluation and badges.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: ACM Artifact Review and Badging v1.1 (2020)
+  locator: Official ACM badging policy.
+  action: KEEP
+  notes: Process compliance reference.
+  bibkey: acm2020badges
+  spec_section: P2-8..12 Artifact badges
+  implementation_paths:
+  - scripts/validate_claims.py
+  verification_paths:
+  - scripts/validate_claims.py
+- id: CLM-0014
+  statement: PyTorch determinism notes document reproducible computation practices.
+  status: PROVEN
+  tier: Tier-S
+  normative: false
+  source: PyTorch Notes on Randomness and Determinism (2026)
+  locator: Official documentation.
+  action: KEEP
+  notes: Process guidance for determinism.
+  bibkey: pytorch2026randomness
+  spec_section: P2-8..12 Determinism docs
+  implementation_paths:
+  - scripts/validate_claims.py
+  verification_paths:
+  - scripts/validate_claims.py
+- id: CLM-0015
+  statement: Reciprocal altruism can be favored by natural selection when interactions
+    are repeated and contingent on observed outcomes.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Trivers (1971) The Quarterly Review of Biology 46(1):35–57
+  locator: DOI:10.1086/406755
+  action: KEEP
+  notes: Use as biological foundation for result-based reciprocity gating.
+  bibkey: trivers1971reciprocal
+  spec_section: GOV-1 Result-based reciprocity (foundation)
+  implementation_paths:
+  - src/bnsyn/vcg.py
+  verification_paths:
+  - tests/test_vcg_smoke.py
+- id: CLM-0016
+  statement: In iterated dilemmas, contingent reciprocity strategies (e.g., tit-for-tat)
+    can stabilize cooperation under suitable conditions.
+  status: PROVEN

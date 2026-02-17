@@ -1,0 +1,260 @@
+version: 1
+generated_utc: 2026-01-23 00:00:00+00:00
+schema:
+  required_fields:
+  - id
+  - statement
+  - status
+  - tier
+  - normative
+  - source
+  - locator
+  - action
+  - notes
+  - bibkey
+  - spec_section
+  - implementation_paths
+  - verification_paths
+claims:
+- id: CLM-0001
+  statement: AdEx predicts 96% of spikes within ±2 ms compared to a conductance-based
+    Hodgkin–Huxley model.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
+  locator: Abstract + results summary near p.3637 (verify exact sentence in paper
+    PDF)
+  action: KEEP
+  notes: 'Use exact phrasing: 96% within ±2 ms (not ''±2 ms always'').' 
+  bibkey: brette2005adaptive
+  spec_section: P0-1 AdEx neuron model
+  implementation_paths:
+  - src/bnsyn/neuron/adex.py
+  - src/bnsyn/sim/network.py
+  verification_paths:
+  - tests/test_adex_smoke.py
+  - tests/test_network_smoke.py
+- id: CLM-0002
+  statement: The AdEx neuron model combines leaky integrate-and-fire dynamics with an
+    exponential spike initiation term and an adaptation variable w.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Brette & Gerstner (2005) J Neurophysiol 94:3637–3642
+  locator: Model equations describing exponential term and adaptation variable w.
+  action: KEEP
+  notes: Core AdEx structure for BN-Syn neuron dynamics.
+  bibkey: brette2005adaptive
+  spec_section: P0-1 AdEx model
+  implementation_paths:
+  - src/bnsyn/neuron/adex.py
+  - src/bnsyn/sim/network.py
+  benchmark_paths:
+  - benchmarks/bench_adex.py
+  performance_metrics:
+  - adex_steps_per_sec
+  - memory_per_neuron_mb
+  verification_paths:
+  - tests/test_adex_smoke.py
+  - tests/test_network_smoke.py
+- id: CLM-0003
+  statement: NMDA Mg²⁺ block uses B(V)=1/(1+[Mg]/3.57*exp(-0.062*V)) with [Mg] in
+    mM and V in mV.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Jahr & Stevens (1990) J Neurosci 10(9):3178–3182
+  locator: Equation for Mg block coefficients (3.57 mM, -0.062 mV⁻¹), DOI:10.1523/JNEUROSCI.10-09-03178.1990
+  action: KEEP
+  notes: Ensure units are stated explicitly.
+  bibkey: jahr1990voltage
+  spec_section: P0-2 NMDA block
+  implementation_paths:
+  - src/bnsyn/synapse/conductance.py
+  benchmark_paths:
+  - benchmarks/bench_synapses.py
+  performance_metrics:
+  - synapse_update_cost_ms
+  verification_paths:
+  - tests/test_synapse_smoke.py
+- id: CLM-0004
+  statement: Three-factor learning rules update weights proportional to eligibility
+    traces and a modulatory signal.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Frémaux & Gerstner (2016) Front Neural Circuits 9:85
+  locator: Formal definition of three-factor learning rules with eligibility traces.
+  action: KEEP
+  notes: Aligns with BN-Syn three-factor plasticity implementation.
+  bibkey: fremaux2016neuromodulated
+  spec_section: P0-3 Three-factor learning
+  implementation_paths:
+  - src/bnsyn/plasticity/three_factor.py
+  benchmark_paths:
+  - benchmarks/bench_plasticity.py
+  performance_metrics:
+  - plasticity_update_cost_ms
+  verification_paths:
+  - tests/test_plasticity_smoke.py
+- id: CLM-0005
+  statement: Eligibility traces allow spike-timing-dependent plasticity to be modulated
+    by delayed reward signals.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Izhikevich (2007) Cerebral Cortex 17(10):2443–2452
+  locator: Reward-modulated STDP with eligibility trace formalism.
+  action: KEEP
+  notes: Supports neuromodulator × eligibility design.
+  bibkey: izhikevich2007solving
+  spec_section: P0-3 Neuromodulated STDP
+  implementation_paths:
+  - src/bnsyn/plasticity/three_factor.py
+  verification_paths:
+  - tests/test_plasticity_smoke.py
+- id: CLM-0006
+  statement: Neuronal avalanche sizes in cortical circuits exhibit scale-free (power-law)
+    distributions consistent with critical dynamics.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
+  locator: Avalanche size distributions and criticality discussion.
+  action: KEEP
+  notes: Criticality motivation for σ tracking.
+  bibkey: beggs2003neuronal
+  spec_section: P0-4 Avalanche exponents
+  implementation_paths:
+  - src/bnsyn/criticality/branching.py
+  benchmark_paths:
+  - benchmarks/bench_criticality.py
+  performance_metrics:
+  - criticality_sigma_drift
+  verification_paths:
+  - tests/test_criticality_smoke.py
+- id: CLM-0007
+  statement: Branching ratio σ is defined by the ratio of activity in successive
+    time bins during avalanche propagation.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Beggs & Plenz (2003) J Neurosci 23(35):11167–11177
+  locator: Definition of branching parameter in avalanche analysis.
+  action: KEEP
+  notes: Basis for σ estimator in BN-Syn.
+  bibkey: beggs2003neuronal
+  spec_section: P0-4 Branching parameter σ
+  implementation_paths:
+  - src/bnsyn/criticality/branching.py
+  verification_paths:
+  - tests/test_criticality_smoke.py
+- id: CLM-0008
+  statement: The multistep regression (MR) estimator provides a subsampling-corrected
+    estimate of branching ratio in neural systems.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Wilting & Priesemann (2018) Nat Commun 9:2325
+  locator: MR estimator section for subsampling-corrected σ.
+  action: KEEP
+  notes: Used for offline criticality validation.
+  bibkey: wilting2018inferring
+  spec_section: P0-4 MR estimator
+  implementation_paths:
+  - src/bnsyn/criticality/analysis.py
+  verification_paths:
+  - tests/validation/test_criticality_validation.py
+- id: CLM-0009
+  statement: Clauset et al. define statistical procedures for fitting and validating
+    power-law distributions.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Clauset et al. (2009) SIAM Review 51(4):661–703
+  locator: Power-law fitting and goodness-of-fit methodology.
+  action: KEEP
+  notes: Power-law validation reference for criticality checks.
+  bibkey: clauset2009power
+  spec_section: P0-4 Power-law fitting
+  implementation_paths:
+  - src/bnsyn/criticality/analysis.py
+  verification_paths:
+  - tests/validation/test_criticality_validation.py
+- id: CLM-0010
+  statement: Synaptic tagging and capture supports consolidation of transient synaptic
+    changes into long-term modifications.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Frey & Morris (1997) Nature 385(6616):533–536
+  locator: Synaptic tagging and capture mechanism description.
+  action: KEEP
+  notes: Supports dual-weight consolidation rationale.
+  bibkey: frey1997synaptic
+  spec_section: P1-6 Synaptic tagging
+  implementation_paths:
+  - src/bnsyn/consolidation/dual_weight.py
+  verification_paths:
+  - tests/test_consolidation_smoke.py
+- id: CLM-0019
+  statement: Simulated annealing uses a temperature schedule that is gradually reduced
+    to transition from exploration toward convergence.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Kirkpatrick et al. (1983) Science 220(4598):671–680
+  locator: Temperature schedule description in simulated annealing method.
+  action: KEEP
+  notes: Supports BN-Syn temperature-gated exploration/consolidation framing.
+  bibkey: kirkpatrick1983annealing
+  spec_section: P1-5 Temperature schedule
+  implementation_paths:
+  - src/bnsyn/temperature/schedule.py
+  verification_paths:
+  - tests/test_temperature_smoke.py
+- id: CLM-0020
+  statement: Synaptic consolidation models use fast and slow weight components with
+    tagging/capture mechanisms to stabilize long-term memory traces.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Benna & Fusi (2016) Nat Neurosci 19:1697–1706
+  locator: Multiple timescale consolidation model with fast/slow components and capture.
+  action: KEEP
+  notes: Supports dual-weight consolidation dynamics and tag-based capture.
+  bibkey: benna2016synaptic
+  spec_section: P1-6 Dual-weight consolidation
+  implementation_paths:
+  - src/bnsyn/consolidation/dual_weight.py
+  verification_paths:
+  - tests/test_consolidation_smoke.py
+  - tests/validation/test_consolidation_validation.py
+- id: CLM-0021
+  statement: Energy-based neural models define a quadratic energy function that
+    penalizes large firing rates and weights.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Hopfield (1982) PNAS 79(8):2554–2558
+  locator: Energy function definition for neural network states.
+  action: KEEP
+  notes: Grounds BN-Syn energy regularization objective.
+  bibkey: hopfield1982neural
+  spec_section: P1-7 Energy regularization
+  implementation_paths:
+  - src/bnsyn/energy/regularization.py
+  verification_paths:
+  - tests/test_energy_smoke.py
+  - tests/validation/test_energy_validation.py
+- id: CLM-0022
+  statement: Explicit Euler and second-order Runge–Kutta methods are standard
+    deterministic integrators for ordinary differential equations.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: Hairer, Nørsett & Wanner (1993) Solving ODEs I
+  locator: Chapter on explicit Runge–Kutta methods (Euler/RK2).
+  action: KEEP
+  notes: Validates BN-Syn numerical integration choices and dt-invariance checks.

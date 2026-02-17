@@ -1,0 +1,52 @@
+     1	{
+     2	  "_generated_by": "python tools/generate_inventory.py",
+     3	  "paths": [
+     4	    "src",
+     5	    "tests",
+     6	    "docs",
+     7	    ".github"
+     8	  ],
+     9	  "counts": {
+    10	    "src": 73,
+    11	    "tests": 170,
+    12	    "docs": 280,
+    13	    ".github": 41
+    14	  },
+    15	  "workflows": [
+    16	    "_reusable_benchmarks.yml",
+    17	    "_reusable_chaos_tests.yml",
+    18	    "_reusable_formal_science.yml",
+    19	    "_reusable_gate_profile.yml",
+    20	    "_reusable_property_tests.yml",
+    21	    "_reusable_pytest.yml",
+    22	    "_reusable_quality.yml",
+    23	    "_reusable_ssot.yml",
+    24	    "_reusable_validation_tests.yml",
+    25	    "benchmarks.yml",
+    26	    "ci-benchmarks-elite.yml",
+    27	    "ci-benchmarks.yml",
+    28	    "ci-pr-atomic.yml",
+    29	    "ci-pr.yml",
+    30	    "ci-smoke.yml",
+    31	    "ci-validation.yml",
+    32	    "codecov-health.yml",
+    33	    "codeql.yml",
+    34	    "dependency-review.yml",
+    35	    "dependency-watch.yml",
+    36	    "docs.yml",
+    37	    "formal-coq.yml",
+    38	    "formal-tla.yml",
+    39	    "math-quality-gate.yml",
+    40	    "physics-equivalence.yml",
+    41	    "quality-mutation.yml",
+    42	    "release-pipeline.yml",
+    43	    "science.yml",
+    44	    "workflow-integrity.yml"
+    45	  ],
+    46	  "detected_tools": [
+    47	    "pyproject.toml",
+    48	    "requirements-lock.txt",
+    49	    "docker-compose.yml",
+    50	    "Makefile"
+    51	  ]
+    52	}
