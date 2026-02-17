@@ -135,6 +135,7 @@ ssot:
 	python -m scripts.validate_api_maturity
 	$(MAKE) api-contract
 	$(MAKE) manifest-check
+	$(MAKE) traceability-check
 
 validate-claims-coverage:
 	python -m scripts.validate_claims_coverage --format markdown
@@ -182,3 +183,10 @@ clean:
 	rm -f .mutmut-cache
 	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
 	@echo "Cleaned temporary files"
+
+
+traceability-check:
+	python -m scripts.validate_traceability
+
+public-surfaces:
+	python -m scripts.discover_public_surfaces
