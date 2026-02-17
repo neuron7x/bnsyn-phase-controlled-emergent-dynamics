@@ -1,4 +1,4 @@
-.PHONY: dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+.PHONY: dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -38,13 +38,19 @@ wheelhouse-report: wheelhouse-validate
 	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
 
 test:
-	python -m pytest -m "not validation" -q
+	$(MAKE) test-gate
+
+test-gate:
+	python -m pytest -m "not (validation or property)" -q
 
 test-determinism:
 	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
 
 test-validation:
-	python -m pytest -m validation -q
+	python -m pytest -m "validation" -q
+
+test-property:
+	python -m pytest -m "property" -q
 
 coverage:
 	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q

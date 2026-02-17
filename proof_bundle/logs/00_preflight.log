@@ -1,0 +1,12 @@
+$ git rev-parse --show-toplevel
+/workspace/bnsyn-phase-controlled-emergent-dynamics
+$ git status --porcelain
+?? proof_bundle/logs/00_preflight.log
+$ python -V
+Python 3.12.12
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+$ python -c "import sys; print(\"OK\")"
+OK
+$ tmpfile=.preflight_tmp_$$ && echo test > "$tmpfile" && rm "$tmpfile" && echo write-delete-ok
+write-delete-ok

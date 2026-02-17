@@ -1,0 +1,89 @@
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+      - name: pip-audit
+        run: |
+          mkdir -p artifacts
+          pip-audit --desc --format json --output artifacts/pip-audit.json
+      - name: bandit
+        run: bandit -r src/ -ll
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: security-report-${{ github.sha }}
+          path: artifacts/pip-audit.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  codeql-pr:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (contains(github.event.pull_request.labels.*.name, 'run-codeql') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+        with:
+          languages: "python"
+          build-mode: none
+      - name: Analyze
+        uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+
+
+  finalize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    needs:
+      - gate-profile
+      - determinism
+      - quality
+      - build
+      - smoke-wheel-matrix
+      - tests-smoke
+      - ssot
+      - security
+    if: success()
+    steps:
+      - name: PR Quality Gate
+        run: |
+          echo " All PR checks passed!"
+          echo "   Determinism verified"
+          echo "   Code quality approved"
+          echo "   Build successful"
+          echo "   Tests passed (${{ needs.gate-profile.outputs.coverage-threshold }}% coverage)"
+          echo "   SSOT gates verified"
+          echo "   Security audit passed"
+          echo ""
+          echo "Ready for merge "
+
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "ci-pr-atomic",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-ci-pr-atomic-${{ github.sha }}
+          path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30

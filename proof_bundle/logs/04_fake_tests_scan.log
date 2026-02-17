@@ -1,0 +1,10 @@
+$ rg -n "assert True|assert\s+1\s*==\s*1|pass\s*$" tests --glob "test*.py"
+tests/test_verify_hypothesis_v2.py:44:    # Check consolidation gates pass
+$ rg -n "@pytest\.mark\.skip\b|pytest\.skip\(" tests --glob "test*.py"
+tests/test_mutation_counts_contract.py:49:        pytest.skip("Baseline not yet generated - run 'make mutation-baseline' first")
+tests/test_verify_hypothesis_v2.py:36:        pytest.skip("Bundled v2 results not found (expected in CI)")
+tests/test_verify_hypothesis_v2.py:65:        pytest.skip("Bundled v1 results not found")
+tests/test_math_invariants.py:168:        pytest.skip("Hypothesis is required for property tests")
+tests/test_math_invariants.py:172:        pytest.skip("Hypothesis is required for property tests")
+tests/test_interactive_smoke.py:82:        pytest.skip("Example config not found")
+$ rg -n "@pytest\.mark\.skipif\(True|skipif\(True" tests --glob "test*.py"

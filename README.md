@@ -41,6 +41,22 @@ python -m scripts.check_internal_links
 python -m scripts.check_quickstart_consistency
 ```
 
+## Testing
+
+Install test dependencies before running any pytest command:
+
+```bash
+python -m pip install -e ".[test]"
+```
+
+Canonical local suites:
+
+```bash
+make test-gate
+make test-validation
+make test-property
+```
+
 ## Architecture at a glance
 
 ```mermaid

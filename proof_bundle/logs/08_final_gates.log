@@ -1,0 +1,317 @@
+$ python -m pip install -e ".[test]"
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: hypothesis==6.151.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.151.5)
+Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.2)
+Requirement already satisfied: pytest-cov==7.0.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (7.0.0)
+Requirement already satisfied: psutil==7.2.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (7.2.2)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from hypothesis==6.151.5->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.3.0)
+Requirement already satisfied: packaging>=22 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (25.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.19.2)
+Requirement already satisfied: coverage>=7.10.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->bnsyn==0.2.0) (7.13.4)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4132 sha256=b5ae7eed3c240258ecccd63fa9b50b3dabb4d2e528aefbad7c53a1744b08cb1c
+  Stored in directory: /tmp/pip-ephem-wheel-cache-qwe1gipj/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+$ python -m pytest --collect-only -q
+[Hypothesis] Using default profile
+tests/benchmarks/test_regression.py: 3
+tests/properties/test_adex_properties.py: 10
+tests/properties/test_hypothesis_profiles.py: 2
+tests/properties/test_manifest_tooling_properties.py: 3
+tests/properties/test_properties_bnsyn.py: 7
+tests/properties/test_properties_determinism.py: 2
+tests/properties/test_validation_inputs_properties.py: 1
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_claims_enforcement.py: 3
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_declarative.py: 7
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_integration_experiment_flow.py: 1
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tooling.py: 3
+tests/test_manifest_tooling_regression.py: 4
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_governed_docs_script.py: 1
+tests/test_scan_placeholders.py: 6
+tests/test_schema_contracts.py: 2
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_sync_required_status_contexts.py: 4
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_bibliography_script.py: 4
+tests/test_validate_calibration_summary.py: 3
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_long_running_triggers.py: 27
+tests/test_validate_pr_gates.py: 6
+tests/test_validate_required_checks.py: 8
+tests/test_validate_status_claims.py: 3
+tests/test_validate_workflow_contracts.py: 6
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_verify_hypothesis_v2.py: 2
+tests/validation/test_viz_dashboard.py: 5
+
+$ python -m pytest -q -m "not (validation or property)"
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+.....................................ss....ss........................... [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 72%]
+........................................................................ [ 83%]
+........................................................................ [ 93%]
+...........................................                              [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+$ python -m pytest -q -m "validation"
+[Hypothesis] Using default profile
+........................................................................ [ 29%]
+........................................................................ [ 58%]
+........................................................................ [ 87%]
+............................ss.                                          [100%]
+$ python -m pytest -q -m "property"
+[Hypothesis] Using default profile
+.........................                                                [100%]
+$ python -m scripts.validate_calibration_summary
+Calibration summary claims: PASS
+$ make test
+make test-gate
+make[1]: Entering directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+python -m pytest -m "not (validation or property)" -q
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+.....................................ss....ss........................... [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 72%]
+........................................................................ [ 83%]
+........................................................................ [ 93%]
+...........................................                              [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+make[1]: Leaving directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+$ python -m pytest -q -m "not (validation or property)"
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+.....................................ss....ss........................... [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 72%]
+........................................................................ [ 83%]
+........................................................................ [ 93%]
+...........................................                              [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
