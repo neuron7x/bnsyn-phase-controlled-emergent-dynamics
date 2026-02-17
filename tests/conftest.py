@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import ast
+import re
 import sys
 from pathlib import Path
 
@@ -11,12 +13,29 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+_ALLOWED_TOKENS = re.compile(r"\b[a-zA-Z_]\w*\b")
+
+
+def _marker_selected(markexpr: str, marker: str) -> bool:
+    if not markexpr:
+        return True
+
+    def _replace_identifier(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if token in {"and", "or", "not", "True", "False"}:
+            return token
+        return "True" if token == marker else "False"
+
+    bool_expr = _ALLOWED_TOKENS.sub(_replace_identifier, markexpr)
+    parsed = ast.parse(bool_expr, mode="eval")
+    return bool(eval(compile(parsed, "<markexpr>", "eval"), {"__builtins__": {}}, {}))
+
 
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool:
+    if "tests/properties" not in collection_path.as_posix():
+        return False
     markexpr = (config.option.markexpr or "").strip()
-    if "not property" in markexpr and "tests/properties" in collection_path.as_posix():
-        return True
-    return False
+    return not _marker_selected(markexpr, "property")
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
