@@ -1,0 +1,1673 @@
+$ python -m venv artifacts/audit/repair/.venv-fixed
+[exit:0]
+$ artifacts/audit/repair/.venv-fixed/bin/python -V
+Python 3.12.12
+[exit:0]
+$ artifacts/audit/repair/.venv-fixed/bin/python -m pip --version
+pip 25.0.1 from /workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/pip (python 3.12)
+[exit:0]
+$ artifacts/audit/repair/.venv-fixed/bin/python -m pip install --upgrade pip
+Requirement already satisfied: pip in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (25.0.1)
+Collecting pip
+  Using cached pip-26.0.1-py3-none-any.whl.metadata (4.7 kB)
+Using cached pip-26.0.1-py3-none-any.whl (1.8 MB)
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 25.0.1
+    Uninstalling pip-25.0.1:
+      Successfully uninstalled pip-25.0.1
+Successfully installed pip-26.0.1
+[exit:0]
+$ artifacts/audit/repair/.venv-fixed/bin/python -m pip install -e .
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting numpy==2.4.1 (from bnsyn==0.2.0)
+  Using cached numpy-2.4.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting pydantic==2.12.5 (from bnsyn==0.2.0)
+  Using cached pydantic-2.12.5-py3-none-any.whl.metadata (90 kB)
+Collecting scipy==1.17.0 (from bnsyn==0.2.0)
+  Using cached scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting jsonschema==4.26.0 (from bnsyn==0.2.0)
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting joblib==1.4.2 (from bnsyn==0.2.0)
+  Using cached joblib-1.4.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting pyyaml==6.0.3 (from bnsyn==0.2.0)
+  Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting attrs>=22.2.0 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Using cached attrs-25.4.0-py3-none-any.whl.metadata (10 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema==4.26.0->bnsyn==0.2.0)
+  Using cached rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting annotated-types>=0.6.0 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.41.5 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Using cached pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Collecting typing-extensions>=4.14.1 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic==2.12.5->bnsyn==0.2.0)
+  Using cached typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Using cached joblib-1.4.2-py3-none-any.whl (301 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached numpy-2.4.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.4 MB)
+Using cached pydantic-2.12.5-py3-none-any.whl (463 kB)
+Using cached pydantic_core-2.41.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Using cached pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+Using cached scipy-1.17.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.0 MB)
+Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Using cached attrs-25.4.0-py3-none-any.whl (67 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Using cached rpds_py-0.30.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (394 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Using cached typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4146 sha256=e8321e315bb29cb6b2497705d3f9559b14a6a253a7fd8d074322b9b08b8817f8
+  Stored in directory: /tmp/pip-ephem-wheel-cache-u9mru9e0/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: typing-extensions, rpds-py, pyyaml, numpy, joblib, attrs, annotated-types, typing-inspection, scipy, referencing, pydantic-core, pydantic, jsonschema-specifications, jsonschema, bnsyn
+
+Successfully installed annotated-types-0.7.0 attrs-25.4.0 bnsyn-0.2.0 joblib-1.4.2 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 numpy-2.4.1 pydantic-2.12.5 pydantic-core-2.41.5 pyyaml-6.0.3 referencing-0.37.0 rpds-py-0.30.0 scipy-1.17.0 typing-extensions-4.15.0 typing-inspection-0.4.2
+[exit:0]
+$ artifacts/audit/repair/.venv-fixed/bin/python -m pip install -e .[test,docs]
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Collecting hypothesis==6.151.5 (from bnsyn==0.2.0)
+  Using cached hypothesis-6.151.5-py3-none-any.whl.metadata (5.6 kB)
+Collecting pytest==9.0.2 (from bnsyn==0.2.0)
+  Using cached pytest-9.0.2-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-cov==7.0.0 (from bnsyn==0.2.0)
+  Using cached pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Collecting psutil==7.2.2 (from bnsyn==0.2.0)
+  Using cached psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting packaging==25.0 (from bnsyn==0.2.0)
+  Using cached packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting sphinx==9.0.4 (from bnsyn==0.2.0)
+  Downloading sphinx-9.0.4-py3-none-any.whl.metadata (5.8 kB)
+Collecting sphinx-autodoc-typehints==3.6.1 (from bnsyn==0.2.0)
+  Downloading sphinx_autodoc_typehints-3.6.1-py3-none-any.whl.metadata (8.7 kB)
+Collecting myst-parser==5.0.0 (from bnsyn==0.2.0)
+  Downloading myst_parser-5.0.0-py3-none-any.whl.metadata (5.6 kB)
+Collecting furo==2025.12.19 (from bnsyn==0.2.0)
+  Downloading furo-2025.12.19-py3-none-any.whl.metadata (4.9 kB)
+Collecting sphinx-copybutton==0.5.2 (from bnsyn==0.2.0)
+  Downloading sphinx_copybutton-0.5.2-py3-none-any.whl.metadata (3.2 kB)
+Collecting beautifulsoup4 (from furo==2025.12.19->bnsyn==0.2.0)
+  Downloading beautifulsoup4-4.14.3-py3-none-any.whl.metadata (3.8 kB)
+Collecting sphinx-basic-ng>=1.0.0.beta2 (from furo==2025.12.19->bnsyn==0.2.0)
+  Downloading sphinx_basic_ng-1.0.0b2-py3-none-any.whl.metadata (1.5 kB)
+Collecting pygments>=2.7 (from furo==2025.12.19->bnsyn==0.2.0)
+  Using cached pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting accessible-pygments>=0.0.5 (from furo==2025.12.19->bnsyn==0.2.0)
+  Downloading accessible_pygments-0.0.5-py3-none-any.whl.metadata (10 kB)
+Collecting sphinxcontrib-applehelp>=1.0.7 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_applehelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-devhelp>=1.0.6 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_devhelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-htmlhelp>=2.0.6 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-jsmath>=1.0.1 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting sphinxcontrib-qthelp>=1.0.6 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_qthelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-serializinghtml>=1.1.9 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting Jinja2>=3.1 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting docutils<0.23,>=0.20 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading docutils-0.22.4-py3-none-any.whl.metadata (15 kB)
+Collecting snowballstemmer>=2.2 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading snowballstemmer-3.0.1-py3-none-any.whl.metadata (7.9 kB)
+Collecting babel>=2.13 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading babel-2.18.0-py3-none-any.whl.metadata (2.2 kB)
+Collecting alabaster>=0.7.14 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading alabaster-1.0.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting imagesize>=1.3 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading imagesize-1.4.1-py2.py3-none-any.whl.metadata (1.5 kB)
+Collecting requests>=2.30.0 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+Collecting roman-numerals>=1.0.0 (from sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading roman_numerals-4.1.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis==6.151.5->bnsyn==0.2.0)
+  Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: attrs>=22.2.0 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Collecting markdown-it-py~=4.0 (from myst-parser==5.0.0->bnsyn==0.2.0)
+  Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+Collecting mdit-py-plugins~=0.5 (from myst-parser==5.0.0->bnsyn==0.2.0)
+  Downloading mdit_py_plugins-0.5.0-py3-none-any.whl.metadata (2.8 kB)
+Requirement already satisfied: annotated-types>=0.6.0 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Collecting iniconfig>=1.0.1 (from pytest==9.0.2->bnsyn==0.2.0)
+  Using cached iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest==9.0.2->bnsyn==0.2.0)
+  Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->bnsyn==0.2.0)
+  Using cached coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.5 kB)
+Collecting mdurl~=0.1 (from markdown-it-py~=4.0->myst-parser==5.0.0->bnsyn==0.2.0)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting MarkupSafe>=2.0 (from Jinja2>=3.1->sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting charset_normalizer<4,>=2 (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading charset_normalizer-3.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting idna<4,>=2.5 (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+Collecting urllib3<3,>=1.21.1 (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading urllib3-2.6.3-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2017.4.17 (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0)
+  Downloading certifi-2026.1.4-py3-none-any.whl.metadata (2.5 kB)
+Collecting soupsieve>=1.6.1 (from beautifulsoup4->furo==2025.12.19->bnsyn==0.2.0)
+  Downloading soupsieve-2.8.3-py3-none-any.whl.metadata (4.6 kB)
+Downloading furo-2025.12.19-py3-none-any.whl (339 kB)
+Downloading sphinx-9.0.4-py3-none-any.whl (3.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.9/3.9 MB 19.4 MB/s  0:00:00
+Using cached hypothesis-6.151.5-py3-none-any.whl (543 kB)
+Downloading myst_parser-5.0.0-py3-none-any.whl (84 kB)
+Using cached packaging-25.0-py3-none-any.whl (66 kB)
+Using cached psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Using cached pytest-9.0.2-py3-none-any.whl (374 kB)
+Using cached pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Downloading sphinx_autodoc_typehints-3.6.1-py3-none-any.whl (20 kB)
+Downloading sphinx_copybutton-0.5.2-py3-none-any.whl (13 kB)
+Downloading docutils-0.22.4-py3-none-any.whl (633 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 633.2/633.2 kB 41.7 MB/s  0:00:00
+Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+Downloading mdit_py_plugins-0.5.0-py3-none-any.whl (57 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Downloading accessible_pygments-0.0.5-py3-none-any.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 18.9 MB/s  0:00:00
+Downloading alabaster-1.0.0-py3-none-any.whl (13 kB)
+Downloading babel-2.18.0-py3-none-any.whl (10.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.2/10.2 MB 25.7 MB/s  0:00:00
+Using cached coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (254 kB)
+Downloading imagesize-1.4.1-py2.py3-none-any.whl (8.8 kB)
+Using cached iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Using cached pygments-2.19.2-py3-none-any.whl (1.2 MB)
+Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+Downloading charset_normalizer-3.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (153 kB)
+Downloading idna-3.11-py3-none-any.whl (71 kB)
+Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+Downloading certifi-2026.1.4-py3-none-any.whl (152 kB)
+Downloading roman_numerals-4.1.0-py3-none-any.whl (7.7 kB)
+Downloading snowballstemmer-3.0.1-py3-none-any.whl (103 kB)
+Downloading sphinx_basic_ng-1.0.0b2-py3-none-any.whl (22 kB)
+Downloading sphinxcontrib_applehelp-2.0.0-py3-none-any.whl (119 kB)
+Downloading sphinxcontrib_devhelp-2.0.0-py3-none-any.whl (82 kB)
+Downloading sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl (98 kB)
+Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
+Downloading sphinxcontrib_qthelp-2.0.0-py3-none-any.whl (88 kB)
+Downloading sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl (92 kB)
+Downloading beautifulsoup4-4.14.3-py3-none-any.whl (107 kB)
+Downloading soupsieve-2.8.3-py3-none-any.whl (37 kB)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4146 sha256=6f264e7c6548bb7093119d476a24087bc447cdd08ebab25299238d2f06c3f871
+  Stored in directory: /tmp/pip-ephem-wheel-cache-q76m4ywy/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: sortedcontainers, urllib3, sphinxcontrib-serializinghtml, sphinxcontrib-qthelp, sphinxcontrib-jsmath, sphinxcontrib-htmlhelp, sphinxcontrib-devhelp, sphinxcontrib-applehelp, soupsieve, snowballstemmer, roman-numerals, pygments, psutil, pluggy, packaging, mdurl, MarkupSafe, iniconfig, imagesize, idna, hypothesis, docutils, coverage, charset_normalizer, certifi, babel, alabaster, requests, pytest, markdown-it-py, Jinja2, beautifulsoup4, accessible-pygments, sphinx, pytest-cov, mdit-py-plugins, sphinx-copybutton, sphinx-basic-ng, sphinx-autodoc-typehints, myst-parser, bnsyn, furo
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+
+Successfully installed Jinja2-3.1.6 MarkupSafe-3.0.3 accessible-pygments-0.0.5 alabaster-1.0.0 babel-2.18.0 beautifulsoup4-4.14.3 bnsyn-0.2.0 certifi-2026.1.4 charset_normalizer-3.4.4 coverage-7.13.4 docutils-0.22.4 furo-2025.12.19 hypothesis-6.151.5 idna-3.11 imagesize-1.4.1 iniconfig-2.3.0 markdown-it-py-4.0.0 mdit-py-plugins-0.5.0 mdurl-0.1.2 myst-parser-5.0.0 packaging-25.0 pluggy-1.6.0 psutil-7.2.2 pygments-2.19.2 pytest-9.0.2 pytest-cov-7.0.0 requests-2.32.5 roman-numerals-4.1.0 snowballstemmer-3.0.1 sortedcontainers-2.4.0 soupsieve-2.8.3 sphinx-9.0.4 sphinx-autodoc-typehints-3.6.1 sphinx-basic-ng-1.0.0b2 sphinx-copybutton-0.5.2 sphinxcontrib-applehelp-2.0.0 sphinxcontrib-devhelp-2.0.0 sphinxcontrib-htmlhelp-2.1.0 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-qthelp-2.0.0 sphinxcontrib-serializinghtml-2.0.0 urllib3-2.6.3
+[exit:0]
+$ bash -lc "source artifacts/audit/repair/.venv-fixed/bin/activate && python -m pytest --collect-only -q"
+[Hypothesis] Using default profile
+tests/benchmarks/test_regression.py: 3
+tests/properties/test_adex_properties.py: 10
+tests/properties/test_hypothesis_profiles.py: 2
+tests/properties/test_manifest_tooling_properties.py: 3
+tests/properties/test_properties_bnsyn.py: 7
+tests/properties/test_properties_determinism.py: 2
+tests/properties/test_validation_inputs_properties.py: 1
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_claims_enforcement.py: 3
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_declarative.py: 7
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_integration_experiment_flow.py: 1
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tooling.py: 3
+tests/test_manifest_tooling_regression.py: 4
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_quickstart_contract_validator.py: 4
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_governed_docs_script.py: 1
+tests/test_scan_placeholders.py: 6
+tests/test_schema_contracts.py: 2
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_sync_required_status_contexts.py: 4
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_bibliography_script.py: 4
+tests/test_validate_calibration_summary.py: 3
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_long_running_triggers.py: 27
+tests/test_validate_pr_gates.py: 6
+tests/test_validate_required_checks.py: 8
+tests/test_validate_status_claims.py: 3
+tests/test_validate_workflow_contracts.py: 6
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_verify_hypothesis_v2.py: 2
+tests/validation/test_viz_dashboard.py: 5
+
+[exit:0]
+$ bash -lc "source artifacts/audit/repair/.venv-fixed/bin/activate && make test-gate"
+python -m pytest -m "not (validation or property)" -q
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+.....................................ss....ss........................... [ 41%]
+........................................................................ [ 51%]
+........................................................................ [ 62%]
+........................................................................ [ 72%]
+........................................................................ [ 82%]
+........................................................................ [ 93%]
+...............................................                          [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[exit:0]
+$ bash -lc "source artifacts/audit/repair/.venv-fixed/bin/activate && make docs"
+python -m sphinx -b html docs docs/_build/html
+Running Sphinx v9.0.4
+loading translations [en]... done
+making output directory... done
+myst v5.0.0: MdParserConfig(commonmark_only=False, gfm_only=False, enable_extensions={'fieldlist', 'deflist', 'colon_fence'}, disable_syntax=[], all_links_external=False, links_external_new_tab=False, url_schemes=('http', 'https', 'mailto', 'ftp'), ref_domains=None, fence_as_directive=set(), number_code_blocks=[], title_to_header=False, heading_anchors=0, heading_slug_func=None, html_meta={}, footnote_sort=True, footnote_transition=True, words_per_minute=200, substitutions={}, linkify_fuzzy_links=True, dmath_allow_labels=True, dmath_allow_space=True, dmath_allow_digits=True, dmath_double_inline=False, update_mathjax=True, mathjax_classes='tex2jax_process|mathjax_process|math|output_area', enable_checkboxes=False, suppress_warnings=[], highlight_code_blocks=True)
+[autosummary] generating autosummary for: ACTIONS_TEST_PROTOCOL.md, API_CONTRACT.md, API_STABILITY.md, ARCHITECTURE.md, ARCHITECTURE_INVARIANTS.md, ASSUMPTIONS.md, AUDIT_FINDINGS.md, AUDIT_LEDGER.md, AUDIT_TASKS_2026-02-15.md, BENCHMARKS.md, ..., scripts/validate-required-checks.md, scripts/validate-required-status-contexts.md, scripts/validate-status-claims.md, scripts/validate-workflow-contracts.md, scripts/verify-equivalence.md, scripts/verify-formal-constants.md, scripts/verify-reproducible-artifacts.md, scripts/visualize-experiment.md, sleep_stack.md, usage_workflows.md
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 237 source files that are out of date
+updating environment: [new config] 237 added, 0 changed, 0 removed
+reading sources... [  0%] ACTIONS_TEST_PROTOCOL
+reading sources... [  1%] API_CONTRACT
+reading sources... [  1%] API_STABILITY
+reading sources... [  2%] ARCHITECTURE
+reading sources... [  2%] ARCHITECTURE_INVARIANTS
+reading sources... [  3%] ASSUMPTIONS
+reading sources... [  3%] AUDIT_FINDINGS
+reading sources... [  3%] AUDIT_LEDGER
+reading sources... [  4%] AUDIT_TASKS_2026-02-15
+reading sources... [  4%] BENCHMARKS
+reading sources... [  5%] BENCHMARK_MAP
+reading sources... [  5%] BIBLIOGRAPHY
+reading sources... [  5%] BUILD_DOCS
+reading sources... [  6%] CI_BATTLE_USAGE_AUDIT_2026-02-07
+reading sources... [  6%] CI_GATES
+reading sources... [  7%] COMPONENT_AUDIT
+reading sources... [  7%] CONFERENCE_RUNBOOK
+reading sources... [  8%] CONSTITUTIONAL_AUDIT
+reading sources... [  8%] CRITICALITY_CONTROL_VS_MEASUREMENT
+reading sources... [  8%] DEMO
+reading sources... [  9%] DETERMINISM
+reading sources... [  9%] DOCUMENTATION_FORMALIZATION
+reading sources... [ 10%] DOC_DEBT
+reading sources... [ 10%] ENFORCEMENT_MATRIX
+reading sources... [ 11%] ENTROPY_LEDGER
+reading sources... [ 11%] EVIDENCE_COVERAGE
+reading sources... [ 11%] GOVERNANCE
+reading sources... [ 12%] HYPOTHESIS
+reading sources... [ 12%] INDEX
+reading sources... [ 13%] INPUTS
+reading sources... [ 13%] INTEGRATION
+reading sources... [ 14%] INVENTORY
+reading sources... [ 14%] LEGENDARY_QUICKSTART
+reading sources... [ 14%] MAINTENANCE
+reading sources... [ 15%] MODULE_RESPONSIBILITY_MATRIX
+reading sources... [ 15%] MUTATION_GATE
+reading sources... [ 16%] NORMATIVE_LABELING
+reading sources... [ 16%] PERFORMANCE
+reading sources... [ 16%] PERFORMANCE_REPORT
+reading sources... [ 17%] PHYSICAL_VALIDITY
+reading sources... [ 17%] PLACEHOLDER_BASELINE_CYCLE0
+reading sources... [ 18%] PLACEHOLDER_REGISTRY
+reading sources... [ 18%] PR40_EVIDENCE_REPORT
+reading sources... [ 19%] PROJECT_SURFACES
+reading sources... [ 19%] PR_AUTOMATION_VECTORS
+reading sources... [ 19%] QUALITY_INDEX
+reading sources... [ 20%] QUALITY_INFRASTRUCTURE
+reading sources... [ 20%] QUICKSTART
+reading sources... [ 21%] RELEASE_NOTES
+reading sources... [ 21%] RELEASE_PIPELINE
+reading sources... [ 22%] RELEASE_READINESS
+reading sources... [ 22%] REPO_STRUCTURE
+reading sources... [ 22%] REPRODUCIBILITY
+reading sources... [ 23%] REPRODUCIBILITY_ENVELOPE
+reading sources... [ 23%] RISKS
+reading sources... [ 24%] SCALABILITY
+reading sources... [ 24%] SCALABILITY_REPORT
+reading sources... [ 24%] SCRIPTS/index
+reading sources... [ 25%] SECURITY_GITLEAKS
+reading sources... [ 25%] SPEC
+reading sources... [ 26%] SSOT
+reading sources... [ 26%] SSOT_RULES
+reading sources... [ 27%] START_HERE
+reading sources... [ 27%] STATUS
+reading sources... [ 27%] TESTING
+reading sources... [ 28%] TESTING_MUTATION
+reading sources... [ 28%] THROUGHPUT_SCALING
+reading sources... [ 29%] TRACEABILITY
+reading sources... [ 29%] TRACEABILITY_MAP
+reading sources... [ 30%] TROUBLESHOOTING
+reading sources... [ 30%] VCG
+reading sources... [ 30%] VERSIONING
+reading sources... [ 31%] _inventory
+reading sources... [ 31%] adr/0001-math-integrator-guardrails
+reading sources... [ 32%] api/api_bnsyn
+reading sources... [ 32%] api/generated/bnsyn
+reading sources... [ 32%] api/generated/bnsyn.benchmarks
+reading sources... [ 33%] api/generated/bnsyn.benchmarks.regime
+reading sources... [ 33%] api/generated/bnsyn.calibration
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 34%] api/generated/bnsyn.calibration.accuracy_speed
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 34%] api/generated/bnsyn.calibration.fit
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 35%] api/generated/bnsyn.cli
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 35%] api/generated/bnsyn.config
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:15: (ERROR/3) Unexpected indentation.
+:16: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:18: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:29: (ERROR/3) Unexpected indentation.
+:30: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:33: (ERROR/3) Unexpected indentation.
+:34: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:41: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:43: (ERROR/3) Unexpected indentation.
+:44: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:56: (ERROR/3) Unexpected indentation.
+:57: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:59: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+reading sources... [ 35%] api/generated/bnsyn.connectivity
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 36%] api/generated/bnsyn.connectivity.sparse
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 36%] api/generated/bnsyn.consolidation
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 37%] api/generated/bnsyn.consolidation.dual_weight
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 37%] api/generated/bnsyn.control
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 38%] api/generated/bnsyn.criticality
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 38%] api/generated/bnsyn.criticality.analysis
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 38%] api/generated/bnsyn.criticality.branching
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 39%] api/generated/bnsyn.criticality.phase_transition
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 39%] api/generated/bnsyn.emergence
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 40%] api/generated/bnsyn.emergence.crystallizer
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 40%] api/generated/bnsyn.energy
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 41%] api/generated/bnsyn.energy.regularization
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 41%] api/generated/bnsyn.experiments
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 41%] api/generated/bnsyn.experiments.declarative
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 42%] api/generated/bnsyn.incremental
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 42%] api/generated/bnsyn.memory
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 43%] api/generated/bnsyn.memory.consolidator
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 43%] api/generated/bnsyn.memory.ledger
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 43%] api/generated/bnsyn.memory.trace
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 44%] api/generated/bnsyn.neuron
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 44%] api/generated/bnsyn.neuron.adex
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 45%] api/generated/bnsyn.neurons
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 45%] api/generated/bnsyn.numerics
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 46%] api/generated/bnsyn.numerics.integrators
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 46%] api/generated/bnsyn.plasticity
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 46%] api/generated/bnsyn.plasticity.stdp
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 47%] api/generated/bnsyn.plasticity.three_factor
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 47%] api/generated/bnsyn.production
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 48%] api/generated/bnsyn.production.adex
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 48%] api/generated/bnsyn.production.connectivity
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 49%] api/generated/bnsyn.production.jax_backend
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 49%] api/generated/bnsyn.provenance
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 49%] api/generated/bnsyn.provenance.manifest
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 50%] api/generated/bnsyn.provenance.manifest_builder
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 50%] api/generated/bnsyn.rng
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 51%] api/generated/bnsyn.schemas
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 51%] api/generated/bnsyn.schemas.experiment
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:15: (ERROR/3) Unexpected indentation.
+:16: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:18: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:29: (ERROR/3) Unexpected indentation.
+:30: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:33: (ERROR/3) Unexpected indentation.
+:34: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:41: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:43: (ERROR/3) Unexpected indentation.
+:44: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:56: (ERROR/3) Unexpected indentation.
+:57: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:59: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:6: (WARNING/2) Inline literal start-string without end-string.
+:6: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:14: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:22: (ERROR/3) Unexpected indentation.
+:24: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:38: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:38: (WARNING/2) Inline literal start-string without end-string.
+:38: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:45: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:49: (ERROR/3) Unexpected indentation.
+:45: (WARNING/2) Inline emphasis start-string without end-string.
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:6: (WARNING/2) Inline literal start-string without end-string.
+:6: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:18: (ERROR/3) Unexpected indentation.
+:20: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:32: (ERROR/3) Unexpected indentation.
+:33: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:34: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:34: (WARNING/2) Inline literal start-string without end-string.
+:34: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 51%] api/generated/bnsyn.sim
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 52%] api/generated/bnsyn.sim.network
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 52%] api/generated/bnsyn.simulation
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 53%] api/generated/bnsyn.sleep
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 53%] api/generated/bnsyn.sleep.cycle
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 54%] api/generated/bnsyn.sleep.replay
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 54%] api/generated/bnsyn.sleep.stages
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 54%] api/generated/bnsyn.synapse
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 55%] api/generated/bnsyn.synapse.conductance
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 55%] api/generated/bnsyn.synapses
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 56%] api/generated/bnsyn.temperature
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 56%] api/generated/bnsyn.temperature.schedule
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 57%] api/generated/bnsyn.testing
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 57%] api/generated/bnsyn.testing.faults
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 57%] api/generated/bnsyn.tools
+reading sources... [ 58%] api/generated/bnsyn.tools.benchmark_sleep_stack_scale
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 58%] api/generated/bnsyn.tools.run_scaled_sleep_stack
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 59%] api/generated/bnsyn.validation
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 59%] api/generated/bnsyn.validation.inputs
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:15: (ERROR/3) Unexpected indentation.
+:16: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:18: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:29: (ERROR/3) Unexpected indentation.
+:30: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:33: (ERROR/3) Unexpected indentation.
+:34: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:41: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:43: (ERROR/3) Unexpected indentation.
+:44: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:56: (ERROR/3) Unexpected indentation.
+:57: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:59: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+reading sources... [ 59%] api/generated/bnsyn.vcg
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 60%] api/generated/bnsyn.viz
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 60%] api/generated/bnsyn.viz.dashboard
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 61%] api/generated/bnsyn.viz.interactive
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 61%] api/generated/contracts
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 62%] api/generated/contracts.math_contracts
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 62%] api/index
+/workspace/bnsyn-phase-controlled-emergent-dynamics/artifacts/audit/repair/.venv-fixed/lib/python3.12/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 62%] api/modules
+reading sources... [ 63%] appendix/CODEX_PROJECT_FEEDBACK_UA
+reading sources... [ 63%] appendix/EXECUTIVE_SUMMARY
+reading sources... [ 64%] appendix/PRODUCTION_AUDIT
+reading sources... [ 64%] appendix/PRODUCTION_ROADMAP
+reading sources... [ 65%] appendix/additional_audit_2026
+reading sources... [ 65%] audit_merge_readiness
+reading sources... [ 65%] benchmarks/PROTOCOL
+reading sources... [ 66%] benchmarks/README
+reading sources... [ 66%] benchmarks/SCHEMA
+reading sources... [ 67%] benchmarks/threshold_derivation_alloc_v2
+reading sources... [ 67%] contracts/index
+reading sources... [ 68%] emergence_tracking
+reading sources... [ 68%] index
+reading sources... [ 68%] math/CONTRACTS
+reading sources... [ 69%] math/MATH_SURFACES
+reading sources... [ 69%] math/PROVENANCE
+reading sources... [ 70%] modules
+reading sources... [ 70%] placeholder_cycles/cycle1/plan
+reading sources... [ 70%] repo_map
+reading sources... [ 71%] safety/deferred_gates
+reading sources... [ 71%] safety/followups
+reading sources... [ 72%] safety/stpa
+reading sources... [ 72%] scripts/--init--
+reading sources... [ 73%] scripts/-audit-metrics-pr40
+reading sources... [ 73%] scripts/audit-spec-implementation
+reading sources... [ 73%] scripts/bench-ci-smoke
+reading sources... [ 74%] scripts/benchmark-physics
+reading sources... [ 74%] scripts/benchmark-production
+reading sources... [ 75%] scripts/benchmark-sleep-stack-scale
+reading sources... [ 75%] scripts/build-readiness-artifacts
+reading sources... [ 76%] scripts/build-wheelhouse
+reading sources... [ 76%] scripts/calculate-throughput-gain
+reading sources... [ 76%] scripts/check-api-contract
+reading sources... [ 77%] scripts/check-benchmark-regressions
+reading sources... [ 77%] scripts/check-coverage-gate
+reading sources... [ 78%] scripts/check-mutation-score
+reading sources... [ 78%] scripts/check-quickstart-consistency
+reading sources... [ 78%] scripts/collect-ci-run-urls
+reading sources... [ 79%] scripts/compare-benchmarks
+reading sources... [ 79%] scripts/generate-benchmark-baseline
+reading sources... [ 80%] scripts/generate-coverage-baseline
+reading sources... [ 80%] scripts/generate-coverage-trend
+reading sources... [ 81%] scripts/generate-evidence-coverage
+reading sources... [ 81%] scripts/generate-math-data
+reading sources... [ 81%] scripts/generate-mutation-baseline
+reading sources... [ 82%] scripts/generate-tests-inventory
+reading sources... [ 82%] scripts/index
+reading sources... [ 83%] scripts/intelligence-cycle
+reading sources... [ 83%] scripts/lint-ci-truthfulness
+reading sources... [ 84%] scripts/math-validate
+reading sources... [ 84%] scripts/mutation-ci-summary
+reading sources... [ 84%] scripts/mutation-counts
+reading sources... [ 85%] scripts/mutation-survivors-summary
+reading sources... [ 85%] scripts/orchestrate-throughput-scaling
+reading sources... [ 86%] scripts/pre-push
+reading sources... [ 86%] scripts/profile-kernels
+reading sources... [ 86%] scripts/rebuild-sources-lock
+reading sources... [ 87%] scripts/release-pipeline
+reading sources... [ 87%] scripts/release-readiness
+reading sources... [ 88%] scripts/render-workflow-policy-docs
+reading sources... [ 88%] scripts/run-benchmarks
+reading sources... [ 89%] scripts/run-mutation-pipeline
+reading sources... [ 89%] scripts/run-scaled-sleep-stack
+reading sources... [ 89%] scripts/scan-governed-docs
+reading sources... [ 90%] scripts/scan-normative-tags
+reading sources... [ 90%] scripts/scan-placeholders
+reading sources... [ 91%] scripts/scan-tierS-misuse
+reading sources... [ 91%] scripts/ssot-rules
+reading sources... [ 92%] scripts/sync-required-status-contexts
+reading sources... [ 92%] scripts/track-quality
+reading sources... [ 92%] scripts/validate-api-maturity
+reading sources... [ 93%] scripts/validate-bibliography
+reading sources... [ 93%] scripts/validate-branch-protection-governance
+reading sources... [ 94%] scripts/validate-claims
+reading sources... [ 94%] scripts/validate-claims-coverage
+reading sources... [ 95%] scripts/validate-codebase-readiness-audit
+reading sources... [ 95%] scripts/validate-long-running-triggers
+reading sources... [ 95%] scripts/validate-mutation-baseline
+reading sources... [ 96%] scripts/validate-pr-gates
+reading sources... [ 96%] scripts/validate-required-checks
+reading sources... [ 97%] scripts/validate-required-status-contexts
+reading sources... [ 97%] scripts/validate-status-claims
+reading sources... [ 97%] scripts/validate-workflow-contracts
+reading sources... [ 98%] scripts/verify-equivalence
+reading sources... [ 98%] scripts/verify-formal-constants
+reading sources... [ 99%] scripts/verify-reproducible-artifacts
+reading sources... [ 99%] scripts/visualize-experiment
+reading sources... [100%] sleep_stack
+reading sources... [100%] usage_workflows
+
+<unknown>:1: WARNING: duplicate object description of bnsyn, other instance in api/api_bnsyn, use :no-index: for one of them
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.config.Field": name 'JsonValue' is not defined [sphinx_autodoc_typehints.forward_reference]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/consolidation/dual_weight.py:docstring of bnsyn.consolidation.dual_weight.DualWeights:22: ERROR: Undefined substitution referenced: "w_fast - w0". [docutils]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/consolidation/dual_weight.py:docstring of bnsyn.consolidation.dual_weight.DualWeights:22: ERROR: Undefined substitution referenced: "w_fast - w0". [docutils]
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.branching.BranchingEstimator, other instance in api/generated/bnsyn.control, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.CriticalPhase.CRITICAL, other instance in api/generated/bnsyn.criticality, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.CriticalPhase.SUBCRITICAL, other instance in api/generated/bnsyn.criticality, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.CriticalPhase.SUPERCRITICAL, other instance in api/generated/bnsyn.criticality, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.CriticalPhase.UNKNOWN, other instance in api/generated/bnsyn.criticality, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.branching.SigmaController, other instance in api/generated/bnsyn.control, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.phase_transition.CriticalPhase.CRITICAL, other instance in api/generated/bnsyn.criticality.phase_transition, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.phase_transition.CriticalPhase.SUBCRITICAL, other instance in api/generated/bnsyn.criticality.phase_transition, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.phase_transition.CriticalPhase.SUPERCRITICAL, other instance in api/generated/bnsyn.criticality.phase_transition, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.criticality.phase_transition.CriticalPhase.UNKNOWN, other instance in api/generated/bnsyn.criticality.phase_transition, use :no-index: for one of them
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/memory/trace.py:docstring of bnsyn.memory.trace.MemoryTrace.consolidate:18: WARNING: Inline emphasis start-string without end-string. [docutils]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/memory/trace.py:docstring of bnsyn.memory.trace.MemoryTrace.consolidate:18: WARNING: Inline emphasis start-string without end-string. [docutils]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.schemas.experiment.Field": name 'JsonValue' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Failed guarded type import with TypeError("type 'classmethod' is not subscriptable") [sphinx_autodoc_typehints.guarded_import]
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.SleepStage.DEEP_SLEEP, other instance in api/generated/bnsyn.sleep, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.SleepStage.LIGHT_SLEEP, other instance in api/generated/bnsyn.sleep, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.SleepStage.REM, other instance in api/generated/bnsyn.sleep, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.SleepStage.WAKE, other instance in api/generated/bnsyn.sleep, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.stages.SleepStage.DEEP_SLEEP, other instance in api/generated/bnsyn.sleep.stages, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.stages.SleepStage.LIGHT_SLEEP, other instance in api/generated/bnsyn.sleep.stages, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.stages.SleepStage.REM, other instance in api/generated/bnsyn.sleep.stages, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.sleep.stages.SleepStage.WAKE, other instance in api/generated/bnsyn.sleep.stages, use :no-index: for one of them
+<unknown>:1: WARNING: duplicate object description of bnsyn.temperature.schedule.TemperatureSchedule, other instance in api/generated/bnsyn.control, use :no-index: for one of them
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.validation.inputs.Field": name 'JsonValue' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_firing_rate_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_raster_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_stats_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_voltage_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_firing_rate_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_raster_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_stats_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Cannot resolve forward reference in type annotations of "bnsyn.viz.interactive.create_voltage_plot": name 'go' is not defined [sphinx_autodoc_typehints.forward_reference]
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ACTIONS_TEST_PROTOCOL.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/API_CONTRACT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/API_STABILITY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ARCHITECTURE_INVARIANTS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ASSUMPTIONS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/AUDIT_FINDINGS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/AUDIT_LEDGER.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/AUDIT_TASKS_2026-02-15.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/BENCHMARKS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/BENCHMARK_MAP.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/BIBLIOGRAPHY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/CI_GATES.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/COMPONENT_AUDIT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/CONFERENCE_RUNBOOK.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/CONSTITUTIONAL_AUDIT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/DEMO.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/DETERMINISM.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/DOCUMENTATION_FORMALIZATION.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/DOC_DEBT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ENFORCEMENT_MATRIX.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ENTROPY_LEDGER.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/EVIDENCE_COVERAGE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/GOVERNANCE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/HYPOTHESIS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/INPUTS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/INTEGRATION.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/INVENTORY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/LEGENDARY_QUICKSTART.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/MAINTENANCE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/MUTATION_GATE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/NORMATIVE_LABELING.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PERFORMANCE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PERFORMANCE_REPORT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PHYSICAL_VALIDITY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PLACEHOLDER_BASELINE_CYCLE0.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PLACEHOLDER_REGISTRY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PR40_EVIDENCE_REPORT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PROJECT_SURFACES.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/PR_AUTOMATION_VECTORS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/QUALITY_INDEX.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/QUALITY_INFRASTRUCTURE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/RELEASE_NOTES.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/RELEASE_PIPELINE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/RELEASE_READINESS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/REPO_STRUCTURE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/REPRODUCIBILITY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/REPRODUCIBILITY_ENVELOPE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/RISKS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SCALABILITY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SCALABILITY_REPORT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SCRIPTS/index.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SECURITY_GITLEAKS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SPEC.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SSOT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/SSOT_RULES.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/STATUS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/TESTING_MUTATION.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/THROUGHPUT_SCALING.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/TRACEABILITY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/TRACEABILITY_MAP.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/TROUBLESHOOTING.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/VCG.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/VERSIONING.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_inventory.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/adr/0001-math-integrator-guardrails.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/appendix/EXECUTIVE_SUMMARY.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/appendix/PRODUCTION_AUDIT.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/appendix/PRODUCTION_ROADMAP.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/appendix/additional_audit_2026.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/benchmarks/PROTOCOL.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/benchmarks/README.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/benchmarks/SCHEMA.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/benchmarks/threshold_derivation_alloc_v2.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/emergence_tracking.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/math/CONTRACTS.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/math/MATH_SURFACES.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/math/PROVENANCE.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/modules.rst: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/placeholder_cycles/cycle1/plan.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/safety/deferred_gates.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/safety/followups.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/safety/stpa.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/--init--.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/-audit-metrics-pr40.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/audit-spec-implementation.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/bench-ci-smoke.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/benchmark-physics.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/benchmark-production.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/benchmark-sleep-stack-scale.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/build-readiness-artifacts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/build-wheelhouse.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/calculate-throughput-gain.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/check-api-contract.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/check-benchmark-regressions.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/check-coverage-gate.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/check-mutation-score.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/check-quickstart-consistency.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/collect-ci-run-urls.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/compare-benchmarks.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-benchmark-baseline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-coverage-baseline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-coverage-trend.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-evidence-coverage.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-math-data.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-mutation-baseline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/generate-tests-inventory.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/intelligence-cycle.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/lint-ci-truthfulness.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/math-validate.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/mutation-ci-summary.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/mutation-counts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/mutation-survivors-summary.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/orchestrate-throughput-scaling.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/pre-push.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/profile-kernels.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/rebuild-sources-lock.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/release-pipeline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/release-readiness.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/render-workflow-policy-docs.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/run-benchmarks.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/run-mutation-pipeline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/run-scaled-sleep-stack.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/scan-governed-docs.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/scan-normative-tags.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/scan-placeholders.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/scan-tierS-misuse.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/ssot-rules.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/sync-required-status-contexts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/track-quality.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-api-maturity.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-bibliography.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-branch-protection-governance.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-claims.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-claims-coverage.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-codebase-readiness-audit.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-long-running-triggers.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-mutation-baseline.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-pr-gates.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-required-checks.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-required-status-contexts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-status-claims.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/validate-workflow-contracts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/verify-equivalence.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/verify-formal-constants.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/verify-reproducible-artifacts.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/scripts/visualize-experiment.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/sleep_stack.md: WARNING: document isn't included in any toctree [toc.not_included]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.cli.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.cli
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.config.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.config
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.connectivity.sparse.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.connectivity'], selecting: api/generated/bnsyn.connectivity <- api/generated/bnsyn.connectivity.sparse
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.control.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.control
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.criticality.branching.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.criticality'], selecting: api/generated/bnsyn.criticality <- api/generated/bnsyn.criticality.branching
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.incremental.rst: document is referenced in multiple toctrees: ['api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.incremental
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.neuron.adex.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.neuron'], selecting: api/generated/bnsyn.neuron <- api/generated/bnsyn.neuron.adex
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.neurons.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.neurons
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.plasticity.three_factor.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.plasticity'], selecting: api/generated/bnsyn.plasticity <- api/generated/bnsyn.plasticity.three_factor
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.rng.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.rng
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sim.network.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.sim'], selecting: api/generated/bnsyn.sim <- api/generated/bnsyn.sim.network
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.simulation.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.simulation
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.synapse.conductance.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.synapse'], selecting: api/generated/bnsyn.synapse <- api/generated/bnsyn.synapse.conductance
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.synapses.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.synapses
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.temperature.schedule.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.temperature'], selecting: api/generated/bnsyn.temperature <- api/generated/bnsyn.temperature.schedule
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.vcg.rst: document is referenced in multiple toctrees: ['api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.vcg
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/contracts.math_contracts.rst: document is referenced in multiple toctrees: ['api/generated/contracts', 'modules'], selecting: modules <- api/generated/contracts.math_contracts
+done
+preparing documents... done
+copying assets... 
+copying downloadable files... [ 20%] ../../claims/claims.yml
+copying downloadable files... [ 40%] ../../bibliography/mapping.yml
+copying downloadable files... [ 60%] ../../bibliography/sources.lock
+copying downloadable files... [ 80%] ../../.github/workflows/ci-smoke.yml
+copying downloadable files... [100%] ../../.github/workflows/ci-validation.yml
+
+copying static files... 
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/basic.css
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/language_data.js
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/documentation_options.js
+copying static files: done
+copying extra files... 
+copying extra files: done
+copying assets: done
+writing output... [  0%] ACTIONS_TEST_PROTOCOL
+writing output... [  1%] API_CONTRACT
+writing output... [  1%] API_STABILITY
+writing output... [  2%] ARCHITECTURE
+writing output... [  2%] ARCHITECTURE_INVARIANTS
+writing output... [  3%] ASSUMPTIONS
+writing output... [  3%] AUDIT_FINDINGS
+writing output... [  3%] AUDIT_LEDGER
+writing output... [  4%] AUDIT_TASKS_2026-02-15
+writing output... [  4%] BENCHMARKS
+writing output... [  5%] BENCHMARK_MAP
+writing output... [  5%] BIBLIOGRAPHY
+writing output... [  5%] BUILD_DOCS
+writing output... [  6%] CI_BATTLE_USAGE_AUDIT_2026-02-07
+writing output... [  6%] CI_GATES
+writing output... [  7%] COMPONENT_AUDIT
+writing output... [  7%] CONFERENCE_RUNBOOK
+writing output... [  8%] CONSTITUTIONAL_AUDIT
+writing output... [  8%] CRITICALITY_CONTROL_VS_MEASUREMENT
+writing output... [  8%] DEMO
+writing output... [  9%] DETERMINISM
+writing output... [  9%] DOCUMENTATION_FORMALIZATION
+writing output... [ 10%] DOC_DEBT
+writing output... [ 10%] ENFORCEMENT_MATRIX
+writing output... [ 11%] ENTROPY_LEDGER
+writing output... [ 11%] EVIDENCE_COVERAGE
+writing output... [ 11%] GOVERNANCE
+writing output... [ 12%] HYPOTHESIS
+writing output... [ 12%] INDEX
+writing output... [ 13%] INPUTS
+writing output... [ 13%] INTEGRATION
+writing output... [ 14%] INVENTORY
+writing output... [ 14%] LEGENDARY_QUICKSTART
+writing output... [ 14%] MAINTENANCE
+writing output... [ 15%] MODULE_RESPONSIBILITY_MATRIX
+writing output... [ 15%] MUTATION_GATE
+writing output... [ 16%] NORMATIVE_LABELING
+writing output... [ 16%] PERFORMANCE
+writing output... [ 16%] PERFORMANCE_REPORT
+writing output... [ 17%] PHYSICAL_VALIDITY
+writing output... [ 17%] PLACEHOLDER_BASELINE_CYCLE0
+writing output... [ 18%] PLACEHOLDER_REGISTRY
+writing output... [ 18%] PR40_EVIDENCE_REPORT
+writing output... [ 19%] PROJECT_SURFACES
+writing output... [ 19%] PR_AUTOMATION_VECTORS
+writing output... [ 19%] QUALITY_INDEX
+writing output... [ 20%] QUALITY_INFRASTRUCTURE
+writing output... [ 20%] QUICKSTART
+writing output... [ 21%] RELEASE_NOTES
+writing output... [ 21%] RELEASE_PIPELINE
+writing output... [ 22%] RELEASE_READINESS
+writing output... [ 22%] REPO_STRUCTURE
+writing output... [ 22%] REPRODUCIBILITY
+writing output... [ 23%] REPRODUCIBILITY_ENVELOPE
+writing output... [ 23%] RISKS
+writing output... [ 24%] SCALABILITY
+writing output... [ 24%] SCALABILITY_REPORT
+writing output... [ 24%] SCRIPTS/index
+writing output... [ 25%] SECURITY_GITLEAKS
+writing output... [ 25%] SPEC
+writing output... [ 26%] SSOT
+writing output... [ 26%] SSOT_RULES
+writing output... [ 27%] START_HERE
+writing output... [ 27%] STATUS
+writing output... [ 27%] TESTING
+writing output... [ 28%] TESTING_MUTATION
+writing output... [ 28%] THROUGHPUT_SCALING
+writing output... [ 29%] TRACEABILITY
+writing output... [ 29%] TRACEABILITY_MAP
+writing output... [ 30%] TROUBLESHOOTING
+writing output... [ 30%] VCG
+writing output... [ 30%] VERSIONING
+writing output... [ 31%] _inventory
+writing output... [ 31%] adr/0001-math-integrator-guardrails
+writing output... [ 32%] api/api_bnsyn
+writing output... [ 32%] api/generated/bnsyn
+writing output... [ 32%] api/generated/bnsyn.benchmarks
+writing output... [ 33%] api/generated/bnsyn.benchmarks.regime
+writing output... [ 33%] api/generated/bnsyn.calibration
+writing output... [ 34%] api/generated/bnsyn.calibration.accuracy_speed
+writing output... [ 34%] api/generated/bnsyn.calibration.fit
+writing output... [ 35%] api/generated/bnsyn.cli
+writing output... [ 35%] api/generated/bnsyn.config
+writing output... [ 35%] api/generated/bnsyn.connectivity
+writing output... [ 36%] api/generated/bnsyn.connectivity.sparse
+writing output... [ 36%] api/generated/bnsyn.consolidation
+writing output... [ 37%] api/generated/bnsyn.consolidation.dual_weight
+writing output... [ 37%] api/generated/bnsyn.control
+writing output... [ 38%] api/generated/bnsyn.criticality
+writing output... [ 38%] api/generated/bnsyn.criticality.analysis
+writing output... [ 38%] api/generated/bnsyn.criticality.branching
+writing output... [ 39%] api/generated/bnsyn.criticality.phase_transition
+writing output... [ 39%] api/generated/bnsyn.emergence
+writing output... [ 40%] api/generated/bnsyn.emergence.crystallizer
+writing output... [ 40%] api/generated/bnsyn.energy
+writing output... [ 41%] api/generated/bnsyn.energy.regularization
+writing output... [ 41%] api/generated/bnsyn.experiments
+writing output... [ 41%] api/generated/bnsyn.experiments.declarative
+writing output... [ 42%] api/generated/bnsyn.incremental
+writing output... [ 42%] api/generated/bnsyn.memory
+writing output... [ 43%] api/generated/bnsyn.memory.consolidator
+writing output... [ 43%] api/generated/bnsyn.memory.ledger
+writing output... [ 43%] api/generated/bnsyn.memory.trace
+writing output... [ 44%] api/generated/bnsyn.neuron
+writing output... [ 44%] api/generated/bnsyn.neuron.adex
+writing output... [ 45%] api/generated/bnsyn.neurons
+writing output... [ 45%] api/generated/bnsyn.numerics
+writing output... [ 46%] api/generated/bnsyn.numerics.integrators
+writing output... [ 46%] api/generated/bnsyn.plasticity
+writing output... [ 46%] api/generated/bnsyn.plasticity.stdp
+writing output... [ 47%] api/generated/bnsyn.plasticity.three_factor
+writing output... [ 47%] api/generated/bnsyn.production
+writing output... [ 48%] api/generated/bnsyn.production.adex
+writing output... [ 48%] api/generated/bnsyn.production.connectivity
+writing output... [ 49%] api/generated/bnsyn.production.jax_backend
+writing output... [ 49%] api/generated/bnsyn.provenance
+writing output... [ 49%] api/generated/bnsyn.provenance.manifest
+writing output... [ 50%] api/generated/bnsyn.provenance.manifest_builder
+writing output... [ 50%] api/generated/bnsyn.rng
+writing output... [ 51%] api/generated/bnsyn.schemas
+writing output... [ 51%] api/generated/bnsyn.schemas.experiment
+writing output... [ 51%] api/generated/bnsyn.sim
+writing output... [ 52%] api/generated/bnsyn.sim.network
+writing output... [ 52%] api/generated/bnsyn.simulation
+writing output... [ 53%] api/generated/bnsyn.sleep
+writing output... [ 53%] api/generated/bnsyn.sleep.cycle
+writing output... [ 54%] api/generated/bnsyn.sleep.replay
+writing output... [ 54%] api/generated/bnsyn.sleep.stages
+writing output... [ 54%] api/generated/bnsyn.synapse
+writing output... [ 55%] api/generated/bnsyn.synapse.conductance
+writing output... [ 55%] api/generated/bnsyn.synapses
+writing output... [ 56%] api/generated/bnsyn.temperature
+writing output... [ 56%] api/generated/bnsyn.temperature.schedule
+writing output... [ 57%] api/generated/bnsyn.testing
+writing output... [ 57%] api/generated/bnsyn.testing.faults
+writing output... [ 57%] api/generated/bnsyn.tools
+writing output... [ 58%] api/generated/bnsyn.tools.benchmark_sleep_stack_scale
+writing output... [ 58%] api/generated/bnsyn.tools.run_scaled_sleep_stack
+writing output... [ 59%] api/generated/bnsyn.validation
+writing output... [ 59%] api/generated/bnsyn.validation.inputs
+writing output... [ 59%] api/generated/bnsyn.vcg
+writing output... [ 60%] api/generated/bnsyn.viz
+writing output... [ 60%] api/generated/bnsyn.viz.dashboard
+writing output... [ 61%] api/generated/bnsyn.viz.interactive
+writing output... [ 61%] api/generated/contracts
+writing output... [ 62%] api/generated/contracts.math_contracts
+writing output... [ 62%] api/index
+writing output... [ 62%] api/modules
+writing output... [ 63%] appendix/CODEX_PROJECT_FEEDBACK_UA
+writing output... [ 63%] appendix/EXECUTIVE_SUMMARY
+writing output... [ 64%] appendix/PRODUCTION_AUDIT
+writing output... [ 64%] appendix/PRODUCTION_ROADMAP
+writing output... [ 65%] appendix/additional_audit_2026
+writing output... [ 65%] audit_merge_readiness
+writing output... [ 65%] benchmarks/PROTOCOL
+writing output... [ 66%] benchmarks/README
+writing output... [ 66%] benchmarks/SCHEMA
+writing output... [ 67%] benchmarks/threshold_derivation_alloc_v2
+writing output... [ 67%] contracts/index
+writing output... [ 68%] emergence_tracking
+writing output... [ 68%] index
+writing output... [ 68%] math/CONTRACTS
+writing output... [ 69%] math/MATH_SURFACES
+writing output... [ 69%] math/PROVENANCE
+writing output... [ 70%] modules
+writing output... [ 70%] placeholder_cycles/cycle1/plan
+writing output... [ 70%] repo_map
+writing output... [ 71%] safety/deferred_gates
+writing output... [ 71%] safety/followups
+writing output... [ 72%] safety/stpa
+writing output... [ 72%] scripts/--init--
+writing output... [ 73%] scripts/-audit-metrics-pr40
+writing output... [ 73%] scripts/audit-spec-implementation
+writing output... [ 73%] scripts/bench-ci-smoke
+writing output... [ 74%] scripts/benchmark-physics
+writing output... [ 74%] scripts/benchmark-production
+writing output... [ 75%] scripts/benchmark-sleep-stack-scale
+writing output... [ 75%] scripts/build-readiness-artifacts
+writing output... [ 76%] scripts/build-wheelhouse
+writing output... [ 76%] scripts/calculate-throughput-gain
+writing output... [ 76%] scripts/check-api-contract
+writing output... [ 77%] scripts/check-benchmark-regressions
+writing output... [ 77%] scripts/check-coverage-gate
+writing output... [ 78%] scripts/check-mutation-score
+writing output... [ 78%] scripts/check-quickstart-consistency
+writing output... [ 78%] scripts/collect-ci-run-urls
+writing output... [ 79%] scripts/compare-benchmarks
+writing output... [ 79%] scripts/generate-benchmark-baseline
+writing output... [ 80%] scripts/generate-coverage-baseline
+writing output... [ 80%] scripts/generate-coverage-trend
+writing output... [ 81%] scripts/generate-evidence-coverage
+writing output... [ 81%] scripts/generate-math-data
+writing output... [ 81%] scripts/generate-mutation-baseline
+writing output... [ 82%] scripts/generate-tests-inventory
+writing output... [ 82%] scripts/index
+writing output... [ 83%] scripts/intelligence-cycle
+writing output... [ 83%] scripts/lint-ci-truthfulness
+writing output... [ 84%] scripts/math-validate
+writing output... [ 84%] scripts/mutation-ci-summary
+writing output... [ 84%] scripts/mutation-counts
+writing output... [ 85%] scripts/mutation-survivors-summary
+writing output... [ 85%] scripts/orchestrate-throughput-scaling
+writing output... [ 86%] scripts/pre-push
+writing output... [ 86%] scripts/profile-kernels
+writing output... [ 86%] scripts/rebuild-sources-lock
+writing output... [ 87%] scripts/release-pipeline
+writing output... [ 87%] scripts/release-readiness
+writing output... [ 88%] scripts/render-workflow-policy-docs
+writing output... [ 88%] scripts/run-benchmarks
+writing output... [ 89%] scripts/run-mutation-pipeline
+writing output... [ 89%] scripts/run-scaled-sleep-stack
+writing output... [ 89%] scripts/scan-governed-docs
+writing output... [ 90%] scripts/scan-normative-tags
+writing output... [ 90%] scripts/scan-placeholders
+writing output... [ 91%] scripts/scan-tierS-misuse
+writing output... [ 91%] scripts/ssot-rules
+writing output... [ 92%] scripts/sync-required-status-contexts
+writing output... [ 92%] scripts/track-quality
+writing output... [ 92%] scripts/validate-api-maturity
+writing output... [ 93%] scripts/validate-bibliography
+writing output... [ 93%] scripts/validate-branch-protection-governance
+writing output... [ 94%] scripts/validate-claims
+writing output... [ 94%] scripts/validate-claims-coverage
+writing output... [ 95%] scripts/validate-codebase-readiness-audit
+writing output... [ 95%] scripts/validate-long-running-triggers
+writing output... [ 95%] scripts/validate-mutation-baseline
+writing output... [ 96%] scripts/validate-pr-gates
+writing output... [ 96%] scripts/validate-required-checks
+writing output... [ 97%] scripts/validate-required-status-contexts
+writing output... [ 97%] scripts/validate-status-claims
+writing output... [ 97%] scripts/validate-workflow-contracts
+writing output... [ 98%] scripts/verify-equivalence
+writing output... [ 98%] scripts/verify-formal-constants
+writing output... [ 99%] scripts/verify-reproducible-artifacts
+writing output... [ 99%] scripts/visualize-experiment
+writing output... [100%] sleep_stack
+writing output... [100%] usage_workflows
+
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ARCHITECTURE.md:3: WARNING: Unknown source document '/workspace/bnsyn-phase-controlled-emergent-dynamics/README' [myst.xref_missing]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ARCHITECTURE.md:8: WARNING: Pygments lexer name 'mermaid' is not known [misc.highlighting_failure]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/ARCHITECTURE.md:23: WARNING: Pygments lexer name 'mermaid' is not known [misc.highlighting_failure]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/INDEX.md:7: WARNING: Unknown source document '/workspace/bnsyn-phase-controlled-emergent-dynamics/README' [myst.xref_missing]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/INDEX.md:9: WARNING: Unknown source document '/workspace/bnsyn-phase-controlled-emergent-dynamics/README' [myst.xref_missing]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/experiments/__init__.py:docstring of bnsyn.experiments.declarative.load_config:: WARNING: more than one target found for cross-reference 'BNSynExperimentConfig': bnsyn.schemas.BNSynExperimentConfig, bnsyn.schemas.experiment.BNSynExperimentConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/experiments/__init__.py:docstring of bnsyn.experiments.declarative.run_experiment:: WARNING: more than one target found for cross-reference 'BNSynExperimentConfig': bnsyn.schemas.BNSynExperimentConfig, bnsyn.schemas.experiment.BNSynExperimentConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/experiments/declarative.py:docstring of bnsyn.experiments.declarative.load_config:: WARNING: more than one target found for cross-reference 'BNSynExperimentConfig': bnsyn.schemas.BNSynExperimentConfig, bnsyn.schemas.experiment.BNSynExperimentConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/experiments/declarative.py:docstring of bnsyn.experiments.declarative.run_experiment:: WARNING: more than one target found for cross-reference 'BNSynExperimentConfig': bnsyn.schemas.BNSynExperimentConfig, bnsyn.schemas.experiment.BNSynExperimentConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neuron/__init__.py:docstring of bnsyn.neuron.adex.adex_step:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neuron/__init__.py:docstring of bnsyn.neuron.adex.adex_step_with_error_tracking:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neuron/adex.py:docstring of bnsyn.neuron.adex.adex_step:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neuron/adex.py:docstring of bnsyn.neuron.adex.adex_step_adaptive:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neuron/adex.py:docstring of bnsyn.neuron.adex.adex_step_with_error_tracking:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neurons.py:docstring of bnsyn.neuron.adex.adex_step:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neurons.py:docstring of bnsyn.neuron.adex.adex_step_adaptive:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/neurons.py:docstring of bnsyn.neuron.adex.adex_step_with_error_tracking:: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sim.rst:2: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sim.network.rst:2: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.simulation.rst:2: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.rst:2: WARNING: more than one target found for cross-reference 'Network': bnsyn.sim.Network, bnsyn.sim.network.Network, bnsyn.simulation.Network [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.rst:2: WARNING: more than one target found for cross-reference 'TemperatureSchedule': bnsyn.control.TemperatureSchedule, bnsyn.temperature.schedule.TemperatureSchedule, bnsyn.temperature.TemperatureSchedule [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.cycle.rst:2: WARNING: more than one target found for cross-reference 'Network': bnsyn.sim.Network, bnsyn.sim.network.Network, bnsyn.simulation.Network [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.cycle.rst:2: WARNING: more than one target found for cross-reference 'TemperatureSchedule': bnsyn.control.TemperatureSchedule, bnsyn.temperature.schedule.TemperatureSchedule, bnsyn.temperature.TemperatureSchedule [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.cycle.rst:2: WARNING: more than one target found for cross-reference 'SleepStage': bnsyn.sleep.SleepStage, bnsyn.sleep.stages.SleepStage [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sleep.cycle.rst:2: WARNING: more than one target found for cross-reference 'SleepStage': bnsyn.sleep.SleepStage, bnsyn.sleep.stages.SleepStage [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/sleep/cycle.py:docstring of bnsyn.sleep.cycle.SleepCycle.sleep:: WARNING: more than one target found for cross-reference 'SleepStageConfig': bnsyn.sleep.SleepStageConfig, bnsyn.sleep.stages.SleepStageConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/sleep/cycle.py:docstring of bnsyn.sleep.cycle.default_human_sleep_cycle:: WARNING: more than one target found for cross-reference 'SleepStageConfig': bnsyn.sleep.SleepStageConfig, bnsyn.sleep.stages.SleepStageConfig [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.validation.rst:2: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.validation.inputs.rst:2: WARNING: more than one target found for cross-reference 'AdExParams': bnsyn.config.AdExParams, bnsyn.production.AdExParams, bnsyn.production.adex.AdExParams [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'Network': bnsyn.sim.Network, bnsyn.sim.network.Network, bnsyn.simulation.Network [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'AttractorCrystallizer': bnsyn.emergence.AttractorCrystallizer, bnsyn.emergence.crystallizer.AttractorCrystallizer [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'SleepCycle': bnsyn.sleep.SleepCycle, bnsyn.sleep.cycle.SleepCycle [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'DualWeights': bnsyn.consolidation.DualWeights, bnsyn.consolidation.dual_weight.DualWeights [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'Network': bnsyn.sim.Network, bnsyn.sim.network.Network, bnsyn.simulation.Network [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'AttractorCrystallizer': bnsyn.emergence.AttractorCrystallizer, bnsyn.emergence.crystallizer.AttractorCrystallizer [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'SleepCycle': bnsyn.sleep.SleepCycle, bnsyn.sleep.cycle.SleepCycle [ref.python]
+/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/viz/dashboard.py:docstring of bnsyn.viz.dashboard.EmergenceDashboard.attach:: WARNING: more than one target found for cross-reference 'DualWeights': bnsyn.consolidation.DualWeights, bnsyn.consolidation.dual_weight.DualWeights [ref.python]
+generating indices... genindex py-modindex done
+highlighting module code... [  2%] bnsyn.calibration.accuracy_speed
+highlighting module code... [  5%] bnsyn.calibration.fit
+highlighting module code... [  7%] bnsyn.cli
+highlighting module code... [ 10%] bnsyn.config
+highlighting module code... [ 12%] bnsyn.connectivity.sparse
+highlighting module code... [ 15%] bnsyn.consolidation.dual_weight
+highlighting module code... [ 17%] bnsyn.criticality.analysis
+highlighting module code... [ 20%] bnsyn.criticality.branching
+highlighting module code... [ 22%] bnsyn.criticality.phase_transition
+highlighting module code... [ 24%] bnsyn.emergence.crystallizer
+highlighting module code... [ 27%] bnsyn.energy.regularization
+highlighting module code... [ 29%] bnsyn.experiments.declarative
+highlighting module code... [ 32%] bnsyn.incremental
+highlighting module code... [ 34%] bnsyn.memory.consolidator
+highlighting module code... [ 37%] bnsyn.memory.ledger
+highlighting module code... [ 39%] bnsyn.memory.trace
+highlighting module code... [ 41%] bnsyn.neuron.adex
+highlighting module code... [ 44%] bnsyn.numerics.integrators
+highlighting module code... [ 46%] bnsyn.plasticity.stdp
+highlighting module code... [ 49%] bnsyn.plasticity.three_factor
+highlighting module code... [ 51%] bnsyn.production.adex
+highlighting module code... [ 54%] bnsyn.production.connectivity
+highlighting module code... [ 56%] bnsyn.production.jax_backend
+highlighting module code... [ 59%] bnsyn.provenance.manifest
+highlighting module code... [ 61%] bnsyn.provenance.manifest_builder
+highlighting module code... [ 63%] bnsyn.rng
+highlighting module code... [ 66%] bnsyn.schemas.experiment
+highlighting module code... [ 68%] bnsyn.sim.network
+highlighting module code... [ 71%] bnsyn.sleep.cycle
+highlighting module code... [ 73%] bnsyn.sleep.replay
+highlighting module code... [ 76%] bnsyn.sleep.stages
+highlighting module code... [ 78%] bnsyn.synapse.conductance
+highlighting module code... [ 80%] bnsyn.temperature.schedule
+highlighting module code... [ 83%] bnsyn.testing.faults
+highlighting module code... [ 85%] bnsyn.tools.benchmark_sleep_stack_scale
+highlighting module code... [ 88%] bnsyn.tools.run_scaled_sleep_stack
+highlighting module code... [ 90%] bnsyn.validation.inputs
+highlighting module code... [ 93%] bnsyn.vcg
+highlighting module code... [ 95%] bnsyn.viz.dashboard
+highlighting module code... [ 98%] bnsyn.viz.interactive
+highlighting module code... [100%] contracts.math_contracts
+
+writing additional pages... search done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 224 warnings.
+
+The HTML pages are in docs/_build/html.
+Docs built at docs/_build/html
+[exit:0]
+$ test -f docs/_build/html/index.html
+[exit:0]
+$ bash -lc "source artifacts/audit/repair/.venv-fixed/bin/activate && make security"
+python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+8.24.3
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+6:47PM INF 550 commits scanned.
+6:47PM INF scanned ~13118868 bytes (13.12 MB) in 734ms
+6:47PM INF no leaks found
+[gitleaks] binary=.tools/gitleaks/v8.24.3/gitleaks
+[gitleaks] cmd=.tools/gitleaks/v8.24.3/gitleaks detect --redact --verbose --source=.
+pip-audit --desc
+make: pip-audit: No such file or directory
+make: *** [Makefile:165: security] Error 127

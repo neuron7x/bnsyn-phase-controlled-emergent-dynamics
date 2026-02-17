@@ -51,19 +51,17 @@ If gitleaks detects a real secret:
 
 ## Local Testing
 
-To test gitleaks locally before pushing:
+Local secret scanning is reproducible without preinstalled gitleaks.
 
 ```bash
-# Install gitleaks (v8.24.3 or later recommended)
-# macOS: brew install gitleaks
-# Linux: Download from https://github.com/gitleaks/gitleaks/releases
+# Bootstraps pinned gitleaks v8.24.3 into .tools/gitleaks/ and runs scan
+make security
 
-# Run repo scan with config
-gitleaks detect --source . --config .gitleaks.toml --verbose
-
-# Run diff scan (for PR changes)
-gitleaks detect --config .gitleaks.toml --log-opts="origin/main..HEAD" --verbose
+# Invoke bootstrapper directly with custom args if needed
+python -m scripts.ensure_gitleaks -- detect --config .gitleaks.toml --log-opts="origin/main..HEAD" --verbose
 ```
+
+`python -m scripts.ensure_gitleaks` verifies the SHA256 checksum of the downloaded release archive before extracting the binary.
 
 ## References
 

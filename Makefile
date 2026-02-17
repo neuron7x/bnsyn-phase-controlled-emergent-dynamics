@@ -161,9 +161,10 @@ docs-evidence:
 	python -m scripts.generate_evidence_coverage
 
 security:
-	gitleaks detect --redact --verbose --source=.
-	pip-audit --desc
-	bandit -r src/ -ll
+	python -m pip install -e ".[dev]"
+	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+	python -m pip_audit --desc
+	python -m bandit -r src/ -ll
 
 check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
