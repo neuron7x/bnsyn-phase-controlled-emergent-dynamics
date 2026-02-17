@@ -5,9 +5,13 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
+DEMO_TIMEOUT_SECONDS = 30
 CANONICAL_DEMO_CMD: tuple[str, ...] = (
+    sys.executable,
+    "-m",
     "bnsyn",
     "demo",
     "--steps",
@@ -34,7 +38,19 @@ def _validate_payload(payload: object) -> dict[str, object]:
 def main() -> int:
     ARTIFACT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    proc = subprocess.run(CANONICAL_DEMO_CMD, check=True, capture_output=True, text=True)
+    try:
+        proc = subprocess.run(
+            CANONICAL_DEMO_CMD,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=DEMO_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"quickstart demo command timed out after {DEMO_TIMEOUT_SECONDS}s"
+        ) from exc
+
     payload = _validate_payload(json.loads(proc.stdout))
 
     with ARTIFACT_PATH.open("w", encoding="utf-8") as handle:

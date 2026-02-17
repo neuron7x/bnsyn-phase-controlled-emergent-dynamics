@@ -14,6 +14,8 @@ ARTIFACT_PATH = Path("artifacts/demo.json")
 QUICKSTART_LINES = ["make setup", "make demo", "make test"]
 CANONICAL_TEST_CMD = 'python -m pytest -m "not (validation or property)" -q'
 GATE_MARKER = "not (validation or property)"
+DEMO_TIMEOUT_SECONDS = 120
+COLLECT_TIMEOUT_SECONDS = 120
 
 
 class ContractError(RuntimeError):
@@ -21,14 +23,38 @@ class ContractError(RuntimeError):
 
 
 def _extract_readme_quickstart(text: str) -> list[str]:
-    pattern = re.compile(
-        r"^## Quickstart\n\n```bash\n(?P<body>.*?)\n```",
-        flags=re.MULTILINE | re.DOTALL,
-    )
-    match = pattern.search(text)
-    if not match:
-        raise ContractError("README.md missing Quickstart code block")
-    return [line.strip() for line in match.group("body").strip().splitlines() if line.strip()]
+    lines = text.splitlines()
+    heading_index: int | None = None
+    for index, line in enumerate(lines):
+        if line.strip() == "## Quickstart":
+            heading_index = index
+            break
+    if heading_index is None:
+        raise ContractError("README.md missing '## Quickstart' heading")
+
+    fence_start: int | None = None
+    for index in range(heading_index + 1, len(lines)):
+        stripped = lines[index].strip()
+        if stripped.startswith("## "):
+            break
+        if stripped.startswith("```"):
+            fence_start = index
+            break
+    if fence_start is None:
+        raise ContractError("README.md Quickstart section missing fenced code block")
+
+    fence_header = lines[fence_start].strip()
+    if fence_header not in {"```", "```bash", "```sh", "```shell"}:
+        raise ContractError("README.md Quickstart first fenced block must be a shell code block")
+
+    block_lines: list[str] = []
+    for index in range(fence_start + 1, len(lines)):
+        stripped = lines[index].strip()
+        if stripped == "```":
+            return [line for line in block_lines if line]
+        block_lines.append(stripped)
+
+    raise ContractError("README.md Quickstart fenced code block is not closed")
 
 
 def _assert_make_targets(makefile_text: str) -> None:
@@ -46,22 +72,57 @@ def _assert_test_contract(makefile_text: str) -> None:
         raise ContractError("Makefile test-gate must execute $(TEST_CMD)")
 
 
-def _assert_non_empty_gate_suite() -> None:
-    proc = subprocess.run(
-        ["python", "-m", "pytest", "--collect-only", "-m", GATE_MARKER],
-        check=True,
-        capture_output=True,
-        text=True,
+def _run_with_timeout(command: list[str], timeout_seconds: int) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(
+            command,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired as exc:
+        joined = " ".join(command)
+        raise ContractError(f"command timed out after {timeout_seconds}s: {joined}") from exc
+
+
+def _count_collected_tests(output: str) -> int | None:
+    aggregate = 0
+    found_aggregate_lines = False
+    for raw in output.splitlines():
+        line = raw.strip()
+        match = re.match(r"^[^:]+\.py:\s+(\d+)$", line)
+        if match:
+            aggregate += int(match.group(1))
+            found_aggregate_lines = True
+    if found_aggregate_lines:
+        return aggregate
+
+    summary_patterns = (
+        r"(\d+)(?:/\d+)?\s+tests?\s+collected",
+        r"collected\s+(\d+)\s+items?",
     )
-    match = re.search(r"(\d+)(?:/\d+)? tests collected", proc.stdout)
-    if match is None:
+    for pattern in summary_patterns:
+        match = re.search(pattern, output)
+        if match:
+            return int(match.group(1))
+    return None
+
+
+def _assert_non_empty_gate_suite() -> None:
+    proc = _run_with_timeout(
+        ["python", "-m", "pytest", "--collect-only", "-q", "-m", GATE_MARKER],
+        timeout_seconds=COLLECT_TIMEOUT_SECONDS,
+    )
+    collected = _count_collected_tests(proc.stdout)
+    if collected is None:
         raise ContractError("Unable to determine collected test count for gate suite")
-    if int(match.group(1)) <= 0:
+    if collected <= 0:
         raise ContractError("Gate suite collected 0 tests")
 
 
 def _assert_demo_artifact() -> None:
-    subprocess.run(["make", "demo"], check=True)
+    _run_with_timeout(["make", "demo"], timeout_seconds=DEMO_TIMEOUT_SECONDS)
     with ARTIFACT_PATH.open(encoding="utf-8") as handle:
         payload = json.load(handle)
     if not isinstance(payload, dict):
