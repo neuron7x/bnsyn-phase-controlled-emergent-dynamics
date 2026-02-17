@@ -1,0 +1,572 @@
+python -m sphinx -b html docs docs/_build/html
+Running Sphinx v9.0.4
+loading translations [en]... done
+making output directory... done
+myst v5.0.0: MdParserConfig(commonmark_only=False, gfm_only=False, enable_extensions={'deflist', 'fieldlist', 'colon_fence'}, disable_syntax=[], all_links_external=False, links_external_new_tab=False, url_schemes=('http', 'https', 'mailto', 'ftp'), ref_domains=None, fence_as_directive=set(), number_code_blocks=[], title_to_header=False, heading_anchors=0, heading_slug_func=None, html_meta={}, footnote_sort=True, footnote_transition=True, words_per_minute=200, substitutions={}, linkify_fuzzy_links=True, dmath_allow_labels=True, dmath_allow_space=True, dmath_allow_digits=True, dmath_double_inline=False, update_mathjax=True, mathjax_classes='tex2jax_process|mathjax_process|math|output_area', enable_checkboxes=False, suppress_warnings=[], highlight_code_blocks=True)
+[autosummary] generating autosummary for: ACTIONS_TEST_PROTOCOL.md, API_CONTRACT.md, API_STABILITY.md, ARCHITECTURE.md, ARCHITECTURE_INVARIANTS.md, ASSUMPTIONS.md, AUDIT_FINDINGS.md, AUDIT_LEDGER.md, AUDIT_TASKS_2026-02-15.md, BENCHMARKS.md, ..., scripts/validate-required-checks.md, scripts/validate-required-status-contexts.md, scripts/validate-status-claims.md, scripts/validate-workflow-contracts.md, scripts/verify-equivalence.md, scripts/verify-formal-constants.md, scripts/verify-reproducible-artifacts.md, scripts/visualize-experiment.md, sleep_stack.md, usage_workflows.md
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 237 source files that are out of date
+updating environment: [new config] 237 added, 0 changed, 0 removed
+reading sources... [  0%] ACTIONS_TEST_PROTOCOL
+reading sources... [  1%] API_CONTRACT
+reading sources... [  1%] API_STABILITY
+reading sources... [  2%] ARCHITECTURE
+reading sources... [  2%] ARCHITECTURE_INVARIANTS
+reading sources... [  3%] ASSUMPTIONS
+reading sources... [  3%] AUDIT_FINDINGS
+reading sources... [  3%] AUDIT_LEDGER
+reading sources... [  4%] AUDIT_TASKS_2026-02-15
+reading sources... [  4%] BENCHMARKS
+reading sources... [  5%] BENCHMARK_MAP
+reading sources... [  5%] BIBLIOGRAPHY
+reading sources... [  5%] BUILD_DOCS
+reading sources... [  6%] CI_BATTLE_USAGE_AUDIT_2026-02-07
+reading sources... [  6%] CI_GATES
+reading sources... [  7%] COMPONENT_AUDIT
+reading sources... [  7%] CONFERENCE_RUNBOOK
+reading sources... [  8%] CONSTITUTIONAL_AUDIT
+reading sources... [  8%] CRITICALITY_CONTROL_VS_MEASUREMENT
+reading sources... [  8%] DEMO
+reading sources... [  9%] DETERMINISM
+reading sources... [  9%] DOCUMENTATION_FORMALIZATION
+reading sources... [ 10%] DOC_DEBT
+reading sources... [ 10%] ENFORCEMENT_MATRIX
+reading sources... [ 11%] ENTROPY_LEDGER
+reading sources... [ 11%] EVIDENCE_COVERAGE
+reading sources... [ 11%] GOVERNANCE
+reading sources... [ 12%] HYPOTHESIS
+reading sources... [ 12%] INDEX
+reading sources... [ 13%] INPUTS
+reading sources... [ 13%] INTEGRATION
+reading sources... [ 14%] INVENTORY
+reading sources... [ 14%] LEGENDARY_QUICKSTART
+reading sources... [ 14%] MAINTENANCE
+reading sources... [ 15%] MODULE_RESPONSIBILITY_MATRIX
+reading sources... [ 15%] MUTATION_GATE
+reading sources... [ 16%] NORMATIVE_LABELING
+reading sources... [ 16%] PERFORMANCE
+reading sources... [ 16%] PERFORMANCE_REPORT
+reading sources... [ 17%] PHYSICAL_VALIDITY
+reading sources... [ 17%] PLACEHOLDER_BASELINE_CYCLE0
+reading sources... [ 18%] PLACEHOLDER_REGISTRY
+reading sources... [ 18%] PR40_EVIDENCE_REPORT
+reading sources... [ 19%] PROJECT_SURFACES
+reading sources... [ 19%] PR_AUTOMATION_VECTORS
+reading sources... [ 19%] QUALITY_INDEX
+reading sources... [ 20%] QUALITY_INFRASTRUCTURE
+reading sources... [ 20%] QUICKSTART
+reading sources... [ 21%] RELEASE_NOTES
+reading sources... [ 21%] RELEASE_PIPELINE
+reading sources... [ 22%] RELEASE_READINESS
+reading sources... [ 22%] REPO_STRUCTURE
+reading sources... [ 22%] REPRODUCIBILITY
+reading sources... [ 23%] REPRODUCIBILITY_ENVELOPE
+reading sources... [ 23%] RISKS
+reading sources... [ 24%] SCALABILITY
+reading sources... [ 24%] SCALABILITY_REPORT
+reading sources... [ 24%] SCRIPTS/index
+reading sources... [ 25%] SECURITY_GITLEAKS
+reading sources... [ 25%] SPEC
+reading sources... [ 26%] SSOT
+reading sources... [ 26%] SSOT_RULES
+reading sources... [ 27%] START_HERE
+reading sources... [ 27%] STATUS
+reading sources... [ 27%] TESTING
+reading sources... [ 28%] TESTING_MUTATION
+reading sources... [ 28%] THROUGHPUT_SCALING
+reading sources... [ 29%] TRACEABILITY
+reading sources... [ 29%] TRACEABILITY_MAP
+reading sources... [ 30%] TROUBLESHOOTING
+reading sources... [ 30%] VCG
+reading sources... [ 30%] VERSIONING
+reading sources... [ 31%] _inventory
+reading sources... [ 31%] adr/0001-math-integrator-guardrails
+reading sources... [ 32%] api/api_bnsyn
+reading sources... [ 32%] api/generated/bnsyn
+reading sources... [ 32%] api/generated/bnsyn.benchmarks
+reading sources... [ 33%] api/generated/bnsyn.benchmarks.regime
+reading sources... [ 33%] api/generated/bnsyn.calibration
+reading sources... [ 34%] api/generated/bnsyn.calibration.accuracy_speed
+reading sources... [ 34%] api/generated/bnsyn.calibration.fit
+reading sources... [ 35%] api/generated/bnsyn.cli
+reading sources... [ 35%] api/generated/bnsyn.config
+reading sources... [ 35%] api/generated/bnsyn.connectivity
+reading sources... [ 36%] api/generated/bnsyn.connectivity.sparse
+reading sources... [ 36%] api/generated/bnsyn.consolidation
+reading sources... [ 37%] api/generated/bnsyn.consolidation.dual_weight
+reading sources... [ 37%] api/generated/bnsyn.control
+reading sources... [ 38%] api/generated/bnsyn.criticality
+reading sources... [ 38%] api/generated/bnsyn.criticality.analysis
+reading sources... [ 38%] api/generated/bnsyn.criticality.branching
+reading sources... [ 39%] api/generated/bnsyn.criticality.phase_transition
+reading sources... [ 39%] api/generated/bnsyn.emergence
+reading sources... [ 40%] api/generated/bnsyn.emergence.crystallizer
+reading sources... [ 40%] api/generated/bnsyn.energy
+reading sources... [ 41%] api/generated/bnsyn.energy.regularization
+reading sources... [ 41%] api/generated/bnsyn.experiments
+reading sources... [ 41%] api/generated/bnsyn.experiments.declarative
+reading sources... [ 42%] api/generated/bnsyn.incremental
+reading sources... [ 42%] api/generated/bnsyn.memory
+reading sources... [ 43%] api/generated/bnsyn.memory.consolidator
+reading sources... [ 43%] api/generated/bnsyn.memory.ledger
+reading sources... [ 43%] api/generated/bnsyn.memory.trace
+reading sources... [ 44%] api/generated/bnsyn.neuron
+reading sources... [ 44%] api/generated/bnsyn.neuron.adex
+reading sources... [ 45%] api/generated/bnsyn.neurons
+reading sources... [ 45%] api/generated/bnsyn.numerics
+reading sources... [ 46%] api/generated/bnsyn.numerics.integrators
+reading sources... [ 46%] api/generated/bnsyn.plasticity
+reading sources... [ 46%] api/generated/bnsyn.plasticity.stdp
+reading sources... [ 47%] api/generated/bnsyn.plasticity.three_factor
+reading sources... [ 47%] api/generated/bnsyn.production
+reading sources... [ 48%] api/generated/bnsyn.production.adex
+reading sources... [ 48%] api/generated/bnsyn.production.connectivity
+reading sources... [ 49%] api/generated/bnsyn.production.jax_backend
+reading sources... [ 49%] api/generated/bnsyn.provenance
+reading sources... [ 49%] api/generated/bnsyn.provenance.manifest
+reading sources... [ 50%] api/generated/bnsyn.provenance.manifest_builder
+reading sources... [ 50%] api/generated/bnsyn.rng
+reading sources... [ 51%] api/generated/bnsyn.schemas
+reading sources... [ 51%] api/generated/bnsyn.schemas.experiment
+reading sources... [ 51%] api/generated/bnsyn.sim
+reading sources... [ 52%] api/generated/bnsyn.sim.network
+reading sources... [ 52%] api/generated/bnsyn.simulation
+reading sources... [ 53%] api/generated/bnsyn.sleep
+reading sources... [ 53%] api/generated/bnsyn.sleep.cycle
+reading sources... [ 54%] api/generated/bnsyn.sleep.replay
+reading sources... [ 54%] api/generated/bnsyn.sleep.stages
+reading sources... [ 54%] api/generated/bnsyn.synapse
+reading sources... [ 55%] api/generated/bnsyn.synapse.conductance
+reading sources... [ 55%] api/generated/bnsyn.synapses
+reading sources... [ 56%] api/generated/bnsyn.temperature
+reading sources... [ 56%] api/generated/bnsyn.temperature.schedule
+reading sources... [ 57%] api/generated/bnsyn.testing
+reading sources... [ 57%] api/generated/bnsyn.testing.faults
+reading sources... [ 57%] api/generated/bnsyn.tools
+reading sources... [ 58%] api/generated/bnsyn.tools.benchmark_sleep_stack_scale
+reading sources... [ 58%] api/generated/bnsyn.tools.run_scaled_sleep_stack
+reading sources... [ 59%] api/generated/bnsyn.validation
+reading sources... [ 59%] api/generated/bnsyn.validation.inputs
+reading sources... [ 59%] api/generated/bnsyn.vcg
+reading sources... [ 60%] api/generated/bnsyn.viz
+reading sources... [ 60%] api/generated/bnsyn.viz.dashboard
+reading sources... [ 61%] api/generated/bnsyn.viz.interactive
+reading sources... [ 61%] api/generated/contracts
+reading sources... [ 62%] api/generated/contracts.math_contracts
+reading sources... [ 62%] api/index
+reading sources... [ 62%] api/modules
+reading sources... [ 63%] appendix/CODEX_PROJECT_FEEDBACK_UA
+reading sources... [ 63%] appendix/EXECUTIVE_SUMMARY
+reading sources... [ 64%] appendix/PRODUCTION_AUDIT
+reading sources... [ 64%] appendix/PRODUCTION_ROADMAP
+reading sources... [ 65%] appendix/additional_audit_2026
+reading sources... [ 65%] audit_merge_readiness
+reading sources... [ 65%] benchmarks/PROTOCOL
+reading sources... [ 66%] benchmarks/README
+reading sources... [ 66%] benchmarks/SCHEMA
+reading sources... [ 67%] benchmarks/threshold_derivation_alloc_v2
+reading sources... [ 67%] contracts/index
+reading sources... [ 68%] emergence_tracking
+reading sources... [ 68%] index
+reading sources... [ 68%] math/CONTRACTS
+reading sources... [ 69%] math/MATH_SURFACES
+reading sources... [ 69%] math/PROVENANCE
+reading sources... [ 70%] modules
+reading sources... [ 70%] placeholder_cycles/cycle1/plan
+reading sources... [ 70%] repo_map
+reading sources... [ 71%] safety/deferred_gates
+reading sources... [ 71%] safety/followups
+reading sources... [ 72%] safety/stpa
+reading sources... [ 72%] scripts/--init--
+reading sources... [ 73%] scripts/-audit-metrics-pr40
+reading sources... [ 73%] scripts/audit-spec-implementation
+reading sources... [ 73%] scripts/bench-ci-smoke
+reading sources... [ 74%] scripts/benchmark-physics
+reading sources... [ 74%] scripts/benchmark-production
+reading sources... [ 75%] scripts/benchmark-sleep-stack-scale
+reading sources... [ 75%] scripts/build-readiness-artifacts
+reading sources... [ 76%] scripts/build-wheelhouse
+reading sources... [ 76%] scripts/calculate-throughput-gain
+reading sources... [ 76%] scripts/check-api-contract
+reading sources... [ 77%] scripts/check-benchmark-regressions
+reading sources... [ 77%] scripts/check-coverage-gate
+reading sources... [ 78%] scripts/check-mutation-score
+reading sources... [ 78%] scripts/check-quickstart-consistency
+reading sources... [ 78%] scripts/collect-ci-run-urls
+reading sources... [ 79%] scripts/compare-benchmarks
+reading sources... [ 79%] scripts/generate-benchmark-baseline
+reading sources... [ 80%] scripts/generate-coverage-baseline
+reading sources... [ 80%] scripts/generate-coverage-trend
+reading sources... [ 81%] scripts/generate-evidence-coverage
+reading sources... [ 81%] scripts/generate-math-data
+reading sources... [ 81%] scripts/generate-mutation-baseline
+reading sources... [ 82%] scripts/generate-tests-inventory
+reading sources... [ 82%] scripts/index
+reading sources... [ 83%] scripts/intelligence-cycle
+reading sources... [ 83%] scripts/lint-ci-truthfulness
+reading sources... [ 84%] scripts/math-validate
+reading sources... [ 84%] scripts/mutation-ci-summary
+reading sources... [ 84%] scripts/mutation-counts
+reading sources... [ 85%] scripts/mutation-survivors-summary
+reading sources... [ 85%] scripts/orchestrate-throughput-scaling
+reading sources... [ 86%] scripts/pre-push
+reading sources... [ 86%] scripts/profile-kernels
+reading sources... [ 86%] scripts/rebuild-sources-lock
+reading sources... [ 87%] scripts/release-pipeline
+reading sources... [ 87%] scripts/release-readiness
+reading sources... [ 88%] scripts/render-workflow-policy-docs
+reading sources... [ 88%] scripts/run-benchmarks
+reading sources... [ 89%] scripts/run-mutation-pipeline
+reading sources... [ 89%] scripts/run-scaled-sleep-stack
+reading sources... [ 89%] scripts/scan-governed-docs
+reading sources... [ 90%] scripts/scan-normative-tags
+reading sources... [ 90%] scripts/scan-placeholders
+reading sources... [ 91%] scripts/scan-tierS-misuse
+reading sources... [ 91%] scripts/ssot-rules
+reading sources... [ 92%] scripts/sync-required-status-contexts
+reading sources... [ 92%] scripts/track-quality
+reading sources... [ 92%] scripts/validate-api-maturity
+reading sources... [ 93%] scripts/validate-bibliography
+reading sources... [ 93%] scripts/validate-branch-protection-governance
+reading sources... [ 94%] scripts/validate-claims
+reading sources... [ 94%] scripts/validate-claims-coverage
+reading sources... [ 95%] scripts/validate-codebase-readiness-audit
+reading sources... [ 95%] scripts/validate-long-running-triggers
+reading sources... [ 95%] scripts/validate-mutation-baseline
+reading sources... [ 96%] scripts/validate-pr-gates
+reading sources... [ 96%] scripts/validate-required-checks
+reading sources... [ 97%] scripts/validate-required-status-contexts
+reading sources... [ 97%] scripts/validate-status-claims
+reading sources... [ 97%] scripts/validate-workflow-contracts
+reading sources... [ 98%] scripts/verify-equivalence
+reading sources... [ 98%] scripts/verify-formal-constants
+reading sources... [ 99%] scripts/verify-reproducible-artifacts
+reading sources... [ 99%] scripts/visualize-experiment
+reading sources... [100%] sleep_stack
+reading sources... [100%] usage_workflows
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.cli.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.cli
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.config.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.config
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.connectivity.sparse.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.connectivity'], selecting: api/generated/bnsyn.connectivity <- api/generated/bnsyn.connectivity.sparse
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.control.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.control
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.criticality.branching.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.criticality'], selecting: api/generated/bnsyn.criticality <- api/generated/bnsyn.criticality.branching
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.incremental.rst: document is referenced in multiple toctrees: ['api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.incremental
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.neuron.adex.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.neuron'], selecting: api/generated/bnsyn.neuron <- api/generated/bnsyn.neuron.adex
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.neurons.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.neurons
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.plasticity.three_factor.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.plasticity'], selecting: api/generated/bnsyn.plasticity <- api/generated/bnsyn.plasticity.three_factor
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.rng.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.rng
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.sim.network.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.sim'], selecting: api/generated/bnsyn.sim <- api/generated/bnsyn.sim.network
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.simulation.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.simulation
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.synapse.conductance.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.synapse'], selecting: api/generated/bnsyn.synapse <- api/generated/bnsyn.synapse.conductance
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.synapses.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.synapses
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.temperature.schedule.rst: document is referenced in multiple toctrees: ['api/api_bnsyn', 'api/generated/bnsyn.temperature'], selecting: api/generated/bnsyn.temperature <- api/generated/bnsyn.temperature.schedule
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/bnsyn.vcg.rst: document is referenced in multiple toctrees: ['api/generated/bnsyn', 'modules'], selecting: modules <- api/generated/bnsyn.vcg
+/workspace/bnsyn-phase-controlled-emergent-dynamics/docs/api/generated/contracts.math_contracts.rst: document is referenced in multiple toctrees: ['api/generated/contracts', 'modules'], selecting: modules <- api/generated/contracts.math_contracts
+done
+preparing documents... done
+copying assets... 
+copying downloadable files... [ 20%] ../../claims/claims.yml
+copying downloadable files... [ 40%] ../../bibliography/mapping.yml
+copying downloadable files... [ 60%] ../../bibliography/sources.lock
+copying downloadable files... [ 80%] ../../.github/workflows/ci-smoke.yml
+copying downloadable files... [100%] ../../.github/workflows/ci-validation.yml
+
+copying static files... 
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/basic.css
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/documentation_options.js
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/language_data.js
+copying static files: done
+copying extra files... 
+copying extra files: done
+copying assets: done
+writing output... [  0%] ACTIONS_TEST_PROTOCOL
+writing output... [  1%] API_CONTRACT
+writing output... [  1%] API_STABILITY
+writing output... [  2%] ARCHITECTURE
+writing output... [  2%] ARCHITECTURE_INVARIANTS
+writing output... [  3%] ASSUMPTIONS
+writing output... [  3%] AUDIT_FINDINGS
+writing output... [  3%] AUDIT_LEDGER
+writing output... [  4%] AUDIT_TASKS_2026-02-15
+writing output... [  4%] BENCHMARKS
+writing output... [  5%] BENCHMARK_MAP
+writing output... [  5%] BIBLIOGRAPHY
+writing output... [  5%] BUILD_DOCS
+writing output... [  6%] CI_BATTLE_USAGE_AUDIT_2026-02-07
+writing output... [  6%] CI_GATES
+writing output... [  7%] COMPONENT_AUDIT
+writing output... [  7%] CONFERENCE_RUNBOOK
+writing output... [  8%] CONSTITUTIONAL_AUDIT
+writing output... [  8%] CRITICALITY_CONTROL_VS_MEASUREMENT
+writing output... [  8%] DEMO
+writing output... [  9%] DETERMINISM
+writing output... [  9%] DOCUMENTATION_FORMALIZATION
+writing output... [ 10%] DOC_DEBT
+writing output... [ 10%] ENFORCEMENT_MATRIX
+writing output... [ 11%] ENTROPY_LEDGER
+writing output... [ 11%] EVIDENCE_COVERAGE
+writing output... [ 11%] GOVERNANCE
+writing output... [ 12%] HYPOTHESIS
+writing output... [ 12%] INDEX
+writing output... [ 13%] INPUTS
+writing output... [ 13%] INTEGRATION
+writing output... [ 14%] INVENTORY
+writing output... [ 14%] LEGENDARY_QUICKSTART
+writing output... [ 14%] MAINTENANCE
+writing output... [ 15%] MODULE_RESPONSIBILITY_MATRIX
+writing output... [ 15%] MUTATION_GATE
+writing output... [ 16%] NORMATIVE_LABELING
+writing output... [ 16%] PERFORMANCE
+writing output... [ 16%] PERFORMANCE_REPORT
+writing output... [ 17%] PHYSICAL_VALIDITY
+writing output... [ 17%] PLACEHOLDER_BASELINE_CYCLE0
+writing output... [ 18%] PLACEHOLDER_REGISTRY
+writing output... [ 18%] PR40_EVIDENCE_REPORT
+writing output... [ 19%] PROJECT_SURFACES
+writing output... [ 19%] PR_AUTOMATION_VECTORS
+writing output... [ 19%] QUALITY_INDEX
+writing output... [ 20%] QUALITY_INFRASTRUCTURE
+writing output... [ 20%] QUICKSTART
+writing output... [ 21%] RELEASE_NOTES
+writing output... [ 21%] RELEASE_PIPELINE
+writing output... [ 22%] RELEASE_READINESS
+writing output... [ 22%] REPO_STRUCTURE
+writing output... [ 22%] REPRODUCIBILITY
+writing output... [ 23%] REPRODUCIBILITY_ENVELOPE
+writing output... [ 23%] RISKS
+writing output... [ 24%] SCALABILITY
+writing output... [ 24%] SCALABILITY_REPORT
+writing output... [ 24%] SCRIPTS/index
+writing output... [ 25%] SECURITY_GITLEAKS
+writing output... [ 25%] SPEC
+writing output... [ 26%] SSOT
+writing output... [ 26%] SSOT_RULES
+writing output... [ 27%] START_HERE
+writing output... [ 27%] STATUS
+writing output... [ 27%] TESTING
+writing output... [ 28%] TESTING_MUTATION
+writing output... [ 28%] THROUGHPUT_SCALING
+writing output... [ 29%] TRACEABILITY
+writing output... [ 29%] TRACEABILITY_MAP
+writing output... [ 30%] TROUBLESHOOTING
+writing output... [ 30%] VCG
+writing output... [ 30%] VERSIONING
+writing output... [ 31%] _inventory
+writing output... [ 31%] adr/0001-math-integrator-guardrails
+writing output... [ 32%] api/api_bnsyn
+writing output... [ 32%] api/generated/bnsyn
+writing output... [ 32%] api/generated/bnsyn.benchmarks
+writing output... [ 33%] api/generated/bnsyn.benchmarks.regime
+writing output... [ 33%] api/generated/bnsyn.calibration
+writing output... [ 34%] api/generated/bnsyn.calibration.accuracy_speed
+writing output... [ 34%] api/generated/bnsyn.calibration.fit
+writing output... [ 35%] api/generated/bnsyn.cli
+writing output... [ 35%] api/generated/bnsyn.config
+writing output... [ 35%] api/generated/bnsyn.connectivity
+writing output... [ 36%] api/generated/bnsyn.connectivity.sparse
+writing output... [ 36%] api/generated/bnsyn.consolidation
+writing output... [ 37%] api/generated/bnsyn.consolidation.dual_weight
+writing output... [ 37%] api/generated/bnsyn.control
+writing output... [ 38%] api/generated/bnsyn.criticality
+writing output... [ 38%] api/generated/bnsyn.criticality.analysis
+writing output... [ 38%] api/generated/bnsyn.criticality.branching
+writing output... [ 39%] api/generated/bnsyn.criticality.phase_transition
+writing output... [ 39%] api/generated/bnsyn.emergence
+writing output... [ 40%] api/generated/bnsyn.emergence.crystallizer
+writing output... [ 40%] api/generated/bnsyn.energy
+writing output... [ 41%] api/generated/bnsyn.energy.regularization
+writing output... [ 41%] api/generated/bnsyn.experiments
+writing output... [ 41%] api/generated/bnsyn.experiments.declarative
+writing output... [ 42%] api/generated/bnsyn.incremental
+writing output... [ 42%] api/generated/bnsyn.memory
+writing output... [ 43%] api/generated/bnsyn.memory.consolidator
+writing output... [ 43%] api/generated/bnsyn.memory.ledger
+writing output... [ 43%] api/generated/bnsyn.memory.trace
+writing output... [ 44%] api/generated/bnsyn.neuron
+writing output... [ 44%] api/generated/bnsyn.neuron.adex
+writing output... [ 45%] api/generated/bnsyn.neurons
+writing output... [ 45%] api/generated/bnsyn.numerics
+writing output... [ 46%] api/generated/bnsyn.numerics.integrators
+writing output... [ 46%] api/generated/bnsyn.plasticity
+writing output... [ 46%] api/generated/bnsyn.plasticity.stdp
+writing output... [ 47%] api/generated/bnsyn.plasticity.three_factor
+writing output... [ 47%] api/generated/bnsyn.production
+writing output... [ 48%] api/generated/bnsyn.production.adex
+writing output... [ 48%] api/generated/bnsyn.production.connectivity
+writing output... [ 49%] api/generated/bnsyn.production.jax_backend
+writing output... [ 49%] api/generated/bnsyn.provenance
+writing output... [ 49%] api/generated/bnsyn.provenance.manifest
+writing output... [ 50%] api/generated/bnsyn.provenance.manifest_builder
+writing output... [ 50%] api/generated/bnsyn.rng
+writing output... [ 51%] api/generated/bnsyn.schemas
+writing output... [ 51%] api/generated/bnsyn.schemas.experiment
+writing output... [ 51%] api/generated/bnsyn.sim
+writing output... [ 52%] api/generated/bnsyn.sim.network
+writing output... [ 52%] api/generated/bnsyn.simulation
+writing output... [ 53%] api/generated/bnsyn.sleep
+writing output... [ 53%] api/generated/bnsyn.sleep.cycle
+writing output... [ 54%] api/generated/bnsyn.sleep.replay
+writing output... [ 54%] api/generated/bnsyn.sleep.stages
+writing output... [ 54%] api/generated/bnsyn.synapse
+writing output... [ 55%] api/generated/bnsyn.synapse.conductance
+writing output... [ 55%] api/generated/bnsyn.synapses
+writing output... [ 56%] api/generated/bnsyn.temperature
+writing output... [ 56%] api/generated/bnsyn.temperature.schedule
+writing output... [ 57%] api/generated/bnsyn.testing
+writing output... [ 57%] api/generated/bnsyn.testing.faults
+writing output... [ 57%] api/generated/bnsyn.tools
+writing output... [ 58%] api/generated/bnsyn.tools.benchmark_sleep_stack_scale
+writing output... [ 58%] api/generated/bnsyn.tools.run_scaled_sleep_stack
+writing output... [ 59%] api/generated/bnsyn.validation
+writing output... [ 59%] api/generated/bnsyn.validation.inputs
+writing output... [ 59%] api/generated/bnsyn.vcg
+writing output... [ 60%] api/generated/bnsyn.viz
+writing output... [ 60%] api/generated/bnsyn.viz.dashboard
+writing output... [ 61%] api/generated/bnsyn.viz.interactive
+writing output... [ 61%] api/generated/contracts
+writing output... [ 62%] api/generated/contracts.math_contracts
+writing output... [ 62%] api/index
+writing output... [ 62%] api/modules
+writing output... [ 63%] appendix/CODEX_PROJECT_FEEDBACK_UA
+writing output... [ 63%] appendix/EXECUTIVE_SUMMARY
+writing output... [ 64%] appendix/PRODUCTION_AUDIT
+writing output... [ 64%] appendix/PRODUCTION_ROADMAP
+writing output... [ 65%] appendix/additional_audit_2026
+writing output... [ 65%] audit_merge_readiness
+writing output... [ 65%] benchmarks/PROTOCOL
+writing output... [ 66%] benchmarks/README
+writing output... [ 66%] benchmarks/SCHEMA
+writing output... [ 67%] benchmarks/threshold_derivation_alloc_v2
+writing output... [ 67%] contracts/index
+writing output... [ 68%] emergence_tracking
+writing output... [ 68%] index
+writing output... [ 68%] math/CONTRACTS
+writing output... [ 69%] math/MATH_SURFACES
+writing output... [ 69%] math/PROVENANCE
+writing output... [ 70%] modules
+writing output... [ 70%] placeholder_cycles/cycle1/plan
+writing output... [ 70%] repo_map
+writing output... [ 71%] safety/deferred_gates
+writing output... [ 71%] safety/followups
+writing output... [ 72%] safety/stpa
+writing output... [ 72%] scripts/--init--
+writing output... [ 73%] scripts/-audit-metrics-pr40
+writing output... [ 73%] scripts/audit-spec-implementation
+writing output... [ 73%] scripts/bench-ci-smoke
+writing output... [ 74%] scripts/benchmark-physics
+writing output... [ 74%] scripts/benchmark-production
+writing output... [ 75%] scripts/benchmark-sleep-stack-scale
+writing output... [ 75%] scripts/build-readiness-artifacts
+writing output... [ 76%] scripts/build-wheelhouse
+writing output... [ 76%] scripts/calculate-throughput-gain
+writing output... [ 76%] scripts/check-api-contract
+writing output... [ 77%] scripts/check-benchmark-regressions
+writing output... [ 77%] scripts/check-coverage-gate
+writing output... [ 78%] scripts/check-mutation-score
+writing output... [ 78%] scripts/check-quickstart-consistency
+writing output... [ 78%] scripts/collect-ci-run-urls
+writing output... [ 79%] scripts/compare-benchmarks
+writing output... [ 79%] scripts/generate-benchmark-baseline
+writing output... [ 80%] scripts/generate-coverage-baseline
+writing output... [ 80%] scripts/generate-coverage-trend
+writing output... [ 81%] scripts/generate-evidence-coverage
+writing output... [ 81%] scripts/generate-math-data
+writing output... [ 81%] scripts/generate-mutation-baseline
+writing output... [ 82%] scripts/generate-tests-inventory
+writing output... [ 82%] scripts/index
+writing output... [ 83%] scripts/intelligence-cycle
+writing output... [ 83%] scripts/lint-ci-truthfulness
+writing output... [ 84%] scripts/math-validate
+writing output... [ 84%] scripts/mutation-ci-summary
+writing output... [ 84%] scripts/mutation-counts
+writing output... [ 85%] scripts/mutation-survivors-summary
+writing output... [ 85%] scripts/orchestrate-throughput-scaling
+writing output... [ 86%] scripts/pre-push
+writing output... [ 86%] scripts/profile-kernels
+writing output... [ 86%] scripts/rebuild-sources-lock
+writing output... [ 87%] scripts/release-pipeline
+writing output... [ 87%] scripts/release-readiness
+writing output... [ 88%] scripts/render-workflow-policy-docs
+writing output... [ 88%] scripts/run-benchmarks
+writing output... [ 89%] scripts/run-mutation-pipeline
+writing output... [ 89%] scripts/run-scaled-sleep-stack
+writing output... [ 89%] scripts/scan-governed-docs
+writing output... [ 90%] scripts/scan-normative-tags
+writing output... [ 90%] scripts/scan-placeholders
+writing output... [ 91%] scripts/scan-tierS-misuse
+writing output... [ 91%] scripts/ssot-rules
+writing output... [ 92%] scripts/sync-required-status-contexts
+writing output... [ 92%] scripts/track-quality
+writing output... [ 92%] scripts/validate-api-maturity
+writing output... [ 93%] scripts/validate-bibliography
+writing output... [ 93%] scripts/validate-branch-protection-governance
+writing output... [ 94%] scripts/validate-claims
+writing output... [ 94%] scripts/validate-claims-coverage
+writing output... [ 95%] scripts/validate-codebase-readiness-audit
+writing output... [ 95%] scripts/validate-long-running-triggers
+writing output... [ 95%] scripts/validate-mutation-baseline
+writing output... [ 96%] scripts/validate-pr-gates
+writing output... [ 96%] scripts/validate-required-checks
+writing output... [ 97%] scripts/validate-required-status-contexts
+writing output... [ 97%] scripts/validate-status-claims
+writing output... [ 97%] scripts/validate-workflow-contracts
+writing output... [ 98%] scripts/verify-equivalence
+writing output... [ 98%] scripts/verify-formal-constants
+writing output... [ 99%] scripts/verify-reproducible-artifacts
+writing output... [ 99%] scripts/visualize-experiment
+writing output... [100%] sleep_stack
+writing output... [100%] usage_workflows
+
+generating indices... genindex py-modindex done
+highlighting module code... [  2%] bnsyn.calibration.accuracy_speed
+highlighting module code... [  5%] bnsyn.calibration.fit
+highlighting module code... [  7%] bnsyn.cli
+highlighting module code... [ 10%] bnsyn.config
+highlighting module code... [ 12%] bnsyn.connectivity.sparse
+highlighting module code... [ 15%] bnsyn.consolidation.dual_weight
+highlighting module code... [ 17%] bnsyn.criticality.analysis
+highlighting module code... [ 20%] bnsyn.criticality.branching
+highlighting module code... [ 22%] bnsyn.criticality.phase_transition
+highlighting module code... [ 24%] bnsyn.emergence.crystallizer
+highlighting module code... [ 27%] bnsyn.energy.regularization
+highlighting module code... [ 29%] bnsyn.experiments.declarative
+highlighting module code... [ 32%] bnsyn.incremental
+highlighting module code... [ 34%] bnsyn.memory.consolidator
+highlighting module code... [ 37%] bnsyn.memory.ledger
+highlighting module code... [ 39%] bnsyn.memory.trace
+highlighting module code... [ 41%] bnsyn.neuron.adex
+highlighting module code... [ 44%] bnsyn.numerics.integrators
+highlighting module code... [ 46%] bnsyn.plasticity.stdp
+highlighting module code... [ 49%] bnsyn.plasticity.three_factor
+highlighting module code... [ 51%] bnsyn.production.adex
+highlighting module code... [ 54%] bnsyn.production.connectivity
+highlighting module code... [ 56%] bnsyn.production.jax_backend
+highlighting module code... [ 59%] bnsyn.provenance.manifest
+highlighting module code... [ 61%] bnsyn.provenance.manifest_builder
+highlighting module code... [ 63%] bnsyn.rng
+highlighting module code... [ 66%] bnsyn.schemas.experiment
+highlighting module code... [ 68%] bnsyn.sim.network
+highlighting module code... [ 71%] bnsyn.sleep.cycle
+highlighting module code... [ 73%] bnsyn.sleep.replay
+highlighting module code... [ 76%] bnsyn.sleep.stages
+highlighting module code... [ 78%] bnsyn.synapse.conductance
+highlighting module code... [ 80%] bnsyn.temperature.schedule
+highlighting module code... [ 83%] bnsyn.testing.faults
+highlighting module code... [ 85%] bnsyn.tools.benchmark_sleep_stack_scale
+highlighting module code... [ 88%] bnsyn.tools.run_scaled_sleep_stack
+highlighting module code... [ 90%] bnsyn.validation.inputs
+highlighting module code... [ 93%] bnsyn.vcg
+highlighting module code... [ 95%] bnsyn.viz.dashboard
+highlighting module code... [ 98%] bnsyn.viz.interactive
+highlighting module code... [100%] contracts.math_contracts
+
+writing additional pages... search done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 224 warnings.
+
+The HTML pages are in docs/_build/html.
+Docs built at docs/_build/html

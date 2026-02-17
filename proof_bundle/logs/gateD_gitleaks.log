@@ -1,0 +1,3 @@
+8.24.3
+[gitleaks] binary=.tools/gitleaks/v8.24.3/gitleaks
+[gitleaks] cmd=.tools/gitleaks/v8.24.3/gitleaks detect --redact --verbose --source=.
