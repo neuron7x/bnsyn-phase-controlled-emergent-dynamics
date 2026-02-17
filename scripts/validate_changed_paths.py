@@ -16,6 +16,8 @@ ALLOWED_FILES = {
     "setup.cfg",
     "Makefile",
     "README.md",
+    ".github/REPO_MANIFEST.md",
+    "manifest/repo_manifest.computed.json",
 }
 
 
