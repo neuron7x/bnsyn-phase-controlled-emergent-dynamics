@@ -1,0 +1,5 @@
+CMD: source .venv_prr/bin/activate && timeout -s TERM 2s bnsyn demo --steps 100000 --dt-ms 0.1 --seed 123 --N 64
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:43:47Z
+END: 2026-02-17T22:43:49Z
+EXIT:124

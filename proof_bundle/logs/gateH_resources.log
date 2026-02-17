@@ -1,0 +1,6 @@
+CMD: source .venv_prr/bin/activate && python -m pytest tests/test_performance.py -q
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:43:54Z
+....                                                                     [100%]
+END: 2026-02-17T22:43:56Z
+EXIT:0

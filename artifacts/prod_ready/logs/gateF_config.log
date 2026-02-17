@@ -1,0 +1,7 @@
+CMD: rg -n "os\.getenv|os\.environ" src README.md
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:43:41Z
+src/bnsyn/sim/network.py:207:        if torch is not None and os.environ.get("BNSYN_USE_TORCH") == "1":
+src/bnsyn/sim/network.py:208:            device = os.environ.get("BNSYN_DEVICE", "cpu")
+END: 2026-02-17T22:43:41Z
+EXIT:0

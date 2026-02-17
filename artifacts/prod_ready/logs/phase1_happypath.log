@@ -1,0 +1,13 @@
+CMD: source .venv_prr/bin/activate && bnsyn demo --steps 20 --dt-ms 0.1 --seed 123 --N 16
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:40:36Z
+{
+  "demo": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  }
+}
+END: 2026-02-17T22:40:38Z
+EXIT:0

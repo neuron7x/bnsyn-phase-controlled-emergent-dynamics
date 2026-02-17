@@ -1,0 +1,2 @@
+6ef49fef26532cf7ed70da79a43ca8dec7073ba81e85f65d72005cc9eef91213  dist/bnsyn-0.2.0-py3-none-any.whl
+29da36ab4fc8cf792be24fe9245915ecfc615f2aa53bcd0931598d092c13ca3b  dist/bnsyn-0.2.0.tar.gz
