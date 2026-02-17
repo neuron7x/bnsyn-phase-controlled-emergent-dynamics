@@ -1,0 +1,30 @@
+src/bnsyn/viz/dashboard.py:50:    Imports matplotlib at runtime to avoid mypy checking missing stubs.
+tests/test_experiments_declarative.py:102:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_experiments_declarative.py:105:        return stub_result
+tests/test_experiments_declarative.py:111:    assert payload == stub_result
+tests/test_experiments_declarative.py:116:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_experiments_declarative.py:119:    monkeypatch.setattr(declarative, "run_experiment", lambda _: stub_result)
+tests/test_experiments_declarative.py:124:    assert json.dumps(stub_result, indent=2, sort_keys=True) in captured
+tests/test_verify_hypothesis_v2.py:44:    # Check consolidation gates pass
+tests/test_no_escape_tripwires.py:48:    needles = ("TODO", "FIXME")
+tests/test_scan_placeholders.py:8:from scripts import scan_placeholders
+tests/test_scan_placeholders.py:13:def test_scan_placeholders_json_contract() -> None:
+tests/test_scan_placeholders.py:14:    findings = scan_placeholders.collect_findings()
+tests/test_scan_placeholders.py:44:    findings = scan_placeholders.collect_findings()
+tests/test_scan_placeholders.py:97:        "    raise NotImplementedError\n"
+tests/test_scan_placeholders.py:99:        "    raise NotImplementedError()\n"
+tests/test_scan_placeholders.py:101:        "    raise builtins.NotImplementedError()\n",
+tests/test_scan_placeholders.py:105:    original_root = scan_placeholders.ROOT
+tests/test_scan_placeholders.py:106:    original_targets = scan_placeholders.TARGET_DIRS
+tests/test_scan_placeholders.py:108:        scan_placeholders.ROOT = scan_root
+tests/test_scan_placeholders.py:109:        scan_placeholders.TARGET_DIRS = ("scripts",)
+tests/test_scan_placeholders.py:110:        findings = scan_placeholders.collect_findings()
+tests/test_scan_placeholders.py:112:        scan_placeholders.ROOT = original_root
+tests/test_scan_placeholders.py:113:        scan_placeholders.TARGET_DIRS = original_targets
+tests/test_scan_placeholders.py:118:    assert all(item.signature == "raise_NotImplementedError" for item in findings)
+tests/test_scan_placeholders.py:122:def test_scan_placeholders_cli_json_output(monkeypatch, capsys) -> None:
+tests/test_scan_placeholders.py:123:    monkeypatch.setattr(sys, "argv", ["scan_placeholders", "--format", "json"])
+tests/test_scan_placeholders.py:124:    exit_code = scan_placeholders.main()
+tests/test_scan_placeholders.py:132:def test_placeholder_scan_and_registry_have_no_open_entries() -> None:
+tests/test_scan_placeholders.py:133:    findings = scan_placeholders.collect_findings()
+tests/test_manifest_tools.py:33:    (root / "tools" / "update_manifest.py").write_text("# tool placeholder\n", encoding="utf-8")

@@ -1,0 +1,465 @@
+src/bnsyn/memory/ledger.py:5:- ``ConsolidationLedger``: append-only event ledger with deterministic SHA256 hashing.
+src/bnsyn/memory/ledger.py:14:import hashlib
+src/bnsyn/memory/ledger.py:62:    """Audit ledger for consolidation events with cryptographic hashing.
+src/bnsyn/memory/ledger.py:176:    def compute_hash(self) -> str:
+src/bnsyn/memory/ledger.py:177:        """Compute SHA256 hash of entire ledger state.
+src/bnsyn/memory/ledger.py:182:            Hexadecimal SHA256 hash digest of ledger contents.
+src/bnsyn/memory/ledger.py:187:        - Includes all event fields in canonical order.
+src/bnsyn/memory/ledger.py:189:        - None values are represented as "None" in hash computation.
+src/bnsyn/memory/ledger.py:195:        >>> hash_value = ledger.compute_hash()
+src/bnsyn/memory/ledger.py:196:        >>> len(hash_value)
+src/bnsyn/memory/ledger.py:199:        hasher = hashlib.sha256()
+src/bnsyn/memory/ledger.py:212:            hasher.update(event_str.encode("utf-8"))
+src/bnsyn/memory/ledger.py:214:        return hasher.hexdigest()
+src/bnsyn/memory/ledger.py:222:            Dictionary with 'event_count' and 'hash' keys.
+src/bnsyn/memory/ledger.py:230:            "hash": self.compute_hash(),
+tests/test_release_readiness.py:12:        json.dumps(
+tests/test_release_readiness.py:35:        json.dumps(
+tests/test_release_readiness.py:46:        json.dumps(
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:50:    (out / "metrics.json").write_text(json.dumps(data, indent=2))
+tests/test_manifest_builder.py:9:from bnsyn.provenance import manifest_builder
+tests/test_manifest_builder.py:21:    monkeypatch.setattr(manifest_builder.subprocess, "run", raise_called)
+tests/test_manifest_builder.py:23:        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
+tests/test_manifest_builder.py:28:    monkeypatch.setattr(manifest_builder.subprocess, "run", raise_missing)
+tests/test_manifest_builder.py:30:        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
+tests/test_manifest_builder.py:33:def test_extract_spec_version_falls_back_to_hash(tmp_path: Path) -> None:
+tests/test_manifest_builder.py:37:    expected = manifest_builder._compute_file_hash(spec_path)
+tests/test_manifest_builder.py:39:    assert manifest_builder._extract_spec_version(spec_path) == expected
+tests/test_manifest_builder.py:42:def test_extract_hypothesis_version_falls_back_to_hash(tmp_path: Path) -> None:
+tests/test_manifest_builder.py:46:    expected = manifest_builder._compute_file_hash(hypothesis_path)
+tests/test_manifest_builder.py:48:    assert manifest_builder._extract_hypothesis_version(hypothesis_path) == expected
+tests/test_manifest_builder.py:55:    assert manifest_builder._extract_spec_version(spec_path) == "v2.3.4"
+tests/test_manifest_builder.py:65:    assert manifest_builder._extract_hypothesis_version(hypothesis_path) == "2024.10"
+tests/test_manifest_builder.py:68:def test_build_experiment_manifest_filters_manifest_json(tmp_path: Path) -> None:
+tests/test_manifest_builder.py:71:    (output_dir / "manifest.json").write_text("{}", encoding="utf-8")
+tests/test_manifest_builder.py:80:    manifest = manifest_builder.build_experiment_manifest(
+tests/test_manifest_builder.py:89:    expected_hash = manifest_builder._compute_file_hash(data_path)
+tests/test_manifest_builder.py:90:    assert manifest["result_files"] == {"metrics.json": expected_hash}
+tests/test_manifest_builder.py:101:    monkeypatch.setattr(manifest_builder.metadata, "version", raise_pkg_not_found)
+tests/test_manifest_builder.py:102:    assert manifest_builder._resolve_package_version(tmp_path) == "9.9.9"
+tests/test_manifest_builder.py:111:    monkeypatch.setattr(manifest_builder.metadata, "version", raise_pkg_not_found)
+tests/test_manifest_builder.py:112:    assert manifest_builder._resolve_package_version(tmp_path) == "0.0.0"
+tests/test_manifest_builder.py:115:def test_build_sleep_stack_manifest_uses_fallback_git_id(
+tests/test_manifest_builder.py:118:    monkeypatch.setattr(manifest_builder.shutil, "which", lambda _: None)
+tests/test_manifest_builder.py:121:        manifest = manifest_builder.build_sleep_stack_manifest(
+tests/test_manifest_builder.py:130:    assert manifest["git_sha"] == "release-0.2.0"
+src/bnsyn/tools/run_scaled_sleep_stack.py:5:import hashlib
+src/bnsyn/tools/run_scaled_sleep_stack.py:18:from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+src/bnsyn/tools/run_scaled_sleep_stack.py:110:    manifest = build_sleep_stack_manifest(
+src/bnsyn/tools/run_scaled_sleep_stack.py:117:    return manifest, metrics, raster
+src/bnsyn/tools/run_scaled_sleep_stack.py:121:    return hashlib.sha256(path.read_bytes()).hexdigest()
+src/bnsyn/tools/run_scaled_sleep_stack.py:205:        b_manifest, b_metrics, _ = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:214:        (bdir / "manifest.json").write_text(json.dumps(b_manifest, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:215:        (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:217:    hashes: list[dict[str, str]] = []
+src/bnsyn/tools/run_scaled_sleep_stack.py:221:        manifest, metrics, raster = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:230:        mp = rdir / "manifest.json"
+src/bnsyn/tools/run_scaled_sleep_stack.py:232:        mp.write_text(json.dumps(manifest, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:233:        kp.write_text(json.dumps(metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:234:        hashes.append({"manifest": _sha(mp), "metrics": _sha(kp)})
+src/bnsyn/tools/run_scaled_sleep_stack.py:298:        determinism_identical = all(h == hashes[0] for h in hashes[1:])
+src/bnsyn/tools/run_scaled_sleep_stack.py:306:        "determinism_hashes": hashes,
+src/bnsyn/tools/run_scaled_sleep_stack.py:324:    (out / "metrics.json").write_text(json.dumps(summary, indent=2))
+tests/test_manifest_consistency.py:6:from bnsyn.provenance.manifest_builder import (
+tests/test_manifest_consistency.py:7:    build_experiment_manifest,
+tests/test_manifest_consistency.py:8:    build_sleep_stack_manifest,
+tests/test_manifest_consistency.py:12:def test_manifest_git_consistency(tmp_path: Path) -> None:
+tests/test_manifest_consistency.py:15:    (output_dir / "example.json").write_text(json.dumps({"ok": True}))
+tests/test_manifest_consistency.py:18:    experiment_manifest = build_experiment_manifest(
+tests/test_manifest_consistency.py:26:    sleep_manifest = build_sleep_stack_manifest(
+tests/test_manifest_consistency.py:35:    assert sleep_manifest.get("git_sha") == experiment_manifest.get("git_commit")
+src/bnsyn/incremental.py:14:import hashlib
+src/bnsyn/incremental.py:30:def compute_file_hash(filepath: str | Path) -> str:
+src/bnsyn/incremental.py:31:    """Compute SHA256 hash of file contents.
+src/bnsyn/incremental.py:36:        Path to file to hash
+src/bnsyn/incremental.py:41:        Hex digest of file hash
+src/bnsyn/incremental.py:47:        hash1 = compute_file_hash("config.yaml")
+src/bnsyn/incremental.py:49:        hash2 = compute_file_hash("config.yaml")
+src/bnsyn/incremental.py:50:        assert hash1 != hash2
+src/bnsyn/incremental.py:56:    sha256 = hashlib.sha256()
+src/bnsyn/incremental.py:112:            # Compute dependency hash if specified
+src/bnsyn/incremental.py:115:                dep_hash = "|".join(compute_file_hash(f) for f in files)
+src/bnsyn/incremental.py:116:                kwargs["_dep_hash"] = dep_hash
+tests/test_update_manifest_tools.py:1:"""Tests for API docs manifest tooling."""
+tests/test_update_manifest_tools.py:13:    Path("docs/api/_static/tools/update_manifest.py"),
+tests/test_update_manifest_tools.py:14:    Path("docs/api/_templates/tools/update_manifest.py"),
+tests/test_update_manifest_tools.py:39:def test_manifest_generation_and_validation(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:40:    module = _load_tool(tool_path, f"manifest_tool_{tool_path.stem}")
+tests/test_update_manifest_tools.py:42:    module.MANIFEST_PATH = tmp_path / "manifest.json"
+tests/test_update_manifest_tools.py:47:    (tools_dir / "update_manifest.py").write_text("print('ok')\n", encoding="utf-8")
+tests/test_update_manifest_tools.py:51:    manifest = module._build_manifest(seed=7)
+tests/test_update_manifest_tools.py:52:    module._write_manifest(manifest)
+tests/test_update_manifest_tools.py:54:    assert module._check_manifest(seed=7) == 0
+tests/test_update_manifest_tools.py:55:    assert manifest["entries"]
+tests/test_update_manifest_tools.py:59:def test_manifest_empty_directory(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:60:    module = _load_tool(tool_path, f"manifest_tool_empty_{tool_path.stem}")
+tests/test_update_manifest_tools.py:62:    module.MANIFEST_PATH = tmp_path / "manifest.json"
+tests/test_update_manifest_tools.py:65:    manifest = module._build_manifest(seed=1)
+tests/test_update_manifest_tools.py:66:    assert manifest["entries"] == []
+tests/test_update_manifest_tools.py:67:    module._write_manifest(manifest)
+tests/test_update_manifest_tools.py:69:    assert module._check_manifest(seed=1) == 0
+tests/test_update_manifest_tools.py:73:def test_manifest_unreadable_file(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:74:    module = _load_tool(tool_path, f"manifest_tool_unreadable_{tool_path.stem}")
+tests/test_update_manifest_tools.py:76:    module.MANIFEST_PATH = tmp_path / "manifest.json"
+tests/test_update_manifest_tools.py:84:            module._build_manifest(seed=3)
+tests/test_update_manifest_tools.py:90:def test_manifest_validation_detects_stale_entries(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:91:    module = _load_tool(tool_path, f"manifest_tool_stale_{tool_path.stem}")
+tests/test_update_manifest_tools.py:93:    module.MANIFEST_PATH = tmp_path / "manifest.json"
+tests/test_update_manifest_tools.py:99:    manifest = module._build_manifest(seed=5)
+tests/test_update_manifest_tools.py:100:    module._write_manifest(manifest)
+tests/test_update_manifest_tools.py:104:    assert module._check_manifest(seed=5) == 1
+tests/test_update_manifest_tools.py:108:def test_manifest_ordering_stability(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:109:    module = _load_tool(tool_path, f"manifest_tool_order_{tool_path.stem}")
+tests/test_update_manifest_tools.py:111:    module.MANIFEST_PATH = tmp_path / "manifest.json"
+tests/test_update_manifest_tools.py:117:    first = module._build_manifest(seed=9)
+tests/test_update_manifest_tools.py:118:    second = module._build_manifest(seed=9)
+tests/test_update_manifest_tools.py:120:    assert json.dumps(first, sort_keys=True) == json.dumps(second, sort_keys=True)
+tests/test_generate_coverage_trend.py:61:    coverage_json.write_text(json.dumps({"totals": {"percent_covered": "bad"}}), encoding="utf-8")
+tests/test_generate_coverage_trend.py:69:        json.dumps({"totals": {"percent_covered": 91.234567}}), encoding="utf-8"
+src/bnsyn/provenance/__init__.py:21:from .manifest import RunManifest as RunManifest
+tests/test_experiments_temperature_ablation.py:172:    assert (tmp_path / "cli_test" / "manifest.json").exists()
+tests/test_experiments_temperature_ablation.py:175:    # Check manifest structure
+tests/test_experiments_temperature_ablation.py:176:    with open(tmp_path / "cli_test" / "manifest.json", encoding="utf-8") as f:
+tests/test_experiments_temperature_ablation.py:177:        manifest = json.load(f)
+tests/test_experiments_temperature_ablation.py:179:    assert manifest["experiment"] == "temp_ablation_v1"
+tests/test_experiments_temperature_ablation.py:180:    assert manifest["seeds"] == [0, 1]
+tests/test_experiments_temperature_ablation.py:181:    assert "result_files" in manifest
+tests/test_experiments_temperature_ablation.py:182:    assert "cooling_geometric.json" in manifest["result_files"]
+tests/test_experiments_temperature_ablation.py:286:    assert (tmp_path / "cli_test_v2" / "manifest.json").exists()
+tests/test_experiments_temperature_ablation.py:289:    # Check manifest structure
+tests/test_experiments_temperature_ablation.py:290:    with open(tmp_path / "cli_test_v2" / "manifest.json", encoding="utf-8") as f:
+tests/test_experiments_temperature_ablation.py:291:        manifest = json.load(f)
+tests/test_experiments_temperature_ablation.py:293:    assert manifest["experiment"] == "temp_ablation_v2"
+tests/test_experiments_temperature_ablation.py:294:    assert manifest["seeds"] == [0, 1]
+tests/test_experiments_temperature_ablation.py:295:    assert "result_files" in manifest
+tests/test_experiments_temperature_ablation.py:296:    assert "cooling_piecewise.json" in manifest["result_files"]
+tests/test_benchmark_regression_gate.py:11:    path.write_text(json.dumps(payload), encoding="utf-8")
+src/bnsyn/provenance/manifest.py:1:"""Run manifest for provenance tracking.
+src/bnsyn/provenance/manifest.py:14:dependencies, configuration, seed, and output hashes. All operations are
+src/bnsyn/provenance/manifest.py:25:import hashlib
+src/bnsyn/provenance/manifest.py:43:    """Library-level manifest for provenance tracking.
+src/bnsyn/provenance/manifest.py:64:    output_hashes : dict[str, str]
+src/bnsyn/provenance/manifest.py:65:        Mapping from output names to SHA256 hashes.
+src/bnsyn/provenance/manifest.py:73:    - Output hashes can be added incrementally via add_output_hash().
+src/bnsyn/provenance/manifest.py:77:    >>> manifest = RunManifest(seed=42, config={"learning_rate": 0.01})
+src/bnsyn/provenance/manifest.py:78:    >>> manifest.add_output_hash("weights", b"binary_weights_data")
+src/bnsyn/provenance/manifest.py:79:    >>> manifest_dict = manifest.to_dict()
+src/bnsyn/provenance/manifest.py:80:    >>> manifest_json = manifest.to_json()
+src/bnsyn/provenance/manifest.py:81:    >>> hash_value = manifest.compute_hash()
+src/bnsyn/provenance/manifest.py:82:    >>> restored = RunManifest.from_dict(manifest_dict)
+src/bnsyn/provenance/manifest.py:91:        """Initialize a run manifest.
+src/bnsyn/provenance/manifest.py:115:        self.output_hashes: dict[str, str] = {}
+src/bnsyn/provenance/manifest.py:199:    def add_output_hash(self, name: str, data: bytes) -> None:
+src/bnsyn/provenance/manifest.py:200:        """Add SHA256 hash of output data to manifest.
+src/bnsyn/provenance/manifest.py:207:            Binary data to hash.
+src/bnsyn/provenance/manifest.py:216:        Computes SHA256 hash of data and stores in output_hashes dictionary.
+src/bnsyn/provenance/manifest.py:217:        If name already exists, overwrites previous hash.
+src/bnsyn/provenance/manifest.py:221:        >>> manifest = RunManifest(seed=42, config={})
+src/bnsyn/provenance/manifest.py:222:        >>> manifest.add_output_hash("weights", b"binary_data")
+src/bnsyn/provenance/manifest.py:229:        hash_obj = hashlib.sha256(data)
+src/bnsyn/provenance/manifest.py:230:        self.output_hashes[name] = hash_obj.hexdigest()
+src/bnsyn/provenance/manifest.py:233:        """Return manifest as a dictionary.
+src/bnsyn/provenance/manifest.py:238:            Dictionary representation of the manifest.
+src/bnsyn/provenance/manifest.py:246:        >>> manifest = RunManifest(seed=42, config={"lr": 0.01})
+src/bnsyn/provenance/manifest.py:247:        >>> d = manifest.to_dict()
+src/bnsyn/provenance/manifest.py:256:            "output_hashes": self.output_hashes,
+src/bnsyn/provenance/manifest.py:260:        """Return manifest as JSON string with stable ordering.
+src/bnsyn/provenance/manifest.py:265:            JSON string representation of the manifest.
+src/bnsyn/provenance/manifest.py:269:        Uses json.dumps with sort_keys=True and indent=2 for deterministic
+src/bnsyn/provenance/manifest.py:274:        >>> manifest = RunManifest(seed=42, config={"lr": 0.01})
+src/bnsyn/provenance/manifest.py:275:        >>> json_str = manifest.to_json()
+src/bnsyn/provenance/manifest.py:278:        return json.dumps(self.to_dict(), sort_keys=True, indent=2)
+src/bnsyn/provenance/manifest.py:280:    def compute_hash(self) -> str:
+src/bnsyn/provenance/manifest.py:281:        """Compute SHA256 hash of the manifest.
+src/bnsyn/provenance/manifest.py:286:            SHA256 hash hex string of the manifest.
+src/bnsyn/provenance/manifest.py:290:        Hashes the JSON representation of the manifest (stable ordering).
+src/bnsyn/provenance/manifest.py:291:        This hash can be used to uniquely identify a run configuration.
+src/bnsyn/provenance/manifest.py:295:        >>> manifest = RunManifest(seed=42, config={"lr": 0.01})
+src/bnsyn/provenance/manifest.py:296:        >>> hash_value = manifest.compute_hash()
+src/bnsyn/provenance/manifest.py:297:        >>> assert len(hash_value) == 64  # SHA256 hex digest length
+src/bnsyn/provenance/manifest.py:300:        return hashlib.sha256(json_bytes).hexdigest()
+src/bnsyn/provenance/manifest.py:309:            Dictionary representation of a manifest (from to_dict()).
+src/bnsyn/provenance/manifest.py:330:        >>> manifest = RunManifest(seed=42, config={"lr": 0.01})
+src/bnsyn/provenance/manifest.py:331:        >>> d = manifest.to_dict()
+src/bnsyn/provenance/manifest.py:350:        obj.output_hashes = d.get("output_hashes", {})
+src/bnsyn/provenance/manifest_builder.py:1:"""Shared manifest builders for CLI and experiments.
+src/bnsyn/provenance/manifest_builder.py:5:Provides deterministic manifest generation without changing existing schema
+src/bnsyn/provenance/manifest_builder.py:11:import hashlib
+src/bnsyn/provenance/manifest_builder.py:26:    """Get current git commit hash from a working directory.
+src/bnsyn/provenance/manifest_builder.py:36:        Commit hash or fallback release identifier if not in git repo.
+src/bnsyn/provenance/manifest_builder.py:93:def _compute_file_hash(filepath: Path) -> str:
+src/bnsyn/provenance/manifest_builder.py:94:    """Compute SHA256 hash of a file."""
+src/bnsyn/provenance/manifest_builder.py:95:    sha256 = hashlib.sha256()
+src/bnsyn/provenance/manifest_builder.py:102:    """Extract spec version from header or fallback to hash."""
+src/bnsyn/provenance/manifest_builder.py:108:    return _compute_file_hash(spec_path)
+src/bnsyn/provenance/manifest_builder.py:112:    """Extract hypothesis version from header or fallback to hash."""
+src/bnsyn/provenance/manifest_builder.py:118:    return _compute_file_hash(hypothesis_path)
+src/bnsyn/provenance/manifest_builder.py:121:def build_experiment_manifest(
+src/bnsyn/provenance/manifest_builder.py:130:    """Build the experiment manifest without writing it to disk."""
+src/bnsyn/provenance/manifest_builder.py:134:        if result_file.name != "manifest.json":
+src/bnsyn/provenance/manifest_builder.py:135:            result_files[result_file.name] = _compute_file_hash(result_file)
+src/bnsyn/provenance/manifest_builder.py:142:    manifest: dict[str, Any] = {
+src/bnsyn/provenance/manifest_builder.py:156:    return manifest
+src/bnsyn/provenance/manifest_builder.py:159:def build_sleep_stack_manifest(
+src/bnsyn/provenance/manifest_builder.py:167:    """Build the sleep-stack CLI manifest without writing it to disk."""
+src/bnsyn/provenance/manifest_builder.py:169:    manifest: dict[str, Any] = {
+src/bnsyn/provenance/manifest_builder.py:176:    manifest["git_sha"] = _get_git_commit(resolved_root, package_version)
+src/bnsyn/provenance/manifest_builder.py:177:    return manifest
+tests/test_cli_sleep_stack_backend_and_N_unit.py:57:    manifest = json.loads((tmp_path / "out" / "manifest.json").read_text())
+tests/test_cli_sleep_stack_backend_and_N_unit.py:59:    assert manifest["N"] == 8
+tests/test_experiments_declarative.py:124:    assert json.dumps(stub_result, indent=2, sort_keys=True) in captured
+tests/test_coverage_gate.py:44:    baseline.write_text(json.dumps({"baseline_percent": 99.0}), encoding="utf-8")
+tests/test_coverage_gate.py:135:        json.dumps(
+tests/test_tools_run_scaled_sleep_stack_unit.py:28:    manifest = {
+tests/test_tools_run_scaled_sleep_stack_unit.py:35:    return manifest, metrics, raster
+tests/test_tools_run_scaled_sleep_stack_unit.py:332:    manifest, metrics, raster = tool._run_once(
+tests/test_tools_run_scaled_sleep_stack_unit.py:339:    assert manifest["N"] == 8
+tests/test_wheelhouse_tools.py:43:def test_parse_locked_requirements_ignores_hashes_comments_and_continuations(
+tests/test_wheelhouse_tools.py:51:            "    --hash=sha256:abc\n"
+tests/test_wheelhouse_tools.py:53:            "    --hash=sha256:def\n"
+tests/test_experiment_manifest.py:1:"""Tests for experiment manifest metadata."""
+tests/test_experiment_manifest.py:9:from experiments.runner import generate_manifest
+tests/test_experiment_manifest.py:30:def test_generate_manifest_includes_spec_hypothesis_metadata(tmp_path: Path) -> None:
+tests/test_experiment_manifest.py:35:    generate_manifest(
+tests/test_experiment_manifest.py:43:    manifest_path = output_dir / "manifest.json"
+tests/test_experiment_manifest.py:44:    with open(manifest_path, "r", encoding="utf-8") as f:
+tests/test_experiment_manifest.py:45:        manifest = json.load(f)
+tests/test_experiment_manifest.py:51:    assert manifest["spec_path"] == "docs/SPEC.md"
+tests/test_experiment_manifest.py:52:    assert manifest["hypothesis_path"] == "docs/HYPOTHESIS.md"
+tests/test_experiment_manifest.py:53:    assert manifest["spec_version"] == _read_spec_version(spec_path)
+tests/test_experiment_manifest.py:54:    assert manifest["hypothesis_version"] == _read_hypothesis_version(hypothesis_path)
+src/bnsyn/experiments/declarative.py:162:            json.dump(results, f, indent=2, sort_keys=True)
+src/bnsyn/experiments/declarative.py:165:        print(json.dumps(results, indent=2, sort_keys=True))
+tests/test_verify_hypothesis_v2.py:12:        if condition_file.stem == "manifest":
+tests/test_mutation_ci_summary_contract.py:49:        json.dumps(
+tests/test_mutation_ci_summary_contract.py:85:        json.dumps(
+tests/test_mutation_ci_summary_contract.py:146:    baseline_path.write_text(json.dumps({"metrics": {"total_mutants": 1}}), encoding="utf-8")
+tests/test_mutation_ci_summary_contract.py:181:        json.dumps(
+tests/test_mutation_ci_summary_contract.py:254:        json.dumps(
+src/bnsyn/sleep/cycle.py:6:- ``default_human_sleep_cycle``: canonical staged configuration for integration paths.
+src/bnsyn/rng.py:78:    inside a running process has no effect on hash randomization for that process,
+src/bnsyn/cli.py:32:from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+src/bnsyn/cli.py:122:    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+src/bnsyn/cli.py:151:    print(json.dumps(out, indent=2, sort_keys=True))
+src/bnsyn/cli.py:343:    # Generate manifest
+src/bnsyn/cli.py:344:    manifest = build_sleep_stack_manifest(
+src/bnsyn/cli.py:353:    manifest_path = out_dir / "manifest.json"
+src/bnsyn/cli.py:354:    with open(manifest_path, "w") as f:
+src/bnsyn/cli.py:355:        json.dump(manifest, f, indent=2)
+src/bnsyn/cli.py:356:    print(f"Manifest written to {manifest_path}")
+tests/test_memory.py:156:def test_ledger_hash() -> None:
+tests/test_memory.py:157:    """Test ledger hash stability."""
+tests/test_memory.py:164:    # hashes should match for identical events
+tests/test_memory.py:165:    assert ledger1.compute_hash() == ledger2.compute_hash()
+tests/test_incremental_cache.py:7:from bnsyn.incremental import cached, clear_cache, compute_file_hash
+tests/test_incremental_cache.py:10:def test_compute_file_hash_changes(tmp_path: Path) -> None:
+tests/test_incremental_cache.py:12:    assert compute_file_hash(target) == ""
+tests/test_incremental_cache.py:15:    first = compute_file_hash(target)
+tests/test_incremental_cache.py:17:    second = compute_file_hash(target)
+tests/test_incremental_cache.py:21:def test_cached_respects_dependency_hash(tmp_path: Path) -> None:
+tests/test_incremental_cache.py:28:    def compute(value: int, _dep_hash: str | None = None) -> int:
+tests/test_cli_unit.py:73:        manifest_path = out_dir / "manifest.json"
+tests/test_cli_unit.py:76:        assert manifest_path.exists()
+tests/test_cli_unit.py:79:        with open(manifest_path) as f:
+tests/test_cli_unit.py:80:            manifest = json.load(f)
+tests/test_cli_unit.py:81:        assert manifest["seed"] == 123
+tests/test_cli_unit.py:82:        assert manifest["steps_wake"] == 50
+tests/test_cli_unit.py:110:        # Verify that manifest records the correct steps
+tests/test_cli_unit.py:111:        manifest_path = out_dir / "manifest.json"
+tests/test_cli_unit.py:112:        with open(manifest_path) as f:
+tests/test_cli_unit.py:113:            manifest = json.load(f)
+tests/test_cli_unit.py:114:        assert manifest["steps_sleep"] == 300
+tests/test_validate_long_running_triggers.py:58:        yaml.safe_dump(data, sort_keys=False),
+tests/test_principal_test_hardening.py:3:import hashlib
+tests/test_principal_test_hardening.py:13:    return hashlib.sha256(payload).hexdigest()
+tests/test_principal_test_hardening.py:32:        first_hash = _sha256_bytes(inventory_path.read_bytes())
+tests/test_principal_test_hardening.py:36:        second_hash = _sha256_bytes(inventory_path.read_bytes())
+tests/test_principal_test_hardening.py:38:        assert first_hash == second_hash
+tests/test_principal_test_hardening.py:39:        tmp_path.joinpath("inventory.sha").write_text(first_hash, encoding="utf-8")
+tests/test_principal_test_hardening.py:43:    def test_repo_manifest_entries_are_sorted_and_sha_addressed(self) -> None:
+tests/test_principal_test_hardening.py:44:        manifest = json.loads(
+tests/test_principal_test_hardening.py:45:            (REPO_ROOT / "manifest" / "repo_manifest.computed.json").read_text(encoding="utf-8")
+tests/test_principal_test_hardening.py:47:        assert isinstance(manifest["invariants"], list)
+tests/test_principal_test_hardening.py:48:        assert len(manifest["invariants"]) > 0
+tests/test_principal_test_hardening.py:49:        repo_ref = manifest["repo_ref"]
+tests/test_cli_smoke.py:103:        manifest_path = out_dir / "manifest.json"
+tests/test_cli_smoke.py:106:        assert manifest_path.exists(), "manifest.json not created"
+tests/test_cli_smoke.py:109:        with open(manifest_path) as f:
+tests/test_cli_smoke.py:110:            manifest = json.load(f)
+tests/test_cli_smoke.py:111:        assert "seed" in manifest
+tests/test_cli_smoke.py:112:        assert manifest["seed"] == 42
+tests/test_cli_smoke.py:113:        assert "steps_wake" in manifest
+tests/test_cli_smoke.py:114:        assert "steps_sleep" in manifest
+tests/test_cli_smoke.py:115:        assert manifest["N"] == 80
+tests/test_validate_codebase_readiness_audit.py:27:    report.write_text(json.dumps(payload), encoding="utf-8")
+tests/test_validate_codebase_readiness_audit.py:42:    report.write_text(json.dumps(payload), encoding="utf-8")
+tests/test_validate_codebase_readiness_audit.py:56:    report.write_text(json.dumps(payload), encoding="utf-8")
+tests/test_mutation_counts_contract.py:1:"""Contract tests for canonical mutation metrics module."""
+tests/test_mutation_counts_contract.py:99:        json.dumps(
+tests/test_mutation_counts_contract.py:117:def test_render_ci_summary_markdown_uses_canonical_metrics() -> None:
+tests/test_mutation_counts_contract.py:178:        json.dumps(
+tests/test_mutation_counts_contract.py:246:        json.dumps(
+tests/test_mutation_counts_contract.py:286:        json.dumps(
+tests/test_manifest_tooling.py:5:from tools.manifest import generate
+tests/test_manifest_tooling.py:41:        _write(root / "manifest/repo_manifest.yml", "manifest_version: '1.0'\n")
+tests/test_manifest_tooling.py:67:def test_ci_manifest_reference_count_respects_declared_scope(
+tests/test_manifest_tooling.py:72:    _write(root / ".github/workflows/ci.yml", "# ci_manifest.json\n")
+tests/test_manifest_tooling.py:73:    _write(root / "scripts/s.py", "# ci_manifest.json\n")
+tests/test_manifest_tooling.py:74:    _write(root / "docs/d.md", "ci_manifest.json\n")
+tests/test_manifest_tooling.py:75:    _write(root / "Makefile", "# ci_manifest.json\n")
+tests/test_manifest_tooling.py:76:    _write(root / "README.md", "ci_manifest.json\n")
+tests/test_manifest_tooling.py:77:    _write(root / "tools/ignored.py", "ci_manifest.json\n")
+tests/test_manifest_tooling.py:81:    assert generate._count_ci_manifest_references() == 5
+tests/test_manifest_tooling_regression.py:3:import hashlib
+tests/test_manifest_tooling_regression.py:9:from tools.manifest import generate, validate
+tests/test_manifest_tooling_regression.py:19:        root / "manifest/repo_manifest.yml",
+tests/test_manifest_tooling_regression.py:22:                'manifest_version: "1.0"',
+tests/test_manifest_tooling_regression.py:25:                f'  sha256: "{hashlib.sha256((root / ".github/PR_GATES.yml").read_bytes()).hexdigest()}"',
+tests/test_manifest_tooling_regression.py:39:                '    - "manifest/repo_manifest.computed.json"',
+tests/test_manifest_tooling_regression.py:49:        root / "manifest/repo_manifest.schema.json",
+tests/test_manifest_tooling_regression.py:50:        (Path("manifest/repo_manifest.schema.json")).read_text(),
+tests/test_manifest_tooling_regression.py:70:    monkeypatch.setattr(generate, "SSOT_PATH", root / "manifest/repo_manifest.yml")
+tests/test_manifest_tooling_regression.py:71:    monkeypatch.setattr(generate, "SCHEMA_PATH", root / "manifest/repo_manifest.schema.json")
+tests/test_manifest_tooling_regression.py:72:    monkeypatch.setattr(generate, "COMPUTED_PATH", root / "manifest/repo_manifest.computed.json")
+tests/test_manifest_tooling_regression.py:76:    monkeypatch.setattr(validate, "SSOT_PATH", root / "manifest/repo_manifest.yml")
+tests/test_manifest_tooling_regression.py:77:    monkeypatch.setattr(validate, "SCHEMA_PATH", root / "manifest/repo_manifest.schema.json")
+tests/test_manifest_tooling_regression.py:78:    monkeypatch.setattr(validate, "COMPUTED_PATH", root / "manifest/repo_manifest.computed.json")
+tests/test_manifest_tooling_regression.py:89:    computed_path = root / "manifest/repo_manifest.computed.json"
+tests/test_manifest_tooling_regression.py:92:    computed_path.write_text(json.dumps(payload, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+tests/test_manifest_tooling_regression.py:94:    with pytest.raises(SystemExit, match="Computed manifest drift detected"):
+tests/test_manifest_tooling_regression.py:95:        validate.validate_manifest()
+tests/test_manifest_tooling_regression.py:98:def test_generate_summary_hashes_match_outputs(
+tests/test_manifest_tooling_regression.py:111:    assert out.startswith("manifest.generate ")
+tests/test_manifest_tooling_regression.py:113:    computed_text = (root / "manifest/repo_manifest.computed.json").read_text(encoding="utf-8")
+tests/test_manifest_tooling_regression.py:115:    assert fields["computed_sha256"] == hashlib.sha256(computed_text.encode("utf-8")).hexdigest()
+tests/test_manifest_tooling_regression.py:116:    assert fields["rendered_sha256"] == hashlib.sha256(rendered_text.encode("utf-8")).hexdigest()
+tests/test_manifest_tooling_regression.py:119:def test_validate_fails_when_ci_manifest_references_present(
+tests/test_manifest_tooling_regression.py:126:    _write(root / "README.md", "ci_manifest.json\n")
+tests/test_manifest_tooling_regression.py:131:    with pytest.raises(SystemExit, match="ci_manifest.json references detected"):
+tests/test_manifest_tooling_regression.py:132:        validate.validate_manifest()
+tests/test_manifest_tooling_regression.py:139:        _write(root / "manifest/repo_manifest.yml", "manifest_version: '1.0'\n")
+tests/test_coverage_gap_extensions.py:208:    assert state["hash"] == ledger.compute_hash()
+tests/test_coverage_gap_extensions.py:254:def test_manifest_fallback_import_path(monkeypatch: pytest.MonkeyPatch) -> None:
+tests/test_coverage_gap_extensions.py:255:    import bnsyn.provenance.manifest as manifest
+tests/test_coverage_gap_extensions.py:270:    module_name = "bnsyn.provenance.manifest_fallback"
+tests/test_coverage_gap_extensions.py:271:    spec = importlib.util.spec_from_file_location(module_name, Path(manifest.__file__))
+tests/test_math_invariants.py:3:import hashlib
+tests/test_math_invariants.py:19:from scripts.math_validate import build_manifest, iter_scope_files, validate_manifest
+tests/test_math_invariants.py:175:def test_manifest_covers_scoped_files() -> None:
+tests/test_math_invariants.py:176:    manifest = build_manifest()
+tests/test_math_invariants.py:177:    manifest_paths = {item["path"] for item in manifest["artifacts"]}
+tests/test_math_invariants.py:179:    assert manifest_paths == scoped_paths
+tests/test_math_invariants.py:182:def test_validator_reports_no_failures_current_manifest() -> None:
+tests/test_math_invariants.py:183:    manifest = build_manifest()
+tests/test_math_invariants.py:184:    checks = validate_manifest(manifest)
+tests/test_math_invariants.py:191:    artifact.write_text(json.dumps({"x": 1.0}), encoding="utf-8")
+tests/test_math_invariants.py:192:    digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+tests/test_math_invariants.py:193:    manifest = {
+tests/test_math_invariants.py:207:    checks = validate_manifest(manifest)
+tests/test_math_invariants.py:211:def test_build_manifest_has_no_untrusted_entries() -> None:
+tests/test_math_invariants.py:212:    manifest = build_manifest()
+tests/test_math_invariants.py:213:    assert all(a["provenance"] != "UNTRUSTED" for a in manifest["artifacts"])
+tests/validation/test_memory_validation.py:72:    # hash should be stable
+tests/validation/test_memory_validation.py:73:    hash1 = ledger.compute_hash()
+tests/validation/test_memory_validation.py:74:    hash2 = ledger.compute_hash()
+tests/validation/test_memory_validation.py:75:    assert hash1 == hash2
+tests/test_verify_reproducible_artifacts.py:25:        json.dumps([{"artifact": str(artifact), "command": f"python {script}"}]), encoding="utf-8"
+tests/test_verify_reproducible_artifacts.py:57:        json.dumps([{"artifact": str(artifact), "command": f"python {script}"}]), encoding="utf-8"
+tests/test_memory_ledger_unit.py:16:    assert isinstance(state["hash"], str)
+tests/test_memory_ledger_unit.py:17:    assert len(state["hash"]) == 64
+tests/test_memory_ledger_unit.py:86:def test_compute_hash_is_deterministic_for_identical_sequences() -> None:
+tests/test_memory_ledger_unit.py:94:    assert first.compute_hash() == second.compute_hash()
+tests/test_provenance_manifest.py:1:"""Smoke tests for provenance manifest.
+tests/test_provenance_manifest.py:17:docs/features/provenance_manifest.md
+tests/test_provenance_manifest.py:31:def test_manifest_initialization() -> None:
+tests/test_provenance_manifest.py:33:    manifest = RunManifest(seed=42, config={"lr": 0.01})
+tests/test_provenance_manifest.py:34:    assert manifest.seed == 42
+tests/test_provenance_manifest.py:35:    assert manifest.config["lr"] == 0.01
+tests/test_provenance_manifest.py:36:    assert "python_version" in manifest.to_dict()
+tests/test_provenance_manifest.py:39:def test_manifest_to_dict() -> None:
+tests/test_provenance_manifest.py:40:    """Test manifest to_dict."""
+tests/test_provenance_manifest.py:41:    manifest = RunManifest(seed=42, config={"param": "value"})
+tests/test_provenance_manifest.py:42:    d = manifest.to_dict()
+tests/test_provenance_manifest.py:50:def test_manifest_to_json() -> None:
+tests/test_provenance_manifest.py:51:    """Test manifest JSON serialization."""
+tests/test_provenance_manifest.py:52:    manifest = RunManifest(seed=42, config={"x": 1})
+tests/test_provenance_manifest.py:53:    json_str = manifest.to_json()
+tests/test_provenance_manifest.py:60:def test_manifest_hash_determinism() -> None:
+tests/test_provenance_manifest.py:61:    """Test manifest hash is deterministic."""
+tests/test_provenance_manifest.py:62:    manifest1 = RunManifest(seed=42, config={"a": 1})
+tests/test_provenance_manifest.py:63:    manifest2 = RunManifest(seed=42, config={"a": 1})
+tests/test_provenance_manifest.py:65:    # hashes might differ due to timestamp, but structure should be consistent
+tests/test_provenance_manifest.py:66:    hash1 = manifest1.compute_hash()
+tests/test_provenance_manifest.py:67:    hash2 = manifest2.compute_hash()
+tests/test_provenance_manifest.py:69:    # both should be valid SHA256 hashes
+tests/test_provenance_manifest.py:70:    assert len(hash1) == 64  # SHA256 hex digest length
+tests/test_provenance_manifest.py:71:    assert len(hash2) == 64
+tests/test_provenance_manifest.py:74:def test_manifest_round_trip() -> None:
+tests/test_provenance_manifest.py:75:    """Test manifest round-trip through dict."""
+tests/test_provenance_manifest.py:76:    manifest1 = RunManifest(seed=42, config={"param": 123})
+tests/test_provenance_manifest.py:77:    d = manifest1.to_dict()
+tests/test_provenance_manifest.py:78:    manifest2 = RunManifest.from_dict(d)
+tests/test_provenance_manifest.py:80:    assert manifest2.seed == 42
+tests/test_provenance_manifest.py:81:    assert manifest2.config["param"] == 123
+tests/test_provenance_manifest.py:84:def test_manifest_type_validation() -> None:
+tests/test_provenance_manifest.py:93:def test_manifest_capture_git_sha_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+tests/test_provenance_manifest.py:99:    monkeypatch.setattr("bnsyn.provenance.manifest.subprocess.run", _raise_error)
+tests/test_provenance_manifest.py:102:        manifest = RunManifest(seed=1, config={})
+tests/test_provenance_manifest.py:111:    assert manifest.git_sha == f"release-{version}"
+tests/test_provenance_manifest.py:114:def test_manifest_capture_dependencies_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+tests/test_provenance_manifest.py:120:    monkeypatch.setattr("bnsyn.provenance.manifest.distributions", _raise_error)
+tests/test_provenance_manifest.py:123:        manifest = RunManifest(seed=1, config={})
+tests/test_provenance_manifest.py:125:    assert manifest.dependencies == {}
+tests/test_provenance_manifest.py:128:def test_output_hash() -> None:
+tests/test_provenance_manifest.py:129:    """Test adding output hashes."""
+tests/test_provenance_manifest.py:130:    manifest = RunManifest(seed=42, config={})
+tests/test_provenance_manifest.py:131:    manifest.add_output_hash("weights", b"data123")
+tests/test_provenance_manifest.py:133:    d = manifest.to_dict()
+tests/test_provenance_manifest.py:134:    assert "output_hashes" in d
+tests/test_provenance_manifest.py:135:    assert "weights" in d["output_hashes"]
+tests/test_provenance_manifest.py:138:def test_output_hash_type_validation() -> None:
+tests/test_provenance_manifest.py:139:    """Test output hash type validation."""
+tests/test_provenance_manifest.py:140:    manifest = RunManifest(seed=42, config={})
+tests/test_provenance_manifest.py:143:        manifest.add_output_hash(123, b"data")  # type: ignore[arg-type]
+tests/test_provenance_manifest.py:146:        manifest.add_output_hash("weights", "data")  # type: ignore[arg-type]
+tests/test_provenance_manifest.py:149:def test_manifest_from_dict_type_validation() -> None:
+tests/properties/test_manifest_tooling_properties.py:10:from tools.manifest import generate
+tests/properties/test_manifest_tooling_properties.py:73:def test_ci_manifest_reference_scope_fuzz(snippets: list[str]) -> None:
+tests/properties/test_manifest_tooling_properties.py:88:                text += "ci_manifest.json\n"
+tests/properties/test_manifest_tooling_properties.py:92:        _write(root / "tools/out_of_scope.py", "ci_manifest.json\n")
+tests/properties/test_manifest_tooling_properties.py:97:            assert generate._count_ci_manifest_references() == expected
+tests/test_audit_suite_artifacts.py:3:import hashlib
+tests/test_audit_suite_artifacts.py:15:    return hashlib.sha256(path.read_bytes()).hexdigest()
+tests/test_audit_suite_artifacts.py:71:def test_proof_bundle_index_hashes_match_files() -> None:
+tests/test_audit_suite_artifacts.py:82:            # Self-referential hash cannot be validated without fixed-point encoding.
+tests/test_tools_scaled_sleep_stack_smoke.py:57:    manifest_path = out_dir / "scaled_run1" / "manifest.json"
+tests/test_tools_scaled_sleep_stack_smoke.py:59:    assert manifest_path.exists()
+tests/test_tools_scaled_sleep_stack_smoke.py:62:    manifest = json.loads(manifest_path.read_text())
+tests/test_tools_scaled_sleep_stack_smoke.py:63:    assert manifest["seed"] == 42
+tests/test_tools_scaled_sleep_stack_smoke.py:64:    assert manifest["N"] == 80
+tests/test_tools_scaled_sleep_stack_smoke.py:65:    assert manifest["steps_wake"] == 30
+tests/test_tools_scaled_sleep_stack_smoke.py:66:    assert manifest["steps_sleep"] == 30
+tests/test_manifest_tools.py:3:import hashlib
+tests/test_manifest_tools.py:14:    REPO_ROOT / "docs" / "api" / "_static" / "tools" / "update_manifest.py",
+tests/test_manifest_tools.py:15:    REPO_ROOT / "docs" / "api" / "_templates" / "tools" / "update_manifest.py",
+tests/test_manifest_tools.py:33:    (root / "tools" / "update_manifest.py").write_text("# tool placeholder\n", encoding="utf-8")
+tests/test_manifest_tools.py:38:    module.MANIFEST_PATH = root / "manifest.json"
+tests/test_manifest_tools.py:42:def test_manifest_generation_and_validation(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:48:    manifest = module._build_manifest(seed=42)
+tests/test_manifest_tools.py:49:    module._write_manifest(manifest)
+tests/test_manifest_tools.py:51:    assert module._check_manifest(42) == 0
+tests/test_manifest_tools.py:54:    assert module._check_manifest(42) == 1
+tests/test_manifest_tools.py:58:def test_manifest_includes_expected_sha(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:64:    manifest = module._build_manifest(seed=42)
+tests/test_manifest_tools.py:65:    entries = {entry["path"]: entry for entry in manifest["entries"]}
+tests/test_manifest_tools.py:66:    expected_sha = hashlib.sha256(b"asset").hexdigest()
+tests/test_manifest_tools.py:72:def test_manifest_ordering_is_deterministic(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:78:    first = module._build_manifest(seed=42)
+tests/test_manifest_tools.py:79:    second = module._build_manifest(seed=42)
+tests/test_manifest_tools.py:85:def test_manifest_allows_empty_directory(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:91:    manifest = module._build_manifest(seed=42)
+tests/test_manifest_tools.py:93:    assert manifest["entries"] == []
+tests/test_manifest_tools.py:97:def test_manifest_rejects_symlinks(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:106:        module._build_manifest(seed=42)
+tests/test_manifest_tools.py:110:def test_manifest_rejects_unreadable_file(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:122:            module._build_manifest(seed=42)

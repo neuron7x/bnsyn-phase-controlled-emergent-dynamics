@@ -1,0 +1,25 @@
+ M INVENTORY.json
+ M tests/test_math_core_hardening.py
+?? coverage.xml
+?? proof_bundle/logs/check_coverage_gate_after_fix.log
+?? proof_bundle/logs/check_coverage_gate_before_fix.log
+?? proof_bundle/logs/generate_inventory_check_after.log
+?? proof_bundle/logs/generate_inventory_check_before.log
+?? proof_bundle/logs/generate_inventory_check_final.log
+?? proof_bundle/logs/generate_inventory_run.log
+?? proof_bundle/logs/git_log_recent.log
+?? proof_bundle/logs/git_status_before_stage_fix2.log
+?? proof_bundle/logs/git_status_start_fix.log
+?? proof_bundle/logs/mypy_after_fix.log
+?? proof_bundle/logs/pip_install_build_after_fix.log
+?? proof_bundle/logs/pip_install_dev_test_fix.log
+?? proof_bundle/logs/pip_install_pytest_cov.log
+?? proof_bundle/logs/pylint_after_fix.log
+?? proof_bundle/logs/pytest_cov_after_fix.log
+?? proof_bundle/logs/pytest_cov_not_validation.log
+?? proof_bundle/logs/pytest_not_validation_after_fix.log
+?? proof_bundle/logs/pytest_targeted_fix.log
+?? proof_bundle/logs/python_build_after_fix.log
+?? proof_bundle/logs/python_pytest_cov_not_validation.log
+?? proof_bundle/logs/rg_coverage_gate_usage.log
+?? proof_bundle/logs/ruff_check_after_fix.log

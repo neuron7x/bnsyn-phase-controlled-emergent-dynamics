@@ -1,0 +1,167 @@
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.0",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "psutil==7.2.2",
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "psutil==7.2.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.0",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.6.0",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]

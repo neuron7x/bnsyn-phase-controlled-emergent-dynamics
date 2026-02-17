@@ -1,7 +1,7 @@
 {
   "coverage_surface": {
     "determinism": 1,
-    "math_physics": 1,
+    "math_physics": 2,
     "mutation": 5,
     "pytest": 118,
     "workflow_integrity": 2
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 127,
+  "test_count": 128,
   "tests": [
     {
       "category": "pytest",
@@ -206,7 +206,8 @@
     {
       "category": "determinism",
       "entropy_signals": [
-        "filesystem_io"
+        "filesystem_io",
+        "subprocess_dependency"
       ],
       "path": "tests/test_determinism.py"
     },
@@ -377,6 +378,11 @@
         "filesystem_io"
       ],
       "path": "tests/test_manifest_tools.py"
+    },
+    {
+      "category": "math_physics",
+      "entropy_signals": [],
+      "path": "tests/test_math_core_hardening.py"
     },
     {
       "category": "math_physics",

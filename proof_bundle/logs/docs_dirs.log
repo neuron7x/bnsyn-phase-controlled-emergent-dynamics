@@ -1,0 +1,16 @@
+docs
+docs/SCRIPTS
+docs/_generated
+docs/_generated/script_help
+docs/api
+docs/api/_static
+docs/api/_templates
+docs/api/generated
+docs/appendix
+docs/benchmarks
+docs/contracts
+docs/math
+docs/placeholder_cycles
+docs/placeholder_cycles/cycle1
+docs/safety
+docs/scripts

@@ -1,0 +1,39 @@
+    if not isinstance(external_current_pA, Real):
+        raise TypeError("external_current_pA must be a finite real number")
+    external_current = float(external_current_pA)
+    if not np.isfinite(external_current):
+        raise ValueError("external_current_pA must be a finite real number")
+
+    _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
+    pack = seed_all(seed)
+    rng = pack.np_rng
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=dt_ms,
+        rng=rng,
+        backend=backend,
+    )
+
+    sigmas: list[float] = []
+    rates: list[float] = []
+
+    # Prepare external current array if needed
+    injected_current: NDArray[np.float64] | None = None
+    if abs(external_current) > 1e-9:  # Robust check for non-zero
+        injected_current = np.full(N, external_current, dtype=np.float64)
+
+    for _ in range(steps):
+        m = net.step(external_current_pA=injected_current)
+        sigmas.append(m["sigma"])
+        rates.append(m["spike_rate_hz"])
+
+    return {
+        "sigma_mean": float(np.mean(sigmas)),
+        "rate_mean_hz": float(np.mean(rates)),
+        "sigma_std": float(np.std(sigmas)),
+        "rate_std": float(np.std(rates)),
+    }

@@ -1,0 +1,260 @@
+     1	{
+     2	  "coverage_surface": {
+     3	    "determinism": 1,
+     4	    "math_physics": 2,
+     5	    "mutation": 5,
+     6	    "pytest": 118,
+     7	    "workflow_integrity": 2
+     8	  },
+     9	  "flaky_indicator_count": 77,
+    10	  "generated_by": "python -m scripts.generate_tests_inventory",
+    11	  "reusable_workflow_jobs": [
+    12	    "_reusable_benchmarks.yml",
+    13	    "_reusable_chaos_tests.yml",
+    14	    "_reusable_formal_science.yml",
+    15	    "_reusable_gate_profile.yml",
+    16	    "_reusable_property_tests.yml",
+    17	    "_reusable_pytest.yml",
+    18	    "_reusable_quality.yml",
+    19	    "_reusable_ssot.yml",
+    20	    "_reusable_validation_tests.yml"
+    21	  ],
+    22	  "test_count": 128,
+    23	  "tests": [
+    24	    {
+    25	      "category": "pytest",
+    26	      "entropy_signals": [
+    27	        "filesystem_io"
+    28	      ],
+    29	      "path": "tests/test_actions_pinning.py"
+    30	    },
+    31	    {
+    32	      "category": "pytest",
+    33	      "entropy_signals": [],
+    34	      "path": "tests/test_adex_smoke.py"
+    35	    },
+    36	    {
+    37	      "category": "pytest",
+    38	      "entropy_signals": [
+    39	        "filesystem_io",
+    40	        "subprocess_dependency"
+    41	      ],
+    42	      "path": "tests/test_api_contract_command.py"
+    43	    },
+    44	    {
+    45	      "category": "pytest",
+    46	      "entropy_signals": [],
+    47	      "path": "tests/test_api_contract_semver.py"
+    48	    },
+    49	    {
+    50	      "category": "pytest",
+    51	      "entropy_signals": [
+    52	        "filesystem_io"
+    53	      ],
+    54	      "path": "tests/test_api_maturity.py"
+    55	    },
+    56	    {
+    57	      "category": "pytest",
+    58	      "entropy_signals": [],
+    59	      "path": "tests/test_api_surface_reexports.py"
+    60	    },
+    61	    {
+    62	      "category": "pytest",
+    63	      "entropy_signals": [],
+    64	      "path": "tests/test_attractor_crystallizer.py"
+    65	    },
+    66	    {
+    67	      "category": "pytest",
+    68	      "entropy_signals": [
+    69	        "filesystem_io"
+    70	      ],
+    71	      "path": "tests/test_audit_suite_artifacts.py"
+    72	    },
+    73	    {
+    74	      "category": "pytest",
+    75	      "entropy_signals": [
+    76	        "filesystem_io"
+    77	      ],
+    78	      "path": "tests/test_benchmark_regression_gate.py"
+    79	    },
+    80	    {
+    81	      "category": "pytest",
+    82	      "entropy_signals": [
+    83	        "filesystem_io",
+    84	        "subprocess_dependency"
+    85	      ],
+    86	      "path": "tests/test_benchmarks_smoke.py"
+    87	    },
+    88	    {
+    89	      "category": "pytest",
+    90	      "entropy_signals": [],
+    91	      "path": "tests/test_calibration_accuracy_speed.py"
+    92	    },
+    93	    {
+    94	      "category": "pytest",
+    95	      "entropy_signals": [],
+    96	      "path": "tests/test_calibration_fit_edge.py"
+    97	    },
+    98	    {
+    99	      "category": "pytest",
+   100	      "entropy_signals": [],
+   101	      "path": "tests/test_calibration_smoke.py"
+   102	    },
+   103	    {
+   104	      "category": "pytest",
+   105	      "entropy_signals": [
+   106	        "filesystem_io"
+   107	      ],
+   108	      "path": "tests/test_claims_enforcement.py"
+   109	    },
+   110	    {
+   111	      "category": "pytest",
+   112	      "entropy_signals": [
+   113	        "subprocess_dependency"
+   114	      ],
+   115	      "path": "tests/test_cli_interactive.py"
+   116	    },
+   117	    {
+   118	      "category": "pytest",
+   119	      "entropy_signals": [
+   120	        "filesystem_io"
+   121	      ],
+   122	      "path": "tests/test_cli_sleep_stack_backend_and_N_unit.py"
+   123	    },
+   124	    {
+   125	      "category": "pytest",
+   126	      "entropy_signals": [
+   127	        "filesystem_io",
+   128	        "subprocess_dependency"
+   129	      ],
+   130	      "path": "tests/test_cli_sleep_stack_branches.py"
+   131	    },
+   132	    {
+   133	      "category": "pytest",
+   134	      "entropy_signals": [
+   135	        "filesystem_io"
+   136	      ],
+   137	      "path": "tests/test_cli_sleep_stack_figure.py"
+   138	    },
+   139	    {
+   140	      "category": "pytest",
+   141	      "entropy_signals": [
+   142	        "filesystem_io",
+   143	        "subprocess_dependency"
+   144	      ],
+   145	      "path": "tests/test_cli_smoke.py"
+   146	    },
+   147	    {
+   148	      "category": "pytest",
+   149	      "entropy_signals": [
+   150	        "filesystem_io"
+   151	      ],
+   152	      "path": "tests/test_cli_unit.py"
+   153	    },
+   154	    {
+   155	      "category": "pytest",
+   156	      "entropy_signals": [],
+   157	      "path": "tests/test_cli_versioning.py"
+   158	    },
+   159	    {
+   160	      "category": "pytest",
+   161	      "entropy_signals": [
+   162	        "rng_without_explicit_seed"
+   163	      ],
+   164	      "path": "tests/test_connectivity_sparse.py"
+   165	    },
+   166	    {
+   167	      "category": "pytest",
+   168	      "entropy_signals": [],
+   169	      "path": "tests/test_consolidation_smoke.py"
+   170	    },
+   171	    {
+   172	      "category": "pytest",
+   173	      "entropy_signals": [
+   174	        "filesystem_io",
+   175	        "time_dependency"
+   176	      ],
+   177	      "path": "tests/test_coverage_gap_extensions.py"
+   178	    },
+   179	    {
+   180	      "category": "pytest",
+   181	      "entropy_signals": [
+   182	        "filesystem_io"
+   183	      ],
+   184	      "path": "tests/test_coverage_gate.py"
+   185	    },
+   186	    {
+   187	      "category": "pytest",
+   188	      "entropy_signals": [],
+   189	      "path": "tests/test_coverage_paths.py"
+   190	    },
+   191	    {
+   192	      "category": "pytest",
+   193	      "entropy_signals": [],
+   194	      "path": "tests/test_criticality_analysis_edge.py"
+   195	    },
+   196	    {
+   197	      "category": "pytest",
+   198	      "entropy_signals": [],
+   199	      "path": "tests/test_criticality_smoke.py"
+   200	    },
+   201	    {
+   202	      "category": "pytest",
+   203	      "entropy_signals": [],
+   204	      "path": "tests/test_crystallizer_edge_cases.py"
+   205	    },
+   206	    {
+   207	      "category": "determinism",
+   208	      "entropy_signals": [
+   209	        "filesystem_io",
+   210	        "subprocess_dependency"
+   211	      ],
+   212	      "path": "tests/test_determinism.py"
+   213	    },
+   214	    {
+   215	      "category": "pytest",
+   216	      "entropy_signals": [],
+   217	      "path": "tests/test_dt_invariance.py"
+   218	    },
+   219	    {
+   220	      "category": "pytest",
+   221	      "entropy_signals": [],
+   222	      "path": "tests/test_edge_cases_adex.py"
+   223	    },
+   224	    {
+   225	      "category": "pytest",
+   226	      "entropy_signals": [],
+   227	      "path": "tests/test_edge_cases_criticality.py"
+   228	    },
+   229	    {
+   230	      "category": "pytest",
+   231	      "entropy_signals": [],
+   232	      "path": "tests/test_edge_cases_synapse.py"
+   233	    },
+   234	    {
+   235	      "category": "pytest",
+   236	      "entropy_signals": [],
+   237	      "path": "tests/test_edge_cases_temperature.py"
+   238	    },
+   239	    {
+   240	      "category": "pytest",
+   241	      "entropy_signals": [],
+   242	      "path": "tests/test_energy_smoke.py"
+   243	    },
+   244	    {
+   245	      "category": "pytest",
+   246	      "entropy_signals": [
+   247	        "filesystem_io"
+   248	      ],
+   249	      "path": "tests/test_entropy_artifacts_guard.py"
+   250	    },
+   251	    {
+   252	      "category": "pytest",
+   253	      "entropy_signals": [
+   254	        "filesystem_io"
+   255	      ],
+   256	      "path": "tests/test_entropy_gate.py"
+   257	    },
+   258	    {
+   259	      "category": "pytest",
+   260	      "entropy_signals": [

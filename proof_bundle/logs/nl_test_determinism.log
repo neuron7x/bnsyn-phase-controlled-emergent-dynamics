@@ -1,0 +1,58 @@
+     1	import json
+     2	import os
+     3	import subprocess
+     4	import sys
+     5	from pathlib import Path
+     6	
+     7	from bnsyn.sim.network import run_simulation
+     8	
+     9	
+    10	def test_determinism_same_seed_same_metrics() -> None:
+    11	    m1 = run_simulation(steps=500, dt_ms=0.1, seed=42, N=80)
+    12	    m2 = run_simulation(steps=500, dt_ms=0.1, seed=42, N=80)
+    13	    assert m1 == m2
+    14	
+    15	
+    16	def test_no_global_numpy_rng_usage() -> None:
+    17	    root = Path(__file__).resolve().parents[1]
+    18	    src_root = root / "src" / "bnsyn"
+    19	    offenders: list[str] = []
+    20	    for path in src_root.rglob("*.py"):
+    21	        rel_path = path.relative_to(root)
+    22	        text = path.read_text()
+    23	        for line_no, line in enumerate(text.splitlines(), start=1):
+    24	            if "np.random." in line:
+    25	                if "np.random.Generator" in line:
+    26	                    continue
+    27	                if rel_path.as_posix() == "src/bnsyn/rng.py":
+    28	                    continue
+    29	                offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
+    30	            if "random." in line or line.strip().startswith("import random"):
+    31	                offenders.append(f"{rel_path}:{line_no}:{line.strip()}")
+    32	    assert offenders == []
+    33	
+    34	
+    35	def test_determinism_across_pythonhashseed_for_summary_output() -> None:
+    36	    cmd = [
+    37	        sys.executable,
+    38	        "-c",
+    39	        (
+    40	            "import json; "
+    41	            "from bnsyn.sim.network import run_simulation; "
+    42	            "print(json.dumps(run_simulation(steps=200, dt_ms=0.1, seed=42, N=64), sort_keys=True))"
+    43	        ),
+    44	    ]
+    45	    env0 = os.environ.copy()
+    46	    env1 = os.environ.copy()
+    47	    env0["PYTHONHASHSEED"] = "0"
+    48	    env1["PYTHONHASHSEED"] = "123"
+    49	
+    50	    repo_root = Path(__file__).resolve().parents[1]
+    51	    src_path = str(repo_root / "src")
+    52	    env0["PYTHONPATH"] = src_path + os.pathsep + env0.get("PYTHONPATH", "")
+    53	    env1["PYTHONPATH"] = src_path + os.pathsep + env1.get("PYTHONPATH", "")
+    54	
+    55	    out0 = subprocess.check_output(cmd, text=True, env=env0).strip()
+    56	    out1 = subprocess.check_output(cmd, text=True, env=env1).strip()
+    57	
+    58	    assert json.loads(out0) == json.loads(out1)

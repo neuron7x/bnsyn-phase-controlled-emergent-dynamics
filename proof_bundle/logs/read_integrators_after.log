@@ -92,9 +92,7 @@ def euler_step(
     return out
 
 
-def rk2_step(
-    x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]
-) -> Float64Array:
+def rk2_step(x: Float64Array, dt: float, f: Callable[[Float64Array], Float64Array]) -> Float64Array:
     """Perform a second-order Runge-Kutta integration step.
 
     Parameters

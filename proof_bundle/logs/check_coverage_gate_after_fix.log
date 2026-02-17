@@ -1,0 +1,5 @@
+Metric: coverage.xml line-rate
+Current coverage: 99.53%
+Baseline coverage: 99.57%
+Minimum coverage: 99.00%
+PASS: coverage gate satisfied
