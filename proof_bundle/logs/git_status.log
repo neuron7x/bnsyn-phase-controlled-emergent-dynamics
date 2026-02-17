@@ -1,0 +1,35 @@
+ M README.md
+ M docs/ARCHITECTURE.md
+ M docs/INDEX.md
+ M docs/PROJECT_SURFACES.md
+ M proof_bundle/logs/session.log
+?? docs/assets/
+?? proof_bundle/logs/check_internal_links.log
+?? proof_bundle/logs/check_internal_links_script.log
+?? proof_bundle/logs/discover_public_surfaces_check.log
+?? proof_bundle/logs/file_inventory.log
+?? proof_bundle/logs/git_remote.log
+?? proof_bundle/logs/git_status.log
+?? proof_bundle/logs/github_refs.log
+?? proof_bundle/logs/makefile.log
+?? proof_bundle/logs/repo_url_probe.log
+?? proof_bundle/logs/target_docs_before.log
+?? proof_bundle/logs/validate_traceability.log
+ M README.md
+ M docs/ARCHITECTURE.md
+ M docs/INDEX.md
+ M proof_bundle/logs/session.log
+?? docs/assets/
+?? proof_bundle/logs/check_internal_links.log
+?? proof_bundle/logs/check_internal_links_script.log
+?? proof_bundle/logs/discover_public_surfaces_check.log
+?? proof_bundle/logs/discover_script.log
+?? proof_bundle/logs/doc_diff.log
+?? proof_bundle/logs/file_inventory.log
+?? proof_bundle/logs/git_remote.log
+?? proof_bundle/logs/git_status.log
+?? proof_bundle/logs/github_refs.log
+?? proof_bundle/logs/makefile.log
+?? proof_bundle/logs/repo_url_probe.log
+?? proof_bundle/logs/target_docs_before.log
+?? proof_bundle/logs/validate_traceability.log

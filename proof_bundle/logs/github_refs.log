@@ -1,0 +1,15 @@
+.github/workflows/_reusable_formal_science.yml:152:          wget -q "https://github.com/tlaplus/tlaplus/releases/download/v${TLA2TOOLS_VERSION}/tla2tools.jar"
+.github/workflows/_reusable_pytest.yml:185:              echo "git clone https://github.com/${{ github.repository }}.git"
+docs/TROUBLESHOOTING.md:358:1. **Check existing issues:** [GitHub Issues](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/issues)
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:4:Target: https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics
+docs/api/index.md:7:- Project overview: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/README.md>
+docs/api/index.md:8:- Formal specification: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/SPEC.md>
+docs/api/index.md:9:- Reproducibility contract: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/REPRODUCIBILITY.md>
+docs/api/index.md:10:- API contract: <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/API_CONTRACT.md>
+docs/api/index.md:31:See <https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/REPRODUCIBILITY.md> for the determinism and seed protocol.
+docs/TESTING_MUTATION.md:157:wget https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+docs/SECURITY_GITLEAKS.md:5:This repository uses [Gitleaks](https://github.com/gitleaks/gitleaks) to detect hardcoded secrets in the codebase. Secret scanning is enforced via GitHub Actions CI and runs on every push and pull request.
+docs/SECURITY_GITLEAKS.md:59:# Linux: Download from https://github.com/gitleaks/gitleaks/releases
+docs/SECURITY_GITLEAKS.md:70:- [Gitleaks Documentation](https://github.com/gitleaks/gitleaks)
+docs/SECURITY_GITLEAKS.md:71:- [Gitleaks Configuration Reference](https://github.com/gitleaks/gitleaks)
+docs/QUALITY_INFRASTRUCTURE.md:74:wget https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
