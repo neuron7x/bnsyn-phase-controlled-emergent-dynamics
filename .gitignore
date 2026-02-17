@@ -40,3 +40,6 @@ PR_SUMMARY.md
 wheelhouse/
 
 artifacts/wheelhouse_report.json
+
+# Local tool bootstrap cache
+.tools/

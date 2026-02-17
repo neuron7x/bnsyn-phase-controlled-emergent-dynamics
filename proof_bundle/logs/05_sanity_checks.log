@@ -1,0 +1,12 @@
+$ python -m scripts.ensure_gitleaks -- --help
+8.24.3
+Gitleaks scans code, past or present, for secrets
+
+Usage:
+  gitleaks [command]
+[exit:0]
+$ python - <<"PY" ... parse workflow yaml
+  File "<stdin>", line 3
+    for p in [Path(.github/workflows/docs.yml), Path(.github/workflows/ci-pr-atomic.yml)]:
+                   ^
+SyntaxError: invalid syntax

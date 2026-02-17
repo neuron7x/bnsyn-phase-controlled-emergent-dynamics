@@ -1,0 +1,242 @@
+$ artifacts/audit/.venv/bin/python -m pytest --version
+pytest 9.0.2
+[exit:0]
+$ artifacts/audit/.venv/bin/python -m pytest --markers
+@pytest.mark.smoke: fast critical-path tests
+
+@pytest.mark.validation: slow statistical/large-N validation tests (excluded from CI by default)
+
+@pytest.mark.benchmark: benchmark regression tests (excluded from mutation runs)
+
+@pytest.mark.performance: performance regression tests with timing assertions
+
+@pytest.mark.integration: integration tests requiring multiple components
+
+@pytest.mark.property: property-based tests using Hypothesis
+
+@pytest.mark.chaos: chaos engineering tests with fault injection
+
+@pytest.mark.hypothesis: Tests which use hypothesis.
+
+@pytest.mark.no_cover: disable coverage for this test.
+
+@pytest.mark.filterwarnings(warning): add a warning filter to the given test. see https://docs.pytest.org/en/stable/how-to/capture-warnings.html#pytest-mark-filterwarnings 
+
+@pytest.mark.skip(reason=None): skip the given test function with an optional reason. Example: skip(reason="no way of currently testing this") skips the test.
+
+@pytest.mark.skipif(condition, ..., *, reason=...): skip the given test function if any of the conditions evaluate to True. Example: skipif(sys.platform == 'win32') skips the test if we are on the win32 platform. See https://docs.pytest.org/en/stable/reference/reference.html#pytest-mark-skipif
+
+@pytest.mark.xfail(condition, ..., *, reason=..., run=True, raises=None, strict=strict_xfail): mark the test function as an expected failure if any of the conditions evaluate to True. Optionally specify a reason for better reporting and run=False if you don't even want to execute the test function. If only specific exception(s) are expected, you can list them in raises, and if the test fails in other ways, it will be reported as a true failure. See https://docs.pytest.org/en/stable/reference/reference.html#pytest-mark-xfail
+
+@pytest.mark.parametrize(argnames, argvalues): call a test function multiple times passing in different arguments in turn. argvalues generally needs to be a list of values if argnames specifies only one name or a list of tuples of values if argnames specifies multiple names. Example: @parametrize('arg1', [1,2]) would lead to two calls of the decorated test function, one with arg1=1 and another with arg1=2.see https://docs.pytest.org/en/stable/how-to/parametrize.html for more info and examples.
+
+@pytest.mark.usefixtures(fixturename1, fixturename2, ...): mark tests as needing all of the specified fixtures. see https://docs.pytest.org/en/stable/explanation/fixtures.html#usefixtures 
+
+@pytest.mark.tryfirst: mark a hook implementation function such that the plugin machinery will try to call it first/as early as possible. DEPRECATED, use @pytest.hookimpl(tryfirst=True) instead.
+
+@pytest.mark.trylast: mark a hook implementation function such that the plugin machinery will try to call it last/as late as possible. DEPRECATED, use @pytest.hookimpl(trylast=True) instead.
+
+[exit:0]
+$ artifacts/audit/.venv/bin/python -m pytest --collect-only -q
+[Hypothesis] Using default profile
+tests/benchmarks/test_regression.py: 3
+tests/properties/test_adex_properties.py: 10
+tests/properties/test_hypothesis_profiles.py: 2
+tests/properties/test_manifest_tooling_properties.py: 3
+tests/properties/test_properties_bnsyn.py: 7
+tests/properties/test_properties_determinism.py: 2
+tests/properties/test_validation_inputs_properties.py: 1
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_claims_enforcement.py: 3
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_declarative.py: 7
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_integration_experiment_flow.py: 1
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tooling.py: 3
+tests/test_manifest_tooling_regression.py: 4
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_quickstart_contract_validator.py: 4
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_governed_docs_script.py: 1
+tests/test_scan_placeholders.py: 6
+tests/test_schema_contracts.py: 2
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_sync_required_status_contexts.py: 4
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_bibliography_script.py: 4
+tests/test_validate_calibration_summary.py: 3
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_long_running_triggers.py: 27
+tests/test_validate_pr_gates.py: 6
+tests/test_validate_required_checks.py: 8
+tests/test_validate_status_claims.py: 3
+tests/test_validate_workflow_contracts.py: 6
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_verify_hypothesis_v2.py: 2
+tests/validation/test_viz_dashboard.py: 5
+
+[exit:0]
+$ timeout 600 bash -lc "source artifacts/audit/.venv/bin/activate && make test-gate"
+python -m pytest -m "not (validation or property)" -q
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+.....................................ss....ss........................... [ 41%]
+........................................................................ [ 51%]
+........................................................................ [ 62%]
+........................................................................ [ 72%]
+........................................................................ [ 82%]
+........................................................................ [ 93%]
+...............................................                          [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[exit:0]
+gate_duration_seconds=46
+$ artifacts/audit/.venv/bin/python -m pytest -m smoke -q
+....ss....ss..                                                           [100%]
+[exit:0]

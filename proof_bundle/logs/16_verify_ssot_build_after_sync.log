@@ -1,0 +1,65 @@
+$ make ssot
+python -m scripts.validate_bibliography
+OK: bibliography SSOT validated.
+  Bibkeys: 31
+  Mapping entries: 26
+  Claim IDs: 26
+  Lock entries: 31
+python -m scripts.validate_claims
+[claims-gate] OK: 26 claims validated; 22 normative.
+python -m scripts.scan_normative_tags
+OK: normative tag scan passed.
+python -m scripts.validate_pr_gates
+OK: pr_gates=4 workflows=29 validated
+python -m scripts.validate_required_status_contexts
+OK: required_status_contexts=13 validated
+python -m scripts.sync_required_status_contexts --check
+OK: /workspace/bnsyn-phase-controlled-emergent-dynamics/.github/REQUIRED_STATUS_CONTEXTS.yml already up to date (13 contexts)
+make inventory-check
+make[1]: Entering directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+python tools/generate_inventory.py --check
+OK: INVENTORY.json is up to date
+make[1]: Leaving directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+python -m scripts.validate_api_maturity
+api_maturity validation passed
+make api-contract
+make[1]: Entering directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+API contract check passed
+make[1]: Leaving directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+make manifest-check
+make[1]: Entering directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+python -m tools.manifest generate
+manifest.generate computed_sha256=f42e985d4955e7ab2079a9b543de21d31a5a6a8753d5aeffddfda6b30c786228 rendered_sha256=c39f1e150011af49d256879fa5969308c79badc33b835952c815f20caef24cbd workflow_total=29 workflow_call_total=11 ci_manifest_reference_count=0
+python -m tools.manifest validate
+Manifest validation passed.
+git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+diff --git a/.github/REPO_MANIFEST.md b/.github/REPO_MANIFEST.md
+index a416ec3..0a87b51 100644
+--- a/.github/REPO_MANIFEST.md
++++ b/.github/REPO_MANIFEST.md
+@@ -2,7 +2,7 @@
+ 
+ - Manifest version: `1.0`
+ - Generated marker: `deterministic`
+-- Repository fingerprint: `6a514897d1a3a724f0483fae338a52757b48ec7e8fa46c21b57161e8d0bf70b6`
++- Repository fingerprint: `19758bd3093820883206b5b965d24994557f56c996ad2fc7ca7d41d0eed665b0`
+ - Required PR gates source: `.github/PR_GATES.yml`
+ - Required PR gates SHA-256: `cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9`
+ 
+diff --git a/manifest/repo_manifest.computed.json b/manifest/repo_manifest.computed.json
+index ff06ab3..118dbe4 100644
+--- a/manifest/repo_manifest.computed.json
++++ b/manifest/repo_manifest.computed.json
+@@ -67,7 +67,7 @@
+     ],
+     "generated_files_are_readonly": true
+   },
+-  "repo_ref": "6a514897d1a3a724f0483fae338a52757b48ec7e8fa46c21b57161e8d0bf70b6",
++  "repo_ref": "19758bd3093820883206b5b965d24994557f56c996ad2fc7ca7d41d0eed665b0",
+   "required_pr_gates": {
+     "required_pr_gate_total": 4,
+     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",
+make[1]: *** [Makefile:186: manifest-check] Error 1
+make[1]: Leaving directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'
+make: *** [Makefile:154: ssot] Error 2

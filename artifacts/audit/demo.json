@@ -1,0 +1,8 @@
+{
+  "demo": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  }
+}

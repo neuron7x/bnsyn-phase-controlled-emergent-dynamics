@@ -42,10 +42,10 @@ bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 
 ## Testing
 
-Install test dependencies before running any pytest command:
+Install test and docs dependencies before running local validation or docs builds:
 
 ```bash
-python -m pip install -e ".[test]"
+python -m pip install -e ".[test,docs]"
 ```
 
 Canonical local suites:
@@ -54,6 +54,8 @@ Canonical local suites:
 make test-gate
 make test-validation
 make test-property
+make docs
+make security
 ```
 
 ## Architecture at a glance
