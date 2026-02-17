@@ -28,15 +28,23 @@ ARTIFACT_PATH = Path("artifacts/demo.json")
 
 def _validate_payload(payload: object) -> dict[str, object]:
     if not isinstance(payload, dict):
-        raise ValueError("demo output must be a JSON object")
+        raise RuntimeError("demo output must be a JSON object")
     demo = payload.get("demo")
     if not isinstance(demo, dict) or not demo:
-        raise ValueError("demo output must contain a non-empty 'demo' object")
+        raise RuntimeError("demo output must contain a non-empty 'demo' object")
     return payload
 
 
+def _tail_40_lines(text: str) -> str:
+    lines = text.splitlines()
+    return "\n".join(lines[-40:])
+
+
 def main() -> int:
-    ARTIFACT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        ARTIFACT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        raise RuntimeError(f"cannot create artifacts directory: {exc}") from exc
 
     try:
         proc = subprocess.run(
@@ -48,18 +56,33 @@ def main() -> int:
         )
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(
-            f"quickstart demo command timed out after {DEMO_TIMEOUT_SECONDS}s"
+            f"timeout {DEMO_TIMEOUT_SECONDS}s: {' '.join(CANONICAL_DEMO_CMD)}"
+        ) from exc
+    except subprocess.CalledProcessError as exc:
+        combined = (exc.stdout or "") + "\n" + (exc.stderr or "")
+        raise RuntimeError(
+            f"command failed rc={exc.returncode}: {' '.join(CANONICAL_DEMO_CMD)} | {_tail_40_lines(combined).strip()}"
         ) from exc
 
-    payload = _validate_payload(json.loads(proc.stdout))
+    try:
+        payload = _validate_payload(json.loads(proc.stdout))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("demo command did not return valid JSON") from exc
 
-    with ARTIFACT_PATH.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, indent=2, sort_keys=True)
-        handle.write("\n")
+    try:
+        with ARTIFACT_PATH.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+    except OSError as exc:
+        raise RuntimeError(f"cannot write artifacts/demo.json: {exc}") from exc
 
     print("Demo artifact written: artifacts/demo.json")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except RuntimeError as exc:
+        print(f"quickstart demo FAILED: {exc}")
+        raise SystemExit(1)
