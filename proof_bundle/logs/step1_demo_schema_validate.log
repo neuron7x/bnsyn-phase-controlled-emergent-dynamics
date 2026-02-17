@@ -1,0 +1,8 @@
+$ . .venv_step1/bin/activate && python - <<"PY"
+import json
+from jsonschema import validate
+obj=json.load(open("proof_bundle/demo_step1.json"))
+validate(obj,{"type":"object","required":["demo"],"properties":{"demo":{"type":"object"}},"additionalProperties":True})
+print("schema-ok")
+PY
+schema-ok

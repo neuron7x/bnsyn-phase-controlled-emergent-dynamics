@@ -1,0 +1,3 @@
+$ git check-ignore -v artifacts/audit/BATTLE_READINESS_REPORT.md artifacts/audit/logs/step7_versions.log || true
+.gitignore:23:artifacts/	artifacts/audit/BATTLE_READINESS_REPORT.md
+.gitignore:23:artifacts/	artifacts/audit/logs/step7_versions.log

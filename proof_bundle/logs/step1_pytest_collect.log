@@ -1,0 +1,2 @@
+$ . .venv_step1/bin/activate && python -m pytest --collect-only -q
+/workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_step1/bin/python: No module named pytest

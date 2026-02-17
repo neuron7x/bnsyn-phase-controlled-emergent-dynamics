@@ -1,0 +1,42 @@
+$ nl -ba .github/workflows/ci-pr-atomic.yml | sed -n "100,115p"
+   100	            pyproject.toml
+   101	            requirements-lock.txt
+   102	      - name: Pin pip
+   103	        uses: ./.github/actions/pin-pip
+   104	      - name: Log pip version
+   105	        run: python -m pip --version
+   106	      - run: python -m pip install -e ".[security]"
+   107	      - name: Test determinism (run 1)
+   108	        id: run1
+   109	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+   110	      - name: Test determinism (run 2)
+   111	        id: run2
+   112	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+   113	      - name: Test determinism (run 3)
+   114	        id: run3
+   115	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+$ nl -ba .github/workflows/ci-pr-atomic.yml | sed -n "466,482p"
+   466	            requirements-lock.txt
+   467	      - name: Pin pip
+   468	        uses: ./.github/actions/pin-pip
+   469	      - name: Log pip version
+   470	        run: python -m pip --version
+   471	      - run: python -m pip install -e ".[dev,test]"
+   472	      - name: gitleaks
+   473	        run: make security
+   474	      - name: pip-audit
+   475	        run: |
+   476	          mkdir -p artifacts
+   477	          python -m pip_audit --desc --format json --output artifacts/pip-audit.json
+   478	      - name: bandit
+   479	        run: python -m bandit -r src/ -ll
+   480	      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   481	        if: always()
+   482	        with:
+$ git status --short
+?? proof_bundle/logs/step7_git_add.log
+?? proof_bundle/logs/step7_git_add_ci_fix.log
+?? proof_bundle/logs/step7_git_commit.log
+?? proof_bundle/logs/step7_git_commit_amend.log
+?? proof_bundle/logs/step7_line_numbers.log
+?? proof_bundle/logs/step7_post_amend_check.log

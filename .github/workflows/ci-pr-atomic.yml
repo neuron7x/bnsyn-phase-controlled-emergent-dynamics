@@ -103,7 +103,7 @@ jobs:
         uses: ./.github/actions/pin-pip
       - name: Log pip version
         run: python -m pip --version
-      - run: python -m pip install -e ".[dev,test]"
+      - run: python -m pip install -e ".[security]"
       - name: Test determinism (run 1)
         id: run1
         run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
@@ -430,7 +430,7 @@ jobs:
         uses: ./.github/actions/pin-pip
       - name: Log pip version
         run: python -m pip --version
-      - run: python -m pip install -e ".[dev,test]"
+      - run: python -m pip install -e ".[security]"
       - run: python -m scripts.validate_bibliography
       - run: python -m scripts.validate_claims
       - run: python -m scripts.scan_governed_docs
@@ -468,15 +468,15 @@ jobs:
         uses: ./.github/actions/pin-pip
       - name: Log pip version
         run: python -m pip --version
-      - run: python -m pip install -e ".[dev,test]"
+      - run: python -m pip install -e ".[security]"
       - name: gitleaks
         run: make security
       - name: pip-audit
         run: |
           mkdir -p artifacts
-          pip-audit --desc --format json --output artifacts/pip-audit.json
+          python -m pip_audit --desc --format json --output artifacts/pip-audit.json
       - name: bandit
-        run: bandit -r src/ -ll
+        run: python -m bandit -r src/ -ll
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

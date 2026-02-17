@@ -1,0 +1,228 @@
+$ . .venv_clean/bin/activate && python -m pip install -e ".[test,docs]" && make docs
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: hypothesis==6.151.5 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.151.5)
+Requirement already satisfied: pytest==9.0.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.2)
+Requirement already satisfied: pytest-cov==7.0.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (7.0.0)
+Requirement already satisfied: psutil==7.2.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (7.2.2)
+Requirement already satisfied: packaging==25.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (25.0)
+Requirement already satisfied: build==1.3.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.3.0)
+Requirement already satisfied: sphinx==9.0.4 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.4)
+Requirement already satisfied: sphinx-autodoc-typehints==3.6.1 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (3.6.1)
+Requirement already satisfied: myst-parser==5.0.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (5.0.0)
+Requirement already satisfied: furo==2025.12.19 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2025.12.19)
+Requirement already satisfied: sphinx-copybutton==0.5.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (0.5.2)
+Requirement already satisfied: pyproject_hooks in ./.venv_clean/lib/python3.12/site-packages (from build==1.3.0->bnsyn==0.2.0) (1.2.0)
+Requirement already satisfied: beautifulsoup4 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (4.14.3)
+Requirement already satisfied: sphinx-basic-ng>=1.0.0.beta2 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (1.0.0b2)
+Requirement already satisfied: pygments>=2.7 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (2.19.2)
+Requirement already satisfied: accessible-pygments>=0.0.5 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (0.0.5)
+Requirement already satisfied: sphinxcontrib-applehelp>=1.0.7 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-devhelp>=1.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-htmlhelp>=2.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.1.0)
+Requirement already satisfied: sphinxcontrib-jsmath>=1.0.1 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.0.1)
+Requirement already satisfied: sphinxcontrib-qthelp>=1.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-serializinghtml>=1.1.9 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: Jinja2>=3.1 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (3.1.6)
+Requirement already satisfied: docutils<0.23,>=0.20 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (0.22.4)
+Requirement already satisfied: snowballstemmer>=2.2 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (3.0.1)
+Requirement already satisfied: babel>=2.13 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.18.0)
+Requirement already satisfied: alabaster>=0.7.14 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.0.0)
+Requirement already satisfied: imagesize>=1.3 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.4.1)
+Requirement already satisfied: requests>=2.30.0 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.32.5)
+Requirement already satisfied: roman-numerals>=1.0.0 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (4.1.0)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.1.0 in ./.venv_clean/lib/python3.12/site-packages (from hypothesis==6.151.5->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: markdown-it-py~=4.0 in ./.venv_clean/lib/python3.12/site-packages (from myst-parser==5.0.0->bnsyn==0.2.0) (4.0.0)
+Requirement already satisfied: mdit-py-plugins~=0.5 in ./.venv_clean/lib/python3.12/site-packages (from myst-parser==5.0.0->bnsyn==0.2.0) (0.5.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: iniconfig>=1.0.1 in ./.venv_clean/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.3.0)
+Requirement already satisfied: pluggy<2,>=1.5 in ./.venv_clean/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (1.6.0)
+Requirement already satisfied: coverage>=7.10.6 in ./.venv_clean/lib/python3.12/site-packages (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->bnsyn==0.2.0) (7.13.4)
+Requirement already satisfied: mdurl~=0.1 in ./.venv_clean/lib/python3.12/site-packages (from markdown-it-py~=4.0->myst-parser==5.0.0->bnsyn==0.2.0) (0.1.2)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv_clean/lib/python3.12/site-packages (from Jinja2>=3.1->sphinx==9.0.4->bnsyn==0.2.0) (3.0.3)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (2026.1.4)
+Requirement already satisfied: soupsieve>=1.6.1 in ./.venv_clean/lib/python3.12/site-packages (from beautifulsoup4->furo==2025.12.19->bnsyn==0.2.0) (2.8.3)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4208 sha256=d66af8c42347b1e5c50fd77bc1f559fb24b17775b3472709445aa23d9036b468
+  Stored in directory: /tmp/pip-ephem-wheel-cache-mmarfahg/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+python -m pip install -e ".[docs]"
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: sphinx==9.0.4 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.4)
+Requirement already satisfied: sphinx-autodoc-typehints==3.6.1 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (3.6.1)
+Requirement already satisfied: myst-parser==5.0.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (5.0.0)
+Requirement already satisfied: furo==2025.12.19 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2025.12.19)
+Requirement already satisfied: sphinx-copybutton==0.5.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (0.5.2)
+Requirement already satisfied: beautifulsoup4 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (4.14.3)
+Requirement already satisfied: sphinx-basic-ng>=1.0.0.beta2 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (1.0.0b2)
+Requirement already satisfied: pygments>=2.7 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (2.19.2)
+Requirement already satisfied: accessible-pygments>=0.0.5 in ./.venv_clean/lib/python3.12/site-packages (from furo==2025.12.19->bnsyn==0.2.0) (0.0.5)
+Requirement already satisfied: sphinxcontrib-applehelp>=1.0.7 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-devhelp>=1.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-htmlhelp>=2.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.1.0)
+Requirement already satisfied: sphinxcontrib-jsmath>=1.0.1 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.0.1)
+Requirement already satisfied: sphinxcontrib-qthelp>=1.0.6 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: sphinxcontrib-serializinghtml>=1.1.9 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.0.0)
+Requirement already satisfied: Jinja2>=3.1 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (3.1.6)
+Requirement already satisfied: docutils<0.23,>=0.20 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (0.22.4)
+Requirement already satisfied: snowballstemmer>=2.2 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (3.0.1)
+Requirement already satisfied: babel>=2.13 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.18.0)
+Requirement already satisfied: alabaster>=0.7.14 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.0.0)
+Requirement already satisfied: imagesize>=1.3 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (1.4.1)
+Requirement already satisfied: requests>=2.30.0 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (2.32.5)
+Requirement already satisfied: roman-numerals>=1.0.0 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (4.1.0)
+Requirement already satisfied: packaging>=23.0 in ./.venv_clean/lib/python3.12/site-packages (from sphinx==9.0.4->bnsyn==0.2.0) (25.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: markdown-it-py~=4.0 in ./.venv_clean/lib/python3.12/site-packages (from myst-parser==5.0.0->bnsyn==0.2.0) (4.0.0)
+Requirement already satisfied: mdit-py-plugins~=0.5 in ./.venv_clean/lib/python3.12/site-packages (from myst-parser==5.0.0->bnsyn==0.2.0) (0.5.0)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: mdurl~=0.1 in ./.venv_clean/lib/python3.12/site-packages (from markdown-it-py~=4.0->myst-parser==5.0.0->bnsyn==0.2.0) (0.1.2)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv_clean/lib/python3.12/site-packages (from Jinja2>=3.1->sphinx==9.0.4->bnsyn==0.2.0) (3.0.3)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.30.0->sphinx==9.0.4->bnsyn==0.2.0) (2026.1.4)
+Requirement already satisfied: soupsieve>=1.6.1 in ./.venv_clean/lib/python3.12/site-packages (from beautifulsoup4->furo==2025.12.19->bnsyn==0.2.0) (2.8.3)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4208 sha256=f97f011aa125f65c3817fa357a911dbd74a945f4e6ad1467a81088adbb6a466d
+  Stored in directory: /tmp/pip-ephem-wheel-cache-792xyhbe/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+python -m sphinx -b html docs docs/_build/html
+Running Sphinx v9.0.4
+loading translations [en]... done
+loading pickled environment... The configuration has changed (1 option: 'pygments_dark_style')
+done
+myst v5.0.0: MdParserConfig(commonmark_only=False, gfm_only=False, enable_extensions={'fieldlist', 'deflist', 'colon_fence'}, disable_syntax=[], all_links_external=False, links_external_new_tab=False, url_schemes=('http', 'https', 'mailto', 'ftp'), ref_domains=None, fence_as_directive=set(), number_code_blocks=[], title_to_header=False, heading_anchors=0, heading_slug_func=None, html_meta={}, footnote_sort=True, footnote_transition=True, words_per_minute=200, substitutions={}, linkify_fuzzy_links=True, dmath_allow_labels=True, dmath_allow_space=True, dmath_allow_digits=True, dmath_double_inline=False, update_mathjax=True, mathjax_classes='tex2jax_process|mathjax_process|math|output_area', enable_checkboxes=False, suppress_warnings=[], highlight_code_blocks=True)
+[autosummary] generating autosummary for: ACTIONS_TEST_PROTOCOL.md, API_CONTRACT.md, API_STABILITY.md, ARCHITECTURE.md, ARCHITECTURE_INVARIANTS.md, ASSUMPTIONS.md, AUDIT_FINDINGS.md, AUDIT_LEDGER.md, AUDIT_TASKS_2026-02-15.md, BENCHMARKS.md, ..., scripts/validate-required-checks.md, scripts/validate-required-status-contexts.md, scripts/validate-status-claims.md, scripts/validate-workflow-contracts.md, scripts/verify-equivalence.md, scripts/verify-formal-constants.md, scripts/verify-reproducible-artifacts.md, scripts/visualize-experiment.md, sleep_stack.md, usage_workflows.md
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 0 source files that are out of date
+updating environment: 0 added, 0 changed, 0 removed
+reading sources... 
+looking for now-outdated files... none found
+no targets are out of date.
+preparing documents... done
+copying assets... 
+copying downloadable files... [ 20%] ../../claims/claims.yml
+copying downloadable files... [ 40%] ../../bibliography/mapping.yml
+copying downloadable files... [ 60%] ../../bibliography/sources.lock
+copying downloadable files... [ 80%] ../../.github/workflows/ci-smoke.yml
+copying downloadable files... [100%] ../../.github/workflows/ci-validation.yml
+
+copying static files... 
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/language_data.js
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/basic.css
+Writing evaluated template result to /workspace/bnsyn-phase-controlled-emergent-dynamics/docs/_build/html/_static/documentation_options.js
+copying static files: done
+copying extra files... 
+copying extra files: done
+copying assets: done
+generating indices... genindex py-modindex done
+highlighting module code... [  2%] bnsyn.calibration.accuracy_speed
+highlighting module code... [  5%] bnsyn.calibration.fit
+highlighting module code... [  7%] bnsyn.cli
+highlighting module code... [ 10%] bnsyn.config
+highlighting module code... [ 12%] bnsyn.connectivity.sparse
+highlighting module code... [ 15%] bnsyn.consolidation.dual_weight
+highlighting module code... [ 17%] bnsyn.criticality.analysis
+highlighting module code... [ 20%] bnsyn.criticality.branching
+highlighting module code... [ 22%] bnsyn.criticality.phase_transition
+highlighting module code... [ 24%] bnsyn.emergence.crystallizer
+highlighting module code... [ 27%] bnsyn.energy.regularization
+highlighting module code... [ 29%] bnsyn.experiments.declarative
+highlighting module code... [ 32%] bnsyn.incremental
+highlighting module code... [ 34%] bnsyn.memory.consolidator
+highlighting module code... [ 37%] bnsyn.memory.ledger
+highlighting module code... [ 39%] bnsyn.memory.trace
+highlighting module code... [ 41%] bnsyn.neuron.adex
+highlighting module code... [ 44%] bnsyn.numerics.integrators
+highlighting module code... [ 46%] bnsyn.plasticity.stdp
+highlighting module code... [ 49%] bnsyn.plasticity.three_factor
+highlighting module code... [ 51%] bnsyn.production.adex
+highlighting module code... [ 54%] bnsyn.production.connectivity
+highlighting module code... [ 56%] bnsyn.production.jax_backend
+highlighting module code... [ 59%] bnsyn.provenance.manifest
+highlighting module code... [ 61%] bnsyn.provenance.manifest_builder
+highlighting module code... [ 63%] bnsyn.rng
+highlighting module code... [ 66%] bnsyn.schemas.experiment
+highlighting module code... [ 68%] bnsyn.sim.network
+highlighting module code... [ 71%] bnsyn.sleep.cycle
+highlighting module code... [ 73%] bnsyn.sleep.replay
+highlighting module code... [ 76%] bnsyn.sleep.stages
+highlighting module code... [ 78%] bnsyn.synapse.conductance
+highlighting module code... [ 80%] bnsyn.temperature.schedule
+highlighting module code... [ 83%] bnsyn.testing.faults
+highlighting module code... [ 85%] bnsyn.tools.benchmark_sleep_stack_scale
+highlighting module code... [ 88%] bnsyn.tools.run_scaled_sleep_stack
+highlighting module code... [ 90%] bnsyn.validation.inputs
+highlighting module code... [ 93%] bnsyn.vcg
+highlighting module code... [ 95%] bnsyn.viz.dashboard
+highlighting module code... [ 98%] bnsyn.viz.interactive
+highlighting module code... [100%] contracts.math_contracts
+
+writing additional pages... search done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded.
+
+The HTML pages are in docs/_build/html.
+Docs built at docs/_build/html

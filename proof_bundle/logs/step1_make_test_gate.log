@@ -1,0 +1,4 @@
+$ . .venv_step1/bin/activate && make test-gate
+python -m pytest -m "not (validation or property)" -q
+/workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_step1/bin/python: No module named pytest
+make: *** [Makefile:55: test-gate] Error 1

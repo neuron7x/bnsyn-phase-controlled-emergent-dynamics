@@ -1,0 +1,1 @@
+$ . .venv_clean/bin/activate && bnsyn demo --steps 20 --dt-ms 0.1 --seed 123 --N 16 > proof_bundle/demo_clean.json

@@ -1,0 +1,38 @@
+$ rg -n "make docs|make security|\[test,docs\]|pip install -e" .github/workflows README.md SECURITY.md
+SECURITY.md:11:Run `make security` to bootstrap pinned gitleaks and execute repository scanning with `.gitleaks.toml`.
+README.md:38:python -m pip install -e .
+README.md:48:python -m pip install -e ".[test,docs]"
+README.md:57:make docs
+README.md:58:make security
+.github/workflows/_reusable_validation_tests.yml:68:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_ssot.yml:32:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-smoke.yml:33:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/quality-mutation.yml:45:          python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_formal_science.yml:351:        run: python -m pip install -e ".[dev,test,viz]"
+.github/workflows/physics-equivalence.yml:36:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_property_tests.yml:76:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_quality.yml:44:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_quality.yml:122:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_quality.yml:195:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_benchmarks.yml:59:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_benchmarks.yml:140:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_benchmarks.yml:220:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/_reusable_benchmarks.yml:278:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/release-pipeline.yml:38:          python -m pip install -e ".[dev,test]" build
+.github/workflows/ci-pr-atomic.yml:106:      - run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-pr-atomic.yml:175:      - run: python -m pip install -e ".[test]"
+.github/workflows/ci-pr-atomic.yml:225:      - run: python -m pip install -e ".[dev,test]" build
+.github/workflows/ci-pr-atomic.yml:260:      - run: python -m pip install -e ".[dev,test]" build
+.github/workflows/ci-pr-atomic.yml:287:        run: python -m pip install -e ".[test]"
+.github/workflows/ci-pr-atomic.yml:371:      - run: python -m pip install -e ".[test,docs]"
+.github/workflows/ci-pr-atomic.yml:373:        run: make docs
+.github/workflows/ci-pr-atomic.yml:433:      - run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-pr-atomic.yml:471:      - run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-pr-atomic.yml:473:        run: make security
+.github/workflows/_reusable_chaos_tests.yml:48:        run: python -m pip install -e ".[dev,test]"
+.github/workflows/docs.yml:35:        run: python -m pip install -e ".[test,docs]"
+.github/workflows/docs.yml:38:        run: make docs
+.github/workflows/dependency-watch.yml:46:          python -m pip install -e ".[dev,test]"
+.github/workflows/math-quality-gate.yml:23:          python -m pip install -e ".[test]"
+.github/workflows/_reusable_pytest.yml:57:        run: python -m pip install -e ".[test]"
+.github/workflows/_reusable_pytest.yml:193:              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test]\""

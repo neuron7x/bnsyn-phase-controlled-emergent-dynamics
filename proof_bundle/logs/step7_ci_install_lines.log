@@ -1,0 +1,10 @@
+$ rg -n "pip install -e \"\.\[.*\]\"" .github/workflows/ci-pr-atomic.yml | sed -n "10,20p"
+$ rg -n "pip install -e" .github/workflows/ci-pr-atomic.yml
+106:      - run: python -m pip install -e ".[security]"
+175:      - run: python -m pip install -e ".[test]"
+225:      - run: python -m pip install -e ".[dev,test]" build
+260:      - run: python -m pip install -e ".[dev,test]" build
+287:        run: python -m pip install -e ".[test]"
+371:      - run: python -m pip install -e ".[test,docs]"
+433:      - run: python -m pip install -e ".[dev,test]"
+471:      - run: python -m pip install -e ".[dev,test]"

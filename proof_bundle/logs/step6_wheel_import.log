@@ -1,0 +1,2 @@
+$ . .venv_wheel/bin/activate && python -c "import bnsyn; print(bnsyn.__version__)"
+0.2.0

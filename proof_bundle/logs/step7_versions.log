@@ -1,0 +1,8 @@
+$ . .venv_clean/bin/activate && python --version
+Python 3.12.12
+$ . .venv_clean/bin/activate && python -m pip --version
+pip 26.0.1 from /workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_clean/lib/python3.12/site-packages/pip (python 3.12)
+$ uname -a
+Linux b532df96cc4a 6.12.47 #1 SMP Mon Oct 27 10:01:15 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+$ git rev-parse HEAD
+e4f6be9ab7a3f5f476034d4feb2a538fb43959d4

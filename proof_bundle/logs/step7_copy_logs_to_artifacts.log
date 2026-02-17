@@ -1,0 +1,1 @@
+$ mkdir -p artifacts/audit/logs && cp -f proof_bundle/logs/step*.log artifacts/audit/logs/

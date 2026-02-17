@@ -1,0 +1,14 @@
+$ . .venv_step1/bin/activate && python -m bnsyn --help
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit

@@ -1,0 +1,115 @@
+$ . .venv_clean/bin/activate && make security
+python -m pip install -e ".[security]"
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: bandit==1.9.3 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.9.3)
+Requirement already satisfied: pip-audit==2.10.0 in ./.venv_clean/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.10.0)
+Requirement already satisfied: stevedore>=1.20.0 in ./.venv_clean/lib/python3.12/site-packages (from bandit==1.9.3->bnsyn==0.2.0) (5.6.0)
+Requirement already satisfied: rich in ./.venv_clean/lib/python3.12/site-packages (from bandit==1.9.3->bnsyn==0.2.0) (14.3.2)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv_clean/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: CacheControl>=0.13.0 in ./.venv_clean/lib/python3.12/site-packages (from CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (0.14.4)
+Requirement already satisfied: cyclonedx-python-lib<12,>=5 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (11.6.0)
+Requirement already satisfied: packaging>=23.0.0 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (25.0)
+Requirement already satisfied: pip-api>=0.0.28 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (0.0.34)
+Requirement already satisfied: pip-requirements-parser>=32.0.0 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (32.0.1)
+Requirement already satisfied: requests>=2.31.0 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (2.32.5)
+Requirement already satisfied: tomli>=2.2.1 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: tomli-w>=1.2.0 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (1.2.0)
+Requirement already satisfied: platformdirs>=4.2.0 in ./.venv_clean/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (4.9.2)
+Requirement already satisfied: annotated-types>=0.6.0 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in ./.venv_clean/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: license-expression<31,>=30 in ./.venv_clean/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (30.4.4)
+Requirement already satisfied: packageurl-python<2,>=0.11 in ./.venv_clean/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (0.17.6)
+Requirement already satisfied: py-serializable<3.0.0,>=2.1.0 in ./.venv_clean/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (2.1.0)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.4.0 in ./.venv_clean/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: boolean.py>=4.0 in ./.venv_clean/lib/python3.12/site-packages (from license-expression<31,>=30->cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (5.0)
+Requirement already satisfied: defusedxml<0.8.0,>=0.7.1 in ./.venv_clean/lib/python3.12/site-packages (from py-serializable<3.0.0,>=2.1.0->cyclonedx-python-lib<12,>=5->pip-audit==2.10.0->bnsyn==0.2.0) (0.7.1)
+Requirement already satisfied: msgpack<2.0.0,>=0.5.2 in ./.venv_clean/lib/python3.12/site-packages (from CacheControl>=0.13.0->CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (1.1.2)
+Requirement already satisfied: filelock>=3.8.0 in ./.venv_clean/lib/python3.12/site-packages (from CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.24.2)
+Requirement already satisfied: pip in ./.venv_clean/lib/python3.12/site-packages (from pip-api>=0.0.28->pip-audit==2.10.0->bnsyn==0.2.0) (26.0.1)
+Requirement already satisfied: pyparsing in ./.venv_clean/lib/python3.12/site-packages (from pip-requirements-parser>=32.0.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.3.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in ./.venv_clean/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (2026.1.4)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./.venv_clean/lib/python3.12/site-packages (from rich->bandit==1.9.3->bnsyn==0.2.0) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in ./.venv_clean/lib/python3.12/site-packages (from rich->bandit==1.9.3->bnsyn==0.2.0) (2.19.2)
+Requirement already satisfied: mdurl~=0.1 in ./.venv_clean/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich->bandit==1.9.3->bnsyn==0.2.0) (0.1.2)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4208 sha256=bee850ae221d73abd2569814e32dbc24c7ff4bf4c9803efdf2a45072b40f1cc4
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ucgglbf2/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+8.24.3
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+7:23PM INF 553 commits scanned.
+7:23PM INF scanned ~13930338 bytes (13.93 MB) in 945ms
+7:23PM INF no leaks found
+[gitleaks] binary=.tools/gitleaks/v8.24.3/gitleaks
+[gitleaks] cmd=.tools/gitleaks/v8.24.3/gitleaks detect --redact --verbose --source=.
+python -m pip_audit --desc
+No known vulnerabilities found
+Name  Skip Reason
+----- --------------------------------------------------------------------
+bnsyn Dependency not found on PyPI and could not be audited: bnsyn (0.2.0)
+python -m bandit -r src/ -ll
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.12
+Working... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Run started:2026-02-17 19:23:51.800515+00:00
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 8359
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 6
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):

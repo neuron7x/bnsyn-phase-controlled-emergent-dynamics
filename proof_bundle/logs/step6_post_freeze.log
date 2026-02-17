@@ -1,0 +1,1 @@
+$ . .venv_clean/bin/activate && python -m pip freeze > proof_bundle/post_install_freeze.txt

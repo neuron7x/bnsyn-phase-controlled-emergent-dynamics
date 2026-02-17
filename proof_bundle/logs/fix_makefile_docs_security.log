@@ -1,0 +1,3 @@
+$ apply_patch <<"PATCH" ...
+Success. Updated the following files:
+M Makefile

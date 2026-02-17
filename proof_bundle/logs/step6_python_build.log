@@ -1,0 +1,2 @@
+$ . .venv_clean/bin/activate && python -m build
+/workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_clean/bin/python: No module named build

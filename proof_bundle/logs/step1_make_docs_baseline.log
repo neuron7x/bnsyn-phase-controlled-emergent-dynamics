@@ -1,0 +1,4 @@
+$ . .venv_step1/bin/activate && make docs
+python -m sphinx -b html docs docs/_build/html
+/workspace/bnsyn-phase-controlled-emergent-dynamics/.venv_step1/bin/python: No module named sphinx
+make: *** [Makefile:173: docs] Error 1

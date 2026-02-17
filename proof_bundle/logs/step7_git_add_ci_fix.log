@@ -1,0 +1,1 @@
+$ git add .github/workflows/ci-pr-atomic.yml proof_bundle/logs/step7_ci_install_lines.log proof_bundle/logs/step7_fix_ci_security_line471.log

@@ -1,0 +1,324 @@
+$ nl -ba pyproject.toml | sed -n "1,130p"
+     1	[project]
+     2	name = "bnsyn"
+     3	version = "0.2.0"
+     4	description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+     5	requires-python = ">=3.11"
+     6	readme = "README.md"
+     7	license = "MIT"
+     8	license-files = ["LICENSE"]
+     9	authors = [{name="BN-Syn Contributors"}]
+    10	dependencies = [
+    11	  "numpy==2.4.1",
+    12	  "pydantic==2.12.5",
+    13	  "scipy==1.17.0",
+    14	  "jsonschema==4.26.0",
+    15	  "joblib==1.4.2",
+    16	  "pyyaml==6.0.3",
+    17	]
+    18	
+    19	[project.optional-dependencies]
+    20	dev = [
+    21	  "hypothesis==6.151.5",
+    22	  "pytest==9.0.2",
+    23	  "pytest-cov==7.0.0",
+    24	  "ruff==0.15.0",
+    25	  "mypy==1.19.1",
+    26	  "pylint==3.3.5",
+    27	  "pydocstyle==6.3.0",
+    28	  "bandit==1.9.3",
+    29	  "validate-pyproject==0.25",
+    30	  "pre-commit==4.5.1",
+    31	  "pip-audit==2.10.0",
+    32	  "psutil==7.2.2",
+    33	  "packaging==25.0",
+    34	  "build==1.3.0",
+    35	]
+    36	
+    37	test = [
+    38	  "hypothesis==6.151.5",
+    39	  "pytest==9.0.2",
+    40	  "pytest-cov==7.0.0",
+    41	  "psutil==7.2.2",
+    42	  "packaging==25.0",
+    43	  "build==1.3.0",
+    44	]
+    45	
+    46	
+    47	docs = [
+    48	  "sphinx==9.0.4",
+    49	  "sphinx-autodoc-typehints==3.6.1",
+    50	  "myst-parser==5.0.0",
+    51	  "furo==2025.12.19",
+    52	  "sphinx-copybutton==0.5.2",
+    53	]
+    54	
+    55	security = [
+    56	  "bandit==1.9.3",
+    57	  "pip-audit==2.10.0",
+    58	]
+    59	
+    60	viz = [
+    61	  "matplotlib==3.10.8",
+    62	  "pillow==12.1.0",
+    63	  "streamlit==1.42.1",
+    64	  "plotly==6.5.2",
+    65	]
+    66	
+    67	jax = [
+    68	  "jax==0.6.0",
+    69	  "jaxlib==0.9.0",
+    70	]
+    71	
+    72	torch = [
+    73	  "torch==2.10.0",
+    74	]
+    75	
+    76	accelerators = [
+    77	  "bnsyn[jax]",
+    78	  "bnsyn[torch]",
+    79	]
+    80	
+    81	[project.scripts]
+    82	bnsyn = "bnsyn.cli:main"
+    83	
+    84	[build-system]
+    85	requires = ["setuptools==79.0.1"]
+    86	build-backend = "setuptools.build_meta"
+    87	
+    88	[tool.setuptools]
+    89	package-dir = {"" = "src"}
+    90	
+    91	[tool.pytest.ini_options]
+    92	addopts = "-q --strict-markers"
+    93	testpaths = ["tests"]
+    94	markers = [
+    95	  "smoke: fast critical-path tests",
+    96	  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+    97	  "benchmark: benchmark regression tests (excluded from mutation runs)",
+    98	  "performance: performance regression tests with timing assertions",
+    99	  "integration: integration tests requiring multiple components",
+   100	  "property: property-based tests using Hypothesis",
+   101	  "chaos: chaos engineering tests with fault injection",
+   102	]
+   103	
+   104	[tool.hypothesis]
+   105	derandomize = true
+   106	
+   107	[tool.hypothesis.profiles.ci]
+   108	max_examples = 200
+   109	deadline = 10000
+   110	print_blob = true
+   111	
+   112	[tool.hypothesis.profiles.quick]
+   113	max_examples = 100
+   114	deadline = 5000
+   115	print_blob = true
+   116	
+   117	[tool.hypothesis.profiles.thorough]
+   118	max_examples = 1000
+   119	deadline = 20000
+   120	print_blob = true
+   121	
+   122	[tool.ruff]
+   123	line-length = 100
+   124	target-version = "py311"
+   125	
+   126	[tool.mypy]
+   127	python_version = "3.11"
+   128	strict = true
+   129	warn_return_any = true
+   130	disallow_untyped_defs = true
+$ nl -ba Makefile | sed -n "160,190p"
+   160	docs-evidence:
+   161		python -m scripts.generate_evidence_coverage
+   162	
+   163	security:
+   164		python -m pip install -e ".[security]"
+   165		python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+   166		python -m pip_audit --desc
+   167		python -m bandit -r src/ -ll
+   168	
+   169	check: format lint mypy coverage ssot security
+   170		@echo "✅ All checks passed"
+   171	
+   172	docs:
+   173		python -m pip install -e ".[docs]"
+   174		python -m sphinx -b html docs docs/_build/html
+   175		@echo "Docs built at docs/_build/html"
+   176	
+   177	release-readiness:
+   178		python -m scripts.release_readiness
+   179	
+   180	manifest:
+   181		python -m tools.manifest generate
+   182	
+   183	manifest-validate:
+   184		python -m tools.manifest validate
+   185	
+   186	manifest-check: manifest manifest-validate
+   187		git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+   188	
+   189	inventory:
+   190		python tools/generate_inventory.py
+$ nl -ba README.md | sed -n "40,90p"
+    40	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+    41	```
+    42	
+    43	## Testing
+    44	
+    45	Install test and docs dependencies before running local validation or docs builds:
+    46	
+    47	```bash
+    48	python -m pip install -e ".[test,docs]"
+    49	```
+    50	
+    51	Install security tooling dependencies before running the reproducible security gate:
+    52	
+    53	```bash
+    54	python -m pip install -e ".[security]"
+    55	```
+    56	
+    57	Canonical local suites:
+    58	
+    59	```bash
+    60	make test-gate
+    61	make test-validation
+    62	make test-property
+    63	make docs
+    64	make security
+    65	```
+    66	
+    67	## Architecture at a glance
+    68	
+    69	```mermaid
+    70	flowchart LR
+    71	  A["src/bnsyn/cli.py"] --> B["src/bnsyn/"]
+    72	  B --> C["experiments/"]
+    73	  C --> D["results/ + figures/"]
+    74	  E["specs/ + schemas/ + claims/ + docs/"] --> F["scripts/"]
+    75	  F --> G[".github/workflows/"]
+    76	```
+    77	
+    78	### Key Paths
+    79	
+    80	- CLI: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+    81	- Runtime: `src/bnsyn/` (see path/src/bnsyn)
+    82	- Experiments: `experiments/` (see path/experiments)
+    83	- Artifacts: `results/`, `figures/` (see path/results) (see path/figures)
+    84	- SSOT: `specs/`, `schemas/`, `claims/`, `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/docs)
+    85	- Validation: `scripts/` (see path/scripts)
+    86	- CI: `.github/workflows/` (see path/.github/workflows)
+    87	
+    88	## Status
+    89	
+    90	This project is research-grade / pre-production. No battle usage claimed.
+$ nl -ba SECURITY.md | sed -n "1,80p"
+     1	# Security
+     2	
+     3	This repository is a research-grade simulator. Do not deploy it as a security boundary.
+     4	
+     5	If you discover a vulnerability (e.g., supply-chain risk in workflows), open a private report
+     6	via the repository's security advisory feature (GitHub Security Advisories).
+     7	
+     8	
+     9	## Local Secret Scan
+    10	
+    11	Run the reproducible security gate with pinned Python dependencies and pinned gitleaks bootstrap:
+    12	
+    13	```bash
+    14	python -m pip install -e ".[security]"
+    15	make security
+    16	```
+$ nl -ba .github/workflows/ci-pr-atomic.yml | sed -n "460,490p"
+   460	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+   461	        with:
+   462	          python-version: ${{ inputs['python-version'] || '3.11' }}
+   463	          cache: "pip"
+   464	          cache-dependency-path: |
+   465	            pyproject.toml
+   466	            requirements-lock.txt
+   467	      - name: Pin pip
+   468	        uses: ./.github/actions/pin-pip
+   469	      - name: Log pip version
+   470	        run: python -m pip --version
+   471	      - run: python -m pip install -e ".[dev,test]"
+   472	      - name: gitleaks
+   473	        run: make security
+   474	      - name: pip-audit
+   475	        run: |
+   476	          mkdir -p artifacts
+   477	          python -m pip_audit --desc --format json --output artifacts/pip-audit.json
+   478	      - name: bandit
+   479	        run: python -m bandit -r src/ -ll
+   480	      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   481	        if: always()
+   482	        with:
+   483	          name: security-report-${{ github.sha }}
+   484	          path: artifacts/pip-audit.json
+   485	          if-no-files-found: ignore
+   486	          retention-days: 30
+   487	
+   488	  codeql-pr:
+   489	    if: >-
+   490	      github.event_name == 'pull_request' &&
+$ nl -ba proof_bundle/BATTLE_READINESS_REPORT.md | sed -n "1,220p"
+     1	# Battle Readiness Report
+     2	
+     3	Status: PASS
+     4	
+     5	## Versions
+     6	- Python: 3.12.12 (`proof_bundle/logs/step7_versions.log`)
+     7	- pip: 26.0.1 (`proof_bundle/logs/step7_versions.log`)
+     8	- OS: Linux 6.12.47 x86_64 (`proof_bundle/logs/step7_versions.log`)
+     9	- Git SHA: e4f6be9ab7a3f5f476034d4feb2a538fb43959d4 (`proof_bundle/logs/step7_versions.log`)
+    10	
+    11	## Scorecard (A–G)
+    12	- A) Installability — PASS  
+    13	  Evidence: editable install baseline and extras install (`proof_bundle/logs/step6_install_editable_runtime.log`, `proof_bundle/logs/step6_install_test_docs_security.log`, `proof_bundle/logs/step7_hard_acceptance_docs_cmd.log`).
+    14	- B) Runtime UX — PASS  
+    15	  Evidence: CLI help + deterministic demo output + schema check (`proof_bundle/logs/step6_bnsyn_help.log`, `proof_bundle/logs/step6_bnsyn_demo.log`, `proof_bundle/logs/step1_demo_schema_validate.log`, outputs `proof_bundle/demo_clean.json`).
+    16	- C) Test Integrity — PASS  
+    17	  Evidence: collect-only + test gate (`proof_bundle/logs/step6_pytest_collect.log`, `proof_bundle/logs/step6_make_test_gate.log`).
+    18	- D) Packaging — PASS  
+    19	  Evidence: build succeeds and wheel imports in clean venv (`proof_bundle/logs/step6_python_build_fixed.log`, `proof_bundle/logs/step6_wheel_install.log`, `proof_bundle/logs/step6_wheel_import.log`).
+    20	- E) Docs Truthfulness — PASS  
+    21	  Evidence: hard acceptance command succeeds in clean env (`proof_bundle/logs/step7_hard_acceptance_docs_cmd.log`).
+    22	- F) Security Hygiene — PASS  
+    23	  Evidence: reproducible security gate with pinned gitleaks bootstrap + pip-audit + bandit (`proof_bundle/logs/step7_hard_acceptance_security_cmd.log`, `proof_bundle/logs/step0_ensure_gitleaks.log`).
+    24	- G) CI Truthfulness — PASS  
+    25	  Evidence: CI workflow uses `make docs` and `make security` with aligned extras (`proof_bundle/logs/step0_ci_atomic_scan.log`, `.github/workflows/ci-pr-atomic.yml`).
+    26	
+    27	## Blockers
+    28	| Priority | Blocker | Status | Minimal fix direction | Proof |
+    29	|---|---|---|---|---|
+    30	| P0 | `make docs` depended on undeclared local pre-install state | Resolved | Bootstrap docs extra from `make docs`; keep docs extra pinned | `proof_bundle/logs/step1_make_docs_baseline.log`, `proof_bundle/logs/step7_hard_acceptance_docs_cmd.log` |
+    31	| P0 | No explicit `security` extra for reproducible local/CI security tooling | Resolved | Add `[security]` extra and align local/CI installs to it | `proof_bundle/logs/step6_install_test_docs_security.log`, `proof_bundle/logs/fix_ci_security_install.log` |
+    32	| P1 | `python -m build` absent from clean extra path | Resolved | Pin `build==1.3.0` in `test`/`dev` extras | `proof_bundle/logs/step6_python_build.log`, `proof_bundle/logs/step6_python_build_fixed.log` |
+    33	
+    34	## Canonical Commands
+    35	```bash
+    36	python -m pip install -e .
+    37	python -m bnsyn --help
+    38	bnsyn demo --steps 20 --dt-ms 0.1 --seed 123 --N 16
+    39	python -m pytest --collect-only -q
+    40	make test-gate
+    41	python -m pip install -e ".[test,docs]"
+    42	make docs
+    43	python -m pip install -e ".[security]"
+    44	make security
+    45	python -m build
+    46	```
+    47	
+    48	## Diff Summary
+    49	- Added `security` optional dependency group and pinned `build` in `test`/`dev` extras.
+    50	- Made `make docs` self-bootstrapping via `.[docs]`; made `make security` install `.[security]`.
+    51	- Updated CI security job to install `.[security]` and run module-invoked tools.
+    52	- Updated README/SECURITY instructions to include exact reproducible docs/security commands.
+    53	- Captured proof bundle logs and snapshots under `proof_bundle/` and mirrored logs under `artifacts/audit/logs/`.
+    54	
+    55	## Proof Bundle
+    56	- Logs: `proof_bundle/logs/*.log`
+    57	- Mirror logs: `artifacts/audit/logs/*.log`
+    58	- Demo outputs: `proof_bundle/demo_step1.json`, `proof_bundle/demo_clean.json`
+    59	- Freeze snapshots: `proof_bundle/pre_install_freeze.txt`, `proof_bundle/post_install_freeze.txt`

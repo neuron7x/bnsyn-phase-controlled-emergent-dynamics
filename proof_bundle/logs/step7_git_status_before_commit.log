@@ -1,0 +1,62 @@
+$ git status --short | sed -n "1,220p"
+ M .github/workflows/ci-pr-atomic.yml
+ M Makefile
+ M README.md
+ M SECURITY.md
+ M pyproject.toml
+?? proof_bundle/demo_clean.json
+?? proof_bundle/demo_step1.json
+?? proof_bundle/logs/fix_ci_security_install.log
+?? proof_bundle/logs/fix_makefile_docs_security.log
+?? proof_bundle/logs/fix_pyproject_build_dep.log
+?? proof_bundle/logs/fix_pyproject_security_extra.log
+?? proof_bundle/logs/fix_readme_security_extra.log
+?? proof_bundle/logs/fix_securitymd_commands.log
+?? proof_bundle/logs/step0_ci_atomic_scan.log
+?? proof_bundle/logs/step0_ensure_gitleaks.log
+?? proof_bundle/logs/step0_files.log
+?? proof_bundle/logs/step0_makefile.log
+?? proof_bundle/logs/step0_pyproject.log
+?? proof_bundle/logs/step0_readme.log
+?? proof_bundle/logs/step0_securitymd.log
+?? proof_bundle/logs/step0_workflow_readme_scan.log
+?? proof_bundle/logs/step1_bnsyn_demo.log
+?? proof_bundle/logs/step1_bnsyn_help.log
+?? proof_bundle/logs/step1_create_venv.log
+?? proof_bundle/logs/step1_demo_schema_validate.log
+?? proof_bundle/logs/step1_install_runtime.log
+?? proof_bundle/logs/step1_make_docs_baseline.log
+?? proof_bundle/logs/step1_make_security_baseline.log
+?? proof_bundle/logs/step1_make_test_gate.log
+?? proof_bundle/logs/step1_pytest_collect.log
+?? proof_bundle/logs/step1_upgrade_pip.log
+?? proof_bundle/logs/step6_bnsyn_demo.log
+?? proof_bundle/logs/step6_bnsyn_help.log
+?? proof_bundle/logs/step6_create_clean_venv.log
+?? proof_bundle/logs/step6_create_wheel_venv.log
+?? proof_bundle/logs/step6_install_editable_runtime.log
+?? proof_bundle/logs/step6_install_test_docs_security.log
+?? proof_bundle/logs/step6_make_docs.log
+?? proof_bundle/logs/step6_make_security.log
+?? proof_bundle/logs/step6_make_test_gate.log
+?? proof_bundle/logs/step6_post_freeze.log
+?? proof_bundle/logs/step6_pre_freeze.log
+?? proof_bundle/logs/step6_pytest_collect.log
+?? proof_bundle/logs/step6_python_build.log
+?? proof_bundle/logs/step6_python_build_fixed.log
+?? proof_bundle/logs/step6_reinstall_after_build_dep.log
+?? proof_bundle/logs/step6_upgrade_pip.log
+?? proof_bundle/logs/step6_wheel_import.log
+?? proof_bundle/logs/step6_wheel_install.log
+?? proof_bundle/logs/step6_wheel_upgrade_pip.log
+?? proof_bundle/logs/step7_cleanup_venvs.log
+?? proof_bundle/logs/step7_copy_logs_to_artifacts.log
+?? proof_bundle/logs/step7_git_status.log
+?? proof_bundle/logs/step7_git_status_before_commit.log
+?? proof_bundle/logs/step7_hard_acceptance_docs_cmd.log
+?? proof_bundle/logs/step7_hard_acceptance_security_cmd.log
+?? proof_bundle/logs/step7_sync_all_logs.log
+?? proof_bundle/logs/step7_versions.log
+?? proof_bundle/logs/view_ci_security_section.log
+?? proof_bundle/post_install_freeze.txt
+?? proof_bundle/pre_install_freeze.txt
