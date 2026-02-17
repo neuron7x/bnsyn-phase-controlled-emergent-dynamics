@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import ast
+import re
 import sys
 from pathlib import Path
 
 import pytest
-from _pytest.mark.expression import Expression
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -12,12 +13,22 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+_ALLOWED_TOKENS = re.compile(r"\b[a-zA-Z_]\w*\b")
+
 
 def _marker_selected(markexpr: str, marker: str) -> bool:
     if not markexpr:
         return True
-    expr = Expression.compile(markexpr)
-    return expr.evaluate(lambda candidate, *args: candidate == marker)
+
+    def _replace_identifier(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if token in {"and", "or", "not", "True", "False"}:
+            return token
+        return "True" if token == marker else "False"
+
+    bool_expr = _ALLOWED_TOKENS.sub(_replace_identifier, markexpr)
+    parsed = ast.parse(bool_expr, mode="eval")
+    return bool(eval(compile(parsed, "<markexpr>", "eval"), {"__builtins__": {}}, {}))
 
 
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool:
