@@ -7,6 +7,7 @@ Deterministic research-grade simulator and governance repository for phase-contr
 - **Missing product/ops layers:** deployment SLOs, runtime service API compatibility policy, and formal release semver governance are not fully defined in SSOT docs.
 
 ## Canonical onboarding
+- [docs/STATUS.md](docs/STATUS.md)
 - [docs/INDEX.md](docs/INDEX.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/PROJECT_SURFACES.md](docs/PROJECT_SURFACES.md)
