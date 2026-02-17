@@ -1,4 +1,4 @@
-.PHONY: setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+.PHONY: setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs build validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -161,6 +161,7 @@ docs-evidence:
 	python -m scripts.generate_evidence_coverage
 
 security:
+	python -m pip install --upgrade pip==26.0.1
 	python -m pip install -e ".[dev]"
 	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
 	python -m pip_audit --desc
@@ -170,8 +171,13 @@ check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
 
 docs:
+	python -m pip install -e ".[docs]"
 	python -m sphinx -b html docs docs/_build/html
 	@echo "Docs built at docs/_build/html"
+
+build:
+	python -m pip install -e . build
+	python -m build
 
 release-readiness:
 	python -m scripts.release_readiness
