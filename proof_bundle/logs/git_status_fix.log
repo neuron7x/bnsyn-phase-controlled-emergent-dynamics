@@ -1,0 +1,12 @@
+ M INVENTORY.json
+ M README.md
+ M proof_bundle/logs/session.log
+?? proof_bundle/logs/claims_excerpt.log
+?? proof_bundle/logs/claims_governance_excerpt.log
+?? proof_bundle/logs/claims_ids.log
+?? proof_bundle/logs/git_status_fix.log
+?? proof_bundle/logs/inventory_check.log
+?? proof_bundle/logs/inventory_generate.log
+?? proof_bundle/logs/pip_install_pyyaml.log
+?? proof_bundle/logs/scan_governed_docs.log
+?? proof_bundle/logs/scan_governed_docs_script.log

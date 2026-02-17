@@ -1,0 +1,8 @@
+    45	  VAL --> CI[.github/workflows/**]
+    46	  CI --> VAL
+    47	```
+    48	
+    49	## Status
+    50	
+    51	- **Maturity:** research-grade / pre-production.
+    52	- **Productization gap (explicit):** missing full product/ops layer (SRE runbooks under SLA, external integration contracts, stabilized public API/semver as product, perf budgets as must, support/release cadence as product). [NORMATIVE][CLM-0011]

@@ -49,4 +49,4 @@ flowchart TD
 ## Status
 
 - **Maturity:** research-grade / pre-production.
-- **Productization gap (explicit):** missing full product/ops layer (SRE runbooks under SLA, external integration contracts, stabilized public API/semver as product, perf budgets as must, support/release cadence as product).
+- **Productization gap (explicit):** missing full product/ops layer (SRE runbooks under SLA, external integration contracts, stabilized public API/semver as product, perf budgets as must, support/release cadence as product). [NORMATIVE][CLM-0011]
