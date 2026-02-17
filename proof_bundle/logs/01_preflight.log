@@ -1,0 +1,15 @@
+$ python -V
+Python 3.12.12
+[exit:0]
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+[exit:0]
+$ python -c import sys; print("OK")
+OK
+[exit:0]
+$ python -c print(1+1)
+2
+[exit:0]
+$ python -m pip check
+No broken requirements found.
+[exit:0]

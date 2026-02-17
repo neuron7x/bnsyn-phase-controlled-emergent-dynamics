@@ -1,0 +1,21 @@
+$ artifacts/audit/.venv/bin/python -m bnsyn --help
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+[exit:0]
+$ artifacts/audit/.venv/bin/bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 > artifacts/audit/demo.json
+[exit:0]
+duration_seconds=1
+$ artifacts/audit/.venv/bin/python -c import json; d=json.load(open("artifacts/audit/demo.json")); assert isinstance(d,dict) and d; assert "demo" in d and isinstance(d["demo"], dict) and d["demo"]; print("demo.json minimal schema ok", sorted(d.keys()))
+demo.json minimal schema ok ['demo']
+[exit:0]
