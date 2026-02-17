@@ -160,11 +160,14 @@ validate-claims-coverage:
 docs-evidence:
 	python -m scripts.generate_evidence_coverage
 
+SECURITY_REPORT ?= artifacts/pip-audit.json
+
 security:
 	python -m pip install --upgrade pip==26.0.1
 	python -m pip install -e ".[dev]"
+	mkdir -p artifacts
 	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
-	python -m pip_audit --desc
+	python -m pip_audit --desc --format json --output $(SECURITY_REPORT)
 	python -m bandit -r src/ -ll
 
 check: format lint mypy coverage ssot security

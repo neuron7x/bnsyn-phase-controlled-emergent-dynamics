@@ -469,14 +469,8 @@ jobs:
       - name: Log pip version
         run: python -m pip --version
       - run: python -m pip install -e ".[dev,test]"
-      - name: gitleaks
+      - name: security-gate
         run: make security
-      - name: pip-audit
-        run: |
-          mkdir -p artifacts
-          python -m pip_audit --desc --format json --output artifacts/pip-audit.json
-      - name: bandit
-        run: python -m bandit -r src/ -ll
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

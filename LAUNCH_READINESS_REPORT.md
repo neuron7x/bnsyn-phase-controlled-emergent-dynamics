@@ -9,7 +9,7 @@
 | Build (`make build`) | PASS | `artifacts/audit/logs/step4_rerun.log` |
 | Wheel install smoke | PASS | `artifacts/audit/logs/wheel_install.log` |
 | Docs (`make docs`) | PASS | `artifacts/audit/logs/make_docs.log` |
-| Security (`make security`) | PASS | `artifacts/audit/logs/make_security.log` |
+| Security (`make security`) | PASS | `artifacts/audit/logs/make_security.log` + `artifacts/pip-audit.json` |
 | CI canonical targets alignment | PASS | `.github/workflows/ci-pr-atomic.yml`, `Makefile` |
 | Release sanity (build artifact path) | PASS | `dist/bnsyn-0.2.0-py3-none-any.whl` generation in build log |
 
