@@ -1,0 +1,1910 @@
+$ git rev-parse --is-inside-work-tree
+true
+$ python -V
+Python 3.12.12
+$ python -m pytest --version
+pytest 9.0.2
+$ tmpfile check
+tmpfile write/delete ok
+$ ls
+AGENTS.md
+ARCH_ASSESSMENT.md
+BENCHMARK_PROTOCOL.md
+CALIBRATION_REPORT.json
+CALIBRATION_SUMMARY.md
+CHANGELOG.md
+CHANGESET_PLAN.yaml
+CITATION.cff
+CODEBASE_READINESS.md
+CONTRIBUTING.md
+DECISION_MEMO.md
+DOC_CHANGELOG.md
+Dockerfile
+EVIDENCE_INDEX.md
+EXECUTION_PLAN.md
+EXEC_SUMMARY.md
+FINAL_REPORT.md
+GAP_TABLE.md
+GOVERNANCE_VERIFICATION_REPORT.md
+HARDENING_SUMMARY.md
+IMPLEMENTATION_SUMMARY.md
+INVENTORY.json
+LICENSE
+Makefile
+PROOF_BUNDLE
+PR_DESCRIPTION.md
+PR_DESCRIPTION_EVIDENCE.md
+PR_FINAL_DESCRIPTION.md
+PR_READY_CHECKLIST.md
+README.md
+README_CLAIMS_GATE.md
+RISK_REGISTER.md
+SECURITY.md
+VERIFICATION_REPORT.md
+acceptance_map.yaml
+artifacts
+assessment_logs
+attack_paths_graph.json
+audit_reproducibility.json
+audit_suite_report.json
+benchmarks
+bibliography
+calibration_pack
+claims
+docker-compose.yml
+docs
+entropy
+evidence
+examples
+executive_summary.md
+experiments
+figures
+manifest
+noise_cleanup_manifest.json
+noise_cleanup_report.md
+plan.md
+proof_bundle
+pseudostructure_inventory.json
+pyproject.toml
+quality
+readiness_report.json
+readiness_summary.md
+reports
+requirements-lock.txt
+results
+schemas
+scripts
+specs
+src
+tests
+tests_inventory.json
+tools
+worklist.json
+$ make -n test
+python -m pytest -m "not validation" -q
+$ make -n lint
+ruff check .
+pylint src/bnsyn
+$ make -n mypy
+mypy src --strict --config-file pyproject.toml
+$ sed -n "1,220p" pyproject.toml
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.0",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "psutil==7.2.2",
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "pyyaml==6.0.3",
+  "psutil==7.2.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.0",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.6.0",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==79.0.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+$ rg "@pytest\.mark\.|-m \"not validation\"|pytest -m|validation" tests docs .github Makefile
+Makefile:.PHONY: dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-determinism test-validation coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+Makefile:	python -m pytest -m "not validation" -q
+Makefile:test-validation:
+Makefile:	python -m pytest -m validation -q
+Makefile:	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+.github/workflows/_reusable_gate_profile.yml:      validation-markers:
+.github/workflows/_reusable_gate_profile.yml:        value: ${{ jobs.profile.outputs.validation_markers }}
+.github/workflows/_reusable_gate_profile.yml:      validation-timeout-minutes:
+.github/workflows/_reusable_gate_profile.yml:        value: ${{ jobs.profile.outputs.validation_timeout_minutes }}
+.github/workflows/_reusable_gate_profile.yml:      validation_markers: ${{ steps.set.outputs.validation_markers }}
+.github/workflows/_reusable_gate_profile.yml:      validation_timeout_minutes: ${{ steps.set.outputs.validation_timeout_minutes }}
+.github/workflows/_reusable_gate_profile.yml:              pytest_markers="not (validation or property)"
+.github/workflows/_reusable_gate_profile.yml:              validation_markers="validation"
+.github/workflows/_reusable_gate_profile.yml:              validation_timeout_minutes="30"
+.github/workflows/_reusable_gate_profile.yml:              pytest_markers="not (validation)"
+.github/workflows/_reusable_gate_profile.yml:              validation_markers="validation"
+.github/workflows/_reusable_gate_profile.yml:              validation_timeout_minutes="30"
+.github/workflows/_reusable_gate_profile.yml:            echo "validation_markers=$validation_markers"
+.github/workflows/_reusable_gate_profile.yml:            echo "validation_timeout_minutes=$validation_timeout_minutes"
+.github/workflows/workflow-integrity.yml:            "_reusable_validation_tests.yml"
+.github/workflows/_reusable_chaos_tests.yml:          pytest tests/validation/test_chaos_${{ matrix.fault-type }}.py \
+.github/workflows/_reusable_chaos_tests.yml:            -m "validation and chaos" \
+.github/workflows/ci-pr-atomic.yml:      validation: ${{ steps.filter.outputs.validation }}
+.github/workflows/ci-pr-atomic.yml:            validation:
+.github/workflows/ci-pr-atomic.yml:        run: pytest -m smoke -v --tb=short
+.github/workflows/ci-pr-atomic.yml:  validation-tests-pr:
+.github/workflows/ci-pr-atomic.yml:      (needs.changes.outputs.validation == 'true' ||
+.github/workflows/ci-pr-atomic.yml:      contains(github.event.pull_request.labels.*.name, 'run-validation') ||
+.github/workflows/ci-pr-atomic.yml:    uses: ./.github/workflows/_reusable_validation_tests.yml
+.github/workflows/ci-pr-atomic.yml:      markers: ${{ needs.gate-profile.outputs.validation-markers }}
+.github/workflows/ci-pr-atomic.yml:      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
+.github/workflows/ci-pr-atomic.yml:      artifact-name: validation-logs-pr
+.github/workflows/ci-pr-atomic.yml:              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
+.github/workflows/ci-pr-atomic.yml:            const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
+docs/ENFORCEMENT_MATRIX.md:| Smoke test suite must pass (exclude `validation`) | AGENTS.md | Make target + pytest marker policy | `python -m pytest -m "not validation" -q` | non-zero exit from pytest |
+docs/EVIDENCE_COVERAGE.md:| CLM-0008 | Tier-A | true | PROVEN | wilting2018inferring | 10.1038/s41467-018-04725-4 | P0-4 MR estimator | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0009 | Tier-A | true | PROVEN | clauset2009power | 10.1137/070710111 | P0-4 Power-law fitting | `src/bnsyn/criticality/analysis.py` | `tests/validation/test_criticality_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0020 | Tier-A | true | PROVEN | benna2016synaptic | 10.1038/nn.4401 | P1-6 Dual-weight consolidation | `src/bnsyn/consolidation/dual_weight.py` | `tests/test_consolidation_smoke.py`, `tests/validation/test_consolidation_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0021 | Tier-A | true | PROVEN | hopfield1982neural | 10.1073/pnas.79.8.2554 | P1-7 Energy regularization | `src/bnsyn/energy/regularization.py` | `tests/test_energy_smoke.py`, `tests/validation/test_energy_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0022 | Tier-A | true | PROVEN | hairer1993solving | 10.1007/978-3-540-78862-1 | P2-8 Numerical methods | `src/bnsyn/numerics/integrators.py` | `tests/test_dt_invariance.py`, `tests/validation/test_numerics_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0023 | Tier-A | true | PROVEN | matsumoto1998mersenne | 10.1145/272991.272995 | P2-9 Determinism protocol | `src/bnsyn/rng.py`, `src/bnsyn/sim/network.py` | `tests/test_determinism.py`, `tests/validation/test_determinism_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0024 | Tier-A | true | PROVEN | bjorck1996least | 10.1137/1.9781611971484 | P2-10 Calibration utilities | `src/bnsyn/calibration/fit.py` | `tests/test_calibration_smoke.py`, `tests/validation/test_calibration_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0025 | Tier-A | true | PROVEN | izhikevich2003simple | 10.1109/TNN.2003.820440 | P2-11 Reference network simulator | `src/bnsyn/sim/network.py` | `tests/test_network_smoke.py`, `tests/validation/test_network_validation.py` |
+docs/EVIDENCE_COVERAGE.md:| CLM-0026 | Tier-S | false | PROVEN | cliguidelines2024 | https://clig.dev/ | P2-12 Bench harness contract | `src/bnsyn/cli.py` | `tests/test_cli_smoke.py`, `tests/validation/test_cli_validation.py` |
+docs/PR_AUTOMATION_VECTORS.md:  3. `pytest -m "not validation" -q`
+docs/PR40_EVIDENCE_REPORT.md:- tests/validation/test_experiments_temperature_ablation_stats.py (new tests)
+docs/PR40_EVIDENCE_REPORT.md:**Existing workflows:** ci-pr.yml, ci-validation.yml, ci-smoke.yml remain unchanged.
+docs/PR40_EVIDENCE_REPORT.md:pytest -m "not validation"  # 103 tests passed
+docs/PR40_EVIDENCE_REPORT.md:- tests/validation/test_experiments_temperature_ablation_stats.py
+docs/INVENTORY.md:| `tests/` | Smoke + validation tests | [SPEC.md](SPEC.md), [REPRODUCIBILITY.md](REPRODUCIBILITY.md) |
+docs/INVENTORY.md:└── validation/                 # Validation tests (slow, statistical)
+docs/INVENTORY.md:    ├── test_*_validation.py
+docs/TESTING_MUTATION.md:- **Marker**: No marker or `@pytest.mark.smoke`
+docs/TESTING_MUTATION.md:- **Run with**: `make test` or `pytest -m "not validation"`
+docs/TESTING_MUTATION.md:- **Marker**: `@pytest.mark.validation`
+docs/TESTING_MUTATION.md:- **Run with**: `make test-validation` or `pytest -m validation`
+docs/TESTING_MUTATION.md:- **Purpose**: Slow statistical/large-N validation tests
+docs/TESTING_MUTATION.md:- **Location**: `tests/validation/`
+docs/TESTING_MUTATION.md:- **Marker**: `@pytest.mark.property`
+docs/TESTING_MUTATION.md:- **Run with**: `pytest -m property`
+docs/TESTING_MUTATION.md:- **Marker**: `@pytest.mark.chaos` (must also have `@pytest.mark.validation`)
+docs/TESTING_MUTATION.md:- **Run with**: `pytest -m "validation and chaos"`
+docs/TESTING_MUTATION.md:- **Location**: `tests/validation/test_chaos_*.py`
+docs/TESTING_MUTATION.md:Located in `tests/validation/test_chaos_*.py`, these tests inject controlled faults to verify resilience:
+docs/TESTING_MUTATION.md:- **Marked** with `@pytest.mark.validation`
+docs/TESTING_MUTATION.md:The `.github/workflows/ci-validation.yml` workflow (mode: `chaos`):
+docs/TESTING_MUTATION.md:pytest -m property --hypothesis-profile=quick
+docs/TESTING_MUTATION.md:pytest -m validation -k "chaos"
+docs/TESTING_MUTATION.md:HYPOTHESIS_PROFILE=thorough pytest -m property
+docs/TESTING_MUTATION.md:CI=1 pytest -m property  # Uses ci-quick profile
+docs/TESTING_MUTATION.md:2. **Mark validation tests** with `@pytest.mark.validation`
+docs/TESTING_MUTATION.md:3. **Mark chaos tests** with both `@pytest.mark.validation` and `@pytest.mark.chaos`
+.github/workflows/_reusable_validation_tests.yml:        default: 'validation'
+.github/workflows/_reusable_validation_tests.yml:        default: 'validation.log'
+.github/workflows/_reusable_validation_tests.yml:        default: 'validation-junit.xml'
+.github/workflows/_reusable_validation_tests.yml:        default: 'validation-logs'
+.github/workflows/_reusable_validation_tests.yml:  validation-tests:
+.github/workflows/_reusable_validation_tests.yml:      - name: Run validation tests
+.github/workflows/_reusable_validation_tests.yml:        id: validation
+.github/workflows/_reusable_validation_tests.yml:          pytest -m "${{ inputs.markers }}" ${{ inputs['extra-args'] }} $JUNIT_ARGS 2>&1 | tee "${{ inputs['log-file'] }}"
+.github/workflows/_reusable_pytest.yml:        default: 'not (validation or property)'
+.github/workflows/_reusable_pytest.yml:              echo "python -m pytest -m \"${{ inputs.markers }}\" \\"
+.github/workflows/ci-validation.yml:name: ci-validation
+.github/workflows/ci-validation.yml:  group: validation-${{ github.ref }}-${{ github.event.inputs.mode || github.event.schedule || 'manual' }}
+.github/workflows/ci-validation.yml:  validation-tests:
+.github/workflows/ci-validation.yml:    uses: ./.github/workflows/_reusable_validation_tests.yml
+.github/workflows/ci-validation.yml:      markers: ${{ needs.gate-profile.outputs.validation-markers }}
+.github/workflows/ci-validation.yml:      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
+.github/workflows/ci-validation.yml:      artifact-name: validation-logs
+.github/workflows/ci-validation.yml:    needs: [determine, validation-tests, property-tests]
+.github/workflows/ci-validation.yml:            echo "| Validation Tests | ${{ needs.validation-tests.result }} |"
+.github/workflows/ci-validation.yml:            echo " Some validation tests failed" >> "$GITHUB_STEP_SUMMARY"
+docs/contracts/index.md:`src/contracts` contains machine-checkable assertion helpers for mathematical and numerical invariants used throughout BN-Syn validation workflows. Contracts are designed to fail fast via `AssertionError` with structured messages that identify violated preconditions.
+.github/workflows/_reusable_property_tests.yml:          pytest -m "${{ inputs.markers }}" ${{ inputs['extra-args'] }} $JUNIT_ARGS 2>&1 | tee "${{ inputs['log-file'] }}"
+docs/_inventory.md:- .github/workflows/_reusable_validation_tests.yml
+docs/_inventory.md:- .github/workflows/ci-validation.yml
+docs/_inventory.md:- make test-validation
+.github/CI_SLO.md:- `run-validation` — force-run `pytest -m validation` on PR.
+.github/CI_SLO.md:- `run-property` — force-run `pytest -m property` on PR.
+.github/CI_SLO.md:- `heavy-ci` — force-run validation + property + docs + codeql paths in PR pipeline.
+.github/pull_request_template.md:- `run-validation`
+.github/pull_request_template.md:- [ ] Ran `pytest -m "not validation" --cov=src/bnsyn --cov-fail-under=85` ✅
+docs/ACTIONS_TEST_PROTOCOL.md:Primary PR validation workflow with 10 blocking jobs:
+docs/ACTIONS_TEST_PROTOCOL.md:- `ssot` - SSOT validation + **claims coverage gate**
+docs/ACTIONS_TEST_PROTOCOL.md:**Purpose:** Comprehensive validation without blocking PRs  
+docs/ACTIONS_TEST_PROTOCOL.md:#### ci-validation.yml (mode: `elite`)
+docs/ACTIONS_TEST_PROTOCOL.md:Daily validation of scientific claims and invariants:
+docs/ACTIONS_TEST_PROTOCOL.md:- `validation` - 10 validation tests (`-m validation`)
+docs/ACTIONS_TEST_PROTOCOL.md:**Artifacts:** `validation.log`, `property.log`, JUnit XML
+docs/ACTIONS_TEST_PROTOCOL.md:   - All validation/testing uses public data
+docs/ACTIONS_TEST_PROTOCOL.md:| Validation Logs | 30 days | ci-validation.yml (elite mode) | Scientific validation |
+docs/ACTIONS_TEST_PROTOCOL.md:| Property Logs | 30 days | ci-validation.yml (elite mode) | Invariant verification |
+docs/ACTIONS_TEST_PROTOCOL.md:- `validation-logs-abc123` (per-commit)
+docs/ACTIONS_TEST_PROTOCOL.md:@pytest.mark.smoke          # Fast critical-path tests (BLOCKING)
+docs/ACTIONS_TEST_PROTOCOL.md:@pytest.mark.validation     # Slow scientific validation (NON-BLOCKING)
+docs/ACTIONS_TEST_PROTOCOL.md:@pytest.mark.property       # Hypothesis property tests (NON-BLOCKING)
+docs/ACTIONS_TEST_PROTOCOL.md:@pytest.mark.performance    # Performance regression tests
+docs/ACTIONS_TEST_PROTOCOL.md:@pytest.mark.integration    # Integration tests
+docs/ACTIONS_TEST_PROTOCOL.md:- All tests in `tests/validation/` MUST have `@pytest.mark.validation`
+docs/ACTIONS_TEST_PROTOCOL.md:- Validation marker CANNOT be used outside `tests/validation/`
+docs/ACTIONS_TEST_PROTOCOL.md:   pytest -m "not (validation or property)" -v
+docs/ACTIONS_TEST_PROTOCOL.md:2. Check `validation.log` artifact
+docs/ACTIONS_TEST_PROTOCOL.md:# SSOT validation
+docs/ACTIONS_TEST_PROTOCOL.md:# Full validation suite (~10 min)
+docs/ACTIONS_TEST_PROTOCOL.md:make test-validation
+docs/ACTIONS_TEST_PROTOCOL.md:# Specific validation test
+docs/ACTIONS_TEST_PROTOCOL.md:pytest tests/validation/test_claims_validation.py::test_clm_001_determinism_across_runs -v
+docs/ACTIONS_TEST_PROTOCOL.md:HYPOTHESIS_PROFILE=ci-quick pytest -m property -v
+docs/ACTIONS_TEST_PROTOCOL.md:HYPOTHESIS_PROFILE=thorough pytest -m property -v
+docs/ACTIONS_TEST_PROTOCOL.md:2. **Do NOT** mark with `@pytest.mark.validation` or `@pytest.mark.property`
+docs/ACTIONS_TEST_PROTOCOL.md:1. Create test in `tests/validation/`
+docs/ACTIONS_TEST_PROTOCOL.md:2. **Must** mark with `@pytest.mark.validation`
+docs/ACTIONS_TEST_PROTOCOL.md:4. Runs in `ci-validation.yml` (mode: `elite`), NOT in PR gates
+docs/ACTIONS_TEST_PROTOCOL.md:2. **Must** mark with `@pytest.mark.property`
+docs/ACTIONS_TEST_PROTOCOL.md:5. Runs in `ci-validation.yml` (mode: `elite`), NOT in PR gates
+.github/BRANCH_PROTECTION_GOVERNANCE.md:- [ ] **Control PR #2:** break validation invariant → merge blocked.
+.github/BRANCH_PROTECTION_GOVERNANCE.md:| #2 validation invariant | PENDING | `ci-pr-atomic / validation-tests-pr` | PENDING | PENDING | PENDING |
+docs/adr/0001-math-integrator-guardrails.md:The numerical core relied on Euler/RK2/exp-decay helpers without explicit finite-step validation. Invalid `dt`/`tau` or non-finite intermediate values could propagate NaN/Inf into downstream summaries before failing.
+docs/TRACEABILITY_MAP.md:| Reject malformed external numeric inputs (shape/dtype/non-finite) | Prevent undefined numerical state propagation | `src/bnsyn/validation/inputs.py` | `tests/test_validation_inputs.py` | `ci-pr-atomic` → `tests-smoke` |
+.github/WORKFLOW_CONTRACTS.md:| `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:| `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
+.github/WORKFLOW_CONTRACTS.md:* Provide reusable SSOT validation gates for bibliography, claims, and governance scans.
+.github/WORKFLOW_CONTRACTS.md:* `ssot` — Runs SSOT validation scripts.
+.github/WORKFLOW_CONTRACTS.md:## _reusable_validation_tests.yml
+.github/WORKFLOW_CONTRACTS.md:**Path:** `.github/workflows/_reusable_validation_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:* Provide a reusable validation test job with optional artifacts and summaries.
+.github/WORKFLOW_CONTRACTS.md:* `validation-tests`: `${{ inputs['timeout-minutes'] }}`
+.github/WORKFLOW_CONTRACTS.md:* `validation-tests` — Runs validation tests, writes summaries, and uploads artifacts if configured.
+.github/WORKFLOW_CONTRACTS.md:* `./workflows/_reusable_validation_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:* `tests-smoke` — Runs smoke tests without validation/property markers.
+.github/WORKFLOW_CONTRACTS.md:## ci-validation.yml
+.github/WORKFLOW_CONTRACTS.md:**Path:** `.github/workflows/ci-validation.yml`
+.github/WORKFLOW_CONTRACTS.md:* Scheduled validation and chaos suites provide non-blocking A2 regression coverage without gating PR merges.
+.github/WORKFLOW_CONTRACTS.md:* Orchestrate scheduled and manual validation modes (standard/elite/chaos) with SSOT, validation, property, and chaos suites.
+.github/WORKFLOW_CONTRACTS.md:* `validation-tests`: 30
+.github/WORKFLOW_CONTRACTS.md:* `validation-tests` — Runs validation tests (standard/elite).
+.github/WORKFLOW_CONTRACTS.md:* `elite-summary` — Aggregates validation + property results (elite).
+.github/WORKFLOW_CONTRACTS.md:* `./workflows/ci-validation.yml`
+.github/WORKFLOW_CONTRACTS.md:* Nightly formal proof checks uphold A7 assurance as non-blocking long-running validation.
+.github/WORKFLOW_CONTRACTS.md:* Nightly TLA+ model checks uphold A8 assurance as non-blocking long-running validation.
+.github/WORKFLOW_CONTRACTS.md:* Scheduled flagship experiments support A2 scientific validation without gating PR merges.
+.github/WORKFLOW_CONTRACTS.md:2. **ci-validation.yml (mode orchestration)** (Consolidation completed)
+.github/WORKFLOW_CONTRACTS.md:   * Current state: `ci-validation.yml` routes standard/elite/chaos schedules and dispatch inputs to reusable jobs.
+.github/WORKFLOW_CONTRACTS.md:   * Follow-up criteria: MUST ensure branch protection requires only PR-gate workflows (`ci-pr-atomic.yml`, `workflow-integrity.yml`) and not `ci-validation`; SHOULD ensure scheduled cadence matches prior weekly/daily runs.
+.github/WORKFLOW_CONTRACTS.md:   * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_ssot.yml`, `./workflows/_reusable_validation_tests.yml`, `./workflows/_reusable_property_tests.yml`, `./workflows/_reusable_chaos_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:3. **ci-validation.yml (property mode)** (Consolidation completed)
+.github/WORKFLOW_CONTRACTS.md:   * Rationale: Property tests are now scheduled and dispatched via `ci-validation.yml` with a dedicated `property` mode.
+.github/WORKFLOW_CONTRACTS.md:   * Current state: `ci-validation.yml` owns the 02:30 UTC property schedule and `workflow_dispatch` supports `mode=property`.
+.github/WORKFLOW_CONTRACTS.md:   * Evidence: `./workflows/ci-validation.yml`, `./workflows/_reusable_property_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:* Mandatory named workflows present: YES (ci-validation.yml, ci-benchmarks-elite.yml, workflow-integrity.yml, quality-mutation.yml, formal-coq.yml, formal-tla.yml)
+docs/REPO_STRUCTURE.md:| `tests/`        | Automated tests (smoke and validation)                        | Stable paths    |
+docs/REPO_STRUCTURE.md:   - `tests/*.py`: Smoke tests (fast, critical-path, no `@pytest.mark.validation`)
+docs/REPO_STRUCTURE.md:   - `tests/validation/*.py`: Validation tests (slow, statistical; use `@pytest.mark.validation`)
+docs/REPO_STRUCTURE.md:   validation (`tests/validation/*.py`) suites.
+docs/ARCHITECTURE.md:## Governance and validation flow
+.github/QUALITY_LEDGER.md:       markers: "not (validation or property)"
+.github/QUALITY_LEDGER.md:       markers: "not (validation or property)"
+.github/QUALITY_LEDGER.md:     - Testing categories (unit/integration/property/validation/benchmarks)
+.github/QUALITY_LEDGER.md:   - Marker: @pytest.mark.smoke (BLOCKING)
+.github/QUALITY_LEDGER.md:1. Created `tests/validation/test_claims_validation.py`
+.github/QUALITY_LEDGER.md:   - 10 validation tests for empirical claims
+.github/QUALITY_LEDGER.md:   - Marker: @pytest.mark.validation (NON-BLOCKING)
+.github/QUALITY_LEDGER.md:2. Created `.github/workflows/ci-validation-elite.yml`
+.github/QUALITY_LEDGER.md:   - Runs validation + property tests on schedule
+.github/QUALITY_LEDGER.md:   - Uploads artifacts: validation.log, junit.xml
+.github/QUALITY_LEDGER.md:Scientific claims require extensive validation but shouldn't block PRs. Scheduled runs catch long-term drift without impacting development velocity.
+.github/QUALITY_LEDGER.md:- Tests: 10 validation tests
+.github/QUALITY_LEDGER.md:- Workflow: ci-validation-elite.yml
+.github/QUALITY_LEDGER.md:- **A4 (Exhaustiveness):** +3% (scientific validation)
+.github/QUALITY_LEDGER.md:- **A4 (Exhaustiveness):** +2% (invariant validation)
+.github/QUALITY_LEDGER.md:**Tests:** +18 validation, +8 property, +3 enforcement
+.github/QUALITY_LEDGER.md:**Elite Validation:** Non-blocking validation never blocks PRs ✅
+docs/MAINTENANCE.md:- Test: `python -m pytest -m "not validation" -q`
+docs/INTEGRATION.md:validation, and the simulation core.
+docs/INTEGRATION.md:| `bnsyn.experiments.declarative` | YAML-driven experiment runner, schema validation, result persistence | Python 3.11+ | Python API (`load_config`, `run_experiment`, `run_from_yaml`) | YAML config |
+docs/INTEGRATION.md:| `bnsyn.schemas.experiment` / `schemas/experiment.schema.json` | Explicit experiment config schema | JSON Schema / Pydantic | Schema validation | YAML config object |
+docs/INTEGRATION.md:            ├─ load_config -> BNSynExperimentConfig (schema validation)
+docs/INTEGRATION.md:runner. The declarative runner performs schema validation and invokes the
+docs/INTEGRATION.md:and schema validation.
+docs/INTEGRATION.md:- CLI prints validation and summary outputs to stdout.
+docs/INTEGRATION.md:- Non-zero CLI exit code on validation or runtime errors.
+docs/INTEGRATION.md:  and explicit schema validation. No external services or deployment orchestration exist
+docs/INTEGRATION.md:- Risk: YAML config invalid or missing fields. Mitigation: strict schema validation in
+docs/emergence_tracking.md:- `tests/validation/test_crystallizer_real.py`: Validation tests
+docs/api/_templates/tools/update_manifest.py:    """Raised when manifest generation or validation cannot proceed."""
+docs/api/_templates/tools/update_manifest.py:    """Command-line entrypoint for manifest generation or validation."""
+tests/test_network_validation_edges.py:def test_network_param_validation() -> None:
+tests/test_network_validation_edges.py:def test_network_external_current_shape_validation() -> None:
+tests/test_sleep_stage_validation.py:"""Tests for sleep stage configuration validation."""
+tests/test_tools_run_scaled_sleep_stack_unit.py:def test_validation_errors(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+tests/test_memory_consolidator.py:def test_tag_validation() -> None:
+tests/test_memory_consolidator.py:    """Test tag input validation."""
+tests/test_memory_consolidator.py:def test_recall_validation() -> None:
+tests/test_memory_consolidator.py:    """Test recall input validation."""
+tests/test_validation_inputs.py:"""Tests for input validation utilities."""
+tests/test_validation_inputs.py:from bnsyn.validation.inputs import (
+tests/test_validation_inputs.py:    """Bounded fuzz-style regression entrypoint for API boundary validation."""
+tests/test_generate_coverage_trend.py:@pytest.mark.parametrize("value", [-0.01, 100.01])
+tests/test_generate_coverage_trend.py:@pytest.mark.parametrize(
+tests/test_generate_coverage_trend.py:@pytest.mark.parametrize(
+tests/test_dt_invariance.py:@pytest.mark.smoke
+tests/test_edge_cases_criticality.py:    @pytest.mark.parametrize("sigma_target", [0.1, 0.5, 1.0, 1.5, 2.0, 5.0])
+tests/test_edge_cases_criticality.py:    @pytest.mark.parametrize("sigma", [0.0, 0.5, 1.0, 1.5, 2.0, 100.0])
+tests/test_phase_transition.py:    """Test detector initialization and validation."""
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.skipif(
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.skipif(
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:        with pytest.raises(ValueError, match="validation failed"):
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:def test_schema_validation() -> None:
+tests/test_interactive_smoke.py:    """Test Pydantic schema validation."""
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.skipif(
+tests/test_interactive_smoke.py:@pytest.mark.smoke
+tests/test_interactive_smoke.py:@pytest.mark.skipif(
+tests/test_claims_enforcement.py:Marker: @pytest.mark.smoke (BLOCKING - runs on every PR)
+tests/test_claims_enforcement.py:@pytest.mark.smoke
+tests/test_claims_enforcement.py:@pytest.mark.smoke
+tests/test_claims_enforcement.py:@pytest.mark.smoke
+tests/test_update_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_update_manifest_tools.py:def test_manifest_generation_and_validation(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_update_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_update_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_update_manifest_tools.py:def test_manifest_validation_detects_stale_entries(tmp_path: Path, tool_path: Path) -> None:
+tests/test_update_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+docs/api/generated/bnsyn.validation.inputs.rst:bnsyn.validation.inputs
+docs/api/generated/bnsyn.validation.inputs.rst:.. automodule:: bnsyn.validation.inputs
+tests/test_benchmarks_smoke.py:@pytest.mark.parametrize(
+tests/test_benchmarks_smoke.py:@pytest.mark.parametrize(
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_manifest_tools.py:def test_manifest_generation_and_validation(tmp_path: Path, tool_path: Path) -> None:
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_manifest_tools.py:@pytest.mark.parametrize("tool_path", TOOL_PATHS)
+tests/test_run_simulation_validation.py:@pytest.mark.parametrize("bad_current", [float("nan"), float("inf"), float("-inf")])
+tests/test_edge_cases_temperature.py:    @pytest.mark.parametrize("T0,Tmin", [(0.1, 0.01), (1.0, 0.1), (10.0, 0.01), (100.0, 1.0)])
+tests/test_edge_cases_temperature.py:    @pytest.mark.parametrize("alpha", [0.1, 0.5, 0.9, 0.99, 0.999])
+tests/test_memory.py:def test_memory_tag_validation() -> None:
+tests/test_memory.py:    """Test validation in MemoryTrace.tag."""
+tests/test_memory.py:def test_memory_recall_validation() -> None:
+tests/test_memory.py:    """Test recall validation and edge cases."""
+tests/test_memory.py:def test_memory_consolidation_validation() -> None:
+tests/test_memory.py:    """Test consolidation parameter validation."""
+docs/api/generated/bnsyn.rst:   validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.chaos
+tests/validation/test_chaos_stochastic.py:@pytest.mark.validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.chaos
+tests/validation/test_chaos_stochastic.py:@pytest.mark.validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.chaos
+tests/validation/test_chaos_stochastic.py:@pytest.mark.validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.chaos
+tests/validation/test_chaos_stochastic.py:@pytest.mark.validation
+tests/validation/test_chaos_stochastic.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_chaos_timing.py:@pytest.mark.validation
+tests/validation/test_chaos_timing.py:@pytest.mark.chaos
+tests/validation/test_criticality_validation.py:@pytest.mark.validation
+tests/validation/test_criticality_validation.py:@pytest.mark.validation
+tests/validation/test_criticality_validation.py:@pytest.mark.validation
+tests/validation/test_criticality_validation.py:@pytest.mark.validation
+tests/validation/test_plasticity_validation.py:@pytest.mark.validation
+tests/validation/test_plasticity_validation.py:@pytest.mark.validation
+tests/validation/__init__.py:"""Chaos engineering tests for BN-Syn resilience validation."""
+tests/validation/test_experiments_temperature_ablation_stats.py:@pytest.mark.validation
+tests/validation/test_experiments_temperature_ablation_stats.py:    # Use 10 seeds for validation (compromise between speed and statistical power)
+tests/validation/test_experiments_temperature_ablation_stats.py:@pytest.mark.validation
+tests/validation/test_experiments_temperature_ablation_stats.py:    seeds = [0, 1, 2]  # Minimal seeds for fast validation
+tests/validation/test_experiments_temperature_ablation_stats.py:@pytest.mark.validation
+tests/validation/test_experiments_temperature_ablation_stats.py:    # Use 10 seeds for validation
+tests/validation/test_experiments_temperature_ablation_stats.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_chaos_io.py:@pytest.mark.validation
+tests/validation/test_chaos_io.py:@pytest.mark.chaos
+tests/validation/test_consolidation_validation.py:@pytest.mark.validation
+tests/validation/test_consolidation_validation.py:@pytest.mark.validation
+tests/validation/test_memory_validation.py:Longer validation tests marked with @pytest.mark.validation.
+tests/validation/test_memory_validation.py:@pytest.mark.validation
+tests/validation/test_memory_validation.py:@pytest.mark.validation
+tests/validation/test_adex_validation.py:@pytest.mark.validation
+tests/validation/test_adex_validation.py:@pytest.mark.validation
+tests/validation/test_numerics_validation.py:@pytest.mark.validation
+tests/validation/test_numerics_validation.py:@pytest.mark.validation
+tests/validation/test_numerics_validation.py:@pytest.mark.validation
+tests/validation/test_energy_validation.py:@pytest.mark.validation
+tests/validation/test_energy_validation.py:@pytest.mark.validation
+tests/validation/test_cli_validation.py:@pytest.mark.validation
+tests/validation/test_network_validation.py:@pytest.mark.validation
+tests/validation/test_crystallizer_real.py:Longer validation tests marked with @pytest.mark.validation.
+tests/validation/test_crystallizer_real.py:@pytest.mark.validation
+tests/validation/test_crystallizer_real.py:@pytest.mark.validation
+tests/validation/test_integration_validation.py:@pytest.mark.validation
+tests/validation/test_integration_validation.py:@pytest.mark.validation
+tests/validation/test_integration_validation.py:@pytest.mark.validation
+tests/validation/test_integration_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:All tests are marked with @pytest.mark.validation (NON-BLOCKING, scheduled only).
+tests/validation/test_claims_validation.py:Markers: @pytest.mark.validation (NON-BLOCKING)
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:    N = 50  # Small network for fast validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_claims_validation.py:@pytest.mark.validation
+tests/validation/test_determinism_validation.py:@pytest.mark.validation
+tests/validation/test_sleep_cycle_long.py:Longer multi-cycle validation tests marked with @pytest.mark.validation.
+tests/validation/test_sleep_cycle_long.py:@pytest.mark.validation
+tests/validation/test_sleep_cycle_long.py:@pytest.mark.validation
+tests/validation/test_sleep_cycle_long.py:@pytest.mark.validation
+tests/validation/test_synapse_validation.py:@pytest.mark.validation
+tests/validation/test_synapse_validation.py:@pytest.mark.validation
+tests/validation/test_sleep_stack_effectiveness.py:@pytest.mark.validation
+tests/validation/test_sleep_stack_effectiveness.py:        # scale down for faster validation
+tests/validation/test_sleep_stack_effectiveness.py:@pytest.mark.validation
+tests/validation/test_sleep_stack_effectiveness.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:def test_numeric_health_validation_detects_nan() -> None:
+tests/validation/test_chaos_numeric.py:    """Test that numeric health validation catches NaN values."""
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:def test_numeric_health_validation_detects_inf() -> None:
+tests/validation/test_chaos_numeric.py:    """Test that numeric health validation catches inf values."""
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:def test_numeric_health_validation_passes_clean() -> None:
+tests/validation/test_chaos_numeric.py:    """Test that numeric health validation passes for clean arrays."""
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+tests/validation/test_chaos_numeric.py:@pytest.mark.validation
+tests/validation/test_chaos_numeric.py:@pytest.mark.chaos
+docs/api/generated/bnsyn.validation.rst:bnsyn.validation
+docs/api/generated/bnsyn.validation.rst:.. automodule:: bnsyn.validation
+tests/validation/test_validation.py:from bnsyn.validation import NetworkValidationConfig
+tests/validation/test_validation.py:@pytest.mark.validation
+tests/validation/test_validation.py:@pytest.mark.validation
+tests/validation/test_validation.py:@pytest.mark.validation
+tests/validation/test_viz_dashboard.py:Tests marked with @pytest.mark.validation to ensure optional viz
+tests/validation/test_viz_dashboard.py:@pytest.mark.validation
+tests/validation/test_viz_dashboard.py:@pytest.mark.validation
+tests/validation/test_viz_dashboard.py:@pytest.mark.validation
+tests/validation/test_viz_dashboard.py:@pytest.mark.validation
+tests/validation/test_viz_dashboard.py:@pytest.mark.validation
+tests/validation/test_temperature_validation.py:@pytest.mark.validation
+tests/validation/test_largeN_validation.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_chaos_integration.py:@pytest.mark.validation
+tests/validation/test_chaos_integration.py:@pytest.mark.chaos
+tests/validation/test_calibration_validation.py:@pytest.mark.validation
+tests/validation/test_production_properties.py:pytestmark = pytest.mark.validation
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("n", [1, 8, 64, 256])
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("dt", [1e-5, 1e-4, 5e-4, 5e-3])
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("current", [-5e-9, 0.0, 5e-9])
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("n", [2, 8, 32, 128, 512])
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("p_connect", [0.0, 0.01, 0.05, 0.25])
+tests/validation/test_production_properties.py:@pytest.mark.parametrize("seed", [0, 1, 7, 2**16, 2**32 - 1])
+docs/api/_static/tools/update_manifest.py:    """Raised when manifest generation or validation cannot proceed."""
+docs/api/_static/tools/update_manifest.py:    """Command-line entrypoint for manifest generation or validation."""
+tests/test_coverage_gap_extensions.py:@pytest.mark.parametrize(
+tests/test_coverage_gap_extensions.py:def test_calibration_accuracy_speed_validation_errors(kwargs: dict[str, object]) -> None:
+tests/test_coverage_gap_extensions.py:def test_dual_weight_step_validation_errors() -> None:
+tests/test_coverage_gap_extensions.py:def test_consolidation_ledger_validation_and_state() -> None:
+tests/test_coverage_gap_extensions.py:def test_memory_consolidator_eviction_and_validation() -> None:
+tests/test_coverage_gap_extensions.py:def test_adex_validation_and_spike_reset() -> None:
+tests/test_coverage_gap_extensions.py:def test_sleep_cycle_validation_and_callbacks() -> None:
+docs/TROUBLESHOOTING.md:pytest -m "not validation" -v
+docs/TROUBLESHOOTING.md:pytest -m "not validation" --cov=src/bnsyn --cov-report=html
+docs/TROUBLESHOOTING.md:make ssot                # SSOT validation
+docs/RELEASE_NOTES.md:deterministic behavior, build/install validation, and audit-grade evidence.
+docs/RELEASE_NOTES.md:- **Test gates**: `make test` (non-validation suite).
+docs/RELEASE_NOTES.md:- **Determinism**: three consecutive non-validation test runs.
+tests/conftest.py:        in_validation_dir = "tests/validation" in path
+tests/conftest.py:        has_validation_marker = item.get_closest_marker("validation") is not None
+tests/conftest.py:        if in_validation_dir and not has_validation_marker:
+tests/conftest.py:            errors.append(f"Missing @pytest.mark.validation for {item.nodeid}")
+tests/conftest.py:        if not in_validation_dir and has_validation_marker:
+tests/conftest.py:            errors.append(f"Validation marker used outside tests/validation: {item.nodeid}")
+tests/conftest.py:            errors.append(f"Missing @pytest.mark.property for {item.nodeid}")
+docs/START_HERE.md:- Testing and validation workflows: [TESTING.md](TESTING.md)
+docs/CONSTITUTIONAL_AUDIT.md:- Offline validation uses MR estimator + power-law fitting + model comparison.
+tests/test_experiments_declarative.py:def test_load_config_validation_error(tmp_path: Path) -> None:
+tests/test_experiments_declarative.py:    with pytest.raises(ValueError, match="Config validation failed"):
+tests/benchmarks/test_regression.py:@pytest.mark.benchmark
+tests/benchmarks/test_regression.py:@pytest.mark.parametrize("scenario_name", ["small_network", "medium_network", "large_network"])
+tests/test_crystallizer_edge_cases.py:def test_crystallizer_subsample_shape_validation() -> None:
+docs/placeholder_cycles/cycle1/plan.md:   - `tests/validation/test_chaos_integration.py` (PH-0003)
+docs/placeholder_cycles/cycle1/plan.md:2. Directly dependent test or validation infrastructure required to prove PH closure:
+docs/placeholder_cycles/cycle1/plan.md:- Module/context: test and validation harness
+docs/placeholder_cycles/cycle1/plan.md:| PH-0003 | `tests/validation/test_chaos_integration.py` | `guard_fail_closed` | `regression` | Replace permissive `pass` with explicit finite-output and accepted-error assertions. |
+docs/placeholder_cycles/cycle1/plan.md:3. Run meta-scan, registry validation, and CI-equivalent local checks.
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:objective: "Close all OPEN PH entries with deterministic evidence and CI-green validation"
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:  registry_validation_required:
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:    file: tests/validation/test_chaos_integration.py
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:      - tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:  - name: registry_validation
+tests/test_mutation_killers.py:def test_adex_dt_validation_and_upper_bound_inclusive() -> None:
+tests/test_mutation_killers.py:def test_three_factor_validation_errors() -> None:
+docs/placeholder_cycles/cycle1/worklist.json:          "path": "tests/validation/test_chaos_integration.py",
+docs/placeholder_cycles/cycle1/worklist.json:            "tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement"
+docs/placeholder_cycles/cycle1/worklist.json:    "registry_validation": true,
+tests/test_math_core_hardening.py:@pytest.mark.smoke
+tests/test_math_core_hardening.py:@pytest.mark.smoke
+tests/test_sleep_cycle.py:    """Test SleepStageConfig creation and validation."""
+tests/test_sleep_cycle.py:def test_dream_noise_validation_matches_replay_helper() -> None:
+docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md:## Offline validation (measurement)
+docs/AUDIT_FINDINGS.md:Baseline validation run performed on: 2026-01-23
+docs/AUDIT_FINDINGS.md:| `pytest -m "not validation"` | ✅ PASS | 15 passed, 6 deselected |
+docs/AUDIT_FINDINGS.md:| `pytest -m validation` | ⚠️ 1 FAILURE | Pre-existing: `test_adex_refractory_holds_reset` |
+docs/AUDIT_FINDINGS.md:- **Symptom:** `pytest -m "not validation"` fails during test collection with `ModuleNotFoundError: No module named 'bnsyn'` across multiple tests.
+docs/AUDIT_FINDINGS.md:- **Symptom:** `pytest -m validation` fails during test collection with same `ModuleNotFoundError: No module named 'bnsyn'`.
+docs/AUDIT_FINDINGS.md:- **Anchors:** `tests/test_validation_largeN.py:2` and other test imports.
+docs/AUDIT_FINDINGS.md:- **Symptom:** `test_adex_refractory_holds_reset` fails in validation tests.
+docs/AUDIT_FINDINGS.md:- **Anchors:** `tests/validation/test_production_properties.py:29-33`
+docs/AUDIT_FINDINGS.md:- **Notes:** This is a test design issue in the production properties tests, not a core logic bug. The test is marked as `@pytest.mark.validation` and runs in the separate validation CI workflow.
+docs/AUDIT_FINDINGS.md:- **Fix:** Added `ssot`, `test-smoke`, `test-validation`, `ci-local` targets.
+docs/spec_to_code.yml:    - tests/validation/test_adex_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_synapse_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_plasticity_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_criticality_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_temperature_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_consolidation_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_energy_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_numerics_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_determinism_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_calibration_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_network_validation.py
+docs/spec_to_code.yml:    - tests/validation/test_cli_validation.py
+tests/test_edge_cases_adex.py:    @pytest.mark.parametrize(
+tests/test_edge_cases_adex.py:    @pytest.mark.parametrize("w_init", [-100.0, -1e-6, 0.0, 1.0, 1e3])
+tests/test_edge_cases_adex.py:    @pytest.mark.parametrize("dt_ms", [1e-6, 1e-4, 0.1, 1.0])
+tests/test_connectivity_sparse.py:def test_build_random_connectivity_validation() -> None:
+tests/test_network_external_input.py:def test_external_input_shape_validation() -> None:
+tests/test_edge_cases_synapse.py:    @pytest.mark.parametrize("V_mV", [-200.0, -100.0, -80.0, -40.0, 0.0, 40.0, 100.0, 200.0])
+tests/test_edge_cases_synapse.py:    @pytest.mark.parametrize("mg_mM", [0.0, 0.1, 1.0, 5.0, 10.0])
+tests/properties/test_properties_bnsyn.py:All tests are marked with @pytest.mark.property (NON-BLOCKING, scheduled only).
+tests/properties/test_properties_bnsyn.py:Markers: @pytest.mark.property (NON-BLOCKING)
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:        # Some parameter combinations might trigger expected validation errors
+tests/properties/test_properties_bnsyn.py:        if "validation" not in str(e).lower():
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_properties_bnsyn.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+tests/properties/test_adex_properties.py:@pytest.mark.property
+docs/SCRIPTS/index.md:| `orchestrate_throughput_scaling.py` | Master orchestrator for BN-Syn throughput scaling validation. This script executes the complete 7-step physics-preserving optimization workflow: 1. Generate ground-truth baseline 2. Profile kernels 3. Analyze scaling surfaces (already documented in scaling_plan.md) 4. Run accelerated backend 5. Verify physics equivalence 6. Calculate throughput gains 7. Generate comprehensive report Parameters ---------- --steps : int Number of simulation steps (default: 1000) --neurons : int Number of neurons (default: 200) --tolerance : float Physics equivalence tolerance (default: 0.01 = 1%) --output-dir : str Output directory for all reports (default: benchmarks/) Returns ------- None Generates complete validation suite Notes ----- This is the master orchestrator for physics-preserving throughput scaling. References ---------- Problem statement: All 7 steps | unavailable (exit 1) |
+docs/SCRIPTS/index.md:| `verify_equivalence.py` | Physical equivalence verification for BN-Syn backends. This script compares reference vs accelerated backends to ensure physics-preserving transformations maintain exact emergent dynamics within specified tolerances. Parameters ---------- --reference : str Path to reference backend physics baseline JSON --accelerated : str Path to accelerated backend physics baseline JSON --output : str Path to output equivalence report markdown (default: benchmarks/equivalence_report.md) --tolerance : float Maximum allowed relative deviation (default: 0.01 = 1%) Returns ------- None Writes equivalence report markdown to file Notes ----- This is the CRITICAL validation step. If physics diverges beyond tolerance, the accelerated backend MUST be reverted. References ---------- Problem statement STEP 5 | unavailable (exit 1) |
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:**Purpose:** Master orchestrator for BN-Syn throughput scaling validation. This script executes the complete 7-step physics-preserving optimization workflow: 1. Generate ground-truth baseline 2. Profile kernels 3. Analyze scaling surfaces (already documented in scaling_plan.md) 4. Run accelerated backend 5. Verify physics equivalence 6. Calculate throughput gains 7. Generate comprehensive report Parameters ---------- --steps : int Number of simulation steps (default: 1000) --neurons : int Number of neurons (default: 200) --tolerance : float Physics equivalence tolerance (default: 0.01 = 1%) --output-dir : str Output directory for all reports (default: benchmarks/) Returns ------- None Generates complete validation suite Notes ----- This is the master orchestrator for physics-preserving throughput scaling. References ---------- Problem statement: All 7 steps
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:**Purpose:** Physical equivalence verification for BN-Syn backends. This script compares reference vs accelerated backends to ensure physics-preserving transformations maintain exact emergent dynamics within specified tolerances. Parameters ---------- --reference : str Path to reference backend physics baseline JSON --accelerated : str Path to accelerated backend physics baseline JSON --output : str Path to output equivalence report markdown (default: benchmarks/equivalence_report.md) --tolerance : float Maximum allowed relative deviation (default: 0.01 = 1%) Returns ------- None Writes equivalence report markdown to file Notes ----- This is the CRITICAL validation step. If physics diverges beyond tolerance, the accelerated backend MUST be reverted. References ---------- Problem statement STEP 5
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+docs/SCRIPTS/index.md:- Non-zero exit typically indicates validation failure, missing inputs, or contract drift.
+tests/properties/test_validation_inputs_properties.py:"""Property tests for input validation utilities."""
+tests/properties/test_validation_inputs_properties.py:from bnsyn.validation.inputs import validate_state_vector
+tests/properties/test_validation_inputs_properties.py:@pytest.mark.property
+tests/test_provenance_manifest.py:def test_manifest_type_validation() -> None:
+tests/test_provenance_manifest.py:    """Test RunManifest type validation."""
+tests/test_provenance_manifest.py:def test_output_hash_type_validation() -> None:
+tests/test_provenance_manifest.py:    """Test output hash type validation."""
+tests/test_provenance_manifest.py:def test_manifest_from_dict_type_validation() -> None:
+tests/test_provenance_manifest.py:    """Test from_dict type validation."""
+tests/test_performance.py:@pytest.mark.performance
+tests/test_performance.py:@pytest.mark.performance
+tests/test_performance.py:@pytest.mark.performance
+tests/test_performance.py:@pytest.mark.integration
+tests/test_performance.py:@pytest.mark.performance
+docs/scripts/validate-claims-coverage.md:- Returns exit code 1 when validation conditions fail.
+tests/test_vcg_validation.py:def test_vcg_params_validation() -> None:
+tests/test_vcg_validation.py:def test_vcg_support_bounds_validation() -> None:
+tests/test_vcg_validation.py:def test_vcg_vector_shape_validation() -> None:
+docs/scripts/check-mutation-score.md:- Returns exit code 1 when validation conditions fail.
+docs/scripts/verify-equivalence.md:Physical equivalence verification for BN-Syn backends. This script compares reference vs accelerated backends to ensure physics-preserving transformations maintain exact emergent dynamics within specified tolerances. Parameters ---------- --reference : str Path to reference backend physics baseline JSON --accelerated : str Path to accelerated backend physics baseline JSON --output : str Path to output equivalence report markdown (default: benchmarks/equivalence_report.md) --tolerance : float Maximum allowed relative deviation (default: 0.01 = 1%) Returns ------- None Writes equivalence report markdown to file Notes ----- This is the CRITICAL validation step. If physics diverges beyond tolerance, the accelerated backend MUST be reverted. References ---------- Problem statement STEP 5
+docs/scripts/verify-equivalence.md:- Returns exit code 1 when validation conditions fail.
+tests/test_temperature_smoke.py:@pytest.mark.parametrize("tau", [0.015, 0.02, 0.05, 0.08])
+tests/test_temperature_smoke.py:@pytest.mark.parametrize("tau_small,tau_large", [(0.015, 0.02), (0.02, 0.05), (0.05, 0.08)])
+tests/test_temperature_smoke.py:@pytest.mark.parametrize("tau", [0.015, 0.02, 0.05, 0.08])
+docs/scripts/index.md:| `orchestrate_throughput_scaling.py` | Master orchestrator for BN-Syn throughput scaling validation. This script executes the complete 7-step physics-preservin... | Writes artifacts only | [orchestrate-throughput-scaling.md](./orchestrate-throughput-scaling.md) |
+tests/test_pr_description_policy_workflow.py:    assert "'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification']" in workflow
+tests/test_schema_experiment_contracts.py:"""Contract tests for experiment schema validation."""
+tests/test_check_internal_links.py:@pytest.mark.parametrize(
+docs/sleep_stack.md:- `tests/validation/test_sleep_stack_effectiveness.py`: Validation tests
+docs/math/MATH_SURFACES.md:- No GPU required for conformance validation; CPU path is primary.
+docs/TESTING.md:python -m pytest -m "not validation" -q
+docs/TESTING.md:python -m pytest -m smoke -q
+docs/TESTING.md:python -m pytest -m "not property" -q
+docs/TESTING.md:- `python -m pytest -m "not property" -q` succeeds.
+docs/TESTING.md:python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+docs/TESTING.md:2. Rebuild wheels for Python 3.11 and re-run validation:
+docs/DETERMINISM.md:- Reproducible artifact validation script exists (`scripts/verify_reproducible_artifacts.py`).
+docs/DETERMINISM.md:  - DERIVE FROM: `evidence/**` reproducibility artifacts and validation scripts.
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m "not validation and not property" --cov=src/bnsyn --cov-fail-under=85
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m property --hypothesis-profile=quick --hypothesis-show-statistics
+docs/QUALITY_INFRASTRUCTURE.md:HYPOTHESIS_PROFILE=thorough pytest -m property --hypothesis-show-statistics
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m "validation and chaos" -v
+docs/QUALITY_INFRASTRUCTURE.md:pytest tests/validation/test_chaos_integration.py -v
+docs/QUALITY_INFRASTRUCTURE.md:pytest tests/validation/test_chaos_numeric.py -v
+docs/QUALITY_INFRASTRUCTURE.md:# Run all validation tests
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m validation -v
+docs/QUALITY_INFRASTRUCTURE.md:# Run specific validation suite
+docs/QUALITY_INFRASTRUCTURE.md:pytest tests/validation/test_adex_validation.py -v
+docs/QUALITY_INFRASTRUCTURE.md:- SSOT validation (bibliography, claims, normative tags)
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m "not validation and not property"
+docs/QUALITY_INFRASTRUCTURE.md:**Workflow**: `.github/workflows/ci-validation.yml` (mode: `property`)
+docs/QUALITY_INFRASTRUCTURE.md:HYPOTHESIS_PROFILE=ci pytest -m property -v --tb=short --hypothesis-show-statistics
+docs/QUALITY_INFRASTRUCTURE.md:**Workflow**: `.github/workflows/ci-validation.yml` (mode: `chaos`)
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m "validation and chaos" -v
+docs/QUALITY_INFRASTRUCTURE.md:pytest tests/validation/test_chaos_integration.py -v
+docs/QUALITY_INFRASTRUCTURE.md:**Workflow**: `.github/workflows/ci-validation.yml` (mode: `elite`)
+docs/QUALITY_INFRASTRUCTURE.md:- Scientific validation tests (large-N, statistical)
+docs/QUALITY_INFRASTRUCTURE.md:- `validation-logs-<sha>/validation.log` - Full test output
+docs/QUALITY_INFRASTRUCTURE.md:- `validation-logs-<sha>/validation-junit.xml` - JUnit XML report
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m validation -v
+docs/QUALITY_INFRASTRUCTURE.md:- Heavy suites (validation, property, mutation, formal) run on schedule/dispatch
+docs/QUALITY_INFRASTRUCTURE.md:pytest -m property --hypothesis-show-statistics
+docs/QUALITY_INFRASTRUCTURE.md:pytest tests/validation/test_chaos_integration.py -vv -s
+docs/AUDIT_LEDGER.md:## FND-0004 — Normative tag scan lacked tier validation
+docs/AUDIT_LEDGER.md:- **Fix decision:** **FIX** — Enforced Tier-A + normative validation for every NORMATIVE + CLM-#### reference.
+docs/MODULE_RESPONSIBILITY_MATRIX.md:| `scripts/*.py` | Operational gates, audits, benchmarks, and validation automation. | `python -m scripts.<name>` | CI scripts must fail non-zero on detected policy/quality drift. |
+docs/scripts/compare-benchmarks.md:- Returns exit code 1 when validation conditions fail.
+docs/appendix/PRODUCTION_AUDIT.md:V = state.V_mV.astype(float, copy=True)  # No validation of input ranges
+docs/appendix/PRODUCTION_AUDIT.md:- No validation that `V_mV` is 1D array
+docs/appendix/PRODUCTION_AUDIT.md:    # Input validation
+docs/appendix/PRODUCTION_AUDIT.md:**Current:** Pydantic used for basic types, no cross-field validation
+docs/appendix/PRODUCTION_AUDIT.md:    # No validation: what if C_pF < 0? gL_nS = 0?
+docs/appendix/PRODUCTION_AUDIT.md:@pytest.mark.benchmark
+docs/appendix/PRODUCTION_AUDIT.md:- [ ] ISSUE-002: Input validation
+docs/appendix/PRODUCTION_AUDIT.md:- [ ] Experimental data validation
+docs/scripts/check-benchmark-regressions.md:- Returns exit code 1 when validation conditions fail.
+docs/appendix/EXECUTIVE_SUMMARY.md:- ✅ **SSOT framework:** Evidence governance (bibliography + claims validation)
+docs/appendix/EXECUTIVE_SUMMARY.md:- P2-MEDIUM: Checkpointing, configuration validation
+docs/appendix/EXECUTIVE_SUMMARY.md:    V = state.V_mV.astype(float, copy=True)  # No validation
+docs/appendix/EXECUTIVE_SUMMARY.md:   - Input validation comprehensive
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:| Stability & determinism | 25 | PARTIAL | 0.5 | Є pass subset determinism тестів, але не проведено повний контур validation/property/CI replay в межах цього аудиту. |
+docs/appendix/additional_audit_2026.md:### Smoke tests (non-validation)
+docs/appendix/additional_audit_2026.md:pytest -m "not validation"
+docs/appendix/additional_audit_2026.md:### pytest -m "not validation"
+docs/appendix/PRODUCTION_ROADMAP.md:- Comprehensive input validation
+docs/appendix/PRODUCTION_ROADMAP.md:- Contract tests: Input validation, error handling
+docs/appendix/PRODUCTION_ROADMAP.md:2. ✅ Input validation framework
+docs/appendix/PRODUCTION_ROADMAP.md:- Comprehensive validation layer
+docs/appendix/PRODUCTION_ROADMAP.md:3. ⬜ Configuration validation (Pydantic)
+docs/appendix/PRODUCTION_ROADMAP.md:1. ⬜ Experimental validation (vs published data)
+docs/appendix/PRODUCTION_ROADMAP.md:**Experimental validation:**
+docs/appendix/PRODUCTION_ROADMAP.md:│   ├── validation/
+docs/appendix/PRODUCTION_ROADMAP.md:│   │   ├── inputs.py         (input validation functions)
+docs/appendix/PRODUCTION_ROADMAP.md:2. ⬜ Experimental validation (reproduce 3 key papers)
+docs/appendix/codebase_readiness_audit_2026-02-15.json:        "cmd:make test: pytest completed to 100% with only warnings (non-validation test suite)",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:  "exec_summary": "Readiness is 66% (confidence: medium). Biggest blockers are weak observability/ops evidence, non-reproducible local security gate execution (missing gitleaks plus pip-audit finding), and current lint failures at HEAD. Fastest +15 path: (1) implement structured logging + health/metrics baseline with runbook and CI validation, (2) make security tooling self-installing and enforce clean local security run, (3) clear ruff violations and lock zero-warning static checks. Build, tests, coverage, and release automation are strong and mostly deterministic, but production-grade operations evidence is insufficient."
+docs/appendix/intelligence_cycle_report.json:        "name": "validation",
+docs/appendix/intelligence_cycle_report.json:        "source": "src/bnsyn/validation"
+docs/appendix/intelligence_cycle_report.json:        "name": "validation",
+docs/appendix/intelligence_cycle_report.json:        "source": "src/bnsyn/validation",
+docs/appendix/intelligence_cycle_report.json:      "entity|validation|module_dir": 0.85,
+docs/appendix/intelligence_cycle_report.json:      "entity:validation",
+docs/appendix/intelligence_cycle_report.json:        "to": "entity:validation",
+docs/appendix/intelligence_cycle_report.json:      "validation_gate": "validated_model.risk_vectors == []"
+docs/COMPONENT_AUDIT.md:| P0-1 | P0-1 | VERIFIED | src/bnsyn/neuron/adex.py; src/bnsyn/sim/network.py | tests/test_adex_smoke.py; tests/validation/test_adex_validation.py | CLM-0001, CLM-0002 | AdEx equations, reset rule, and exp clamp aligned with spec. |
+docs/COMPONENT_AUDIT.md:| P0-2 | P0-2 | VERIFIED | src/bnsyn/synapse/conductance.py; src/bnsyn/sim/network.py | tests/test_synapse_smoke.py; tests/validation/test_synapse_validation.py | CLM-0003 | Mg block and conductance decay align with spec equations. |
+docs/COMPONENT_AUDIT.md:| P0-3 | P0-3 | VERIFIED | src/bnsyn/plasticity/three_factor.py | tests/test_plasticity_smoke.py; tests/validation/test_plasticity_validation.py | CLM-0004, CLM-0005 | Eligibility × neuromodulator update and weight bounds verified. |
+docs/COMPONENT_AUDIT.md:| P0-4 | P0-4 | VERIFIED | src/bnsyn/criticality/branching.py; src/bnsyn/criticality/analysis.py | tests/test_criticality_smoke.py; tests/validation/test_criticality_validation.py | CLM-0006, CLM-0007, CLM-0008, CLM-0009 | σ estimation and gain homeostasis validated. |
+docs/COMPONENT_AUDIT.md:| P1-5 | P1-5 | VERIFIED | src/bnsyn/temperature/schedule.py | tests/test_temperature_smoke.py; tests/validation/test_temperature_validation.py | CLM-0019 | Geometric cooling and gate sigmoid covered. |
+docs/COMPONENT_AUDIT.md:| P1-6 | P1-6 | VERIFIED | src/bnsyn/consolidation/dual_weight.py | tests/test_consolidation_smoke.py; tests/validation/test_consolidation_validation.py | CLM-0010, CLM-0020 | Dual-weight dynamics and tagging/protein gating verified. |
+docs/COMPONENT_AUDIT.md:| P1-7 | P1-7 | VERIFIED | src/bnsyn/energy/regularization.py | tests/test_energy_smoke.py; tests/validation/test_energy_validation.py | CLM-0021 | Energy regularization objective terms verified. |
+docs/COMPONENT_AUDIT.md:| P2-8 | P2-8 | VERIFIED | src/bnsyn/numerics/integrators.py | tests/test_dt_invariance.py; tests/validation/test_numerics_validation.py | CLM-0022 | Euler/RK2 and exp decay methods covered. |
+docs/COMPONENT_AUDIT.md:| P2-9 | P2-9 | VERIFIED | src/bnsyn/rng.py; src/bnsyn/sim/network.py | tests/test_determinism.py; tests/validation/test_determinism_validation.py | CLM-0023 | Determinism protocol and explicit RNG injection enforced. |
+docs/COMPONENT_AUDIT.md:| P2-10 | P2-10 | VERIFIED | src/bnsyn/calibration/fit.py | tests/test_calibration_smoke.py; tests/validation/test_calibration_validation.py | CLM-0024 | Deterministic least-squares fit validated. |
+docs/COMPONENT_AUDIT.md:| P2-11 | P2-11 | VERIFIED | src/bnsyn/sim/network.py | tests/test_network_smoke.py; tests/validation/test_network_validation.py | CLM-0025 | Reference simulator with safety bounds verified. |
+docs/COMPONENT_AUDIT.md:| P2-12 | P2-12 | VERIFIED | src/bnsyn/cli.py | tests/test_cli_smoke.py; tests/validation/test_cli_validation.py | CLM-0026 | CLI bench harness outputs deterministic metrics. |
+docs/scripts/orchestrate-throughput-scaling.md:Master orchestrator for BN-Syn throughput scaling validation. This script executes the complete 7-step physics-preserving optimization workflow: 1. Generate ground-truth baseline 2. Profile kernels 3. Analyze scaling surfaces (already documented in scaling_plan.md) 4. Run accelerated backend 5. Verify physics equivalence 6. Calculate throughput gains 7. Generate comprehensive report Parameters ---------- --steps : int Number of simulation steps (default: 1000) --neurons : int Number of neurons (default: 200) --tolerance : float Physics equivalence tolerance (default: 0.01 = 1%) --output-dir : str Output directory for all reports (default: benchmarks/) Returns ------- None Generates complete validation suite Notes ----- This is the master orchestrator for physics-preserving throughput scaling. References ---------- Problem statement: All 7 steps
+docs/scripts/orchestrate-throughput-scaling.md:- Returns exit code 1 when validation conditions fail.
+docs/repo_map.md:| `src/contracts/` | Assertion-style mathematical contracts used for validation invariants. | Stable validation API |
+docs/repo_map.md:| `scripts/` | Operational automation (validation, benchmark, governance, release readiness, docs checks). | Mixed; review script-level safety |
+docs/repo_map.md:| `tests/` | Pytest suite (smoke, validation, property, integration, performance). | Stable quality gate |
+docs/repo_map.md:| Inspect mathematical validation contracts | `src/contracts/math_contracts.py` + `docs/contracts/index.md` |
+docs/scripts/validate-claims.md:- Returns exit code 1 when validation conditions fail.
+docs/DOCUMENTATION_FORMALIZATION.md:   - `docs/REPRODUCIBILITY.md` defines the determinism protocol and validation commands.
+docs/DOCUMENTATION_FORMALIZATION.md:   - `docs/CI_GATES.md` defines PR gates, validation tiers, and quality/security checks.
+docs/DOCUMENTATION_FORMALIZATION.md:1. **SSOT validation**
+docs/DOCUMENTATION_FORMALIZATION.md:   - `docs/CI_GATES.md` defines PR-blocking smoke tests, SSOT validation, quality checks, and
+docs/DOCUMENTATION_FORMALIZATION.md:- **Determinism-first**: Reproducibility requirements (seed control, validation commands) are
+docs/DOCUMENTATION_FORMALIZATION.md:5. **Run SSOT gates**: Execute the validation commands in `docs/REPRODUCIBILITY.md`.
+docs/BENCHMARK_MAP.md:This document maps benchmark metrics to SPEC components so every metric has a SPEC-anchored validation target.
+docs/PLACEHOLDER_REGISTRY.md:- Canonical test command: `python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=json --cov-report=xml:coverage.xml --cov-report=html --cov-fail-under=85 --junit-xml=junit.xml -v`
+docs/PLACEHOLDER_REGISTRY.md:- Path: `tests/validation/test_chaos_integration.py:256`
+docs/PLACEHOLDER_REGISTRY.md:- evidence_ref: `tests/validation/test_chaos_integration.py::test_adex_bounds_enforcement`
+docs/safety/followups.md:**Action**: Add explicit environment controls for thread/BLAS determinism (e.g., `OMP_NUM_THREADS=1`, `MKL_NUM_THREADS=1`) in runtime entrypoints and CI, with validation tests ensuring reproducibility under fixed settings.  
+docs/safety/followups.md:**Target evidence**: New tests in `tests/validation` and explicit runtime checks in `src/bnsyn/sim/network.py`.
+docs/safety/stpa.md:- **Sensors/Feedback**: Metrics returned from steps (sigma, gain, spike rate), validation errors, test telemetry.
+docs/safety/stpa.md:| SC-1 | `bnsyn.validation.inputs` validators | `tests/test_validation_inputs.py` | `pytest -q` | enforced |
+docs/safety/stpa.md:| SC-2 | `Network.__init__` and `Network.step` validation | `tests/test_network_validation_edges.py`, `tests/test_network_external_input.py` | `pytest -q` | enforced |
+docs/safety/stpa.md:| SC-3 | `bnsyn.rng.seed_all` | `tests/properties/test_properties_determinism.py` | `pytest -m property` | enforced |
+docs/safety/stpa.md:| SC-5 | _unmitigated_ | `tests/validation/test_chaos_numeric.py` (numeric health utilities only) | _unmitigated_ | unmitigated |
+docs/assets/hero.svg:  <desc id="desc">BN-Syn deterministic research runtime with governance and evidence validation.</desc>
+docs/safety/traceability.yml:      - code: src/bnsyn/validation/inputs.py:L83-L197
+docs/safety/traceability.yml:      - path: tests/test_validation_inputs.py:L15-L53
+docs/safety/traceability.yml:      - pytest tests/test_validation_inputs.py -q
+docs/safety/traceability.yml:        command: pytest -m "not (validation or property)"
+docs/safety/traceability.yml:    status_reason: Network init and step validation enforce bounds and shapes.
+docs/safety/traceability.yml:        notes: parameter validation and connectivity checks.
+docs/safety/traceability.yml:        notes: external current shape validation.
+docs/safety/traceability.yml:      - path: tests/test_network_validation_edges.py:L21-L77
+docs/safety/traceability.yml:        notes: external current shape validation.
+docs/safety/traceability.yml:      - pytest tests/test_network_validation_edges.py -q
+docs/safety/traceability.yml:        command: pytest -m "not (validation or property)"
+docs/safety/traceability.yml:        notes: seed validation and deterministic generator creation.
+docs/safety/traceability.yml:      - workflow: .github/workflows/ci-validation.yml
+docs/safety/traceability.yml:        command: pytest -m property -v --tb=short --hypothesis-show-statistics
+docs/safety/traceability.yml:      - path: tests/validation/test_chaos_numeric.py:L46-L92
+docs/ARCHITECTURE_INVARIANTS.md:- `bnsyn.validation.inputs`: strict boundary validators for array shape/dtype/finiteness.
+docs/ARCHITECTURE_INVARIANTS.md:### Input validation invariants
+docs/safety/hazard_log.yml:      - code: src/bnsyn/validation/inputs.py:L83-L197
+docs/safety/hazard_log.yml:        description: ndarray/type/shape/NaN validation for state, spikes, connectivity.
+docs/safety/hazard_log.yml:      - path: tests/test_validation_inputs.py:L15-L53
+docs/safety/hazard_log.yml:      - pytest tests/test_validation_inputs.py -q
+docs/safety/hazard_log.yml:        command: pytest -m "not (validation or property)"
+docs/safety/hazard_log.yml:        description: parameter validation and connectivity validation.
+docs/safety/hazard_log.yml:        description: external current shape validation.
+docs/safety/hazard_log.yml:      - path: tests/test_network_validation_edges.py:L21-L77
+docs/safety/hazard_log.yml:        description: external current shape validation.
+docs/safety/hazard_log.yml:      - pytest tests/test_network_validation_edges.py -q
+docs/safety/hazard_log.yml:        command: pytest -m "not (validation or property)"
+docs/safety/hazard_log.yml:      - workflow: .github/workflows/ci-validation.yml
+docs/safety/hazard_log.yml:        command: pytest -m property -v --tb=short --hypothesis-show-statistics
+docs/safety/hazard_log.yml:      - path: tests/validation/test_chaos_numeric.py:L46-L92
+docs/HYPOTHESIS.md:- **Seeds**: 20 independent trials per condition (validation run); 5 for smoke tests.
+docs/HYPOTHESIS.md:# Full validation run (seeds=20, ~2-5 minutes)
+docs/GOVERNANCE.md:| [ci-validation.yml](../.github/workflows/ci-validation.yml) | Weekly + manual | SSOT + validation tests |
+docs/RELEASE_PIPELINE.md:The pipeline always performs build + dry-run publish validation.
+docs/ENTROPY_LEDGER.md:| M3 | Contract validation signals (typed validation boundary modules present) | 2 | >= 2 | pass | `entropy/metrics.json` |
+docs/CI_GATES.md:This document defines the **3-tier test selection strategy** for BN-Syn, balancing fast PR feedback with comprehensive validation coverage.
+docs/CI_GATES.md:2. **NON-BLOCKING validation** runs on schedule (thorough, 30+ min)
+docs/CI_GATES.md:3. **Isolation** ensures validation tests never block PRs
+docs/CI_GATES.md:1. **Smoke Suite** (`-m "not (validation or property)"`)
+docs/CI_GATES.md:- **Validation Tests** (`-m validation`): Tests validating empirical claims
+docs/CI_GATES.md:- **Chaos Tests** (`-m "validation and chaos"`): Fault injection resilience tests
+docs/CI_GATES.md:**Workflows:** `ci-validation.yml` (modes: `elite`, `property`, `chaos`)
+docs/CI_GATES.md:make test                      # Smoke suite (excludes validation/property)
+docs/CI_GATES.md:make test-validation           # Run validation suite locally
+docs/CI_GATES.md:| **VALIDATION** | `@pytest.mark.validation` | Daily 2 AM | varies | ❌ NO | `ci-validation.yml` (mode: `elite`) |
+docs/CI_GATES.md:| **PROPERTY** | `@pytest.mark.property` | Daily 2:30 AM | ~10 min | ❌ NO | `ci-validation.yml` (mode: `property`) |
+docs/CI_GATES.md:| **CHAOS** | `@pytest.mark.chaos` | Daily 4 AM | ~20 min | ❌ NO | `ci-validation.yml` (mode: `chaos`) |
+docs/THROUGHPUT_SCALING.md:- `src/bnsyn/sim/network.py`: Added backend parameter with validation
+docs/THROUGHPUT_SCALING.md:**Objective**: Automate physics validation on every PR.
+docs/THROUGHPUT_SCALING.md:- No validation tests broken
+docs/THROUGHPUT_SCALING.md:5. `benchmarks/equivalence_report.md` - Physics validation report
+docs/THROUGHPUT_SCALING.md:1. `.github/workflows/physics-equivalence.yml` - Automated validation
+docs/THROUGHPUT_SCALING.md:5. ✅ **Benchmarks prove it**: Comprehensive validation suite complete
+docs/THROUGHPUT_SCALING.md:- **Auditable**: Complete validation trail
+docs/QUALITY_INDEX.md:| `make test` | Fast unit tests (no validation/property) | PR blocking |
+docs/QUALITY_INDEX.md:| `HYPOTHESIS_PROFILE=quick pytest -m property` | Property tests (quick, 100 examples) | Local dev |
+docs/QUALITY_INDEX.md:| `HYPOTHESIS_PROFILE=thorough pytest -m property` | Property tests (thorough, 1000 examples) | Nightly |
+docs/QUALITY_INDEX.md:| `pytest -m "validation and chaos"` | Chaos engineering tests | Nightly |
+docs/QUALITY_INDEX.md:| `ci-validation.yml` (mode: `standard`) | Weekly Sun 3:00 UTC | SSOT + validation |
+docs/QUALITY_INDEX.md:| `ci-validation.yml` (mode: `elite`) | Nightly 2:00 UTC | Validation + property |
+docs/QUALITY_INDEX.md:| `ci-validation.yml` (mode: `property`) | Nightly 2:30 UTC | Property testing |
+docs/QUALITY_INDEX.md:| `ci-validation.yml` (mode: `chaos`) | Nightly 4:00 UTC | Chaos engineering + property |
+docs/QUALITY_INDEX.md:- Excludes validation and property tests
+docs/QUALITY_INDEX.md:**Property-Based Testing** (`ci-validation.yml` mode `elite`/`property`/`chaos`)
+docs/QUALITY_INDEX.md:- Captures statistics for empirical validation
+docs/QUALITY_INDEX.md:**Chaos Engineering** (`ci-validation.yml`, mode `chaos`)
+docs/QUALITY_INDEX.md:- All tests marked with both `@pytest.mark.validation` and `@pytest.mark.chaos`
+docs/QUALITY_INDEX.md:- Set profile via environment variable: `HYPOTHESIS_PROFILE=thorough pytest -m property`
+docs/QUALITY_INDEX.md:| `property` | Hypothesis property tests | `ci-validation.yml` (elite/property/chaos) |
+docs/QUALITY_INDEX.md:| `validation` | Extended validation tests | `ci-validation.yml` (standard/elite/chaos) |
+docs/QUALITY_INDEX.md:| `chaos` | Chaos engineering tests | `ci-validation.yml` (chaos) |
+docs/QUALITY_INDEX.md:**Chaos tests MUST have both `@pytest.mark.validation` AND `@pytest.mark.chaos`** to be selected by the chaos workflow's `-m "validation and chaos"` filter.
+docs/QUALITY_INDEX.md:- Excludes test files, validation tests, property tests
+docs/QUALITY_INDEX.md:@pytest.mark.validation
+docs/QUALITY_INDEX.md:@pytest.mark.chaos
+docs/QUALITY_INDEX.md:pytest -m "validation and chaos" --collect-only
+docs/benchmarks/PROTOCOL.md:- **Model accuracy**: See validation tests in `tests/validation/`
+docs/REPRODUCIBILITY.md:pytest -m "not validation"
+docs/REPRODUCIBILITY.md:Expected output reports passing smoke tests with the validation suite deselected.
+docs/REPRODUCIBILITY.md:pytest -m validation
+docs/REPRODUCIBILITY.md:Expected output reports passing validation tests.
+$ python -m pytest --collect-only -q
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_placeholders.py: 6
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_status_claims.py: 3
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_hypothesis_v2.py: 2
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_viz_dashboard.py: 5
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/benchmarks/test_regression.py _____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/benchmarks/test_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/benchmarks/test_regression.py:8: in <module>
+    from benchmarks.metrics import metrics_to_dict, run_benchmark
+benchmarks/metrics.py:12: in <module>
+    import psutil
+E   ModuleNotFoundError: No module named 'psutil'
+______________________ ERROR collecting tests/properties _______________________
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+/root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:197: in exec_module
+    exec(co, module.__dict__)
+tests/properties/conftest.py:5: in <module>
+    from hypothesis import Verbosity, settings
+E   ModuleNotFoundError: No module named 'hypothesis'
+______________ ERROR collecting tests/test_claims_enforcement.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_claims_enforcement.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_claims_enforcement.py:21: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+____________ ERROR collecting tests/test_experiments_declarative.py ____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_experiments_declarative.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_experiments_declarative.py:10: in <module>
+    from bnsyn.experiments import declarative
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_integration_experiment_flow.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_integration_experiment_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_integration_experiment_flow.py:8: in <module>
+    from bnsyn.experiments.declarative import run_from_yaml
+src/bnsyn/experiments/__init__.py:5: in <module>
+    from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+src/bnsyn/experiments/declarative.py:17: in <module>
+    import yaml  # type: ignore[import-untyped]
+    ^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_manifest_tooling.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling.py:5: in <module>
+    from tools.manifest import generate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_manifest_tooling_regression.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_manifest_tooling_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_manifest_tooling_regression.py:9: in <module>
+    from tools.manifest import generate, validate
+tools/manifest/generate.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________ ERROR collecting tests/test_scan_governed_docs_script.py ___________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_scan_governed_docs_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_scan_governed_docs_script.py:10: in <module>
+    from scripts import scan_governed_docs  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/scan_governed_docs.py:22: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_schema_contracts.py ________________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_schema_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_schema_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_sync_required_status_contexts.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_sync_required_status_contexts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_sync_required_status_contexts.py:6: in <module>
+    from scripts.sync_required_status_contexts import build_payload, sync_required_status_contexts
+scripts/sync_required_status_contexts.py:7: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_________ ERROR collecting tests/test_validate_bibliography_script.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_bibliography_script.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_bibliography_script.py:12: in <module>
+    from scripts import validate_bibliography as vb  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/validate_bibliography.py:17: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________ ERROR collecting tests/test_validate_long_running_triggers.py _________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_long_running_triggers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_long_running_triggers.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_validate_pr_gates.py _______________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_pr_gates.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_pr_gates.py:5: in <module>
+    from scripts.validate_pr_gates import validate_pr_gates
+scripts/validate_pr_gates.py:8: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________ ERROR collecting tests/test_validate_required_checks.py ____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_required_checks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_required_checks.py:7: in <module>
+    from scripts.validate_required_checks import (
+scripts/validate_required_checks.py:7: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping, reject_unknown_keys
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_validate_workflow_contracts.py __________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/test_validate_workflow_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_validate_workflow_contracts.py:7: in <module>
+    from scripts.validate_workflow_contracts import (
+scripts/validate_workflow_contracts.py:9: in <module>
+    from scripts.yaml_contracts import load_yaml_mapping
+scripts/yaml_contracts.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR tests/benchmarks/test_regression.py
+ERROR tests/properties - ModuleNotFoundError: No module named 'hypothesis'
+ERROR tests/test_claims_enforcement.py
+ERROR tests/test_experiments_declarative.py
+ERROR tests/test_integration_experiment_flow.py
+ERROR tests/test_manifest_tooling.py
+ERROR tests/test_manifest_tooling_regression.py
+ERROR tests/test_scan_governed_docs_script.py
+ERROR tests/test_schema_contracts.py
+ERROR tests/test_sync_required_status_contexts.py
+ERROR tests/test_validate_bibliography_script.py
+ERROR tests/test_validate_long_running_triggers.py
+ERROR tests/test_validate_pr_gates.py
+ERROR tests/test_validate_required_checks.py
+ERROR tests/test_validate_workflow_contracts.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 15 errors during collection !!!!!!!!!!!!!!!!!!!
+$ rg --files -g "*.whl"
+$ python -m pip install pyyaml hypothesis
+Collecting pyyaml
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting hypothesis
+  Downloading hypothesis-6.151.9-py3-none-any.whl.metadata (5.6 kB)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis)
+  Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 26.3 MB/s  0:00:00
+Downloading hypothesis-6.151.9-py3-none-any.whl (529 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 529.3/529.3 kB 41.9 MB/s  0:00:00
+Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Installing collected packages: sortedcontainers, pyyaml, hypothesis
+
+Successfully installed hypothesis-6.151.9 pyyaml-6.0.3 sortedcontainers-2.4.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+$ python -m pytest --collect-only -q
+[Hypothesis] Using default profile
+tests/properties/test_adex_properties.py: 10
+tests/properties/test_hypothesis_profiles.py: 2
+tests/properties/test_manifest_tooling_properties.py: 3
+tests/properties/test_properties_bnsyn.py: 7
+tests/properties/test_properties_determinism.py: 2
+tests/properties/test_validation_inputs_properties.py: 1
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_claims_enforcement.py: 3
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_declarative.py: 7
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_integration_experiment_flow.py: 1
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tooling.py: 3
+tests/test_manifest_tooling_regression.py: 4
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_governed_docs_script.py: 1
+tests/test_scan_placeholders.py: 6
+tests/test_schema_contracts.py: 2
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_sync_required_status_contexts.py: 4
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_bibliography_script.py: 4
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_long_running_triggers.py: 27
+tests/test_validate_pr_gates.py: 6
+tests/test_validate_required_checks.py: 8
+tests/test_validate_status_claims.py: 3
+tests/test_validate_workflow_contracts.py: 6
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_hypothesis_v2.py: 2
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_viz_dashboard.py: 5
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/benchmarks/test_regression.py _____________
+ImportError while importing test module '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/benchmarks/test_regression.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.12.12/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/benchmarks/test_regression.py:8: in <module>
+    from benchmarks.metrics import metrics_to_dict, run_benchmark
+benchmarks/metrics.py:12: in <module>
+    import psutil
+E   ModuleNotFoundError: No module named 'psutil'
+=========================== short test summary info ============================
+ERROR tests/benchmarks/test_regression.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+$ python -m pip install psutil
+Collecting psutil
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Installing collected packages: psutil
+Successfully installed psutil-7.2.2
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+$ python -m pytest --collect-only -q
+[Hypothesis] Using default profile
+tests/benchmarks/test_regression.py: 3
+tests/properties/test_adex_properties.py: 10
+tests/properties/test_hypothesis_profiles.py: 2
+tests/properties/test_manifest_tooling_properties.py: 3
+tests/properties/test_properties_bnsyn.py: 7
+tests/properties/test_properties_determinism.py: 2
+tests/properties/test_validation_inputs_properties.py: 1
+tests/test_actions_pinning.py: 1
+tests/test_adex_smoke.py: 3
+tests/test_api_contract_command.py: 1
+tests/test_api_contract_semver.py: 4
+tests/test_api_maturity.py: 2
+tests/test_api_surface_reexports.py: 4
+tests/test_attractor_crystallizer.py: 12
+tests/test_audit_suite_artifacts.py: 6
+tests/test_benchmark_regression_gate.py: 1
+tests/test_benchmarks_smoke.py: 6
+tests/test_calibration_accuracy_speed.py: 1
+tests/test_calibration_fit_edge.py: 1
+tests/test_calibration_smoke.py: 1
+tests/test_check_internal_links.py: 5
+tests/test_claims_enforcement.py: 3
+tests/test_cli_interactive.py: 10
+tests/test_cli_sleep_stack_backend_and_N_unit.py: 1
+tests/test_cli_sleep_stack_branches.py: 2
+tests/test_cli_sleep_stack_figure.py: 1
+tests/test_cli_smoke.py: 3
+tests/test_cli_unit.py: 4
+tests/test_cli_versioning.py: 4
+tests/test_connectivity_sparse.py: 9
+tests/test_consolidation_smoke.py: 1
+tests/test_coverage_gap_extensions.py: 17
+tests/test_coverage_gate.py: 12
+tests/test_coverage_paths.py: 8
+tests/test_criticality_analysis_edge.py: 4
+tests/test_criticality_smoke.py: 1
+tests/test_crystallizer_edge_cases.py: 5
+tests/test_determinism.py: 3
+tests/test_dt_invariance.py: 1
+tests/test_edge_cases_adex.py: 17
+tests/test_edge_cases_criticality.py: 12
+tests/test_edge_cases_synapse.py: 15
+tests/test_edge_cases_temperature.py: 10
+tests/test_energy_smoke.py: 1
+tests/test_entropy_artifacts_guard.py: 1
+tests/test_entropy_gate.py: 1
+tests/test_experiment_manifest.py: 1
+tests/test_experiments_declarative.py: 7
+tests/test_experiments_temperature_ablation.py: 10
+tests/test_faults.py: 8
+tests/test_generate_coverage_trend.py: 19
+tests/test_generate_inventory.py: 2
+tests/test_imports.py: 2
+tests/test_incremental_cache.py: 2
+tests/test_integration_examples.py: 2
+tests/test_integration_experiment_flow.py: 1
+tests/test_intelligence_cycle.py: 2
+tests/test_interactive_smoke.py: 8
+tests/test_jax_backend.py: 3
+tests/test_manifest_builder.py: 9
+tests/test_manifest_consistency.py: 1
+tests/test_manifest_tooling.py: 3
+tests/test_manifest_tooling_regression.py: 4
+tests/test_manifest_tools.py: 12
+tests/test_math_core_hardening.py: 4
+tests/test_math_invariants.py: 29
+tests/test_memory.py: 12
+tests/test_memory_consolidator.py: 8
+tests/test_memory_ledger_unit.py: 5
+tests/test_memory_trace_unit.py: 5
+tests/test_mutation_ci_summary_contract.py: 9
+tests/test_mutation_counts_contract.py: 12
+tests/test_mutation_killers.py: 9
+tests/test_mutation_run_pipeline_contract.py: 3
+tests/test_mutation_survivors_summary.py: 2
+tests/test_network_allocation_buffers.py: 2
+tests/test_network_external_input.py: 4
+tests/test_network_smoke.py: 3
+tests/test_network_validation_edges.py: 4
+tests/test_neuron_adex_validation.py: 3
+tests/test_no_escape_tripwires.py: 3
+tests/test_performance.py: 4
+tests/test_phase_transition.py: 8
+tests/test_phase_transition_detector.py: 8
+tests/test_plasticity_smoke.py: 1
+tests/test_plasticity_three_factor_edge.py: 2
+tests/test_pr_description_policy_template.py: 1
+tests/test_pr_description_policy_workflow.py: 1
+tests/test_principal_test_hardening.py: 3
+tests/test_production_adex_spike.py: 2
+tests/test_provenance_manifest.py: 11
+tests/test_pytest_collection_contract.py: 3
+tests/test_quickstart_consistency_script.py: 2
+tests/test_quickstart_contract.py: 1
+tests/test_readiness_artifact_schemas.py: 4
+tests/test_readme_quickstart_contract.py: 1
+tests/test_release_pipeline.py: 2
+tests/test_release_readiness.py: 2
+tests/test_run_simulation_external_current.py: 1
+tests/test_run_simulation_validation.py: 7
+tests/test_scan_governed_docs_script.py: 1
+tests/test_scan_placeholders.py: 6
+tests/test_schema_contracts.py: 2
+tests/test_schema_experiment_contracts.py: 5
+tests/test_sleep_cycle.py: 10
+tests/test_sleep_cycle_integration.py: 7
+tests/test_sleep_replay.py: 11
+tests/test_sleep_stage_validation.py: 1
+tests/test_spec_mapping_guard.py: 2
+tests/test_synapse_conductance_edge.py: 4
+tests/test_synapse_smoke.py: 2
+tests/test_sync_required_status_contexts.py: 4
+tests/test_temperature_smoke.py: 14
+tests/test_tla_invariants_guard.py: 9
+tests/test_tools_benchmark_sleep_stack_scale_unit.py: 2
+tests/test_tools_run_scaled_sleep_stack_unit.py: 7
+tests/test_tools_scaled_sleep_stack_smoke.py: 1
+tests/test_update_manifest_tools.py: 10
+tests/test_validate_bibliography_script.py: 4
+tests/test_validate_codebase_readiness_audit.py: 4
+tests/test_validate_long_running_triggers.py: 27
+tests/test_validate_pr_gates.py: 6
+tests/test_validate_required_checks.py: 8
+tests/test_validate_status_claims.py: 3
+tests/test_validate_workflow_contracts.py: 6
+tests/test_validation_inputs.py: 7
+tests/test_vcg_invariants_guard.py: 17
+tests/test_vcg_smoke.py: 2
+tests/test_vcg_validation.py: 3
+tests/test_verify_hypothesis_v2.py: 2
+tests/test_verify_reproducible_artifacts.py: 2
+tests/test_viz_interactive.py: 2
+tests/test_viz_interactive_main.py: 2
+tests/test_viz_optional_import.py: 6
+tests/test_viz_smoke_coverage.py: 6
+tests/test_wheelhouse_tools.py: 11
+tests/validation/test_adex_validation.py: 2
+tests/validation/test_calibration_validation.py: 1
+tests/validation/test_chaos_integration.py: 9
+tests/validation/test_chaos_io.py: 6
+tests/validation/test_chaos_numeric.py: 10
+tests/validation/test_chaos_stochastic.py: 5
+tests/validation/test_chaos_timing.py: 7
+tests/validation/test_claims_validation.py: 10
+tests/validation/test_cli_validation.py: 1
+tests/validation/test_consolidation_validation.py: 2
+tests/validation/test_criticality_validation.py: 4
+tests/validation/test_crystallizer_real.py: 2
+tests/validation/test_determinism_validation.py: 1
+tests/validation/test_energy_validation.py: 2
+tests/validation/test_experiments_temperature_ablation_stats.py: 4
+tests/validation/test_integration_validation.py: 4
+tests/validation/test_largeN_validation.py: 1
+tests/validation/test_memory_validation.py: 2
+tests/validation/test_network_validation.py: 1
+tests/validation/test_numerics_validation.py: 3
+tests/validation/test_plasticity_validation.py: 2
+tests/validation/test_production_properties.py: 149
+tests/validation/test_sleep_cycle_long.py: 3
+tests/validation/test_sleep_stack_effectiveness.py: 3
+tests/validation/test_synapse_validation.py: 2
+tests/validation/test_temperature_validation.py: 1
+tests/validation/test_validation.py: 3
+tests/validation/test_viz_dashboard.py: 5
+
+$ python -m pytest -q
+[Hypothesis] Using default profile
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 22%]
+..............................................................ss....ss.. [ 30%]
+........................................................................ [ 37%]
+........................................................................ [ 45%]
+........................................................................ [ 52%]
+........................................................................ [ 60%]
+........................................................................ [ 67%]
+........................................................................ [ 75%]
+........................................................................ [ 82%]
+........................................................................ [ 90%]
+........................................................................ [ 97%]
+.....................ss.                                                 [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+$ python -m pytest -m "not validation" -q
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+..............................................................ss....ss.. [ 40%]
+........................................................................ [ 50%]
+........................................................................ [ 60%]
+........................................................................ [ 70%]
+........................................................................ [ 80%]
+........................................................................ [ 90%]
+...................................................................      [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+$ python -m pytest -m "not validation" -q
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+..............................................................ss....ss.. [ 40%]
+........................................................................ [ 50%]
+........................................................................ [ 60%]
+........................................................................ [ 70%]
+........................................................................ [ 80%]
+........................................................................ [ 90%]
+...................................................................      [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+$ rg "^(hypothesis|PyYAML|psutil)==" requirements-lock.txt
+hypothesis==6.151.5 \
+psutil==7.2.2 \
+$ rg -n "yaml" requirements-lock.txt
+960:pyyaml==6.0.3 \
+$ git status --short
+?? proof_bundle/logs/agent.log
