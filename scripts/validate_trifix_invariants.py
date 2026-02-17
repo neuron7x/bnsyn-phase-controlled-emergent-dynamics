@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import re
 import subprocess
 import sys
@@ -144,7 +145,15 @@ def _run(cmd: str) -> str:
     return out
 
 
+def _deps_missing() -> bool:
+    required_modules = ("yaml", "hypothesis")
+    return any(importlib.util.find_spec(mod) is None for mod in required_modules)
+
+
 def _check_non_empty_suite() -> None:
+    if _deps_missing():
+        _run(TEST_INSTALL_CMD)
+
     collect_out = _run(COLLECT_CMD)
     if re.search(r"collected\s+0\s+items", collect_out):
         raise ValidationError("I4 violation: collect-only reported zero tests")
