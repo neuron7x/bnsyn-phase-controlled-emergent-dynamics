@@ -1,9 +1,19 @@
-.PHONY: dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+.PHONY: setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
 PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
+SETUP_CMD ?= python -m pip install -e ".[test]"
+TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+
+setup:
+	$(SETUP_CMD)
+
+demo:
+	python -c "from pathlib import Path; Path('artifacts').mkdir(parents=True, exist_ok=True)"
+	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 > artifacts/demo.json
+	@echo "Demo artifact written: artifacts/demo.json"
 
 dev-setup:
 	python -m pip install --upgrade pip setuptools wheel
@@ -41,7 +51,7 @@ test:
 	$(MAKE) test-gate
 
 test-gate:
-	python -m pytest -m "not (validation or property)" -q
+	$(TEST_CMD)
 
 test-determinism:
 	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
