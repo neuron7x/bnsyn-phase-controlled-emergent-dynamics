@@ -8,4 +8,9 @@ via the repository's security advisory feature (GitHub Security Advisories).
 
 ## Local Secret Scan
 
-Run `make security` to bootstrap pinned gitleaks and execute repository scanning with `.gitleaks.toml`.
+Run the reproducible security gate with pinned Python dependencies and pinned gitleaks bootstrap:
+
+```bash
+python -m pip install -e ".[security]"
+make security
+```

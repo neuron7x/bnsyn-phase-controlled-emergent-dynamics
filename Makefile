@@ -161,7 +161,7 @@ docs-evidence:
 	python -m scripts.generate_evidence_coverage
 
 security:
-	python -m pip install -e ".[dev]"
+	python -m pip install -e ".[security]"
 	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
 	python -m pip_audit --desc
 	python -m bandit -r src/ -ll
@@ -170,6 +170,7 @@ check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
 
 docs:
+	python -m pip install -e ".[docs]"
 	python -m sphinx -b html docs docs/_build/html
 	@echo "Docs built at docs/_build/html"
 

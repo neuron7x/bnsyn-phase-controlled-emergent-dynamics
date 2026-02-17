@@ -48,6 +48,12 @@ Install test and docs dependencies before running local validation or docs build
 python -m pip install -e ".[test,docs]"
 ```
 
+Install security tooling dependencies before running the reproducible security gate:
+
+```bash
+python -m pip install -e ".[security]"
+```
+
 Canonical local suites:
 
 ```bash
