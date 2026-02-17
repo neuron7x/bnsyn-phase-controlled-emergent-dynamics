@@ -173,6 +173,10 @@ jobs:
       - name: Log pip version
         run: python -m pip --version
       - run: python -m pip install -e ".[test]"
+      - name: Validate traceability table
+        run: python -m scripts.validate_traceability
+      - name: Check internal docs links
+        run: python -m scripts.check_internal_links
       - name: Run no-escape contract tests
         run: |
           pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_schema_contracts.py             tests/test_verify_reproducible_artifacts.py

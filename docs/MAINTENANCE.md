@@ -7,6 +7,7 @@
 - Build: `python -m build`
 - Traceability: `python -m scripts.validate_traceability`
 - Surface discovery: `python -m scripts.discover_public_surfaces`
+- Internal link integrity: `python -m scripts.check_internal_links`
 
 ## Update protocol
 1. Update SSOT-bearing specs/schemas/claims first.

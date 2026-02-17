@@ -34,4 +34,5 @@ mypy src --strict --config-file pyproject.toml
 python -m build
 python -m scripts.validate_traceability
 python -m scripts.discover_public_surfaces
+python -m scripts.check_internal_links
 ```

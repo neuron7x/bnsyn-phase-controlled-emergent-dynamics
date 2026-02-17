@@ -176,6 +176,7 @@ Any additional information that would be helpful for reviewers.
 
 - [ ] If touching `specs/**`, `schemas/**`, `claims/**`, `src/**`, or `scripts/**`, updated `docs/TRACEABILITY.md`.
 - [ ] Ran `python -m scripts.validate_traceability`.
+- [ ] Ran `python -m scripts.check_internal_links`.
 - [ ] Ran `python -m scripts.discover_public_surfaces` when public surfaces changed.
 - [ ] Updated `docs/ENFORCEMENT_MATRIX.md` if verification commands changed.
 
