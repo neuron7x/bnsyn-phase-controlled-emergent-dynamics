@@ -1,0 +1,799 @@
+$ rg -n "^  ssot:|name: ssot|dependency-review|workflow integrity|validate_workflow|lockfile freshness|pip-compile" .github/workflows/ci-pr-atomic.yml .github/workflows/*.yml tests/test_validate_workflow_contracts.py tests/test_validate_required_checks.py scripts -g "*.py" -g "*.yml"
+.github/workflows/workflow-integrity.yml:30:            "dependency-review.yml"
+.github/workflows/workflow-integrity.yml:202:        run: python -m scripts.validate_workflow_contracts
+.github/workflows/dependency-review.yml:1:name: dependency-review
+.github/workflows/dependency-review.yml:20:  dependency-review:
+.github/workflows/dependency-review.yml:29:        uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261
+.github/workflows/ci-smoke.yml:18:  ssot:
+.github/workflows/ci-pr-atomic.yml:226:      - name: Verify lockfile freshness
+.github/workflows/ci-pr-atomic.yml:229:          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+.github/workflows/ci-pr-atomic.yml:382:  ssot:
+.github/workflows/_reusable_ssot.yml:16:  ssot:
+.github/workflows/ci-pr-atomic.yml:226:      - name: Verify lockfile freshness
+.github/workflows/ci-pr-atomic.yml:229:          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+.github/workflows/ci-pr-atomic.yml:382:  ssot:
+.github/workflows/ci-validation.yml:73:  ssot:
+tests/test_validate_workflow_contracts.py:7:from scripts.validate_workflow_contracts import (
+scripts/validate_required_checks.py:13:from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
+scripts/collect_ci_run_urls.py:31:        "key": "dependency-review",
+scripts/collect_ci_run_urls.py:32:        "name": "dependency-review",
+scripts/collect_ci_run_urls.py:33:        "workflow_path": ".github/workflows/dependency-review.yml",
+scripts/collect_ci_run_urls.py:123:        if wf["key"] == "dependency-review":
+scripts/validate_pr_gates.py:14:from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
+scripts/validate_workflow_contracts.py:220:        print("Usage: python -m scripts.validate_workflow_contracts")
+$ sed -n "1,280p" .github/workflows/ci-pr-atomic.yml
+name: ci-pr-atomic
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: "3.11"
+      upload-codecov:
+        type: boolean
+        default: true
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-pr-atomic-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_CACHE_DIR: ~/.cache/pip
+  PYTHONHASHSEED: 0
+  PYTHONDONTWRITEBYTECODE: 1
+  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_NO_PYTHON_VERSION_WARNING: 1
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      validation: ${{ steps.filter.outputs.validation }}
+      property: ${{ steps.filter.outputs.property }}
+      docs: ${{ steps.filter.outputs.docs }}
+      dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'tests/**'
+            validation:
+              - 'src/**'
+              - 'tools/**'
+              - 'scripts/**'
+              - 'docs/**'
+              - 'tests/**'
+            property:
+              - 'src/**'
+              - 'tests/**'
+            docs:
+              - 'docs/**'
+              - 'README*'
+              - 'mkdocs.yml'
+              - 'pyproject.toml'
+            dependency_manifest:
+              - 'pyproject.toml'
+              - 'requirements*.txt'
+
+  gate-profile:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_gate_profile.yml
+    with:
+      profile: pr
+
+  determinism:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]"
+      - name: Test determinism (run 1)
+        id: run1
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Test determinism (run 2)
+        id: run2
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Test determinism (run 3)
+        id: run3
+        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+      - name: Check RNG isolation
+        id: rng
+        run: pytest tests/test_determinism.py::test_no_global_numpy_rng_usage -v
+      - name: Generate summary
+        if: always()
+        run: |
+          summary_file="$GITHUB_STEP_SUMMARY"
+          {
+            echo "##  Determinism Verification (3x Runs)"
+            echo ""
+            echo "| Run | Status | Result |"
+            echo "|-----|--------|--------|"
+            if [ "${{ steps.run1.outcome }}" = "success" ]; then
+              echo "| 1 |  PASS | Identical outputs |"
+            else
+              echo "| 1 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run2.outcome }}" = "success" ]; then
+              echo "| 2 |  PASS | Identical outputs |"
+            else
+              echo "| 2 |  FAIL | Non-deterministic |"
+            fi
+            if [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "| 3 |  PASS | Identical outputs |"
+            else
+              echo "| 3 |  FAIL | Non-deterministic |"
+            fi
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            if [ "${{ steps.rng.outcome }}" = "success" ]; then
+              echo "| RNG Isolation |  PASS |"
+            else
+              echo "| RNG Isolation |  FAIL |"
+            fi
+            echo ""
+            if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
+              echo "** All runs produced identical outputs (A1: Determinism 96%)**"
+            else
+              echo "** Determinism check failed**"
+            fi
+          } >> "$summary_file"
+
+
+  contracts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[test]"
+      - name: Validate traceability table
+        run: python -m scripts.validate_traceability
+      - name: Check internal docs links
+        run: python -m scripts.check_internal_links
+      - name: Validate calibration summary claims
+        run: python -m scripts.validate_calibration_summary
+      - name: Run no-escape contract tests
+        run: |
+          pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_schema_contracts.py             tests/test_verify_reproducible_artifacts.py
+      - name: Verify reproducible generated artifacts
+        run: |
+          python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
+      - name: Upload contract artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: no-escape-contracts-${{ github.sha }}
+          path: |
+            evidence/zqsg_2026_02_12/repro_report_ci.json
+          if-no-files-found: error
+          retention-days: 30
+
+  quality:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_quality.yml
+    with:
+      python-version: ${{ inputs['python-version'] || '3.11' }}
+      mypy-strict: true
+      pylint-threshold: 7.5
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]" build
+      - name: Verify lockfile freshness
+        run: |
+          python -m pip install pip-tools
+          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+          git diff --exit-code -- requirements-lock.txt
+      - run: python -m build
+      - name: Install from wheel in clean venv
+        run: |
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
+
+  smoke-wheel-matrix:
+    name: smoke-wheel-matrix (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]" build
+      - name: Smoke tests
+        run: pytest -m smoke -v --tb=short
+      - name: Build and install wheel
+        run: |
+          python -m build
+          python -m venv .venv-wheel
+          . .venv-wheel/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install dist/*.whl
+          python -c "import bnsyn; print(bnsyn.__version__)"
+
+  tests-smoke:
+    needs: gate-profile
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_pytest.yml
+    with:
+      python-version: ${{ inputs['python-version'] || '3.11' }}
+      markers: ${{ needs.gate-profile.outputs.pytest-markers }}
+      coverage-threshold: ${{ fromJSON(needs.gate-profile.outputs.coverage-threshold) }}
+$ sed -n "280,620p" .github/workflows/ci-pr-atomic.yml
+      coverage-threshold: ${{ fromJSON(needs.gate-profile.outputs.coverage-threshold) }}
+      upload-codecov: ${{ inputs['upload-codecov'] || true }}
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  validation-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.validation == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-validation') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_validation_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.validation-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.validation-timeout-minutes) }}
+      summary-title: PR Validation Suite
+      upload-artifacts: true
+      artifact-name: validation-logs-pr
+
+  property-tests-pr:
+    needs: [changes, gate-profile]
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.property == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'run-property') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_reusable_property_tests.yml
+    with:
+      markers: ${{ needs.gate-profile.outputs.property-markers }}
+      timeout-minutes: ${{ fromJSON(needs.gate-profile.outputs.property-timeout-minutes) }}
+      hypothesis-profile: ci
+      summary-title: PR Property-Based Invariants
+      upload-artifacts: true
+      artifact-name: property-logs-pr
+
+  docs-pr:
+    needs: changes
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.changes.outputs.docs == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - run: python -m pip install -e ".[dev,test]"
+      - name: Build docs
+        run: make docs
+      - name: Link check
+        run: sphinx-build -b linkcheck docs docs/_build/linkcheck
+
+  pr-description-policy:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: Validate PR body sections and labels policy
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          script: |
+            const body = (context.payload.pull_request?.body || '').toLowerCase();
+            const headings = new Set(
+              [...body.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim())
+            );
+            const requiredSections = {
+              'what changed': ['what changed', 'description', 'summary'],
+              'why': ['why', 'motivation', 'context'],
+              'risk': ['risk', 'risks', 'breaking changes', 'performance impact', 'additional notes'],
+              'evidence': ['evidence', 'testing', 'how to test', 'validation', 'tests', 'verification'],
+              'how to test': ['how to test', 'testing', 'test plan', 'commands run'],
+            };
+            const hasAlias = (alias) => body.includes(alias) || Array.from(headings).some((heading) => heading.includes(alias));
+            const missing = Object.entries(requiredSections)
+              .filter(([, aliases]) => !aliases.some((alias) => hasAlias(alias)))
+              .map(([section]) => section);
+            const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
+            const allowed = new Set(['run-property', 'run-validation', 'run-codeql', 'heavy-ci']);
+            const unknown = labels.filter((name) => name.startsWith('run-') && !allowed.has(name));
+            if (missing.length > 0) {
+              core.warning(`PR description is missing recommended sections: ${missing.join(', ')}`);
+            }
+            if (unknown.length > 0) {
+              core.setFailed(`Unknown run-* labels found: ${unknown.join(', ')}`);
+              return;
+            }
+            core.info('PR description and labels policy checks passed.');
+
+  ssot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]"
+      - run: python -m scripts.validate_bibliography
+      - run: python -m scripts.validate_claims
+      - run: python -m scripts.scan_governed_docs
+      - run: python -m scripts.scan_normative_tags
+      - run: python -m scripts.validate_api_maturity
+      - run: python -m scripts.validate_status_claims
+      - run: make api-contract
+      - run: python -m tools.manifest generate
+      - run: python -m tools.manifest validate
+      - name: Verify manifest artifacts are in sync
+        run: |
+          if ! git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json; then
+            echo "::error::.github/REPO_MANIFEST.md and/or manifest/repo_manifest.computed.json are out of date. Run: python -m tools.manifest generate && git add .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json"
+            git --no-pager diff -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+            exit 1
+          fi
+
+  security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: ${{ inputs['python-version'] || '3.11' }}
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-lock.txt
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - run: python -m pip install -e ".[dev,test]"
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+      - name: pip-audit
+        run: |
+          mkdir -p artifacts
+          pip-audit --desc --format json --output artifacts/pip-audit.json
+      - name: bandit
+        run: bandit -r src/ -ll
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: security-report-${{ github.sha }}
+          path: artifacts/pip-audit.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  codeql-pr:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (contains(github.event.pull_request.labels.*.name, 'run-codeql') ||
+      contains(github.event.pull_request.labels.*.name, 'heavy-ci'))
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+        with:
+          languages: "python"
+          build-mode: none
+      - name: Analyze
+        uses: github/codeql-action/analyze@b5ebac6f4c00c8ccddb7cdcd45fdb248329f808a
+
+
+  finalize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    needs:
+      - gate-profile
+      - determinism
+      - quality
+      - build
+      - smoke-wheel-matrix
+      - tests-smoke
+      - ssot
+      - security
+    if: success()
+    steps:
+      - name: PR Quality Gate
+        run: |
+          echo " All PR checks passed!"
+          echo "   Determinism verified"
+          echo "   Code quality approved"
+          echo "   Build successful"
+          echo "   Tests passed (${{ needs.gate-profile.outputs.coverage-threshold }}% coverage)"
+          echo "   SSOT gates verified"
+          echo "   Security audit passed"
+          echo ""
+          echo "Ready for merge "
+
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "ci-pr-atomic",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-ci-pr-atomic-${{ github.sha }}
+          path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30
+$ sed -n "1,260p" .github/workflows/workflow-integrity.yml
+name: Workflow Integrity
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflows:
+    name: Validate workflow files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Enforce non-PR workflow triggers
+        shell: bash
+        run: |
+          set -euo pipefail
+          allowlist=(
+            "ci-pr-atomic.yml"
+            "ci-pr.yml"
+            "ci-smoke.yml"
+            "codeql.yml"
+            "docs.yml"
+            "dependency-review.yml"
+            "workflow-integrity.yml"
+            "_reusable_benchmarks.yml"
+            "_reusable_chaos_tests.yml"
+            "_reusable_formal_science.yml"
+            "_reusable_gate_profile.yml"
+            "_reusable_property_tests.yml"
+            "_reusable_pytest.yml"
+            "_reusable_quality.yml"
+            "_reusable_ssot.yml"
+            "_reusable_validation_tests.yml"
+          )
+          declare -A allowed
+          for name in "${allowlist[@]}"; do
+            allowed["$name"]=1
+          done
+          mapfile -t files < <(ls .github/workflows/*.yml)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No workflow files found."
+            exit 1
+          fi
+          echo "Scanned ${#files[@]} workflows."
+          echo "Allowed PR-trigger workflows: ${allowlist[*]}"
+          violations=0
+          for file in "${files[@]}"; do
+            base="$(basename "$file")"
+            is_allowed="${allowed[$base]-}"
+            status=0
+            if ! awk '
+              BEGIN { in_on=0; found=0 }
+
+              /^on:[[:space:]]*\[/ {
+                if ($0 ~ /pull_request/ || $0 ~ /push/ ||
+                    $0 ~ /workflow_call/) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+                next
+              }
+
+              /^on:[[:space:]]*(pull_request|push|workflow_call)[[:space:]]*$/ {
+                print FILENAME ":" NR ":" $0
+                found=1
+                next
+              }
+
+              /^on:[[:space:]]*$/ { in_on=1; next }
+
+              in_on {
+                if ($0 ~ /^[^[:space:]]/) { exit }
+                pattern = "^[[:space:]]*(pull_request|push|workflow_call)"
+                pattern = pattern "[[:space:]]*:"
+                if ($0 ~ pattern) {
+                  print FILENAME ":" NR ":" $0
+                  found=1
+                }
+              }
+
+              END { if (found) exit 2 }
+            ' "$file"; then
+              status=$?
+            fi
+            if [ "$status" -eq 2 ]; then
+              if [ -z "$is_allowed" ]; then
+                violations=1
+              fi
+            elif [ "$status" -ne 0 ]; then
+              violations=1
+            fi
+          done
+          if [ "$violations" -ne 0 ]; then
+            echo "Non-PR workflow trigger violations detected."
+            echo "Workflows outside the allowlist MUST NOT declare"
+            echo "pull_request/push/workflow_call under on:."
+            exit 1
+          fi
+          echo "Guarded workflows: trigger policy OK."
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Lint workflows with actionlint
+        uses: rhysd/actionlint@03d0035246f3e81f36aed592ffb4bebf33a03106
+        with:
+          args: -shellcheck=shellcheck -verbose
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+      - name: Log pip version
+        run: python -m pip --version
+      - name: Scan workflow files for tabs or non-ASCII
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import unicodedata
+
+          workflow_dir = Path(".github/workflows")
+          md_files = sorted(Path(".github").rglob("*.md"))
+          offenders = []
+
+          def scan_text(
+              path: Path,
+              allow_non_ascii: bool,
+          ) -> None:
+              text = path.read_text(encoding="utf-8", errors="replace")
+              for line_no, line in enumerate(text.splitlines(), 1):
+                  if "\t" in line:
+                      offenders.append((path, line_no, "TAB"))
+                  for ch in line:
+                      codepoint = ord(ch)
+                      category = unicodedata.category(ch)
+                      if category in {"Cf", "Cc"} and ch not in {"\n", "\r"}:
+                          detail = (
+                              f"CONTROL_OR_BIDI {category} "
+                              f"U+{codepoint:04X}"
+                          )
+                          offenders.append((path, line_no, detail))
+                      if not allow_non_ascii and codepoint > 0x7F:
+                          detail = f"NON_ASCII U+{codepoint:04X}"
+                          offenders.append((path, line_no, detail))
+
+          for path in sorted(workflow_dir.glob("*.yml")):
+              scan_text(path, allow_non_ascii=False)
+
+          for path in md_files:
+              scan_text(path, allow_non_ascii=True)
+
+          if offenders:
+              for path, line_no, detail in offenders:
+                  print(f"{path}:{line_no}:{detail}")
+              raise SystemExit(1)
+
+          print("Workflow integrity checks passed.")
+          PY
+      - name: Install safety checker dependencies
+        run: python -m pip install pyyaml jsonschema
+      - name: Validate PR gate definition
+        run: python -m scripts.validate_pr_gates
+      - name: Validate required checks
+        run: python -m scripts.validate_required_checks
+      - name: Validate required status contexts
+        run: python -m scripts.validate_required_status_contexts
+      - name: Emit CI run evidence
+        run: |
+          mkdir -p artifacts/ci-evidence
+          cat > artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json <<'JSON'
+          {
+            "workflow": "workflow-integrity",
+            "sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}",
+            "run_attempt": "${{ github.run_attempt }}",
+            "run_number": "${{ github.run_number }}",
+            "ref": "${{ github.ref }}",
+            "event": "${{ github.event_name }}"
+          }
+          JSON
+      - name: Upload CI run evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-evidence-workflow-integrity-${{ github.sha }}
+          path: artifacts/ci-evidence/workflow-integrity-${{ github.sha }}.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Validate branch protection governance document
+        run: python -m scripts.validate_branch_protection_governance
+      - name: Validate workflow contracts
+        run: python -m scripts.validate_workflow_contracts
+      - name: Validate long-running workflow triggers
+        run: python -m scripts.validate_long_running_triggers
+      - name: Render workflow policy documentation
+        run: python -m scripts.render_workflow_policy_docs
+      - name: Verify workflow policy documentation
+        run: git diff --exit-code -- .github/WORKFLOW_CONTRACTS.md
+      - name: Validate safety artifacts
+        run: python tools/safety/check_safety_artifacts.py
+      - name: Validate inventory snapshot
+        run: python tools/generate_inventory.py --check
+$ sed -n "1,260p" .github/workflows/dependency-review.yml
+name: dependency-review
+
+on:
+  pull_request:
+    paths:
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - 'requirements/**/*.txt'
+      - 'setup.py'
+      - 'setup.cfg'
+      - 'poetry.lock'
+      - 'uv.lock'
+      - 'Pipfile'
+      - 'Pipfile.lock'
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Dependency Review
+        uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261
