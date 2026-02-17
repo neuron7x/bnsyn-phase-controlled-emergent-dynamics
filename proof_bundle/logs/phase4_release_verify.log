@@ -1,0 +1,5 @@
+CMD: cp artifacts/prod_ready/logs/gateK_release.log artifacts/prod_ready/logs/phase4_release_build.log
+CMD: sha256sum -c artifacts/prod_ready/release/dist_sha256.txt
+dist/bnsyn-0.2.0-py3-none-any.whl: OK
+dist/bnsyn-0.2.0.tar.gz: OK
+EXIT:0

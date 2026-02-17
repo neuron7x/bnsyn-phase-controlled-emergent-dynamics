@@ -1,0 +1,12 @@
+[
+  {
+    "id": "A1",
+    "assumption": "Local virtualenv approximates clean-room environment.",
+    "validation_gate": "A"
+  },
+  {
+    "id": "A2",
+    "assumption": "CLI demo output JSON is acceptable observability evidence for non-service runtime.",
+    "validation_gate": "I"
+  }
+]

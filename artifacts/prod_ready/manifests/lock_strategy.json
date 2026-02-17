@@ -1,0 +1,5 @@
+{
+  "lockfile": "requirements-lock.txt",
+  "verification": "pip-audit -r requirements-lock.txt",
+  "sbom": "cyclonedx-py environment -o artifacts/prod_ready/reports/sbom.json"
+}

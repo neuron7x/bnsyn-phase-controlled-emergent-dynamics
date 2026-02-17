@@ -1,0 +1,27 @@
+CMD: source .venv_prr/bin/activate && python -m pip install pylint
+Collecting pylint
+  Downloading pylint-4.0.4-py3-none-any.whl.metadata (12 kB)
+Collecting astroid<=4.1.dev0,>=4.0.2 (from pylint)
+  Downloading astroid-4.0.4-py3-none-any.whl.metadata (4.4 kB)
+Collecting dill>=0.3.6 (from pylint)
+  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
+Collecting isort!=5.13,<8,>=5 (from pylint)
+  Downloading isort-7.0.0-py3-none-any.whl.metadata (11 kB)
+Collecting mccabe<0.8,>=0.6 (from pylint)
+  Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)
+Collecting platformdirs>=2.2 (from pylint)
+  Downloading platformdirs-4.9.2-py3-none-any.whl.metadata (4.7 kB)
+Collecting tomlkit>=0.10.1 (from pylint)
+  Downloading tomlkit-0.14.0-py3-none-any.whl.metadata (2.8 kB)
+Downloading pylint-4.0.4-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.4/536.4 kB 11.7 MB/s  0:00:00
+Downloading astroid-4.0.4-py3-none-any.whl (276 kB)
+Downloading isort-7.0.0-py3-none-any.whl (94 kB)
+Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+Downloading dill-0.4.1-py3-none-any.whl (120 kB)
+Downloading platformdirs-4.9.2-py3-none-any.whl (21 kB)
+Downloading tomlkit-0.14.0-py3-none-any.whl (39 kB)
+Installing collected packages: tomlkit, platformdirs, mccabe, isort, dill, astroid, pylint
+
+Successfully installed astroid-4.0.4 dill-0.4.1 isort-7.0.0 mccabe-0.7.0 platformdirs-4.9.2 pylint-4.0.4 tomlkit-0.14.0
+EXIT:0

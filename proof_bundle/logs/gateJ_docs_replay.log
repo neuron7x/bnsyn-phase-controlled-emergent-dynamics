@@ -1,0 +1,26 @@
+CMD: source .venv_prr/bin/activate && python -m bnsyn --help && bnsyn demo --steps 10 --dt-ms 0.1 --seed 123 --N 32
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:44:08Z
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+{
+  "demo": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  }
+}
+END: 2026-02-17T22:44:11Z
+EXIT:0

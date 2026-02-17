@@ -1,0 +1,106 @@
+CMD: rg -n "\[project\]|dependencies|pytest|ruff|mypy|build" pyproject.toml
+1:[project]
+10:dependencies = [
+19:[project.optional-dependencies]
+22:  "pytest==9.0.2",
+23:  "pytest-cov==7.0.0",
+24:  "ruff==0.15.0",
+25:  "mypy==1.19.1",
+38:  "pytest==9.0.2",
+39:  "pytest-cov==7.0.0",
+77:[build-system]
+79:build-backend = "setuptools.build_meta"
+84:[tool.pytest.ini_options]
+115:[tool.ruff]
+119:[tool.mypy]
+132:plugins = ["pydantic.mypy"]
+134:# Optional visualization dependencies (no type stubs available)
+135:[[tool.mypy.overrides]]
+159:[[tool.mypy.overrides]]
+163:[[tool.mypy.overrides]]
+167:[[tool.mypy.overrides]]
+CMD: rg --files .github/workflows
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/codecov-health.yml
+.github/workflows/ci-benchmarks.yml
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/release-pipeline.yml
+.github/workflows/ci-validation.yml
+.github/workflows/_reusable_ssot.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/dependency-review.yml
+.github/workflows/workflow-integrity.yml
+.github/workflows/benchmarks.yml
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/formal-coq.yml
+.github/workflows/science.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/formal-tla.yml
+.github/workflows/ci-pr.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/codeql.yml
+.github/workflows/math-quality-gate.yml
+.github/workflows/docs.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/_reusable_chaos_tests.yml
+CMD: rg -n "python -m pytest|ruff check|pylint|mypy|python -m build|make test|make lint|make mypy" README.md Makefile .github/workflows/*.yml .github/workflows/*.yaml
+rg: .github/workflows/*.yaml: No such file or directory (os error 2)
+.github/workflows/ci-pr-atomic.yml:204:      mypy-strict: true
+.github/workflows/ci-pr-atomic.yml:205:      pylint-threshold: 7.5
+.github/workflows/ci-pr-atomic.yml:291:        run: python -m pytest --collect-only -q
+.github/workflows/ci-pr-atomic.yml:295:        run: make test-gate
+.github/workflows/_reusable_quality.yml:11:      mypy-strict:
+.github/workflows/_reusable_quality.yml:12:        description: 'Enable mypy strict mode'
+.github/workflows/_reusable_quality.yml:15:      pylint-threshold:
+.github/workflows/_reusable_quality.yml:16:        description: 'Minimum pylint score (0.0-10.0)'
+.github/workflows/_reusable_quality.yml:61:          ruff check . 2>&1 | tee ruff-lint.log
+.github/workflows/_reusable_quality.yml:102:  mypy:
+.github/workflows/_reusable_quality.yml:124:      - name: Cache mypy
+.github/workflows/_reusable_quality.yml:127:          path: .mypy_cache
+.github/workflows/_reusable_quality.yml:128:          key: mypy-${{ runner.os }}-${{ inputs['python-version'] }}-${{ hashFiles('src/**/*.py', 'pyproject.toml') }}
+.github/workflows/_reusable_quality.yml:131:        id: mypy
+.github/workflows/_reusable_quality.yml:133:          if [ "${{ inputs['mypy-strict'] }}" = "true" ]; then
+.github/workflows/_reusable_quality.yml:134:            mypy src --strict --config-file pyproject.toml 2>&1 | tee mypy.log
+.github/workflows/_reusable_quality.yml:136:            mypy src --config-file pyproject.toml 2>&1 | tee mypy.log
+.github/workflows/_reusable_quality.yml:153:            echo "| Strict Mode | ${{ inputs['mypy-strict'] }} |"
+.github/workflows/_reusable_quality.yml:156:            if [ -f mypy.log ]; then
+.github/workflows/_reusable_quality.yml:157:              ERROR_COUNT=$(grep -c "error:" mypy.log || echo "0")
+.github/workflows/_reusable_quality.yml:166:          name: mypy-logs-${{ github.sha }}
+.github/workflows/_reusable_quality.yml:167:          path: mypy.log
+.github/workflows/_reusable_quality.yml:175:  pylint:
+.github/workflows/_reusable_quality.yml:198:        id: pylint
+.github/workflows/_reusable_quality.yml:200:          pylint src/bnsyn --rcfile=pyproject.toml --fail-under="${{ inputs['pylint-threshold'] }}" 2>&1 | tee pylint.log
+.github/workflows/_reusable_quality.yml:216:            echo "| Threshold | ${{ inputs['pylint-threshold'] }}/10.0 |"
+.github/workflows/_reusable_quality.yml:219:            if [ -f pylint.log ]; then
+.github/workflows/_reusable_quality.yml:220:              SCORE=$(grep "Your code has been rated at" pylint.log | sed 's/.*rated at \([0-9.]*\).*/\1/' || echo "N/A")
+.github/workflows/_reusable_quality.yml:229:          name: pylint-logs-${{ github.sha }}
+.github/workflows/_reusable_quality.yml:230:          path: pylint.log
+README.md:31:make test
+README.md:54:make test-gate
+README.md:55:make test-validation
+README.md:56:make test-property
+.github/workflows/_reusable_pytest.yml:60:        run: python -m pytest --collect-only -q
+.github/workflows/_reusable_pytest.yml:66:          python -m pytest \
+.github/workflows/_reusable_pytest.yml:196:              echo "python -m pytest -m \"${{ inputs.markers }}\" \\"
+Makefile:1:.PHONY: setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs build validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+Makefile:8:TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+Makefile:58:	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+Makefile:61:	python -m pytest -m "validation" -q
+Makefile:64:	python -m pytest -m "property" -q
+Makefile:67:	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+Makefile:70:	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+Makefile:126:quality: format lint mypy ssot security
+Makefile:134:	ruff check . --fix
+Makefile:138:	ruff check .
+Makefile:139:	pylint src/bnsyn
+Makefile:141:mypy:
+Makefile:142:	mypy src --strict --config-file pyproject.toml
+Makefile:173:check: format lint mypy coverage ssot security
+Makefile:183:	python -m build
+Makefile:206:	find . -type d -name .mypy_cache -exec rm -rf {} +

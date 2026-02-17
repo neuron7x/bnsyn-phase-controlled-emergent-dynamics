@@ -1,0 +1,70 @@
+CMD: source .venv_prr/bin/activate && python -m pip install pip-audit bandit detect-secrets && detect-secrets scan > artifacts/prod_ready/reports/security_secrets.json && pip-audit -r requirements-lock.txt -f json > artifacts/prod_ready/reports/security_vulns.json && bandit -r src -f json -o artifacts/prod_ready/reports/security_bandit.json
+CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
+START: 2026-02-17T22:42:16Z
+Collecting pip-audit
+  Downloading pip_audit-2.10.0-py3-none-any.whl.metadata (28 kB)
+Collecting bandit
+  Downloading bandit-1.9.3-py3-none-any.whl.metadata (7.1 kB)
+Collecting detect-secrets
+  Downloading detect_secrets-1.5.0-py3-none-any.whl.metadata (23 kB)
+Collecting CacheControl>=0.13.0 (from CacheControl[filecache]>=0.13.0->pip-audit)
+  Downloading cachecontrol-0.14.4-py3-none-any.whl.metadata (3.1 kB)
+Requirement already satisfied: cyclonedx-python-lib<12,>=5 in ./.venv_prr/lib/python3.12/site-packages (from pip-audit) (11.6.0)
+Requirement already satisfied: packaging>=23.0.0 in ./.venv_prr/lib/python3.12/site-packages (from pip-audit) (25.0)
+Collecting pip-api>=0.0.28 (from pip-audit)
+  Downloading pip_api-0.0.34-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: pip-requirements-parser>=32.0.0 in ./.venv_prr/lib/python3.12/site-packages (from pip-audit) (32.0.1)
+Requirement already satisfied: requests>=2.31.0 in ./.venv_prr/lib/python3.12/site-packages (from pip-audit) (2.32.5)
+Collecting rich>=12.4 (from pip-audit)
+  Downloading rich-14.3.2-py3-none-any.whl.metadata (18 kB)
+Collecting tomli>=2.2.1 (from pip-audit)
+  Downloading tomli-2.4.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+Collecting tomli-w>=1.2.0 (from pip-audit)
+  Downloading tomli_w-1.2.0-py3-none-any.whl.metadata (5.7 kB)
+Requirement already satisfied: platformdirs>=4.2.0 in ./.venv_prr/lib/python3.12/site-packages (from pip-audit) (4.9.2)
+Requirement already satisfied: license-expression<31,>=30 in ./.venv_prr/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit) (30.4.4)
+Requirement already satisfied: packageurl-python<2,>=0.11 in ./.venv_prr/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit) (0.17.6)
+Requirement already satisfied: py-serializable<3.0.0,>=2.1.0 in ./.venv_prr/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit) (2.1.0)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.4.0 in ./.venv_prr/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit) (2.4.0)
+Requirement already satisfied: typing_extensions<5.0,>=4.6 in ./.venv_prr/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=5->pip-audit) (4.15.0)
+Requirement already satisfied: boolean.py>=4.0 in ./.venv_prr/lib/python3.12/site-packages (from license-expression<31,>=30->cyclonedx-python-lib<12,>=5->pip-audit) (5.0)
+Requirement already satisfied: defusedxml<0.8.0,>=0.7.1 in ./.venv_prr/lib/python3.12/site-packages (from py-serializable<3.0.0,>=2.1.0->cyclonedx-python-lib<12,>=5->pip-audit) (0.7.1)
+Requirement already satisfied: PyYAML>=5.3.1 in ./.venv_prr/lib/python3.12/site-packages (from bandit) (6.0.3)
+Collecting stevedore>=1.20.0 (from bandit)
+  Downloading stevedore-5.6.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting msgpack<2.0.0,>=0.5.2 (from CacheControl>=0.13.0->CacheControl[filecache]>=0.13.0->pip-audit)
+  Downloading msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.1 kB)
+Collecting filelock>=3.8.0 (from CacheControl[filecache]>=0.13.0->pip-audit)
+  Downloading filelock-3.24.2-py3-none-any.whl.metadata (2.0 kB)
+Requirement already satisfied: pip in ./.venv_prr/lib/python3.12/site-packages (from pip-api>=0.0.28->pip-audit) (26.0.1)
+Requirement already satisfied: pyparsing in ./.venv_prr/lib/python3.12/site-packages (from pip-requirements-parser>=32.0.0->pip-audit) (3.3.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.venv_prr/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./.venv_prr/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.venv_prr/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in ./.venv_prr/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit) (2026.1.4)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./.venv_prr/lib/python3.12/site-packages (from rich>=12.4->pip-audit) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in ./.venv_prr/lib/python3.12/site-packages (from rich>=12.4->pip-audit) (2.19.2)
+Requirement already satisfied: mdurl~=0.1 in ./.venv_prr/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich>=12.4->pip-audit) (0.1.2)
+Downloading pip_audit-2.10.0-py3-none-any.whl (61 kB)
+Downloading bandit-1.9.3-py3-none-any.whl (134 kB)
+Downloading detect_secrets-1.5.0-py3-none-any.whl (120 kB)
+Downloading cachecontrol-0.14.4-py3-none-any.whl (22 kB)
+Downloading msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (427 kB)
+Downloading filelock-3.24.2-py3-none-any.whl (24 kB)
+Downloading pip_api-0.0.34-py3-none-any.whl (120 kB)
+Downloading rich-14.3.2-py3-none-any.whl (309 kB)
+Downloading stevedore-5.6.0-py3-none-any.whl (54 kB)
+Downloading tomli-2.4.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (251 kB)
+Downloading tomli_w-1.2.0-py3-none-any.whl (6.7 kB)
+Installing collected packages: tomli-w, tomli, stevedore, pip-api, msgpack, filelock, rich, detect-secrets, CacheControl, bandit, pip-audit
+
+Successfully installed CacheControl-0.14.4 bandit-1.9.3 detect-secrets-1.5.0 filelock-3.24.2 msgpack-1.1.2 pip-api-0.0.34 pip-audit-2.10.0 rich-14.3.2 stevedore-5.6.0 tomli-2.4.0 tomli-w-1.2.0
+No known vulnerabilities found
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+Working... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[json]	INFO	JSON output written to file: artifacts/prod_ready/reports/security_bandit.json
+END: 2026-02-17T22:43:37Z
+EXIT:0

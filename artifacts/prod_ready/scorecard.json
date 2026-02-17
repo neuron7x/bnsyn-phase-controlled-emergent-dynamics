@@ -1,0 +1,295 @@
+{
+  "inventory": {
+    "path": "artifacts/prod_ready/inventory.json",
+    "sha256": "4c8879d798dcd097da57618b4cabe351f2265fd9d0843804e3875119d0e92406"
+  },
+  "gates": [
+    {
+      "gate_id": "A",
+      "name": "Build & Install",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "Deterministic build/install from clean room.",
+      "commands": [
+        "python -m pip install -e \".[test,docs]\"",
+        "python -m build"
+      ],
+      "pass_criteria": [
+        "exit_code == 0",
+        "artifact produced",
+        "hash recorded"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/phase1_install.log",
+          "sha256": "b5a825cdfaa98500f01a646f30667bfcfda87c66cfeb442b2f243cd4ec6e3781"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/phase1_build.log",
+          "sha256": "22b84a6a634a172e890348ca6834ced86548d81af4e271ea700b6ab70e20c558"
+        },
+        {
+          "path": "artifacts/prod_ready/release/artifact_manifest.json",
+          "sha256": "198faa26a4a67a77e032d7047ceaef98f9401791c225bfee3279a5a3e551df55"
+        }
+      ],
+      "notes": "Initial missing build module remediated by installing build package."
+    },
+    {
+      "gate_id": "B",
+      "name": "Test Correctness",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "Deterministic tests.",
+      "commands": [
+        "python -m pytest -m \"not validation\" -q"
+      ],
+      "pass_criteria": [
+        "test command exit_code == 0"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/phase1_test.log",
+          "sha256": "10ef734a5cd110b9402bf9035b1c80c1240dd2c3242e27f9d6b10c8868937f32"
+        }
+      ],
+      "notes": "Test suite passed with warnings only."
+    },
+    {
+      "gate_id": "C",
+      "name": "Static Analysis & Lint",
+      "priority": "P1",
+      "status": "PASS",
+      "objective": "lint/static checks pass.",
+      "commands": [
+        "ruff check .",
+        "pylint src/bnsyn",
+        "mypy src --strict --config-file pyproject.toml"
+      ],
+      "pass_criteria": [
+        "commands complete",
+        "mypy strict passes"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/gateC_lint.log",
+          "sha256": "90f28f9f17cf156faa7a58291241f0ab9432b3660c87882f18ca899713d4d5db"
+        }
+      ],
+      "notes": "Ruff and mypy pass; pylint emits advisories without failing exit code."
+    },
+    {
+      "gate_id": "D",
+      "name": "Supply Chain Integrity",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "locked dependencies + integrity metadata.",
+      "commands": [
+        "pip-audit -r requirements-lock.txt",
+        "cyclonedx-py environment -o artifacts/prod_ready/reports/sbom.json"
+      ],
+      "pass_criteria": [
+        "lockfile present",
+        "SBOM produced"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/manifests/lock_strategy.json",
+          "sha256": "5f6f2be8c529dcec396810b9a528f2421713c91519921a487cf1ccf28048df56"
+        },
+        {
+          "path": "artifacts/prod_ready/reports/sbom.json",
+          "sha256": "3454c60181cf221f6634b342ab9f21f2ec5d8256f746976ffd50137e1804a68c"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/gateD_supplychain.log",
+          "sha256": "e7bf3b49b1906c4494a5b9655c85f6ce98da99fbadd84b43ca4204ac385bb18b"
+        }
+      ],
+      "notes": "requirements-lock.txt used as lock strategy with generated SBOM."
+    },
+    {
+      "gate_id": "E",
+      "name": "Security Baseline",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "secrets + vuln scanning clean.",
+      "commands": [
+        "detect-secrets scan",
+        "pip-audit -r requirements-lock.txt -f json",
+        "bandit -r src -f json"
+      ],
+      "pass_criteria": [
+        "no secrets",
+        "no HIGH/CRITICAL untriaged vulns"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/reports/security_secrets.json",
+          "sha256": "a771b23832e628f3116d0ff385c1dad336ab2c6e34c5ad546edcb74c7d49c49c"
+        },
+        {
+          "path": "artifacts/prod_ready/reports/security_vulns.json",
+          "sha256": "063e20c027269af49b79e7164ce44aac61cc262ef6470d114466989282896c00"
+        },
+        {
+          "path": "artifacts/prod_ready/reports/security_bandit.json",
+          "sha256": "44279e5b8c5a94525916cbc333ebd9d32107e43d594cb828323d168a1cfa55bf"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/gateE_security.log",
+          "sha256": "04b69d6edad358742a6d85d12dcd4871027d41b62c2288c2f4c69348c6329238"
+        }
+      ],
+      "notes": "No known vulnerabilities from pip-audit."
+    },
+    {
+      "gate_id": "F",
+      "name": "Config & Secret Hygiene",
+      "priority": "P1",
+      "status": "FAIL",
+      "objective": "config schema + env example exists.",
+      "commands": [
+        "rg -n \"os\\.getenv|os\\.environ\" src README.md"
+      ],
+      "pass_criteria": [
+        ".env.example exists",
+        "schema validation available"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/manifests/config_surface.json",
+          "sha256": "73bff91b6422455d60aaefdb60422376ccd4b3f940cafd33eed5260c1d217bdf"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/gateF_config.log",
+          "sha256": "7147fe5b4bea83daee2408100d4c78457501121054431233f0149bdef7f9ed88"
+        }
+      ],
+      "notes": "No .env.example/config schema file for environment variables."
+    },
+    {
+      "gate_id": "G",
+      "name": "Runtime Reliability",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "graceful failure modes and bounded timeouts.",
+      "commands": [
+        "timeout -s TERM 2s bnsyn demo --steps 100000 --dt-ms 0.1 --seed 123 --N 64"
+      ],
+      "pass_criteria": [
+        "process terminates under timeout control"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/gateG_runtime.log",
+          "sha256": "478bddcf0fe8f1af8007b62513cc0e1ca5c5fc97708babc3b63cc00d585b3970"
+        },
+        {
+          "path": "artifacts/prod_ready/runbook.md",
+          "sha256": "6f3f5ea687d0730795fa9745b735d3e68fbbfb57cee17c3ce6c6011cef4b74e8"
+        }
+      ],
+      "notes": "Controlled SIGTERM timeout returns expected 124."
+    },
+    {
+      "gate_id": "H",
+      "name": "Resource Discipline",
+      "priority": "P1",
+      "status": "PASS",
+      "objective": "baseline performance acceptable.",
+      "commands": [
+        "python -m pytest tests/test_performance.py -q"
+      ],
+      "pass_criteria": [
+        "performance tests pass"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/gateH_resources.log",
+          "sha256": "476e0fb20a17c5eeb7ca1c51d87a8246cf16e6d623f6d9435f8c248ade31ce5e"
+        },
+        {
+          "path": "artifacts/prod_ready/reports/perf_baseline.txt",
+          "sha256": "476e0fb20a17c5eeb7ca1c51d87a8246cf16e6d623f6d9435f8c248ade31ce5e"
+        }
+      ],
+      "notes": "Performance smoke tests passed."
+    },
+    {
+      "gate_id": "I",
+      "name": "Observability",
+      "priority": "P1",
+      "status": "PASS",
+      "objective": "actionable logs/health checks.",
+      "commands": [
+        "bnsyn demo --steps 5 --dt-ms 0.1 --seed 1 --N 8"
+      ],
+      "pass_criteria": [
+        "structured output captured"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/gateI_observability.log",
+          "sha256": "e71484cff8950131c3b2795f39435706303026552bfe289a217a4893c9200e4c"
+        },
+        {
+          "path": "artifacts/prod_ready/reports/observability_log_sample.json",
+          "sha256": "6cb910577af2b91aa06c5e678939b836c23b65badfd356ae3a9efeb863c363dc"
+        }
+      ],
+      "notes": "CLI emits structured JSON output."
+    },
+    {
+      "gate_id": "J",
+      "name": "Operator Documentation",
+      "priority": "P1",
+      "status": "PASS",
+      "objective": "deploy/run from docs only.",
+      "commands": [
+        "python -m bnsyn --help",
+        "bnsyn demo --steps 10 --dt-ms 0.1 --seed 123 --N 32"
+      ],
+      "pass_criteria": [
+        "README replay commands execute successfully"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/logs/gateJ_docs_replay.log",
+          "sha256": "becda7bc5c63e18a833f9310753a4b2b8c165a7012f240f9b230f93fae7c53c7"
+        }
+      ],
+      "notes": "Maintainer doc commands replayed successfully."
+    },
+    {
+      "gate_id": "K",
+      "name": "Release Packaging",
+      "priority": "P0",
+      "status": "PASS",
+      "objective": "artifact is verifiable.",
+      "commands": [
+        "python -m build",
+        "sha256sum -c artifacts/prod_ready/release/dist_sha256.txt"
+      ],
+      "pass_criteria": [
+        "artifacts built",
+        "hashes verified"
+      ],
+      "evidence": [
+        {
+          "path": "artifacts/prod_ready/release/artifact_manifest.json",
+          "sha256": "198faa26a4a67a77e032d7047ceaef98f9401791c225bfee3279a5a3e551df55"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/gateK_release.log",
+          "sha256": "4d76882c1d7b95bdece2e54786d5e6a43f21b1668bd0a8351ac36d298c6ec0f7"
+        },
+        {
+          "path": "artifacts/prod_ready/logs/phase4_release_verify.log",
+          "sha256": "12e38939796db4ec9f40ec9d89078856f02e2fbb59ebff248e42f73959bc5966"
+        }
+      ],
+      "notes": "Release artifacts built and hash-verified."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "env_vars": [
+    "BNSYN_USE_TORCH",
+    "BNSYN_DEVICE"
+  ],
+  "env_example_present": false,
+  "schema_validation": "N/A"
+}
