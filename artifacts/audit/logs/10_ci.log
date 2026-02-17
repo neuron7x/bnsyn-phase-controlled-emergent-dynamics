@@ -1,0 +1,369 @@
+$ bash -lc find .github/workflows -maxdepth 1 -type f -name *.yml | sort
+[exit:0]
+$ rg -n pull_request:|permissions:|pytest --collect-only|make test-gate .github/workflows/ci-pr-atomic.yml .github/workflows/ci-pr.yml .github/workflows/_reusable_pytest.yml
+.github/workflows/_reusable_pytest.yml:32:permissions:
+.github/workflows/_reusable_pytest.yml:60:        run: python -m pytest --collect-only -q
+.github/workflows/ci-pr-atomic.yml:4:  pull_request:
+.github/workflows/ci-pr-atomic.yml:28:permissions:
+.github/workflows/ci-pr-atomic.yml:45:    permissions:
+.github/workflows/ci-pr-atomic.yml:82:    permissions:
+.github/workflows/ci-pr-atomic.yml:90:    permissions:
+.github/workflows/ci-pr-atomic.yml:162:    permissions:
+.github/workflows/ci-pr-atomic.yml:199:    permissions:
+.github/workflows/ci-pr-atomic.yml:209:    permissions:
+.github/workflows/ci-pr-atomic.yml:243:    permissions:
+.github/workflows/ci-pr-atomic.yml:275:    permissions:
+.github/workflows/ci-pr-atomic.yml:291:        run: python -m pytest --collect-only -q
+.github/workflows/ci-pr-atomic.yml:295:        run: make test-gate
+.github/workflows/ci-pr-atomic.yml:307:    permissions:
+.github/workflows/ci-pr-atomic.yml:325:    permissions:
+.github/workflows/ci-pr-atomic.yml:342:    permissions:
+.github/workflows/ci-pr-atomic.yml:360:    permissions:
+.github/workflows/ci-pr-atomic.yml:380:    permissions:
+.github/workflows/ci-pr-atomic.yml:417:    permissions:
+.github/workflows/ci-pr-atomic.yml:453:    permissions:
+.github/workflows/ci-pr-atomic.yml:497:    permissions:
+.github/workflows/ci-pr-atomic.yml:516:    permissions:
+.github/workflows/ci-pr.yml:25:permissions:
+[exit:0]
+$ artifacts/audit/.venv/bin/python <yaml_summary_script>
+  File "<stdin>", line 2
+    wf_dir = pathlib.Path(.github/workflows)
+                          ^
+SyntaxError: invalid syntax
+[yaml_summary]
+[
+  {
+    "file": ".github/workflows/_reusable_benchmarks.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "scenario-benchmarks",
+      "nightly-benchmarks",
+      "micro-benchmarks",
+      "elite-benchmarks"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_chaos_tests.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "chaos-tests"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_formal_science.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "formal-science"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_gate_profile.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "profile"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_property_tests.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "property-tests"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_pytest.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "pytest"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_quality.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "ruff",
+      "mypy",
+      "pylint"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_ssot.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "ssot"
+    ]
+  },
+  {
+    "file": ".github/workflows/_reusable_validation_tests.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "validation-tests"
+    ]
+  },
+  {
+    "file": ".github/workflows/benchmarks.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "benchmarks-dispatch"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-benchmarks-elite.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "benchmarks"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-benchmarks.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "benchmarks-dispatch",
+      "benchmarks-standard",
+      "benchmarks-elite"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-pr-atomic.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "changes",
+      "gate-profile",
+      "determinism",
+      "contracts",
+      "quality",
+      "build",
+      "smoke-wheel-matrix",
+      "test-integrity",
+      "tests-smoke",
+      "validation-tests-pr",
+      "property-tests-pr",
+      "docs-pr",
+      "pr-description-policy",
+      "ssot",
+      "security",
+      "codeql-pr",
+      "finalize"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-pr.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "ci-pr-atomic"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-smoke.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "gate-profile",
+      "ssot",
+      "tests-smoke"
+    ]
+  },
+  {
+    "file": ".github/workflows/ci-validation.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "gate-profile",
+      "determine",
+      "ssot",
+      "validation-tests",
+      "property-tests",
+      "chaos-tests",
+      "elite-summary",
+      "chaos-summary"
+    ]
+  },
+  {
+    "file": ".github/workflows/codecov-health.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "health"
+    ]
+  },
+  {
+    "file": ".github/workflows/codeql.yml",
+    "on": null,
+    "permissions": {
+      "actions": "read",
+      "contents": "read",
+      "pull-requests": "write",
+      "security-events": "write"
+    },
+    "jobs": [
+      "analyze"
+    ]
+  },
+  {
+    "file": ".github/workflows/dependency-review.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "dependency-review"
+    ]
+  },
+  {
+    "file": ".github/workflows/dependency-watch.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "check-outdated"
+    ]
+  },
+  {
+    "file": ".github/workflows/docs.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "build-docs"
+    ]
+  },
+  {
+    "file": ".github/workflows/formal-coq.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "coq-proof-check"
+    ]
+  },
+  {
+    "file": ".github/workflows/formal-tla.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "tla-model-check"
+    ]
+  },
+  {
+    "file": ".github/workflows/math-quality-gate.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "math-gate"
+    ]
+  },
+  {
+    "file": ".github/workflows/physics-equivalence.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "validate-physics"
+    ]
+  },
+  {
+    "file": ".github/workflows/quality-mutation.yml",
+    "on": {
+      "schedule": [
+        {
+          "cron": "0 3 * * *"
+        }
+      ],
+      "workflow_dispatch": null
+    },
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "mutation-testing"
+    ]
+  },
+  {
+    "file": ".github/workflows/release-pipeline.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "release-dry-run"
+    ]
+  },
+  {
+    "file": ".github/workflows/science.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "flagship-experiment"
+    ]
+  },
+  {
+    "file": ".github/workflows/workflow-integrity.yml",
+    "on": null,
+    "permissions": {
+      "contents": "read"
+    },
+    "jobs": [
+      "validate-workflows"
+    ]
+  }
+]
+[exit:0]
