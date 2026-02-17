@@ -31,6 +31,8 @@ Four temperature regimes are tested under identical synthetic input patterns:
 
 ### Synthetic Input Protocol
 
+> **PROVISIONAL / NOT INDEPENDENTLY VALIDATED**: Synthetic input patterns are used as controlled proxies for this experiment and do not by themselves establish external validity.
+
 - **Input pattern**: Deterministic pseudo-random pulses to `fast_update` using seeded `numpy.random.Generator`.
 - **Matrix size**: (10, 10) synapse matrix (configurable parameter).
 - **Steps**: 5000 consolidation steps (default configuration).
