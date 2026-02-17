@@ -71,7 +71,7 @@ This project is research-grade / pre-production. No battle usage claimed.
   - SRE runbooks under SLA
   - external integration contracts
   - stabilized public API/semver as product
-  - perf budgets as “must”
+  - perf budgets as “must” [NORMATIVE][CLM-0011]
   - support/release cadence as product
 
 ## Docs hub
