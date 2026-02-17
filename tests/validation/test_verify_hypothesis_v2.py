@@ -26,6 +26,7 @@ def assert_condition_normalized_blocks(results_dir: Path) -> None:
         )
 
 
+@pytest.mark.validation
 def test_verify_hypothesis_v2_bundled_results() -> None:
     """Test that bundled v2 results pass hypothesis verification."""
     from experiments.verify_hypothesis import verify_hypothesis_h1
@@ -55,6 +56,7 @@ def test_verify_hypothesis_v2_bundled_results() -> None:
     assert verification["w_total_reduction_pct"] >= 10.0
 
 
+@pytest.mark.validation
 def test_verify_hypothesis_v1_bundled_results() -> None:
     """Test that bundled v1 results still work (for backward compatibility)."""
     from experiments.verify_hypothesis import verify_hypothesis_h1

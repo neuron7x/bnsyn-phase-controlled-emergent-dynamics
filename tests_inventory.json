@@ -741,6 +741,13 @@
       "entropy_signals": [
         "filesystem_io"
       ],
+      "path": "tests/test_validate_calibration_summary.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
       "path": "tests/test_validate_codebase_readiness_audit.py"
     },
     {
@@ -799,13 +806,6 @@
       "category": "pytest",
       "entropy_signals": [],
       "path": "tests/test_vcg_validation.py"
-    },
-    {
-      "category": "pytest",
-      "entropy_signals": [
-        "filesystem_io"
-      ],
-      "path": "tests/test_verify_hypothesis_v2.py"
     },
     {
       "category": "pytest",

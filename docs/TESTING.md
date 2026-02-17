@@ -21,12 +21,30 @@ make test
 Equivalent explicit command:
 
 ```bash
-python -m pytest -m "not validation" -q
+python -m pytest -m "not (validation or property)" -q
 ```
 
 Expected output pattern:
 - Dots for passing tests.
 - Final summary with `passed` and optional `skipped`.
+
+## Canonical split targets
+
+```bash
+make test-gate
+make test-validation
+make test-property
+```
+
+Equivalent explicit commands:
+
+```bash
+python -m pytest -m "not (validation or property)" -q
+python -m pytest -m "validation" -q
+python -m pytest -m "property" -q
+```
+
+All three suites are expected to **collect successfully** when test dependencies are installed.
 
 ## Run smoke marker tests
 
@@ -143,7 +161,8 @@ Expected output pattern:
 Use the same checks enforced in PR CI:
 
 ```bash
-python -m pytest -q
+python -m pytest --collect-only -q
+python -m pytest -m "not (validation or property)" -q
 python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
 ruff check .
 ```
