@@ -1,0 +1,26 @@
+diff --git a/.github/REPO_MANIFEST.md b/.github/REPO_MANIFEST.md
+index 15f472c..aa9f653 100644
+--- a/.github/REPO_MANIFEST.md
++++ b/.github/REPO_MANIFEST.md
+@@ -2,7 +2,7 @@
+ 
+ - Manifest version: `1.0`
+ - Generated marker: `deterministic`
+-- Repository fingerprint: `7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67`
++- Repository fingerprint: `76a7bd2e68c8d2bb59eb5ae0555d3883e2f90a3e6020662eff0452560232e2e0`
+ - Required PR gates source: `.github/PR_GATES.yml`
+ - Required PR gates SHA-256: `cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9`
+ 
+diff --git a/manifest/repo_manifest.computed.json b/manifest/repo_manifest.computed.json
+index b15acf0..1c9a54b 100644
+--- a/manifest/repo_manifest.computed.json
++++ b/manifest/repo_manifest.computed.json
+@@ -67,7 +67,7 @@
+     ],
+     "generated_files_are_readonly": true
+   },
+-  "repo_ref": "7e64fbb59c5a094d48dc6f79f9019355dfb3c520fec595ef854ed5e851703a67",
++  "repo_ref": "76a7bd2e68c8d2bb59eb5ae0555d3883e2f90a3e6020662eff0452560232e2e0",
+   "required_pr_gates": {
+     "required_pr_gate_total": 4,
+     "sha256": "cf889e9662eae1fff328239d931b364c6465ee5aae07a1ad0b52d16fc9ab0bc9",
