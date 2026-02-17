@@ -23,22 +23,21 @@ The repository includes SSOT and governance assets under `specs/`, `schemas/`, `
 - Validation scripts: `scripts/` (see path/scripts)
 - CI workflows: `.github/workflows/` (see path/.github/workflows)
 
-## Quickstart (≈60s)
+## Quickstart
+
+```bash
+make setup
+make demo
+make test
+```
+
+## Maintainers / Repo Contract
 
 ```bash
 make quickstart-smoke
-```
-
-```bash
 python -m pip install -e .
 python -m bnsyn --help
 bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
-```
-
-```bash
-python tools/generate_inventory.py --check
-python -m scripts.check_internal_links
-python -m scripts.check_quickstart_consistency
 ```
 
 ## Testing

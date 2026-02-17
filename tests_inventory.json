@@ -3,7 +3,7 @@
     "determinism": 1,
     "math_physics": 2,
     "mutation": 5,
-    "pytest": 119,
+    "pytest": 120,
     "workflow_integrity": 2
   },
   "flaky_indicator_count": 78,
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 129,
+  "test_count": 130,
   "tests": [
     {
       "category": "pytest",
@@ -574,6 +574,11 @@
         "subprocess_dependency"
       ],
       "path": "tests/test_quickstart_contract.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [],
+      "path": "tests/test_quickstart_contract_validator.py"
     },
     {
       "category": "pytest",
