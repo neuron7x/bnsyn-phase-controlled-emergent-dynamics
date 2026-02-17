@@ -1,38 +1,34 @@
-# Documentation Index (Authoritative Hub)
+# Documentation Index
 
-Single authoritative navigation hub for repository-facing documentation.
+Single navigation hub for project docs.
 
-## Start here
+## Trust loop
 
 1. [README.md](../README.md)
-2. [STATUS.md](STATUS.md)
-3. [ARCHITECTURE.md](ARCHITECTURE.md)
+2. [ARCHITECTURE.md](ARCHITECTURE.md)
+3. [README.md](../README.md)
 
-## Core architecture + governance surfaces
+## Core docs
 
 - [ARCHITECTURE.md](ARCHITECTURE.md)
+- [STATUS.md](STATUS.md)
+- [DOC_DEBT.md](DOC_DEBT.md)
 - [PROJECT_SURFACES.md](PROJECT_SURFACES.md)
-- [ENFORCEMENT_MATRIX.md](ENFORCEMENT_MATRIX.md)
-- [TRACEABILITY.md](TRACEABILITY.md)
 - [SSOT.md](SSOT.md)
+- [TRACEABILITY.md](TRACEABILITY.md)
 
-## Operational and quality docs
+## Testing and CI
 
 - [TESTING.md](TESTING.md)
 - [CI_GATES.md](CI_GATES.md)
-- [REPRODUCIBILITY.md](REPRODUCIBILITY.md)
-- [MAINTENANCE.md](MAINTENANCE.md)
-- [DOC_DEBT.md](DOC_DEBT.md)
+- [RELEASE_PIPELINE.md](RELEASE_PIPELINE.md)
 
-## Canonical commands
+## Governance
 
-```bash
-python -m pytest -m "not validation" -q
-ruff check .
-pylint src/bnsyn
-mypy src --strict --config-file pyproject.toml
-python -m build
-python -m scripts.validate_traceability
-python -m scripts.discover_public_surfaces --check
-python -m scripts.check_internal_links
-```
+- [GOVERNANCE.md](GOVERNANCE.md)
+- [ENFORCEMENT_MATRIX.md](ENFORCEMENT_MATRIX.md)
+- [NORMATIVE_LABELING.md](NORMATIVE_LABELING.md)
+
+## Inventory snapshot
+
+- [docs/_inventory.md](_inventory.md)

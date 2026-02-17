@@ -1,63 +1,35 @@
-# Architecture (repo-aligned)
+# Architecture
 
-This page is a structural map of runnable surfaces and governance gates in this repository.
-For public surfaces and SSOT enforcement details, see [PROJECT_SURFACES.md](PROJECT_SURFACES.md) and [ENFORCEMENT_MATRIX.md](ENFORCEMENT_MATRIX.md).
+Repository-grounded execution and governance map for BN-Syn.
+Back to project landing page: [README.md](../README.md).
 
-## Diagram A — System flow (CLI → runtime → experiments → artifacts → validators/CI)
+## Runtime execution flow
 
 ```mermaid
 flowchart LR
-  CLI[src/bnsyn/cli.py] --> RUNTIME[src/bnsyn/**]
-  CLI --> EXP[experiments/**]
-  RUNTIME --> ART1[results/**]
-  RUNTIME --> ART2[figures/**]
-  EXP --> ART1
-  EXP --> ART2
-  DOCS[docs/**]
-  CLAIMS[claims/claims.yml]
-  BIB[bibliography/**]
-  SCHEMAS[schemas/*.json]
-  DOCS --> VAL[scripts/validate_traceability.py\nscripts/check_internal_links.py\nscripts/discover_public_surfaces.py]
-  CLAIMS --> VAL
-  BIB --> VAL
-  SCHEMAS --> VAL
-  VAL --> CI[.github/workflows/ci-pr.yml\n.github/workflows/ci-validation.yml\n.github/workflows/ci-pr-atomic.yml]
-  CI --> VAL
+  A["CLI"] --> B["Runtime Modules"]
+  B --> C["Experiments"]
+  B --> D["Artifacts"]
+  C --> D
 ```
 
-## Diagram B — Governance / SSOT enforcement flow
+### Key Paths (runtime)
+
+- CLI entrypoint: `src/bnsyn/cli.py`
+- Runtime modules: `src/bnsyn/`
+- Experiment definitions and runs: `experiments/`
+- Generated artifacts: `results/`, `figures/`
+
+## Governance and validation flow
 
 ```mermaid
-flowchart TD
-  SSOT1[docs/TRACEABILITY.md]
-  SSOT2[docs/ENFORCEMENT_MATRIX.md]
-  SSOT3[docs/PROJECT_SURFACES.md]
-  SSOT4[claims/claims.yml + bibliography/**]
-  RULES[scripts/ssot_rules.py]
-  V1[scripts/validate_traceability.py]
-  V2[scripts/check_internal_links.py]
-  V3[scripts/discover_public_surfaces.py --check]
-  G1[.github/workflows/ci-pr.yml]
-  G2[.github/workflows/ci-validation.yml]
-  G3[.github/workflows/ci-pr-atomic.yml]
-
-  SSOT1 --> V1
-  SSOT2 --> RULES
-  SSOT3 --> V3
-  SSOT4 --> V1
-  RULES --> G1
-  V1 --> G2
-  V2 --> G2
-  V3 --> G3
+flowchart LR
+  A["SSOT Sources"] --> B["Validation Scripts"]
+  B --> C["CI Workflows"]
 ```
 
-## How to read these diagrams
+### Key Paths (governance)
 
-- Nodes are concrete repo paths, never conceptual-only components.
-- Solid arrows mean dependency or enforcement direction.
-- `src/bnsyn/cli.py` is the documented command entry surface.
-- `src/bnsyn/**` and `experiments/**` feed generated artifacts in `results/**` and `figures/**`.
-- SSOT inputs are documentation, schemas, and claim/evidence files.
-- Validators under `scripts/**` are the executable enforcement layer.
-- CI workflows under `.github/workflows/**` are gate runners, not alternate policy definitions.
-- `docs/INDEX.md` remains the canonical navigation hub for all docs.
+- SSOT sources: `specs/`, `schemas/`, `claims/`, `docs/`
+- Validation scripts: `scripts/check_internal_links.py`, `scripts/check_quickstart_consistency.py`, `scripts/validate_traceability.py`
+- CI workflow runners: `.github/workflows/ci-pr.yml`, `.github/workflows/ci-validation.yml`, `.github/workflows/ci-pr-atomic.yml`, `.github/workflows/docs.yml`

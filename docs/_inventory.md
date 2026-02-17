@@ -1,0 +1,170 @@
+# Inventory Snapshot
+
+## top_level_dirs
+- .git
+- .github
+- PROOF_BUNDLE
+- artifacts
+- assessment_logs
+- benchmarks
+- bibliography
+- calibration_pack
+- claims
+- docs
+- entropy
+- evidence
+- examples
+- experiments
+- figures
+- manifest
+- proof_bundle
+- quality
+- reports
+- results
+- schemas
+- scripts
+- specs
+- src
+- tests
+- tools
+
+## detected_commands
+- make api-contract
+- make check
+- make clean
+- make coverage
+- make coverage-baseline
+- make coverage-fast
+- make coverage-gate
+- make dev-env-offline
+- make dev-setup
+- make docs
+- make docs-evidence
+- make fix
+- make format
+- make inventory
+- make inventory-check
+- make lint
+- make manifest
+- make manifest-check
+- make manifest-validate
+- make mutation
+- make mutation-baseline
+- make mutation-check
+- make mutation-check-strict
+- make mutation-ci
+- make mypy
+- make public-surfaces
+- make quality
+- make quickstart-smoke
+- make release-readiness
+- make security
+- make ssot
+- make test
+- make test-determinism
+- make test-validation
+- make traceability-check
+- make validate-api-maturity
+- make validate-claims-coverage
+- make wheelhouse-build
+- make wheelhouse-clean
+- make wheelhouse-report
+- make wheelhouse-validate
+- python -m scripts.__init__
+- python -m scripts._audit_metrics_pr40
+- python -m scripts.audit_spec_implementation
+- python -m scripts.bench_ci_smoke
+- python -m scripts.benchmark_physics
+- python -m scripts.benchmark_production
+- python -m scripts.benchmark_sleep_stack_scale
+- python -m scripts.build_readiness_artifacts
+- python -m scripts.build_wheelhouse
+- python -m scripts.calculate_throughput_gain
+- python -m scripts.check_api_contract
+- python -m scripts.check_benchmark_regressions
+- python -m scripts.check_coverage_gate
+- python -m scripts.check_internal_links
+- python -m scripts.check_mutation_score
+- python -m scripts.check_quickstart_consistency
+- python -m scripts.collect_ci_run_urls
+- python -m scripts.compare_benchmarks
+- python -m scripts.discover_public_surfaces
+- python -m scripts.generate_benchmark_baseline
+- python -m scripts.generate_coverage_baseline
+- python -m scripts.generate_coverage_trend
+- python -m scripts.generate_evidence_coverage
+- python -m scripts.generate_math_data
+- python -m scripts.generate_mutation_baseline
+- python -m scripts.generate_tests_inventory
+- python -m scripts.intelligence_cycle
+- python -m scripts.lint_ci_truthfulness
+- python -m scripts.math_validate
+- python -m scripts.mutation_ci_summary
+- python -m scripts.mutation_counts
+- python -m scripts.mutation_survivors_summary
+- python -m scripts.orchestrate_throughput_scaling
+- python -m scripts.profile_kernels
+- python -m scripts.rebuild_sources_lock
+- python -m scripts.release_pipeline
+- python -m scripts.release_readiness
+- python -m scripts.render_workflow_policy_docs
+- python -m scripts.run_benchmarks
+- python -m scripts.run_mutation_pipeline
+- python -m scripts.run_scaled_sleep_stack
+- python -m scripts.scan_governed_docs
+- python -m scripts.scan_normative_tags
+- python -m scripts.scan_placeholders
+- python -m scripts.scan_tierS_misuse
+- python -m scripts.ssot_rules
+- python -m scripts.sync_required_status_contexts
+- python -m scripts.track_quality
+- python -m scripts.validate_api_maturity
+- python -m scripts.validate_bibliography
+- python -m scripts.validate_branch_protection_governance
+- python -m scripts.validate_claims
+- python -m scripts.validate_claims_coverage
+- python -m scripts.validate_codebase_readiness_audit
+- python -m scripts.validate_long_running_triggers
+- python -m scripts.validate_mutation_baseline
+- python -m scripts.validate_pr_gates
+- python -m scripts.validate_required_checks
+- python -m scripts.validate_required_status_contexts
+- python -m scripts.validate_status_claims
+- python -m scripts.validate_traceability
+- python -m scripts.validate_workflow_contracts
+- python -m scripts.verify_equivalence
+- python -m scripts.verify_formal_constants
+- python -m scripts.verify_reproducible_artifacts
+- python -m scripts.visualize_experiment
+- python -m scripts.yaml_contracts
+
+## workflows
+- .github/workflows/_reusable_benchmarks.yml
+- .github/workflows/_reusable_chaos_tests.yml
+- .github/workflows/_reusable_formal_science.yml
+- .github/workflows/_reusable_gate_profile.yml
+- .github/workflows/_reusable_property_tests.yml
+- .github/workflows/_reusable_pytest.yml
+- .github/workflows/_reusable_quality.yml
+- .github/workflows/_reusable_ssot.yml
+- .github/workflows/_reusable_validation_tests.yml
+- .github/workflows/benchmarks.yml
+- .github/workflows/ci-benchmarks-elite.yml
+- .github/workflows/ci-benchmarks.yml
+- .github/workflows/ci-pr-atomic.yml
+- .github/workflows/ci-pr.yml
+- .github/workflows/ci-smoke.yml
+- .github/workflows/ci-validation.yml
+- .github/workflows/codecov-health.yml
+- .github/workflows/codeql.yml
+- .github/workflows/dependency-review.yml
+- .github/workflows/dependency-watch.yml
+- .github/workflows/docs.yml
+- .github/workflows/formal-coq.yml
+- .github/workflows/formal-tla.yml
+- .github/workflows/math-quality-gate.yml
+- .github/workflows/physics-equivalence.yml
+- .github/workflows/quality-mutation.yml
+- .github/workflows/release-pipeline.yml
+- .github/workflows/science.yml
+- .github/workflows/workflow-integrity.yml
