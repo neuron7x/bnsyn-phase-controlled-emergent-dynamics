@@ -31,7 +31,7 @@ make demo
 make test
 ```
 
-## Quickstart smoke verification (repo contract)
+## Maintainers / Repo Contract
 
 ```bash
 make quickstart-smoke

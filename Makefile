@@ -8,12 +8,13 @@ SETUP_CMD ?= python -m pip install -e ".[test]"
 TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
 
 setup:
+	python -V
+	python -m pip --version
 	$(SETUP_CMD)
+	python -m pip check
 
 demo:
-	python -c "from pathlib import Path; Path('artifacts').mkdir(parents=True, exist_ok=True)"
-	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 > artifacts/demo.json
-	@echo "Demo artifact written: artifacts/demo.json"
+	@python -m scripts.run_quickstart_demo
 
 dev-setup:
 	python -m pip install --upgrade pip setuptools wheel

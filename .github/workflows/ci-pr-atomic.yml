@@ -285,6 +285,8 @@ jobs:
         uses: ./.github/actions/pin-pip
       - name: Install test dependencies
         run: python -m pip install -e ".[test]"
+      - name: Validate quickstart contract
+        run: python -m scripts.validate_quickstart_contract
       - name: Verify full test collection
         run: python -m pytest --collect-only -q
       - name: Validate Tri-Fix invariants
