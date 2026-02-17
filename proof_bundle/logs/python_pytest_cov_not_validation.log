@@ -1,0 +1,97 @@
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+..............................................FF.........ss....ss....... [ 40%]
+........................................................................ [ 51%]
+........................................................................ [ 61%]
+........................................................................ [ 71%]
+........................................................................ [ 81%]
+........................................................................ [ 92%]
+........................................................                 [100%]
+=================================== FAILURES ===================================
+_________________ test_inventory_json_matches_repository_state _________________
+
+    def test_inventory_json_matches_repository_state() -> None:
+        root = Path(__file__).resolve().parents[1]
+        paths = ["src", "tests", "docs", ".github"]
+    
+        counts = {path: len(_tracked_files_under(path)) for path in paths}
+        workflows = sorted(path.name for path in (root / ".github" / "workflows").glob("*.yml"))
+        detected_tools = [
+            name
+            for name in ["pyproject.toml", "requirements-lock.txt", "docker-compose.yml", "Makefile"]
+            if (root / name).exists()
+        ]
+    
+        expected = {
+            "_generated_by": "python tools/generate_inventory.py",
+            "paths": paths,
+            "counts": counts,
+            "workflows": workflows,
+            "detected_tools": detected_tools,
+        }
+    
+        inventory = json.loads((root / "INVENTORY.json").read_text(encoding="utf-8"))
+>       assert inventory == expected
+E       AssertionError: assert {'_generated_...github'], ...} == {'_generated_...github'], ...}
+E         
+E         Omitting 4 identical items, use -vv to show
+E         Differing items:
+E         {'counts': {'.github': 41, 'docs': 266, 'src': 73, 'tests': 168}} != {'counts': {'.github': 41, 'docs': 268, 'src': 73, 'tests': 169}}
+E         Use -v to get more diff
+
+tests/test_generate_inventory.py:36: AssertionError
+___________________ test_build_inventory_render_matches_file ___________________
+
+    def test_build_inventory_render_matches_file() -> None:
+        root = Path(__file__).resolve().parents[1]
+        rendered = render_inventory(build_inventory(root))
+>       assert (root / "INVENTORY.json").read_text(encoding="utf-8") == rendered
+E       assert '{\n  "_gener...le"\n  ]\n}\n' == '{\n  "_gener...le"\n  ]\n}\n'
+E         
+E         Skipping 161 identical leading characters in diff, use -v to show
+E         Skipping 939 identical trailing characters in diff, use -v to show
+E         - tests": 169,
+E         ?           ^
+E         + tests": 168,
+E         ?           ^...
+E         
+E         ...Full output truncated (5 lines hidden), use '-vv' to show
+
+tests/test_generate_inventory.py:42: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.12-final-0 _______________
+
+Name                                        Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------
+src/bnsyn/cli.py                              215      3    99%   43-45
+src/bnsyn/numerics/integrators.py              38      1    97%   170
+src/bnsyn/provenance/manifest.py               90      3    97%   133, 155-156
+src/bnsyn/provenance/manifest_builder.py       85      3    96%   65-66, 90
+src/bnsyn/schemas/experiment.py                42      2    95%   40, 42
+src/bnsyn/tools/run_scaled_sleep_stack.py     164      2    99%   60, 276
+-------------------------------------------------------------------------
+TOTAL                                        2793     14    99%
+
+64 files skipped due to complete coverage.
+Coverage XML written to file coverage.xml
+=========================== short test summary info ============================
+FAILED tests/test_generate_inventory.py::test_inventory_json_matches_repository_state
+FAILED tests/test_generate_inventory.py::test_build_inventory_render_matches_file

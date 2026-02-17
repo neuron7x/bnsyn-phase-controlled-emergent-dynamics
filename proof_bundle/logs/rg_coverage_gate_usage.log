@@ -1,0 +1,59 @@
+scripts/generate_coverage_baseline.py:14:from scripts.check_coverage_gate import METRIC_NAME, read_coverage_percent  # noqa: E402
+scripts/generate_coverage_baseline.py:26:    parser = argparse.ArgumentParser(description="Generate coverage baseline from coverage.xml")
+scripts/generate_coverage_baseline.py:27:    parser.add_argument("--coverage-xml", type=Path, default=Path("coverage.xml"))
+scripts/generate_coverage_baseline.py:32:    current = read_coverage_percent(args.coverage_xml)
+scripts/pre-push.sh:20:pytest --cov=src/bnsyn --cov-fail-under=85 -q || { echo "❌ Coverage below 85%"; exit 1; }
+scripts/README.md:19:| `check_coverage_gate.py` | UNKNOWN/TBD: missing module docstring. | `--baseline | --coverage-xml | --tolerance` | See page | See page | Safe (read-only checks) | `python -m scripts.check_coverage_gate --help` |
+scripts/README.md:25:| `generate_coverage_baseline.py` | UNKNOWN/TBD: missing module docstring. | `--coverage-xml | --minimum-percent | --output` | See page | See page | Writes artifacts only | `python -m scripts.generate_coverage_baseline --help` |
+scripts/README.md:26:| `generate_coverage_trend.py` | Generate compact coverage trend artifacts for CI observability. | `--branch | --coverage-json | --output-csv | --output-json | --sha` | See page | See page | Writes artifacts only | `python -m scripts.generate_coverage_trend --help` |
+scripts/check_coverage_gate.py:10:METRIC_NAME = "coverage.xml line-rate"
+scripts/check_coverage_gate.py:20:        raise ValueError("coverage.xml missing line-rate attribute")
+scripts/check_coverage_gate.py:72:    parser.add_argument("--coverage-xml", type=Path, default=Path("coverage.xml"))
+scripts/check_coverage_gate.py:78:        current = read_coverage_percent(args.coverage_xml)
+tests/test_generate_coverage_trend.py:78:            "--coverage-json",
+scripts/track_quality.py:17:    run_command("pytest -m 'not validation' --cov=src/bnsyn --cov-report=json -q 2>/dev/null")
+scripts/generate_coverage_trend.py:70:    parser.add_argument("--coverage-json", type=Path, required=True)
+tests/test_coverage_gate.py:6:from scripts import check_coverage_gate
+tests/test_coverage_gate.py:18:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:21:    assert check_coverage_gate.read_coverage_percent(xml_path) == pytest.approx(99.57)
+tests/test_coverage_gate.py:28:        check_coverage_gate.read_coverage_percent(xml_path)
+tests/test_coverage_gate.py:32:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:36:        check_coverage_gate.read_coverage_percent(xml_path)
+tests/test_coverage_gate.py:47:        check_coverage_gate.read_baseline_config(baseline)
+tests/test_coverage_gate.py:58:        check_coverage_gate.read_baseline_config(baseline)
+tests/test_coverage_gate.py:65:    passed, message = check_coverage_gate.check_gate(
+tests/test_coverage_gate.py:77:    passed, message = check_coverage_gate.check_gate(
+tests/test_coverage_gate.py:89:    passed, message = check_coverage_gate.check_gate(
+tests/test_coverage_gate.py:101:    passed, message = check_coverage_gate.check_gate(
+tests/test_coverage_gate.py:113:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:120:            "check_coverage_gate.py",
+tests/test_coverage_gate.py:121:            "--coverage-xml",
+tests/test_coverage_gate.py:128:    assert check_coverage_gate.main() == 1
+tests/test_coverage_gate.py:131:def test_main_fails_when_coverage_xml_missing(tmp_path: Path, monkeypatch) -> None:
+tests/test_coverage_gate.py:139:                "metric": "coverage.xml line-rate",
+tests/test_coverage_gate.py:148:            "check_coverage_gate.py",
+tests/test_coverage_gate.py:149:            "--coverage-xml",
+tests/test_coverage_gate.py:156:    assert check_coverage_gate.main() == 1
+tests/test_coverage_gate.py:160:    xml_path = tmp_path / "coverage.xml"
+tests/test_coverage_gate.py:168:            "check_coverage_gate.py",
+tests/test_coverage_gate.py:169:            "--coverage-xml",
+tests/test_coverage_gate.py:176:    assert check_coverage_gate.main() == 1
+.github/pull_request_template.md:65:- [ ] Ran `pytest -m "not validation" --cov=src/bnsyn --cov-fail-under=85` ✅
+.github/workflows/_reusable_pytest.yml:65:            --cov=bnsyn \
+.github/workflows/_reusable_pytest.yml:66:            --cov-report=term-missing:skip-covered \
+.github/workflows/_reusable_pytest.yml:67:            --cov-report=json \
+.github/workflows/_reusable_pytest.yml:68:            --cov-report=xml:coverage.xml \
+.github/workflows/_reusable_pytest.yml:69:            --cov-report=html \
+.github/workflows/_reusable_pytest.yml:70:            --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
+.github/workflows/_reusable_pytest.yml:82:        run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+.github/workflows/_reusable_pytest.yml:106:            --coverage-json coverage.json \
+.github/workflows/_reusable_pytest.yml:118:      - name: Enforce mandatory coverage.xml artifact input
+.github/workflows/_reusable_pytest.yml:121:          if [ ! -f coverage.xml ]; then
+.github/workflows/_reusable_pytest.yml:122:            echo "coverage.xml is required for smoke/unit coverage jobs"
+.github/workflows/_reusable_pytest.yml:194:              echo "  --cov=bnsyn \\"
+.github/workflows/_reusable_pytest.yml:195:              echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
+.github/workflows/_reusable_pytest.yml:206:          files: ./coverage.xml
+.github/workflows/_reusable_pytest.yml:223:            coverage.xml
+.github/workflows/_reusable_pytest.yml:227:      - name: Upload mandatory coverage.xml artifact
+.github/workflows/_reusable_pytest.yml:231:          name: coverage-xml-${{ github.sha }}
+.github/workflows/_reusable_pytest.yml:232:          path: coverage.xml

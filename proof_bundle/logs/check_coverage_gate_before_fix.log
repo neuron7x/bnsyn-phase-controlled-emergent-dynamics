@@ -1,0 +1,5 @@
+Metric: coverage.xml line-rate
+Current coverage: 99.50%
+Baseline coverage: 99.57%
+Minimum coverage: 99.00%
+FAIL: coverage dropped below baseline by more than 0.05% (current=99.50%, baseline=99.57%)

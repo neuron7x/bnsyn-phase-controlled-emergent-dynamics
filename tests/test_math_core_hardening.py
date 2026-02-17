@@ -58,3 +58,6 @@ def test_integrators_fail_closed_on_non_finite_derivatives() -> None:
 
     with pytest.raises(ValueError, match="rk2_step produced non-finite values"):
         _ = rk2_step(x, 0.1, lambda _y: np.array([np.nan], dtype=np.float64))
+
+    with pytest.raises(ValueError, match="exp_decay_step produced non-finite values"):
+        _ = exp_decay_step(np.array([np.inf], dtype=np.float64), 0.1, tau=1.0)

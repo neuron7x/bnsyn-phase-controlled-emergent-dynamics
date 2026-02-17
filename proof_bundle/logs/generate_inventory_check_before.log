@@ -1,0 +1,1 @@
+INVENTORY.json is out of date. Run: python tools/generate_inventory.py && git add INVENTORY.json
