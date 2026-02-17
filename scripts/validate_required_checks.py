@@ -89,6 +89,9 @@ def validate_required_checks(
 
 def main(argv: Iterable[str]) -> int:
     args = list(argv)
+    if len(args) == 2 and args[1] in {"-h", "--help"}:
+        print("Usage: python -m scripts.validate_required_checks")
+        return 0
     if len(args) != 1:
         print("Usage: python -m scripts.validate_required_checks")
         return 3
