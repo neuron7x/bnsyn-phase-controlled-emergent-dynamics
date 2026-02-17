@@ -4,8 +4,8 @@
 
 # BN-Syn Thermostated Bio-AI System
 
-BN-Syn is a deterministic research runtime for phase-controlled emergent dynamics with repository-native governance checks.
-The repository combines simulation code in `src/bnsyn/` with SSOT validation scripts, schemas, claims, and CI gates.
+BN-Syn is a repository for phase-controlled emergent dynamics simulations implemented in `src/bnsyn/` (see path/src/bnsyn).
+The repository includes SSOT and governance assets under `specs/`, `schemas/`, `claims/`, `scripts/`, and `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/scripts) (see path/docs).
 
 [![CI PR](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
 [![CI Validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)
@@ -14,12 +14,14 @@ The repository combines simulation code in `src/bnsyn/` with SSOT validation scr
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.11-3776AB.svg)](pyproject.toml)
 
-## What you can do here
+## What’s in this repo
 
-- Run deterministic CLI simulations and demos (`bnsyn ...`) via `src/bnsyn/cli.py`.
-- Execute baseline experiments from `experiments/` and inspect outputs in `results/` and `figures/`.
-- Validate SSOT traceability and claim coverage using scripts in `scripts/`.
-- Run repository quality gates with `make` targets aligned to CI workflows.
+- CLI entrypoint: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+- Runtime package: `src/bnsyn/` (see path/src/bnsyn)
+- Experiment inputs: `experiments/` (see path/experiments)
+- Artifact outputs: `results/` and `figures/` (see path/results) (see path/figures)
+- Validation scripts: `scripts/` (see path/scripts)
+- CI workflows: `.github/workflows/` (see path/.github/workflows)
 
 ## Quickstart (≈60s)
 
@@ -31,35 +33,40 @@ make quickstart-smoke
 python -m pip install -e .
 python -m bnsyn --help
 bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
-python -m pytest -m "not validation" -q
+```
+
+```bash
+python tools/generate_inventory.py --check
+python -m scripts.check_internal_links
+python -m scripts.check_quickstart_consistency
 ```
 
 ## Architecture at a glance
 
 ```mermaid
 flowchart LR
-  A["CLI"] --> B["Runtime"]
-  B --> C["Experiments"]
-  C --> D["Artifacts"]
-  E["SSOT Sources"] --> F["Validators"]
-  F --> G["CI Workflows"]
+  A["src/bnsyn/cli.py"] --> B["src/bnsyn/"]
+  B --> C["experiments/"]
+  C --> D["results/ + figures/"]
+  E["specs/ + schemas/ + claims/ + docs/"] --> F["scripts/"]
+  F --> G[".github/workflows/"]
 ```
 
-### Key paths
+### Key Paths
 
-- CLI: `src/bnsyn/cli.py`
-- Runtime: `src/bnsyn/`
-- Experiments: `experiments/`
-- Artifacts: `results/`, `figures/`
-- SSOT sources: `specs/`, `schemas/`, `claims/`, `docs/`
-- Validators: `scripts/`
-- CI workflows: `.github/workflows/`
+- CLI: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+- Runtime: `src/bnsyn/` (see path/src/bnsyn)
+- Experiments: `experiments/` (see path/experiments)
+- Artifacts: `results/`, `figures/` (see path/results) (see path/figures)
+- SSOT: `specs/`, `schemas/`, `claims/`, `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/docs)
+- Validation: `scripts/` (see path/scripts)
+- CI: `.github/workflows/` (see path/.github/workflows)
 
 ## Status
 
 This project is research-grade / pre-production. No battle usage claimed.
 
-- Maturity: research-grade / pre-production
+- Maturity: research-grade / pre-production (see path/docs/STATUS.md)
 - Missing layers:
   - SRE runbooks under SLA
   - external integration contracts
@@ -69,4 +76,4 @@ This project is research-grade / pre-production. No battle usage claimed.
 
 ## Docs hub
 
-- [Documentation index](docs/INDEX.md)
+- [Documentation index](docs/INDEX.md) (see path/docs/INDEX.md)
