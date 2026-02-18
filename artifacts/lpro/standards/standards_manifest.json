@@ -1,0 +1,20 @@
+{
+  "manifest_version": "1",
+  "standards": [
+    {
+      "name": "LPRO-2026.02 protocol (user-provided)",
+      "source": "conversation input",
+      "source_hash": "n/a"
+    },
+    {
+      "name": "NIST AI RMF 1.0",
+      "source": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+      "source_hash": "external-not-fetched"
+    },
+    {
+      "name": "Repo AGENTS contract",
+      "source": "AGENTS.md",
+      "source_hash": "63a7f97eb4a24422a8b11f678ab1111e71b218befd064c2493727d341d421d3c"
+    }
+  ]
+}
