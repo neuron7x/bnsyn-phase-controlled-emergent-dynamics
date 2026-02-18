@@ -1,0 +1,182 @@
+{
+  "logs": [
+    {
+      "path": "artifacts/prod_ready/logs/gateA_build.log",
+      "sha256": "22b84a6a634a172e890348ca6834ced86548d81af4e271ea700b6ab70e20c558"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateB_tests.log",
+      "sha256": "10ef734a5cd110b9402bf9035b1c80c1240dd2c3242e27f9d6b10c8868937f32"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateC_lint.log",
+      "sha256": "b227a3c90e4eb9c164b600eb11dcb8bc40badc2345f972a104419f00a54b9a90"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateC_lint_rerun.log",
+      "sha256": "8271dc82f16e8446cc83b511b9479a486c686bcf08d4acd24517d9ce32bf1f78"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateC_lint_rerun2.log",
+      "sha256": "bf4afb52343aeb662b70caf7aa556a0f2844c6463f314ce7b175a5d969966d59"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateC_mypy.log",
+      "sha256": "8acf5dc89d3010cce833052773e9fd3bc4eaea9e89a0332b6412250c92a0686f"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateD_sbom.log",
+      "sha256": "c0e0c05d08c7befdb47cad2ef5b8d97ea2c7d01fda3af6c038ee19dc370ce78d"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateD_supplychain.log",
+      "sha256": "e7bf3b49b1906c4494a5b9655c85f6ce98da99fbadd84b43ca4204ac385bb18b"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateE_security.log",
+      "sha256": "e57df821563b9f61ae3d14ce0a4cbe1add2cf42bcffd92523ad4c6df97ecbd6e"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateF_config.log",
+      "sha256": "7147fe5b4bea83daee2408100d4c78457501121054431233f0149bdef7f9ed88"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateG_runtime.log",
+      "sha256": "1f22cc0ba1088a2e14b9ef634e5b1cc8124b53f25dc8c32cda823d1aee9bf817"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateH_resource.log",
+      "sha256": "4f0eefcd452dfaad1cfd629897c9e1048e9bb6e3e1d0c4cbdd533b30dd660d02"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateH_resources.log",
+      "sha256": "476e0fb20a17c5eeb7ca1c51d87a8246cf16e6d623f6d9435f8c248ade31ce5e"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateI_observability.log",
+      "sha256": "633a6f8158dc752feaf994671368121ca8d92f495dcd940d47260392f3e1e075"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateJ_docs_replay.log",
+      "sha256": "0852d4bb19fbe4eef003de121d85214ffc9ec021dfc0a6e97bbabd6ec32cd460"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/gateK_release.log",
+      "sha256": "b254d9bb31d5ff88f0159626cbb00a79d97f49de3cd7a0284b273215be975ceb"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_ci_map.log",
+      "sha256": "c43a9506f43ac8f8019153864f4d13f7523f7d2d8cf8b4ca32fca4abf7f8c42f"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_inventory_scan.log",
+      "sha256": "e88989678e4fb73dc03638f69f034b1c0aae012d235a59ec236672a3e6017464"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_python_version.log",
+      "sha256": "eb006487f21263cc5becf6aec51ca901ce5eba91be3b57deb818178dad514f93"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_readme_excerpt.log",
+      "sha256": "aea5030b55eb00aa6060223e353d5c89d293bb794886c664c7aaba77a8711d1f"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_repo_scan.log",
+      "sha256": "5b457a228fa67ff0ab8e9b371e7903ebae5ef85f09d605f71b09d59bd8103c9d"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase0_toolchain.log",
+      "sha256": "a9249d59d42a868db42027193c081a94593e30a1fa444e5c1eea5f391df96998"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase1_build.log",
+      "sha256": "a613f72be5bc387eabbbc0fae77af6e1d6f5031fb5a75e1bfbc5b0c199a240ef"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase1_happypath.log",
+      "sha256": "daf5c7fe85491d70bf23974b83c614b756d0eb96af7ad37d58aa6575551ac0b7"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase1_install.log",
+      "sha256": "d35fde3fd0fe6dd568a8c2028a2f8f9e2a87595d19cb1347c452a2013e5a7f28"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase1_test.log",
+      "sha256": "2afbb6be163a39f45204705897484581ed35dcd1f2c12a20d00915ef5ffb361e"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase2_cleanroom.log",
+      "sha256": "ac4ed43d98c704400b145ee23cb3bee301d3f9298f1fdef86902805e4e92de80"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase4_release_build.log",
+      "sha256": "4d76882c1d7b95bdece2e54786d5e6a43f21b1668bd0a8351ac36d298c6ec0f7"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/phase4_release_verify.log",
+      "sha256": "12e38939796db4ec9f40ec9d89078856f02e2fbb59ebff248e42f73959bc5966"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/remediate_install_build_pkg.log",
+      "sha256": "eb50da3533a9da651a66f8d1be9771ebec48e2e89b1201d79950b19ff49d7abe"
+    },
+    {
+      "path": "artifacts/prod_ready/logs/remediate_install_pylint.log",
+      "sha256": "efff201a0937398818dff2fd7a6bfc7f5c4836ce1f48d063232f5aee6fec2b1d"
+    }
+  ],
+  "reports": [
+    {
+      "path": "artifacts/prod_ready/reports/observability_log_sample.json",
+      "sha256": "6cb910577af2b91aa06c5e678939b836c23b65badfd356ae3a9efeb863c363dc"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/perf_baseline.txt",
+      "sha256": "476e0fb20a17c5eeb7ca1c51d87a8246cf16e6d623f6d9435f8c248ade31ce5e"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/sbom.cdx.json",
+      "sha256": "ff479b1d003d7cc3c4d9561e534268e95fc74ce1aa4c9fde107792a23d266d02"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/sbom.json",
+      "sha256": "3454c60181cf221f6634b342ab9f21f2ec5d8256f746976ffd50137e1804a68c"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/security_bandit.json",
+      "sha256": "44279e5b8c5a94525916cbc333ebd9d32107e43d594cb828323d168a1cfa55bf"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/security_secrets.json",
+      "sha256": "a771b23832e628f3116d0ff385c1dad336ab2c6e34c5ad546edcb74c7d49c49c"
+    },
+    {
+      "path": "artifacts/prod_ready/reports/security_vulns.json",
+      "sha256": "063e20c027269af49b79e7164ce44aac61cc262ef6470d114466989282896c00"
+    }
+  ],
+  "release_artifacts": [
+    {
+      "path": "dist/bnsyn-0.2.0-py3-none-any.whl",
+      "sha256": "95388722102c36e9e119bda08feccd69d8b32277b914f66771cf7ca741ccfddf"
+    },
+    {
+      "path": "dist/bnsyn-0.2.0.tar.gz",
+      "sha256": "44429e103a5b8aa77d939053fa23fcc9a98f9bf6e26be164cbcf72f2d3ec3e2d"
+    },
+    {
+      "path": "artifacts/release_readiness.json",
+      "sha256": "8d0e1a4b4af61db98b3d1b5e9ca11a00ce390924bc4f1156c6501b79b17cff4f"
+    },
+    {
+      "path": "artifacts/release_readiness.md",
+      "sha256": "12669637f4dcf9e457a8bc799e92d2e2766231db7c4bb3a3a93f894d6f6d45e8"
+    }
+  ],
+  "lockfiles": [
+    {
+      "path": "requirements-lock.txt",
+      "sha256": "648d603f3a96db249bee5579c9396edfbc04075e0427371d1dadaf72fb176011"
+    }
+  ]
+}
