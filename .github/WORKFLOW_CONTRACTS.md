@@ -88,7 +88,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
 | `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
-| `context_compressor_gate.yml` | `context-compressor-gate` | PR-gate | `pull_request, push` | NO |
+| `context_compressor_gate.yml` | `context-compressor-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-review.yml` | `dependency-review` | PR-gate | `pull_request` | NO |
 | `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
