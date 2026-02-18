@@ -1,0 +1,6 @@
+$ git status --short
+?? proof_bundle/logs/fix4_initial_state.log
+$ git log --oneline -n 3
+d4dcf28 Add scientific-product PR gate, deterministic Phase Atlas, and fix workflow contract drift
+6bde36c Merge pull request #287 from neuron7x/codex/execute-context-compressor-pipeline
+ff5dd2f Add deterministic context compressor artifact bundle

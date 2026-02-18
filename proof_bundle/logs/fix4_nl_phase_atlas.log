@@ -1,0 +1,170 @@
+     1	"""Generate deterministic BN-Syn phase-atlas artifacts."""
+     2	
+     3	from __future__ import annotations
+     4	
+     5	import argparse
+     6	import hashlib
+     7	import json
+     8	import platform
+     9	from dataclasses import dataclass
+    10	from pathlib import Path
+    11	from typing import Any
+    12	
+    13	from bnsyn.criticality.phase_transition import CriticalPhase, PhaseTransitionDetector
+    14	
+    15	SCHEMA_VERSION = "1.0.0"
+    16	ATLAS_VERSION = "2026.02"
+    17	DEFAULT_SEED = 20260218
+    18	FLOAT_DIGITS = 6
+    19	
+    20	
+    21	@dataclass(frozen=True)
+    22	class GridPoint:
+    23	    temperature: float
+    24	    sigma_target: float
+    25	    gain_clamp: float
+    26	    sleep_replay: float
+    27	
+    28	
+    29	SMALL_GRID: tuple[GridPoint, ...] = (
+    30	    GridPoint(0.9, 0.90, 0.08, 0.0),
+    31	    GridPoint(1.0, 1.00, 0.12, 0.2),
+    32	    GridPoint(1.1, 1.10, 0.25, 0.6),
+    33	)
+    34	
+    35	
+    36	def _round(value: float) -> float:
+    37	    return float(f"{value:.{FLOAT_DIGITS}f}")
+    38	
+    39	
+    40	def _classify_sigma(sigma_value: float) -> str:
+    41	    detector = PhaseTransitionDetector(subcritical_threshold=0.95, supercritical_threshold=1.05)
+    42	    detector.observe(sigma=sigma_value, step=0)
+    43	    phase = detector.current_phase()
+    44	    if phase is CriticalPhase.SUBCRITICAL:
+    45	        return "SUB"
+    46	    if phase is CriticalPhase.SUPERCRITICAL:
+    47	        return "SUPER"
+    48	    return "CRIT"
+    49	
+    50	
+    51	def _deterministic_sigma(point: GridPoint) -> float:
+    52	    sigma = point.sigma_target + 0.05 * (point.temperature - 1.0) + 0.02 * point.sleep_replay
+    53	    return _round(sigma)
+    54	
+    55	
+    56	def _build_record(index: int, point: GridPoint) -> dict[str, Any]:
+    57	    sigma = _deterministic_sigma(point)
+    58	    return {
+    59	        "grid_id": f"small-{index:03d}",
+    60	        "temperature": _round(point.temperature),
+    61	        "criticality": {
+    62	            "sigma_target": _round(point.sigma_target),
+    63	            "gain_clamp": _round(point.gain_clamp),
+    64	            "estimator_window": 200,
+    65	        },
+    66	        "sleep": {
+    67	            "stages": ["NREM", "REM"],
+    68	            "replay_strength": _round(point.sleep_replay),
+    69	            "noise_scale": _round(0.05 + point.sleep_replay * 0.1),
+    70	        },
+    71	        "metrics": {
+    72	            "sigma_estimate": sigma,
+    73	            "stability_score": _round(max(0.0, 1.0 - abs(sigma - 1.0))),
+    74	            "attractor_score": _round(point.sleep_replay * 0.5 + point.temperature * 0.1),
+    75	        },
+    76	        "regime": _classify_sigma(sigma),
+    77	    }
+    78	
+    79	
+    80	def _repo_root() -> Path:
+    81	    return Path(__file__).resolve().parents[1]
+    82	
+    83	
+    84	def _source_hash() -> str:
+    85	    root = _repo_root()
+    86	    tracked = [
+    87	        Path(__file__).resolve(),
+    88	        root / "src" / "bnsyn" / "criticality" / "phase_transition.py",
+    89	        root / "schemas" / "phase_atlas.schema.json",
+    90	    ]
+    91	    digest = hashlib.sha1()
+    92	    for path in sorted(tracked, key=lambda item: item.as_posix()):
+    93	        rel = path.resolve().relative_to(root).as_posix()
+    94	        digest.update(rel.encode("utf-8"))
+    95	        digest.update(path.read_bytes())
+    96	    return digest.hexdigest()
+    97	
+    98	
+    99	def build_phase_atlas(seed: int) -> dict[str, Any]:
+   100	    records = [_build_record(i + 1, point) for i, point in enumerate(SMALL_GRID)]
+   101	    payload = {
+   102	        "atlas_version": ATLAS_VERSION,
+   103	        "schema_version": SCHEMA_VERSION,
+   104	        "seed": seed,
+   105	        "meta": {
+   106	            "code_sha": _source_hash(),
+   107	            "grid": "small",
+   108	            "classifier": {
+   109	                "subcritical_max": 0.95,
+   110	                "critical_min": 0.95,
+   111	                "critical_max": 1.05,
+   112	                "supercritical_min": 1.05,
+   113	            },
+   114	        },
+   115	        "records": records,
+   116	    }
+   117	    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+   118	    payload["meta"]["payload_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+   119	    return payload
+   120	
+   121	
+   122	def _write_json(path: Path, payload: dict[str, Any]) -> None:
+   123	    path.parent.mkdir(parents=True, exist_ok=True)
+   124	    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+   125	
+   126	
+   127	def _write_log(log_path: Path, command: str, output_path: Path) -> None:
+   128	    log_path.parent.mkdir(parents=True, exist_ok=True)
+   129	    lines = [
+   130	        f"cmd:{command}",
+   131	        f"python:{platform.python_version()}",
+   132	        f"platform:{platform.platform()}",
+   133	        f"output:{output_path.as_posix()}",
+   134	    ]
+   135	    log_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+   136	
+   137	
+   138	def parse_args() -> argparse.Namespace:
+   139	    parser = argparse.ArgumentParser(description="Generate deterministic phase atlas artifact.")
+   140	    parser.add_argument(
+   141	        "--output",
+   142	        type=Path,
+   143	        default=Path("artifacts/scientific_product/PHASE_ATLAS.json"),
+   144	        help="Output atlas JSON path.",
+   145	    )
+   146	    parser.add_argument(
+   147	        "--seed",
+   148	        type=int,
+   149	        default=DEFAULT_SEED,
+   150	        help="Authoritative deterministic seed.",
+   151	    )
+   152	    parser.add_argument(
+   153	        "--log",
+   154	        type=Path,
+   155	        default=Path("artifacts/scientific_product/logs/phase_atlas.log"),
+   156	        help="Execution log path.",
+   157	    )
+   158	    return parser.parse_args()
+   159	
+   160	
+   161	def main() -> int:
+   162	    args = parse_args()
+   163	    atlas = build_phase_atlas(seed=args.seed)
+   164	    _write_json(args.output, atlas)
+   165	    _write_log(args.log, "python -m scripts.phase_atlas --output ... --seed ...", args.output)
+   166	    return 0
+   167	
+   168	
+   169	if __name__ == "__main__":
+   170	    raise SystemExit(main())

@@ -1,0 +1,27 @@
+$ git status --short
+ M .github/BRANCH_PROTECTION_GOVERNANCE.md
+ M .github/REPO_MANIFEST.md
+ M .github/workflows/scientific_product_gate.yml
+ M artifacts/scientific_product/PHASE_ATLAS.json
+ M artifacts/scientific_product/REGRESSION_BASELINES/phase_atlas_small.json
+ M manifest/repo_manifest.computed.json
+ M manifest/repo_manifest.yml
+ M scripts/phase_atlas.py
+?? proof_bundle/logs/fix4_git_status_before_commit.log
+?? proof_bundle/logs/fix4_initial_state.log
+?? proof_bundle/logs/fix4_list_tools.log
+?? proof_bundle/logs/fix4_make_test_gate.log
+?? proof_bundle/logs/fix4_manifest_generate_validate.log
+?? proof_bundle/logs/fix4_read_branch_governance_doc.log
+?? proof_bundle/logs/fix4_read_manifest_generate_validate.log
+?? proof_bundle/logs/fix4_read_manifest_ssot_branchgov.log
+?? proof_bundle/logs/fix4_read_manifest_tool.log
+?? proof_bundle/logs/fix4_read_phase_atlas_and_tests.log
+?? proof_bundle/logs/fix4_read_trifix_invariants.log
+?? proof_bundle/logs/fix4_regen_phase_atlas_after_hash_fix.log
+?? proof_bundle/logs/fix4_regen_phase_atlas_and_manifest.log
+?? proof_bundle/logs/fix4_repro_failures.log
+?? proof_bundle/logs/fix4_revalidate_after_patches.log
+?? proof_bundle/logs/fix4_ruff_mypy.log
+?? proof_bundle/logs/fix4_validate_all_four_and_contracts.log
+?? proof_bundle/logs/fix4_validate_workflow_governance_suite.log

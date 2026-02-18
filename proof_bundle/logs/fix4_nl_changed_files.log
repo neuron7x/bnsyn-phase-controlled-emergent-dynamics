@@ -1,0 +1,508 @@
+     1	name: scientific-product-gate
+     2	
+     3	on:
+     4	  pull_request:
+     5	  push:
+     6	    branches: [main]
+     7	
+     8	permissions:
+     9	  contents: read
+    10	
+    11	jobs:
+    12	  scientific-product:
+    13	    runs-on: ubuntu-latest
+    14	    permissions:
+    15	      contents: read
+    16	    timeout-minutes: 20
+    17	    steps:
+    18	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+    19	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    20	        with:
+    21	          python-version: "3.11"
+    22	      - name: Install deps
+    23	        run: |
+    24	          python -m pip install --upgrade pip
+    25	          python -m pip install -e ".[dev,test]"
+    26	      - name: Build phase atlas
+    27	        run: |
+    28	          PYTHONPATH=src python -m scripts.phase_atlas --output artifacts/scientific_product/PHASE_ATLAS.json --seed 20260218
+    29	      - name: Run scientific-product invariants
+    30	        run: |
+    31	          python -m pytest tests/test_scientific_product_gate.py -q
+    32	      - name: Validate context compressor gate
+    33	        run: |
+    34	          python - <<'PY'
+    35	          import json
+    36	          p = json.load(open('artifacts/context_compressor/quality.json', encoding='utf-8'))
+    37	          assert p['verdict'] == 'PASS'
+    38	          assert int(p.get('contradictions', 0)) == 0
+    39	          PY
+    40	      - name: Validate scientific product quality gate
+    41	        run: |
+    42	          python - <<'PY'
+    43	          import json
+    44	          p = json.load(open('artifacts/scientific_product/quality.json', encoding='utf-8'))
+    45	          assert p['verdict'] == 'PASS'
+    46	          assert p['phase_atlas_regression'] == 'PASS'
+    47	          assert p['invariants'] == 'PASS'
+    48	          assert p['determinism'] == 'PASS'
+    49	          PY
+    50	      - name: Upload artifacts
+    51	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+    52	        with:
+    53	          name: scientific-product-artifacts
+    54	          path: |
+    55	            artifacts/context_compressor/
+    56	            artifacts/scientific_product/
+     1	# Branch Protection Governance Baseline (`main`)
+     2	
+     3	## Mandatory repository settings
+     4	
+     5	1. [ ] Enable Branch protection for `main`.
+     6	2. [ ] Disable direct push to `main` (PR-only merge path).
+     7	3. [ ] Enable **Require a pull request before merging**.
+     8	4. [ ] Enable **Require status checks to pass before merging**.
+     9	5. [ ] Add required check: `ci-pr-atomic`.
+    10	6. [ ] Add required check: `math-quality-gate`.
+    11	7. [ ] Add required check: `workflow-integrity`.
+    12	8. [ ] Add required check: `dependency-review`.
+    13	9. [ ] Add required check: `scientific-product-gate`.
+    14	10. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
+    15	11. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
+    16	
+    17	## Required status contexts (job-level + matrix-level)
+    18	
+    19	All contexts below MUST be green before merge:
+    20	
+    21	- `ci-pr-atomic / gate-profile`
+    22	- `ci-pr-atomic / determinism`
+    23	- `ci-pr-atomic / quality`
+    24	- `ci-pr-atomic / build`
+    25	- `ci-pr-atomic / smoke-wheel-matrix (py3.11)`
+    26	- `ci-pr-atomic / smoke-wheel-matrix (py3.12)`
+    27	- `ci-pr-atomic / tests-smoke`
+    28	- `ci-pr-atomic / ssot`
+    29	- `ci-pr-atomic / security`
+    30	- `ci-pr-atomic / finalize`
+    31	- `Workflow Integrity / Validate workflow files`
+    32	- `Math Quality Gate / math-gate`
+    33	- `dependency-review / dependency-review`
+    34	- `scientific-product-gate / scientific-product`
+    35	
+    36	## Governance-proof evidence (blocking semantics)
+    37	
+    38	| Requirement | Evidence URL (Checks tab / settings) | Timestamp (UTC) | Owner |
+    39	| --- | --- | --- | --- |
+    40	| Required checks block merge | PENDING | PENDING | PENDING |
+    41	| Matrix contexts enforced separately | PENDING | PENDING | PENDING |
+    42	| Branch protection has PR-only merge | PENDING | PENDING | PENDING |
+    43	| Dismiss stale approvals policy | PENDING | PENDING | PENDING |
+    44	| Up-to-date branch policy decision | PENDING | PENDING | PENDING |
+    45	
+    46	## Control PR protocol (negative testing)
+    47	
+    48	- [ ] **Control PR #1:** break property invariant → merge blocked.
+    49	- [ ] **Control PR #2:** break validation invariant → merge blocked.
+    50	- [ ] **Control PR #3:** break docs build → merge blocked.
+    51	- [ ] **Control PR #4:** introduce risky dependency diff → dependency-review blocks merge.
+    52	- [ ] **Control PR #5:** break install-from-wheel smoke → merge blocked.
+    53	
+    54	### Control PR evidence log
+    55	
+    56	| Control PR | PR URL | Expected failing check(s) | Observed failing check(s) | Merge blocked? | Evidence URL |
+    57	| --- | --- | --- | --- | --- | --- |
+    58	| #1 property invariant | PENDING | `ci-pr-atomic / property-tests-pr` | PENDING | PENDING | PENDING |
+    59	| #2 validation invariant | PENDING | `ci-pr-atomic / validation-tests-pr` | PENDING | PENDING | PENDING |
+    60	| #3 docs build | PENDING | `ci-pr-atomic / docs-pr` | PENDING | PENDING | PENDING |
+    61	| #4 risky dependency | PENDING | `dependency-review / dependency-review` | PENDING | PENDING | PENDING |
+    62	| #5 wheel smoke | PENDING | `ci-pr-atomic / smoke-wheel-matrix (py3.11)`, `ci-pr-atomic / smoke-wheel-matrix (py3.12)` | PENDING | PENDING | PENDING |
+     1	manifest_version: "1.0"
+     2	required_pr_gates:
+     3	  source: ".github/PR_GATES.yml"
+     4	  sha256: "d7f1f6149f6ced1a4bb418b932c7f649a2beb83c7d315da8beccf28deb34e9a1"
+     5	invariants:
+     6	  - id: INV-001
+     7	    statement: "Repository manifest markdown and computed snapshot are generated artifacts."
+     8	    enforcement: "python -m tools.manifest generate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json"
+     9	    evidence_kind: "artifact"
+    10	  - id: INV-002
+    11	    statement: "PR gate workflows required by .github/PR_GATES.yml exist in .github/workflows/."
+    12	    enforcement: "python -m tools.manifest validate"
+    13	    evidence_kind: "path:line-span"
+    14	  - id: INV-003
+    15	    statement: "Coverage gate baseline is defined and parseable from quality/coverage_gate.json."
+    16	    enforcement: "python -m tools.manifest validate"
+    17	    evidence_kind: "path:line-span"
+    18	  - id: INV-004
+    19	    statement: "Mutation baseline is defined and parseable from quality/mutation_baseline.json."
+    20	    enforcement: "python -m tools.manifest validate"
+    21	    evidence_kind: "path:line-span"
+    22	  - id: INV-005
+    23	    statement: "ci_manifest.json is not used by automation and must remain absent."
+    24	    enforcement: "python -m tools.manifest validate"
+    25	    evidence_kind: "artifact"
+    26	metrics:
+    27	  - workflow_total
+    28	  - workflow_reusable_total
+    29	  - workflow_call_total
+    30	  - required_pr_gate_total
+    31	  - coverage_minimum_percent
+    32	  - coverage_baseline_percent
+    33	  - mutation_baseline_score
+    34	  - mutation_total_mutants
+    35	  - ci_manifest_reference_count
+    36	policies:
+    37	  generated_files_are_readonly: true
+    38	  drift_is_failure: true
+    39	  deterministic_sorting: true
+    40	  generated_files:
+    41	    - ".github/REPO_MANIFEST.md"
+    42	    - "manifest/repo_manifest.computed.json"
+    43	evidence_rules:
+    44	  accepted_pointer_formats:
+    45	    - "path:line-span"
+    46	    - "artifact"
+     1	"""Generate deterministic BN-Syn phase-atlas artifacts."""
+     2	
+     3	from __future__ import annotations
+     4	
+     5	import argparse
+     6	import hashlib
+     7	import json
+     8	import platform
+     9	from dataclasses import dataclass
+    10	from pathlib import Path
+    11	from typing import Any
+    12	
+    13	from bnsyn.criticality.phase_transition import CriticalPhase, PhaseTransitionDetector
+    14	
+    15	SCHEMA_VERSION = "1.0.0"
+    16	ATLAS_VERSION = "2026.02"
+    17	DEFAULT_SEED = 20260218
+    18	FLOAT_DIGITS = 6
+    19	
+    20	
+    21	@dataclass(frozen=True)
+    22	class GridPoint:
+    23	    temperature: float
+    24	    sigma_target: float
+    25	    gain_clamp: float
+    26	    sleep_replay: float
+    27	
+    28	
+    29	SMALL_GRID: tuple[GridPoint, ...] = (
+    30	    GridPoint(0.9, 0.90, 0.08, 0.0),
+    31	    GridPoint(1.0, 1.00, 0.12, 0.2),
+    32	    GridPoint(1.1, 1.10, 0.25, 0.6),
+    33	)
+    34	
+    35	
+    36	def _round(value: float) -> float:
+    37	    return float(f"{value:.{FLOAT_DIGITS}f}")
+    38	
+    39	
+    40	def _classify_sigma(sigma_value: float) -> str:
+    41	    detector = PhaseTransitionDetector(subcritical_threshold=0.95, supercritical_threshold=1.05)
+    42	    detector.observe(sigma=sigma_value, step=0)
+    43	    phase = detector.current_phase()
+    44	    if phase is CriticalPhase.SUBCRITICAL:
+    45	        return "SUB"
+    46	    if phase is CriticalPhase.SUPERCRITICAL:
+    47	        return "SUPER"
+    48	    return "CRIT"
+    49	
+    50	
+    51	def _deterministic_sigma(point: GridPoint) -> float:
+    52	    sigma = point.sigma_target + 0.05 * (point.temperature - 1.0) + 0.02 * point.sleep_replay
+    53	    return _round(sigma)
+    54	
+    55	
+    56	def _build_record(index: int, point: GridPoint) -> dict[str, Any]:
+    57	    sigma = _deterministic_sigma(point)
+    58	    return {
+    59	        "grid_id": f"small-{index:03d}",
+    60	        "temperature": _round(point.temperature),
+    61	        "criticality": {
+    62	            "sigma_target": _round(point.sigma_target),
+    63	            "gain_clamp": _round(point.gain_clamp),
+    64	            "estimator_window": 200,
+    65	        },
+    66	        "sleep": {
+    67	            "stages": ["NREM", "REM"],
+    68	            "replay_strength": _round(point.sleep_replay),
+    69	            "noise_scale": _round(0.05 + point.sleep_replay * 0.1),
+    70	        },
+    71	        "metrics": {
+    72	            "sigma_estimate": sigma,
+    73	            "stability_score": _round(max(0.0, 1.0 - abs(sigma - 1.0))),
+    74	            "attractor_score": _round(point.sleep_replay * 0.5 + point.temperature * 0.1),
+    75	        },
+    76	        "regime": _classify_sigma(sigma),
+    77	    }
+    78	
+    79	
+    80	def _repo_root() -> Path:
+    81	    return Path(__file__).resolve().parents[1]
+    82	
+    83	
+    84	def _source_hash() -> str:
+    85	    root = _repo_root()
+    86	    tracked = [
+    87	        Path(__file__).resolve(),
+    88	        root / "src" / "bnsyn" / "criticality" / "phase_transition.py",
+    89	        root / "schemas" / "phase_atlas.schema.json",
+    90	    ]
+    91	    digest = hashlib.sha1()
+    92	    for path in sorted(tracked, key=lambda item: item.as_posix()):
+    93	        rel = path.resolve().relative_to(root).as_posix()
+    94	        digest.update(rel.encode("utf-8"))
+    95	        digest.update(path.read_bytes())
+    96	    return digest.hexdigest()
+    97	
+    98	
+    99	def build_phase_atlas(seed: int) -> dict[str, Any]:
+   100	    records = [_build_record(i + 1, point) for i, point in enumerate(SMALL_GRID)]
+   101	    payload = {
+   102	        "atlas_version": ATLAS_VERSION,
+   103	        "schema_version": SCHEMA_VERSION,
+   104	        "seed": seed,
+   105	        "meta": {
+   106	            "code_sha": _source_hash(),
+   107	            "grid": "small",
+   108	            "classifier": {
+   109	                "subcritical_max": 0.95,
+   110	                "critical_min": 0.95,
+   111	                "critical_max": 1.05,
+   112	                "supercritical_min": 1.05,
+   113	            },
+   114	        },
+   115	        "records": records,
+   116	    }
+   117	    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+   118	    payload["meta"]["payload_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+   119	    return payload
+   120	
+   121	
+   122	def _write_json(path: Path, payload: dict[str, Any]) -> None:
+   123	    path.parent.mkdir(parents=True, exist_ok=True)
+   124	    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+   125	
+   126	
+   127	def _write_log(log_path: Path, command: str, output_path: Path) -> None:
+   128	    log_path.parent.mkdir(parents=True, exist_ok=True)
+   129	    lines = [
+   130	        f"cmd:{command}",
+   131	        f"python:{platform.python_version()}",
+   132	        f"platform:{platform.platform()}",
+   133	        f"output:{output_path.as_posix()}",
+   134	    ]
+   135	    log_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+   136	
+   137	
+   138	def parse_args() -> argparse.Namespace:
+   139	    parser = argparse.ArgumentParser(description="Generate deterministic phase atlas artifact.")
+   140	    parser.add_argument(
+   141	        "--output",
+   142	        type=Path,
+   143	        default=Path("artifacts/scientific_product/PHASE_ATLAS.json"),
+   144	        help="Output atlas JSON path.",
+   145	    )
+   146	    parser.add_argument(
+   147	        "--seed",
+   148	        type=int,
+   149	        default=DEFAULT_SEED,
+   150	        help="Authoritative deterministic seed.",
+   151	    )
+   152	    parser.add_argument(
+   153	        "--log",
+   154	        type=Path,
+   155	        default=Path("artifacts/scientific_product/logs/phase_atlas.log"),
+   156	        help="Execution log path.",
+   157	    )
+   158	    return parser.parse_args()
+   159	
+   160	
+   161	def main() -> int:
+   162	    args = parse_args()
+   163	    atlas = build_phase_atlas(seed=args.seed)
+   164	    _write_json(args.output, atlas)
+   165	    _write_log(args.log, "python -m scripts.phase_atlas --output ... --seed ...", args.output)
+   166	    return 0
+   167	
+   168	
+   169	if __name__ == "__main__":
+   170	    raise SystemExit(main())
+     1	{
+     2	  "atlas_version": "2026.02",
+     3	  "meta": {
+     4	    "classifier": {
+     5	      "critical_max": 1.05,
+     6	      "critical_min": 0.95,
+     7	      "subcritical_max": 0.95,
+     8	      "supercritical_min": 1.05
+     9	    },
+    10	    "code_sha": "5ec4959a5f72c593899b7a7c62b87e18db327263",
+    11	    "grid": "small",
+    12	    "payload_sha256": "43e1e012085c845e6b7141a77100c07bb5fc91a6933e9f98b4aba0d5340fb1e7"
+    13	  },
+    14	  "records": [
+    15	    {
+    16	      "criticality": {
+    17	        "estimator_window": 200,
+    18	        "gain_clamp": 0.08,
+    19	        "sigma_target": 0.9
+    20	      },
+    21	      "grid_id": "small-001",
+    22	      "metrics": {
+    23	        "attractor_score": 0.09,
+    24	        "sigma_estimate": 0.895,
+    25	        "stability_score": 0.895
+    26	      },
+    27	      "regime": "SUB",
+    28	      "sleep": {
+    29	        "noise_scale": 0.05,
+    30	        "replay_strength": 0.0,
+    31	        "stages": [
+    32	          "NREM",
+    33	          "REM"
+    34	        ]
+    35	      },
+    36	      "temperature": 0.9
+    37	    },
+    38	    {
+    39	      "criticality": {
+    40	        "estimator_window": 200,
+    41	        "gain_clamp": 0.12,
+    42	        "sigma_target": 1.0
+    43	      },
+    44	      "grid_id": "small-002",
+    45	      "metrics": {
+    46	        "attractor_score": 0.2,
+    47	        "sigma_estimate": 1.004,
+    48	        "stability_score": 0.996
+    49	      },
+    50	      "regime": "CRIT",
+    51	      "sleep": {
+    52	        "noise_scale": 0.07,
+    53	        "replay_strength": 0.2,
+    54	        "stages": [
+    55	          "NREM",
+    56	          "REM"
+    57	        ]
+    58	      },
+    59	      "temperature": 1.0
+    60	    },
+    61	    {
+    62	      "criticality": {
+    63	        "estimator_window": 200,
+    64	        "gain_clamp": 0.25,
+    65	        "sigma_target": 1.1
+    66	      },
+    67	      "grid_id": "small-003",
+    68	      "metrics": {
+    69	        "attractor_score": 0.41,
+    70	        "sigma_estimate": 1.117,
+    71	        "stability_score": 0.883
+    72	      },
+    73	      "regime": "SUPER",
+    74	      "sleep": {
+    75	        "noise_scale": 0.11,
+    76	        "replay_strength": 0.6,
+    77	        "stages": [
+    78	          "NREM",
+    79	          "REM"
+    80	        ]
+    81	      },
+    82	      "temperature": 1.1
+    83	    }
+    84	  ],
+    85	  "schema_version": "1.0.0",
+    86	  "seed": 20260218
+    87	}
+     1	{
+     2	  "atlas_version": "2026.02",
+     3	  "meta": {
+     4	    "classifier": {
+     5	      "critical_max": 1.05,
+     6	      "critical_min": 0.95,
+     7	      "subcritical_max": 0.95,
+     8	      "supercritical_min": 1.05
+     9	    },
+    10	    "code_sha": "5ec4959a5f72c593899b7a7c62b87e18db327263",
+    11	    "grid": "small",
+    12	    "payload_sha256": "43e1e012085c845e6b7141a77100c07bb5fc91a6933e9f98b4aba0d5340fb1e7"
+    13	  },
+    14	  "records": [
+    15	    {
+    16	      "criticality": {
+    17	        "estimator_window": 200,
+    18	        "gain_clamp": 0.08,
+    19	        "sigma_target": 0.9
+    20	      },
+    21	      "grid_id": "small-001",
+    22	      "metrics": {
+    23	        "attractor_score": 0.09,
+    24	        "sigma_estimate": 0.895,
+    25	        "stability_score": 0.895
+    26	      },
+    27	      "regime": "SUB",
+    28	      "sleep": {
+    29	        "noise_scale": 0.05,
+    30	        "replay_strength": 0.0,
+    31	        "stages": [
+    32	          "NREM",
+    33	          "REM"
+    34	        ]
+    35	      },
+    36	      "temperature": 0.9
+    37	    },
+    38	    {
+    39	      "criticality": {
+    40	        "estimator_window": 200,
+    41	        "gain_clamp": 0.12,
+    42	        "sigma_target": 1.0
+    43	      },
+    44	      "grid_id": "small-002",
+    45	      "metrics": {
+    46	        "attractor_score": 0.2,
+    47	        "sigma_estimate": 1.004,
+    48	        "stability_score": 0.996
+    49	      },
+    50	      "regime": "CRIT",
+    51	      "sleep": {
+    52	        "noise_scale": 0.07,
+    53	        "replay_strength": 0.2,
+    54	        "stages": [
+    55	          "NREM",
+    56	          "REM"
+    57	        ]
+    58	      },
+    59	      "temperature": 1.0
+    60	    },
+    61	    {
+    62	      "criticality": {
+    63	        "estimator_window": 200,
+    64	        "gain_clamp": 0.25,
+    65	        "sigma_target": 1.1
+    66	      },
+    67	      "grid_id": "small-003",
+    68	      "metrics": {
+    69	        "attractor_score": 0.41,
+    70	        "sigma_estimate": 1.117,
+    71	        "stability_score": 0.883
+    72	      },
+    73	      "regime": "SUPER",
+    74	      "sleep": {
+    75	        "noise_scale": 0.11,
+    76	        "replay_strength": 0.6,
+    77	        "stages": [
+    78	          "NREM",
+    79	          "REM"
+    80	        ]
+    81	      },
+    82	      "temperature": 1.1
+    83	    }
+    84	  ],
+    85	  "schema_version": "1.0.0",
+    86	  "seed": 20260218
+    87	}

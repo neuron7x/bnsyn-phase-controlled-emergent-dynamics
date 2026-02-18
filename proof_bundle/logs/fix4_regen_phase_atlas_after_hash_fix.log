@@ -1,0 +1,1 @@
+$ PYTHONPATH=src python -m scripts.phase_atlas --output artifacts/scientific_product/PHASE_ATLAS.json --seed 20260218

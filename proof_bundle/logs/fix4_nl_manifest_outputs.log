@@ -1,0 +1,118 @@
+     1	# Repository Manifest (Generated)
+     2	
+     3	- Manifest version: `1.0`
+     4	- Generated marker: `deterministic`
+     5	- Repository fingerprint: `bc4c08e8d9da2b941f6a330f2cc8153805d3e622253b410c9038be1bdb45af9e`
+     6	- Required PR gates source: `.github/PR_GATES.yml`
+     7	- Required PR gates SHA-256: `d7f1f6149f6ced1a4bb418b932c7f649a2beb83c7d315da8beccf28deb34e9a1`
+     8	
+     9	## Metrics
+    10	
+    11	- Workflow files (`.github/workflows/*.yml`): **30**
+    12	- Reusable workflow files (`_reusable_*.yml`): **9**
+    13	- Workflows declaring `workflow_call`: **11**
+    14	- Required PR gates (`.github/PR_GATES.yml`): **5**
+    15	- Coverage minimum percent (`quality/coverage_gate.json`): **99.0**
+    16	- Coverage baseline percent (`quality/coverage_gate.json`): **99.57**
+    17	- Mutation baseline score (`quality/mutation_baseline.json`): **51.61**
+    18	- Mutation total mutants (`quality/mutation_baseline.json`): **31**
+    19	- `ci_manifest.json` exists: **False**
+    20	- `ci_manifest.json` references in scoped scan: **0**
+    21	- `ci_manifest.json` scan scope:
+    22	  - `.github/workflows`
+    23	  - `scripts`
+    24	  - `docs`
+    25	  - `Makefile`
+    26	  - `README.md`
+    27	
+    28	## Invariants
+    29	
+    30	| ID | Statement | Enforcement | Evidence kind |
+    31	|---|---|---|---|
+    32	| INV-001 | Repository manifest markdown and computed snapshot are generated artifacts. | `python -m tools.manifest generate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json` | artifact |
+    33	| INV-002 | PR gate workflows required by .github/PR_GATES.yml exist in .github/workflows/. | `python -m tools.manifest validate` | path:line-span |
+    34	| INV-003 | Coverage gate baseline is defined and parseable from quality/coverage_gate.json. | `python -m tools.manifest validate` | path:line-span |
+    35	| INV-004 | Mutation baseline is defined and parseable from quality/mutation_baseline.json. | `python -m tools.manifest validate` | path:line-span |
+    36	| INV-005 | ci_manifest.json is not used by automation and must remain absent. | `python -m tools.manifest validate` | artifact |
+    37	
+    38	## Evidence Rules
+    39	
+    40	Accepted pointer formats:
+    41	- `path:line-span`
+    42	- `artifact`
+     1	{
+     2	  "evidence_rules": {
+     3	    "accepted_pointer_formats": [
+     4	      "path:line-span",
+     5	      "artifact"
+     6	    ]
+     7	  },
+     8	  "generated_at": "deterministic",
+     9	  "invariants": [
+    10	    {
+    11	      "enforcement": "python -m tools.manifest generate && git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json",
+    12	      "evidence_kind": "artifact",
+    13	      "id": "INV-001",
+    14	      "statement": "Repository manifest markdown and computed snapshot are generated artifacts."
+    15	    },
+    16	    {
+    17	      "enforcement": "python -m tools.manifest validate",
+    18	      "evidence_kind": "path:line-span",
+    19	      "id": "INV-002",
+    20	      "statement": "PR gate workflows required by .github/PR_GATES.yml exist in .github/workflows/."
+    21	    },
+    22	    {
+    23	      "enforcement": "python -m tools.manifest validate",
+    24	      "evidence_kind": "path:line-span",
+    25	      "id": "INV-003",
+    26	      "statement": "Coverage gate baseline is defined and parseable from quality/coverage_gate.json."
+    27	    },
+    28	    {
+    29	      "enforcement": "python -m tools.manifest validate",
+    30	      "evidence_kind": "path:line-span",
+    31	      "id": "INV-004",
+    32	      "statement": "Mutation baseline is defined and parseable from quality/mutation_baseline.json."
+    33	    },
+    34	    {
+    35	      "enforcement": "python -m tools.manifest validate",
+    36	      "evidence_kind": "artifact",
+    37	      "id": "INV-005",
+    38	      "statement": "ci_manifest.json is not used by automation and must remain absent."
+    39	    }
+    40	  ],
+    41	  "manifest_version": "1.0",
+    42	  "metrics": {
+    43	    "ci_manifest_exists": false,
+    44	    "ci_manifest_reference_count": 0,
+    45	    "ci_manifest_reference_scope": [
+    46	      ".github/workflows",
+    47	      "scripts",
+    48	      "docs",
+    49	      "Makefile",
+    50	      "README.md"
+    51	    ],
+    52	    "coverage_baseline_percent": 99.57,
+    53	    "coverage_minimum_percent": 99.0,
+    54	    "mutation_baseline_score": 51.61,
+    55	    "mutation_total_mutants": 31,
+    56	    "required_pr_gate_total": 5,
+    57	    "workflow_call_total": 11,
+    58	    "workflow_reusable_total": 9,
+    59	    "workflow_total": 30
+    60	  },
+    61	  "policies": {
+    62	    "deterministic_sorting": true,
+    63	    "drift_is_failure": true,
+    64	    "generated_files": [
+    65	      ".github/REPO_MANIFEST.md",
+    66	      "manifest/repo_manifest.computed.json"
+    67	    ],
+    68	    "generated_files_are_readonly": true
+    69	  },
+    70	  "repo_ref": "bc4c08e8d9da2b941f6a330f2cc8153805d3e622253b410c9038be1bdb45af9e",
+    71	  "required_pr_gates": {
+    72	    "required_pr_gate_total": 5,
+    73	    "sha256": "d7f1f6149f6ced1a4bb418b932c7f649a2beb83c7d315da8beccf28deb34e9a1",
+    74	    "source": ".github/PR_GATES.yml"
+    75	  }
+    76	}
