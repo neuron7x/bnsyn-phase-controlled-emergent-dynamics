@@ -1,0 +1,7 @@
+$ python -m scripts.validate_pr_gates
+VIOLATION: CONTRACT_PR_GATES_MISMATCH contracts=['ci-pr-atomic.yml', 'dependency-review.yml', 'math-quality-gate.yml', 'scientific_product_gate.yml', 'workflow-integrity.yml'] ssot=['ci-pr-atomic.yml', 'dependency-review.yml', 'math-quality-gate.yml', 'workflow-integrity.yml']
+$ python -m scripts.validate_required_checks
+VIOLATION: REQUIRED_CHECKS_MISMATCH contracts=['ci-pr-atomic.yml', 'dependency-review.yml', 'math-quality-gate.yml', 'scientific_product_gate.yml', 'workflow-integrity.yml'] required_checks=['ci-pr-atomic.yml', 'dependency-review.yml', 'math-quality-gate.yml', 'workflow-integrity.yml']
+VIOLATION: REQUIRED_CHECKS_MISSING workflows=['scientific_product_gate.yml']
+$ python -m scripts.validate_required_status_contexts
+OK: required_status_contexts=13 validated

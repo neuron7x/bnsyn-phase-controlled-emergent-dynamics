@@ -1,0 +1,3 @@
+$ python -m scripts.validate_workflow_contracts
+VIOLATION: COUNT_MISMATCH contracts=(29,18,11) actual=(30,19,11)
+VIOLATION: MISSING_ROW scientific_product_gate.yml

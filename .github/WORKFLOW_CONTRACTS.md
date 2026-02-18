@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 29
-**Breakdown:** 18 primary + 11 reusable
+**Total workflows:** 30
+**Breakdown:** 19 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -32,7 +32,7 @@
 ## PR-Gate Definition (Authoritative)
 
 * Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
-* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `dependency-review.yml`.
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `scientific_product_gate.yml`, `dependency-review.yml`.
 * Required checks MUST NOT include any workflow other than the PR-gates listed above.
 * If any other section conflicts with this, this section wins.
 
@@ -45,6 +45,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `smoke-wheel-matrix`, `tests-smoke`, `ssot`, `security`, `finalize` |
 | `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
 | `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
+| `scientific_product_gate.yml` | `scientific-product-gate` | `scientific-product` |
 | `dependency-review.yml` | `dependency-review` | `dependency-review` |
 
 ## Gate Class Policy (Normative)
@@ -97,6 +98,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
+| `scientific_product_gate.yml` | `scientific-product-gate` | PR-gate | `pull_request, push` | NO |
 | `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
 
 ---

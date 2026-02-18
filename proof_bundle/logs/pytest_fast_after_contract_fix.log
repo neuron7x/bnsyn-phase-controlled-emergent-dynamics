@@ -1,0 +1,116 @@
+$ python -m pytest -m "not (validation or property)" -q
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+..............................FF.........ss....ss....................... [ 40%]
+....................................ss.................................. [ 51%]
+........................................................................ [ 61%]
+.........................F.............................................. [ 71%]
+........................................................................ [ 81%]
+........................................................................ [ 92%]
+........................................................                 [100%]
+=================================== FAILURES ===================================
+_________________ test_inventory_json_matches_repository_state _________________
+
+    def test_inventory_json_matches_repository_state() -> None:
+        root = Path(__file__).resolve().parents[1]
+        paths = ["src", "tests", "docs", ".github"]
+    
+        counts = {path: len(_tracked_files_under(path)) for path in paths}
+        workflows = sorted(path.name for path in (root / ".github" / "workflows").glob("*.yml"))
+        detected_tools = [
+            name
+            for name in ["pyproject.toml", "requirements-lock.txt", "docker-compose.yml", "Makefile"]
+            if (root / name).exists()
+        ]
+    
+        expected = {
+            "_generated_by": "python tools/generate_inventory.py",
+            "paths": paths,
+            "counts": counts,
+            "workflows": workflows,
+            "detected_tools": detected_tools,
+        }
+    
+        inventory = json.loads((root / "INVENTORY.json").read_text(encoding="utf-8"))
+>       assert inventory == expected
+E       AssertionError: assert {'_generated_...github'], ...} == {'_generated_...github'], ...}
+E         
+E         Omitting 4 identical items, use -vv to show
+E         Differing items:
+E         {'counts': {'.github': 41, 'docs': 281, 'src': 73, 'tests': 172}} != {'counts': {'.github': 42, 'docs': 281, 'src': 73, 'tests': 173}}
+E         Use -v to get more diff
+
+tests/test_generate_inventory.py:36: AssertionError
+___________________ test_build_inventory_render_matches_file ___________________
+
+    def test_build_inventory_render_matches_file() -> None:
+        root = Path(__file__).resolve().parents[1]
+        rendered = render_inventory(build_inventory(root))
+>       assert (root / "INVENTORY.json").read_text(encoding="utf-8") == rendered
+E       assert '{\n  "_gener...le"\n  ]\n}\n' == '{\n  "_gener...le"\n  ]\n}\n'
+E         
+E         Skipping 161 identical leading characters in diff, use -v to show
+E         Skipping 955 identical trailing characters in diff, use -v to show
+E         - tests": 173,
+E         ?           ^
+E         + tests": 172,
+E         ?           ^...
+E         
+E         ...Full output truncated (7 lines hidden), use '-vv' to show
+
+tests/test_generate_inventory.py:42: AssertionError
+_______________ test_property_collection_with_hypothesis_profile _______________
+
+    def test_property_collection_with_hypothesis_profile() -> None:
+        env = os.environ.copy()
+        env["HYPOTHESIS_PROFILE"] = "ci"
+    
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/properties",
+                "-m",
+                "property",
+                "--collect-only",
+                "-q",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            env=env,
+        )
+    
+        output = result.stdout + result.stderr
+>       assert result.returncode == 0, output
+E       AssertionError: ImportError while loading conftest '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/properties/conftest.py'.
+E         tests/properties/conftest.py:5: in <module>
+E             from hypothesis import Verbosity, settings
+E         E   ModuleNotFoundError: No module named 'hypothesis'
+E         
+E       assert 4 == 0
+E        +  where 4 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', '-m', 'pytest', 'tests/properties', '-m', 'property... in <module>\n    from hypothesis import Verbosity, settings\nE   ModuleNotFoundError: No module named 'hypothesis'\n").returncode
+
+tests/test_pytest_collection_contract.py:106: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_generate_inventory.py::test_inventory_json_matches_repository_state
+FAILED tests/test_generate_inventory.py::test_build_inventory_render_matches_file
+FAILED tests/test_pytest_collection_contract.py::test_property_collection_with_hypothesis_profile

@@ -1,0 +1,2 @@
+$ python -m scripts.sync_required_status_contexts --check
+DRIFT: /workspace/bnsyn-phase-controlled-emergent-dynamics/.github/REQUIRED_STATUS_CONTEXTS.yml is out of date. Run: python -m scripts.sync_required_status_contexts

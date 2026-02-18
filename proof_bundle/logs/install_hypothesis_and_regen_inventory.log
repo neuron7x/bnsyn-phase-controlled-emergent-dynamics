@@ -1,0 +1,13 @@
+$ python -m pip install hypothesis
+Collecting hypothesis
+  Downloading hypothesis-6.151.9-py3-none-any.whl.metadata (5.6 kB)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis)
+  Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Downloading hypothesis-6.151.9-py3-none-any.whl (529 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 529.3/529.3 kB 16.8 MB/s  0:00:00
+Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Installing collected packages: sortedcontainers, hypothesis
+
+Successfully installed hypothesis-6.151.9 sortedcontainers-2.4.0
+$ python tools/generate_inventory.py
+UPDATED: INVENTORY.json
