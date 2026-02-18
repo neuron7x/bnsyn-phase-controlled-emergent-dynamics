@@ -1,0 +1,26 @@
+     1	........................................................................ [ 10%]
+     2	........................................................................ [ 20%]
+     3	........................................................................ [ 30%]
+     4	.................................................ss....ss............... [ 40%]
+     5	........................................................................ [ 50%]
+     6	........................................................................ [ 60%]
+     7	........................................................................ [ 70%]
+     8	........................................................................ [ 80%]
+     9	........................................................................ [ 91%]
+    10	................................................................         [100%]
+    11	=============================== warnings summary ===============================
+    12	tests/test_cli_interactive.py::test_cli_module_main_executes
+    13	  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+    14	
+    15	tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+    16	  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+    17	
+    18	tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+    19	  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    20	    "git_commit": _get_git_commit(resolved_root, resolved_version),
+    21	
+    22	tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+    23	  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    24	    "git_commit": _get_git_commit(resolved_root, resolved_version),
+    25	
+    26	-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

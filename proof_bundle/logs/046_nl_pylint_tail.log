@@ -1,0 +1,30 @@
+   130	==bnsyn.sim.network:[528:534]
+   131	    nparams = NetworkParams(N=N)
+   132	    net = Network(
+   133	        nparams,
+   134	        AdExParams(),
+   135	        SynapseParams(),
+   136	        CriticalityParams(), (duplicate-code)
+   137	src/bnsyn/memory/ledger.py:1:0: R0801: Similar lines in 2 files
+   138	==bnsyn.provenance.manifest:[152:170]
+   139	==bnsyn.provenance.manifest_builder:[62:70]
+   140	    try:
+   141	        version = metadata.version("bnsyn")
+   142	    except metadata.PackageNotFoundError:
+   143	        version = "0.0.0"
+   144	    return f"release-{version}"
+   145	
+   146	
+   147	def _resolve_package_version(repo_root: Path) -> str: (duplicate-code)
+   148	src/bnsyn/memory/ledger.py:1:0: R0801: Similar lines in 2 files
+   149	==bnsyn.cli:[247:252]
+   150	==bnsyn.tools.run_scaled_sleep_stack:[36:41]
+   151	        AdExParams(),
+   152	        SynapseParams(),
+   153	        CriticalityParams(),
+   154	        dt_ms=0.5,
+   155	        rng=rng, (duplicate-code)
+   156	
+   157	-----------------------------------
+   158	Your code has been rated at 9.67/10
+   159	

@@ -1,0 +1,20 @@
+ M benchmarks/metrics.py
+?? proof_bundle/logs/024_git_log_recent.log
+?? proof_bundle/logs/025_git_status_start.log
+?? proof_bundle/logs/026_dep_search.log
+?? proof_bundle/logs/027_view_benchmarks_metrics.log
+?? proof_bundle/logs/028_view_test_regression.log
+?? proof_bundle/logs/029_create_metrics_fallback_test.log
+?? proof_bundle/logs/030_diff_metrics_and_test.log
+?? proof_bundle/logs/031_pytest_new_test.log
+?? proof_bundle/logs/032_pip_install_editable.log
+?? proof_bundle/logs/033_pip_install_missing_tools.log
+?? proof_bundle/logs/034_pytest_full_after_fix.log
+?? proof_bundle/logs/035_pip_install_hypothesis.log
+?? proof_bundle/logs/036_pytest_full_after_deps.log
+?? proof_bundle/logs/037_ruff_after_fix.log
+?? proof_bundle/logs/038_pylint_after_fix.log
+?? proof_bundle/logs/039_mypy_after_fix.log
+?? proof_bundle/logs/040_build_after_fix.log
+?? proof_bundle/logs/041_git_status_before_commit.log
+?? tests/benchmarks/test_metrics_memory_fallback.py

@@ -1,0 +1,285 @@
+     1	"""Metrics collection for BN-Syn benchmarks."""
+     2	
+     3	from __future__ import annotations
+     4	
+     5	import importlib
+     6	import importlib.util
+     7	import math
+     8	import os
+     9	import resource
+    10	import time
+    11	from dataclasses import dataclass
+    12	from typing import Any
+    13	
+    14	import numpy as np
+    15	
+    16	from benchmarks.scenarios.base import BenchmarkScenario
+    17	from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+    18	from bnsyn.rng import seed_all
+    19	from bnsyn.sim.network import Network, NetworkParams
+    20	from bnsyn.temperature.schedule import TemperatureSchedule
+    21	
+    22	
+    23	def _process_rss_mb() -> float:
+    24	    """Best-effort resident memory measurement in MB."""
+    25	    if importlib.util.find_spec("psutil") is not None:
+    26	        psutil = importlib.import_module("psutil")
+    27	        process = psutil.Process(os.getpid())
+    28	        return float(process.memory_info().rss / (1024 * 1024))
+    29	
+    30	    rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    31	    if os.name == "posix":
+    32	        return rss / 1024.0
+    33	    return rss / (1024 * 1024)
+    34	
+    35	
+    36	@dataclass(frozen=True)
+    37	class BenchmarkMetrics:
+    38	    """Metrics collected from a single benchmark run."""
+    39	
+    40	    stability_nan_rate: float
+    41	    stability_divergence_rate: float
+    42	    physics_spike_rate_hz: float
+    43	    physics_sigma: float
+    44	    physics_sigma_std: float
+    45	    learning_weight_entropy: float
+    46	    learning_convergence_error: float
+    47	    thermostat_temperature_mean: float
+    48	    thermostat_exploration_mean: float
+    49	    thermostat_temperature_exploration_corr: float
+    50	    reproducibility_bitwise_delta: float
+    51	    performance_wall_time_sec: float
+    52	    performance_peak_rss_mb: float
+    53	    performance_per_step_ms: float
+    54	    performance_neuron_steps_per_sec: float
+    55	    params: dict[str, Any]
+    56	
+    57	
+    58	def _criticality_params(scenario: BenchmarkScenario) -> CriticalityParams:
+    59	    if scenario.sigma_target is None:
+    60	        return CriticalityParams()
+    61	    return CriticalityParams(sigma_target=float(scenario.sigma_target))
+    62	
+    63	
+    64	def _temperature_params(scenario: BenchmarkScenario) -> TemperatureParams:
+    65	    params = TemperatureParams()
+    66	    if scenario.temperature_T0 is not None:
+    67	        params.T0 = float(scenario.temperature_T0)
+    68	    if scenario.temperature_alpha is not None:
+    69	        params.alpha = float(scenario.temperature_alpha)
+    70	    if scenario.temperature_Tmin is not None:
+    71	        params.Tmin = float(scenario.temperature_Tmin)
+    72	    if scenario.temperature_Tc is not None:
+    73	        params.Tc = float(scenario.temperature_Tc)
+    74	    if scenario.temperature_gate_tau is not None:
+    75	        params.gate_tau = float(scenario.temperature_gate_tau)
+    76	    return params
+    77	
+    78	
+    79	def _weight_entropy(weights: np.ndarray) -> float:
+    80	    weights = np.asarray(weights, dtype=np.float64)
+    81	    nonzero = weights[weights > 0.0]
+    82	    if nonzero.size == 0:
+    83	        return 0.0
+    84	    total = float(np.sum(nonzero))
+    85	    if total <= 0.0:
+    86	        return 0.0
+    87	    probs = nonzero / total
+    88	    entropy = -np.sum(probs * np.log2(probs))
+    89	    return float(entropy)
+    90	
+    91	
+    92	def _bitwise_delta(a: np.ndarray, b: np.ndarray) -> float:
+    93	    a = np.asarray(a, dtype=np.float64)
+    94	    b = np.asarray(b, dtype=np.float64)
+    95	    if a.shape != b.shape:
+    96	        return 1.0
+    97	    if a.size == 0:
+    98	        return 0.0
+    99	    a_bits = a.view(np.uint64)
+   100	    b_bits = b.view(np.uint64)
+   101	    return float(np.count_nonzero(a_bits != b_bits) / a_bits.size)
+   102	
+   103	
+   104	def _safe_stat(value: float) -> float:
+   105	    if np.isfinite(value):
+   106	        return float(value)
+   107	    return 0.0
+   108	
+   109	
+   110	def _safe_mean(values: np.ndarray) -> float:
+   111	    if values.size == 0:
+   112	        return 0.0
+   113	    return _safe_stat(float(np.nanmean(values)))
+   114	
+   115	
+   116	def _safe_std(values: np.ndarray) -> float:
+   117	    if values.size == 0:
+   118	        return 0.0
+   119	    return _safe_stat(float(np.nanstd(values)))
+   120	
+   121	
+   122	def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
+   123	    pack = seed_all(scenario.seed)
+   124	    rng = pack.np_rng
+   125	
+   126	    nparams = NetworkParams(
+   127	        N=scenario.N_neurons,
+   128	        p_conn=scenario.p_conn,
+   129	        frac_inhib=scenario.frac_inhib,
+   130	    )
+   131	    net = Network(
+   132	        nparams,
+   133	        AdExParams(),
+   134	        SynapseParams(),
+   135	        _criticality_params(scenario),
+   136	        dt_ms=scenario.dt_ms,
+   137	        rng=rng,
+   138	    )
+   139	
+   140	    sigma_series: list[float] = []
+   141	    spike_rate_series: list[float] = []
+   142	    gain_series: list[float] = []
+   143	
+   144	    nan_count = 0
+   145	    total_count = 0
+   146	    divergence_steps = 0
+   147	
+   148	    divergence = False
+   149	    for _ in range(scenario.steps):
+   150	        try:
+   151	            if scenario.use_adaptive_dt:
+   152	                metrics = net.step_adaptive()
+   153	            else:
+   154	                metrics = net.step()
+   155	        except RuntimeError:
+   156	            divergence_steps += 1
+   157	            divergence = True
+   158	            break
+   159	
+   160	        sigma_series.append(float(metrics["sigma"]))
+   161	        spike_rate_series.append(float(metrics["spike_rate_hz"]))
+   162	        gain_series.append(float(metrics["gain"]))
+   163	
+   164	        V = net.state.V_mV
+   165	        w = net.state.w_pA
+   166	        nan_count += int(np.isnan(V).sum() + np.isnan(w).sum())
+   167	        total_count += int(V.size + w.size)
+   168	        if np.any(np.isnan(V)) or np.any(np.isnan(w)):
+   169	            divergence_steps += 1
+   170	            divergence = True
+   171	            break
+   172	
+   173	    weights_exc = net.W_exc.to_dense()
+   174	    weights_inh = net.W_inh.to_dense()
+   175	    weight_entropy = _weight_entropy(np.concatenate([weights_exc.ravel(), weights_inh.ravel()]))
+   176	
+   177	    return {
+   178	        "sigma": np.asarray(sigma_series, dtype=np.float64),
+   179	        "spike_rate_hz": np.asarray(spike_rate_series, dtype=np.float64),
+   180	        "gain": np.asarray(gain_series, dtype=np.float64),
+   181	        "nan_count": nan_count,
+   182	        "total_count": total_count,
+   183	        "divergence_steps": divergence_steps,
+   184	        "divergence": divergence,
+   185	        "weight_entropy": weight_entropy,
+   186	        "sigma_target": _criticality_params(scenario).sigma_target,
+   187	    }
+   188	
+   189	
+   190	def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
+   191	    """Run a single benchmark scenario and compute metrics."""
+   192	    start_rss = _process_rss_mb()
+   193	    start_time = time.perf_counter()
+   194	
+   195	    series = _run_series(scenario)
+   196	
+   197	    wall_time = time.perf_counter() - start_time
+   198	    end_rss = _process_rss_mb()
+   199	    peak_rss = max(start_rss, end_rss)
+   200	
+   201	    sigmas = series["sigma"]
+   202	    spike_rates = series["spike_rate_hz"]
+   203	
+   204	    nan_rate = float(series["nan_count"] / series["total_count"]) if series["total_count"] else 0.0
+   205	    divergence_rate = float(series["divergence_steps"] / scenario.steps) if scenario.steps else 0.0
+   206	
+   207	    sigma_mean = _safe_mean(sigmas)
+   208	    sigma_std = _safe_std(sigmas)
+   209	    spike_rate_mean = _safe_mean(spike_rates)
+   210	
+   211	    window = max(1, int(0.1 * scenario.steps))
+   212	    sigma_target = float(series["sigma_target"])
+   213	    convergence_error = _safe_stat(float(abs(_safe_mean(sigmas[-window:]) - sigma_target)))
+   214	
+   215	    temp_params = _temperature_params(scenario)
+   216	    schedule = TemperatureSchedule(params=temp_params)
+   217	    temperatures = np.zeros(scenario.steps, dtype=np.float64)
+   218	    for idx in range(scenario.steps):
+   219	        temperatures[idx] = schedule.step_geometric()
+   220	
+   221	    exploration = np.abs(np.diff(spike_rates, prepend=spike_rates[0]))
+   222	    temp_std = _safe_std(temperatures)
+   223	    exploration_std = _safe_std(exploration)
+   224	    if temp_std > 0.0 and exploration_std > 0.0:
+   225	        corr = _safe_stat(float(np.corrcoef(temperatures, exploration)[0, 1]))
+   226	    else:
+   227	        corr = 0.0
+   228	
+   229	    series_repeat = _run_series(scenario)
+   230	    reproducibility_delta = max(
+   231	        _bitwise_delta(series["sigma"], series_repeat["sigma"]),
+   232	        _bitwise_delta(series["spike_rate_hz"], series_repeat["spike_rate_hz"]),
+   233	    )
+   234	
+   235	    neuron_steps = scenario.N_neurons * scenario.steps
+   236	    per_step_ms = (wall_time / scenario.steps) * 1000.0
+   237	    neuron_steps_per_sec = neuron_steps / wall_time if wall_time > 0.0 else 0.0
+   238	
+   239	    return BenchmarkMetrics(
+   240	        stability_nan_rate=nan_rate,
+   241	        stability_divergence_rate=divergence_rate,
+   242	        physics_spike_rate_hz=spike_rate_mean,
+   243	        physics_sigma=sigma_mean,
+   244	        physics_sigma_std=sigma_std,
+   245	        learning_weight_entropy=float(series["weight_entropy"]),
+   246	        learning_convergence_error=convergence_error,
+   247	        thermostat_temperature_mean=_safe_mean(temperatures),
+   248	        thermostat_exploration_mean=_safe_mean(exploration),
+   249	        thermostat_temperature_exploration_corr=corr,
+   250	        reproducibility_bitwise_delta=reproducibility_delta,
+   251	        performance_wall_time_sec=wall_time,
+   252	        performance_peak_rss_mb=peak_rss,
+   253	        performance_per_step_ms=per_step_ms,
+   254	        performance_neuron_steps_per_sec=float(neuron_steps_per_sec),
+   255	        params=scenario.to_dict(),
+   256	    )
+   257	
+   258	
+   259	def metrics_to_dict(metrics: BenchmarkMetrics) -> dict[str, Any]:
+   260	    """Serialize metrics to dict."""
+   261	
+   262	    def _sanitize(value: float) -> float | None:
+   263	        if math.isfinite(value):
+   264	            return float(value)
+   265	        return None
+   266	
+   267	    return {
+   268	        "stability_nan_rate": _sanitize(metrics.stability_nan_rate),
+   269	        "stability_divergence_rate": _sanitize(metrics.stability_divergence_rate),
+   270	        "physics_spike_rate_hz": _sanitize(metrics.physics_spike_rate_hz),
+   271	        "physics_sigma": _sanitize(metrics.physics_sigma),
+   272	        "physics_sigma_std": _sanitize(metrics.physics_sigma_std),
+   273	        "learning_weight_entropy": _sanitize(metrics.learning_weight_entropy),
+   274	        "learning_convergence_error": _sanitize(metrics.learning_convergence_error),
+   275	        "thermostat_temperature_mean": _sanitize(metrics.thermostat_temperature_mean),
+   276	        "thermostat_exploration_mean": _sanitize(metrics.thermostat_exploration_mean),
+   277	        "thermostat_temperature_exploration_corr": _sanitize(
+   278	            metrics.thermostat_temperature_exploration_corr
+   279	        ),
+   280	        "reproducibility_bitwise_delta": _sanitize(metrics.reproducibility_bitwise_delta),
+   281	        "performance_wall_time_sec": _sanitize(metrics.performance_wall_time_sec),
+   282	        "performance_peak_rss_mb": _sanitize(metrics.performance_peak_rss_mb),
+   283	        "performance_per_step_ms": _sanitize(metrics.performance_per_step_ms),
+   284	        "performance_neuron_steps_per_sec": _sanitize(metrics.performance_neuron_steps_per_sec),
+   285	    }
