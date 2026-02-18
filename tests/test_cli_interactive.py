@@ -173,3 +173,66 @@ def test_cli_main_invalid_demo_args_reports_actionable_error(
     assert "Error: steps must be greater than 0" in captured.err
     assert "Traceback" not in captured.err
     assert "Traceback" not in captured.out
+
+
+def test_cli_main_invalid_demo_dt_ms_reports_actionable_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    argv = [
+        "bnsyn",
+        "demo",
+        "--steps",
+        "1",
+        "--dt-ms",
+        "0",
+        "--seed",
+        "1",
+        "--N",
+        "10",
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    captured = capsys.readouterr()
+    assert exc.value.code == 2
+    assert "Error: dt-ms must be greater than 0" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_main_invalid_demo_n_reports_actionable_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    argv = [
+        "bnsyn",
+        "demo",
+        "--steps",
+        "1",
+        "--dt-ms",
+        "0.1",
+        "--seed",
+        "1",
+        "--N",
+        "0",
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    captured = capsys.readouterr()
+    assert exc.value.code == 2
+    assert "Error: N must be greater than 0" in captured.err
+
+
+def test_get_package_version_handles_unexpected_metadata_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(cli.importlib.metadata, "version", lambda _name: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(cli.Path, "exists", lambda _self: False)
+
+    with pytest.warns(UserWarning, match="Failed to read package version"):
+        version = cli._get_package_version()
+
+    assert version == "unknown"
