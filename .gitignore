@@ -47,3 +47,7 @@ artifacts/wheelhouse_report.json
 
 # Local tool bootstrap cache
 .tools/
+
+# Local command/evidence logs
+proof_bundle/logs/*.log
+!proof_bundle/logs/.gitkeep
