@@ -13,3 +13,4 @@ required_status_contexts:
 - ci-pr-atomic / ssot
 - ci-pr-atomic / tests-smoke
 - dependency-review / dependency-review
+- scientific-product-gate / scientific-product

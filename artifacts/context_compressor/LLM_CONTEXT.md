@@ -1,6 +1,6 @@
 # 1) Repo Identity + Surface Summary
 - Repo: `/workspace/bnsyn-phase-controlled-emergent-dynamics`.
-- Commit: `35bd4e8aa77e343e7c37470fdbd5a54bb38f6461`.
+- Commit: `6bde36ce17d6b59c9cf01dd06e6be233bd62250b`.
 - Surface: Python package/library+CLI (`bnsyn`) with scientific simulation modules, strict config schemas, and CI-heavy quality gates.
 - Evidence: `file:pyproject.toml:L75-L76`, `file:src/bnsyn/cli.py:L443-L533`.
 
@@ -34,7 +34,7 @@
 # 5) Invariants & SSOT (P0/P1 only)
 - `§INV:determinism:seeded_rng#398b20aa24034c4f` seeded RNG determinism invariant.
 - Bounded parameter invariants enforced in config models (PositiveFloat and explicit bounds).
-- Canonical gate commands sourced from Makefile; mismatches with policy docs are treated as risks, not overridden.
+- Canonical gate commands sourced from Makefile and aligned policy docs.
 
 # 6) Gates & Required Evidence (P0/P1 only)
 - Required evidence pointer formats: `file:...`, `hash:sha256:...`, `cmd:... -> log:...`.
@@ -42,7 +42,7 @@
 - Current risk: AGENTS test command mismatch with Makefile/docs (see RIS node).
 
 # 7) Open Risks (P0/P1 only)
-- `§RIS:contradiction:test-marker-contract#0cb50848744f45fb` command mismatch can cause false expectations for default test scope.
+- No unresolved P0/P1 contradictions in current truth map.
 
 # 8) EXPAND Protocol (how to rehydrate details)
 - Syntax: `EXPAND <ID> [depth=N] [include={contracts|edges|evidence|snippets}] [budget=chars]`.

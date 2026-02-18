@@ -1,0 +1,162 @@
+$ sed Makefile
+.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+
+LOCK_FILE ?= requirements-lock.txt
+WHEELHOUSE_DIR ?= wheelhouse
+PYTHON_VERSION ?= 3.11
+WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
+SETUP_CMD ?= python -m pip install -e ".[dev,test]"
+TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+
+setup:
+	python -V
+	python -m pip --version
+	$(SETUP_CMD)
+	python -m pip check
+
+install: setup
+	@echo "✅ install completed via setup"
+
+demo:
+	@python -m scripts.run_quickstart_demo
+
+dev-setup:
+	python -m pip install --upgrade pip setuptools wheel
+	python -m pip install -e ".[dev,test]"
+	pre-commit install
+	pre-commit autoupdate
+
+quickstart-smoke:
+	python -m scripts.check_quickstart_consistency
+	python -m pip install -e .
+	python -m pip show bnsyn
+	bnsyn --help
+	bnsyn sleep-stack --help
+	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
+
+
+wheelhouse-build:
+	python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
+
+wheelhouse-validate:
+	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
+
+dev-env-offline: wheelhouse-validate
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
+	pre-commit install
+
+wheelhouse-clean:
+	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+
+wheelhouse-report: wheelhouse-validate
+	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
+
+test:
+	$(MAKE) test-gate
+
+test-gate:
+	$(TEST_CMD)
+
+test-determinism:
+	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+
+test-validation:
+	python -m pytest -m "validation" -q
+
+test-property:
+	python -m pytest -m "property" -q
+
+coverage:
+	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+
+coverage-fast:
+	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+
+coverage-baseline: coverage
+	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+
+coverage-gate: coverage
+	python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+$ sed docs TESTING
+# Testing & Coverage (Canonical)
+
+This document is the **single source of truth** for running tests and coverage in this repository.
+
+## Install test dependencies
+
+```bash
+python -m pip install -e ".[test]"
+```
+
+Expected output pattern:
+- `Successfully installed bnsyn-...`
+- No import errors for `pytest`, `pytest-cov`, `hypothesis`.
+
+## Run default test suite
+
+```bash
+make test
+```
+
+Equivalent explicit command:
+
+```bash
+python -m pytest -m "not (validation or property)" -q
+```
+
+Expected output pattern:
+- Dots for passing tests.
+- Final summary with `passed` and optional `skipped`.
+
+## Canonical split targets
+
+```bash
+make test-gate
+make test-validation
+make test-property
+```
+
+Equivalent explicit commands:
+
+```bash
+python -m pytest -m "not (validation or property)" -q
+python -m pytest -m "validation" -q
+python -m pytest -m "property" -q
+```
+
+All three suites are expected to **collect successfully** when test dependencies are installed.
+
+## Run smoke marker tests
+
+```bash
+python -m pytest -m smoke -q
+```
+
+Expected output pattern:
+- Only smoke-marked tests.
+
+
+## Property test contour (Hypothesis)
+
+Hypothesis profiles are defined only in:
+- `tests/properties/conftest.py`
+
+Run property tests (requires `hypothesis` installed):
+
+```bash
+HYPOTHESIS_PROFILE=ci python -m pytest tests/properties -m property -q
+```
+
+Alternate profiles:
+
+```bash
+HYPOTHESIS_PROFILE=quick python -m pytest tests/properties -m property -q
+HYPOTHESIS_PROFILE=thorough python -m pytest tests/properties -m property -q
+```
+
+Run non-property tests without Hypothesis dependency:
+
+```bash
+python -m pytest -m "not property" -q

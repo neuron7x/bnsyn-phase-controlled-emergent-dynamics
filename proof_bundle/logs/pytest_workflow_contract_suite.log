@@ -1,0 +1,2 @@
+$ python -m pytest tests/test_validate_workflow_contracts.py tests/test_validate_pr_gates.py tests/test_validate_required_checks.py tests/test_sync_required_status_contexts.py -q
+........................                                                 [100%]

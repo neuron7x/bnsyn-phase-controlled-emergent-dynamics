@@ -1,0 +1,12 @@
+$ rg --files tools | head
+tools/generate_inventory.py
+tools/__init__.py
+tools/safety/check_safety_artifacts.py
+tools/manifest/validate.py
+tools/manifest/generate.py
+tools/manifest/render.py
+tools/manifest/__main__.py
+tools/manifest/__init__.py
+tools/entropy_gate/__main__.py
+tools/entropy_gate/compute_metrics.py
+tools/entropy_gate/__init__.py

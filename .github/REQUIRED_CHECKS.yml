@@ -5,4 +5,6 @@ required_checks:
 
   - workflow_file: "math-quality-gate.yml"
 
+  - workflow_file: "scientific_product_gate.yml"
+
   - workflow_file: "dependency-review.yml"

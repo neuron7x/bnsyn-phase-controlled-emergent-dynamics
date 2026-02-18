@@ -1,0 +1,2 @@
+$ python -m pytest tests/test_scientific_product_gate.py -q
+.....                                                                    [100%]

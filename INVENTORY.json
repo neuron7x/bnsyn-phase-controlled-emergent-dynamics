@@ -8,9 +8,9 @@
   ],
   "counts": {
     "src": 73,
-    "tests": 172,
+    "tests": 173,
     "docs": 281,
-    ".github": 41
+    ".github": 42
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -41,6 +41,7 @@
     "quality-mutation.yml",
     "release-pipeline.yml",
     "science.yml",
+    "scientific_product_gate.yml",
     "workflow-integrity.yml"
   ],
   "detected_tools": [

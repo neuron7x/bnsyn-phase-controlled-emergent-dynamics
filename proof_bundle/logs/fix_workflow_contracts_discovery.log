@@ -1,0 +1,25 @@
+$ git status --short
+?? proof_bundle/logs/fix_workflow_contracts_discovery.log
+$ rg -n "validate_workflow_contracts|COUNT_MISMATCH|MISSING_ROW|workflow contracts|scientific_product_gate" -S scripts docs .github tests
+.github/workflows/workflow-integrity.yml:201:      - name: Validate workflow contracts
+.github/workflows/workflow-integrity.yml:202:        run: python -m scripts.validate_workflow_contracts
+.github/workflows/scientific_product_gate.yml:28:          python -m pytest tests/test_scientific_product_gate.py -q
+scripts/validate_pr_gates.py:14:from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
+scripts/validate_pr_gates.py:18:    """Raised when PR gate workflow contracts fail parsing or validation."""
+scripts/validate_workflow_contracts.py:23:    """Raised when workflow contracts cannot be parsed deterministically."""
+scripts/validate_workflow_contracts.py:166:        violations.append(f"VIOLATION: MISSING_ROW {workflow}")
+scripts/validate_workflow_contracts.py:176:            "VIOLATION: COUNT_MISMATCH "
+scripts/validate_workflow_contracts.py:220:        print("Usage: python -m scripts.validate_workflow_contracts")
+scripts/README.md:66:| `validate_workflow_contracts.py` | UNKNOWN/TBD: missing module docstring. | `---` | See page | See page | Safe (read-only checks) | `python -m scripts.validate_workflow_contracts --help` |
+scripts/validate_required_checks.py:13:from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
+tests/test_validate_workflow_contracts.py:7:from scripts.validate_workflow_contracts import (
+tests/test_validate_workflow_contracts.py:55:    assert any("MISSING_ROW alpha.yml" in violation for violation in violations)
+tests/test_validate_workflow_contracts.py:112:    assert any("COUNT_MISMATCH" in violation for violation in violations)
+docs/scripts/validate-workflow-contracts.md:1:# `validate_workflow_contracts.py`
+docs/scripts/validate-workflow-contracts.md:7:- Invocation: `python -m scripts.validate_workflow_contracts --help`
+docs/scripts/validate-workflow-contracts.md:21:python -m scripts.validate_workflow_contracts --help
+docs/scripts/index.md:68:| `validate_workflow_contracts.py` | UNKNOWN/TBD: missing module docstring. | Safe (read-only checks) | [validate-workflow-contracts.md](./validate-workflow-contracts.md) |
+docs/ASSUMPTIONS.md:7:  - DERIVE FROM: `CHANGELOG.md`, release workflow contracts.
+docs/SCRIPTS/index.md:71:| `validate_workflow_contracts.py` | UNKNOWN/TBD: no module docstring. | unavailable (exit 1) |
+docs/SCRIPTS/index.md:1877:## `validate_workflow_contracts.py`
+docs/SCRIPTS/index.md:1886:python -m scripts.validate_workflow_contracts --help

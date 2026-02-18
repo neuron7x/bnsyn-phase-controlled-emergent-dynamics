@@ -1,0 +1,2 @@
+$ python -m scripts.validate_workflow_contracts
+Workflow contracts validation passed.

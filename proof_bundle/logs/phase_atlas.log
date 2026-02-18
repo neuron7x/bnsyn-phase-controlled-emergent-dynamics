@@ -1,0 +1,4 @@
+cmd:python -m scripts.phase_atlas --output ... --seed ...
+python:3.12.12
+platform:Linux-6.12.47-x86_64-with-glibc2.39
+output:artifacts/scientific_product/PHASE_ATLAS.json

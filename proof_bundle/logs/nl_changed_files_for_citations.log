@@ -1,0 +1,277 @@
+$ nl PR_GATES
+     1	version: "1"
+     2	required_pr_gates:
+     3	  - workflow_file: "ci-pr-atomic.yml"
+     4	    workflow_name: "ci-pr-atomic"
+     5	    required_job_ids:
+     6	      - gate-profile
+     7	      - determinism
+     8	      - quality
+     9	      - build
+    10	      - smoke-wheel-matrix
+    11	      - tests-smoke
+    12	      - ssot
+    13	      - security
+    14	      - finalize
+    15	  - workflow_file: "workflow-integrity.yml"
+    16	    workflow_name: "Workflow Integrity"
+    17	    required_job_ids:
+    18	      - validate-workflows
+    19	
+    20	  - workflow_file: "math-quality-gate.yml"
+    21	    workflow_name: "Math Quality Gate"
+    22	    required_job_ids:
+    23	      - math-gate
+    24	
+    25	  - workflow_file: "scientific_product_gate.yml"
+    26	    workflow_name: "scientific-product-gate"
+    27	    required_job_ids:
+    28	      - scientific-product
+    29	
+    30	  - workflow_file: "dependency-review.yml"
+    31	    workflow_name: "dependency-review"
+    32	    required_job_ids:
+    33	      - dependency-review
+$ nl REQUIRED_CHECKS
+     1	version: "1"
+     2	required_checks:
+     3	  - workflow_file: "ci-pr-atomic.yml"
+     4	  - workflow_file: "workflow-integrity.yml"
+     5	
+     6	  - workflow_file: "math-quality-gate.yml"
+     7	
+     8	  - workflow_file: "scientific_product_gate.yml"
+     9	
+    10	  - workflow_file: "dependency-review.yml"
+$ nl REQUIRED_STATUS_CONTEXTS
+     1	version: '1'
+     2	required_status_contexts:
+     3	- Math Quality Gate / math-gate
+     4	- Workflow Integrity / Validate workflow files
+     5	- ci-pr-atomic / build
+     6	- ci-pr-atomic / determinism
+     7	- ci-pr-atomic / finalize
+     8	- ci-pr-atomic / gate-profile
+     9	- ci-pr-atomic / quality
+    10	- ci-pr-atomic / security
+    11	- ci-pr-atomic / smoke-wheel-matrix (py3.11)
+    12	- ci-pr-atomic / smoke-wheel-matrix (py3.12)
+    13	- ci-pr-atomic / ssot
+    14	- ci-pr-atomic / tests-smoke
+    15	- dependency-review / dependency-review
+    16	- scientific-product-gate / scientific-product
+$ nl WORKFLOW_CONTRACTS head+table
+     1	# CI/CD Workflow Contracts
+     2	
+     3	**Version:** 1.1
+     4	**Date (UTC):** 2026-02-03
+     5	**Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
+     6	**Total workflows:** 30
+     7	**Breakdown:** 19 primary + 11 reusable
+     8	
+     9	## Axiom Dictionary
+    10	
+    11	* **A1 — Determinism & Toolchain Pinning**
+    12	* **A2 — CI Correctness & Regression Safety**
+    13	* **A3 — Workflow Integrity & Provenance (branch/sha correctness, tamper resistance)**
+    14	* **A4 — Performance & Benchmark Fidelity**
+    15	* **A5 — Chaos / Robustness / Fault Injection**
+    16	* **A6 — Quality / Mutation / Adversarial Testing**
+    17	* **A7 — Formal Verification – Proof Assistants (e.g., Coq)**
+    18	* **A8 — Formal Verification – Temporal Logic / Model Checking (e.g., TLA)**
+    19	* **A9 — Security & Permissions Hygiene (least privilege, untrusted code boundaries)**
+    20	
+    21	## Migration Notes (v1.1)
+    22	
+    23	* Expanded axiom dictionary from prior legend to include A1–A9 with explicit names; all uses in this document map to the dictionary above.
+    24	
+    25	## Global Notes
+    26	
+    27	* Workflow-level timeouts are not supported in GitHub Actions; only job-level `timeout-minutes` are recorded.
+    28	* Timeout notation: use **Not set** when `timeout-minutes` is absent in the workflow YAML.
+    29	* Branch protection rules are defined in **PR-Gate Definition (Authoritative)**.
+    30	* This contract is normative even if current branch protection temporarily deviates.
+    31	
+    32	## PR-Gate Definition (Authoritative)
+    33	
+    34	* Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
+    35	* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `scientific_product_gate.yml`, `dependency-review.yml`.
+    36	* Required checks MUST NOT include any workflow other than the PR-gates listed above.
+    37	* If any other section conflicts with this, this section wins.
+    38	
+    39	## Required PR Gates
+    40	
+    41	The workflows below are the required PR gates that must pass on pull requests. Source: `.github/PR_GATES.yml`.
+    42	
+    43	| Workflow File | Workflow Name | Required Job IDs |
+    44	| --- | --- | --- |
+    45	| `ci-pr-atomic.yml` | `ci-pr-atomic` | `gate-profile`, `determinism`, `quality`, `build`, `smoke-wheel-matrix`, `tests-smoke`, `ssot`, `security`, `finalize` |
+    46	| `workflow-integrity.yml` | `Workflow Integrity` | `validate-workflows` |
+    47	| `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
+    48	| `scientific_product_gate.yml` | `scientific-product-gate` | `scientific-product` |
+    49	| `dependency-review.yml` | `dependency-review` | `dependency-review` |
+    50	
+    51	## Gate Class Policy (Normative)
+    52	
+    53	* PR-gate workflows MAY be required checks.
+    54	* Long-running workflows MUST NOT be required checks and MUST NOT block merge.
+    55	* If a workflow is not explicitly labeled PR-gate, it MUST NOT be required in branch protection.
+    56	* EXCEPTION format (only when a PR-gate lacks `pull_request`): `EXCEPTION: <workflow file> - <reason>` on the line immediately following the workflow row in the inventory table.
+    57	
+    58	<!-- BEGIN: AUTO-GENERATED WORKFLOW POLICIES -->
+    59	## Workflow Policy Rules (Auto-generated)
+    60	
+    61	| Rule ID | Statement | Enforcement |
+    62	| --- | --- | --- |
+    63	| R1 | Workflows with Gate Class `long-running` MUST NOT declare `push` or `pull_request` triggers. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+    64	| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}` with `workflow_call` required. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+    65	| R3 | Workflows named `_reusable_*.yml` MUST declare `on: workflow_call` only. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+    66	| R4 | Workflows with Gate Class `PR-gate` MUST include `pull_request` unless an explicit `EXCEPTION:` line is present in the inventory table. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+    67	<!-- END: AUTO-GENERATED WORKFLOW POLICIES -->
+    68	
+    69	## Workflow Inventory Table (Authoritative)
+    70	
+    71	| Workflow file | Workflow name | Gate Class | Trigger set | Reusable? |
+    72	| --- | --- | --- | --- | --- |
+    73	| `_reusable_benchmarks.yml` | `reusable-benchmarks` | long-running | `workflow_call` | YES |
+    74	| `_reusable_chaos_tests.yml` | `Reusable Chaos Tests` | long-running | `workflow_call` | YES |
+    75	| `_reusable_formal_science.yml` | `_reusable_formal_science` | long-running | `workflow_call` | YES |
+    76	| `_reusable_gate_profile.yml` | `Reusable Gate Profile` | long-running | `workflow_call` | YES |
+    77	| `_reusable_property_tests.yml` | `Reusable Property Tests` | long-running | `workflow_call` | YES |
+    78	| `_reusable_pytest.yml` | `Reusable Pytest` | long-running | `workflow_call` | YES |
+    79	| `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
+    80	| `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
+    81	| `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
+    82	| `benchmarks.yml` | `benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+    83	| `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `schedule, workflow_dispatch` | NO |
+    84	| `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
+    85	| `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
+    86	| `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
+    87	| `ci-smoke.yml` | `ci-smoke` | long-running | `schedule, workflow_dispatch` | NO |
+    88	| `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
+    89	| `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
+    90	| `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
+    91	| `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
+    92	| `dependency-review.yml` | `dependency-review` | PR-gate | `pull_request` | NO |
+    93	| `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
+    94	| `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
+    95	| `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
+    96	| `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
+    97	| `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
+    98	| `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
+    99	| `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
+   100	| `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
+   101	| `scientific_product_gate.yml` | `scientific-product-gate` | PR-gate | `pull_request, push` | NO |
+   102	| `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
+   103	
+   104	---
+   105	
+   106	## _reusable_pytest.yml
+   107	
+   108	**Path:** `.github/workflows/_reusable_pytest.yml`
+   109	**Status:** Active
+   110	
+   111	**Gate Class:** long-running
+   112	
+   113	**Gate Rationale:**
+   114	
+   115	* Reusable non-PR gate; must not run on pull_request/push.
+   116	
+   117	* Reusable workflow invoked by callers; gating is defined by the parent workflow, so it is not a standalone PR gate despite enforcing A2.
+   118	
+   119	**Intent (1–2 sentences):**
+   120	
+   121	* Provide a reusable pytest job with coverage enforcement and optional Codecov uploads for caller workflows.
+   122	
+   123	**Axiom focus:**
+   124	
+   125	* A2 — CI Correctness & Regression Safety
+   126	
+   127	**Trigger(s):**
+   128	
+   129	* `workflow_call` with inputs (`python-version`, `markers`, `coverage-threshold`, `timeout-minutes`, `upload-codecov`) and optional secret `CODECOV_TOKEN`.
+   130	
+$ nl workflow-integrity allowlist
+    14	    name: Validate workflow files
+    15	    runs-on: ubuntu-latest
+    16	    timeout-minutes: 5
+    17	    steps:
+    18	      - name: Checkout
+    19	        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+    20	      - name: Enforce non-PR workflow triggers
+    21	        shell: bash
+    22	        run: |
+    23	          set -euo pipefail
+    24	          allowlist=(
+    25	            "ci-pr-atomic.yml"
+    26	            "ci-pr.yml"
+    27	            "ci-smoke.yml"
+    28	            "codeql.yml"
+    29	            "docs.yml"
+    30	            "dependency-review.yml"
+    31	            "scientific_product_gate.yml"
+    32	            "workflow-integrity.yml"
+    33	            "_reusable_benchmarks.yml"
+    34	            "_reusable_chaos_tests.yml"
+    35	            "_reusable_formal_science.yml"
+    36	            "_reusable_gate_profile.yml"
+    37	            "_reusable_property_tests.yml"
+    38	            "_reusable_pytest.yml"
+    39	            "_reusable_quality.yml"
+    40	            "_reusable_ssot.yml"
+    41	            "_reusable_validation_tests.yml"
+    42	          )
+    43	          declare -A allowed
+    44	          for name in "${allowlist[@]}"; do
+    45	            allowed["$name"]=1
+$ nl INVENTORY counts
+     1	{
+     2	  "_generated_by": "python tools/generate_inventory.py",
+     3	  "paths": [
+     4	    "src",
+     5	    "tests",
+     6	    "docs",
+     7	    ".github"
+     8	  ],
+     9	  "counts": {
+    10	    "src": 73,
+    11	    "tests": 173,
+    12	    "docs": 281,
+    13	    ".github": 42
+    14	  },
+    15	  "workflows": [
+    16	    "_reusable_benchmarks.yml",
+    17	    "_reusable_chaos_tests.yml",
+    18	    "_reusable_formal_science.yml",
+    19	    "_reusable_gate_profile.yml",
+    20	    "_reusable_property_tests.yml",
+    21	    "_reusable_pytest.yml",
+    22	    "_reusable_quality.yml",
+    23	    "_reusable_ssot.yml",
+    24	    "_reusable_validation_tests.yml",
+    25	    "benchmarks.yml",
+    26	    "ci-benchmarks-elite.yml",
+    27	    "ci-benchmarks.yml",
+    28	    "ci-pr-atomic.yml",
+    29	    "ci-pr.yml",
+    30	    "ci-smoke.yml",
+    31	    "ci-validation.yml",
+    32	    "codecov-health.yml",
+    33	    "codeql.yml",
+    34	    "dependency-review.yml",
+    35	    "dependency-watch.yml",
+    36	    "docs.yml",
+    37	    "formal-coq.yml",
+    38	    "formal-tla.yml",
+    39	    "math-quality-gate.yml",
+    40	    "physics-equivalence.yml",
+    41	    "quality-mutation.yml",
+    42	    "release-pipeline.yml",
+    43	    "science.yml",
+    44	    "scientific_product_gate.yml",
+    45	    "workflow-integrity.yml"
+    46	  ],
+    47	  "detected_tools": [
+    48	    "pyproject.toml",
+    49	    "requirements-lock.txt",
+    50	    "docker-compose.yml",

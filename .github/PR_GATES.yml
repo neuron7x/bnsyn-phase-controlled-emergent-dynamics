@@ -22,6 +22,11 @@ required_pr_gates:
     required_job_ids:
       - math-gate
 
+  - workflow_file: "scientific_product_gate.yml"
+    workflow_name: "scientific-product-gate"
+    required_job_ids:
+      - scientific-product
+
   - workflow_file: "dependency-review.yml"
     workflow_name: "dependency-review"
     required_job_ids:

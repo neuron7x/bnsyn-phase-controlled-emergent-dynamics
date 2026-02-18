@@ -1,0 +1,4 @@
+$ ruff check scripts/phase_atlas.py tests/test_scientific_product_gate.py
+All checks passed!
+$ mypy src --strict --config-file pyproject.toml
+Success: no issues found in 72 source files

@@ -1,0 +1,2 @@
+$ ruff check scripts/phase_atlas.py tests/test_scientific_product_gate.py
+All checks passed!

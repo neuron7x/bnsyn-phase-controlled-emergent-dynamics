@@ -1,0 +1,7 @@
+$ python -m tools.manifest validate
+$ python -m scripts.validate_trifix_invariants
+FAIL: I1 violation: workflows missing top-level permissions: .github/workflows/scientific_product_gate.yml
+$ python -m pytest tests/test_scientific_product_gate.py -q
+.....                                                                    [100%]
+$ python -m scripts.validate_branch_protection_governance
+VIOLATION: MISSING_REQUIRED_CONTEXT scientific-product-gate / scientific-product

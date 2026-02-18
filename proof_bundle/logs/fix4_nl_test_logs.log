@@ -1,0 +1,50 @@
+     1	$ python -m tools.manifest generate
+     2	manifest.generate computed_sha256=813c988ffa25e11d42c614ca44fd96bf2a7016badc54919b735638a9708ac4d1 rendered_sha256=e523ba1b9ae900d6e42f2005709e464098ae0e6ae68168a4700597d08ce693d7 workflow_total=30 workflow_call_total=11 ci_manifest_reference_count=0
+     3	$ python -m tools.manifest validate
+     4	Manifest validation passed.
+     5	$ python -m scripts.validate_trifix_invariants
+     6	PASS: Tri-Fix invariants validated
+     7	$ PYTHONPATH=src python -m pytest tests/test_scientific_product_gate.py -q
+     8	.....                                                                    [100%]
+     9	$ python -m scripts.validate_branch_protection_governance
+    10	OK: branch protection governance document validated
+     1	$ python -m scripts.validate_workflow_contracts
+     2	Workflow contracts validation passed.
+     3	$ python -m scripts.validate_pr_gates
+     4	OK: pr_gates=5 workflows=30 validated
+     5	$ python -m scripts.validate_required_checks
+     6	OK: required_checks=5 contract_pr_gates=5 validated
+     7	$ python -m scripts.validate_required_status_contexts
+     8	OK: required_status_contexts=14 validated
+     1	$ make test-gate
+     2	python -m pytest -m "not (validation or property)" -q
+     3	........................................................................ [ 10%]
+     4	........................................................................ [ 20%]
+     5	........................................................................ [ 30%]
+     6	.........................................ss....ss....................... [ 40%]
+     7	........................................................................ [ 51%]
+     8	........................................................................ [ 61%]
+     9	........................................................................ [ 71%]
+    10	........................................................................ [ 81%]
+    11	........................................................................ [ 92%]
+    12	........................................................                 [100%]
+    13	=============================== warnings summary ===============================
+    14	tests/test_cli_interactive.py::test_cli_module_main_executes
+    15	  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+    16	
+    17	tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+    18	  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+    19	
+    20	tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+    21	  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    22	    "git_commit": _get_git_commit(resolved_root, resolved_version),
+    23	
+    24	tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+    25	  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    26	    "git_commit": _get_git_commit(resolved_root, resolved_version),
+    27	
+    28	-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+     1	$ ruff check scripts/phase_atlas.py tests/test_scientific_product_gate.py
+     2	All checks passed!
+     3	$ mypy src --strict --config-file pyproject.toml
+     4	Success: no issues found in 72 source files

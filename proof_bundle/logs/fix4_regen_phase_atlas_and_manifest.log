@@ -1,0 +1,4 @@
+$ PYTHONPATH=src python -m scripts.phase_atlas --output artifacts/scientific_product/PHASE_ATLAS.json --seed 20260218
+$ cp phase atlas baseline
+$ python -m tools.manifest generate
+manifest.generate computed_sha256=21e685ed92a88a3c81bed49fa3e6db9cdf57b174778978448e59f3215e63faee rendered_sha256=de92a0b885eb51d389b8f4c8a9df6a6a0ed3165004edd4dc566446af937b72c1 workflow_total=30 workflow_call_total=11 ci_manifest_reference_count=0

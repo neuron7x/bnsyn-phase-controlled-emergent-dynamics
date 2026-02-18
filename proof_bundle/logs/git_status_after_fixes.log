@@ -1,0 +1,35 @@
+$ git status --short
+ M .github/PR_GATES.yml
+ M .github/REQUIRED_CHECKS.yml
+ M .github/REQUIRED_STATUS_CONTEXTS.yml
+ M .github/WORKFLOW_CONTRACTS.md
+ M .github/workflows/workflow-integrity.yml
+ M INVENTORY.json
+?? proof_bundle/logs/fix_workflow_contracts_discovery.log
+?? proof_bundle/logs/git_status_after_fixes.log
+?? proof_bundle/logs/install_hypothesis_and_regen_inventory.log
+?? proof_bundle/logs/pip_install_psutil_again.log
+?? proof_bundle/logs/pytest_fast_after_contract_fix.log
+?? proof_bundle/logs/pytest_inventory_and_collection.log
+?? proof_bundle/logs/pytest_scientific_product_after_fix.log
+?? proof_bundle/logs/pytest_workflow_contract_suite.log
+?? proof_bundle/logs/read_context_quality_current.log
+?? proof_bundle/logs/read_makefile_ssot.log
+?? proof_bundle/logs/read_pr_gates_and_required_checks.log
+?? proof_bundle/logs/read_render_workflow_policy_docs.log
+?? proof_bundle/logs/read_required_checks_files.log
+?? proof_bundle/logs/read_scientific_product_workflow.log
+?? proof_bundle/logs/read_validate_long_running.log
+?? proof_bundle/logs/read_validate_pr_gates.log
+?? proof_bundle/logs/read_validate_workflow_contracts.log
+?? proof_bundle/logs/read_validate_workflow_contracts_rules.log
+?? proof_bundle/logs/read_workflow_contracts_top.log
+?? proof_bundle/logs/read_workflow_integrity_yml.log
+?? proof_bundle/logs/rg_tests_workflow_contracts.log
+?? proof_bundle/logs/sync_required_status_contexts_apply.log
+?? proof_bundle/logs/sync_required_status_contexts_check.log
+?? proof_bundle/logs/validate_long_running_triggers.log
+?? proof_bundle/logs/validate_pr_gate_family.log
+?? proof_bundle/logs/validate_workflow_contract_family_after_fix.log
+?? proof_bundle/logs/validate_workflow_contracts_after_fix.log
+?? proof_bundle/logs/validate_workflow_contracts_before_fix.log

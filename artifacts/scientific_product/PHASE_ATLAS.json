@@ -1,0 +1,87 @@
+{
+  "atlas_version": "2026.02",
+  "meta": {
+    "classifier": {
+      "critical_max": 1.05,
+      "critical_min": 0.95,
+      "subcritical_max": 0.95,
+      "supercritical_min": 1.05
+    },
+    "code_sha": "5ec4959a5f72c593899b7a7c62b87e18db327263",
+    "grid": "small",
+    "payload_sha256": "43e1e012085c845e6b7141a77100c07bb5fc91a6933e9f98b4aba0d5340fb1e7"
+  },
+  "records": [
+    {
+      "criticality": {
+        "estimator_window": 200,
+        "gain_clamp": 0.08,
+        "sigma_target": 0.9
+      },
+      "grid_id": "small-001",
+      "metrics": {
+        "attractor_score": 0.09,
+        "sigma_estimate": 0.895,
+        "stability_score": 0.895
+      },
+      "regime": "SUB",
+      "sleep": {
+        "noise_scale": 0.05,
+        "replay_strength": 0.0,
+        "stages": [
+          "NREM",
+          "REM"
+        ]
+      },
+      "temperature": 0.9
+    },
+    {
+      "criticality": {
+        "estimator_window": 200,
+        "gain_clamp": 0.12,
+        "sigma_target": 1.0
+      },
+      "grid_id": "small-002",
+      "metrics": {
+        "attractor_score": 0.2,
+        "sigma_estimate": 1.004,
+        "stability_score": 0.996
+      },
+      "regime": "CRIT",
+      "sleep": {
+        "noise_scale": 0.07,
+        "replay_strength": 0.2,
+        "stages": [
+          "NREM",
+          "REM"
+        ]
+      },
+      "temperature": 1.0
+    },
+    {
+      "criticality": {
+        "estimator_window": 200,
+        "gain_clamp": 0.25,
+        "sigma_target": 1.1
+      },
+      "grid_id": "small-003",
+      "metrics": {
+        "attractor_score": 0.41,
+        "sigma_estimate": 1.117,
+        "stability_score": 0.883
+      },
+      "regime": "SUPER",
+      "sleep": {
+        "noise_scale": 0.11,
+        "replay_strength": 0.6,
+        "stages": [
+          "NREM",
+          "REM"
+        ]
+      },
+      "temperature": 1.1
+    }
+  ],
+  "schema_version": "1.0.0",
+  "seed": 20260218
+}

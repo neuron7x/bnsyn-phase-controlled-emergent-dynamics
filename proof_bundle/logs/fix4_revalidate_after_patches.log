@@ -1,0 +1,10 @@
+$ python -m tools.manifest generate
+manifest.generate computed_sha256=813c988ffa25e11d42c614ca44fd96bf2a7016badc54919b735638a9708ac4d1 rendered_sha256=e523ba1b9ae900d6e42f2005709e464098ae0e6ae68168a4700597d08ce693d7 workflow_total=30 workflow_call_total=11 ci_manifest_reference_count=0
+$ python -m tools.manifest validate
+Manifest validation passed.
+$ python -m scripts.validate_trifix_invariants
+PASS: Tri-Fix invariants validated
+$ PYTHONPATH=src python -m pytest tests/test_scientific_product_gate.py -q
+.....                                                                    [100%]
+$ python -m scripts.validate_branch_protection_governance
+OK: branch protection governance document validated

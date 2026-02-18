@@ -1,0 +1,52 @@
+$ rg -n "validate_workflow_contracts|validate_pr_gates|required_checks|required_status_contexts|workflow-integrity" tests
+tests/test_validate_required_checks.py:7:from scripts.validate_required_checks import (
+tests/test_validate_required_checks.py:9:    load_required_checks,
+tests/test_validate_required_checks.py:11:    validate_required_checks,
+tests/test_validate_required_checks.py:15:def _write_required_checks(path: Path, workflows: list[str], *, version: str = "1") -> None:
+tests/test_validate_required_checks.py:16:    lines = [f"version: '{version}'", "required_checks:"]
+tests/test_validate_required_checks.py:37:def test_load_required_checks_rejects_duplicate_workflow_file(tmp_path: Path) -> None:
+tests/test_validate_required_checks.py:39:    _write_required_checks(path, ["ci-pr-atomic.yml", "ci-pr-atomic.yml"])
+tests/test_validate_required_checks.py:42:        load_required_checks(path)
+tests/test_validate_required_checks.py:45:def test_load_required_checks_rejects_non_mapping_yaml_root(tmp_path: Path) -> None:
+tests/test_validate_required_checks.py:50:        load_required_checks(path)
+tests/test_validate_required_checks.py:53:def test_validate_required_checks_reports_missing_and_extra(tmp_path: Path) -> None:
+tests/test_validate_required_checks.py:54:    required_checks = tmp_path / "REQUIRED_CHECKS.yml"
+tests/test_validate_required_checks.py:56:    _write_required_checks(required_checks, ["ci-pr-atomic.yml", "extra.yml"])
+tests/test_validate_required_checks.py:65:    violations = validate_required_checks(required_checks, contracts)
+tests/test_validate_required_checks.py:73:    exit_code = main(["validate_required_checks", "--help"])
+tests/test_validate_required_checks.py:77:    assert "Usage: python -m scripts.validate_required_checks" in captured.out
+tests/test_validate_required_checks.py:81:    exit_code = main(["validate_required_checks", "unexpected"])
+tests/test_validate_required_checks.py:85:    assert "Usage: python -m scripts.validate_required_checks" in captured.out
+tests/test_validate_required_checks.py:88:def test_main_returns_parse_error_code_for_invalid_required_checks(
+tests/test_validate_required_checks.py:100:    exit_code = main(["validate_required_checks"])
+tests/test_validate_required_checks.py:112:    _write_required_checks(github / "REQUIRED_CHECKS.yml", ["ci-pr-atomic.yml", "extra.yml"])
+tests/test_validate_required_checks.py:122:    exit_code = main(["validate_required_checks"])
+tests/test_validate_required_checks.py:136:    _write_required_checks(github / "REQUIRED_CHECKS.yml", ["ci-pr-atomic.yml"])
+tests/test_validate_required_checks.py:143:    exit_code = main(["validate_required_checks"])
+tests/test_validate_required_checks.py:147:    assert "OK: required_checks=1 contract_pr_gates=1 validated" in captured.out
+tests/test_sync_required_status_contexts.py:6:from scripts.sync_required_status_contexts import build_payload, sync_required_status_contexts
+tests/test_sync_required_status_contexts.py:7:from scripts.validate_required_status_contexts import (
+tests/test_sync_required_status_contexts.py:9:    expected_required_status_contexts,
+tests/test_sync_required_status_contexts.py:17:    contexts = payload["required_status_contexts"]
+tests/test_sync_required_status_contexts.py:23:def test_sync_required_status_contexts_check_and_update(tmp_path: Path) -> None:
+tests/test_sync_required_status_contexts.py:25:    contexts_path.write_text("version: '1'\nrequired_status_contexts: []\n", encoding="utf-8")
+tests/test_sync_required_status_contexts.py:27:    check_exit = sync_required_status_contexts(
+tests/test_sync_required_status_contexts.py:35:    update_exit = sync_required_status_contexts(
+tests/test_sync_required_status_contexts.py:44:    assert "required_status_contexts:" in saved
+tests/test_sync_required_status_contexts.py:48:def test_expected_required_status_contexts_rejects_pr_gates_unknown_keys(tmp_path: Path) -> None:
+tests/test_sync_required_status_contexts.py:58:        expected_required_status_contexts(pr_gates, workflows)
+tests/test_sync_required_status_contexts.py:61:def test_expected_required_status_contexts_rejects_duplicate_required_job_ids(
+tests/test_sync_required_status_contexts.py:88:        expected_required_status_contexts(pr_gates, workflows)
+tests/test_validate_workflow_contracts.py:7:from scripts.validate_workflow_contracts import (
+tests/test_release_readiness.py:38:                    "process.required_checks_files_present": "eq",
+tests/test_release_readiness.py:49:                    "required_checks_files_present": True,
+tests/test_release_readiness.py:61:                "required_checks_files_present": True,
+tests/test_validate_pr_gates.py:5:from scripts.validate_pr_gates import validate_pr_gates
+tests/test_validate_pr_gates.py:7:from scripts.validate_pr_gates import PrGateParseError, load_workflow_data
+tests/test_validate_pr_gates.py:86:    violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
+tests/test_validate_pr_gates.py:119:    violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
+tests/test_validate_pr_gates.py:152:    violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
+tests/test_validate_pr_gates.py:185:    violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
+tests/test_validate_pr_gates.py:225:    violations = validate_pr_gates(pr_gates_path, workflows_dir, contracts_path)
+tests/test_schema_contracts.py:32:    required_checks = no_escape["required_checks"]
+tests/test_schema_contracts.py:33:    assert required_checks == ["ci-pr-atomic", "workflow-integrity", "determinism", "contracts"]

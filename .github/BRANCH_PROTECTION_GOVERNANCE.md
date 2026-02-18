@@ -10,8 +10,9 @@
 6. [ ] Add required check: `math-quality-gate`.
 7. [ ] Add required check: `workflow-integrity`.
 8. [ ] Add required check: `dependency-review`.
-9. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
-10. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
+9. [ ] Add required check: `scientific-product-gate`.
+10. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
+11. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
 
 ## Required status contexts (job-level + matrix-level)
 
@@ -30,6 +31,7 @@ All contexts below MUST be green before merge:
 - `Workflow Integrity / Validate workflow files`
 - `Math Quality Gate / math-gate`
 - `dependency-review / dependency-review`
+- `scientific-product-gate / scientific-product`
 
 ## Governance-proof evidence (blocking semantics)
 

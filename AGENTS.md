@@ -27,7 +27,7 @@
 - Disabling tests/linters/typechecks.
 
 ## Tooling & Commands (Project-Specific)
-- Tests: `python -m pytest -m "not validation" -q` (Makefile `test`, used by CI reusable pytest workflows)
+- Tests: `python -m pytest -m "not (validation or property)" -q` (Makefile `test`, used by CI reusable pytest workflows)
 - Linters: `ruff check .` and `pylint src/bnsyn` (Makefile `lint`)
 - Typechecks: `mypy src --strict --config-file pyproject.toml` (Makefile `mypy`)
 - Build: `python -m build` (CI workflow `ci-pr-atomic.yml`)

@@ -1,0 +1,320 @@
+$ sed validate_workflow_contracts
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+import re
+import sys
+from typing import Iterable
+
+from scripts.yaml_contracts import load_yaml_mapping
+
+ALLOWED_GATE_CLASSES = {"PR-gate", "long-running"}
+ALLOWED_REUSABLE_VALUES = {"YES", "NO"}
+TRIGGER_ORDER = (
+    "pull_request",
+    "push",
+    "schedule",
+    "workflow_dispatch",
+    "workflow_call",
+)
+
+
+class ContractParseError(RuntimeError):
+    """Raised when workflow contracts cannot be parsed deterministically."""
+
+
+@dataclass(frozen=True)
+class InventoryRow:
+    workflow_file: str
+    workflow_name: str
+    gate_class: str
+    triggers: tuple[str, ...]
+    reusable: bool
+    has_exception: bool
+
+
+def normalize_on_section(on_section: object) -> tuple[str, ...]:
+    triggers: set[str] = set()
+    if isinstance(on_section, str):
+        triggers.add(on_section)
+    elif isinstance(on_section, list):
+        triggers.update(str(item) for item in on_section)
+    elif isinstance(on_section, dict):
+        triggers.update(str(key) for key in on_section.keys())
+    ordered = [name for name in TRIGGER_ORDER if name in triggers]
+    unknown = sorted(trigger for trigger in triggers if trigger not in TRIGGER_ORDER)
+    ordered.extend(unknown)
+    return tuple(ordered)
+
+
+def parse_counts(text: str) -> tuple[int, int, int]:
+    total_match = re.search(r"^\*\*Total workflows:\*\*\s*(\d+)\s*$", text, re.M)
+    breakdown_match = re.search(
+        r"^\*\*Breakdown:\*\*\s*(\d+)\s+primary\s+\+\s+(\d+)\s+reusable\s*$",
+        text,
+        re.M,
+    )
+    if not total_match or not breakdown_match:
+        raise ContractParseError("Missing total/breakdown counts in contracts.")
+    total = int(total_match.group(1))
+    primary = int(breakdown_match.group(1))
+    reusable = int(breakdown_match.group(2))
+    return total, primary, reusable
+
+
+def parse_inventory_table(text: str) -> dict[str, InventoryRow]:
+    lines = text.splitlines()
+    header = "| Workflow file | Workflow name | Gate Class | Trigger set | Reusable? |"
+    try:
+        header_index = next(i for i, line in enumerate(lines) if line.strip() == header)
+    except StopIteration as exc:
+        raise ContractParseError("Workflow Inventory Table header not found.") from exc
+
+    rows: dict[str, InventoryRow] = {}
+    duplicate_rows: set[str] = set()
+    last_row: str | None = None
+    for line in lines[header_index + 1 :]:
+        stripped = line.strip()
+        if stripped.startswith("## "):
+            break
+        if not stripped or stripped == "---":
+            continue
+        if stripped.startswith("EXCEPTION:") or stripped.startswith("> EXCEPTION:"):
+            if not last_row:
+                raise ContractParseError("EXCEPTION line without preceding workflow row.")
+            row = rows[last_row]
+            rows[last_row] = InventoryRow(
+                workflow_file=row.workflow_file,
+                workflow_name=row.workflow_name,
+                gate_class=row.gate_class,
+                triggers=row.triggers,
+                reusable=row.reusable,
+                has_exception=True,
+            )
+            continue
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if len(cells) != 5:
+            raise ContractParseError(f"Invalid inventory table row: {line}")
+        if cells[0].startswith("---"):
+            continue
+        workflow_file = cells[0].strip("` ")
+        workflow_name = cells[1].strip("` ")
+        gate_class = cells[2].strip()
+        triggers_raw = cells[3].strip("` ")
+        reusable_raw = cells[4].strip()
+        if reusable_raw not in ALLOWED_REUSABLE_VALUES:
+            raise ContractParseError(
+                f"Invalid reusable value '{reusable_raw}' for {workflow_file}."
+            )
+        triggers = tuple(trigger.strip() for trigger in triggers_raw.split(",") if trigger.strip())
+        if workflow_file in rows:
+            duplicate_rows.add(workflow_file)
+        rows[workflow_file] = InventoryRow(
+            workflow_file=workflow_file,
+            workflow_name=workflow_name,
+            gate_class=gate_class,
+            triggers=triggers,
+            reusable=reusable_raw == "YES",
+            has_exception=False,
+        )
+        last_row = workflow_file
+    if not rows:
+        raise ContractParseError("Workflow Inventory Table has no rows.")
+    if duplicate_rows:
+        raise ContractParseError(f"Duplicate workflow rows: {sorted(duplicate_rows)}")
+    return rows
+
+
+def load_workflow_inventory(workflows_dir: Path) -> dict[str, dict[str, object]]:
+    inventory: dict[str, dict[str, object]] = {}
+    for workflow_path in sorted(workflows_dir.glob("*.yml")):
+        data = load_yaml_mapping(
+            workflow_path,
+            ContractParseError,
+            label=f"workflow file {workflow_path.name}",
+        )
+        on_section = data.get("on", data.get(True, {}))
+        triggers = normalize_on_section(on_section)
+        jobs_raw = data.get("jobs")
+        if not isinstance(jobs_raw, dict):
+            raise ContractParseError(f"jobs missing or invalid in workflow: {workflow_path.name}")
+        name = data.get("name", "UNKNOWN")
+        reusable = "workflow_call" in triggers or workflow_path.name.startswith("_reusable_")
+        inventory[workflow_path.name] = {
+            "name": str(name) if name is not None else "UNKNOWN",
+            "triggers": triggers,
+            "reusable": reusable,
+            "prefix_reusable": workflow_path.name.startswith("_reusable_"),
+        }
+    return inventory
+
+
+def validate_contracts(contracts_path: Path, workflows_dir: Path) -> list[str]:
+    text = contracts_path.read_text(encoding="utf-8")
+    total, primary, reusable = parse_counts(text)
+    rows = parse_inventory_table(text)
+    actual = load_workflow_inventory(workflows_dir)
+
+    violations: list[str] = []
+
+    expected_files = set(rows.keys())
+    actual_files = set(actual.keys())
+    missing_rows = sorted(actual_files - expected_files)
+    for workflow in missing_rows:
+        violations.append(f"VIOLATION: MISSING_ROW {workflow}")
+    extra_rows = sorted(expected_files - actual_files)
+    for workflow in extra_rows:
+        violations.append(f"VIOLATION: EXTRA_ROW {workflow}")
+
+    actual_total = len(actual_files)
+    actual_reusable = sum(1 for data in actual.values() if data["reusable"])
+    actual_primary = actual_total - actual_reusable
+    if (total, primary, reusable) != (actual_total, actual_primary, actual_reusable):
+        violations.append(
+            "VIOLATION: COUNT_MISMATCH "
+            f"contracts=({total},{primary},{reusable}) "
+            f"actual=({actual_total},{actual_primary},{actual_reusable})"
+        )
+
+    for workflow_file in sorted(expected_files & actual_files):
+        row = rows[workflow_file]
+        actual_row = actual[workflow_file]
+        if row.gate_class not in ALLOWED_GATE_CLASSES:
+            violations.append(f"VIOLATION: INVALID_GATE_CLASS {workflow_file} {row.gate_class}")
+        if row.workflow_name != actual_row["name"]:
+            violations.append(
+                "VIOLATION: NAME_MISMATCH "
+                f"{workflow_file} expected={row.workflow_name} "
+                f"actual={actual_row['name']}"
+            )
+        if tuple(row.triggers) != tuple(actual_row["triggers"]):
+            violations.append(
+                "VIOLATION: TRIGGER_MISMATCH "
+                f"{workflow_file} expected={row.triggers} "
+                f"actual={actual_row['triggers']}"
+            )
+        if row.reusable != bool(actual_row["reusable"]):
+            violations.append(
+                "VIOLATION: REUSABLE_MISMATCH "
+                f"{workflow_file} expected={row.reusable} "
+                f"actual={actual_row['reusable']}"
+            )
+        if actual_row["prefix_reusable"] and "workflow_call" not in actual_row["triggers"]:
+            violations.append(
+                f"VIOLATION: AMBIGUOUS_REUSABLE {workflow_file} missing workflow_call trigger"
+            )
+        if row.gate_class == "PR-gate":
+            if "pull_request" not in actual_row["triggers"] and not row.has_exception:
+                violations.append(
+                    f"VIOLATION: PR_GATE_NO_PULL_REQUEST {workflow_file} requires EXCEPTION entry"
+                )
+
+    return sorted(violations)
+
+
+def main(argv: Iterable[str]) -> int:
+    args = list(argv)
+    if len(args) != 1:
+        print("Usage: python -m scripts.validate_workflow_contracts")
+        return 3
+    contracts_path = Path(".github/WORKFLOW_CONTRACTS.md")
+    workflows_dir = Path(".github/workflows")
+    try:
+        violations = validate_contracts(contracts_path, workflows_dir)
+    except ContractParseError as exc:
+        print(f"PARSE_ERROR: {exc}")
+        return 3
+    if violations:
+        for violation in violations:
+            print(violation)
+        return 2
+    print("Workflow contracts validation passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))
+$ rg -n "workflow inventory|table|contracts=.*actual" docs .github scripts | head -n 40
+.github/REPO_MANIFEST.md:12:- Reusable workflow files (`_reusable_*.yml`): **9**
+scripts/generate_tests_inventory.py:49:def build_inventory(repo_root: Path) -> dict[str, object]:
+scripts/generate_tests_inventory.py:66:    reusable_workflows = sorted(
+scripts/generate_tests_inventory.py:68:        for p in (repo_root / ".github" / "workflows").glob("_reusable_*.yml")
+scripts/generate_tests_inventory.py:72:        "generated_by": "python -m scripts.generate_tests_inventory",
+scripts/generate_tests_inventory.py:76:        "reusable_workflow_jobs": reusable_workflows,
+scripts/generate_tests_inventory.py:83:    inventory = build_inventory(repo_root)
+scripts/generate_tests_inventory.py:84:    out_path = repo_root / "tests_inventory.json"
+scripts/generate_tests_inventory.py:85:    out_path.write_text(json.dumps(inventory, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+scripts/validate_pr_gates.py:14:from scripts.validate_workflow_contracts import ContractParseError, parse_inventory_table  # noqa: E402
+scripts/validate_pr_gates.py:24:    workflow_name: str
+scripts/validate_pr_gates.py:48:        expected_keys = {"workflow_file", "workflow_name", "required_job_ids"}
+scripts/validate_pr_gates.py:52:                "workflow_file, workflow_name, required_job_ids."
+scripts/validate_pr_gates.py:55:        workflow_name = entry["workflow_name"]
+scripts/validate_pr_gates.py:59:        if not isinstance(workflow_name, str) or not workflow_name:
+scripts/validate_pr_gates.py:60:            raise PrGateParseError("workflow_name must be a non-empty string.")
+scripts/validate_pr_gates.py:71:                workflow_name=workflow_name,
+scripts/validate_pr_gates.py:112:    rows = parse_inventory_table(text)
+scripts/validate_pr_gates.py:133:        if entry.workflow_name != data["name"]:
+scripts/validate_pr_gates.py:136:                f"{entry.workflow_file} expected={entry.workflow_name} "
+.github/WORKFLOW_CONTRACTS.md:7:**Breakdown:** 18 primary + 11 reusable
+.github/WORKFLOW_CONTRACTS.md:55:* EXCEPTION format (only when a PR-gate lacks `pull_request`): `EXCEPTION: <workflow file> - <reason>` on the line immediately following the workflow row in the inventory table.
+.github/WORKFLOW_CONTRACTS.md:63:| R2 | Long-running workflows MUST use only the allowed trigger sets: non-reusable `{schedule, workflow_dispatch}`; reusable `{workflow_call}` or `{workflow_call, workflow_dispatch}` with `workflow_call` required. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+.github/WORKFLOW_CONTRACTS.md:64:| R3 | Workflows named `_reusable_*.yml` MUST declare `on: workflow_call` only. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+.github/WORKFLOW_CONTRACTS.md:65:| R4 | Workflows with Gate Class `PR-gate` MUST include `pull_request` unless an explicit `EXCEPTION:` line is present in the inventory table. | `python -m scripts.validate_long_running_triggers` (exit 0 OK, exit 2 violations, exit 3 parse errors). |
+.github/WORKFLOW_CONTRACTS.md:72:| `_reusable_benchmarks.yml` | `reusable-benchmarks` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:73:| `_reusable_chaos_tests.yml` | `Reusable Chaos Tests` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:74:| `_reusable_formal_science.yml` | `_reusable_formal_science` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:75:| `_reusable_gate_profile.yml` | `Reusable Gate Profile` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:76:| `_reusable_property_tests.yml` | `Reusable Property Tests` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:77:| `_reusable_pytest.yml` | `Reusable Pytest` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:78:| `_reusable_quality.yml` | `Reusable Quality Checks` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:79:| `_reusable_ssot.yml` | `Reusable SSOT Gates` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:80:| `_reusable_validation_tests.yml` | `Reusable Validation Tests` | long-running | `workflow_call` | YES |
+.github/WORKFLOW_CONTRACTS.md:104:## _reusable_pytest.yml
+.github/WORKFLOW_CONTRACTS.md:106:**Path:** `.github/workflows/_reusable_pytest.yml`
+.github/WORKFLOW_CONTRACTS.md:119:* Provide a reusable pytest job with coverage enforcement and optional Codecov uploads for caller workflows.
+.github/WORKFLOW_CONTRACTS.md:139:* `./workflows/_reusable_pytest.yml`
+.github/WORKFLOW_CONTRACTS.md:143:## _reusable_quality.yml
+.github/WORKFLOW_CONTRACTS.md:145:**Path:** `.github/workflows/_reusable_quality.yml`
+.github/WORKFLOW_CONTRACTS.md:158:* Provide reusable lint/type/quality checks (ruff, mypy, pylint) for CI callers.
+.github/WORKFLOW_CONTRACTS.md:183:* `./workflows/_reusable_quality.yml`
+.github/WORKFLOW_CONTRACTS.md:187:## _reusable_chaos_tests.yml
+.github/WORKFLOW_CONTRACTS.md:189:**Path:** `.github/workflows/_reusable_chaos_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:202:* Provide a reusable chaos test matrix job with fault-type fan-out and artifact capture.
+.github/WORKFLOW_CONTRACTS.md:223:* `./workflows/_reusable_chaos_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:227:## _reusable_property_tests.yml
+.github/WORKFLOW_CONTRACTS.md:229:**Path:** `.github/workflows/_reusable_property_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:238:* Property-based tests are executed by caller workflows, so this reusable job is not a standalone PR gate even though it enforces A2.
+.github/WORKFLOW_CONTRACTS.md:242:* Provide a reusable property-based test job with optional Hypothesis profiles and artifact capture.
+.github/WORKFLOW_CONTRACTS.md:262:* `./workflows/_reusable_property_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:266:## _reusable_ssot.yml
+.github/WORKFLOW_CONTRACTS.md:268:**Path:** `.github/workflows/_reusable_ssot.yml`
+.github/WORKFLOW_CONTRACTS.md:277:* SSOT checks are consumed by caller workflows; this reusable job supports A2 but has no independent PR-gate status.
+.github/WORKFLOW_CONTRACTS.md:281:* Provide reusable SSOT validation gates for bibliography, claims, and governance scans.
+.github/WORKFLOW_CONTRACTS.md:301:* `./workflows/_reusable_ssot.yml`
+.github/WORKFLOW_CONTRACTS.md:305:## _reusable_validation_tests.yml
+.github/WORKFLOW_CONTRACTS.md:307:**Path:** `.github/workflows/_reusable_validation_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:316:* Validation tests are driven by parent workflows; this reusable job enforces A2 but is not a PR gate on its own.
+.github/WORKFLOW_CONTRACTS.md:320:* Provide a reusable validation test job with optional artifacts and summaries.
+.github/WORKFLOW_CONTRACTS.md:340:* `./workflows/_reusable_validation_tests.yml`
+.github/WORKFLOW_CONTRACTS.md:344:## _reusable_benchmarks.yml
+.github/WORKFLOW_CONTRACTS.md:346:**Path:** `.github/workflows/_reusable_benchmarks.yml`
+.github/WORKFLOW_CONTRACTS.md:355:* Benchmark execution is orchestrated by caller workflows; this reusable job supports A4/A2 but does not create a standalone PR gate.
+.github/WORKFLOW_CONTRACTS.md:384:* `./workflows/_reusable_benchmarks.yml`
+.github/WORKFLOW_CONTRACTS.md:388:## _reusable_formal_science.yml
+.github/WORKFLOW_CONTRACTS.md:390:**Path:** `.github/workflows/_reusable_formal_science.yml`
+.github/WORKFLOW_CONTRACTS.md:403:* Provide a reusable formal/science job template that executes Coq proofs, TLA+ model checks, or flagship experiments based on explicit inputs.
+.github/WORKFLOW_CONTRACTS.md:429:* `./workflows/_reusable_formal_science.yml`
+.github/WORKFLOW_CONTRACTS.md:433:## _reusable_gate_profile.yml
+.github/WORKFLOW_CONTRACTS.md:435:**Path:** `.github/workflows/_reusable_gate_profile.yml`
+.github/WORKFLOW_CONTRACTS.md:448:* Provide a reusable gate-profile selector that outputs standardized test markers, timeouts, and coverage thresholds for PR and long-running workflows.
+.github/WORKFLOW_CONTRACTS.md:468:* `./workflows/_reusable_gate_profile.yml`
+.github/WORKFLOW_CONTRACTS.md:475:**Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
+.github/WORKFLOW_CONTRACTS.md:487:* Preserve legacy entrypoints while delegating execution to `_reusable_benchmarks.yml`.
+.github/WORKFLOW_CONTRACTS.md:504:* `benchmarks-dispatch` — Delegates workflow_dispatch inputs to `_reusable_benchmarks.yml`.
+.github/WORKFLOW_CONTRACTS.md:515:**Status:** Deprecated shim (delegates to `_reusable_benchmarks.yml`)
+.github/WORKFLOW_CONTRACTS.md:527:* Preserve the legacy elite benchmark dispatch while delegating execution to `_reusable_benchmarks.yml`.
+.github/WORKFLOW_CONTRACTS.md:540:* `benchmarks`: Not set (delegated to reusable workflow)
+.github/WORKFLOW_CONTRACTS.md:544:* `benchmarks` — Delegates elite baseline to `_reusable_benchmarks.yml`.

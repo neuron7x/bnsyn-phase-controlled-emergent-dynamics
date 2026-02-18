@@ -1,0 +1,6 @@
+$ python -m scripts.validate_pr_gates
+OK: pr_gates=5 workflows=30 validated
+$ python -m scripts.validate_required_checks
+OK: required_checks=5 contract_pr_gates=5 validated
+$ python -m scripts.validate_required_status_contexts
+OK: required_status_contexts=14 validated
