@@ -1,0 +1,2 @@
+$ python -m pytest tests/test_actions_pinning.py tests/test_entropy_gate.py tests/test_generate_inventory.py tests/test_pytest_collection_contract.py tests/test_scientific_product_gate.py -q
+............                                                             [100%]

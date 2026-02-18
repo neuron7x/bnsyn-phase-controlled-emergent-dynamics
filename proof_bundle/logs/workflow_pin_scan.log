@@ -1,0 +1,41 @@
+$ rg uses actions
+.github/workflows/scientific_product_gate.yml:12:      - uses: actions/checkout@v4
+.github/workflows/scientific_product_gate.yml:13:      - uses: actions/setup-python@v5
+.github/workflows/scientific_product_gate.yml:45:        uses: actions/upload-artifact@v4
+.github/workflows/release-pipeline.yml:30:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/release-pipeline.yml:31:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/release-pipeline.yml:49:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/physics-equivalence.yml:21:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/physics-equivalence.yml:24:        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/physics-equivalence.yml:73:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/workflow-integrity.yml:19:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/workflow-integrity.yml:116:        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/workflow-integrity.yml:193:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/docs.yml:18:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/docs.yml:23:        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/docs.yml:41:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/dependency-review.yml:27:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/quality-mutation.yml:24:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/quality-mutation.yml:27:        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/quality-mutation.yml:69:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/math-quality-gate.yml:15:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/math-quality-gate.yml:16:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/math-quality-gate.yml:46:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/ci-smoke.yml:22:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-smoke.yml:24:        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/dependency-watch.yml:16:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/dependency-watch.yml:18:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/codeql.yml:26:        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:55:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:94:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:95:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/ci-pr-atomic.yml:166:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:167:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/ci-pr-atomic.yml:190:        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+.github/workflows/ci-pr-atomic.yml:213:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:214:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/ci-pr-atomic.yml:251:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:252:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/ci-pr-atomic.yml:279:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+.github/workflows/ci-pr-atomic.yml:280:      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+.github/workflows/ci-pr-atomic.yml:364:      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5

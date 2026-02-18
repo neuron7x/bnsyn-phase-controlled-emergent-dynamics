@@ -1,0 +1,32 @@
+$ rg phase atlas
+scripts/check_benchmark_regressions.py:16:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+scripts/check_benchmark_regressions.py:261:        baseline_regime = baseline_data.get("regime_id")
+scripts/check_benchmark_regressions.py:262:        current_regime = current_data.get("regime_id")
+scripts/check_benchmark_regressions.py:263:        if baseline_regime is None or current_regime is None:
+scripts/check_benchmark_regressions.py:264:            raise SystemExit(f"Missing benchmark regime_id for {label}")
+scripts/check_benchmark_regressions.py:265:        if baseline_regime != current_regime or baseline_regime != BENCHMARK_REGIME_ID:
+scripts/check_benchmark_regressions.py:267:                f"Benchmark regime mismatch for {label}: "
+scripts/check_benchmark_regressions.py:268:                f"baseline={baseline_regime}, current={current_regime}, "
+scripts/README.md:24:| `generate_benchmark_baseline.py` | Generate benchmark baselines for the active regime. | `--dt | --kernel-steps | --neurons | --output-dir | --physics-steps | --raw-dir | --runs | --seed | --warmup` | See page | See page | Writes artifacts only | `python -m scripts.generate_benchmark_baseline --help` |
+scripts/run_benchmarks.py:13:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+scripts/run_benchmarks.py:146:        entry["regime_id"] = BENCHMARK_REGIME_ID
+scripts/profile_kernels.py:47:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+scripts/profile_kernels.py:248:        "regime_id": BENCHMARK_REGIME_ID,
+scripts/profile_kernels.py:290:        "regime_id": runs[0]["regime_id"],
+scripts/generate_benchmark_baseline.py:2:"""Generate benchmark baselines for the active regime."""
+scripts/generate_benchmark_baseline.py:15:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+scripts/generate_benchmark_baseline.py:59:        "regime_id": BENCHMARK_REGIME_ID,
+scripts/generate_benchmark_baseline.py:115:        "regime_id": BENCHMARK_REGIME_ID,
+scripts/generate_benchmark_baseline.py:215:    print(f"✅ Baselines written for regime {BENCHMARK_REGIME_ID}")
+scripts/benchmark_physics.py:49:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+scripts/benchmark_physics.py:211:        "regime_id": BENCHMARK_REGIME_ID,
+tests/validation/test_integration_validation.py:68:def test_temperature_gate_switches_regimes() -> None:
+src/bnsyn/benchmarks/__init__.py:1:"""Benchmark helpers for regime/version tracking."""
+src/bnsyn/benchmarks/__init__.py:5:from .regime import BENCHMARK_REGIME_ID
+src/bnsyn/benchmarks/regime.py:1:"""Benchmark regime identifiers and invariants."""
+tests/properties/test_adex_properties.py:141:    parameter regimes; invariants are finiteness and consistent spike labeling.
+tests/test_benchmark_regression_gate.py:6:from bnsyn.benchmarks.regime import BENCHMARK_REGIME_ID
+tests/test_benchmark_regression_gate.py:17:        "regime_id": BENCHMARK_REGIME_ID,
+tests/test_benchmark_regression_gate.py:27:        "regime_id": BENCHMARK_REGIME_ID,
+tests/test_benchmark_regression_gate.py:37:        "regime_id": BENCHMARK_REGIME_ID,
+tests/test_benchmark_regression_gate.py:50:        "regime_id": BENCHMARK_REGIME_ID,

@@ -1,35 +1,37 @@
- M README.md
- M docs/ARCHITECTURE.md
- M docs/INDEX.md
- M docs/PROJECT_SURFACES.md
- M proof_bundle/logs/session.log
-?? docs/assets/
-?? proof_bundle/logs/check_internal_links.log
-?? proof_bundle/logs/check_internal_links_script.log
-?? proof_bundle/logs/discover_public_surfaces_check.log
-?? proof_bundle/logs/file_inventory.log
-?? proof_bundle/logs/git_remote.log
-?? proof_bundle/logs/git_status.log
-?? proof_bundle/logs/github_refs.log
-?? proof_bundle/logs/makefile.log
-?? proof_bundle/logs/repo_url_probe.log
-?? proof_bundle/logs/target_docs_before.log
-?? proof_bundle/logs/validate_traceability.log
- M README.md
- M docs/ARCHITECTURE.md
- M docs/INDEX.md
- M proof_bundle/logs/session.log
-?? docs/assets/
-?? proof_bundle/logs/check_internal_links.log
-?? proof_bundle/logs/check_internal_links_script.log
-?? proof_bundle/logs/discover_public_surfaces_check.log
-?? proof_bundle/logs/discover_script.log
-?? proof_bundle/logs/doc_diff.log
-?? proof_bundle/logs/file_inventory.log
-?? proof_bundle/logs/git_remote.log
-?? proof_bundle/logs/git_status.log
-?? proof_bundle/logs/github_refs.log
-?? proof_bundle/logs/makefile.log
-?? proof_bundle/logs/repo_url_probe.log
-?? proof_bundle/logs/target_docs_before.log
-?? proof_bundle/logs/validate_traceability.log
+$ git status --short
+ M AGENTS.md
+ M INVENTORY.json
+ M artifacts/context_compressor/LLM_CONTEXT.md
+ M artifacts/context_compressor/RIC_REPORT.md
+ M artifacts/context_compressor/RIC_TRUTH_MAP.json
+ M artifacts/context_compressor/quality.json
+ M proof_bundle/logs/git_status.log
+ M proof_bundle/logs/pip_install_build.log
+ M proof_bundle/logs/python_build.log
+ M tests_inventory.json
+?? .github/workflows/scientific_product_gate.yml
+?? proof_bundle/logs/artifacts_find.log
+?? proof_bundle/logs/context_existing.log
+?? proof_bundle/logs/generate_inventory.log
+?? proof_bundle/logs/inventory_files.log
+?? proof_bundle/logs/mypy_strict.log
+?? proof_bundle/logs/phase_atlas.log
+?? proof_bundle/logs/phase_atlas_generate.log
+?? proof_bundle/logs/pip_install_hypothesis.log
+?? proof_bundle/logs/pip_install_psutil.log
+?? proof_bundle/logs/pytest_not_validation_or_property.log
+?? proof_bundle/logs/pytest_scientific_product.log
+?? proof_bundle/logs/pytest_targeted_scientific_gate.log
+?? proof_bundle/logs/read_criticality.log
+?? proof_bundle/logs/read_llm_context.log
+?? proof_bundle/logs/read_makefile_testing.log
+?? proof_bundle/logs/read_sim_network.log
+?? proof_bundle/logs/read_simulation.log
+?? proof_bundle/logs/read_truth_map.log
+?? proof_bundle/logs/rg_phase.log
+?? proof_bundle/logs/ruff_check_all.log
+?? proof_bundle/logs/ruff_new_files.log
+?? proof_bundle/logs/workflow_pin_scan.log
+?? schemas/phase_atlas.schema.json
+?? scripts/phase_atlas.py
+?? tests/test_scientific_product_gate.py

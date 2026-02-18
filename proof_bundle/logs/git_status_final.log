@@ -13,7 +13,7 @@ A  proof_bundle/logs/artifacts_find.log
 A  proof_bundle/logs/context_existing.log
 A  proof_bundle/logs/generate_inventory.log
 M  proof_bundle/logs/git_status.log
- M proof_bundle/logs/git_status_staged.log
+M  proof_bundle/logs/git_status_staged.log
 A  proof_bundle/logs/inventory_files.log
 A  proof_bundle/logs/mypy_strict.log
 A  proof_bundle/logs/phase_atlas.log
@@ -39,3 +39,4 @@ A  schemas/phase_atlas.schema.json
 A  scripts/phase_atlas.py
 A  tests/test_scientific_product_gate.py
 M  tests_inventory.json
+?? proof_bundle/logs/git_status_final.log
