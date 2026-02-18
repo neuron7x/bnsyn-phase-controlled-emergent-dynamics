@@ -6,20 +6,18 @@ from __future__ import annotations
 
 import argparse
 import math
-import os
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
 import numpy as np
-import psutil
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
-from benchmarks.performance_utils import build_payload, emit_json
+from benchmarks.performance_utils import build_payload, emit_json, process_memory_rss
 from bnsyn.config import PlasticityParams
 from bnsyn.plasticity.three_factor import (
     EligibilityTraces,
@@ -73,8 +71,7 @@ def _run_case(
     params = PlasticityParams()
     neuromod = NeuromodulatorTrace(n=0.5)
 
-    process = psutil.Process(os.getpid())
-    max_rss = process.memory_info().rss
+    max_rss = process_memory_rss()
     start_time = time.perf_counter()
     for idx in range(steps):
         if plasticity_on:
@@ -88,9 +85,9 @@ def _run_case(
                 params,
             )
         if idx % sample_interval == 0:
-            max_rss = max(max_rss, process.memory_info().rss)
+            max_rss = max(max_rss, process_memory_rss())
     runtime = time.perf_counter() - start_time
-    max_rss = max(max_rss, process.memory_info().rss)
+    max_rss = max(max_rss, process_memory_rss())
 
     synaptic_events = float(synapses * steps) if plasticity_on else 0.0
     events_per_sec = synaptic_events / runtime if runtime > 0 else 0.0

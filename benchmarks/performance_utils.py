@@ -2,20 +2,31 @@
 
 from __future__ import annotations
 
+import importlib
+import importlib.util
 import json
 import math
 import os
 import platform
 import time
 from dataclasses import dataclass
+from types import ModuleType
 from typing import Any
-
-import psutil
 
 from benchmarks.common import git_sha, utc_timestamp
 from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import Network, NetworkParams
+
+_PSUTIL_CACHE: ModuleType | None | bool = False
+
+
+def _psutil_module() -> ModuleType | None:
+    global _PSUTIL_CACHE
+    if _PSUTIL_CACHE is False:
+        spec = importlib.util.find_spec("psutil")
+        _PSUTIL_CACHE = importlib.import_module("psutil") if spec else None
+    return _PSUTIL_CACHE if isinstance(_PSUTIL_CACHE, ModuleType) else None
 
 
 @dataclass(frozen=True)
@@ -53,10 +64,21 @@ def _cpu_name() -> str:
 
 
 def hardware_info() -> dict[str, Any]:
+    total_ram = 0.0
+    psutil_module = _psutil_module()
+    if psutil_module is not None:
+        total_ram = float(psutil_module.virtual_memory().total) / (1024**3)
     return {
         "cpu": _cpu_name(),
-        "ram_gb": _safe_float(psutil.virtual_memory().total / (1024**3)),
+        "ram_gb": _safe_float(total_ram),
     }
+
+
+def process_memory_rss() -> int:
+    psutil_module = _psutil_module()
+    if psutil_module is None:
+        return 0
+    return int(psutil_module.Process(os.getpid()).memory_info().rss)
 
 
 def run_network_benchmark(
@@ -82,8 +104,7 @@ def run_network_benchmark(
     )
     synapses = int(net.W_exc.metrics.nnz + net.W_inh.metrics.nnz)
 
-    process = psutil.Process(os.getpid())
-    max_rss = process.memory_info().rss
+    max_rss = process_memory_rss()
     spike_count = 0.0
 
     start_time = time.perf_counter()
@@ -91,9 +112,9 @@ def run_network_benchmark(
         metrics = net.step()
         spike_count += float(metrics["A_t1"])
         if idx % sample_interval == 0:
-            max_rss = max(max_rss, process.memory_info().rss)
+            max_rss = max(max_rss, process_memory_rss())
     runtime = time.perf_counter() - start_time
-    max_rss = max(max_rss, process.memory_info().rss)
+    max_rss = max(max_rss, process_memory_rss())
 
     synaptic_updates = float(synapses * steps)
     spikes_per_sec = spike_count / runtime if runtime > 0 else 0.0
