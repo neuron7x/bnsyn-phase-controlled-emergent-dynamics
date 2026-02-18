@@ -10,7 +10,7 @@
     "src": 74,
     "tests": 176,
     "docs": 281,
-    ".github": 43
+    ".github": 44
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -37,6 +37,7 @@
     "docs.yml",
     "formal-coq.yml",
     "formal-tla.yml",
+    "launch-gate.yml",
     "math-quality-gate.yml",
     "perfection-gate.yml",
     "physics-equivalence.yml",

@@ -26,3 +26,7 @@ python -m tools.entropy_gate --mode current
 python -m tools.entropy_gate --mode current
 python -m tools.entropy_gate --mode baseline
 python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current
+python -m tools.entropy_gate --mode baseline
+python -m tools.entropy_gate --mode current

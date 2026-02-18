@@ -1,0 +1,6 @@
+{
+  "determinism": "PASS",
+  "invariants": "PASS",
+  "phase_atlas_regression": "PASS",
+  "verdict": "PASS"
+}
