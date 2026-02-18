@@ -1,0 +1,3 @@
+cmd: python - <<"PY" summarize gate logs
+artifacts/de_tf/logs/security_deps.json 1
+artifacts/de_tf/logs/workflow_lint.json 2

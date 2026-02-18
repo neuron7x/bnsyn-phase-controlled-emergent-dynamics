@@ -1,0 +1,3 @@
+cmd: rg --files .github scripts tests | rg "ci_policy|ci_inventory|ci_gate_runner|required_checks|actions_pinned|ci_pr_gate_completeness|pr_gate.yml"
+tests/test_validate_required_checks.py
+scripts/validate_required_checks.py

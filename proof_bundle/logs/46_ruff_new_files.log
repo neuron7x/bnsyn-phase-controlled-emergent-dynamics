@@ -1,0 +1,2 @@
+cmd: ruff check scripts/ci_policy.py scripts/ci_inventory.py scripts/ci_gate_runner.py tests/test_ci_policy_contract.py tests/test_required_checks_manifest.py tests/test_actions_pinned.py tests/test_ci_pr_gate_completeness.py
+All checks passed!

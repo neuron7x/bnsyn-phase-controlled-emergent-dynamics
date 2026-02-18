@@ -1,0 +1,2 @@
+cmd: python -m scripts.ci_gate_runner
+{"verdict": "PASS", "contradictions": 0}

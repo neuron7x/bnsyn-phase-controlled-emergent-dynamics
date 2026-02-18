@@ -1,0 +1,3 @@
+cmd: git status --short
+?? proof_bundle/logs/00_inventory.log
+?? proof_bundle/logs/01_git_status.log

@@ -1,0 +1,1 @@
+cmd: cat > tests/test_actions_pinned.py

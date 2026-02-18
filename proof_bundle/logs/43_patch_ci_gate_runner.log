@@ -1,0 +1,1 @@
+cmd: python - <<"PY" patch ci_gate_runner gate commands

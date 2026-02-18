@@ -1,0 +1,133 @@
+cmd: python -m pytest -m "not (validation or property)" -q
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+.....................................................................F.. [ 30%]
+...........................................FF.........ss....ss.......... [ 40%]
+.................................................ss..................... [ 50%]
+........................................................................ [ 60%]
+......................................s................................. [ 70%]
+........................................................................ [ 80%]
+........................................................................ [ 90%]
+........................................................................ [100%]
+=================================== FAILURES ===================================
+_______________________ test_entropy_gate_no_regressions _______________________
+
+    def test_entropy_gate_no_regressions() -> None:
+        repo_root = _repo_root()
+        policy = _load_json(repo_root / "entropy" / "policy.json")
+        baseline = _load_json(repo_root / "entropy" / "baseline.json")
+    
+        current = compute_metrics(repo_root)
+    
+        comparators: dict[str, str] = policy.get("comparators", {})
+        assert comparators, "NEEDS_EVIDENCE: policy.json comparators missing/empty"
+    
+        baseline_flat = flatten(baseline)
+        current_flat = flatten(current)
+    
+        failures: list[str] = []
+        for key, comparator in sorted(comparators.items()):
+            if key not in baseline_flat:
+                failures.append(f"{key}: NEEDS_EVIDENCE baseline missing key")
+                continue
+            if key not in current_flat:
+                failures.append(f"{key}: NEEDS_EVIDENCE current missing key")
+                continue
+    
+            baseline_value = baseline_flat[key]
+            current_value = current_flat[key]
+    
+            if comparator == "lte":
+                if not (current_value <= baseline_value):
+                    failures.append(
+                        f"{key}: regression (current={current_value} > baseline={baseline_value})"
+                    )
+            elif comparator == "gte":
+                if not (current_value >= baseline_value):
+                    failures.append(
+                        f"{key}: regression (current={current_value} < baseline={baseline_value})"
+                    )
+            elif comparator == "eq":
+                if not (current_value == baseline_value):
+                    failures.append(
+                        f"{key}: changed (current={current_value} != baseline={baseline_value})"
+                    )
+            else:
+                failures.append(f"{key}: NEEDS_EVIDENCE unknown comparator '{comparator}'")
+    
+>       assert not failures, "ENTROPY_GATE_BLOCKED:\n" + "\n".join(failures)
+E       AssertionError: ENTROPY_GATE_BLOCKED:
+E         process.gh_workflows_missing_job_timeout_count: regression (current=34 > baseline=33)
+E       assert not ['process.gh_workflows_missing_job_timeout_count: regression (current=34 > baseline=33)']
+
+tests/test_entropy_gate.py:62: AssertionError
+_________________ test_inventory_json_matches_repository_state _________________
+
+    def test_inventory_json_matches_repository_state() -> None:
+        root = Path(__file__).resolve().parents[1]
+        paths = ["src", "tests", "docs", ".github"]
+    
+        counts = {path: len(_tracked_files_under(path)) for path in paths}
+        workflows = sorted(path.name for path in (root / ".github" / "workflows").glob("*.yml"))
+        detected_tools = [
+            name
+            for name in ["pyproject.toml", "requirements-lock.txt", "docker-compose.yml", "Makefile"]
+            if (root / name).exists()
+        ]
+    
+        expected = {
+            "_generated_by": "python tools/generate_inventory.py",
+            "paths": paths,
+            "counts": counts,
+            "workflows": workflows,
+            "detected_tools": detected_tools,
+        }
+    
+        inventory = json.loads((root / "INVENTORY.json").read_text(encoding="utf-8"))
+>       assert inventory == expected
+E       AssertionError: assert {'_generated_...github'], ...} == {'_generated_...github'], ...}
+E         
+E         Omitting 4 identical items, use -vv to show
+E         Differing items:
+E         {'workflows': ['_reusable_benchmarks.yml', '_reusable_chaos_tests.yml', '_reusable_formal_science.yml', '_reusable_gate_profile.yml', '_reusable_property_tests.yml', '_reusable_pytest.yml', ...]} != {'workflows': ['_reusable_benchmarks.yml', '_reusable_chaos_tests.yml', '_reusable_formal_science.yml', '_reusable_gate_profile.yml', '_reusable_property_tests.yml', '_reusable_pytest.yml', ...]}
+E         Use -v to get more diff
+
+tests/test_generate_inventory.py:36: AssertionError
+___________________ test_build_inventory_render_matches_file ___________________
+
+    def test_build_inventory_render_matches_file() -> None:
+        root = Path(__file__).resolve().parents[1]
+        rendered = render_inventory(build_inventory(root))
+>       assert (root / "INVENTORY.json").read_text(encoding="utf-8") == rendered
+E       assert '{\n  "_gener...le"\n  ]\n}\n' == '{\n  "_gener...le"\n  ]\n}\n'
+E         
+E         Skipping 1009 identical leading characters in diff, use -v to show
+E           ml",
+E         -     "pr_gate.yml",
+E               "quality-mutation.yml",
+E               "release-pipeline.yml",
+E               "science.yml",...
+E         
+E         ...Full output truncated (11 lines hidden), use '-vv' to show
+
+tests/test_generate_inventory.py:42: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_entropy_gate.py::test_entropy_gate_no_regressions - Asserti...
+FAILED tests/test_generate_inventory.py::test_inventory_json_matches_repository_state
+FAILED tests/test_generate_inventory.py::test_build_inventory_render_matches_file

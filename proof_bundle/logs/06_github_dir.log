@@ -1,0 +1,15 @@
+cmd: ls .github
+BRANCH_PROTECTION_GOVERNANCE.md
+CI_SLO.md
+CODEOWNERS
+PR_GATES.yml
+QUALITY_LEDGER.md
+REPO_MANIFEST.md
+REQUIRED_CHECKS.yml
+REQUIRED_STATUS_CONTEXTS.yml
+WORKFLOW_CONTRACTS.md
+actions
+dependabot.yml
+pull_request_template.md
+workflows
+cmd: ls .github | rg required

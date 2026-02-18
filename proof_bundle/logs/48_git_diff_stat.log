@@ -1,0 +1,5 @@
+cmd: git diff --stat
+ INVENTORY.json       |  1 +
+ pyproject.toml       |  9 +++++++++
+ tests_inventory.json | 34 +++++++++++++++++++++++++++++++---
+ 3 files changed, 41 insertions(+), 3 deletions(-)
