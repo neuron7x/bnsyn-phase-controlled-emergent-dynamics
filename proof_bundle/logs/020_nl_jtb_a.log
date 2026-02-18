@@ -1,0 +1,9 @@
+     1	{
+     2	  "id": "JTB-A",
+     3	  "status": "PASS",
+     4	  "phase": "2",
+     5	  "gate": "A",
+     6	  "owner": "primary_persona",
+     7	  "created_at": "2026-02-18T14:08:15Z",
+     8	  "notes": "Validated during gate loop and marked PASS."
+     9	}

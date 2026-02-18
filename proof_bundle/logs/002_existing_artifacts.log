@@ -1,0 +1,5 @@
+artifacts/product/inventory.json
+artifacts/product/scorecard.json
+artifacts/product/PRD.md
+artifacts/merge_ready/inventory.json
+artifacts/merge_ready/reports/gate_scorecard.json

@@ -1,0 +1,125 @@
+     1	{
+     2	  "generated_at": "2026-02-18T14:08:15Z",
+     3	  "phase_0": "PASS",
+     4	  "ric_1": "PASS",
+     5	  "phase_1": "PASS",
+     6	  "ric_2": "PASS",
+     7	  "gates": [
+     8	    {
+     9	      "gate": "A",
+    10	      "process_steps": "executed",
+    11	      "pass_criteria": "met",
+    12	      "evidence": [
+    13	        "manifests/prs/prs_A.json",
+    14	        "manifests/jtb/jtb_A.json"
+    15	      ],
+    16	      "status": "PASS",
+    17	      "blocker_protocol_invoked": false,
+    18	      "ric3_checkpoint": false
+    19	    },
+    20	    {
+    21	      "gate": "B",
+    22	      "process_steps": "executed",
+    23	      "pass_criteria": "met",
+    24	      "evidence": [
+    25	        "manifests/prs/prs_B.json",
+    26	        "manifests/jtb/jtb_B.json"
+    27	      ],
+    28	      "status": "PASS",
+    29	      "blocker_protocol_invoked": false,
+    30	      "ric3_checkpoint": true
+    31	    },
+    32	    {
+    33	      "gate": "C",
+    34	      "process_steps": "executed",
+    35	      "pass_criteria": "met",
+    36	      "evidence": [
+    37	        "manifests/prs/prs_C.json",
+    38	        "manifests/jtb/jtb_C.json"
+    39	      ],
+    40	      "status": "PASS",
+    41	      "blocker_protocol_invoked": false,
+    42	      "ric3_checkpoint": false
+    43	    },
+    44	    {
+    45	      "gate": "D",
+    46	      "process_steps": "executed",
+    47	      "pass_criteria": "met",
+    48	      "evidence": [
+    49	        "manifests/prs/prs_D.json",
+    50	        "manifests/jtb/jtb_D.json"
+    51	      ],
+    52	      "status": "PASS",
+    53	      "blocker_protocol_invoked": false,
+    54	      "ric3_checkpoint": true
+    55	    },
+    56	    {
+    57	      "gate": "E",
+    58	      "process_steps": "executed",
+    59	      "pass_criteria": "met",
+    60	      "evidence": [
+    61	        "manifests/prs/prs_E.json",
+    62	        "manifests/jtb/jtb_E.json"
+    63	      ],
+    64	      "status": "PASS",
+    65	      "blocker_protocol_invoked": false,
+    66	      "ric3_checkpoint": false
+    67	    },
+    68	    {
+    69	      "gate": "F",
+    70	      "process_steps": "executed",
+    71	      "pass_criteria": "met",
+    72	      "evidence": [
+    73	        "manifests/prs/prs_F.json",
+    74	        "manifests/jtb/jtb_F.json"
+    75	      ],
+    76	      "status": "PASS",
+    77	      "blocker_protocol_invoked": false,
+    78	      "ric3_checkpoint": true
+    79	    },
+    80	    {
+    81	      "gate": "G",
+    82	      "process_steps": "executed",
+    83	      "pass_criteria": "met",
+    84	      "evidence": [
+    85	        "manifests/prs/prs_G.json",
+    86	        "manifests/jtb/jtb_G.json"
+    87	      ],
+    88	      "status": "PASS",
+    89	      "blocker_protocol_invoked": false,
+    90	      "ric3_checkpoint": false
+    91	    },
+    92	    {
+    93	      "gate": "H",
+    94	      "process_steps": "executed",
+    95	      "pass_criteria": "met",
+    96	      "evidence": [
+    97	        "manifests/prs/prs_H.json",
+    98	        "manifests/jtb/jtb_H.json"
+    99	      ],
+   100	      "status": "PASS",
+   101	      "blocker_protocol_invoked": false,
+   102	      "ric3_checkpoint": true
+   103	    },
+   104	    {
+   105	      "gate": "I",
+   106	      "process_steps": "executed",
+   107	      "pass_criteria": "met",
+   108	      "evidence": [
+   109	        "manifests/prs/prs_I.json",
+   110	        "manifests/jtb/jtb_I.json"
+   111	      ],
+   112	      "status": "PASS",
+   113	      "blocker_protocol_invoked": false,
+   114	      "ric3_checkpoint": false
+   115	    }
+   116	  ],
+   117	  "ric_3": "PASS",
+   118	  "phase_3_launch_readiness": {
+   119	    "chk_launch_done": "PASS",
+   120	    "rollback_tested": "PASS",
+   121	    "production_metrics_collecting": "PASS_WITH_ASSUMPTION"
+   122	  },
+   123	  "ric_final": "PASS",
+   124	  "overall": "PASS"
+   125	}
