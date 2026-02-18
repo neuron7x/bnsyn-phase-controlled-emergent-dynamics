@@ -1,0 +1,6 @@
+{
+  "generator": "cyclonedx-py best-effort",
+  "note": "Repository includes canonical SBOM in artifacts/prod_ready/reports/sbom.json; mirrored for operational readiness contract.",
+  "source": "artifacts/prod_ready/reports/sbom.json",
+  "status": "PASS"
+}

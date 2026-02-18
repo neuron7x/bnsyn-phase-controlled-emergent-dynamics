@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "sigma_finite": true,
+    "spike_rate_non_negative": true
+  },
+  "cmd": "bnsyn smoke",
+  "hashes": {
+    "metrics_sha256": "2bc8a5e9cb82415a4cbf57acda2b4b1dc67fc8687ea13bae06326ebb6ac9cf3f"
+  },
+  "metrics": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  },
+  "platform": "Linux-6.12.47-x86_64-with-glibc2.39",
+  "python": "3.12.12",
+  "schema_version": "1.0.0",
+  "seed": 20260218,
+  "status": "PASS",
+  "timestamp": "1970-01-01T00:00:00Z"
+}

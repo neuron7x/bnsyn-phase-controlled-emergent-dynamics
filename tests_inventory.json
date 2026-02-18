@@ -3,10 +3,10 @@
     "determinism": 1,
     "math_physics": 2,
     "mutation": 5,
-    "pytest": 121,
+    "pytest": 123,
     "workflow_integrity": 2
   },
-  "flaky_indicator_count": 79,
+  "flaky_indicator_count": 80,
   "generated_by": "python -m scripts.generate_tests_inventory",
   "reusable_workflow_jobs": [
     "_reusable_benchmarks.yml",
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 131,
+  "test_count": 133,
   "tests": [
     {
       "category": "pytest",
@@ -52,6 +52,11 @@
         "filesystem_io"
       ],
       "path": "tests/test_api_maturity.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [],
+      "path": "tests/test_api_surface.py"
     },
     {
       "category": "pytest",
@@ -151,6 +156,13 @@
         "subprocess_dependency"
       ],
       "path": "tests/test_cli_smoke.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_cli_smoke_command.py"
     },
     {
       "category": "pytest",

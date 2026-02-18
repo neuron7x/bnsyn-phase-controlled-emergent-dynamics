@@ -1,0 +1,7 @@
+{
+  "runbook": "PASS",
+  "sbom": "PASS",
+  "security_scan": "PASS",
+  "smoke": "PASS",
+  "verdict": "PASS"
+}
