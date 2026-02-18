@@ -1,0 +1,18 @@
+[work edbe6f3] Regenerate INVENTORY and restore test-gate consistency
+ 17 files changed, 991 insertions(+), 1 deletion(-)
+ create mode 100644 proof_bundle/logs/050_validate_trifix_invariants_before_fix.log
+ create mode 100644 proof_bundle/logs/051_generate_inventory.log
+ create mode 100644 proof_bundle/logs/052_generate_inventory_check.log
+ create mode 100644 proof_bundle/logs/053_pytest_after_inventory_fix.log
+ create mode 100644 proof_bundle/logs/054_ruff_after_inventory_fix.log
+ create mode 100644 proof_bundle/logs/055_pylint_after_inventory_fix.log
+ create mode 100644 proof_bundle/logs/056_mypy_after_inventory_fix.log
+ create mode 100644 proof_bundle/logs/057_build_after_inventory_fix.log
+ create mode 100644 proof_bundle/logs/058_install_dev_tools_again.log
+ create mode 100644 proof_bundle/logs/059_ruff_final.log
+ create mode 100644 proof_bundle/logs/060_pylint_final.log
+ create mode 100644 proof_bundle/logs/061_mypy_final.log
+ create mode 100644 proof_bundle/logs/062_build_final.log
+ create mode 100644 proof_bundle/logs/063_validate_trifix_invariants_after_fix.log
+ create mode 100644 proof_bundle/logs/064_git_status_pre_commit.log
+ create mode 100644 proof_bundle/logs/065_nl_inventory_updated.log
