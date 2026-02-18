@@ -7,10 +7,10 @@
     ".github"
   ],
   "counts": {
-    "src": 73,
-    "tests": 173,
+    "src": 74,
+    "tests": 175,
     "docs": 281,
-    ".github": 42
+    ".github": 43
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -31,6 +31,7 @@
     "ci-validation.yml",
     "codecov-health.yml",
     "codeql.yml",
+    "context_compressor_gate.yml",
     "dependency-review.yml",
     "dependency-watch.yml",
     "docs.yml",

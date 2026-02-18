@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 30
-**Breakdown:** 19 primary + 11 reusable
+**Total workflows:** 31
+**Breakdown:** 20 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -88,6 +88,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |
 | `codecov-health.yml` | `codecov-health-check` | long-running | `schedule, workflow_dispatch` | NO |
 | `codeql.yml` | `CodeQL` | long-running | `schedule, workflow_dispatch` | NO |
+| `context_compressor_gate.yml` | `context-compressor-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-review.yml` | `dependency-review` | PR-gate | `pull_request` | NO |
 | `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |

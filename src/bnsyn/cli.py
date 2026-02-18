@@ -440,6 +440,36 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_smoke(args: argparse.Namespace) -> int:
+    """Run minimal end-to-end smoke and emit readiness report."""
+    import hashlib
+    import platform
+
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    metrics = run_simulation(steps=40, dt_ms=0.1, seed=args.seed, N=32)
+    canonical_metrics = json.dumps(metrics, sort_keys=True, separators=(",", ":"))
+    report: dict[str, Any] = {
+        "schema_version": "1.0.0",
+        "cmd": "bnsyn smoke",
+        "seed": int(args.seed),
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "timestamp": "1970-01-01T00:00:00Z",
+        "status": "PASS",
+        "checks": {
+            "sigma_finite": bool(abs(float(metrics["sigma_mean"])) < 10.0),
+            "spike_rate_non_negative": bool(float(metrics["rate_mean_hz"]) >= 0.0),
+        },
+        "hashes": {"metrics_sha256": hashlib.sha256(canonical_metrics.encode("utf-8")).hexdigest()},
+        "metrics": metrics,
+    }
+    report["status"] = "PASS" if all(report["checks"].values()) else "FAIL"
+    out_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps({"smoke_report": out_path.as_posix(), "status": report["status"]}, sort_keys=True))
+    return 0 if report["status"] == "PASS" else 1
+
+
 def main() -> None:
     """Entry point for the BN-Syn CLI.
 
@@ -524,6 +554,17 @@ def main() -> None:
         help="Output directory for results",
     )
     sleep.set_defaults(func=_cmd_sleep_stack)
+
+
+    smoke = sub.add_parser("smoke", help="Run deterministic operational readiness smoke test")
+    smoke.add_argument("--seed", type=int, default=20260218)
+    smoke.add_argument(
+        "--out",
+        type=str,
+        default="artifacts/operational_readiness/SMOKE_REPORT.json",
+        help="Output path for smoke report",
+    )
+    smoke.set_defaults(func=_cmd_smoke)
 
     args = p.parse_args()
     try:

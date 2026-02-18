@@ -98,7 +98,7 @@ def _source_hash() -> str:
 
 def build_phase_atlas(seed: int) -> dict[str, Any]:
     records = [_build_record(i + 1, point) for i, point in enumerate(SMALL_GRID)]
-    payload = {
+    payload: dict[str, Any] = {
         "atlas_version": ATLAS_VERSION,
         "schema_version": SCHEMA_VERSION,
         "seed": seed,
@@ -115,7 +115,9 @@ def build_phase_atlas(seed: int) -> dict[str, Any]:
         "records": records,
     }
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    payload["meta"]["payload_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    meta = payload.get("meta")
+    if isinstance(meta, dict):
+        meta["payload_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     return payload
 
 
