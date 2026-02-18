@@ -1,0 +1,16 @@
+$ rg -n "optional-dependencies|pylint|ruff|mypy" pyproject.toml
+19:[project.optional-dependencies]
+24:  "ruff==0.15.0",
+25:  "mypy==1.19.1",
+26:  "pylint==3.3.5",
+115:[tool.ruff]
+119:[tool.mypy]
+132:plugins = ["pydantic.mypy"]
+135:[[tool.mypy.overrides]]
+139:[tool.pylint.main]
+144:[tool.pylint.messages_control]
+153:[tool.pylint.basic]
+156:[tool.pylint.design]
+159:[[tool.mypy.overrides]]
+163:[[tool.mypy.overrides]]
+167:[[tool.mypy.overrides]]

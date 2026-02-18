@@ -1,0 +1,4 @@
+$ python -V
+Python 3.12.12
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)

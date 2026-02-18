@@ -1,0 +1,43 @@
+{
+  "timestamp_utc": "20260218T103943Z",
+  "execution_truth": [
+    "Makefile:setup",
+    "Makefile:test-gate",
+    "Makefile:lint",
+    "Makefile:mypy",
+    "Makefile:build"
+  ],
+  "toolchain_truth": [
+    "pyproject.toml [project.optional-dependencies]",
+    "pyproject.toml [tool.ruff]",
+    "pyproject.toml [tool.mypy]",
+    "pyproject.toml [tool.pylint.main]"
+  ],
+  "policy_truth": [
+    "docs/GOVERNANCE.md",
+    "docs/SSOT_RULES.md",
+    "README.md"
+  ],
+  "enforcement_truth": [
+    ".github/workflows/ci-pr.yml",
+    ".github/workflows/ci-pr-atomic.yml",
+    ".github/workflows/ci-validation.yml"
+  ],
+  "detected_contradictions": [
+    {
+      "id": "RIC-20260218-SETUP-LINT-001",
+      "severity": "P1",
+      "description": "Default make setup installed only test extras while lint/build gates require pylint and build module.",
+      "evidence": [
+        "proof_bundle/logs/dse_pylint.log",
+        "proof_bundle/logs/dse_build.log"
+      ],
+      "resolution": "Patched Makefile SETUP_CMD to install .[dev,test] and added build==1.3.0 in dev dependencies.",
+      "post_resolution_evidence": [
+        "proof_bundle/logs/dse_make_setup_after_build_dep.log",
+        "proof_bundle/logs/dse_pylint_after_patch.log",
+        "proof_bundle/logs/dse_build_after_patch.log"
+      ]
+    }
+  ]
+}
