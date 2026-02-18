@@ -1,0 +1,11 @@
+$ list generated artifacts
+artifacts/context_compressor/CONTRACTS.md
+artifacts/context_compressor/DELTAS/current_kg.sha256
+artifacts/context_compressor/DELTAS/previous_kg.sha256
+artifacts/context_compressor/DELTAS/summary.md
+artifacts/context_compressor/KG.json
+artifacts/context_compressor/LLM_CONTEXT.md
+artifacts/context_compressor/RIC_REPORT.md
+artifacts/context_compressor/RIC_TRUTH_MAP.json
+artifacts/context_compressor/SSOT.md
+artifacts/context_compressor/quality.json

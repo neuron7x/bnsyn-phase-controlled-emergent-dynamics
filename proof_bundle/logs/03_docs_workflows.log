@@ -1,0 +1,1038 @@
+$ key docs/gates
+     1	# Documentation Index
+     2	
+     3	This file is the single navigation hub for project documentation (see path/docs/INDEX.md).
+     4	
+     5	## Trust loop
+     6	
+     7	1. [README.md](../README.md) (see path/README.md)
+     8	2. [ARCHITECTURE.md](ARCHITECTURE.md) (see path/docs/ARCHITECTURE.md)
+     9	3. [README.md](../README.md) (see path/README.md)
+    10	
+    11	## Core docs
+    12	
+    13	- [ARCHITECTURE.md](ARCHITECTURE.md) (see path/docs/ARCHITECTURE.md)
+    14	- [STATUS.md](STATUS.md) (see path/docs/STATUS.md)
+    15	- [DOC_DEBT.md](DOC_DEBT.md) (see path/docs/DOC_DEBT.md)
+    16	- [PROJECT_SURFACES.md](PROJECT_SURFACES.md) (see path/docs/PROJECT_SURFACES.md)
+    17	- [SSOT.md](SSOT.md) (see path/docs/SSOT.md)
+    18	- [TRACEABILITY.md](TRACEABILITY.md) (see path/docs/TRACEABILITY.md)
+    19	
+    20	## Testing and CI
+    21	
+    22	- [TESTING.md](TESTING.md) (see path/docs/TESTING.md)
+    23	- [CI_GATES.md](CI_GATES.md) (see path/docs/CI_GATES.md)
+    24	- [RELEASE_PIPELINE.md](RELEASE_PIPELINE.md) (see path/docs/RELEASE_PIPELINE.md)
+    25	
+    26	## Governance
+    27	
+    28	- [GOVERNANCE.md](GOVERNANCE.md) (see path/docs/GOVERNANCE.md)
+    29	- [ENFORCEMENT_MATRIX.md](ENFORCEMENT_MATRIX.md) (see path/docs/ENFORCEMENT_MATRIX.md)
+    30	- [NORMATIVE_LABELING.md](NORMATIVE_LABELING.md) (see path/docs/NORMATIVE_LABELING.md)
+    31	
+    32	## Inventory snapshot
+    33	
+    34	- [_inventory.md](_inventory.md) (see path/docs/_inventory.md)
+---
+     1	# Testing & Coverage (Canonical)
+     2	
+     3	This document is the **single source of truth** for running tests and coverage in this repository.
+     4	
+     5	## Install test dependencies
+     6	
+     7	```bash
+     8	python -m pip install -e ".[test]"
+     9	```
+    10	
+    11	Expected output pattern:
+    12	- `Successfully installed bnsyn-...`
+    13	- No import errors for `pytest`, `pytest-cov`, `hypothesis`.
+    14	
+    15	## Run default test suite
+    16	
+    17	```bash
+    18	make test
+    19	```
+    20	
+    21	Equivalent explicit command:
+    22	
+    23	```bash
+    24	python -m pytest -m "not (validation or property)" -q
+    25	```
+    26	
+    27	Expected output pattern:
+    28	- Dots for passing tests.
+    29	- Final summary with `passed` and optional `skipped`.
+    30	
+    31	## Canonical split targets
+    32	
+    33	```bash
+    34	make test-gate
+    35	make test-validation
+    36	make test-property
+    37	```
+    38	
+    39	Equivalent explicit commands:
+    40	
+    41	```bash
+    42	python -m pytest -m "not (validation or property)" -q
+    43	python -m pytest -m "validation" -q
+    44	python -m pytest -m "property" -q
+    45	```
+    46	
+    47	All three suites are expected to **collect successfully** when test dependencies are installed.
+    48	
+    49	## Run smoke marker tests
+    50	
+    51	```bash
+    52	python -m pytest -m smoke -q
+    53	```
+    54	
+    55	Expected output pattern:
+    56	- Only smoke-marked tests.
+    57	
+    58	
+    59	## Property test contour (Hypothesis)
+    60	
+    61	Hypothesis profiles are defined only in:
+    62	- `tests/properties/conftest.py`
+    63	
+    64	Run property tests (requires `hypothesis` installed):
+    65	
+    66	```bash
+    67	HYPOTHESIS_PROFILE=ci python -m pytest tests/properties -m property -q
+    68	```
+    69	
+    70	Alternate profiles:
+    71	
+    72	```bash
+    73	HYPOTHESIS_PROFILE=quick python -m pytest tests/properties -m property -q
+    74	HYPOTHESIS_PROFILE=thorough python -m pytest tests/properties -m property -q
+    75	```
+    76	
+    77	Run non-property tests without Hypothesis dependency:
+    78	
+    79	```bash
+    80	python -m pytest -m "not property" -q
+    81	```
+    82	
+    83	Behavior when `hypothesis` is missing:
+    84	- `python -m pytest -m "not property" -q` succeeds.
+    85	- `python -m pytest tests/properties -m property -q` fails with explicit `ModuleNotFoundError: No module named 'hypothesis'`.
+    86	
+    87	## Generate fast local coverage artifacts (canonical dev path)
+    88	
+    89	```bash
+    90	make coverage-fast
+    91	```
+    92	
+    93	Equivalent explicit command:
+    94	
+    95	```bash
+    96	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+    97	```
+    98	
+    99	Artifacts:
+   100	- Terminal report with missing lines by module (`term-missing`).
+   101	- `coverage.xml` at repository root.
+   102	
+   103	## Generate coverage artifacts
+   104	
+   105	```bash
+   106	make coverage
+   107	```
+   108	
+   109	Equivalent explicit command:
+   110	
+   111	```bash
+   112	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+   113	```
+   114	
+   115	Artifacts:
+   116	- Terminal report with missing lines by module.
+   117	- `coverage.xml` at repository root.
+   118	
+   119	## Generate / refresh coverage baseline
+   120	
+   121	```bash
+   122	make coverage-baseline
+   123	```
+   124	
+   125	Equivalent explicit command:
+   126	
+   127	```bash
+   128	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+   129	```
+   130	
+   131	This baseline uses the same metric enforced by the gate: `coverage.xml line-rate`.
+   132	
+   133	## Enforce coverage gate
+   134	
+   135	```bash
+   136	make coverage-gate
+   137	```
+   138	
+   139	Gate behavior:
+   140	- Fails if current coverage drops below baseline in `quality/coverage_gate.json`.
+   141	- Fails if current coverage drops below minimum floor in `quality/coverage_gate.json`.
+   142	
+   143	
+   144	## API contract check (canonical)
+   145	
+   146	```bash
+   147	make api-contract
+   148	```
+   149	
+   150	Equivalent explicit command:
+   151	
+   152	```bash
+   153	python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+   154	```
+   155	
+   156	Expected output pattern:
+   157	- `API contract check passed`
+   158	
+   159	## CI parity checks (local)
+   160	
+   161	Use the same checks enforced in PR CI:
+   162	
+   163	```bash
+   164	python -m pytest --collect-only -q
+   165	python -m pytest -m "not (validation or property)" -q
+   166	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+   167	ruff check .
+   168	```
+   169	
+   170	If a tool is unavailable locally, install via:
+   171	
+   172	```bash
+   173	python -m pip install -e ".[test]"
+   174	```
+   175	
+   176	Deferred gate note:
+   177	- `mypy` is configured in CI quality workflow; run locally only after full `.[dev]` install.
+   178	
+   179	
+   180	## Offline dependency workflow (Python 3.11)
+   181	
+   182	Notes:
+   183	- `wheelhouse/` is platform-specific (implementation/ABI/platform tag). Build and validate for the same target.
+   184	- `wheelhouse-build` requires internet access. `wheelhouse-validate` and `dev-env-offline` are offline.
+   185	- `wheelhouse-build` uses `pip download --only-binary=:all: --no-deps`; lock file must stay fully pinned.
+   186	- `wheelhouse-validate` writes `artifacts/wheelhouse_report.json` by default.
+   187	
+   188	Build the local wheelhouse from pinned lock dependencies:
+   189	
+   190	```bash
+   191	make wheelhouse-build
+   192	```
+   193	
+   194	Validate that every pinned dependency in `requirements-lock.txt` has a matching wheel in `wheelhouse/`:
+   195	
+   196	```bash
+   197	make wheelhouse-validate
+   198	make wheelhouse-report
+   199	```
+   200	
+   201	Install the development environment fully offline from the local wheelhouse:
+   202	
+   203	```bash
+   204	make dev-env-offline
+   205	```
+   206	
+   207	Equivalent install commands:
+   208	
+   209	```bash
+   210	python -m pip install --no-index --find-links wheelhouse -r requirements-lock.txt
+   211	python -m pip install --no-index --find-links wheelhouse --no-deps -e .
+   212	```
+   213	
+   214	Failure modes:
+   215	- Locked package has no wheel for the configured target tuple.
+   216	- Marker applicability differs from the target environment.
+   217	- Wheelhouse built for a different platform/ABI than the install target.
+   218	
+   219	Validation exit codes:
+   220	- `0`: wheelhouse fully covers applicable locked requirements.
+   221	- `1`: one or more applicable locked requirements are missing wheels.
+   222	- `2`: lock contains unsupported or duplicate applicable requirement entries.
+   223	
+   224	Report contains additional diagnostics:
+   225	- `duplicate_requirements`
+   226	- `incompatible_wheels`
+   227	- `malformed_wheels`
+   228	
+   229	## Updating lock and wheelhouse
+   230	
+   231	1. Refresh lock file after dependency changes:
+   232	
+   233	```bash
+   234	pip-compile --extra=dev --generate-hashes --allow-unsafe --strip-extras --output-file=requirements-lock.txt pyproject.toml
+   235	```
+   236	
+   237	2. Rebuild wheels for Python 3.11 and re-run validation:
+   238	
+   239	```bash
+   240	make wheelhouse-build
+---
+     1	See also: `docs/MUTATION_GATE.md` for the canonical mutation gate contract.
+     2	
+     3	# Quality Infrastructure Index
+     4	
+     5	This document provides a comprehensive overview of the BN-Syn quality infrastructure, including how to run each system locally, what artifacts prove correctness, and what CI jobs enforce what.
+     6	
+     7	## Overview
+     8	
+     9	The BN-Syn quality infrastructure consists of multiple layers:
+    10	
+    11	1. **SSOT Gates** - Ensure single source of truth for bibliography, claims, and normative tags
+    12	2. **Governance Gates** - Verify CI workflows follow truthfulness principles and formal specs match code
+    13	3. **Property Testing** - Hypothesis-based testing for universal invariants
+    14	4. **Mutation Testing** - Measure test suite effectiveness
+    15	5. **Formal Verification** - TLA+ and Coq proofs for critical properties
+    16	6. **Chaos Engineering** - Fault injection for resilience testing
+    17	7. **Validation Tests** - Statistical and large-N tests for scientific claims
+    18	
+    19	## Local Verification Commands
+    20	
+    21	### Quick Check (Fast, PR-level)
+    22	```bash
+    23	# Pre-commit hooks
+    24	pre-commit run --all-files
+    25	
+    26	# SSOT gates
+    27	python -m scripts.validate_bibliography
+    28	python -m scripts.validate_claims
+    29	python -m scripts.scan_governed_docs
+    30	python -m scripts.scan_normative_tags
+    31	
+    32	# Governance gates (NEW)
+    33	python -m scripts.verify_formal_constants
+    34	python -m scripts.lint_ci_truthfulness --out artifacts/ci_truthfulness.json --md artifacts/ci_truthfulness.md
+    35	
+    36	# Fast tests
+    37	pytest -m "not validation and not property" --cov=src/bnsyn --cov-fail-under=85
+    38	
+    39	# Type checking
+    40	make mypy
+    41	
+    42	# Linting
+    43	make lint
+    44	```
+    45	
+    46	### Property Testing (Nightly)
+    47	```bash
+    48	# Quick profile (local testing)
+    49	pytest -m property --hypothesis-profile=quick --hypothesis-show-statistics
+    50	
+    51	# Thorough profile (nightly CI)
+    52	HYPOTHESIS_PROFILE=thorough pytest -m property --hypothesis-show-statistics
+    53	```
+    54	
+    55	### Mutation Testing (Nightly)
+    56	```bash
+    57	# Generate baseline (first time)
+    58	make mutation-baseline
+    59	
+    60	# Check against baseline
+    61	make mutation-check
+    62	
+    63	# Or use scripts directly
+    64	python -m scripts.generate_mutation_baseline
+    65	python -m scripts.check_mutation_score
+    66	```
+    67	
+    68	### Formal Verification (Nightly)
+    69	
+    70	#### TLA+ Model Checking
+    71	```bash
+    72	# Download TLC (if not cached)
+    73	cd specs/tla
+    74	wget https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar
+    75	
+    76	# Verify checksum
+    77	echo "a6ece2e543c87e6e7d90d1c6e0cc04d57b1f08e6e7f4f4db08ebafdd8b39c53e  tla2tools.jar" | sha256sum -c -
+    78	
+    79	# Run model checker
+    80	java -cp tla2tools.jar tlc2.TLC -config BNsyn.cfg BNsyn.tla
+    81	
+    82	# Verify constants match code
+    83	python ../../scripts/verify_formal_constants.py
+    84	```
+    85	
+    86	#### Coq Proofs
+    87	```bash
+    88	# Install Coq (if needed)
+    89	opam install coq.8.18.0
+    90	
+    91	# Compile proofs
+    92	cd specs/coq
+    93	coqc BNsyn_Sigma.v
+    94	
+    95	# Verify constants match code
+    96	python ../../scripts/verify_formal_constants.py
+    97	```
+    98	
+    99	### Chaos Engineering (Nightly)
+   100	```bash
+   101	# Run all chaos tests
+   102	pytest -m "validation and chaos" -v
+   103	
+   104	# Run integration chaos tests only
+   105	pytest tests/validation/test_chaos_integration.py -v
+   106	
+   107	# Run specific fault type
+   108	pytest tests/validation/test_chaos_numeric.py -v
+   109	```
+   110	
+   111	### Validation Tests (Nightly)
+   112	```bash
+   113	# Run all validation tests
+   114	pytest -m validation -v
+   115	
+   116	# Run specific validation suite
+   117	pytest tests/validation/test_adex_validation.py -v
+   118	```
+   119	
+   120	## CI Jobs and Enforcement
+   121	
+   122	### PR CI (Blocking)
+   123	
+   124	**Workflow**: `.github/workflows/ci-pr.yml`
+   125	**Trigger**: Every pull request and push to main
+   126	**Timeout**: 15 minutes
+   127	
+   128	**Gates Enforced**:
+   129	- SSOT validation (bibliography, claims, normative tags)
+   130	- **Governance gates** (formal constants, CI truthfulness)
+   131	- Claims coverage (must be 100%)
+   132	- Fast tests (< 10 min)
+   133	- Type checking (mypy --strict)
+   134	- Linting (ruff, pylint)
+   135	
+   136	**Artifacts Produced**:
+   137	- `claims_coverage.json` - Claims coverage report
+   138	- `governance-reports/ci_truthfulness.json` - CI truthfulness lint report
+   139	- `governance-reports/ci_truthfulness.md` - Human-readable lint report
+   140	
+   141	**How to Debug Failures**:
+   142	```bash
+   143	# Reproduce locally
+   144	python -m scripts.validate_claims_coverage --format markdown
+   145	python -m scripts.verify_formal_constants
+   146	python -m scripts.lint_ci_truthfulness --md artifacts/ci_truthfulness.md
+   147	pytest -m "not validation and not property"
+   148	```
+   149	
+   150	### Property Tests (Non-Blocking, Nightly)
+   151	
+   152	**Workflow**: `.github/workflows/ci-validation.yml` (mode: `property`)
+   153	**Trigger**: Nightly at 2:30 AM UTC, manual dispatch (mode: `property`)
+   154	**Timeout**: 30 minutes
+   155	
+   156	**Tests Run**:
+   157	- Property-based tests with `quick` profile (100 examples by default)
+   158	- Hypothesis statistics enabled
+   159	
+   160	**Artifacts Produced**:
+   161	- `property-test-results/.hypothesis/` - Hypothesis database
+   162	- Test results and logs
+   163	
+   164	**How to Reproduce**:
+   165	```bash
+   166	HYPOTHESIS_PROFILE=ci pytest -m property -v --tb=short --hypothesis-show-statistics
+   167	```
+   168	
+   169	### Mutation Testing (Non-Blocking, Nightly)
+   170	
+   171	**Workflow**: `.github/workflows/quality-mutation.yml`
+   172	**Trigger**: Nightly at 3 AM UTC, manual dispatch
+   173	**Timeout**: 120 minutes
+   174	
+   175	**Process**:
+   176	1. Load baseline from `quality/mutation_baseline.json`
+   177	2. Run mutmut on critical modules
+   178	3. Compare score against baseline with tolerance
+   179	4. Fail if score drops below `baseline - tolerance`
+   180	
+   181	**Artifacts Produced**:
+   182	- `mutation-logs-<sha>/mutation_results.txt` - Full mutmut results
+   183	- `mutation-logs-<sha>/survived_mutants.txt` - List of survivors
+   184	- `mutation-logs-<sha>/mutation_report.txt` - Score comparison
+   185	
+   186	**How to Reproduce**:
+   187	```bash
+   188	make mutation-check
+   189	# Or generate new baseline
+   190	make mutation-baseline
+   191	```
+   192	
+   193	### Formal Verification - TLA+ (Non-Blocking, Nightly)
+   194	
+   195	**Workflow**: `.github/workflows/formal-tla.yml`
+   196	**Trigger**: Nightly at 2 AM UTC, manual dispatch
+   197	**Timeout**: 30 minutes
+   198	
+   199	**Invariants Checked**:
+   200	- `TypeOK` - Type correctness
+   201	- `GainClamp` - Criticality gain bounds [0.2, 5.0]
+   202	- `TemperatureBounds` - Temperature bounds [Tmin, T0]
+   203	- `GateBounds` - Plasticity gate [0, 1]
+   204	- `PhaseValid` - Valid phase transitions
+   205	
+   206	**Artifacts Produced**:
+   207	- `tla-model-check-report-<sha>/tlc_output.txt` - Full TLC stdout
+   208	- `tla-model-check-report-<sha>/tla_summary.md` - Summary report
+   209	
+   210	**Constants Verified**: See `specs/tla/README.md` for code-to-spec mapping
+   211	
+   212	**How to Reproduce**:
+   213	```bash
+   214	cd specs/tla
+   215	java -cp tla2tools.jar tlc2.TLC -config BNsyn.cfg BNsyn.tla
+   216	```
+   217	
+   218	### Formal Verification - Coq (Non-Blocking, Nightly)
+   219	
+   220	**Workflow**: `.github/workflows/formal-coq.yml`
+   221	**Trigger**: Nightly at 1 AM UTC, manual dispatch
+   222	**Timeout**: 20 minutes
+   223	
+   224	**Proofs Verified**:
+   225	- `gain_clamp_preserves_bounds` - Gain clamping preserves [0.2, 5.0] bounds
+   226	- `clamp_idempotent` - Clamp is idempotent
+   227	
+   228	**Artifacts Produced**:
+   229	- `coq-proof-verification-<sha>/coq_output_*.txt` - Compilation logs
+   230	- `coq-proof-verification-<sha>/coq_summary.md` - Proof summary
+   231	
+   232	**Constants Verified**: `gain_min=0.2`, `gain_max=5.0` (matches `CriticalityParams`)
+   233	
+   234	**How to Reproduce**:
+   235	```bash
+   236	cd specs/coq
+   237	coqc BNsyn_Sigma.v
+   238	```
+   239	
+   240	### Chaos Engineering (Non-Blocking, Nightly)
+---
+     1	name: ci-pr-atomic
+     2	
+     3	on:
+     4	  pull_request:
+     5	    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
+     6	  push:
+     7	    branches: [main]
+     8	  workflow_dispatch:
+     9	    inputs:
+    10	      python-version:
+    11	        type: string
+    12	        default: "3.11"
+    13	      upload-codecov:
+    14	        type: boolean
+    15	        default: true
+    16	  workflow_call:
+    17	    inputs:
+    18	      python-version:
+    19	        type: string
+    20	        default: "3.11"
+    21	      upload-codecov:
+    22	        type: boolean
+    23	        default: true
+    24	    secrets:
+    25	      CODECOV_TOKEN:
+    26	        required: false
+    27	
+    28	permissions:
+    29	  contents: read
+    30	
+    31	concurrency:
+    32	  group: ci-pr-atomic-${{ github.ref }}
+    33	  cancel-in-progress: true
+    34	
+    35	env:
+    36	  PIP_CACHE_DIR: ~/.cache/pip
+    37	  PYTHONHASHSEED: 0
+    38	  PYTHONDONTWRITEBYTECODE: 1
+    39	  PIP_DISABLE_PIP_VERSION_CHECK: 1
+    40	  PIP_NO_PYTHON_VERSION_WARNING: 1
+    41	
+    42	jobs:
+    43	  changes:
+    44	    runs-on: ubuntu-latest
+    45	    permissions:
+    46	      contents: read
+    47	      pull-requests: read
+    48	    outputs:
+    49	      code: ${{ steps.filter.outputs.code }}
+    50	      validation: ${{ steps.filter.outputs.validation }}
+    51	      property: ${{ steps.filter.outputs.property }}
+    52	      docs: ${{ steps.filter.outputs.docs }}
+    53	      dependency_manifest: ${{ steps.filter.outputs.dependency_manifest }}
+    54	    steps:
+    55	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+    56	      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+    57	        id: filter
+    58	        with:
+    59	          filters: |
+    60	            code:
+    61	              - 'src/**'
+    62	              - 'tests/**'
+    63	            validation:
+    64	              - 'src/**'
+    65	              - 'tools/**'
+    66	              - 'scripts/**'
+    67	              - 'docs/**'
+    68	              - 'tests/**'
+    69	            property:
+    70	              - 'src/**'
+    71	              - 'tests/**'
+    72	            docs:
+    73	              - 'docs/**'
+    74	              - 'README*'
+    75	              - 'mkdocs.yml'
+    76	              - 'pyproject.toml'
+    77	            dependency_manifest:
+    78	              - 'pyproject.toml'
+    79	              - 'requirements*.txt'
+    80	
+    81	  gate-profile:
+    82	    permissions:
+    83	      contents: read
+    84	    uses: ./.github/workflows/_reusable_gate_profile.yml
+    85	    with:
+    86	      profile: pr
+    87	
+    88	  determinism:
+    89	    runs-on: ubuntu-latest
+    90	    permissions:
+    91	      contents: read
+    92	    timeout-minutes: 20
+    93	    steps:
+    94	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+    95	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    96	        with:
+    97	          python-version: ${{ inputs['python-version'] || '3.11' }}
+    98	          cache: "pip"
+    99	          cache-dependency-path: |
+   100	            pyproject.toml
+   101	            requirements-lock.txt
+   102	      - name: Pin pip
+   103	        uses: ./.github/actions/pin-pip
+   104	      - name: Log pip version
+   105	        run: python -m pip --version
+   106	      - run: python -m pip install -e ".[dev,test]"
+   107	      - name: Test determinism (run 1)
+   108	        id: run1
+   109	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+   110	      - name: Test determinism (run 2)
+   111	        id: run2
+   112	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+   113	      - name: Test determinism (run 3)
+   114	        id: run3
+   115	        run: pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -v --tb=short
+   116	      - name: Check RNG isolation
+   117	        id: rng
+   118	        run: pytest tests/test_determinism.py::test_no_global_numpy_rng_usage -v
+   119	      - name: Generate summary
+   120	        if: always()
+   121	        run: |
+   122	          summary_file="$GITHUB_STEP_SUMMARY"
+   123	          {
+   124	            echo "##  Determinism Verification (3x Runs)"
+   125	            echo ""
+   126	            echo "| Run | Status | Result |"
+   127	            echo "|-----|--------|--------|"
+   128	            if [ "${{ steps.run1.outcome }}" = "success" ]; then
+   129	              echo "| 1 |  PASS | Identical outputs |"
+   130	            else
+   131	              echo "| 1 |  FAIL | Non-deterministic |"
+   132	            fi
+   133	            if [ "${{ steps.run2.outcome }}" = "success" ]; then
+   134	              echo "| 2 |  PASS | Identical outputs |"
+   135	            else
+   136	              echo "| 2 |  FAIL | Non-deterministic |"
+   137	            fi
+   138	            if [ "${{ steps.run3.outcome }}" = "success" ]; then
+   139	              echo "| 3 |  PASS | Identical outputs |"
+   140	            else
+   141	              echo "| 3 |  FAIL | Non-deterministic |"
+   142	            fi
+   143	            echo ""
+   144	            echo "| Check | Status |"
+   145	            echo "|-------|--------|"
+   146	            if [ "${{ steps.rng.outcome }}" = "success" ]; then
+   147	              echo "| RNG Isolation |  PASS |"
+   148	            else
+   149	              echo "| RNG Isolation |  FAIL |"
+   150	            fi
+   151	            echo ""
+   152	            if [ "${{ steps.run1.outcome }}" = "success" ] && [ "${{ steps.run2.outcome }}" = "success" ] && [ "${{ steps.run3.outcome }}" = "success" ]; then
+   153	              echo "** All runs produced identical outputs (A1: Determinism 96%)**"
+   154	            else
+   155	              echo "** Determinism check failed**"
+   156	            fi
+   157	          } >> "$summary_file"
+   158	
+   159	
+   160	  contracts:
+   161	    runs-on: ubuntu-latest
+   162	    permissions:
+   163	      contents: read
+   164	    timeout-minutes: 12
+   165	    steps:
+   166	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+   167	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+   168	        with:
+   169	          python-version: ${{ inputs['python-version'] || '3.11' }}
+   170	          cache: "pip"
+   171	      - name: Pin pip
+   172	        uses: ./.github/actions/pin-pip
+   173	      - name: Log pip version
+   174	        run: python -m pip --version
+   175	      - run: python -m pip install -e ".[test]"
+   176	      - name: Validate traceability table
+   177	        run: python -m scripts.validate_traceability
+   178	      - name: Check internal docs links
+   179	        run: python -m scripts.check_internal_links
+   180	      - name: Validate calibration summary claims
+   181	        run: python -m scripts.validate_calibration_summary
+   182	      - name: Run no-escape contract tests
+   183	        run: |
+   184	          pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_schema_contracts.py             tests/test_verify_reproducible_artifacts.py
+   185	      - name: Verify reproducible generated artifacts
+   186	        run: |
+   187	          python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
+   188	      - name: Upload contract artifacts
+   189	        if: always()
+   190	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   191	        with:
+   192	          name: no-escape-contracts-${{ github.sha }}
+   193	          path: |
+   194	            evidence/zqsg_2026_02_12/repro_report_ci.json
+   195	          if-no-files-found: error
+   196	          retention-days: 30
+   197	
+   198	  quality:
+   199	    permissions:
+   200	      contents: read
+   201	    uses: ./.github/workflows/_reusable_quality.yml
+   202	    with:
+   203	      python-version: ${{ inputs['python-version'] || '3.11' }}
+   204	      mypy-strict: true
+   205	      pylint-threshold: 7.5
+   206	
+   207	  build:
+   208	    runs-on: ubuntu-latest
+   209	    permissions:
+   210	      contents: read
+   211	    timeout-minutes: 20
+   212	    steps:
+   213	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+   214	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+   215	        with:
+   216	          python-version: ${{ inputs['python-version'] || '3.11' }}
+   217	          cache: "pip"
+   218	          cache-dependency-path: |
+   219	            pyproject.toml
+   220	            requirements-lock.txt
+   221	      - name: Pin pip
+   222	        uses: ./.github/actions/pin-pip
+   223	      - name: Log pip version
+   224	        run: python -m pip --version
+   225	      - run: python -m pip install -e ".[dev,test]" build
+   226	      - name: Verify lockfile freshness
+   227	        run: |
+   228	          python -m pip install pip-tools
+   229	          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --allow-unsafe --strip-extras --output-file=requirements-lock.txt pyproject.toml
+   230	          git diff --exit-code -- requirements-lock.txt
+   231	      - run: make build
+   232	      - name: Install from wheel in clean venv
+   233	        run: |
+   234	          python -m venv .venv-wheel
+   235	          . .venv-wheel/bin/activate
+   236	          python -m pip install --upgrade pip
+   237	          python -m pip install dist/*.whl
+   238	          python -c "import bnsyn; print(bnsyn.__version__)"
+   239	
+   240	  smoke-wheel-matrix:
+   241	    name: smoke-wheel-matrix (py${{ matrix.python-version }})
+   242	    runs-on: ubuntu-latest
+   243	    permissions:
+   244	      contents: read
+   245	    timeout-minutes: 30
+   246	    strategy:
+   247	      fail-fast: false
+   248	      matrix:
+   249	        python-version: ["3.11", "3.12"]
+   250	    steps:
+   251	      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+   252	      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+   253	        with:
+   254	          python-version: ${{ matrix.python-version }}
+   255	          cache: "pip"
+   256	      - name: Pin pip
+   257	        uses: ./.github/actions/pin-pip
+   258	      - name: Log pip version
+   259	        run: python -m pip --version
+   260	      - run: python -m pip install -e ".[dev,test]" build
+---
+     1	# REUSABLE NON-PR-GATE: long-running workflow_call; must not run on pull_request/push.
+     2	name: Reusable Pytest
+     3	
+     4	on:
+     5	  workflow_call:
+     6	    inputs:
+     7	      python-version:
+     8	        description: 'Python version to use'
+     9	        type: string
+    10	        default: '3.11'
+    11	      markers:
+    12	        description: 'Pytest marker expression'
+    13	        type: string
+    14	        default: 'not (validation or property)'
+    15	      coverage-threshold:
+    16	        description: 'Minimum coverage percentage'
+    17	        type: number
+    18	        default: 85
+    19	      timeout-minutes:
+    20	        description: 'Timeout in minutes'
+    21	        type: number
+    22	        default: 10
+    23	      upload-codecov:
+    24	        description: 'Upload coverage to Codecov'
+    25	        type: boolean
+    26	        default: false
+    27	    secrets:
+    28	      CODECOV_TOKEN:
+    29	        description: 'Codecov token (required if upload-codecov is true)'
+    30	        required: false
+    31	
+    32	permissions:
+    33	  contents: read
+    34	
+    35	jobs:
+    36	  pytest:
+    37	    name: Pytest (Coverage ${{ inputs['coverage-threshold'] }}%)
+    38	    runs-on: ubuntu-latest
+    39	    timeout-minutes: ${{ inputs['timeout-minutes'] }}
+    40	    steps:
+    41	      - name: Checkout
+    42	        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+    43	      
+    44	      - name: Set up Python
+    45	        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    46	        with:
+    47	          python-version: ${{ inputs['python-version'] }}
+    48	          cache: 'pip'
+    49	      
+    50	      - name: Pin pip
+    51	        uses: ./.github/actions/pin-pip
+    52	
+    53	      - name: Log pip version
+    54	        run: python -m pip --version
+    55	
+    56	      - name: Install dependencies
+    57	        run: python -m pip install -e ".[test]"
+    58	
+    59	      - name: Verify full test collection
+    60	        run: python -m pytest --collect-only -q
+    61	      
+    62	      - name: Run pytest
+    63	        id: pytest
+    64	        run: |
+    65	          START_TIME=$(date +%s)
+    66	          python -m pytest \
+    67	            -m "${{ inputs.markers }}" \
+    68	            --cov=bnsyn \
+    69	            --cov-report=term-missing:skip-covered \
+    70	            --cov-report=json \
+    71	            --cov-report=xml:coverage.xml \
+    72	            --cov-report=html \
+    73	            --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
+    74	            --junit-xml=junit.xml \
+    75	            -v 2>&1 | tee pytest.log
+    76	          PYTEST_EXIT=$?
+    77	          END_TIME=$(date +%s)
+    78	          DURATION=$((END_TIME - START_TIME))
+    79	          echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+    80	          echo "DURATION=$DURATION" >> "$GITHUB_ENV"
+    81	          exit "$PYTEST_EXIT"
+    82	      
+    83	      - name: Coverage regression gate
+    84	        if: success()
+    85	        run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+    86	
+    87	      - name: Parse coverage
+    88	        if: always()
+    89	        id: coverage
+    90	        run: |
+    91	          if [ -f coverage.json ]; then
+    92	            COVERAGE=$(python -c "import json; print(round(float(json.load(open('coverage.json'))['totals']['percent_covered']), 4))")
+    93	            echo "COVERAGE=$COVERAGE" >> "$GITHUB_ENV"
+    94	          else
+    95	            echo "COVERAGE=N/A" >> "$GITHUB_ENV"
+    96	          fi
+    97	
+    98	          if [ -f junit.xml ]; then
+    99	            TEST_COUNT=$(grep -c '<testcase' junit.xml || echo "0")
+   100	            echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
+   101	          else
+   102	            echo "TEST_COUNT=0" >> "$GITHUB_ENV"
+   103	          fi
+   104	
+   105	      - name: Generate coverage trend artifact
+   106	        if: always() && hashFiles('coverage.json') != ''
+   107	        run: |
+   108	          python -m scripts.generate_coverage_trend \
+   109	            --coverage-json coverage.json \
+   110	            --output-json artifacts/coverage-trend/coverage-trend.json \
+   111	            --output-csv artifacts/coverage-trend/coverage-trend.csv \
+   112	            --sha "${{ github.sha }}" \
+   113	            --branch "${{ github.ref_name }}"
+   114	
+   115	      - name: Parse coverage state
+   116	        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+   117	        run: |
+   118	          COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+   119	          echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
+   120	
+   121	      - name: Enforce mandatory coverage.xml artifact input
+   122	        if: always()
+   123	        run: |
+   124	          if [ ! -f coverage.xml ]; then
+   125	            echo "coverage.xml is required for smoke/unit coverage jobs"
+   126	            exit 1
+   127	          fi
+   128	      
+   129	      - name: Generate summary
+   130	        if: always()
+   131	        run: |
+   132	          summary_file="$GITHUB_STEP_SUMMARY"
+   133	          {
+   134	            echo "##  Pytest Results"
+   135	            echo ""
+   136	            echo "| Metric | Value |"
+   137	            echo "|--------|-------|"
+   138	            if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+   139	              echo "| Status |  PASS |"
+   140	            else
+   141	              echo "| Status |  FAIL |"
+   142	            fi
+   143	            echo "| Tests Run | ${{ env.TEST_COUNT }} |"
+   144	            echo "| Coverage | ${{ env.COVERAGE }}% |"
+   145	            echo "| Coverage State | ${{ env.COVERAGE_STATE || 'N/A' }} |"
+   146	            echo "| Threshold | ${{ inputs['coverage-threshold'] }}% |"
+   147	            echo "| Duration | ${{ env.DURATION }}s |"
+   148	            echo "| Markers | \`${{ inputs.markers }}\` |"
+   149	            echo "| Python | ${{ inputs['python-version'] }} |"
+   150	            echo ""
+   151	            
+   152	            # Show failure details if tests failed
+   153	            if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+   154	              echo "###  Failure Details"
+   155	              echo ""
+   156	              
+   157	              # Extract failed tests
+   158	              if [ -f pytest.log ]; then
+   159	                echo "**Failed Tests:**"
+   160	                echo "\`\`\`"
+   161	                if grep "FAILED" pytest.log | head -10; then
+   162	                  true
+   163	                else
+   164	                  echo "No FAILED markers found"
+   165	                fi
+   166	                echo "\`\`\`"
+   167	                echo ""
+   168	              fi
+   169	              
+   170	              # Show coverage hotspots (lowest 5 files)
+   171	              if [ -f coverage.json ]; then
+   172	                echo "**Coverage Hotspots (Lowest 5 Files):**"
+   173	                echo "\`\`\`"
+   174	                if python -c 'import json; data = json.load(open("coverage.json")); files = [(k, v["summary"]["percent_covered"]) for k, v in data.get("files", {}).items()]; files.sort(key=lambda x: x[1]); [print(f"{file}: {cov:.1f}%") for file, cov in files[:5]]' 2>/dev/null; then
+   175	                  true
+   176	                else
+   177	                  echo "Could not parse coverage"
+   178	                fi
+   179	                echo "\`\`\`"
+   180	                echo ""
+   181	              fi
+   182	              
+   183	              # Reproduction commands
+   184	              echo "###  Reproduction Commands"
+   185	              echo ""
+   186	              echo "\`\`\`bash"
+   187	              echo "# Clone and setup"
+   188	              echo "git clone https://github.com/${{ github.repository }}.git"
+   189	              echo "cd ${{ github.event.repository.name }}"
+   190	              echo "git checkout ${{ github.sha }}"
+   191	              echo ""
+   192	              echo "# Install dependencies"
+   193	              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test]\""
+   194	              echo ""
+   195	              echo "# Run tests"
+   196	              echo "python -m pytest -m \"${{ inputs.markers }}\" \\"
+   197	              echo "  --cov=bnsyn \\"
+   198	              echo "  --cov-fail-under=${{ inputs['coverage-threshold'] }} \\"
+   199	              echo "  -v"
+   200	              echo "\`\`\`"
+   201	            fi
+   202	          } >> "$summary_file"
+   203	      
+   204	      - name: Upload coverage to Codecov
+   205	        if: inputs['upload-codecov'] && always()
+   206	        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de
+   207	        with:
+   208	          token: ${{ secrets.CODECOV_TOKEN }}
+   209	          files: ./coverage.xml
+   210	          fail_ci_if_error: false
+   211	          verbose: true
+   212	          flags: pytest-${{ inputs.markers }}
+   213	          name: pytest-coverage-${{ github.sha }}
+   214	        timeout-minutes: 5
+   215	      
+   216	      - name: Upload artifacts on failure
+   217	        if: failure()
+   218	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   219	        with:
+   220	          name: pytest-failure-${{ github.sha }}
+   221	          path: |
+   222	            pytest.log
+   223	            junit.xml
+   224	            htmlcov/
+   225	            coverage.json
+   226	            coverage.xml
+   227	          if-no-files-found: ignore
+   228	          retention-days: 7
+   229	      
+   230	      - name: Upload mandatory coverage.xml artifact
+   231	        if: always()
+   232	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   233	        with:
+   234	          name: coverage-xml-${{ github.sha }}
+   235	          path: coverage.xml
+   236	          if-no-files-found: error
+   237	          retention-days: 30
+   238	
+   239	      - name: Upload coverage HTML report artifact
+   240	        if: always()
+   241	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   242	        with:
+   243	          name: coverage-html-${{ github.sha }}
+   244	          path: htmlcov/
+   245	          if-no-files-found: ignore
+   246	          retention-days: 30
+   247	
+   248	      - name: Upload coverage trend metrics artifact
+   249	        if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
+   250	        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+   251	        with:
+   252	          name: coverage-trend-metrics
+   253	          path: artifacts/coverage-trend/
+   254	          if-no-files-found: error
+   255	          retention-days: 90
+   256	      
+   257	      - name: Fail if tests failed
+   258	        if: env.PYTEST_RESULT != '0'
+   259	        run: exit 1
