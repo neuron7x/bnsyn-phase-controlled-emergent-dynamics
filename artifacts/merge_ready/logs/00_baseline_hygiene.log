@@ -1,0 +1,26 @@
+[hygiene 2026-02-18T09:49:08+00:00]
+ M src/bnsyn/cli.py
+ M tests/test_cli_interactive.py
+?? proof_bundle/logs/mri_cli_source.log
+?? proof_bundle/logs/mri_execution.log
+-- tracked file size top --
+522967 proof_bundle/logs/commands.log
+487584 artifacts/math_audit/validator_report.json
+335157 figures/temp_ablation_v2/comparison_grid.png
+332300 proof_bundle/logs/session.log
+322691 figures/comparison_grid.png
+287675 results/temp_ablation_v2/random_T.json
+287675 results/temp_ablation_v1/random_T.json
+285843 results/temp_ablation_v2/cooling_piecewise.json
+258011 results/temp_ablation_v2/fixed_high.json
+258011 results/temp_ablation_v1/fixed_high.json
+228796 artifacts/prod_ready/reports/security_secrets.json
+203225 results/temp_ablation_v1/cooling_geometric.json
+202776 results/temp_ablation_v2/fixed_low.json
+202776 results/temp_ablation_v1/fixed_low.json
+183246 artifacts/coverage.json
+180085 artifacts/release_rc/coverage.json
+167807 proof_bundle/logs/02_verify_after_fix.log
+167807 artifacts/audit/repair/logs/02_verify_after_fix.log
+144161 proof_bundle/logs/11_fix_ci_failures.log
+139324 proof_bundle/logs/12_final_repair.log

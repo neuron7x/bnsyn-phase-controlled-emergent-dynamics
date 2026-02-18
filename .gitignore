@@ -20,7 +20,11 @@ coverage.json
 results/*
 !results/temp_ablation_v1/
 !results/temp_ablation_v2/
-artifacts/
+artifacts/*
+!artifacts/product/
+!artifacts/product/**
+!artifacts/merge_ready/
+!artifacts/merge_ready/**
 benchmarks/baselines/
 !benchmarks/baselines/
 !benchmarks/baselines/golden_baseline.yml

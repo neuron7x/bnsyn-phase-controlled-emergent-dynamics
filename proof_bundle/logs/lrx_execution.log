@@ -1,0 +1,230 @@
+2026-02-18T09:30:52+00:00 INIT
+[START] baseline build/run 2026-02-18T09:31:02+00:00
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Collecting hypothesis==6.151.5 (from bnsyn==0.2.0)
+  Downloading hypothesis-6.151.5-py3-none-any.whl.metadata (5.6 kB)
+Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.2)
+Collecting pytest-cov==7.0.0 (from bnsyn==0.2.0)
+  Downloading pytest_cov-7.0.0-py3-none-any.whl.metadata (31 kB)
+Collecting psutil==7.2.2 (from bnsyn==0.2.0)
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Requirement already satisfied: packaging==25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (25.0)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis==6.151.5->bnsyn==0.2.0)
+  Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.3.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.19.2)
+Collecting coverage>=7.10.6 (from coverage[toml]>=7.10.6->pytest-cov==7.0.0->bnsyn==0.2.0)
+  Downloading coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (8.5 kB)
+Downloading hypothesis-6.151.5-py3-none-any.whl (543 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 543.3/543.3 kB 8.0 MB/s  0:00:00
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading pytest_cov-7.0.0-py3-none-any.whl (22 kB)
+Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Downloading coverage-7.13.4-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (254 kB)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4146 sha256=48a7cd307d224ebaf1624151d23625dd72e4b0d7a6a3a8fbcee14ef6d673f7aa
+  Stored in directory: /tmp/pip-ephem-wheel-cache-v9yg75kj/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: sortedcontainers, psutil, hypothesis, coverage, pytest-cov, bnsyn
+
+Successfully installed bnsyn-0.2.0 coverage-7.13.4 hypothesis-6.151.5 psutil-7.2.2 pytest-cov-7.0.0 sortedcontainers-2.4.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+python -m scripts.check_quickstart_consistency
+quickstart consistency check PASSED
+python -m pip install -e .
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: numpy==2.4.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-extensions>=4.14.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4146 sha256=0acb812eab125314c5b1806085f869463b0b423b1a126065eb3b4c6efbc8ee32
+  Stored in directory: /tmp/pip-ephem-wheel-cache-qh5ek36a/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
+python -m pip show bnsyn
+Name: bnsyn
+Version: 0.2.0
+Summary: BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation
+Home-page: 
+Author: BN-Syn Contributors
+Author-email: 
+License-Expression: MIT
+Location: /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages
+Editable project location: /workspace/bnsyn-phase-controlled-emergent-dynamics
+Requires: joblib, jsonschema, numpy, pydantic, pyyaml, scipy
+Required-by: 
+bnsyn --help
+usage: bnsyn [-h] {demo,run,dtcheck,sleep-stack} ...
+
+BN-Syn CLI
+
+positional arguments:
+  {demo,run,dtcheck,sleep-stack}
+    demo                Run a small deterministic demo simulation
+    run                 Run experiment from YAML config
+    dtcheck             Run dt vs dt/2 invariance harness
+    sleep-stack         Run sleep-stack demo with emergence tracking
+
+options:
+  -h, --help            show this help message and exit
+bnsyn sleep-stack --help
+usage: bnsyn sleep-stack [-h] [--seed SEED] [--N N]
+                         [--backend {reference,accelerated}]
+                         [--steps-wake STEPS_WAKE] [--steps-sleep STEPS_SLEEP]
+                         [--out OUT]
+
+options:
+  -h, --help            show this help message and exit
+  --seed SEED           RNG seed
+  --N N                 Number of neurons
+  --backend {reference,accelerated}
+                        Simulation backend
+  --steps-wake STEPS_WAKE
+                        Wake phase steps
+  --steps-sleep STEPS_SLEEP
+                        Sleep phase steps
+  --out OUT             Output directory for results
+bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
+quickstart demo output validated
+[START] reliability checks 2026-02-18T09:31:35+00:00
+-- run 1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'dt_ms'
+-- run 2
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'dt_ms'
+-- run 3
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'dt_ms'
+-- invalid input check
+invalid_status=1
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.12/bin/bnsyn", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 516, in main
+    raise SystemExit(int(args.func(args)))
+                         ^^^^^^^^^^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 121, in _cmd_demo
+    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/sim/network.py", line 519, in run_simulation
+    raise ValueError("steps must be greater than 0")
+ValueError: steps must be greater than 0
+[START] happy path 2026-02-18T09:31:49+00:00
+{
+  "demo": {
+    "rate_mean_hz": 0.0,
+    "rate_std": 0.0,
+    "sigma_mean": 1.0,
+    "sigma_std": 0.0
+  }
+}
+[START] baseline checks
+[Hypothesis] Using default profile
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+..............................................................ss....ss.. [ 40%]
+........................................................................ [ 50%]
+........................................................................ [ 60%]
+........................................................................ [ 70%]
+........................................................................ [ 80%]
+........................................................................ [ 90%]
+........................................................................ [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[START] reliability checks rerun 2026-02-18T09:34:58+00:00
+-- run 1
+ok
+-- run 2
+ok
+-- run 3
+ok
+-- invalid input check
+invalid_status=1
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.12/bin/bnsyn", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 516, in main
+    raise SystemExit(int(args.func(args)))
+                         ^^^^^^^^^^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 121, in _cmd_demo
+2026-02-18T09:35:42+00:00 copied comms artifacts
+scorecard json ok
