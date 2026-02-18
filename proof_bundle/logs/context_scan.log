@@ -1,0 +1,379 @@
+## README head
+<div align="center">
+  <img src="docs/assets/hero.svg" alt="BN-Syn project banner" width="100%" />
+</div>
+
+# BN-Syn Thermostated Bio-AI System
+
+BN-Syn is a repository for phase-controlled emergent dynamics simulations implemented in `src/bnsyn/` (see path/src/bnsyn).
+The repository includes SSOT and governance assets under `specs/`, `schemas/`, `claims/`, `scripts/`, and `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/scripts) (see path/docs).
+
+[![CI PR](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
+[![CI Validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)
+[![Atomic PR Gate](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
+[![Docs](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-%3E%3D3.11-3776AB.svg)](pyproject.toml)
+
+## What’s in this repo
+
+- CLI entrypoint: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+- Runtime package: `src/bnsyn/` (see path/src/bnsyn)
+- Experiment inputs: `experiments/` (see path/experiments)
+- Artifact outputs: `results/` and `figures/` (see path/results) (see path/figures)
+- Validation scripts: `scripts/` (see path/scripts)
+- CI workflows: `.github/workflows/` (see path/.github/workflows)
+
+## Quickstart
+
+```bash
+make setup
+make demo
+make test
+```
+
+## Maintainers / Repo Contract
+
+```bash
+make quickstart-smoke
+python -m pip install -e .
+python -m bnsyn --help
+bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+```
+
+## Testing
+
+Install test and docs dependencies before running local validation or docs builds:
+
+```bash
+python -m pip install -e ".[test,docs]"
+```
+
+Canonical local suites:
+
+```bash
+make test-gate
+make test-validation
+make test-property
+make docs
+make security
+```
+
+## Architecture at a glance
+
+```mermaid
+flowchart LR
+  A["src/bnsyn/cli.py"] --> B["src/bnsyn/"]
+  B --> C["experiments/"]
+  C --> D["results/ + figures/"]
+  E["specs/ + schemas/ + claims/ + docs/"] --> F["scripts/"]
+  F --> G[".github/workflows/"]
+```
+
+### Key Paths
+
+- CLI: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+- Runtime: `src/bnsyn/` (see path/src/bnsyn)
+- Experiments: `experiments/` (see path/experiments)
+- Artifacts: `results/`, `figures/` (see path/results) (see path/figures)
+- SSOT: `specs/`, `schemas/`, `claims/`, `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/docs)
+- Validation: `scripts/` (see path/scripts)
+- CI: `.github/workflows/` (see path/.github/workflows)
+
+## Status
+
+This project is research-grade / pre-production. No battle usage claimed.
+
+- Maturity: research-grade / pre-production (see path/docs/STATUS.md)
+- Missing layers:
+  - SRE runbooks under SLA
+  - external integration contracts
+  - stabilized public API/semver as product
+  - perf budgets as “must” [NORMATIVE][CLM-0011]
+  - support/release cadence as product
+
+## Docs hub
+
+- [Documentation index](docs/INDEX.md) (see path/docs/INDEX.md)
+## docs list
+docs/TRACEABILITY.md
+docs/_inventory.md
+docs/STATUS.md
+docs/PLACEHOLDER_REGISTRY.md
+docs/GOVERNANCE.md
+docs/START_HERE.md
+docs/API_CONTRACT.md
+docs/SPEC.md
+docs/ACTIONS_TEST_PROTOCOL.md
+docs/RISKS.md
+docs/DOCUMENTATION_FORMALIZATION.md
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md
+docs/appendix/PRODUCTION_ROADMAP.md
+docs/appendix/intelligence_cycle_report.json
+docs/appendix/codebase_readiness_audit_2026-02-15.json
+docs/appendix/additional_audit_2026.md
+docs/appendix/PRODUCTION_AUDIT.md
+docs/appendix/EXECUTIVE_SUMMARY.md
+docs/emergence_tracking.md
+docs/NORMATIVE_LABELING.md
+docs/VCG.md
+docs/repo_map.md
+docs/usage_workflows.md
+docs/INPUTS.md
+docs/benchmarks/SCHEMA.md
+docs/benchmarks/PROTOCOL.md
+docs/benchmarks/ci_comparison_report_alloc_v2.txt
+docs/benchmarks/threshold_derivation_alloc_v2.md
+docs/benchmarks/README.md
+docs/AUDIT_LEDGER.md
+docs/TRACEABILITY_MAP.md
+docs/safety/stpa.md
+docs/safety/followups.md
+docs/safety/deferred_gates.md
+docs/safety/hazard_log.yml
+docs/safety/traceability.yml
+docs/MAINTENANCE.md
+docs/EVIDENCE_COVERAGE.md
+docs/PR_AUTOMATION_VECTORS.md
+docs/SCALABILITY.md
+docs/DETERMINISM.md
+docs/DEMO.md
+docs/_generated/script_help/check_coverage_gate.txt
+docs/_generated/script_help/check_api_contract.txt
+docs/_generated/script_help/release_readiness.txt
+docs/_generated/script_help/mutation_ci_summary.txt
+docs/_generated/script_help/scan_placeholders.txt
+docs/_generated/script_help/render_workflow_policy_docs.txt
+docs/_generated/script_help/verify_reproducible_artifacts.txt
+docs/_generated/script_help/check_mutation_score.txt
+docs/_generated/script_help/verify_formal_constants.txt
+docs/_generated/script_help/generate_coverage_baseline.txt
+docs/_generated/script_help/validate_status_claims.txt
+docs/_generated/script_help/validate_api_maturity.txt
+docs/_generated/script_help/bench_ci_smoke.txt
+docs/_generated/script_help/intelligence_cycle.txt
+docs/_generated/script_help/run_mutation_pipeline.txt
+docs/_generated/script_help/generate_mutation_baseline.txt
+docs/_generated/script_help/validate_mutation_baseline.txt
+docs/_generated/script_help/track_quality.txt
+docs/_generated/script_help/check_quickstart_consistency.txt
+docs/_generated/script_help/collect_ci_run_urls.txt
+docs/_generated/script_help/calculate_throughput_gain.txt
+docs/_generated/script_help/build_wheelhouse.txt
+docs/_generated/script_help/generate_coverage_trend.txt
+docs/_generated/script_help/release_pipeline.txt
+docs/_generated/script_help/validate_codebase_readiness_audit.txt
+docs/_generated/script_help/generate_math_data.txt
+docs/CI_GATES.md
+docs/api_maturity.json
+docs/PERFORMANCE.md
+docs/INTEGRATION.md
+docs/PLACEHOLDER_BASELINE_CYCLE0.md
+docs/spec_to_code.yml
+docs/ARCHITECTURE.md
+docs/ASSUMPTIONS.md
+docs/sleep_stack.md
+docs/audit_merge_readiness.md
+docs/HYPOTHESIS.md
+docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md
+docs/index.rst
+docs/ENTROPY_LEDGER.md
+docs/TESTING.md
+docs/modules.rst
+docs/placeholder_cycles/cycle1/worklist.json
+docs/placeholder_cycles/cycle1/plan.md
+docs/placeholder_cycles/cycle1/acceptance_map.yaml
+docs/QUALITY_INFRASTRUCTURE.md
+docs/QUALITY_INDEX.md
+docs/API_STABILITY.md
+docs/LEGENDARY_QUICKSTART.md
+docs/BUILD_DOCS.md
+docs/INDEX.md
+docs/RELEASE_PIPELINE.md
+docs/SECURITY_GITLEAKS.md
+docs/MUTATION_GATE.md
+docs/PROJECT_SURFACES.md
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md
+docs/REPO_STRUCTURE.md
+docs/conf.py
+docs/RELEASE_READINESS.md
+docs/PERFORMANCE_REPORT.md
+docs/contracts/index.md
+docs/THROUGHPUT_SCALING.md
+docs/AUDIT_TASKS_2026-02-15.md
+docs/BENCHMARK_MAP.md
+docs/assets/hero.svg
+docs/PR40_EVIDENCE_REPORT.md
+docs/COMPONENT_AUDIT.md
+docs/ENFORCEMENT_MATRIX.md
+docs/VERSIONING.md
+docs/REPRODUCIBILITY_ENVELOPE.md
+docs/ARCHITECTURE_INVARIANTS.md
+docs/AUDIT_FINDINGS.md
+docs/REPRODUCIBILITY.md
+docs/scripts/verify-formal-constants.md
+docs/scripts/math-validate.md
+docs/RELEASE_NOTES.md
+docs/INVENTORY.md
+docs/SSOT.md
+docs/PHYSICAL_VALIDITY.md
+docs/QUICKSTART.md
+docs/SCRIPTS/index.md
+docs/TROUBLESHOOTING.md
+docs/SSOT_RULES.md
+docs/math/CONTRACTS.md
+docs/math/PROVENANCE.md
+docs/math/MATH_SURFACES.md
+docs/DOC_DEBT.md
+docs/MODULE_RESPONSIBILITY_MATRIX.md
+docs/adr/0001-math-integrator-guardrails.md
+docs/CONSTITUTIONAL_AUDIT.md
+docs/TESTING_MUTATION.md
+docs/api/api_bnsyn.md
+docs/scripts/scan-governed-docs.md
+docs/api/_static/tools/update_manifest.py
+docs/api/_static/manifest.json
+docs/api/_static/README.md
+docs/scripts/mutation-counts.md
+docs/scripts/run-scaled-sleep-stack.md
+docs/scripts/generate-benchmark-baseline.md
+docs/scripts/validate-long-running-triggers.md
+docs/scripts/check-api-contract.md
+docs/scripts/generate-coverage-trend.md
+docs/scripts/validate-api-maturity.md
+docs/scripts/verify-equivalence.md
+docs/scripts/check-mutation-score.md
+docs/scripts/audit-spec-implementation.md
+docs/scripts/visualize-experiment.md
+docs/scripts/--init--.md
+docs/scripts/validate-pr-gates.md
+docs/scripts/run-benchmarks.md
+docs/scripts/verify-reproducible-artifacts.md
+docs/scripts/check-coverage-gate.md
+docs/scripts/orchestrate-throughput-scaling.md
+docs/scripts/benchmark-production.md
+docs/scripts/render-workflow-policy-docs.md
+docs/scripts/check-benchmark-regressions.md
+docs/scripts/collect-ci-run-urls.md
+docs/api/generated/bnsyn.production.jax_backend.rst
+docs/scripts/validate-required-status-contexts.md
+docs/api/generated/bnsyn.sim.network.rst
+docs/api/generated/bnsyn.consolidation.rst
+docs/api/generated/bnsyn.vcg.rst
+docs/api/generated/bnsyn.memory.consolidator.rst
+docs/api/generated/bnsyn.consolidation.dual_weight.rst
+docs/api/generated/bnsyn.criticality.analysis.rst
+docs/api/generated/bnsyn.memory.rst
+docs/api/generated/bnsyn.incremental.rst
+docs/api/generated/bnsyn.validation.inputs.rst
+docs/api/generated/bnsyn.numerics.integrators.rst
+docs/api/generated/bnsyn.plasticity.stdp.rst
+docs/api/generated/bnsyn.temperature.rst
+docs/api/generated/bnsyn.production.adex.rst
+docs/api/generated/bnsyn.sleep.rst
+docs/api/generated/bnsyn.schemas.rst
+docs/api/generated/bnsyn.testing.rst
+docs/api/generated/bnsyn.production.rst
+docs/api/generated/bnsyn.rst
+docs/api/generated/bnsyn.emergence.rst
+docs/api/generated/bnsyn.memory.trace.rst
+docs/api/generated/bnsyn.tools.rst
+docs/api/generated/bnsyn.synapses.rst
+docs/api/generated/bnsyn.simulation.rst
+docs/api/generated/bnsyn.benchmarks.regime.rst
+docs/api/generated/bnsyn.criticality.rst
+docs/api/generated/bnsyn.sleep.replay.rst
+docs/api/generated/bnsyn.criticality.branching.rst
+docs/api/generated/bnsyn.calibration.accuracy_speed.rst
+docs/api/generated/bnsyn.config.rst
+docs/api/generated/bnsyn.synapse.conductance.rst
+docs/api/generated/bnsyn.sleep.stages.rst
+docs/api/generated/bnsyn.provenance.rst
+docs/api/generated/bnsyn.control.rst
+docs/api/generated/bnsyn.synapse.rst
+docs/api/generated/bnsyn.viz.dashboard.rst
+docs/api/generated/bnsyn.schemas.experiment.rst
+docs/api/generated/bnsyn.provenance.manifest_builder.rst
+docs/api/generated/bnsyn.energy.regularization.rst
+docs/api/generated/bnsyn.temperature.schedule.rst
+docs/api/generated/bnsyn.criticality.phase_transition.rst
+docs/api/generated/bnsyn.validation.rst
+docs/api/generated/bnsyn.energy.rst
+docs/api/generated/bnsyn.experiments.declarative.rst
+docs/api/generated/bnsyn.neuron.rst
+docs/api/generated/bnsyn.testing.faults.rst
+docs/api/generated/bnsyn.plasticity.three_factor.rst
+docs/api/generated/bnsyn.provenance.manifest.rst
+docs/api/generated/bnsyn.benchmarks.rst
+docs/api/generated/bnsyn.neurons.rst
+docs/api/generated/bnsyn.sim.rst
+docs/api/generated/bnsyn.rng.rst
+docs/api/generated/bnsyn.sleep.cycle.rst
+docs/api/generated/bnsyn.neuron.adex.rst
+docs/api/generated/bnsyn.numerics.rst
+docs/api/generated/contracts.rst
+docs/api/generated/bnsyn.calibration.fit.rst
+docs/api/generated/bnsyn.connectivity.rst
+docs/api/generated/bnsyn.memory.ledger.rst
+docs/api/generated/bnsyn.connectivity.sparse.rst
+docs/api/generated/contracts.math_contracts.rst
+docs/api/generated/bnsyn.viz.interactive.rst
+docs/api/generated/bnsyn.emergence.crystallizer.rst
+docs/api/generated/bnsyn.plasticity.rst
+docs/api/generated/bnsyn.viz.rst
+docs/api/generated/bnsyn.tools.run_scaled_sleep_stack.rst
+docs/api/generated/bnsyn.experiments.rst
+docs/api/generated/bnsyn.production.connectivity.rst
+docs/api/generated/bnsyn.cli.rst
+docs/api/generated/bnsyn.calibration.rst
+docs/api/generated/bnsyn.tools.benchmark_sleep_stack_scale.rst
+docs/api/conf.py
+docs/scripts/validate-bibliography.md
+docs/scripts/compare-benchmarks.md
+docs/scripts/run-mutation-pipeline.md
+docs/scripts/mutation-ci-summary.md
+docs/scripts/generate-tests-inventory.md
+docs/scripts/ssot-rules.md
+docs/scripts/validate-claims-coverage.md
+docs/scripts/validate-mutation-baseline.md
+docs/scripts/release-pipeline.md
+docs/scripts/calculate-throughput-gain.md
+docs/scripts/validate-claims.md
+docs/scripts/scan-tierS-misuse.md
+docs/scripts/intelligence-cycle.md
+docs/scripts/generate-evidence-coverage.md
+docs/scripts/benchmark-sleep-stack-scale.md
+docs/scripts/validate-status-claims.md
+docs/scripts/validate-required-checks.md
+docs/scripts/lint-ci-truthfulness.md
+docs/scripts/sync-required-status-contexts.md
+docs/scripts/build-wheelhouse.md
+docs/scripts/generate-coverage-baseline.md
+docs/scripts/validate-workflow-contracts.md
+docs/scripts/generate-math-data.md
+docs/scripts/check-quickstart-consistency.md
+docs/scripts/benchmark-physics.md
+docs/scripts/validate-codebase-readiness-audit.md
+docs/scripts/track-quality.md
+docs/scripts/bench-ci-smoke.md
+docs/scripts/pre-push.md
+docs/scripts/-audit-metrics-pr40.md
+docs/scripts/validate-branch-protection-governance.md
+docs/scripts/index.md
+docs/scripts/release-readiness.md
+docs/scripts/profile-kernels.md
+docs/scripts/generate-mutation-baseline.md
+docs/scripts/rebuild-sources-lock.md
+docs/scripts/build-readiness-artifacts.md
+docs/scripts/mutation-survivors-summary.md
+docs/scripts/scan-placeholders.md
+docs/scripts/scan-normative-tags.md
+docs/api/modules.md
+docs/BIBLIOGRAPHY.md
+docs/BENCHMARKS.md
+docs/SCALABILITY_REPORT.md
+docs/CONFERENCE_RUNBOOK.md
+docs/api/_templates/README.md
+docs/api/_templates/tools/update_manifest.py
+docs/api/_templates/manifest.json
+docs/api/index.md
