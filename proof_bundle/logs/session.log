@@ -7043,3 +7043,4 @@ $ git add README.md docs/ARCHITECTURE.md docs/INDEX.md docs/DOC_DEBT.md docs/ass
 [work 99e663f] Harden README and architecture docs with verified trust loop
  7 files changed, 1116 insertions(+), 121 deletions(-)
  create mode 100644 docs/_inventory.md
+2026-02-18T09:04:20+00:00 init

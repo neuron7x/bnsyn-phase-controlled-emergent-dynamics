@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-02-18T09:10:04.803449+00:00",
+  "gates": [
+    {
+      "id": "A",
+      "name": "Build & Install",
+      "severity": "P0",
+      "status": "pass",
+      "evidence": [
+        "proof_bundle/logs/phase1_install.log",
+        "proof_bundle/logs/phase2_build.log"
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Test Correctness + Flake Control",
+      "severity": "P0",
+      "status": "pass",
+      "evidence": [
+        "proof_bundle/logs/phase1_pytest.log"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Static Analysis / Lint / Type Safety",
+      "severity": "P1",
+      "status": "pass",
+      "evidence": [
+        "proof_bundle/logs/phase2_ruff.log",
+        "proof_bundle/logs/phase2_pylint.log",
+        "proof_bundle/logs/phase2_mypy.log"
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Supply Chain Integrity",
+      "severity": "P0",
+      "status": "unknown",
+      "evidence": [
+        "requirements-lock.txt exists; SBOM/hash verification not executed in this batch"
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Security Baseline",
+      "severity": "P0",
+      "status": "unknown",
+      "evidence": [
+        "security scans not executed in this batch"
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Config & Secret Hygiene",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "not evaluated in this batch"
+      ]
+    },
+    {
+      "id": "G",
+      "name": "Runtime Reliability",
+      "severity": "P0",
+      "status": "pass",
+      "evidence": [
+        "proof_bundle/logs/phase1_cuj_demo.log"
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Performance & Resource Discipline",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "not evaluated in this batch"
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Observability",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "not evaluated in this batch"
+      ]
+    },
+    {
+      "id": "J",
+      "name": "Operator Docs",
+      "severity": "P1",
+      "status": "pass",
+      "evidence": [
+        "artifacts/lpro/inventory/entrypoints.md"
+      ]
+    },
+    {
+      "id": "K",
+      "name": "Release Packaging",
+      "severity": "P0",
+      "status": "pass",
+      "evidence": [
+        "proof_bundle/logs/phase2_build.log",
+        "dist/*"
+      ]
+    },
+    {
+      "id": "L",
+      "name": "Metrics Truth System",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "artifacts/lpro/product/metrics_spec.md (initial draft)"
+      ]
+    },
+    {
+      "id": "M",
+      "name": "Experimentation Engine",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "artifacts/lpro/product/experiment_plan.md (initial draft)"
+      ]
+    },
+    {
+      "id": "N",
+      "name": "Monetization Readiness",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "artifacts/lpro/product/pricing_packaging.md (template)"
+      ]
+    },
+    {
+      "id": "O",
+      "name": "Trust-by-Design for AI/ML",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "threat model not executed in this batch"
+      ]
+    },
+    {
+      "id": "P",
+      "name": "Continuous Discovery Loop",
+      "severity": "P1",
+      "status": "unknown",
+      "evidence": [
+        "artifacts/lpro/delivery/incident_process.md + backlog template"
+      ]
+    }
+  ]
+}

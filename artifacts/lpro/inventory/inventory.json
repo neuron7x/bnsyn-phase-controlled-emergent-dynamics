@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-02-18T09:10:04.802431+00:00",
+  "repo": "bnsyn-phase-controlled-emergent-dynamics",
+  "languages": [
+    "Python 3.11+"
+  ],
+  "runtimes": [
+    "CPython"
+  ],
+  "build_systems": [
+    "setuptools (pyproject.toml)",
+    "make"
+  ],
+  "deploy_targets": [
+    "local CLI execution",
+    "CI (GitHub Actions)"
+  ],
+  "data_stores": [
+    "filesystem artifacts (results/, figures/)"
+  ],
+  "external_dependencies": [
+    "numpy",
+    "scipy",
+    "pydantic",
+    "jsonschema",
+    "joblib",
+    "pyyaml"
+  ],
+  "feature_flags": [],
+  "entrypoints": [
+    "python -m bnsyn --help",
+    "bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32"
+  ],
+  "config_surfaces": [
+    "pyproject.toml",
+    "acceptance_map.yaml",
+    "experiments/*.yaml"
+  ],
+  "secrets_surfaces": [
+    "environment variables in CI/workflows (not audited in this change)"
+  ],
+  "ci_cd": [
+    ".github/workflows/ci-pr.yml",
+    ".github/workflows/ci-validation.yml",
+    ".github/workflows/ci-pr-atomic.yml",
+    ".github/workflows/docs.yml"
+  ],
+  "testing": [
+    "pytest markers and suites in pyproject.toml; Make targets in README"
+  ],
+  "observability": [
+    "structured manifests under src/bnsyn/provenance; no external telemetry sink declared"
+  ]
+}

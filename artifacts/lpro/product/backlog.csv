@@ -1,0 +1,4 @@
+id,severity,title,acceptance_criteria,status
+LPRO-001,P0,Run supply-chain integrity gate,SBOM+hash verification evidence added,pending
+LPRO-002,P0,Run security baseline scans,No critical/high findings with logs,pending
+LPRO-003,P1,Define observability baseline,Health/logging checks documented,pending
