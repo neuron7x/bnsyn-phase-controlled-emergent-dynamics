@@ -40,6 +40,92 @@
       "version": "0.14.4"
     },
     {
+      "bom-ref": "Jinja2==3.1.6",
+      "description": "A very fast and expressive template engine.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Chat",
+          "type": "chat",
+          "url": "https://discord.gg/pallets"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://jinja.palletsprojects.com/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/pallets/jinja/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Donate",
+          "type": "other",
+          "url": "https://palletsprojects.com/donate"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changes",
+          "type": "release-notes",
+          "url": "https://jinja.palletsprojects.com/changes/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "Jinja2",
+      "purl": "pkg:pypi/jinja2@3.1.6",
+      "type": "library",
+      "version": "3.1.6"
+    },
+    {
+      "bom-ref": "MarkupSafe==3.0.3",
+      "description": "Safely add untrusted strings to HTML/XML markup.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Chat",
+          "type": "chat",
+          "url": "https://discord.gg/pallets"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://markupsafe.palletsprojects.com/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/pallets/markupsafe/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Donate",
+          "type": "other",
+          "url": "https://palletsprojects.com/donate"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changes",
+          "type": "release-notes",
+          "url": "https://markupsafe.palletsprojects.com/page/changes/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "name": "MarkupSafe",
+      "purl": "pkg:pypi/markupsafe@3.0.3",
+      "type": "library",
+      "version": "3.0.3"
+    },
+    {
       "bom-ref": "PyYAML==6.0.3",
       "description": "YAML parser and emitter for Python",
       "externalReferences": [
@@ -140,6 +226,136 @@
       "purl": "pkg:pypi/pygments@2.19.2",
       "type": "library",
       "version": "2.19.2"
+    },
+    {
+      "bom-ref": "Sphinx==9.0.4",
+      "description": "Python documentation generator",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/Sphinx/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://www.sphinx-doc.org/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinx"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://www.sphinx-doc.org/en/master/changes.html"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "name": "Sphinx",
+      "purl": "pkg:pypi/sphinx@9.0.4",
+      "type": "library",
+      "version": "9.0.4"
+    },
+    {
+      "bom-ref": "accessible-pygments==0.0.5",
+      "description": "A collection of accessible pygments styles",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Bug Reports",
+          "type": "issue-tracker",
+          "url": "https://github.com/Quansight-Labs/accessible-pygments/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/Quansight-Labs/accessible-pygments"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "BSD-3-Clause"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "accessible-pygments",
+      "purl": "pkg:pypi/accessible-pygments@0.0.5",
+      "type": "library",
+      "version": "0.0.5"
+    },
+    {
+      "bom-ref": "alabaster==1.0.0",
+      "description": "A light, configurable Sphinx theme",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/alabaster/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://alabaster.readthedocs.io/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/alabaster/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/alabaster"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://alabaster.readthedocs.io/en/latest/changelog.html"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://alabaster.readthedocs.io/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "alabaster",
+      "purl": "pkg:pypi/alabaster@1.0.0",
+      "type": "library",
+      "version": "1.0.0"
     },
     {
       "bom-ref": "annotated-types==0.7.0",
@@ -289,6 +505,40 @@
       "version": "25.4.0"
     },
     {
+      "bom-ref": "babel==2.18.0",
+      "description": "Internationalization utilities",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/python-babel/babel"
+        },
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://babel.pocoo.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "BSD-3-Clause"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "babel",
+      "purl": "pkg:pypi/babel@2.18.0",
+      "type": "library",
+      "version": "2.18.0"
+    },
+    {
       "bom-ref": "bandit==1.9.3",
       "description": "Security oriented static analyser for python code.",
       "externalReferences": [
@@ -340,6 +590,34 @@
       "purl": "pkg:pypi/bandit@1.9.3",
       "type": "library",
       "version": "1.9.3"
+    },
+    {
+      "bom-ref": "beautifulsoup4==4.14.3",
+      "description": "Screen-scraping library",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://www.crummy.com/software/BeautifulSoup/bs4/download/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.crummy.com/software/BeautifulSoup/bs4/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "beautifulsoup4",
+      "purl": "pkg:pypi/beautifulsoup4@4.14.3",
+      "type": "library",
+      "version": "4.14.3"
     },
     {
       "bom-ref": "black==25.12.0",
@@ -396,7 +674,7 @@
       "version": "0.2.0"
     },
     {
-      "bom-ref": "BomRef.271553464489109.4438096558263098",
+      "bom-ref": "BomRef.9488845600325414.919754174603217",
       "description": "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation",
       "externalReferences": [
         {
@@ -441,7 +719,7 @@
       "version": "5.0"
     },
     {
-      "bom-ref": "build==1.4.0",
+      "bom-ref": "build==1.3.0",
       "description": "A simple, correct Python build frontend",
       "externalReferences": [
         {
@@ -474,9 +752,9 @@
         }
       ],
       "name": "build",
-      "purl": "pkg:pypi/build@1.4.0",
+      "purl": "pkg:pypi/build@1.3.0",
       "type": "library",
-      "version": "1.4.0"
+      "version": "1.3.0"
     },
     {
       "bom-ref": "certifi==2026.1.4",
@@ -939,6 +1217,66 @@
       "version": "0.4.0"
     },
     {
+      "bom-ref": "docutils==0.22.4",
+      "description": "Docutils -- Python Documentation Utilities",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/docutils/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://docutils.sourceforge.io/docs/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://sourceforge.net/p/docutils/bugs/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://sourceforge.net/p/docutils/code/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://docutils.sourceforge.io/HISTORY.html"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://docutils.sourceforge.io"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: GNU General Public License (GPL)"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: Public Domain"
+          }
+        }
+      ],
+      "name": "docutils",
+      "purl": "pkg:pypi/docutils@0.22.4",
+      "type": "library",
+      "version": "0.22.4"
+    },
+    {
       "bom-ref": "fastjsonschema==2.21.2",
       "description": "Fastest Python implementation of JSON schema",
       "externalReferences": [
@@ -1021,6 +1359,52 @@
       "purl": "pkg:pypi/fqdn@1.5.1",
       "type": "library",
       "version": "1.5.1"
+    },
+    {
+      "bom-ref": "furo==2025.12.19",
+      "description": "A clean customisable Sphinx documentation theme.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: GitHub",
+          "type": "vcs",
+          "url": "https://github.com/pradyunsg/furo"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "furo",
+      "purl": "pkg:pypi/furo@2025.12.19",
+      "type": "library",
+      "version": "2025.12.19"
+    },
+    {
+      "bom-ref": "glob2==0.7",
+      "description": "Version of the glob module that can capture patterns and supports recursive wildcards",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "http://github.com/miracle2k/python-glob2/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "glob2",
+      "purl": "pkg:pypi/glob2@0.7",
+      "type": "library",
+      "version": "0.7"
     },
     {
       "bom-ref": "hypothesis==6.151.5",
@@ -1120,6 +1504,29 @@
       "purl": "pkg:pypi/idna@3.11",
       "type": "library",
       "version": "3.11"
+    },
+    {
+      "bom-ref": "imagesize==1.4.1",
+      "description": "Getting image size from png/jpeg/jpeg2000/gif file",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/shibukawa/imagesize_py"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "imagesize",
+      "purl": "pkg:pypi/imagesize@1.4.1",
+      "type": "library",
+      "version": "1.4.1"
     },
     {
       "bom-ref": "iniconfig==2.3.0",
@@ -1379,6 +1786,35 @@
       "version": "2025.9.1"
     },
     {
+      "bom-ref": "junit-xml==1.9",
+      "description": "Creates JUnit XML test result documents that can be read by tools such as Jenkins",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/kyrus/python-junit-xml"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: Freely Distributable"
+          }
+        }
+      ],
+      "name": "junit-xml",
+      "purl": "pkg:pypi/junit-xml@1.9",
+      "type": "library",
+      "version": "1.9"
+    },
+    {
       "bom-ref": "lark==1.3.1",
       "description": "a modern parsing library",
       "externalReferences": [
@@ -1542,6 +1978,34 @@
       "version": "0.7.0"
     },
     {
+      "bom-ref": "mdit-py-plugins==0.5.0",
+      "description": "Collection of plugins for markdown-it-py",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://mdit-py-plugins.readthedocs.io"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/executablebooks/mdit-py-plugins"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "mdit-py-plugins",
+      "purl": "pkg:pypi/mdit-py-plugins@0.5.0",
+      "type": "library",
+      "version": "0.5.0"
+    },
+    {
       "bom-ref": "mdurl==0.1.2",
       "description": "Markdown URL utilities",
       "externalReferences": [
@@ -1608,6 +2072,29 @@
       "version": "1.1.2"
     },
     {
+      "bom-ref": "mutmut==2.4.5",
+      "description": "mutation testing for Python 3",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/boxed/mutmut"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "mutmut",
+      "purl": "pkg:pypi/mutmut@2.4.5",
+      "type": "library",
+      "version": "2.4.5"
+    },
+    {
       "bom-ref": "mypy==1.19.1",
       "description": "Optional static typing for Python",
       "externalReferences": [
@@ -1672,6 +2159,34 @@
       "purl": "pkg:pypi/mypy-extensions@1.1.0",
       "type": "library",
       "version": "1.1.0"
+    },
+    {
+      "bom-ref": "myst-parser==5.0.0",
+      "description": "An extended [CommonMark](https://spec.commonmark.org/) compliant parser,",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://myst-parser.readthedocs.io"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/executablebooks/MyST-Parser"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "myst-parser",
+      "purl": "pkg:pypi/myst-parser@5.0.0",
+      "type": "library",
+      "version": "5.0.0"
     },
     {
       "bom-ref": "nodeenv==1.10.0",
@@ -1798,6 +2313,29 @@
       "purl": "pkg:pypi/packaging@25.0",
       "type": "library",
       "version": "25.0"
+    },
+    {
+      "bom-ref": "parso==0.8.6",
+      "description": "A Python Parser",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/davidhalter/parso"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "parso",
+      "purl": "pkg:pypi/parso@0.8.6",
+      "type": "library",
+      "version": "0.8.6"
     },
     {
       "bom-ref": "pathspec==1.0.3",
@@ -2007,6 +2545,44 @@
       "purl": "pkg:pypi/pluggy@1.6.0",
       "type": "library",
       "version": "1.6.0"
+    },
+    {
+      "bom-ref": "pony==0.7.19",
+      "description": "Pony Object-Relational Mapper",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Download-URL",
+          "type": "distribution",
+          "url": "http://pypi.python.org/pypi/pony/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://docs.ponyorm.org"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/ponyorm/pony"
+        },
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://ponyorm.com"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: Apache Software License"
+          }
+        }
+      ],
+      "name": "pony",
+      "purl": "pkg:pypi/pony@0.7.19",
+      "type": "library",
+      "version": "0.7.19"
     },
     {
       "bom-ref": "pre_commit==4.5.1",
@@ -2728,6 +3304,42 @@
       "version": "14.3.2"
     },
     {
+      "bom-ref": "roman-numerals==4.1.0",
+      "description": "Manipulate well-formed Roman numerals",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/roman-numerals/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/AA-Turner/roman-numerals/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/AA-Turner/roman-numerals/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/AA-Turner/roman-numerals/blob/master/CHANGES.rst"
+        }
+      ],
+      "licenses": [
+        {
+          "acknowledgement": "declared",
+          "expression": "0BSD OR CC0-1.0"
+        }
+      ],
+      "name": "roman-numerals",
+      "purl": "pkg:pypi/roman-numerals@4.1.0",
+      "type": "library",
+      "version": "4.1.0"
+    },
+    {
       "bom-ref": "rpds-py==0.30.0",
       "description": "Python bindings to Rust's persistent data structures (rpds)",
       "externalReferences": [
@@ -2937,6 +3549,361 @@
       "version": "2.4.0"
     },
     {
+      "bom-ref": "soupsieve==2.8.3",
+      "description": "A modern CSS selector implementation for Beautiful Soup.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/facelessuser/soupsieve"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "soupsieve",
+      "purl": "pkg:pypi/soupsieve@2.8.3",
+      "type": "library",
+      "version": "2.8.3"
+    },
+    {
+      "bom-ref": "sphinx-autodoc-typehints==3.6.1",
+      "description": "Type hints (PEP 484) support for the Sphinx autodoc extension",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/tox-dev/sphinx-autodoc-typehints/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/tox-dev/sphinx-autodoc-typehints"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/tox-dev/sphinx-autodoc-typehints/releases"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/tox-dev/sphinx-autodoc-typehints"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "sphinx-autodoc-typehints",
+      "purl": "pkg:pypi/sphinx-autodoc-typehints@3.6.1",
+      "type": "library",
+      "version": "3.6.1"
+    },
+    {
+      "bom-ref": "sphinx-basic-ng==1.0.0b2",
+      "description": "A modern skeleton for Sphinx themes.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://rtfd.io/sphinx-basic-ng/"
+        },
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/pradyunsg/sphinx-basic-ng"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "sphinx-basic-ng",
+      "purl": "pkg:pypi/sphinx-basic-ng@1.0.0b2",
+      "type": "library",
+      "version": "1.0.0b2"
+    },
+    {
+      "bom-ref": "sphinx-copybutton==0.5.2",
+      "description": "Add a copy button to each of your code cells.",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/executablebooks/sphinx-copybutton"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "sphinx-copybutton",
+      "purl": "pkg:pypi/sphinx-copybutton@0.5.2",
+      "type": "library",
+      "version": "0.5.2"
+    },
+    {
+      "bom-ref": "sphinxcontrib-applehelp==2.0.0",
+      "description": "sphinxcontrib-applehelp is a Sphinx extension which outputs Apple help books",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-applehelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-applehelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-applehelp/blob/master/CHANGES.rst"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-applehelp",
+      "purl": "pkg:pypi/sphinxcontrib-applehelp@2.0.0",
+      "type": "library",
+      "version": "2.0.0"
+    },
+    {
+      "bom-ref": "sphinxcontrib-devhelp==2.0.0",
+      "description": "sphinxcontrib-devhelp is a sphinx extension which outputs Devhelp documents",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-devhelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-devhelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-devhelp/blob/master/CHANGES.rst"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-devhelp",
+      "purl": "pkg:pypi/sphinxcontrib-devhelp@2.0.0",
+      "type": "library",
+      "version": "2.0.0"
+    },
+    {
+      "bom-ref": "sphinxcontrib-htmlhelp==2.1.0",
+      "description": "sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-htmlhelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-htmlhelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-htmlhelp/blob/master/CHANGES.rst"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-htmlhelp",
+      "purl": "pkg:pypi/sphinxcontrib-htmlhelp@2.1.0",
+      "type": "library",
+      "version": "2.1.0"
+    },
+    {
+      "bom-ref": "sphinxcontrib-jsmath==1.0.1",
+      "description": "A sphinx extension which renders display math in HTML via JavaScript",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Download-URL",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-jsmath/"
+        },
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "http://sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-jsmath",
+      "purl": "pkg:pypi/sphinxcontrib-jsmath@1.0.1",
+      "type": "library",
+      "version": "1.0.1"
+    },
+    {
+      "bom-ref": "sphinxcontrib-qthelp==2.0.0",
+      "description": "sphinxcontrib-qthelp is a sphinx extension which outputs QtHelp documents",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-qthelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-qthelp/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-qthelp/blob/master/CHANGES.rst"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-qthelp",
+      "purl": "pkg:pypi/sphinxcontrib-qthelp@2.0.0",
+      "type": "library",
+      "version": "2.0.0"
+    },
+    {
+      "bom-ref": "sphinxcontrib-serializinghtml==2.0.0",
+      "description": "sphinxcontrib-serializinghtml is a sphinx extension which outputs \"serialized\" HTML files (json and pickle)",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Download",
+          "type": "distribution",
+          "url": "https://pypi.org/project/sphinxcontrib-serializinghtml/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Issue tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/sphinx-doc/sphinx/issues/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Code",
+          "type": "other",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-serializinghtml/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://github.com/sphinx-doc/sphinxcontrib-serializinghtml/blob/master/CHANGES.rst"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://www.sphinx-doc.org/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "sphinxcontrib-serializinghtml",
+      "purl": "pkg:pypi/sphinxcontrib-serializinghtml@2.0.0",
+      "type": "library",
+      "version": "2.0.0"
+    },
+    {
       "bom-ref": "stevedore==5.6.0",
       "description": "Manage dynamic plugins for Python applications",
       "externalReferences": [
@@ -2969,6 +3936,29 @@
       "purl": "pkg:pypi/stevedore@5.6.0",
       "type": "library",
       "version": "5.6.0"
+    },
+    {
+      "bom-ref": "toml==0.10.2",
+      "description": "Python Library for Tom's Obvious, Minimal Language",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/uiri/toml"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "toml",
+      "purl": "pkg:pypi/toml@0.10.2",
+      "type": "library",
+      "version": "0.10.2"
     },
     {
       "bom-ref": "tomli==2.4.0",
@@ -3292,7 +4282,7 @@
       "version": "0.25"
     },
     {
-      "bom-ref": "virtualenv==20.37.0",
+      "bom-ref": "virtualenv==20.36.1",
       "description": "Virtual Python Environment builder",
       "externalReferences": [
         {
@@ -3325,9 +4315,9 @@
         }
       ],
       "name": "virtualenv",
-      "purl": "pkg:pypi/virtualenv@20.37.0",
+      "purl": "pkg:pypi/virtualenv@20.36.1",
       "type": "library",
-      "version": "20.37.0"
+      "version": "20.36.1"
     },
     {
       "bom-ref": "webcolors==25.10.0",
@@ -3367,15 +4357,28 @@
   "dependencies": [
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "filelock==3.24.2",
+        "furo==2025.12.19",
         "msgpack==1.1.2",
         "mypy==1.19.1",
         "pytest-cov==7.0.0",
         "pytest==9.0.2",
         "requests==2.32.5",
-        "ruff==0.15.0"
+        "ruff==0.15.0",
+        "sphinx-copybutton==0.5.2"
       ],
       "ref": "CacheControl==0.14.4"
+    },
+    {
+      "dependsOn": [
+        "MarkupSafe==3.0.3",
+        "babel==2.18.0"
+      ],
+      "ref": "Jinja2==3.1.6"
+    },
+    {
+      "ref": "MarkupSafe==3.0.3"
     },
     {
       "ref": "PyYAML==6.0.3"
@@ -3385,16 +4388,51 @@
     },
     {
       "dependsOn": [
+        "Jinja2==3.1.6",
+        "Pygments==2.19.2",
+        "alabaster==1.0.0",
+        "babel==2.18.0",
+        "docutils==0.22.4",
+        "imagesize==1.4.1",
+        "packaging==25.0",
+        "requests==2.32.5",
+        "roman-numerals==4.1.0",
+        "snowballstemmer==3.0.1",
+        "sphinxcontrib-applehelp==2.0.0",
+        "sphinxcontrib-devhelp==2.0.0",
+        "sphinxcontrib-htmlhelp==2.1.0",
+        "sphinxcontrib-jsmath==1.0.1",
+        "sphinxcontrib-qthelp==2.0.0",
+        "sphinxcontrib-serializinghtml==2.0.0"
+      ],
+      "ref": "Sphinx==9.0.4"
+    },
+    {
+      "dependsOn": [
+        "Pygments==2.19.2",
+        "hypothesis==6.151.5",
+        "pre_commit==4.5.1",
+        "pytest==9.0.2"
+      ],
+      "ref": "accessible-pygments==0.0.5"
+    },
+    {
+      "ref": "alabaster==1.0.0"
+    },
+    {
+      "dependsOn": [
         "typing_extensions==4.15.0"
       ],
       "ref": "annotated-types==0.7.0"
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "pre_commit==4.5.1",
         "pytest-cov==7.0.0",
         "pytest==9.0.2",
         "python-dateutil==2.9.0.post0",
+        "sphinx-autodoc-typehints==3.6.1",
         "tzdata==2025.3"
       ],
       "ref": "arrow==1.4.0"
@@ -3410,7 +4448,17 @@
     },
     {
       "dependsOn": [
+        "Jinja2==3.1.6",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2",
+        "tzdata==2025.3"
+      ],
+      "ref": "babel==2.18.0"
+    },
+    {
+      "dependsOn": [
         "PyYAML==6.0.3",
+        "beautifulsoup4==4.14.3",
         "coverage==7.13.4",
         "pylint==3.3.5",
         "rich==14.3.2",
@@ -3418,6 +4466,16 @@
         "tomli==2.4.0"
       ],
       "ref": "bandit==1.9.3"
+    },
+    {
+      "dependsOn": [
+        "chardet==5.2.0",
+        "charset-normalizer==3.4.4",
+        "lxml==6.0.2",
+        "soupsieve==2.8.3",
+        "typing_extensions==4.15.0"
+      ],
+      "ref": "beautifulsoup4==4.14.3"
     },
     {
       "dependsOn": [
@@ -3435,11 +4493,15 @@
     {
       "dependsOn": [
         "PyYAML==6.0.3",
+        "Sphinx==9.0.4",
         "bandit==1.9.3",
+        "build==1.3.0",
+        "furo==2025.12.19",
         "hypothesis==6.151.5",
         "joblib==1.4.2",
         "jsonschema==4.26.0",
         "mypy==1.19.1",
+        "myst-parser==5.0.0",
         "numpy==2.4.1",
         "packaging==25.0",
         "pip_audit==2.10.0",
@@ -3452,14 +4514,17 @@
         "pytest==9.0.2",
         "ruff==0.15.0",
         "scipy==1.17.0",
+        "sphinx-autodoc-typehints==3.6.1",
+        "sphinx-copybutton==0.5.2",
         "validate-pyproject==0.25"
       ],
       "ref": "bnsyn==0.2.0"
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "black==25.12.0",
-        "build==1.4.0",
+        "build==1.3.0",
         "isort==6.1.0",
         "pytest==9.0.2"
       ],
@@ -3470,9 +4535,9 @@
         "packaging==25.0",
         "pyproject_hooks==1.2.0",
         "tomli==2.4.0",
-        "virtualenv==20.37.0"
+        "virtualenv==20.36.1"
       ],
-      "ref": "build==1.4.0"
+      "ref": "build==1.3.0"
     },
     {
       "ref": "certifi==2026.1.4"
@@ -3529,6 +4594,9 @@
       "ref": "distlib==0.4.0"
     },
     {
+      "ref": "docutils==0.22.4"
+    },
+    {
       "dependsOn": [
         "jsonschema==4.26.0",
         "pylint==3.3.5",
@@ -3541,6 +4609,19 @@
     },
     {
       "ref": "fqdn==1.5.1"
+    },
+    {
+      "dependsOn": [
+        "Pygments==2.19.2",
+        "Sphinx==9.0.4",
+        "accessible-pygments==0.0.5",
+        "beautifulsoup4==4.14.3",
+        "sphinx-basic-ng==1.0.0b2"
+      ],
+      "ref": "furo==2025.12.19"
+    },
+    {
+      "ref": "glob2==0.7"
     },
     {
       "dependsOn": [
@@ -3566,6 +4647,9 @@
         "ruff==0.15.0"
       ],
       "ref": "idna==3.11"
+    },
+    {
+      "ref": "imagesize==1.4.1"
     },
     {
       "ref": "iniconfig==2.3.0"
@@ -3610,6 +4694,12 @@
       "ref": "jsonschema==4.26.0"
     },
     {
+      "dependsOn": [
+        "six==1.17.0"
+      ],
+      "ref": "junit-xml==1.9"
+    },
+    {
       "ref": "lark==1.3.1"
     },
     {
@@ -3617,24 +4707,33 @@
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "boolean.py==5.0",
         "pytest==9.0.2",
-        "ruff==0.15.0"
+        "ruff==0.15.0",
+        "sphinx-copybutton==0.5.2"
       ],
       "ref": "license-expression==30.4.4"
     },
     {
+      "dependsOn": [
+        "beautifulsoup4==4.14.3"
+      ],
       "ref": "lxml==6.0.2"
     },
     {
       "dependsOn": [
         "PyYAML==6.0.3",
+        "Sphinx==9.0.4",
         "coverage==7.13.4",
+        "mdit-py-plugins==0.5.0",
         "mdurl==0.1.2",
+        "myst-parser==5.0.0",
         "psutil==7.2.2",
         "pytest-cov==7.0.0",
         "pytest==9.0.2",
-        "requests==2.32.5"
+        "requests==2.32.5",
+        "sphinx-copybutton==0.5.2"
       ],
       "ref": "markdown-it-py==4.0.0"
     },
@@ -3642,10 +4741,35 @@
       "ref": "mccabe==0.7.0"
     },
     {
+      "dependsOn": [
+        "coverage==7.13.4",
+        "markdown-it-py==4.0.0",
+        "myst-parser==5.0.0",
+        "pre_commit==4.5.1",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2"
+      ],
+      "ref": "mdit-py-plugins==0.5.0"
+    },
+    {
       "ref": "mdurl==0.1.2"
     },
     {
       "ref": "msgpack==1.1.2"
+    },
+    {
+      "dependsOn": [
+        "click==8.3.1",
+        "coverage==7.13.4",
+        "glob2==0.7",
+        "junit-xml==1.9",
+        "parso==0.8.6",
+        "pony==0.7.19",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2",
+        "toml==0.10.2"
+      ],
+      "ref": "mutmut==2.4.5"
     },
     {
       "dependsOn": [
@@ -3662,6 +4786,25 @@
     },
     {
       "ref": "mypy_extensions==1.1.0"
+    },
+    {
+      "dependsOn": [
+        "Jinja2==3.1.6",
+        "PyYAML==6.0.3",
+        "Pygments==2.19.2",
+        "Sphinx==9.0.4",
+        "beautifulsoup4==4.14.3",
+        "coverage==7.13.4",
+        "defusedxml==0.7.1",
+        "docutils==0.22.4",
+        "markdown-it-py==4.0.0",
+        "mdit-py-plugins==0.5.0",
+        "pre_commit==4.5.1",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2",
+        "sphinx-copybutton==0.5.2"
+      ],
+      "ref": "myst-parser==5.0.0"
     },
     {
       "ref": "nodeenv==1.10.0"
@@ -3683,6 +4826,12 @@
     },
     {
       "dependsOn": [
+        "pytest==9.0.2"
+      ],
+      "ref": "parso==0.8.6"
+    },
+    {
+      "dependsOn": [
         "pytest==9.0.2",
         "typing_extensions==4.15.0"
       ],
@@ -3696,6 +4845,7 @@
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "black==25.12.0",
         "packaging==25.0",
         "pyparsing==3.3.2",
@@ -3709,7 +4859,7 @@
     {
       "dependsOn": [
         "CacheControl==0.14.4",
-        "build==1.4.0",
+        "build==1.3.0",
         "coverage==7.13.4",
         "cyclonedx-python-lib==11.6.0",
         "mypy==1.19.1",
@@ -3728,9 +4878,12 @@
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
+        "furo==2025.12.19",
         "mypy==1.19.1",
         "pytest-cov==7.0.0",
-        "pytest==9.0.2"
+        "pytest==9.0.2",
+        "sphinx-autodoc-typehints==3.6.1"
       ],
       "ref": "platformdirs==4.5.1"
     },
@@ -3743,17 +4896,21 @@
       "ref": "pluggy==1.6.0"
     },
     {
+      "ref": "pony==0.7.19"
+    },
+    {
       "dependsOn": [
         "PyYAML==6.0.3",
         "cfgv==3.5.0",
         "identify==2.6.16",
         "nodeenv==1.10.0",
-        "virtualenv==20.37.0"
+        "virtualenv==20.36.1"
       ],
       "ref": "pre_commit==4.5.1"
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "black==25.12.0",
         "coverage==7.13.4",
         "packaging==25.0",
@@ -3763,7 +4920,7 @@
         "requests==2.32.5",
         "ruff==0.15.0",
         "validate-pyproject==0.25",
-        "virtualenv==20.37.0"
+        "virtualenv==20.36.1"
       ],
       "ref": "psutil==7.2.2"
     },
@@ -3810,6 +4967,9 @@
       "ref": "pylint==3.3.5"
     },
     {
+      "dependsOn": [
+        "Jinja2==3.1.6"
+      ],
       "ref": "pyparsing==3.3.2"
     },
     {
@@ -3827,7 +4987,7 @@
         "coverage==7.13.4",
         "pluggy==1.6.0",
         "pytest==9.0.2",
-        "virtualenv==20.37.0"
+        "virtualenv==20.36.1"
       ],
       "ref": "pytest-cov==7.0.0"
     },
@@ -3853,7 +5013,7 @@
     {
       "dependsOn": [
         "black==25.12.0",
-        "build==1.4.0",
+        "build==1.3.0",
         "mypy==1.19.1",
         "pytest-cov==7.0.0",
         "pytest==9.0.2"
@@ -3902,6 +5062,9 @@
       "ref": "rich==14.3.2"
     },
     {
+      "ref": "roman-numerals==4.1.0"
+    },
+    {
       "ref": "rpds-py==0.30.0"
     },
     {
@@ -3909,6 +5072,7 @@
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "click==8.3.1",
         "hypothesis==6.151.5",
         "mypy==1.19.1",
@@ -3916,6 +5080,7 @@
         "pytest-cov==7.0.0",
         "pytest==9.0.2",
         "ruff==0.15.0",
+        "sphinx-copybutton==0.5.2",
         "typing_extensions==4.15.0"
       ],
       "ref": "scipy==1.17.0"
@@ -3930,7 +5095,94 @@
       "ref": "sortedcontainers==2.4.0"
     },
     {
+      "ref": "soupsieve==2.8.3"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "coverage==7.13.4",
+        "defusedxml==0.7.1",
+        "furo==2025.12.19",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2",
+        "typing_extensions==4.15.0"
+      ],
+      "ref": "sphinx-autodoc-typehints==3.6.1"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "furo==2025.12.19",
+        "myst-parser==5.0.0",
+        "sphinx-copybutton==0.5.2"
+      ],
+      "ref": "sphinx-basic-ng==1.0.0b2"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "pre_commit==4.5.1"
+      ],
+      "ref": "sphinx-copybutton==0.5.2"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "mypy==1.19.1",
+        "pytest==9.0.2",
+        "ruff==0.15.0"
+      ],
+      "ref": "sphinxcontrib-applehelp==2.0.0"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "mypy==1.19.1",
+        "pytest==9.0.2",
+        "ruff==0.15.0"
+      ],
+      "ref": "sphinxcontrib-devhelp==2.0.0"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "mypy==1.19.1",
+        "pytest==9.0.2",
+        "ruff==0.15.0"
+      ],
+      "ref": "sphinxcontrib-htmlhelp==2.1.0"
+    },
+    {
+      "dependsOn": [
+        "mypy==1.19.1",
+        "pytest==9.0.2"
+      ],
+      "ref": "sphinxcontrib-jsmath==1.0.1"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "defusedxml==0.7.1",
+        "mypy==1.19.1",
+        "pytest==9.0.2",
+        "ruff==0.15.0"
+      ],
+      "ref": "sphinxcontrib-qthelp==2.0.0"
+    },
+    {
+      "dependsOn": [
+        "Sphinx==9.0.4",
+        "mypy==1.19.1",
+        "pytest==9.0.2",
+        "ruff==0.15.0"
+      ],
+      "ref": "sphinxcontrib-serializinghtml==2.0.0"
+    },
+    {
       "ref": "stevedore==5.6.0"
+    },
+    {
+      "ref": "toml==0.10.2"
     },
     {
       "ref": "tomli==2.4.0"
@@ -3972,22 +5224,24 @@
     },
     {
       "dependsOn": [
+        "Sphinx==9.0.4",
         "coverage==7.13.4",
         "distlib==0.4.0",
         "filelock==3.24.2",
+        "furo==2025.12.19",
         "packaging==25.0",
         "platformdirs==4.5.1",
         "pytest==9.0.2",
         "typing_extensions==4.15.0"
       ],
-      "ref": "virtualenv==20.37.0"
+      "ref": "virtualenv==20.36.1"
     },
     {
       "ref": "webcolors==25.10.0"
     }
   ],
   "metadata": {
-    "timestamp": "2026-02-17T23:05:01.853531+00:00",
+    "timestamp": "2026-02-18T17:58:43.799180+00:00",
     "tools": {
       "components": [
         {
@@ -4091,7 +5345,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:0c26fd00-e05e-4464-958d-37949458d887",
+  "serialNumber": "urn:uuid:5ecc6c2e-0f19-457f-a6d7-60f7df2394be",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

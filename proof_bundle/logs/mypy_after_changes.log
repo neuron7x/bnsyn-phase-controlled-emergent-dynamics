@@ -1,0 +1,22 @@
+src/bnsyn/neuron/adex.py:58: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:58: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:59: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:59: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:94: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:94: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:95: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:95: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:168: error: Float64Array? has no attribute "shape"  [attr-defined]
+src/bnsyn/neuron/adex.py:203: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:203: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:204: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:204: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:256: error: Unsupported left operand type for - (Float64Array?)  [operator]
+src/bnsyn/neuron/adex.py:257: error: Unsupported left operand type for - (Float64Array?)  [operator]
+src/bnsyn/neuron/adex.py:283: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:283: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:284: error: Variable "bnsyn.neuron.adex.Float64Array" is not valid as a type  [valid-type]
+src/bnsyn/neuron/adex.py:284: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+src/bnsyn/neuron/adex.py:330: error: Float64Array? has no attribute "shape"  [attr-defined]
+src/bnsyn/viz/interactive.py:115: error: Value of type Float64Array? is not indexable  [index]
+Found 13 errors in 2 files (checked 73 source files)

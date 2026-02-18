@@ -1,0 +1,3 @@
+OK .github/workflows/ci-pr-atomic.yml
+OK .github/workflows/launch-gate.yml
+OK .github/workflows/release-pipeline.yml

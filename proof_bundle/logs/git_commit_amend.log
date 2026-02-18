@@ -1,0 +1,23 @@
+[work c10d60f] Add perfection gate pipeline and evidence artifacts
+ Date: Wed Feb 18 15:27:42 2026 +0000
+ 33 files changed, 1107 insertions(+), 73 deletions(-)
+ create mode 100644 .github/workflows/perfection-gate.yml
+ create mode 100644 proof_bundle/logs/entropy_baseline.log
+ create mode 100644 proof_bundle/logs/entropy_current.log
+ create mode 100644 proof_bundle/logs/entropy_gate_help.log
+ create mode 100644 proof_bundle/logs/generate_tests_inventory.log
+ create mode 100644 proof_bundle/logs/initial_assessment.log
+ create mode 100644 proof_bundle/logs/make_mypy.log
+ create mode 100644 proof_bundle/logs/make_perfection_gate.log
+ create mode 100644 proof_bundle/logs/manifest_generate.log
+ create mode 100644 proof_bundle/logs/mypy_after_changes.log
+ create mode 100644 proof_bundle/logs/mypy_non_strict.log
+ create mode 100644 proof_bundle/logs/perfection_quality_json.log
+ create mode 100644 proof_bundle/logs/pip_install_gate_deps.log
+ create mode 100644 proof_bundle/logs/pytest_coverage.log
+ create mode 100644 proof_bundle/logs/pytest_not_validation_property.log
+ create mode 100644 proof_bundle/logs/read_makefile.log
+ create mode 100644 proof_bundle/logs/ruff_check_after_adex_fix.log
+ create mode 100644 proof_bundle/logs/ruff_check_after_changes.log
+ create mode 100644 proof_bundle/logs/ruff_check_perfection_script.log
+ create mode 100644 scripts/perfection_gate.py

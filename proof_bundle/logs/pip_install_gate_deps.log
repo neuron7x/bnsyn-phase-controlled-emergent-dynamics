@@ -1,0 +1,111 @@
+Obtaining file:///workspace/bnsyn-phase-controlled-emergent-dynamics
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: build in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (1.3.0)
+Requirement already satisfied: bandit in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (1.9.3)
+Requirement already satisfied: pytest-cov in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (7.0.0)
+Requirement already satisfied: cyclonedx-bom==7.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (7.1.0)
+Requirement already satisfied: numpy==2.4.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.4.1)
+Requirement already satisfied: pydantic==2.12.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.12.5)
+Requirement already satisfied: scipy==1.17.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.17.0)
+Requirement already satisfied: jsonschema==4.26.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.26.0)
+Requirement already satisfied: joblib==1.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.4.2)
+Requirement already satisfied: pyyaml==6.0.3 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.0.3)
+Requirement already satisfied: hypothesis==6.151.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.151.5)
+Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (9.0.2)
+Requirement already satisfied: ruff==0.15.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (0.15.0)
+Requirement already satisfied: mypy==1.19.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (1.19.1)
+Requirement already satisfied: pylint==3.3.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (3.3.5)
+Requirement already satisfied: pydocstyle==6.3.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (6.3.0)
+Requirement already satisfied: validate-pyproject==0.25 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (0.25)
+Requirement already satisfied: pre-commit==4.5.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (4.5.1)
+Requirement already satisfied: pip-audit==2.10.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (2.10.0)
+Requirement already satisfied: psutil==7.2.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (7.2.2)
+Requirement already satisfied: packaging==25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bnsyn==0.2.0) (25.0)
+Requirement already satisfied: pyproject_hooks in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from build) (1.2.0)
+Requirement already satisfied: stevedore>=1.20.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bandit) (5.6.0)
+Requirement already satisfied: rich in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from bandit) (14.3.2)
+Requirement already satisfied: coverage>=7.10.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from coverage[toml]>=7.10.6->pytest-cov) (7.13.4)
+Requirement already satisfied: pluggy>=1.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest-cov) (1.6.0)
+Requirement already satisfied: chardet<6.0,>=5.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-bom==7.1.0) (5.2.0)
+Requirement already satisfied: cyclonedx-python-lib<12,>=8.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (11.6.0)
+Requirement already satisfied: packageurl-python<2,>=0.11 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-bom==7.1.0) (0.17.6)
+Requirement already satisfied: pip-requirements-parser<33.0,>=32.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-bom==7.1.0) (32.0.1)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from hypothesis==6.151.5->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (25.4.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema==4.26.0->bnsyn==0.2.0) (0.30.0)
+Requirement already satisfied: typing_extensions>=4.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from mypy==1.19.1->bnsyn==0.2.0) (4.15.0)
+Requirement already satisfied: mypy_extensions>=1.0.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from mypy==1.19.1->bnsyn==0.2.0) (1.1.0)
+Requirement already satisfied: pathspec>=0.9.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from mypy==1.19.1->bnsyn==0.2.0) (1.0.3)
+Requirement already satisfied: librt>=0.6.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from mypy==1.19.1->bnsyn==0.2.0) (0.7.7)
+Requirement already satisfied: CacheControl>=0.13.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (0.14.4)
+Requirement already satisfied: pip-api>=0.0.28 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (0.0.34)
+Requirement already satisfied: requests>=2.31.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (2.32.5)
+Requirement already satisfied: tomli>=2.2.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (2.4.0)
+Requirement already satisfied: tomli-w>=1.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (1.2.0)
+Requirement already satisfied: platformdirs>=4.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-audit==2.10.0->bnsyn==0.2.0) (4.5.1)
+Requirement already satisfied: cfgv>=2.0.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pre-commit==4.5.1->bnsyn==0.2.0) (3.5.0)
+Requirement already satisfied: identify>=1.0.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pre-commit==4.5.1->bnsyn==0.2.0) (2.6.16)
+Requirement already satisfied: nodeenv>=0.11.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pre-commit==4.5.1->bnsyn==0.2.0) (1.10.0)
+Requirement already satisfied: virtualenv>=20.10.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pre-commit==4.5.1->bnsyn==0.2.0) (20.37.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydantic==2.12.5->bnsyn==0.2.0) (0.4.2)
+Requirement already satisfied: snowballstemmer>=2.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pydocstyle==6.3.0->bnsyn==0.2.0) (3.0.1)
+Requirement already satisfied: dill>=0.3.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pylint==3.3.5->bnsyn==0.2.0) (0.4.1)
+Requirement already satisfied: astroid<=3.4.0-dev0,>=3.3.8 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pylint==3.3.5->bnsyn==0.2.0) (3.3.11)
+Requirement already satisfied: isort!=5.13.0,<7,>=4.2.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pylint==3.3.5->bnsyn==0.2.0) (6.1.0)
+Requirement already satisfied: mccabe<0.8,>=0.6 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pylint==3.3.5->bnsyn==0.2.0) (0.7.0)
+Requirement already satisfied: tomlkit>=0.10.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pylint==3.3.5->bnsyn==0.2.0) (0.14.0)
+Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.3.0)
+Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pytest==9.0.2->bnsyn==0.2.0) (2.19.2)
+Requirement already satisfied: fastjsonschema<=3,>=2.16.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from validate-pyproject==0.25->bnsyn==0.2.0) (2.21.2)
+Requirement already satisfied: license-expression<31,>=30 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=8.0->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (30.4.4)
+Requirement already satisfied: py-serializable<3.0.0,>=2.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-python-lib<12,>=8.0->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (2.1.0)
+Requirement already satisfied: lxml<7,>=4 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (6.0.2)
+Requirement already satisfied: fqdn in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.5.1)
+Requirement already satisfied: idna in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (3.11)
+Requirement already satisfied: isoduration in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (20.11.0)
+Requirement already satisfied: jsonpointer>1.13 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (3.0.0)
+Requirement already satisfied: rfc3339-validator in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (0.1.4)
+Requirement already satisfied: rfc3986-validator>0.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (0.1.1)
+Requirement already satisfied: rfc3987-syntax>=1.1.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.1.0)
+Requirement already satisfied: uri-template in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.3.0)
+Requirement already satisfied: webcolors>=24.6.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (25.10.0)
+Requirement already satisfied: boolean.py>=4.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from license-expression<31,>=30->cyclonedx-python-lib<12,>=8.0->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (5.0)
+Requirement already satisfied: pyparsing in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-requirements-parser<33.0,>=32.0->cyclonedx-bom==7.1.0) (3.3.2)
+Requirement already satisfied: defusedxml<0.8.0,>=0.7.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from py-serializable<3.0.0,>=2.1.0->cyclonedx-python-lib<12,>=8.0->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (0.7.1)
+Requirement already satisfied: msgpack<2.0.0,>=0.5.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from CacheControl>=0.13.0->CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (1.1.2)
+Requirement already satisfied: filelock>=3.8.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from CacheControl[filecache]>=0.13.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.24.2)
+Requirement already satisfied: pip in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from pip-api>=0.0.28->pip-audit==2.10.0->bnsyn==0.2.0) (25.3)
+Requirement already satisfied: charset_normalizer<4,>=2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (3.4.4)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from requests>=2.31.0->pip-audit==2.10.0->bnsyn==0.2.0) (2026.1.4)
+Requirement already satisfied: lark>=1.2.2 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from rfc3987-syntax>=1.1.0->jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.3.1)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from rich->bandit) (4.0.0)
+Requirement already satisfied: mdurl~=0.1 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich->bandit) (0.1.2)
+Requirement already satisfied: distlib<1,>=0.3.7 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from virtualenv>=20.10.0->pre-commit==4.5.1->bnsyn==0.2.0) (0.4.0)
+Requirement already satisfied: arrow>=0.15.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from isoduration->jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.4.0)
+Requirement already satisfied: python-dateutil>=2.7.0 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from arrow>=0.15.0->isoduration->jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (2.9.0.post0)
+Requirement already satisfied: tzdata in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from arrow>=0.15.0->isoduration->jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (2025.3)
+Requirement already satisfied: six>=1.5 in /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages (from python-dateutil>=2.7.0->arrow>=0.15.0->isoduration->jsonschema[format-nongpl]<5.0,>=4.25; extra == "validation" or extra == "json-validation"->cyclonedx-python-lib[validation]<12,>=8.0->cyclonedx-bom==7.1.0) (1.17.0)
+Building wheels for collected packages: bnsyn
+  Building editable for bnsyn (pyproject.toml): started
+  Building editable for bnsyn (pyproject.toml): finished with status 'done'
+  Created wheel for bnsyn: filename=bnsyn-0.2.0-0.editable-py3-none-any.whl size=4153 sha256=f41dfc637ed663bb171ec26c52be2ca02bd7292a4c017f4824cdc5d8aef3b3a3
+  Stored in directory: /tmp/pip-ephem-wheel-cache-18yj4vol/wheels/b6/1a/09/a1d36e07ea304f8c95ab88d866597d5b760d5b91c4e13d9643
+Successfully built bnsyn
+Installing collected packages: bnsyn
+  Attempting uninstall: bnsyn
+    Found existing installation: bnsyn 0.2.0
+    Uninstalling bnsyn-0.2.0:
+      Successfully uninstalled bnsyn-0.2.0
+Successfully installed bnsyn-0.2.0

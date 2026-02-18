@@ -59,7 +59,6 @@ class AdExState:
     w_pA: Float64Array  # shape (N,)
     spiked: BoolArray  # shape (N,)
 
-
 @dataclass(frozen=True)
 class IntegrationMetrics:
     """Capture integration error estimates for AdEx dynamics.

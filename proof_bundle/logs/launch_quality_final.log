@@ -1,0 +1,26 @@
+{
+  "broken_refs": 0,
+  "cli_contract": "PASS",
+  "config_schema": "PASS",
+  "contradictions": 0,
+  "determinism": "PASS",
+  "docs": "PASS",
+  "missing_evidence": 0,
+  "packaging": {
+    "build": "PASS",
+    "install_smoke": "PASS",
+    "metadata": "PASS"
+  },
+  "regression": "PASS",
+  "release_automation": {
+    "dry_run": "PASS",
+    "tag_build": "PASS"
+  },
+  "reproducibility": "PASS",
+  "sbom": "PASS",
+  "security": "PASS",
+  "single_system": "PASS",
+  "tests": "PASS",
+  "upgrade_path": "PASS",
+  "verdict": "PASS"
+}

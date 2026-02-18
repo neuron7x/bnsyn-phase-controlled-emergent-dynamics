@@ -1,0 +1,31 @@
+# EVIDENCE_INDEX
+
+- cmd:python -m pip install --upgrade pip==26.0.1 && python -m pip install -e ".[dev,test,docs]" build pytest-cov bandit cyclonedx-bom==7.1.0 -> log:artifacts/smlrs/logs/deps.log
+- cmd:python scripts/fingerprint_repo.py --output artifacts/smlrs/REPO_FINGERPRINT.json -> log:artifacts/smlrs/logs/fingerprint.log
+- cmd:python scripts/env_snapshot.py --output artifacts/smlrs/ENV_SNAPSHOT.json -> log:artifacts/smlrs/logs/env_snapshot.log
+- cmd:python scripts/ric_check.py --truth-map artifacts/smlrs/reports/RIC_TRUTH_MAP.json --report artifacts/smlrs/reports/RIC_REPORT.md -> log:artifacts/smlrs/logs/ric.log
+- cmd:python scripts/semantic_mine.py -> log:artifacts/smlrs/logs/semantic_mine.log
+- cmd:ruff check . -> log:artifacts/smlrs/logs/lint.log
+- cmd:mypy src --strict --config-file pyproject.toml -> log:artifacts/smlrs/logs/mypy.log
+- cmd:python tools/generate_inventory.py -> log:artifacts/smlrs/logs/inventory.log
+- cmd:python -m tools.entropy_gate --mode baseline && python -m tools.entropy_gate --mode current -> log:artifacts/smlrs/logs/entropy.log
+- cmd:python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-branch --cov-report=xml:artifacts/smlrs/coverage/coverage.xml -q -> log:artifacts/smlrs/logs/tests.log
+- cmd:python -m pytest tests/test_determinism.py tests/properties/test_properties_determinism.py -q -> log:artifacts/smlrs/logs/determinism.log
+- cmd:python -m pytest -m "property" -q -> log:artifacts/smlrs/logs/fuzz_property.log
+- cmd:GITHUB_OUTPUT=artifacts/smlrs/mutation/mutation_output.txt GITHUB_STEP_SUMMARY=artifacts/smlrs/mutation/mutation_summary.md python -m scripts.mutation_ci_summary --baseline quality/mutation_baseline.json --write-output --write-summary -> log:artifacts/smlrs/logs/mutation.log
+- cmd:python -m scripts.bench_ci_smoke --json artifacts/smlrs/benchmarks/ci_smoke.json --out artifacts/smlrs/benchmarks/ci_smoke.csv --repeats 1 -> log:artifacts/smlrs/logs/bench.log
+- cmd:python -m scripts.profile_kernels --output artifacts/smlrs/profiles/kernel_profile.json -> log:artifacts/smlrs/logs/profiles.log
+- cmd:python -m build -> log:artifacts/smlrs/logs/build.log
+- cmd:python scripts/install_smoke.py --log artifacts/smlrs/logs/install_smoke.log --report artifacts/smlrs/install_smoke/SMOKE_REPORT.json --dist-hashes artifacts/smlrs/dist/DIST_HASHES.json -> log:artifacts/smlrs/logs/install_smoke_driver.log
+- cmd:python -m sphinx -b html docs docs/_build/html -> log:artifacts/smlrs/logs/docs.log
+- cmd:python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=. -> log:artifacts/smlrs/logs/gitleaks.log
+- cmd:python -m pip_audit --desc --format json --output artifacts/smlrs/security/pip_audit.json -> log:artifacts/smlrs/logs/pip_audit.log
+- cmd:python -m bandit -r src/ -ll -> log:artifacts/smlrs/logs/bandit.log
+- cmd:cyclonedx-py environment --output-format JSON --output-file artifacts/smlrs/sbom/SBOM.cdx.json -> log:artifacts/smlrs/logs/sbom.log
+- cmd:python -m scripts.release_pipeline --verify-only -> log:artifacts/smlrs/logs/release_dry_run.log
+- cmd:make launch-gate -> log:artifacts/smlrs/logs/launch_gate.log
+- cmd:make perfection-gate -> log:artifacts/smlrs/logs/perfection_gate.log
+- hash:sha256:b1c347ca0b61dc29c8c24e61ad78e3effc82f58f72e47c101425ae9305d0dda5
+- hash:sha256:3601bbc91a99457c6a3544c109132db8aa8c2a0b3b310b3e57b33568bda86166
+- hash:sha256:b309e1edca64fdafeca3b0d0647a2168971fe5c42bd2017a540dd39eaf320c87
+- hash:sha256:521b2a4e4b34cd9f3912057099e594929babce29670f9af2e5967188942379d0

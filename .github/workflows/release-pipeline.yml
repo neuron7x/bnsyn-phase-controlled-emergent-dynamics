@@ -43,6 +43,8 @@ jobs:
           else
             python -m scripts.release_pipeline --verify-only
           fi
+      - name: Launch gate
+        run: make launch-gate
       - name: Build and publish dry-run
         run: python -m scripts.release_pipeline
       - name: Upload release dry-run artifacts

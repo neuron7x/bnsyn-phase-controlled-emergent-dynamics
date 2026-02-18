@@ -19,8 +19,8 @@
     "time": []
   },
   "process": {
-    "gh_workflows_missing_job_permissions_count": 39,
-    "gh_workflows_missing_job_timeout_count": 29,
+    "gh_workflows_missing_job_permissions_count": 43,
+    "gh_workflows_missing_job_timeout_count": 33,
     "gh_workflows_unpinned_actions_count": 0,
     "required_checks_files_present": true
   },

@@ -1,0 +1,32 @@
+{
+  "broken_refs": 0,
+  "cli_contract": "PASS",
+  "config_schema": "PASS",
+  "contradictions": 0,
+  "coverage": {
+    "branch_pct": 95.57,
+    "line_pct": 99.65,
+    "thresholds_met": true
+  },
+  "determinism": "PASS",
+  "docs": "PASS",
+  "missing_evidence": 0,
+  "packaging": {
+    "build": "PASS",
+    "dist_hashes": "PASS",
+    "install_smoke": "PASS",
+    "metadata": "PASS"
+  },
+  "release_automation": {
+    "dry_run": "PASS",
+    "tag_build": "PASS"
+  },
+  "reproducibility": "PASS",
+  "sbom": "PASS",
+  "scientific_regression": "PASS",
+  "security": "PASS",
+  "single_system": "PASS",
+  "tests": "PASS",
+  "upgrade_path": "PASS",
+  "verdict": "PASS"
+}

@@ -1,0 +1,4 @@
+artifacts/launch_gate/ENV_SNAPSHOT.json
+artifacts/launch_gate/REPO_FINGERPRINT.json
+artifacts/launch_gate/reports/RIC_REPORT.md
+artifacts/launch_gate/reports/RIC_TRUTH_MAP.json

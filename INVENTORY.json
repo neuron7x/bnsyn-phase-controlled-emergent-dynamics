@@ -9,8 +9,8 @@
   "counts": {
     "src": 74,
     "tests": 176,
-    "docs": 281,
-    ".github": 43
+    "docs": 282,
+    ".github": 47
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -35,14 +35,18 @@
     "dependency-review.yml",
     "dependency-watch.yml",
     "docs.yml",
+    "dsio_gate.yml",
     "formal-coq.yml",
     "formal-tla.yml",
+    "launch-gate.yml",
     "math-quality-gate.yml",
+    "perfection-gate.yml",
     "physics-equivalence.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
     "science.yml",
     "scientific_product_gate.yml",
+    "smlrs_gate.yml",
     "workflow-integrity.yml"
   ],
   "detected_tools": [
