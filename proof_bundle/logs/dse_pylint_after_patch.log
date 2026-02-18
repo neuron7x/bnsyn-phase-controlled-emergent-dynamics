@@ -1,0 +1,154 @@
+$ pylint src/bnsyn
+************* Module bnsyn.cli
+src/bnsyn/cli.py:100:8: W0621: Redefining name 'importlib' from outer scope (line 25) (redefined-outer-name)
+src/bnsyn/cli.py:104:8: W0621: Redefining name 'sys' from outer scope (line 29) (redefined-outer-name)
+src/bnsyn/cli.py:100:8: C0415: Import outside toplevel (importlib.util) (import-outside-toplevel)
+src/bnsyn/cli.py:103:8: C0415: Import outside toplevel (subprocess) (import-outside-toplevel)
+src/bnsyn/cli.py:104:8: W0404: Reimport 'sys' (imported line 29) (reimported)
+src/bnsyn/cli.py:104:8: C0415: Import outside toplevel (sys) (import-outside-toplevel)
+src/bnsyn/cli.py:119:21: W1510: 'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)
+src/bnsyn/cli.py:75:0: R0911: Too many return statements (7/6) (too-many-return-statements)
+src/bnsyn/cli.py:190:4: C0415: Import outside toplevel (bnsyn.experiments.declarative.run_from_yaml) (import-outside-toplevel)
+src/bnsyn/cli.py:200:0: R0914: Too many local variables (57/15) (too-many-locals)
+src/bnsyn/cli.py:224:4: C0415: Import outside toplevel (bnsyn.config.AdExParams, bnsyn.config.CriticalityParams, bnsyn.config.SynapseParams, bnsyn.config.TemperatureParams) (import-outside-toplevel)
+src/bnsyn/cli.py:225:4: C0415: Import outside toplevel (bnsyn.criticality.PhaseTransitionDetector) (import-outside-toplevel)
+src/bnsyn/cli.py:226:4: C0415: Import outside toplevel (bnsyn.emergence.AttractorCrystallizer) (import-outside-toplevel)
+src/bnsyn/cli.py:227:4: C0415: Import outside toplevel (bnsyn.memory.MemoryConsolidator) (import-outside-toplevel)
+src/bnsyn/cli.py:228:4: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+src/bnsyn/cli.py:229:4: C0415: Import outside toplevel (bnsyn.sim.network.Network, bnsyn.sim.network.NetworkParams) (import-outside-toplevel)
+src/bnsyn/cli.py:230:4: C0415: Import outside toplevel (bnsyn.sleep.SleepCycle, bnsyn.sleep.SleepStageConfig, bnsyn.sleep.default_human_sleep_cycle) (import-outside-toplevel)
+src/bnsyn/cli.py:231:4: C0415: Import outside toplevel (bnsyn.temperature.schedule.TemperatureSchedule) (import-outside-toplevel)
+src/bnsyn/cli.py:352:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/cli.py:367:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/cli.py:373:8: C0415: Import outside toplevel (matplotlib.pyplot) (import-outside-toplevel)
+src/bnsyn/cli.py:374:8: W0404: Reimport 'Any' (imported line 31) (reimported)
+src/bnsyn/cli.py:374:8: C0415: Import outside toplevel (typing.Any) (import-outside-toplevel)
+src/bnsyn/cli.py:200:0: R0915: Too many statements (106/50) (too-many-statements)
+src/bnsyn/cli.py:376:8: W0612: Unused variable 'fig' (unused-variable)
+************* Module bnsyn.provenance.manifest
+src/bnsyn/provenance/manifest.py:37:4: C0412: Imports from package importlib are not grouped (ungrouped-imports)
+************* Module bnsyn.provenance.manifest_builder
+src/bnsyn/provenance/manifest_builder.py:121:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+src/bnsyn/provenance/manifest_builder.py:159:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module bnsyn.viz.interactive
+src/bnsyn/viz/interactive.py:32:0: R0914: Too many local variables (33/15) (too-many-locals)
+src/bnsyn/viz/interactive.py:86:12: C0415: Import outside toplevel (bnsyn.config.AdExParams, bnsyn.config.CriticalityParams, bnsyn.config.SynapseParams) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:87:12: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:88:12: C0415: Import outside toplevel (bnsyn.sim.network.Network, bnsyn.sim.network.NetworkParams) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:32:0: R0915: Too many statements (63/50) (too-many-statements)
+src/bnsyn/viz/interactive.py:215:19: R1735: Consider using '{"size": 2, "color": 'black'}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:222:14: R1735: Consider using '{"range": [-1, N]}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:173:58: W0613: Unused argument 'duration_ms' (unused-argument)
+src/bnsyn/viz/interactive.py:266:21: R1735: Consider using '{"width": 1}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:345:4: C0415: Import outside toplevel (plotly.subplots.make_subplots) (import-outside-toplevel)
+src/bnsyn/viz/interactive.py:359:71: R1735: Consider using '{"color": 'blue'}' instead of a call to 'dict'. (use-dict-literal)
+src/bnsyn/viz/interactive.py:367:74: R1735: Consider using '{"color": 'orange'}' instead of a call to 'dict'. (use-dict-literal)
+************* Module bnsyn.viz.dashboard
+src/bnsyn/viz/dashboard.py:53:4: W0603: Using the global statement (global-statement)
+src/bnsyn/viz/dashboard.py:71:0: R0902: Too many instance attributes (14/7) (too-many-instance-attributes)
+************* Module bnsyn.tools.run_scaled_sleep_stack
+src/bnsyn/tools/run_scaled_sleep_stack.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src/bnsyn/tools/run_scaled_sleep_stack.py:25:0: R0914: Too many local variables (29/15) (too-many-locals)
+src/bnsyn/tools/run_scaled_sleep_stack.py:147:8: C0415: Import outside toplevel (matplotlib.pyplot) (import-outside-toplevel)
+src/bnsyn/tools/run_scaled_sleep_stack.py:145:0: R1711: Useless return at end of function or method (useless-return)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0914: Too many local variables (29/15) (too-many-locals)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0912: Too many branches (16/12) (too-many-branches)
+src/bnsyn/tools/run_scaled_sleep_stack.py:170:0: R0915: Too many statements (82/50) (too-many-statements)
+************* Module bnsyn.tools.benchmark_sleep_stack_scale
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module bnsyn.plasticity.three_factor
+src/bnsyn/plasticity/three_factor.py:100:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module bnsyn.connectivity.sparse
+src/bnsyn/connectivity/sparse.py:278:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+************* Module bnsyn.calibration.accuracy_speed
+src/bnsyn/calibration/accuracy_speed.py:37:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+src/bnsyn/calibration/accuracy_speed.py:79:0: R0914: Too many local variables (18/15) (too-many-locals)
+************* Module bnsyn.sim.network
+src/bnsyn/sim/network.py:57:0: R0902: Too many instance attributes (9/7) (too-many-instance-attributes)
+src/bnsyn/sim/network.py:99:0: R0902: Too many instance attributes (24/7) (too-many-instance-attributes)
+src/bnsyn/sim/network.py:132:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+src/bnsyn/sim/network.py:132:4: R0914: Too many local variables (17/15) (too-many-locals)
+src/bnsyn/sim/network.py:132:4: R0915: Too many statements (54/50) (too-many-statements)
+src/bnsyn/sim/network.py:214:4: R0914: Too many local variables (22/15) (too-many-locals)
+src/bnsyn/sim/network.py:270:12: W0621: Redefining name 'torch_module' from outer scope (line 41) (redefined-outer-name)
+src/bnsyn/sim/network.py:336:4: R0914: Too many local variables (24/15) (too-many-locals)
+src/bnsyn/sim/network.py:397:12: W0621: Redefining name 'torch_module' from outer scope (line 41) (redefined-outer-name)
+src/bnsyn/sim/network.py:472:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+src/bnsyn/sim/network.py:472:0: R0914: Too many local variables (16/15) (too-many-locals)
+src/bnsyn/sim/network.py:514:4: C0415: Import outside toplevel (bnsyn.rng.seed_all) (import-outside-toplevel)
+************* Module bnsyn.neuron.adex
+src/bnsyn/neuron/adex.py:199:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/bnsyn/neuron/adex.py:279:0: R0914: Too many local variables (19/15) (too-many-locals)
+************* Module bnsyn.experiments.declarative
+src/bnsyn/experiments/declarative.py:56:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/bnsyn/experiments/declarative.py:161:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+************* Module bnsyn.memory.ledger
+src/bnsyn/memory/ledger.py:82:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module bnsyn.memory.consolidator
+src/bnsyn/memory/consolidator.py:235:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+************* Module bnsyn.production.adex
+src/bnsyn/production/adex.py:35:0: R0902: Too many instance attributes (11/7) (too-many-instance-attributes)
+************* Module bnsyn.production.connectivity
+src/bnsyn/production/connectivity.py:86:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+************* Module bnsyn.production.jax_backend
+src/bnsyn/production/jax_backend.py:48:0: R0914: Too many local variables (21/15) (too-many-locals)
+************* Module bnsyn.criticality.phase_transition
+src/bnsyn/criticality/phase_transition.py:77:0: R0902: Too many instance attributes (9/7) (too-many-instance-attributes)
+src/bnsyn/criticality/phase_transition.py:154:8: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+src/bnsyn/criticality/phase_transition.py:188:11: R1714: Consider merging these comparisons with 'in' by using 'self._current_phase not in (new_phase, CriticalPhase.UNKNOWN)'. Use a set instead if elements are hashable. (consider-using-in)
+************* Module bnsyn.testing.faults
+src/bnsyn/testing/faults.py:39:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+src/bnsyn/testing/faults.py:179:18: W0613: Unused argument 'rng_state' (unused-argument)
+src/bnsyn/testing/faults.py:234:8: R1720: Unnecessary "elif" after "raise", remove the leading "el" from "elif" (no-else-raise)
+************* Module bnsyn.emergence.crystallizer
+src/bnsyn/emergence/crystallizer.py:126:0: R0902: Too many instance attributes (17/7) (too-many-instance-attributes)
+src/bnsyn/emergence/crystallizer.py:280:12: W0612: Unused variable 'U' (unused-variable)
+src/bnsyn/emergence/crystallizer.py:280:15: W0612: Unused variable 'S' (unused-variable)
+************* Module bnsyn.sleep.cycle
+src/bnsyn/sleep/cycle.py:48:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
+************* Module bnsyn.sleep.stages
+src/bnsyn/sleep/stages.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.provenance.manifest:[129:139]
+==bnsyn.provenance.manifest_builder:[37:47]
+        try:
+            git_path = shutil.which("git")
+            if not git_path:
+                raise FileNotFoundError("git executable not found")
+            # Fixed git command without shell; inputs are constant.
+            result = subprocess.run(  # nosec B603
+                [git_path, "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True, (duplicate-code)
+src/bnsyn/sleep/stages.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.cli:[244:250]
+==bnsyn.sim.network:[528:534]
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(), (duplicate-code)
+src/bnsyn/sleep/stages.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.provenance.manifest:[152:170]
+==bnsyn.provenance.manifest_builder:[62:70]
+    try:
+        version = metadata.version("bnsyn")
+    except metadata.PackageNotFoundError:
+        version = "0.0.0"
+    return f"release-{version}"
+
+
+def _resolve_package_version(repo_root: Path) -> str: (duplicate-code)
+src/bnsyn/sleep/stages.py:1:0: R0801: Similar lines in 2 files
+==bnsyn.cli:[247:252]
+==bnsyn.tools.run_scaled_sleep_stack:[36:41]
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=rng, (duplicate-code)
+
+-----------------------------------
+Your code has been rated at 9.68/10
+

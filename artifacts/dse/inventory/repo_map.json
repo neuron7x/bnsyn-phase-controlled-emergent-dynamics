@@ -1,0 +1,25 @@
+{
+  "entrypoints": [
+    "src/bnsyn/cli.py",
+    "src/bnsyn/__main__.py"
+  ],
+  "public_surfaces": [
+    "bnsyn CLI",
+    "Python package bnsyn",
+    "docs and governance scripts"
+  ],
+  "core_modules": [
+    "src/bnsyn/sim",
+    "src/bnsyn/sleep",
+    "src/bnsyn/memory",
+    "src/bnsyn/criticality"
+  ],
+  "tests": {
+    "root": "tests/",
+    "markers": [
+      "validation",
+      "property"
+    ]
+  },
+  "ci_workflows_count": 29
+}
