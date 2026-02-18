@@ -45,6 +45,7 @@
     "release-pipeline.yml",
     "science.yml",
     "scientific_product_gate.yml",
+    "smlrs_gate.yml",
     "workflow-integrity.yml"
   ],
   "detected_tools": [
