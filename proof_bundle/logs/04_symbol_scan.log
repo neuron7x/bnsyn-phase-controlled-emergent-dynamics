@@ -1,0 +1,28 @@
+$ python inspect symbols
+
+ src/bnsyn/cli.py
+fun _get_package_version 0 37 61
+fun _validate_demo_args 1 66 73
+fun _cmd_demo 1 75 136
+fun _cmd_dtcheck 1 139 165
+fun _cmd_run_experiment 1 168 197
+fun _cmd_sleep_stack 1 200 440
+fun main 0 443 533
+
+ src/bnsyn/__main__.py
+
+ src/bnsyn/rng.py
+cls RNGPack 28 48
+fun seed_all 1 51 92
+fun split 2 95 122
+
+ src/bnsyn/config.py
+cls AdExParams 26 71
+cls SynapseParams 74 114
+cls PlasticityParams 117 155
+cls CriticalityParams 158 184
+cls TemperatureParams 187 224
+cls DualWeightParams 227 259
+cls EnergyParams 262 288
+
+ src/bnsyn/simulation.py

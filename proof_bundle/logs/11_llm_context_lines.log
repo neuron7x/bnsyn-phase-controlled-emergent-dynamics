@@ -1,0 +1,51 @@
+     1	# 1) Repo Identity + Surface Summary
+     2	- Repo: `/workspace/bnsyn-phase-controlled-emergent-dynamics`.
+     3	- Commit: `35bd4e8aa77e343e7c37470fdbd5a54bb38f6461`.
+     4	- Surface: Python package/library+CLI (`bnsyn`) with scientific simulation modules, strict config schemas, and CI-heavy quality gates.
+     5	- Evidence: `file:pyproject.toml:L75-L76`, `file:src/bnsyn/cli.py:L443-L533`.
+     6	
+     7	# 2) Canonical Commands (install/test/lint/type/security/docs/release)
+     8	- Install: `python -m pip install -e ".[dev,test]"` (`file:Makefile:L7-L14`).
+     9	- Test: `python -m pytest -m "not (validation or property)" -q` (`file:Makefile:L8-L8`).
+    10	- Lint: `ruff check .` + `pylint src/bnsyn` (`file:Makefile:L140-L143`).
+    11	- Typecheck: `mypy src --strict --config-file pyproject.toml` (`file:Makefile:L144-L145`).
+    12	- Build: `python -m build` (`file:Makefile:L199-L200`).
+    13	- Docs: `make docs` (`file:Makefile:L193-L194`).
+    14	- Release readiness: `python -m scripts.release_readiness` (`file:Makefile:L207-L209`).
+    15	
+    16	# 3) Critical Paths (P0)
+    17	- CLI path: `pyproject script bnsyn -> bnsyn.cli:main -> command handlers` (`file:pyproject.toml:L75-L76`, `file:src/bnsyn/cli.py:L443-L533`).
+    18	- Determinism path: `seed_all -> RNGPack/split -> determinism tests` (`file:src/bnsyn/rng.py:L51-L122`, `file:tests/test_determinism.py:L1-L200`).
+    19	- CI path: `ci-pr-atomic workflow -> reusable pytest/quality gates` (`file:.github/workflows/ci-pr-atomic.yml:L1-L554`, `file:.github/workflows/_reusable_pytest.yml:L1-L257`).
+    20	
+    21	# 4) Contracts Index (P0/P1 only)
+    22	- `§CFG:src/bnsyn/config.py:BaseModels#99fbf8a5537a4faf`: Pydantic parameter schemas for neuron/synapse/plasticity/criticality/temperature/energy invariants.
+    23	- `§CMD:make:build#46174ef38e397e02`: Package build artifact creation.
+    24	- `§CMD:make:lint#feb185397e880c72`: Static quality gate with ruff+pylint.
+    25	- `§CMD:make:mypy#16b7f58d110ef0fb`: Strict typecheck gate.
+    26	- `§CMD:make:test-gate#432b561eca3c3c5e`: Primary fast test gate excluding validation/property.
+    27	- `§FUN:src/bnsyn/cli.py:main()#a164a2ef0e7ba513`: Parses CLI args and dispatches subcommands for runtime operations.
+    28	- `§FUN:src/bnsyn/rng.py:seed_all(seed:int)#3d349752e0a011eb`: Creates RNGPack and seeds python/numpy streams.
+    29	- `§GAT:CI:ci-pr-atomic#bbc71bd4909c7ea9`: PR atomic CI orchestrating reusable quality/pytest/science gates.
+    30	- `§INV:determinism:seeded_rng#398b20aa24034c4f`: Simulation randomness must be seeded through bnsyn.rng to ensure replayable outputs.
+    31	- `§MOD:src/bnsyn/cli.py#3670dc50ae2fad1c`: CLI entry surface exposing demo, dtcheck, experiments, sleep-stack command paths.
+    32	- `§MOD:src/bnsyn/rng.py#a82f3dfe6131aa15`: Central deterministic RNG utilities with split support for reproducibility.
+    33	
+    34	# 5) Invariants & SSOT (P0/P1 only)
+    35	- `§INV:determinism:seeded_rng#398b20aa24034c4f` seeded RNG determinism invariant.
+    36	- Bounded parameter invariants enforced in config models (PositiveFloat and explicit bounds).
+    37	- Canonical gate commands sourced from Makefile; mismatches with policy docs are treated as risks, not overridden.
+    38	
+    39	# 6) Gates & Required Evidence (P0/P1 only)
+    40	- Required evidence pointer formats: `file:...`, `hash:sha256:...`, `cmd:... -> log:...`.
+    41	- Gate evidence must map to Makefile/workflow lines and command logs in `proof_bundle/logs/`.
+    42	- Current risk: AGENTS test command mismatch with Makefile/docs (see RIS node).
+    43	
+    44	# 7) Open Risks (P0/P1 only)
+    45	- `§RIS:contradiction:test-marker-contract#0cb50848744f45fb` command mismatch can cause false expectations for default test scope.
+    46	
+    47	# 8) EXPAND Protocol (how to rehydrate details)
+    48	- Syntax: `EXPAND <ID> [depth=N] [include={contracts|edges|evidence|snippets}] [budget=chars]`.
+    49	- Expansion source: KG.json node + evidence pointers only.
+    50	- Fail-closed: if any evidence pointer is missing, expansion is refused.
+    51	- Snippet expansion must preserve exact source line ranges from evidence pointers.

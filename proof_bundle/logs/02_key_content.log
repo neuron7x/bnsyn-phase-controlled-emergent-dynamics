@@ -1,0 +1,1145 @@
+$ sed key files
+     1	.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+     2	
+     3	LOCK_FILE ?= requirements-lock.txt
+     4	WHEELHOUSE_DIR ?= wheelhouse
+     5	PYTHON_VERSION ?= 3.11
+     6	WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
+     7	SETUP_CMD ?= python -m pip install -e ".[dev,test]"
+     8	TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+     9	
+    10	setup:
+    11		python -V
+    12		python -m pip --version
+    13		$(SETUP_CMD)
+    14		python -m pip check
+    15	
+    16	install: setup
+    17		@echo "✅ install completed via setup"
+    18	
+    19	demo:
+    20		@python -m scripts.run_quickstart_demo
+    21	
+    22	dev-setup:
+    23		python -m pip install --upgrade pip setuptools wheel
+    24		python -m pip install -e ".[dev,test]"
+    25		pre-commit install
+    26		pre-commit autoupdate
+    27	
+    28	quickstart-smoke:
+    29		python -m scripts.check_quickstart_consistency
+    30		python -m pip install -e .
+    31		python -m pip show bnsyn
+    32		bnsyn --help
+    33		bnsyn sleep-stack --help
+    34		bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
+    35	
+    36	
+    37	wheelhouse-build:
+    38		python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
+    39	
+    40	wheelhouse-validate:
+    41		python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
+    42	
+    43	dev-env-offline: wheelhouse-validate
+    44		python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+    45		python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
+    46		pre-commit install
+    47	
+    48	wheelhouse-clean:
+    49		rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+    50	
+    51	wheelhouse-report: wheelhouse-validate
+    52		@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
+    53	
+    54	test:
+    55		$(MAKE) test-gate
+    56	
+    57	test-gate:
+    58		$(TEST_CMD)
+    59	
+    60	test-determinism:
+    61		python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+    62	
+    63	test-validation:
+    64		python -m pytest -m "validation" -q
+    65	
+    66	test-property:
+    67		python -m pytest -m "property" -q
+    68	
+    69	coverage:
+    70		python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+    71	
+    72	coverage-fast:
+    73		python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+    74	
+    75	coverage-baseline: coverage
+    76		python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+    77	
+    78	coverage-gate: coverage
+    79		python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+    80	
+    81	
+    82	mutation:
+    83		@echo "🧬 Running mutation profile (reproducible local workflow step)..."
+    84		@python -m pip install -e ".[test]" -q
+    85		@python -m pip install mutmut==2.4.5 -q
+    86		@python -m scripts.run_mutation_pipeline
+    87	
+    88	mutation-ci:
+    89		@echo "🧬 Emitting mutation CI artifacts to local files..."
+    90		@baseline_file=quality/mutation_baseline.json; \
+    91		output_file=.mutation_ci_output; \
+    92		summary_file=.mutation_ci_summary.md; \
+    93		: > $$output_file; \
+    94		: > $$summary_file; \
+    95		GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
+    96	
+    97	mutation-baseline:
+    98		@echo "🧬 Running mutation testing to establish baseline..."
+    99		@python -m pip install -e ".[test]" -q
+   100		@python -m pip install mutmut==2.4.5 -q
+   101		@python -m scripts.generate_mutation_baseline
+   102	
+   103	mutation-check:
+   104		@echo "🧬 Running mutation testing against baseline..."
+   105		@python -m pip install -e ".[test]" -q
+   106		@python -m pip install mutmut==2.4.5 -q
+   107		@rm -rf .mutmut-cache
+   108		@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+   109		@python -m scripts.validate_mutation_baseline
+   110		@python -m scripts.run_mutation_pipeline
+   111		@python -m scripts.check_mutation_score --advisory
+   112	
+   113	mutation-check-strict:
+   114		@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
+   115		@python -m pip install -e ".[test]" -q
+   116		@python -m pip install mutmut==2.4.5 -q
+   117		@rm -rf .mutmut-cache
+   118		@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+   119		@python -m scripts.validate_mutation_baseline
+   120		@python -m scripts.run_mutation_pipeline
+   121		@python -m scripts.check_mutation_score --strict
+   122	
+   123	api-contract:
+   124		python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+   125	
+   126	validate-api-maturity:
+   127		python -m scripts.validate_api_maturity
+   128	
+   129	quality: format lint mypy ssot security
+   130		@echo "✅ All quality checks passed"
+   131	
+   132	format:
+   133		ruff format .
+   134		@echo "Formatted code"
+   135	
+   136	fix:
+   137		ruff check . --fix
+   138		@echo "Fixed lint issues"
+   139	
+   140	lint:
+   141		ruff check .
+   142		pylint --fail-under=9.5 src/bnsyn
+   143	
+   144	mypy:
+   145		mypy src --strict --config-file pyproject.toml
+   146	
+   147	ssot:
+   148		python -m scripts.validate_bibliography
+   149		python -m scripts.validate_claims
+   150		python -m scripts.scan_normative_tags
+   151		python -m scripts.validate_pr_gates
+   152		python -m scripts.validate_required_status_contexts
+   153		python -m scripts.sync_required_status_contexts --check
+   154		$(MAKE) inventory-check
+   155		python -m scripts.validate_api_maturity
+   156		$(MAKE) api-contract
+   157		$(MAKE) manifest-check
+   158		$(MAKE) traceability-check
+   159	
+   160	validate-claims-coverage:
+   161		python -m scripts.validate_claims_coverage --format markdown
+   162	
+   163	docs-evidence:
+   164		python -m scripts.generate_evidence_coverage
+   165	
+   166	SECURITY_REPORT ?= artifacts/pip-audit.json
+   167	
+   168	security:
+   169		python -m pip install --upgrade pip==26.0.1
+   170		python -m pip install -e ".[dev]"
+   171		mkdir -p artifacts
+   172		python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+   173		python -m pip_audit --desc --format json --output $(SECURITY_REPORT)
+   174		python -m bandit -r src/ -ll
+   175	
+   176	SBOM_REPORT ?= artifacts/prod_ready/reports/sbom.cdx.json
+   177	
+   178	sbom:
+   179		python -m pip install cyclonedx-bom==7.1.0
+   180		mkdir -p $(dir $(SBOM_REPORT))
+   181		cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
+   182	
+   183	cleanroom:
+   184		$(MAKE) clean
+   185		$(MAKE) install
+   186		$(MAKE) build
+   187		$(MAKE) test
+   188		bnsyn --help
+   189	
+   190	check: format lint mypy coverage ssot security
+   191		@echo "✅ All checks passed"
+   192	
+   193	docs:
+   194		python -m pip install -e ".[docs]"
+   195		python -m sphinx -b html docs docs/_build/html
+   196		@echo "Docs built at docs/_build/html"
+   197	
+   198	build:
+   199		python -m pip install -e . build
+   200		python -m build
+   201	
+   202	release: build release-readiness
+   203		@echo "✅ release artifacts and readiness report generated"
+   204	
+   205	release-readiness:
+   206		python -m scripts.release_readiness
+   207	
+   208	manifest:
+   209		python -m tools.manifest generate
+   210	
+   211	manifest-validate:
+   212		python -m tools.manifest validate
+   213	
+   214	manifest-check: manifest manifest-validate
+   215		git diff --exit-code -- .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json
+   216	
+   217	inventory:
+   218		python tools/generate_inventory.py
+   219	
+   220	inventory-check:
+---
+     1	[project]
+     2	name = "bnsyn"
+     3	version = "0.2.0"
+     4	description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+     5	requires-python = ">=3.11"
+     6	readme = "README.md"
+     7	license = "MIT"
+     8	license-files = ["LICENSE"]
+     9	authors = [{name="BN-Syn Contributors"}]
+    10	dependencies = [
+    11	  "numpy==2.4.1",
+    12	  "pydantic==2.12.5",
+    13	  "scipy==1.17.0",
+    14	  "jsonschema==4.26.0",
+    15	  "joblib==1.4.2",
+    16	  "pyyaml==6.0.3",
+    17	]
+    18	
+    19	[project.optional-dependencies]
+    20	dev = [
+    21	  "hypothesis==6.151.5",
+    22	  "pytest==9.0.2",
+    23	  "pytest-cov==7.0.0",
+    24	  "ruff==0.15.0",
+    25	  "mypy==1.19.1",
+    26	  "pylint==3.3.5",
+    27	  "pydocstyle==6.3.0",
+    28	  "bandit==1.9.3",
+    29	  "validate-pyproject==0.25",
+    30	  "pre-commit==4.5.1",
+    31	  "pip-audit==2.10.0",
+    32	  "build==1.3.0",
+    33	  "psutil==7.2.2",
+    34	  "packaging==25.0",
+    35	]
+    36	
+    37	test = [
+    38	  "hypothesis==6.151.5",
+    39	  "pytest==9.0.2",
+    40	  "pytest-cov==7.0.0",
+    41	  "psutil==7.2.2",
+    42	  "packaging==25.0",
+    43	]
+    44	
+    45	
+    46	docs = [
+    47	  "sphinx==9.0.4",
+    48	  "sphinx-autodoc-typehints==3.6.1",
+    49	  "myst-parser==5.0.0",
+    50	  "furo==2025.12.19",
+    51	  "sphinx-copybutton==0.5.2",
+    52	]
+    53	
+    54	viz = [
+    55	  "matplotlib==3.10.8",
+    56	  "pillow==12.1.0",
+    57	  "streamlit==1.42.1",
+    58	  "plotly==6.5.2",
+    59	]
+    60	
+    61	jax = [
+    62	  "jax==0.6.0",
+    63	  "jaxlib==0.9.0",
+    64	]
+    65	
+    66	torch = [
+    67	  "torch==2.10.0",
+    68	]
+    69	
+    70	accelerators = [
+    71	  "bnsyn[jax]",
+    72	  "bnsyn[torch]",
+    73	]
+    74	
+    75	[project.scripts]
+    76	bnsyn = "bnsyn.cli:main"
+    77	
+    78	[build-system]
+    79	requires = ["setuptools==79.0.1"]
+    80	build-backend = "setuptools.build_meta"
+    81	
+    82	[tool.setuptools]
+    83	package-dir = {"" = "src"}
+    84	
+    85	[tool.pytest.ini_options]
+    86	addopts = "-q --strict-markers"
+    87	testpaths = ["tests"]
+    88	markers = [
+    89	  "smoke: fast critical-path tests",
+    90	  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+    91	  "benchmark: benchmark regression tests (excluded from mutation runs)",
+    92	  "performance: performance regression tests with timing assertions",
+    93	  "integration: integration tests requiring multiple components",
+    94	  "property: property-based tests using Hypothesis",
+    95	  "chaos: chaos engineering tests with fault injection",
+    96	]
+    97	
+    98	[tool.hypothesis]
+    99	derandomize = true
+   100	
+   101	[tool.hypothesis.profiles.ci]
+   102	max_examples = 200
+   103	deadline = 10000
+   104	print_blob = true
+   105	
+   106	[tool.hypothesis.profiles.quick]
+   107	max_examples = 100
+   108	deadline = 5000
+   109	print_blob = true
+   110	
+   111	[tool.hypothesis.profiles.thorough]
+   112	max_examples = 1000
+   113	deadline = 20000
+   114	print_blob = true
+   115	
+   116	[tool.ruff]
+   117	line-length = 100
+   118	target-version = "py311"
+   119	
+   120	[tool.mypy]
+   121	python_version = "3.11"
+   122	strict = true
+   123	warn_return_any = true
+   124	disallow_untyped_defs = true
+   125	disallow_untyped_calls = true
+   126	disallow_incomplete_defs = true
+   127	check_untyped_defs = true
+   128	no_implicit_optional = true
+   129	warn_redundant_casts = true
+   130	warn_unused_ignores = true
+   131	warn_no_return = true
+   132	warn_unused_configs = true
+   133	plugins = ["pydantic.mypy"]
+   134	
+   135	# Optional visualization dependencies (no type stubs available)
+   136	[[tool.mypy.overrides]]
+   137	module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+   138	ignore_missing_imports = true
+   139	
+   140	[tool.pylint.main]
+   141	recursive = true
+   142	ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+   143	fail-under = 7.5
+   144	
+   145	[tool.pylint.messages_control]
+   146	disable = [
+   147	  "import-error",
+   148	  "invalid-name",
+   149	  "broad-exception-caught",
+   150	  "useless-import-alias",
+   151	  "missing-function-docstring",
+   152	]
+   153	
+   154	[tool.pylint.basic]
+   155	good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+   156	
+   157	[tool.pylint.design]
+   158	max-args = 15
+   159	
+   160	[[tool.mypy.overrides]]
+   161	module = "scipy.*"
+   162	ignore_missing_imports = true
+   163	
+   164	[[tool.mypy.overrides]]
+   165	module = "torch"
+   166	ignore_missing_imports = true
+   167	
+   168	[[tool.mypy.overrides]]
+   169	module = "jax.*"
+   170	ignore_missing_imports = true
+   171	
+   172	[tool.setuptools.packages.find]
+   173	where = ["src"]
+---
+     1	<div align="center">
+     2	  <img src="docs/assets/hero.svg" alt="BN-Syn project banner" width="100%" />
+     3	</div>
+     4	
+     5	# BN-Syn Thermostated Bio-AI System
+     6	
+     7	BN-Syn is a repository for phase-controlled emergent dynamics simulations implemented in `src/bnsyn/` (see path/src/bnsyn).
+     8	The repository includes SSOT and governance assets under `specs/`, `schemas/`, `claims/`, `scripts/`, and `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/scripts) (see path/docs).
+     9	
+    10	[![CI PR](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
+    11	[![CI Validation](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-validation.yml)
+    12	[![Atomic PR Gate](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
+    13	[![Docs](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml)
+    14	[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+    15	[![Python](https://img.shields.io/badge/python-%3E%3D3.11-3776AB.svg)](pyproject.toml)
+    16	
+    17	## What’s in this repo
+    18	
+    19	- CLI entrypoint: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+    20	- Runtime package: `src/bnsyn/` (see path/src/bnsyn)
+    21	- Experiment inputs: `experiments/` (see path/experiments)
+    22	- Artifact outputs: `results/` and `figures/` (see path/results) (see path/figures)
+    23	- Validation scripts: `scripts/` (see path/scripts)
+    24	- CI workflows: `.github/workflows/` (see path/.github/workflows)
+    25	
+    26	## Quickstart
+    27	
+    28	```bash
+    29	make setup
+    30	make demo
+    31	make test
+    32	```
+    33	
+    34	## Maintainers / Repo Contract
+    35	
+    36	```bash
+    37	make quickstart-smoke
+    38	python -m pip install -e .
+    39	python -m bnsyn --help
+    40	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+    41	```
+    42	
+    43	## Testing
+    44	
+    45	Install test and docs dependencies before running local validation or docs builds:
+    46	
+    47	```bash
+    48	python -m pip install -e ".[test,docs]"
+    49	```
+    50	
+    51	Canonical local suites:
+    52	
+    53	```bash
+    54	make test-gate
+    55	make test-validation
+    56	make test-property
+    57	make docs
+    58	make security
+    59	```
+    60	
+    61	## Architecture at a glance
+    62	
+    63	```mermaid
+    64	flowchart LR
+    65	  A["src/bnsyn/cli.py"] --> B["src/bnsyn/"]
+    66	  B --> C["experiments/"]
+    67	  C --> D["results/ + figures/"]
+    68	  E["specs/ + schemas/ + claims/ + docs/"] --> F["scripts/"]
+    69	  F --> G[".github/workflows/"]
+    70	```
+    71	
+    72	### Key Paths
+    73	
+    74	- CLI: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+    75	- Runtime: `src/bnsyn/` (see path/src/bnsyn)
+    76	- Experiments: `experiments/` (see path/experiments)
+    77	- Artifacts: `results/`, `figures/` (see path/results) (see path/figures)
+    78	- SSOT: `specs/`, `schemas/`, `claims/`, `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/docs)
+    79	- Validation: `scripts/` (see path/scripts)
+    80	- CI: `.github/workflows/` (see path/.github/workflows)
+    81	
+    82	## Status
+    83	
+    84	This project is research-grade / pre-production. No battle usage claimed.
+    85	
+    86	- Maturity: research-grade / pre-production (see path/docs/STATUS.md)
+    87	- Missing layers:
+    88	  - SRE runbooks under SLA
+    89	  - external integration contracts
+    90	  - stabilized public API/semver as product
+    91	  - perf budgets as “must” [NORMATIVE][CLM-0011]
+    92	  - support/release cadence as product
+    93	
+    94	## Docs hub
+    95	
+    96	- [Documentation index](docs/INDEX.md) (see path/docs/INDEX.md)
+---
+     1	"""Command-line interface for BN-Syn demos and checks.
+     2	
+     3	Parameters
+     4	----------
+     5	None
+     6	
+     7	Returns
+     8	-------
+     9	None
+    10	
+    11	Notes
+    12	-----
+    13	Provides deterministic demo runs, dt invariance checks, and sleep-stack experiments
+    14	per SPEC P2-11/P2-12.
+    15	
+    16	References
+    17	----------
+    18	docs/SPEC.md#P2-11
+    19	docs/SPEC.md#P2-12
+    20	"""
+    21	
+    22	from __future__ import annotations
+    23	
+    24	import argparse
+    25	import importlib.metadata
+    26	import json
+    27	import tomllib
+    28	import warnings
+    29	import sys
+    30	from pathlib import Path
+    31	from typing import Any
+    32	
+    33	from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+    34	from bnsyn.sim.network import run_simulation
+    35	
+    36	
+    37	def _get_package_version() -> str:
+    38	    """Return the installed package version with a safe fallback."""
+    39	    version: str | None = None
+    40	    try:
+    41	        version = importlib.metadata.version("bnsyn")
+    42	    except importlib.metadata.PackageNotFoundError:
+    43	        version = None
+    44	    except Exception as exc:
+    45	        warnings.warn(f"Failed to read package version: {exc}", stacklevel=2)
+    46	        version = None
+    47	
+    48	    if version:
+    49	        return version
+    50	
+    51	    pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    52	    if pyproject_path.exists():
+    53	        try:
+    54	            data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+    55	        except (OSError, tomllib.TOMLDecodeError):
+    56	            return "unknown"
+    57	        version = data.get("project", {}).get("version")
+    58	        if isinstance(version, str) and version:
+    59	            return version
+    60	
+    61	    return "unknown"
+    62	
+    63	
+    64	
+    65	
+    66	def _validate_demo_args(args: argparse.Namespace) -> None:
+    67	    """Validate demo command arguments and raise user-actionable errors."""
+    68	    if args.steps <= 0:
+    69	        raise ValueError("steps must be greater than 0")
+    70	    if args.dt_ms <= 0:
+    71	        raise ValueError("dt-ms must be greater than 0")
+    72	    if args.N <= 0:
+    73	        raise ValueError("N must be greater than 0")
+    74	
+    75	def _cmd_demo(args: argparse.Namespace) -> int:
+    76	    """Run a deterministic demo simulation and print metrics.
+    77	
+    78	    Parameters
+    79	    ----------
+    80	    args : argparse.Namespace
+    81	        Parsed CLI arguments for the demo subcommand.
+    82	
+    83	    Returns
+    84	    -------
+    85	    int
+    86	        Exit code (0 indicates success).
+    87	
+    88	    Notes
+    89	    -----
+    90	    Calls the deterministic simulation harness with explicit dt and seed.
+    91	    If --interactive flag is set, launches Streamlit dashboard instead.
+    92	
+    93	    References
+    94	    ----------
+    95	    docs/SPEC.md#P2-11
+    96	    docs/LEGENDARY_QUICKSTART.md
+    97	    """
+    98	    if getattr(args, "interactive", False):
+    99	        # Launch interactive Streamlit dashboard
+   100	        import importlib.util
+   101	
+   102	        # subprocess used for controlled dashboard launch (no shell).
+   103	        import subprocess  # nosec B404
+   104	        import sys
+   105	
+   106	        # Find the interactive.py script
+   107	        script_path = Path(__file__).parent / "viz" / "interactive.py"
+   108	        if not script_path.exists():
+   109	            print(f"Error: Interactive dashboard not found at {script_path}")
+   110	            return 1
+   111	        if importlib.util.find_spec("streamlit") is None:
+   112	            print('Error: Streamlit is not installed. Install with: pip install -e ".[viz]"')
+   113	            return 1
+   114	
+   115	        print("🚀 Launching interactive dashboard...")
+   116	        print("   Press Ctrl+C to stop")
+   117	        try:
+   118	            # Fixed module invocation without shell; inputs are local paths only.
+   119	            result = subprocess.run(  # nosec B603
+   120	                [sys.executable, "-m", "streamlit", "run", str(script_path)]
+   121	            )
+   122	            if result.returncode != 0:
+   123	                print(f"Error: Dashboard exited with code {result.returncode}")
+   124	                return 1
+   125	            return 0
+   126	        except KeyboardInterrupt:
+   127	            print("\n✓ Dashboard stopped")
+   128	            return 0
+   129	        except Exception as e:
+   130	            print(f"Error launching dashboard: {e}")
+   131	            return 1
+   132	
+   133	    _validate_demo_args(args)
+   134	    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+   135	    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+   136	    return 0
+   137	
+   138	
+   139	def _cmd_dtcheck(args: argparse.Namespace) -> int:
+   140	    """Run dt vs dt/2 invariance check and print metrics.
+   141	
+   142	    Parameters
+   143	    ----------
+   144	    args : argparse.Namespace
+   145	        Parsed CLI arguments for the dt invariance subcommand.
+   146	
+   147	    Returns
+   148	    -------
+   149	    int
+   150	        Exit code (0 indicates success).
+   151	
+   152	    Notes
+   153	    -----
+   154	    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+   155	
+   156	    References
+   157	    ----------
+   158	    docs/SPEC.md#P2-12
+   159	    """
+   160	    m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+   161	    m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
+   162	    # compare mean rates and sigma; dt2 should be close
+   163	    out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
+   164	    print(json.dumps(out, indent=2, sort_keys=True))
+   165	    return 0
+   166	
+   167	
+   168	def _cmd_run_experiment(args: argparse.Namespace) -> int:
+   169	    """Run experiment from YAML configuration.
+   170	
+   171	    Parameters
+   172	    ----------
+   173	    args : argparse.Namespace
+   174	        Parsed CLI arguments for the run subcommand.
+   175	
+   176	    Returns
+   177	    -------
+   178	    int
+   179	        Exit code (0 indicates success).
+   180	
+   181	    Notes
+   182	    -----
+   183	    Loads YAML config, validates against schema, runs experiment.
+   184	
+   185	    References
+   186	    ----------
+   187	    docs/LEGENDARY_QUICKSTART.md
+   188	    schemas/experiment.schema.json
+   189	    """
+   190	    from bnsyn.experiments.declarative import run_from_yaml
+   191	
+   192	    try:
+   193	        run_from_yaml(args.config, args.output)
+   194	        return 0
+   195	    except Exception as e:
+   196	        print(f"Error running experiment: {e}")
+   197	        return 1
+   198	
+   199	
+   200	def _cmd_sleep_stack(args: argparse.Namespace) -> int:
+   201	    """Run sleep-stack demo with attractor crystallization and consolidation.
+   202	
+   203	    Parameters
+   204	    ----------
+   205	    args : argparse.Namespace
+   206	        Parsed CLI arguments for the sleep-stack subcommand.
+   207	
+   208	    Returns
+   209	    -------
+   210	    int
+   211	        Exit code (0 indicates success).
+   212	
+   213	    Notes
+   214	    -----
+   215	    Runs wake→sleep cycle with memory recording, consolidation, replay,
+   216	    attractor tracking, and phase transition detection.
+   217	
+   218	    References
+   219	    ----------
+   220	    docs/sleep_stack.md
+   221	    docs/emergence_tracking.md
+   222	    """
+   223	    # Import here to avoid circular dependencies and keep CLI fast
+   224	    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+   225	    from bnsyn.criticality import PhaseTransitionDetector
+   226	    from bnsyn.emergence import AttractorCrystallizer
+   227	    from bnsyn.memory import MemoryConsolidator
+   228	    from bnsyn.rng import seed_all
+   229	    from bnsyn.sim.network import Network, NetworkParams
+   230	    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
+   231	    from bnsyn.temperature.schedule import TemperatureSchedule
+   232	
+   233	    # Setup output directory
+   234	    out_dir = Path(args.out)
+   235	    out_dir.mkdir(parents=True, exist_ok=True)
+   236	    fig_dir = out_dir.parent / "figures" / out_dir.name
+   237	    fig_dir.mkdir(parents=True, exist_ok=True)
+   238	
+   239	    # Seed RNG
+   240	    pack = seed_all(args.seed)
+   241	    rng = pack.np_rng
+   242	
+   243	    # Create network
+   244	    N = int(args.N)
+   245	    nparams = NetworkParams(N=N)
+   246	    net = Network(
+   247	        nparams,
+   248	        AdExParams(),
+   249	        SynapseParams(),
+   250	        CriticalityParams(),
+   251	        dt_ms=0.5,
+   252	        rng=rng,
+   253	        backend=args.backend,
+   254	    )
+   255	
+   256	    # Temperature schedule
+   257	    temp_schedule = TemperatureSchedule(TemperatureParams())
+   258	
+   259	    # Sleep cycle
+   260	    sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=rng)
+---
+     1	"""Module entry point for ``python -m bnsyn``."""
+     2	
+     3	from bnsyn.cli import main
+     4	
+     5	
+     6	if __name__ == "__main__":
+     7	    main()
+---
+     1	"""Deterministic RNG utilities for BN-Syn.
+     2	
+     3	Parameters
+     4	----------
+     5	None
+     6	
+     7	Returns
+     8	-------
+     9	None
+    10	
+    11	Notes
+    12	-----
+    13	Implements SPEC P2-9 determinism protocol with explicit seeding.
+    14	
+    15	References
+    16	----------
+    17	docs/SPEC.md#P2-9
+    18	docs/REPRODUCIBILITY.md
+    19	"""
+    20	
+    21	from __future__ import annotations
+    22	
+    23	from dataclasses import dataclass
+    24	import numpy as np
+    25	
+    26	
+    27	@dataclass(frozen=True)
+    28	class RNGPack:
+    29	    """Bundle RNG artifacts produced by seeding.
+    30	
+    31	    Parameters
+    32	    ----------
+    33	    seed : int
+    34	        Seed value used to initialize RNGs.
+    35	    np_rng : np.random.Generator
+    36	        NumPy Generator instance.
+    37	
+    38	    Notes
+    39	    -----
+    40	    This bundle is used to propagate deterministic RNG state across modules.
+    41	
+    42	    References
+    43	    ----------
+    44	    docs/SPEC.md#P2-9
+    45	    """
+    46	
+    47	    seed: int
+    48	    np_rng: np.random.Generator
+    49	
+    50	
+    51	def seed_all(seed: int) -> RNGPack:
+    52	    """Seed all RNGs used by this project.
+    53	
+    54	    Parameters
+    55	    ----------
+    56	    seed : int
+    57	        Integer seed in [0, 2**32 - 1].
+    58	
+    59	    Returns
+    60	    -------
+    61	    RNGPack
+    62	        RNGPack containing the NumPy Generator and seed.
+    63	
+    64	    Raises
+    65	    ------
+    66	    TypeError
+    67	        If seed is not an int.
+    68	    ValueError
+    69	        If seed is outside the allowed range.
+    70	
+    71	    Notes
+    72	    -----
+    73	    Returns an explicit NumPy Generator.
+    74	
+    75	    Notes on determinism
+    76	    --------------------
+    77	    `PYTHONHASHSEED` is evaluated when the Python interpreter starts. Setting it
+    78	    inside a running process has no effect on hash randomization for that process,
+    79	    so this function intentionally avoids mutating environment variables.
+    80	
+    81	    References
+    82	    ----------
+    83	    docs/SPEC.md#P2-9
+    84	    docs/REPRODUCIBILITY.md
+    85	    """
+    86	    if not isinstance(seed, int):
+    87	        raise TypeError("seed must be int")
+    88	    if seed < 0 or seed > 2**32 - 1:
+    89	        raise ValueError("seed must be in [0, 2**32-1]")
+    90	
+    91	    np_rng = np.random.default_rng(seed)
+    92	    return RNGPack(seed=seed, np_rng=np_rng)
+    93	
+    94	
+    95	def split(rng: np.random.Generator, n: int) -> list[np.random.Generator]:
+    96	    """Deterministically split a generator into child generators.
+    97	
+    98	    Parameters
+    99	    ----------
+   100	    rng : np.random.Generator
+   101	        Source NumPy Generator.
+   102	    n : int
+   103	        Number of child generators.
+   104	
+   105	    Returns
+   106	    -------
+   107	    list[np.random.Generator]
+   108	        List of NumPy Generators seeded deterministically.
+   109	
+   110	    Raises
+   111	    ------
+   112	    ValueError
+   113	        If n is non-positive.
+   114	
+   115	    Notes
+   116	    -----
+   117	    Uses integer draws from the parent generator to seed children.
+   118	    """
+   119	    if n <= 0:
+   120	        raise ValueError("n must be positive")
+   121	    seeds = rng.integers(0, 2**32 - 1, size=n, dtype=np.uint32)
+   122	    return [np.random.default_rng(int(s)) for s in seeds]
+---
+     1	"""Parameter definitions for BN-Syn components.
+     2	
+     3	Parameters
+     4	----------
+     5	None
+     6	
+     7	Returns
+     8	-------
+     9	None
+    10	
+    11	Notes
+    12	-----
+    13	Defines typed parameter models used across SPEC components.
+    14	
+    15	References
+    16	----------
+    17	docs/SPEC.md
+    18	docs/SSOT.md
+    19	"""
+    20	
+    21	from __future__ import annotations
+    22	
+    23	from pydantic import BaseModel, Field, PositiveFloat
+    24	
+    25	
+    26	class AdExParams(BaseModel):
+    27	    """AdEx neuron parameters (units: pF, nS, mV, ms, pA).
+    28	
+    29	    Parameters
+    30	    ----------
+    31	    C_pF : float
+    32	        Membrane capacitance (pF).
+    33	    gL_nS : float
+    34	        Leak conductance (nS).
+    35	    EL_mV : float
+    36	        Leak reversal potential (mV).
+    37	    VT_mV : float
+    38	        Spike threshold (mV).
+    39	    DeltaT_mV : float
+    40	        Exponential slope factor (mV).
+    41	    tauw_ms : float
+    42	        Adaptation time constant (ms).
+    43	    a_nS : float
+    44	        Subthreshold adaptation conductance (nS).
+    45	    b_pA : float
+    46	        Spike-triggered adaptation increment (pA).
+    47	    Vreset_mV : float
+    48	        Reset voltage after spike (mV).
+    49	    Vpeak_mV : float
+    50	        Spike peak clamp voltage (mV).
+    51	
+    52	    Notes
+    53	    -----
+    54	    These parameters implement the SPEC P0-1 AdEx neuron model.
+    55	
+    56	    References
+    57	    ----------
+    58	    docs/SPEC.md#P0-1
+    59	    """
+    60	
+    61	    # Units: pF, nS, mV, ms, pA
+    62	    C_pF: PositiveFloat = Field(default=150.0, description="Membrane capacitance (pF)")
+    63	    gL_nS: PositiveFloat = Field(default=10.0, description="Leak conductance (nS)")
+    64	    EL_mV: float = Field(default=-70.0, description="Leak reversal (mV)")
+    65	    VT_mV: float = Field(default=-55.0, description="Threshold (mV)")
+    66	    DeltaT_mV: PositiveFloat = Field(default=2.0, description="Slope factor (mV)")
+    67	    tauw_ms: PositiveFloat = Field(default=200.0, description="Adaptation time constant (ms)")
+    68	    a_nS: float = Field(default=2.0, description="Subthreshold adaptation (nS)")
+    69	    b_pA: float = Field(default=80.0, description="Spike-triggered adaptation increment (pA)")
+    70	    Vreset_mV: float = Field(default=-58.0, description="Reset voltage (mV)")
+    71	    Vpeak_mV: float = Field(default=30.0, description="Spike peak clamp (mV)")
+    72	
+    73	
+    74	class SynapseParams(BaseModel):
+    75	    """Synapse parameters for conductance-based synapses.
+    76	
+    77	    Parameters
+    78	    ----------
+    79	    E_AMPA_mV : float
+    80	        AMPA reversal potential (mV).
+    81	    E_NMDA_mV : float
+    82	        NMDA reversal potential (mV).
+    83	    E_GABAA_mV : float
+    84	        GABA_A reversal potential (mV).
+    85	    tau_AMPA_ms : float
+    86	        AMPA decay time constant (ms).
+    87	    tau_NMDA_ms : float
+    88	        NMDA decay time constant (ms).
+    89	    tau_GABAA_ms : float
+    90	        GABA_A decay time constant (ms).
+    91	    delay_ms : float
+    92	        Synaptic transmission delay (ms).
+    93	    mg_mM : float
+    94	        Extracellular magnesium concentration (mM).
+    95	
+    96	    Notes
+    97	    -----
+    98	    Parameters support conductance-based synapse dynamics in SPEC P0-2.
+    99	
+   100	    References
+   101	    ----------
+   102	    docs/SPEC.md#P0-2
+   103	    """
+   104	
+   105	    E_AMPA_mV: float = 0.0
+   106	    E_NMDA_mV: float = 0.0
+   107	    E_GABAA_mV: float = -70.0
+   108	
+   109	    tau_AMPA_ms: PositiveFloat = 2.5
+   110	    tau_NMDA_ms: PositiveFloat = 100.0
+   111	    tau_GABAA_ms: PositiveFloat = 6.0
+   112	
+   113	    delay_ms: PositiveFloat = 1.0
+   114	    mg_mM: PositiveFloat = 1.0  # extracellular Mg2+
+   115	
+   116	
+   117	class PlasticityParams(BaseModel):
+   118	    """Three-factor plasticity parameters.
+   119	
+   120	    Parameters
+   121	    ----------
+   122	    tau_e_ms : float
+   123	        Eligibility trace decay time constant (ms).
+   124	    tau_plus_ms : float
+   125	        STDP potentiation trace time constant (ms).
+   126	    tau_minus_ms : float
+   127	        STDP depression trace time constant (ms).
+   128	    A_plus : float
+   129	        Potentiation amplitude.
+   130	    A_minus : float
+   131	        Depression amplitude.
+   132	    eta : float
+   133	        Learning rate for three-factor updates.
+   134	    w_min : float
+   135	        Minimum synaptic weight.
+   136	    w_max : float
+   137	        Maximum synaptic weight.
+   138	
+   139	    Notes
+   140	    -----
+   141	    Implements the SPEC P0-3 three-factor plasticity rule.
+   142	
+   143	    References
+   144	    ----------
+   145	    docs/SPEC.md#P0-3
+   146	    """
+   147	
+   148	    tau_e_ms: PositiveFloat = 500.0
+   149	    tau_plus_ms: PositiveFloat = 20.0
+   150	    tau_minus_ms: PositiveFloat = 20.0
+   151	    A_plus: PositiveFloat = 1.0
+   152	    A_minus: PositiveFloat = 1.05
+   153	    eta: PositiveFloat = 5e-3
+   154	    w_min: float = 0.0
+   155	    w_max: float = 200.0
+   156	
+   157	
+   158	class CriticalityParams(BaseModel):
+   159	    """Criticality control parameters for sigma tracking.
+   160	
+   161	    Parameters
+   162	    ----------
+   163	    sigma_target : float
+   164	        Target branching ratio.
+   165	    eta_sigma : float
+   166	        Gain update rate for sigma control.
+   167	    gain_min : float
+   168	        Lower bound on gain.
+   169	    gain_max : float
+   170	        Upper bound on gain.
+   171	
+   172	    Notes
+   173	    -----
+   174	    Used by the SPEC P0-4 sigma tracking control loop.
+   175	
+   176	    References
+   177	    ----------
+   178	    docs/SPEC.md#P0-4
+   179	    """
+   180	
+   181	    sigma_target: float = 1.0
+   182	    eta_sigma: PositiveFloat = 1e-3
+   183	    gain_min: PositiveFloat = 0.2
+   184	    gain_max: PositiveFloat = 5.0
+   185	
+   186	
+   187	class TemperatureParams(BaseModel):
+   188	    """Temperature schedule and gate parameters.
+   189	
+   190	    Parameters
+   191	    ----------
+   192	    T0 : float
+   193	        Initial temperature.
+   194	    Tmin : float
+   195	        Minimum temperature floor.
+   196	    alpha : float
+   197	        Cooling factor per update.
+   198	    Tc : float
+   199	        Critical temperature for gating.
+   200	    gate_tau : float
+   201	        Sigmoid sharpness for temperature gating.
+   202	
+   203	    Notes
+   204	    -----
+   205	    Parameters drive the SPEC P1-2 temperature schedule.
+   206	
+   207	    References
+   208	    ----------
+   209	    docs/SPEC.md#P1-2
+   210	    """
+   211	
+   212	    T0: PositiveFloat = 1.0
+   213	    Tmin: PositiveFloat = 1e-3
+   214	    alpha: float = Field(default=0.95, ge=0.0, le=1.0)
+   215	    Tc: PositiveFloat = 0.1
+   216	    gate_tau: float = Field(
+   217	        default=0.02,
+   218	        ge=0.015,
+   219	        le=0.08,
+   220	        description=(
+   221	            "Validated temperature-gate slope window from ablation studies; "
+   222	            "narrow bounds prevent near-binary gating at low tau and over-flat gating at high tau."
+   223	        ),
+   224	    )
+   225	
+   226	
+   227	class DualWeightParams(BaseModel):
+   228	    """Dual-weight consolidation parameters.
+   229	
+   230	    Parameters
+   231	    ----------
+   232	    tau_f_s : float
+   233	        Fast weight decay time constant (s).
+   234	    tau_tag_s : float
+   235	        Synaptic tag decay time constant (s).
+   236	    tau_p_s : float
+   237	        Protein pool decay time constant (s).
+   238	    theta_tag : float
+   239	        Tagging threshold.
+   240	    eta_f : float
+   241	        Fast weight learning rate.
+   242	    eta_c : float
+   243	        Consolidation learning rate.
+   244	
+   245	    Notes
+   246	    -----
+   247	    Parameters implement the SPEC P1-6 dual-weight consolidation dynamics.
+   248	
+   249	    References
+   250	    ----------
+   251	    docs/SPEC.md#P1-6
+   252	    """
+   253	
+   254	    tau_f_s: PositiveFloat = 1800.0  # 30 min
+   255	    tau_tag_s: PositiveFloat = 5400.0  # 90 min
+   256	    tau_p_s: PositiveFloat = 7200.0  # 2 h
+   257	    theta_tag: PositiveFloat = 0.25
+   258	    eta_f: PositiveFloat = 0.05
+   259	    eta_c: PositiveFloat = 0.005
+   260	

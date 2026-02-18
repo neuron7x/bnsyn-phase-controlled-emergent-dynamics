@@ -1,0 +1,19 @@
+$ line refs
+README.md:55:make test-validation
+docs/TESTING.md:24:python -m pytest -m "not (validation or property)" -q
+docs/TESTING.md:35:make test-validation
+docs/TESTING.md:42:python -m pytest -m "not (validation or property)" -q
+docs/TESTING.md:165:python -m pytest -m "not (validation or property)" -q
+docs/TESTING.md:167:ruff check .
+pyproject.toml:75:[project.scripts]
+pyproject.toml:76:bnsyn = "bnsyn.cli:main"
+Makefile:1:.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+Makefile:8:TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+Makefile:63:test-validation:
+Makefile:137:	ruff check . --fix
+Makefile:141:	ruff check .
+Makefile:145:	mypy src --strict --config-file pyproject.toml
+Makefile:200:	python -m build
+AGENTS.md:31:- Linters: `ruff check .` and `pylint src/bnsyn` (Makefile `lint`)
+AGENTS.md:32:- Typechecks: `mypy src --strict --config-file pyproject.toml` (Makefile `mypy`)
+AGENTS.md:33:- Build: `python -m build` (CI workflow `ci-pr-atomic.yml`)

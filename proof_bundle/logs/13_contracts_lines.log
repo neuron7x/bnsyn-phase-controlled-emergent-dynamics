@@ -1,0 +1,158 @@
+     1	# CONTRACTS Index
+     2	
+     3	Authoritative P0/P1 contracts extracted from critical-path modules and gates.
+     4	
+     5	## §CFG:src/bnsyn/config.py:BaseModels#99fbf8a5537a4faf
+     6	- Name: `bnsyn.config models`
+     7	- Summary: Pydantic parameter schemas for neuron/synapse/plasticity/criticality/temperature/energy invariants.
+     8	- Inputs: typed numeric params
+     9	- Outputs: validated config objects
+    10	- Preconditions: constraints satisfied (PositiveFloat, bounds)
+    11	- Postconditions: validated deterministic parameter set
+    12	- Failure modes: ValidationError
+    13	- Determinism: yes
+    14	- Evidence:
+    15	  - `file:src/bnsyn/config.py:L1-L288`
+    16	  - `file:docs/SPEC.md:L1-L200`
+    17	
+    18	## §CMD:make:build#46174ef38e397e02
+    19	- Name: `build`
+    20	- Summary: Package build artifact creation.
+    21	- Inputs: ∅
+    22	- Outputs: process exit code
+    23	- Preconditions: ∅
+    24	- Postconditions: ∅
+    25	- Failure modes: non-zero exit on gate failure
+    26	- Determinism: conditional
+    27	- Evidence:
+    28	  - `file:Makefile:L199-L200`
+    29	  - `file:AGENTS.md:L33-L33`
+    30	
+    31	## §CMD:make:lint#feb185397e880c72
+    32	- Name: `lint`
+    33	- Summary: Static quality gate with ruff+pylint.
+    34	- Inputs: ∅
+    35	- Outputs: process exit code
+    36	- Preconditions: ∅
+    37	- Postconditions: ∅
+    38	- Failure modes: non-zero exit on gate failure
+    39	- Determinism: conditional
+    40	- Evidence:
+    41	  - `file:Makefile:L140-L143`
+    42	  - `file:AGENTS.md:L31-L31`
+    43	
+    44	## §CMD:make:mypy#16b7f58d110ef0fb
+    45	- Name: `mypy`
+    46	- Summary: Strict typecheck gate.
+    47	- Inputs: ∅
+    48	- Outputs: process exit code
+    49	- Preconditions: ∅
+    50	- Postconditions: ∅
+    51	- Failure modes: non-zero exit on gate failure
+    52	- Determinism: conditional
+    53	- Evidence:
+    54	  - `file:Makefile:L144-L145`
+    55	  - `file:AGENTS.md:L32-L32`
+    56	
+    57	## §CMD:make:test-gate#432b561eca3c3c5e
+    58	- Name: `test-gate`
+    59	- Summary: Primary fast test gate excluding validation/property.
+    60	- Inputs: ∅
+    61	- Outputs: process exit code
+    62	- Preconditions: ∅
+    63	- Postconditions: ∅
+    64	- Failure modes: non-zero exit on gate failure
+    65	- Determinism: conditional
+    66	- Evidence:
+    67	  - `file:Makefile:L8-L8`
+    68	  - `file:Makefile:L57-L59`
+    69	  - `file:docs/TESTING.md:L21-L25`
+    70	
+    71	## §FUN:src/bnsyn/cli.py:main()#a164a2ef0e7ba513
+    72	- Name: `main`
+    73	- Summary: Parses CLI args and dispatches subcommands for runtime operations.
+    74	- Inputs: argv optional
+    75	- Outputs: int exit code
+    76	- Preconditions: CLI arguments conform to parser
+    77	- Postconditions: selected command handler executes
+    78	- Failure modes: SystemExit for invalid args
+    79	- Determinism: conditional
+    80	- Evidence:
+    81	  - `file:src/bnsyn/cli.py:L443-L533`
+    82	  - `file:pyproject.toml:L75-L76`
+    83	
+    84	## §FUN:src/bnsyn/rng.py:seed_all(seed:int)#3d349752e0a011eb
+    85	- Name: `seed_all`
+    86	- Summary: Creates RNGPack and seeds python/numpy streams.
+    87	- Inputs: seed:int
+    88	- Outputs: RNGPack
+    89	- Preconditions: integer seed
+    90	- Postconditions: deterministic RNG state initialized
+    91	- Failure modes: ∅
+    92	- Determinism: yes
+    93	- Evidence:
+    94	  - `file:src/bnsyn/rng.py:L51-L92`
+    95	
+    96	## §GAT:CI:ci-pr-atomic#bbc71bd4909c7ea9
+    97	- Name: `ci-pr-atomic`
+    98	- Summary: PR atomic CI orchestrating reusable quality/pytest/science gates.
+    99	- Inputs: push/pull_request events
+   100	- Outputs: status checks
+   101	- Preconditions: workflow triggers
+   102	- Postconditions: required jobs executed
+   103	- Failure modes: job failure blocks merge
+   104	- Determinism: conditional
+   105	- Evidence:
+   106	  - `file:.github/workflows/ci-pr-atomic.yml:L1-L554`
+   107	  - `file:.github/workflows/_reusable_pytest.yml:L1-L257`
+   108	
+   109	## §INV:determinism:seeded_rng#398b20aa24034c4f
+   110	- Name: `seeded_rng`
+   111	- Summary: Simulation randomness must be seeded through bnsyn.rng to ensure replayable outputs.
+   112	- Inputs: seed
+   113	- Outputs: repeatable stochastic streams
+   114	- Preconditions: seed_all used
+   115	- Postconditions: same seed => same streams
+   116	- Failure modes: unseeded paths nondeterministic
+   117	- Determinism: yes
+   118	- Evidence:
+   119	  - `file:src/bnsyn/rng.py:L51-L122`
+   120	  - `file:tests/test_determinism.py:L1-L200`
+   121	
+   122	## §MOD:src/bnsyn/cli.py#3670dc50ae2fad1c
+   123	- Name: `bnsyn.cli`
+   124	- Summary: CLI entry surface exposing demo, dtcheck, experiments, sleep-stack command paths.
+   125	- Inputs: argv
+   126	- Outputs: stdout JSON / status
+   127	- Preconditions: valid argparse command
+   128	- Postconditions: delegates to simulation/control modules
+   129	- Failure modes: SystemExit on argparse failures
+   130	- Determinism: conditional
+   131	- Evidence:
+   132	  - `file:src/bnsyn/cli.py:L1-L537`
+   133	
+   134	## §MOD:src/bnsyn/rng.py#a82f3dfe6131aa15
+   135	- Name: `bnsyn.rng`
+   136	- Summary: Central deterministic RNG utilities with split support for reproducibility.
+   137	- Inputs: seed ints
+   138	- Outputs: RNGPack
+   139	- Preconditions: seed provided
+   140	- Postconditions: numpy and random seeded consistently
+   141	- Failure modes: ValueError for invalid split count
+   142	- Determinism: yes
+   143	- Evidence:
+   144	  - `file:src/bnsyn/rng.py:L1-L122`
+   145	
+   146	## §RIS:contradiction:test-marker-contract#0cb50848744f45fb
+   147	- Name: `test-marker-contract-mismatch`
+   148	- Summary: AGENTS.md test command excludes only validation, while Makefile/docs exclude both validation and property.
+   149	- Inputs: ∅
+   150	- Outputs: risk record
+   151	- Preconditions: ∅
+   152	- Postconditions: mismatch explicit
+   153	- Failure modes: ∅
+   154	- Determinism: yes
+   155	- Evidence:
+   156	  - `file:AGENTS.md:L30-L33`
+   157	  - `file:Makefile:L8-L8`
+   158	  - `file:docs/TESTING.md:L21-L25`

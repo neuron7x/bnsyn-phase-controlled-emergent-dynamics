@@ -1,0 +1,96 @@
+     1	{
+     2	  "contradictions": [
+     3	    {
+     4	      "evidence": [
+     5	        "file:AGENTS.md:L30-L33",
+     6	        "file:Makefile:L8-L8",
+     7	        "file:docs/TESTING.md:L21-L25"
+     8	      ],
+     9	      "id": "\u00a7RIS:contradiction:test-marker-contract#0cb50848744f45fb",
+    10	      "resolution": "Compressor artifacts treat Makefile+docs/TESTING as runtime truth; AGENTS mismatch recorded for human sync patch.",
+    11	      "severity": "P0",
+    12	      "summary": "AGENTS.md test command excludes only validation, while Makefile/docs exclude both validation and property.",
+    13	      "type": "command_mismatch"
+    14	    }
+    15	  ],
+    16	  "meta": {
+    17	    "commit": "35bd4e8aa77e343e7c37470fdbd5a54bb38f6461",
+    18	    "repo": "/workspace/bnsyn-phase-controlled-emergent-dynamics"
+    19	  },
+    20	  "truth_map": {
+    21	    "code_truth": [
+    22	      {
+    23	        "entrypoint": "bnsyn CLI main",
+    24	        "evidence": [
+    25	          "file:pyproject.toml:L75-L76",
+    26	          "file:src/bnsyn/cli.py:L443-L533"
+    27	        ],
+    28	        "id": "\u00a7FUN:src/bnsyn/cli.py:main()#a164a2ef0e7ba513"
+    29	      },
+    30	      {
+    31	        "entrypoint": "deterministic RNG root",
+    32	        "evidence": [
+    33	          "file:src/bnsyn/rng.py:L51-L92"
+    34	        ],
+    35	        "id": "\u00a7FUN:src/bnsyn/rng.py:seed_all(seed:int)#3d349752e0a011eb"
+    36	      }
+    37	    ],
+    38	    "commands_truth": [
+    39	      {
+    40	        "command": "python -m pytest -m \"not (validation or property)\" -q",
+    41	        "evidence": [
+    42	          "file:Makefile:L8-L8",
+    43	          "file:Makefile:L57-L59"
+    44	        ],
+    45	        "id": "\u00a7CMD:make:test-gate#432b561eca3c3c5e"
+    46	      },
+    47	      {
+    48	        "command": "ruff check . && pylint src/bnsyn",
+    49	        "evidence": [
+    50	          "file:Makefile:L140-L143"
+    51	        ],
+    52	        "id": "\u00a7CMD:make:lint#feb185397e880c72"
+    53	      },
+    54	      {
+    55	        "command": "mypy src --strict --config-file pyproject.toml",
+    56	        "evidence": [
+    57	          "file:Makefile:L144-L145"
+    58	        ],
+    59	        "id": "\u00a7CMD:make:mypy#16b7f58d110ef0fb"
+    60	      },
+    61	      {
+    62	        "command": "python -m build",
+    63	        "evidence": [
+    64	          "file:Makefile:L199-L200"
+    65	        ],
+    66	        "id": "\u00a7CMD:make:build#46174ef38e397e02"
+    67	      }
+    68	    ],
+    69	    "policy_truth": [
+    70	      {
+    71	        "claim": "Tests command excludes only validation marker",
+    72	        "evidence": [
+    73	          "file:AGENTS.md:L30-L33"
+    74	        ],
+    75	        "id": "\u00a7DOC:agents:tooling#73794eab98072756"
+    76	      },
+    77	      {
+    78	        "claim": "Testing SSOT command excludes validation and property markers",
+    79	        "evidence": [
+    80	          "file:docs/TESTING.md:L21-L25",
+    81	          "file:docs/TESTING.md:L39-L45"
+    82	        ],
+    83	        "id": "\u00a7DOC:docs:testing:ssot#5e80c3bac6b2f073"
+    84	      }
+    85	    ],
+    86	    "state_truth": [
+    87	      {
+    88	        "claim": "CI runs reusable quality+pytest+validation gates",
+    89	        "evidence": [
+    90	          "file:.github/workflows/ci-pr-atomic.yml:L1-L554"
+    91	        ],
+    92	        "id": "\u00a7GAT:workflow:ci-pr-atomic#1322b84ea24a619d"
+    93	      }
+    94	    ]
+    95	  }
+    96	}

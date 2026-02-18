@@ -1,0 +1,5 @@
+$ validate artifacts
+3841 artifacts/context_compressor/LLM_CONTEXT.md
+KG_OK
+RIC_MAP_OK
+QUALITY_OK

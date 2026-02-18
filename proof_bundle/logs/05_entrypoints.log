@@ -1,0 +1,4 @@
+$ extract pyproject entrypoints
+{
+  "bnsyn": "bnsyn.cli:main"
+}
