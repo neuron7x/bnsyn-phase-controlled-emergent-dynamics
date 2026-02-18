@@ -146,3 +146,30 @@ def test_cmd_run_experiment_failure(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(declarative, "run_from_yaml", fail)
     assert cli._cmd_run_experiment(args) == 1
+
+
+def test_cli_main_invalid_demo_args_reports_actionable_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    argv = [
+        "bnsyn",
+        "demo",
+        "--steps",
+        "-1",
+        "--dt-ms",
+        "0.1",
+        "--seed",
+        "1",
+        "--N",
+        "10",
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    captured = capsys.readouterr()
+    assert exc.value.code == 2
+    assert "Error: steps must be greater than 0" in captured.err
+    assert "Traceback" not in captured.err
+    assert "Traceback" not in captured.out

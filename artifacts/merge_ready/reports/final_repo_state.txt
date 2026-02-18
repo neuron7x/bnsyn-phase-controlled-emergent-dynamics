@@ -1,0 +1,6 @@
+[snapshot_before_write]
+(clean)
+
+0eeb01b Fix CLI invalid-input UX and add merge-readiness evidence bundle
+b1c56ad Add launch-readiness product artifact bundle and gate scorecard
+baeddef Merge pull request #284 from neuron7x/codex/create-artifacts/lpro/-skeleton

@@ -26,6 +26,7 @@ import importlib.metadata
 import json
 import tomllib
 import warnings
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -59,6 +60,17 @@ def _get_package_version() -> str:
 
     return "unknown"
 
+
+
+
+def _validate_demo_args(args: argparse.Namespace) -> None:
+    """Validate demo command arguments and raise user-actionable errors."""
+    if args.steps <= 0:
+        raise ValueError("steps must be greater than 0")
+    if args.dt_ms <= 0:
+        raise ValueError("dt-ms must be greater than 0")
+    if args.N <= 0:
+        raise ValueError("N must be greater than 0")
 
 def _cmd_demo(args: argparse.Namespace) -> int:
     """Run a deterministic demo simulation and print metrics.
@@ -118,6 +130,7 @@ def _cmd_demo(args: argparse.Namespace) -> int:
             print(f"Error launching dashboard: {e}")
             return 1
 
+    _validate_demo_args(args)
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
     return 0
@@ -513,7 +526,11 @@ def main() -> None:
     sleep.set_defaults(func=_cmd_sleep_stack)
 
     args = p.parse_args()
-    raise SystemExit(int(args.func(args)))
+    try:
+        raise SystemExit(int(args.func(args)))
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from None
 
 
 if __name__ == "__main__":
