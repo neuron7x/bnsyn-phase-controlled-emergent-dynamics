@@ -1,13 +1,10 @@
-CMD: source .venv_prr/bin/activate && bnsyn demo --steps 5 --dt-ms 0.1 --seed 1 --N 8
-CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
-START: 2026-02-17T22:44:01Z
 {
-  "demo": {
-    "rate_mean_hz": 0.0,
-    "rate_std": 0.0,
-    "sigma_mean": 1.0,
-    "sigma_std": 0.0
-  }
+  "command": "python -m pytest tests/test_provenance_manifest.py -q",
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "env_delta_names": [],
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": "...........                                                              [100%]\n",
+  "timestamp_end_utc": "2026-02-17T23:05:46.761479+00:00",
+  "timestamp_start_utc": "2026-02-17T23:05:45.131548+00:00"
 }
-END: 2026-02-17T22:44:03Z
-EXIT:0

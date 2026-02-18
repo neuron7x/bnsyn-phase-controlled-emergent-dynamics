@@ -1,0 +1,20 @@
+{
+  "artifacts": [
+    {
+      "path": "dist/bnsyn-0.2.0-py3-none-any.whl",
+      "sha256": "95388722102c36e9e119bda08feccd69d8b32277b914f66771cf7ca741ccfddf"
+    },
+    {
+      "path": "dist/bnsyn-0.2.0.tar.gz",
+      "sha256": "44429e103a5b8aa77d939053fa23fcc9a98f9bf6e26be164cbcf72f2d3ec3e2d"
+    },
+    {
+      "path": "artifacts/release_readiness.json",
+      "sha256": "8d0e1a4b4af61db98b3d1b5e9ca11a00ce390924bc4f1156c6501b79b17cff4f"
+    },
+    {
+      "path": "artifacts/release_readiness.md",
+      "sha256": "12669637f4dcf9e457a8bc799e92d2e2766231db7c4bb3a3a93f894d6f6d45e8"
+    }
+  ]
+}

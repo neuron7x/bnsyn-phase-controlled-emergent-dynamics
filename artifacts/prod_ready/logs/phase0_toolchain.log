@@ -1,0 +1,10 @@
+{
+  "command": "python -V && python -m pip --version",
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "env_delta_names": [],
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": "Python 3.12.12\npip 26.0.1 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)\n",
+  "timestamp_end_utc": "2026-02-17T23:06:00.114116+00:00",
+  "timestamp_start_utc": "2026-02-17T23:05:59.701810+00:00"
+}

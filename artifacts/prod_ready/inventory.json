@@ -1,47 +1,46 @@
 {
-  "stack_summary": {
-    "language": "Python",
-    "runtime": "Python 3.12.12",
+  "stack": [
+    "Python"
+  ],
+  "toolchains": {
+    "python": "3.12.12",
+    "pip": "26.0.1",
     "build_backend": "setuptools",
     "package_manager": "pip",
-    "test_framework": "pytest"
+    "task_runner": "make"
   },
   "entrypoints": [
-    "python -m bnsyn",
-    "bnsyn demo",
-    "bnsyn run",
-    "bnsyn dtcheck",
-    "bnsyn sleep-stack"
+    "bnsyn CLI (src/bnsyn/cli.py)",
+    "python -m bnsyn"
   ],
-  "canonical_commands": {
-    "install": "python -m pip install -e \".[test,docs]\"",
-    "build": "python -m build",
-    "test": "python -m pytest -m \"not validation\" -q",
-    "lint": "ruff check . && pylint src/bnsyn",
-    "typecheck": "mypy src --strict --config-file pyproject.toml",
-    "run": "bnsyn demo --steps 20 --dt-ms 0.1 --seed 123 --N 16",
-    "release": "python -m build"
-  },
-  "config_surface": {
-    "env_vars": [
-      "BNSYN_USE_TORCH",
-      "BNSYN_DEVICE"
-    ]
-  },
-  "dependency_model": {
-    "file": "pyproject.toml",
-    "lockfile": "requirements-lock.txt",
-    "strategy": "Pinned versions in pyproject and lockfile for reproducible installs"
-  },
-  "ci_map": {
-    "ci-pr-atomic.yml": [
-      "make test-gate",
-      "python -m pytest --collect-only -q"
-    ],
-    "_reusable_quality.yml": [
-      "ruff check .",
-      "mypy src --strict --config-file pyproject.toml",
-      "pylint src/bnsyn"
-    ]
-  }
+  "canonical_tasks": [
+    "make install",
+    "make build",
+    "make test",
+    "make lint",
+    "make mypy",
+    "make security",
+    "make sbom",
+    "make release",
+    "make cleanroom"
+  ],
+  "configs_surface": [
+    "pyproject.toml",
+    "requirements-lock.txt",
+    ".gitleaks.toml",
+    "mypy.ini/pyproject mypy section",
+    "quality/*.json"
+  ],
+  "ci_map": [
+    ".github/workflows/ci-pr.yml",
+    ".github/workflows/ci-pr-atomic.yml",
+    ".github/workflows/ci-validation.yml",
+    ".github/workflows/release-pipeline.yml"
+  ],
+  "release_targets": [
+    "dist/*.tar.gz",
+    "dist/*.whl",
+    "artifacts/release_readiness.json",
+    "artifacts/release_readiness.md"
+  ]
 }

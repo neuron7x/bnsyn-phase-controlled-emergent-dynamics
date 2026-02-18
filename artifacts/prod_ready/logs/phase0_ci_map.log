@@ -1,0 +1,10 @@
+{
+  "command": "rg --files .github/workflows",
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "env_delta_names": [],
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": ".github/workflows/docs.yml\n.github/workflows/_reusable_benchmarks.yml\n.github/workflows/science.yml\n.github/workflows/_reusable_property_tests.yml\n.github/workflows/ci-benchmarks-elite.yml\n.github/workflows/formal-tla.yml\n.github/workflows/workflow-integrity.yml\n.github/workflows/ci-benchmarks.yml\n.github/workflows/_reusable_pytest.yml\n.github/workflows/math-quality-gate.yml\n.github/workflows/physics-equivalence.yml\n.github/workflows/_reusable_ssot.yml\n.github/workflows/codecov-health.yml\n.github/workflows/benchmarks.yml\n.github/workflows/_reusable_gate_profile.yml\n.github/workflows/dependency-review.yml\n.github/workflows/ci-smoke.yml\n.github/workflows/ci-pr.yml\n.github/workflows/ci-pr-atomic.yml\n.github/workflows/_reusable_validation_tests.yml\n.github/workflows/codeql.yml\n.github/workflows/dependency-watch.yml\n.github/workflows/_reusable_quality.yml\n.github/workflows/release-pipeline.yml\n.github/workflows/ci-validation.yml\n.github/workflows/_reusable_chaos_tests.yml\n.github/workflows/formal-coq.yml\n.github/workflows/_reusable_formal_science.yml\n.github/workflows/quality-mutation.yml\n",
+  "timestamp_end_utc": "2026-02-17T23:05:55.657090+00:00",
+  "timestamp_start_utc": "2026-02-17T23:05:55.633240+00:00"
+}

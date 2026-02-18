@@ -1,0 +1,10 @@
+{
+  "command": "python -m pytest tests/test_performance.py -q",
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "env_delta_names": [],
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": "....                                                                     [100%]\n",
+  "timestamp_end_utc": "2026-02-17T23:05:41.672959+00:00",
+  "timestamp_start_utc": "2026-02-17T23:05:39.242585+00:00"
+}

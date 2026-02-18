@@ -1,32 +1,10 @@
-CMD: source .venv_prr/bin/activate && python -m pytest -m "not validation" -q
-CWD: /workspace/bnsyn-phase-controlled-emergent-dynamics
-START: 2026-02-17T22:38:36Z
-[Hypothesis] Using default profile
-........................................................................ [ 10%]
-........................................................................ [ 20%]
-........................................................................ [ 30%]
-..............................................................ss....ss.. [ 40%]
-........................................................................ [ 50%]
-........................................................................ [ 60%]
-........................................................................ [ 70%]
-........................................................................ [ 80%]
-........................................................................ [ 90%]
-........................................................................ [100%]
-=============================== warnings summary ===============================
-tests/test_cli_interactive.py::test_cli_module_main_executes
-  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
-
-tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
-  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
-
-tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
-  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
-    "git_commit": _get_git_commit(resolved_root, resolved_version),
-
-tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
-  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
-    "git_commit": _get_git_commit(resolved_root, resolved_version),
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-END: 2026-02-17T22:40:31Z
-EXIT:0
+{
+  "command": "make test",
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "env_delta_names": [],
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": "make test-gate\nmake[1]: Entering directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'\npython -m pytest -m \"not (validation or property)\" -q\n........................................................................ [ 10%]\n........................................................................ [ 20%]\n........................................................................ [ 31%]\n.....................................ss....ss........................... [ 41%]\n........................................................................ [ 51%]\n........................................................................ [ 62%]\n........................................................................ [ 72%]\n........................................................................ [ 82%]\n........................................................................ [ 93%]\n...............................................                          [100%]\n=============================== warnings summary ===============================\ntests/test_cli_interactive.py::test_cli_module_main_executes\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour\n\ntests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors\n  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\ntests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json\n  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0\n    \"git_commit\": _get_git_commit(resolved_root, resolved_version),\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\nmake[1]: Leaving directory '/workspace/bnsyn-phase-controlled-emergent-dynamics'\n",
+  "timestamp_end_utc": "2026-02-17T23:02:37.496217+00:00",
+  "timestamp_start_utc": "2026-02-17T23:01:36.486703+00:00"
+}

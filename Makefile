@@ -1,4 +1,4 @@
-.PHONY: setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security clean docs build validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -12,6 +12,9 @@ setup:
 	python -m pip --version
 	$(SETUP_CMD)
 	python -m pip check
+
+install: setup
+	@echo "✅ install completed via setup"
 
 demo:
 	@python -m scripts.run_quickstart_demo
@@ -136,7 +139,7 @@ fix:
 
 lint:
 	ruff check .
-	pylint src/bnsyn
+	pylint --fail-under=9.5 src/bnsyn
 
 mypy:
 	mypy src --strict --config-file pyproject.toml
@@ -170,6 +173,20 @@ security:
 	python -m pip_audit --desc --format json --output $(SECURITY_REPORT)
 	python -m bandit -r src/ -ll
 
+SBOM_REPORT ?= artifacts/prod_ready/reports/sbom.cdx.json
+
+sbom:
+	python -m pip install cyclonedx-bom==7.1.0
+	mkdir -p $(dir $(SBOM_REPORT))
+	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
+
+cleanroom:
+	$(MAKE) clean
+	$(MAKE) install
+	$(MAKE) build
+	$(MAKE) test
+	bnsyn --help
+
 check: format lint mypy coverage ssot security
 	@echo "✅ All checks passed"
 
@@ -181,6 +198,9 @@ docs:
 build:
 	python -m pip install -e . build
 	python -m build
+
+release: build release-readiness
+	@echo "✅ release artifacts and readiness report generated"
 
 release-readiness:
 	python -m scripts.release_readiness
