@@ -10,7 +10,7 @@
     "src": 74,
     "tests": 176,
     "docs": 282,
-    ".github": 45
+    ".github": 46
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -35,6 +35,7 @@
     "dependency-review.yml",
     "dependency-watch.yml",
     "docs.yml",
+    "dsio_gate.yml",
     "formal-coq.yml",
     "formal-tla.yml",
     "launch-gate.yml",

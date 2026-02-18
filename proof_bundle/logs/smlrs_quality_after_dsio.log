@@ -1,0 +1,36 @@
+{
+  "broken_refs": 0,
+  "contradictions": 0,
+  "coverage": {
+    "branch_pct": 95.57,
+    "line_pct": 99.65,
+    "thresholds_met": true
+  },
+  "determinism": "PASS",
+  "docs": "PASS",
+  "lint": "PASS",
+  "missing_evidence": 0,
+  "mutation": {
+    "killed_pct": 60.0,
+    "thresholds_met": true
+  },
+  "packaging": {
+    "build": "PASS",
+    "dist_hashes": "PASS",
+    "install_smoke": "PASS"
+  },
+  "phase_atlas_regression": "PASS",
+  "release_automation": {
+    "dry_run": "PASS",
+    "tag_build": "PASS"
+  },
+  "reproducibility": "PASS",
+  "sbom": "PASS",
+  "scientific_regression": "PASS",
+  "security": "PASS",
+  "semantic_mining": "PASS",
+  "single_system": "PASS",
+  "tests": "PASS",
+  "typecheck": "PASS",
+  "verdict": "PASS"
+}
