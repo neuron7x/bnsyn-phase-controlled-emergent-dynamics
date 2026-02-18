@@ -226,7 +226,7 @@ jobs:
       - name: Verify lockfile freshness
         run: |
           python -m pip install pip-tools
-          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+          PYENV_VERSION=3.11.14 pip-compile --extra=dev --generate-hashes --allow-unsafe --strip-extras --output-file=requirements-lock.txt pyproject.toml
           git diff --exit-code -- requirements-lock.txt
       - run: make build
       - name: Install from wheel in clean venv

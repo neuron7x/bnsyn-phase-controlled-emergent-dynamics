@@ -231,7 +231,7 @@ Report contains additional diagnostics:
 1. Refresh lock file after dependency changes:
 
 ```bash
-pip-compile --extra=dev --generate-hashes --output-file=requirements-lock.txt pyproject.toml
+pip-compile --extra=dev --generate-hashes --allow-unsafe --strip-extras --output-file=requirements-lock.txt pyproject.toml
 ```
 
 2. Rebuild wheels for Python 3.11 and re-run validation:
