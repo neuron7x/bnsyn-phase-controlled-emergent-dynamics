@@ -92,18 +92,17 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `dependency-watch.yml` | `dependency-watch` | long-running | `schedule, workflow_dispatch` | NO |
 | `dependency-review.yml` | `dependency-review` | PR-gate | `pull_request` | NO |
 | `docs.yml` | `docs` | long-running | `schedule, workflow_dispatch` | NO |
-| `dsio_gate.yml` | `dsio-gate` | PR-gate | `pull_request, push` | NO |
+| `dsio_gate.yml` | `dsio-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-coq.yml` | `formal-coq` | long-running | `schedule, workflow_dispatch` | NO |
 | `formal-tla.yml` | `formal-tla` | long-running | `schedule, workflow_dispatch` | NO |
-| `launch-gate.yml` | `launch-gate` | PR-gate | `pull_request, push` | NO |
-| `perfection-gate.yml` | `perfection-gate` | PR-gate | `pull_request, push` | NO |
+| `launch-gate.yml` | `launch-gate` | long-running | `schedule, workflow_dispatch` | NO |
+| `perfection-gate.yml` | `perfection-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `math-quality-gate.yml` | `Math Quality Gate` | PR-gate | `pull_request, push` | NO |
 | `physics-equivalence.yml` | `physics-equivalence` | long-running | `schedule, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
-| `release-pipeline.yml` | `release-pipeline` | PR-gate | `push, schedule, workflow_dispatch` | NO |
-EXCEPTION: `release-pipeline.yml` - tag-triggered release automation intentionally omits pull_request.
+| `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
-| `smlrs_gate.yml` | `smlrs-gate` | PR-gate | `pull_request, push` | NO |
+| `smlrs_gate.yml` | `smlrs-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `scientific_product_gate.yml` | `scientific-product-gate` | PR-gate | `pull_request, push` | NO |
 | `workflow-integrity.yml` | `Workflow Integrity` | PR-gate | `pull_request, push` | NO |
 

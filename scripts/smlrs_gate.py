@@ -187,8 +187,8 @@ def main() -> int:
         ('python -m bandit -r src/ -ll', 'bandit.log'),
         ('cyclonedx-py environment --output-format JSON --output-file artifacts/smlrs/sbom/SBOM.cdx.json', 'sbom.log'),
         ('python -m scripts.release_pipeline --verify-only', 'release_dry_run.log'),
-        ('make launch-gate', 'launch_gate.log'),
         ('make perfection-gate', 'perfection_gate.log'),
+        ('make launch-gate', 'launch_gate.log'),
     ]
     results = [run(c, log_name) for c, log_name in cmds]
 
