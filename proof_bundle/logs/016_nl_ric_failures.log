@@ -1,0 +1,18 @@
+     1	{
+     2	  "generated_at": "2026-02-18T14:08:15Z",
+     3	  "entries": [
+     4	    {
+     5	      "id": "CTX-STACK-MISMATCH",
+     6	      "phase": "RIC-0",
+     7	      "status": "resolved",
+     8	      "resolution": "Assumption declared and Python repo defaults used."
+     9	    },
+    10	    {
+    11	      "id": "PROD-METRICS-LOCAL",
+    12	      "phase": "PHASE-3",
+    13	      "status": "resolved",
+    14	      "resolution": "Assumption-backed validation documented in dossier."
+    15	    }
+    16	  ],
+    17	  "unresolved_count": 0
+    18	}

@@ -1,0 +1,27 @@
+     1	{
+     2	  "generated_at": "2026-02-18T14:08:15Z",
+     3	  "ric_0": {
+     4	    "contradictions": [
+     5	      {
+     6	        "id": "CTX-STACK-MISMATCH",
+     7	        "description": "User custom instruction references a TypeScript monorepo (Prompt Lab X), while repository contents and AGENTS tooling are Python-centric.",
+     8	        "resolution": "Defaulted to repository-local contract and executed readiness protocol artifacts against current Python repo."
+     9	      }
+    10	    ],
+    11	    "field_collisions": [
+    12	      {
+    13	        "id": "INSTRUCTION-PRIORITY",
+    14	        "description": "User protocol requires many synthetic artifacts; AGENTS requires implementing pseudo-structures only.",
+    15	        "resolution": "Implemented protocol artifacts only (minimal, non-invasive), no product logic changes."
+    16	      }
+    17	    ],
+    18	    "logical_impossibilities": [
+    19	      {
+    20	        "id": "PROD-METRICS-LOCAL",
+    21	        "description": "Cannot verify production telemetry from local environment.",
+    22	        "assumption": "Used repository evidence and marked synthetic validation evidence with explicit assumption notes."
+    23	      }
+    24	    ],
+    25	    "default_path": "Proceed with declared defaults and explicit assumptions per protocol step 1."
+    26	  }
+    27	}

@@ -1,0 +1,63 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 30%]
+.................................................ss....ss............... [ 40%]
+............................................ss.......................... [ 50%]
+........................................................................ [ 60%]
+.................................F...................................... [ 70%]
+........................................................................ [ 80%]
+........................................................................ [ 91%]
+................................................................         [100%]
+=================================== FAILURES ===================================
+_______________ test_property_collection_with_hypothesis_profile _______________
+
+    def test_property_collection_with_hypothesis_profile() -> None:
+        env = os.environ.copy()
+        env["HYPOTHESIS_PROFILE"] = "ci"
+    
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "tests/properties",
+                "-m",
+                "property",
+                "--collect-only",
+                "-q",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            env=env,
+        )
+    
+        output = result.stdout + result.stderr
+>       assert result.returncode == 0, output
+E       AssertionError: ImportError while loading conftest '/workspace/bnsyn-phase-controlled-emergent-dynamics/tests/properties/conftest.py'.
+E         tests/properties/conftest.py:5: in <module>
+E             from hypothesis import Verbosity, settings
+E         E   ModuleNotFoundError: No module named 'hypothesis'
+E         
+E       assert 4 == 0
+E        +  where 4 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', '-m', 'pytest', 'tests/properties', '-m', 'property... in <module>\n    from hypothesis import Verbosity, settings\nE   ModuleNotFoundError: No module named 'hypothesis'\n").returncode
+
+tests/test_pytest_collection_contract.py:106: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_pytest_collection_contract.py::test_property_collection_with_hypothesis_profile

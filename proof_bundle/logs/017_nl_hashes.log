@@ -1,0 +1,30 @@
+     1	{
+     2	  "generated_at": "2026-02-18T14:08:15Z",
+     3	  "algorithm": "sha256",
+     4	  "artifacts": [
+     5	    {
+     6	      "path": "inventory.json",
+     7	      "sha256": "dc2a80db5c1e38fe9b26b694bd83dbb60122374d8fe3cada63457097feb5961c"
+     8	    },
+     9	    {
+    10	      "path": "assumptions.json",
+    11	      "sha256": "ea63ccba255384e27ed93ce9709ab7a1a540bb6e5bd625157f104f6ce91dd01e"
+    12	    },
+    13	    {
+    14	      "path": "PRD.md",
+    15	      "sha256": "3c5a5bec5ad47562a72cee11f27d7850582e67b75a0ba0aad0325b818c647fff"
+    16	    },
+    17	    {
+    18	      "path": "PRODUCT_READINESS_DOSSIER.md",
+    19	      "sha256": "4e7addf13a4c4f63e06c9239e3e4f10a6f42b81e2168595cfee4b5a64f1b8c84"
+    20	    },
+    21	    {
+    22	      "path": "scorecard.json",
+    23	      "sha256": "9fc2ca97abab53d523bc8f036ec78851d0351d6eac79ecd8aafc24857ef3c29f"
+    24	    },
+    25	    {
+    26	      "path": "manifests/ric_failures.json",
+    27	      "sha256": "a1b590066aef4ca51d6110144c416a1d5d4a781c6c9789087fff9f7f28661dca"
+    28	    }
+    29	  ]
+    30	}

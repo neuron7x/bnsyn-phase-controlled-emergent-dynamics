@@ -1,0 +1,33 @@
+Makefile:1:.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check
+Makefile:37:wheelhouse-build:
+Makefile:38:	python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
+Makefile:41:	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
+Makefile:142:	pylint --fail-under=9.5 src/bnsyn
+Makefile:186:	$(MAKE) build
+Makefile:195:	python -m sphinx -b html docs docs/_build/html
+Makefile:196:	@echo "Docs built at docs/_build/html"
+Makefile:198:build:
+Makefile:199:	python -m pip install -e . build
+Makefile:200:	python -m build
+Makefile:202:release: build release-readiness
+pyproject.toml:26:  "pylint==3.3.5",
+pyproject.toml:32:  "build==1.3.0",
+pyproject.toml:33:  "psutil==7.2.2",
+pyproject.toml:41:  "psutil==7.2.2",
+pyproject.toml:78:[build-system]
+pyproject.toml:80:build-backend = "setuptools.build_meta"
+pyproject.toml:140:[tool.pylint.main]
+pyproject.toml:145:[tool.pylint.messages_control]
+pyproject.toml:154:[tool.pylint.basic]
+pyproject.toml:157:[tool.pylint.design]
+requirements-lock.txt:14:    # via pylint
+requirements-lock.txt:29:build==1.3.0 \
+requirements-lock.txt:267:    # via pylint
+requirements-lock.txt:301:    # via pylint
+requirements-lock.txt:403:    # via pylint
+requirements-lock.txt:605:    #   build
+requirements-lock.txt:630:    #   pylint
+requirements-lock.txt:642:psutil==7.2.2 \
+requirements-lock.txt:806:pylint==3.3.5 \
+requirements-lock.txt:817:    # via build
+requirements-lock.txt:1196:    # via pylint

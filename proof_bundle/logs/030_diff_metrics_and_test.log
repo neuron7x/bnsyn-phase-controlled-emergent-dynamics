@@ -1,0 +1,59 @@
+diff --git a/benchmarks/metrics.py b/benchmarks/metrics.py
+index 024d15e..e33a2eb 100644
+--- a/benchmarks/metrics.py
++++ b/benchmarks/metrics.py
+@@ -2,14 +2,16 @@
+ 
+ from __future__ import annotations
+ 
++import importlib
++import importlib.util
+ import math
+ import os
++import resource
+ import time
+ from dataclasses import dataclass
+ from typing import Any
+ 
+ import numpy as np
+-import psutil
+ 
+ from benchmarks.scenarios.base import BenchmarkScenario
+ from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+@@ -18,6 +20,19 @@ from bnsyn.sim.network import Network, NetworkParams
+ from bnsyn.temperature.schedule import TemperatureSchedule
+ 
+ 
++def _process_rss_mb() -> float:
++    """Best-effort resident memory measurement in MB."""
++    if importlib.util.find_spec("psutil") is not None:
++        psutil = importlib.import_module("psutil")
++        process = psutil.Process(os.getpid())
++        return float(process.memory_info().rss / (1024 * 1024))
++
++    rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
++    if os.name == "posix":
++        return rss / 1024.0
++    return rss / (1024 * 1024)
++
++
+ @dataclass(frozen=True)
+ class BenchmarkMetrics:
+     """Metrics collected from a single benchmark run."""
+@@ -174,14 +189,13 @@ def _run_series(scenario: BenchmarkScenario) -> dict[str, Any]:
+ 
+ def run_benchmark(scenario: BenchmarkScenario) -> BenchmarkMetrics:
+     """Run a single benchmark scenario and compute metrics."""
+-    process = psutil.Process(os.getpid())
+-    start_rss = process.memory_info().rss / (1024 * 1024)
++    start_rss = _process_rss_mb()
+     start_time = time.perf_counter()
+ 
+     series = _run_series(scenario)
+ 
+     wall_time = time.perf_counter() - start_time
+-    end_rss = process.memory_info().rss / (1024 * 1024)
++    end_rss = _process_rss_mb()
+     peak_rss = max(start_rss, end_rss)
+ 
+     sigmas = series["sigma"]

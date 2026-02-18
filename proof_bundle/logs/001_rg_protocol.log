@@ -1,0 +1,8 @@
+./docs/safety/traceability.yml:91:  - id: REQ-NUMERIC-HEALTH
+./proof_bundle/logs/001_rg_protocol.log:1:./docs/safety/traceability.yml:91:  - id: REQ-NUMERIC-HEALTH
+./proof_bundle/logs/lrx_execution.log:230:scorecard json ok
+./proof_bundle/logs/artifacts_find.log:98:artifacts/lpro/scorecard/scorecard.json
+./proof_bundle/logs/artifacts_find.log:138:artifacts/merge_ready/reports/gate_scorecard.json
+./proof_bundle/logs/artifacts_find.log:190:artifacts/prod_ready/scorecard.json
+./proof_bundle/logs/artifacts_find.log:207:artifacts/product/scorecard.json
+./MERGE_READINESS.md:24:- Gate scorecard: `artifacts/merge_ready/reports/gate_scorecard.json`
