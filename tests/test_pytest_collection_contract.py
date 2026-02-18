@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import os
+import importlib.util
+
+import pytest
 import subprocess
 import sys
 from pathlib import Path
@@ -82,6 +85,9 @@ def test_property_collection_fails_clearly_without_hypothesis(tmp_path: Path) ->
 
 
 def test_property_collection_with_hypothesis_profile() -> None:
+    if importlib.util.find_spec("hypothesis") is None:
+        pytest.skip("hypothesis is not installed in this environment")
+
     env = os.environ.copy()
     env["HYPOTHESIS_PROFILE"] = "ci"
 
