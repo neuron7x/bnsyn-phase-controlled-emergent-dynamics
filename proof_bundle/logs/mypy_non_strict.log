@@ -1,0 +1,5 @@
+src/bnsyn/neuron/adex.py:269: error: Unexpected keyword argument "lte_estimate" for "IntegrationMetrics"  [call-arg]
+/root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/mypy/typeshed/stdlib/builtins.pyi: note: "IntegrationMetrics" defined here
+src/bnsyn/neuron/adex.py:269: error: Unexpected keyword argument "global_error_bound" for "IntegrationMetrics"  [call-arg]
+src/bnsyn/neuron/adex.py:269: error: Unexpected keyword argument "recommended_dt_ms" for "IntegrationMetrics"  [call-arg]
+Found 3 errors in 1 file (checked 73 source files)

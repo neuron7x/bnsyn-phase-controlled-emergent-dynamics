@@ -396,7 +396,7 @@
       "version": "0.2.0"
     },
     {
-      "bom-ref": "BomRef.271553464489109.4438096558263098",
+      "bom-ref": "BomRef.7623298968142154.12129063949390995",
       "description": "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation",
       "externalReferences": [
         {
@@ -441,7 +441,7 @@
       "version": "5.0"
     },
     {
-      "bom-ref": "build==1.4.0",
+      "bom-ref": "build==1.3.0",
       "description": "A simple, correct Python build frontend",
       "externalReferences": [
         {
@@ -474,9 +474,9 @@
         }
       ],
       "name": "build",
-      "purl": "pkg:pypi/build@1.4.0",
+      "purl": "pkg:pypi/build@1.3.0",
       "type": "library",
-      "version": "1.4.0"
+      "version": "1.3.0"
     },
     {
       "bom-ref": "certifi==2026.1.4",
@@ -1023,6 +1023,29 @@
       "version": "1.5.1"
     },
     {
+      "bom-ref": "glob2==0.7",
+      "description": "Version of the glob module that can capture patterns and supports recursive wildcards",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "http://github.com/miracle2k/python-glob2/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "glob2",
+      "purl": "pkg:pypi/glob2@0.7",
+      "type": "library",
+      "version": "0.7"
+    },
+    {
       "bom-ref": "hypothesis==6.151.5",
       "description": "The property-based testing library for Python",
       "externalReferences": [
@@ -1379,6 +1402,35 @@
       "version": "2025.9.1"
     },
     {
+      "bom-ref": "junit-xml==1.9",
+      "description": "Creates JUnit XML test result documents that can be read by tools such as Jenkins",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/kyrus/python-junit-xml"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        },
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: Freely Distributable"
+          }
+        }
+      ],
+      "name": "junit-xml",
+      "purl": "pkg:pypi/junit-xml@1.9",
+      "type": "library",
+      "version": "1.9"
+    },
+    {
       "bom-ref": "lark==1.3.1",
       "description": "a modern parsing library",
       "externalReferences": [
@@ -1608,6 +1660,29 @@
       "version": "1.1.2"
     },
     {
+      "bom-ref": "mutmut==2.4.5",
+      "description": "mutation testing for Python 3",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/boxed/mutmut"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: BSD License"
+          }
+        }
+      ],
+      "name": "mutmut",
+      "purl": "pkg:pypi/mutmut@2.4.5",
+      "type": "library",
+      "version": "2.4.5"
+    },
+    {
       "bom-ref": "mypy==1.19.1",
       "description": "Optional static typing for Python",
       "externalReferences": [
@@ -1800,6 +1875,29 @@
       "version": "25.0"
     },
     {
+      "bom-ref": "parso==0.8.6",
+      "description": "A Python Parser",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/davidhalter/parso"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "parso",
+      "purl": "pkg:pypi/parso@0.8.6",
+      "type": "library",
+      "version": "0.8.6"
+    },
+    {
       "bom-ref": "pathspec==1.0.3",
       "description": "Utility library for gitignore style pattern matching of file paths.",
       "externalReferences": [
@@ -1833,7 +1931,7 @@
       "version": "1.0.3"
     },
     {
-      "bom-ref": "pip==26.0.1",
+      "bom-ref": "pip==25.3",
       "description": "The PyPA recommended tool for installing Python packages.",
       "externalReferences": [
         {
@@ -1866,9 +1964,9 @@
         }
       ],
       "name": "pip",
-      "purl": "pkg:pypi/pip@26.0.1",
+      "purl": "pkg:pypi/pip@25.3",
       "type": "library",
-      "version": "26.0.1"
+      "version": "25.3"
     },
     {
       "bom-ref": "pip-api==0.0.34",
@@ -2007,6 +2105,44 @@
       "purl": "pkg:pypi/pluggy@1.6.0",
       "type": "library",
       "version": "1.6.0"
+    },
+    {
+      "bom-ref": "pony==0.7.19",
+      "description": "Pony Object-Relational Mapper",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Download-URL",
+          "type": "distribution",
+          "url": "http://pypi.python.org/pypi/pony/"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://docs.ponyorm.org"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/ponyorm/pony"
+        },
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://ponyorm.com"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "name": "License :: OSI Approved :: Apache Software License"
+          }
+        }
+      ],
+      "name": "pony",
+      "purl": "pkg:pypi/pony@0.7.19",
+      "type": "library",
+      "version": "0.7.19"
     },
     {
       "bom-ref": "pre_commit==4.5.1",
@@ -2971,6 +3107,29 @@
       "version": "5.6.0"
     },
     {
+      "bom-ref": "toml==0.10.2",
+      "description": "Python Library for Tom's Obvious, Minimal Language",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata: Home-page",
+          "type": "website",
+          "url": "https://github.com/uiri/toml"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "toml",
+      "purl": "pkg:pypi/toml@0.10.2",
+      "type": "library",
+      "version": "0.10.2"
+    },
+    {
       "bom-ref": "tomli==2.4.0",
       "description": "A lil' TOML parser",
       "externalReferences": [
@@ -3436,6 +3595,7 @@
       "dependsOn": [
         "PyYAML==6.0.3",
         "bandit==1.9.3",
+        "build==1.3.0",
         "hypothesis==6.151.5",
         "joblib==1.4.2",
         "jsonschema==4.26.0",
@@ -3459,7 +3619,7 @@
     {
       "dependsOn": [
         "black==25.12.0",
-        "build==1.4.0",
+        "build==1.3.0",
         "isort==6.1.0",
         "pytest==9.0.2"
       ],
@@ -3472,7 +3632,7 @@
         "tomli==2.4.0",
         "virtualenv==20.37.0"
       ],
-      "ref": "build==1.4.0"
+      "ref": "build==1.3.0"
     },
     {
       "ref": "certifi==2026.1.4"
@@ -3543,6 +3703,9 @@
       "ref": "fqdn==1.5.1"
     },
     {
+      "ref": "glob2==0.7"
+    },
+    {
       "dependsOn": [
         "black==25.12.0",
         "click==8.3.1",
@@ -3610,6 +3773,12 @@
       "ref": "jsonschema==4.26.0"
     },
     {
+      "dependsOn": [
+        "six==1.17.0"
+      ],
+      "ref": "junit-xml==1.9"
+    },
+    {
       "ref": "lark==1.3.1"
     },
     {
@@ -3649,11 +3818,25 @@
     },
     {
       "dependsOn": [
+        "click==8.3.1",
+        "coverage==7.13.4",
+        "glob2==0.7",
+        "junit-xml==1.9",
+        "parso==0.8.6",
+        "pony==0.7.19",
+        "pytest-cov==7.0.0",
+        "pytest==9.0.2",
+        "toml==0.10.2"
+      ],
+      "ref": "mutmut==2.4.5"
+    },
+    {
+      "dependsOn": [
         "librt==0.7.7",
         "lxml==6.0.2",
         "mypy_extensions==1.1.0",
         "pathspec==1.0.3",
-        "pip==26.0.1",
+        "pip==25.3",
         "psutil==7.2.2",
         "tomli==2.4.0",
         "typing_extensions==4.15.0"
@@ -3683,6 +3866,12 @@
     },
     {
       "dependsOn": [
+        "pytest==9.0.2"
+      ],
+      "ref": "parso==0.8.6"
+    },
+    {
+      "dependsOn": [
         "pytest==9.0.2",
         "typing_extensions==4.15.0"
       ],
@@ -3690,7 +3879,7 @@
     },
     {
       "dependsOn": [
-        "pip==26.0.1"
+        "pip==25.3"
       ],
       "ref": "pip-api==0.0.34"
     },
@@ -3704,12 +3893,12 @@
       "ref": "pip-requirements-parser==32.0.1"
     },
     {
-      "ref": "pip==26.0.1"
+      "ref": "pip==25.3"
     },
     {
       "dependsOn": [
         "CacheControl==0.14.4",
-        "build==1.4.0",
+        "build==1.3.0",
         "coverage==7.13.4",
         "cyclonedx-python-lib==11.6.0",
         "mypy==1.19.1",
@@ -3741,6 +3930,9 @@
         "pytest==9.0.2"
       ],
       "ref": "pluggy==1.6.0"
+    },
+    {
+      "ref": "pony==0.7.19"
     },
     {
       "dependsOn": [
@@ -3853,7 +4045,7 @@
     {
       "dependsOn": [
         "black==25.12.0",
-        "build==1.4.0",
+        "build==1.3.0",
         "mypy==1.19.1",
         "pytest-cov==7.0.0",
         "pytest==9.0.2"
@@ -3933,6 +4125,9 @@
       "ref": "stevedore==5.6.0"
     },
     {
+      "ref": "toml==0.10.2"
+    },
+    {
       "ref": "tomli==2.4.0"
     },
     {
@@ -3987,7 +4182,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-02-17T23:05:01.853531+00:00",
+    "timestamp": "2026-02-18T15:26:51.046413+00:00",
     "tools": {
       "components": [
         {
@@ -4091,7 +4286,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:0c26fd00-e05e-4464-958d-37949458d887",
+  "serialNumber": "urn:uuid:f53d993b-d417-4e1f-ab2d-18591c2caf7a",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

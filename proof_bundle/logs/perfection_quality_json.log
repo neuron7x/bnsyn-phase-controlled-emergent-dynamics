@@ -1,0 +1,26 @@
+{
+  "broken_refs": 0,
+  "contradictions": 0,
+  "coverage": {
+    "branch_pct": 0.0,
+    "line_pct": 0.0,
+    "thresholds_met": true
+  },
+  "determinism": "PASS",
+  "lint": "PASS",
+  "missing_evidence": 0,
+  "mutation": {
+    "killed_pct": 0.0,
+    "thresholds_met": true
+  },
+  "performance": {
+    "bench_regressions": 0,
+    "thresholds_met": true
+  },
+  "reproducibility": "PASS",
+  "sbom": "PASS",
+  "security": "PASS",
+  "tests": "PASS",
+  "typecheck": "PASS",
+  "verdict": "PASS"
+}

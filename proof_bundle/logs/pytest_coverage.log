@@ -1,0 +1,64 @@
+[Hypothesis] Using default profile
+..................................F..................................... [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+..ss....ss.............................................................. [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 73%]
+........................................................................ [ 80%]
+........................................................................ [ 87%]
+........................................................................ [ 95%]
+.............................................ss.                         [100%]
+=================================== FAILURES ===================================
+________________ test_api_contract_command_runs_from_repo_root _________________
+
+    def test_api_contract_command_runs_from_repo_root() -> None:
+        repo_root = Path(__file__).resolve().parents[1]
+        env = os.environ.copy()
+        env.pop("PYTHONPATH", None)
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "scripts.check_api_contract",
+                "--baseline",
+                "quality/api_contract_baseline.json",
+            ],
+            cwd=repo_root,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: 
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/root/.pyenv/versions/3.12.12/bin/python', '-m', 'scripts.check_api_contract', '--baseline', '...: 'float') -> None -> ()\nERROR: Breaking API changes detected without major semver bump: 0.2.0 -> 0.2.0\n", stderr='').returncode
+
+tests/test_api_contract_command.py:27: AssertionError
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.12-final-0 _______________
+
+Coverage XML written to file artifacts/perfection_gate/coverage/coverage.xml
+=========================== short test summary info ============================
+FAILED tests/test_api_contract_command.py::test_api_contract_command_runs_from_repo_root

@@ -38,6 +38,7 @@
     "formal-coq.yml",
     "formal-tla.yml",
     "math-quality-gate.yml",
+    "perfection-gate.yml",
     "physics-equivalence.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
