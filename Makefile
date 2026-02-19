@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -6,6 +6,12 @@ PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 SETUP_CMD ?= python -m pip install -e ".[dev,test]"
 TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+JUNIT_DIR ?= artifacts/tests
+JUNIT_FAST ?= $(JUNIT_DIR)/junit-fast.xml
+JUNIT_ALL ?= $(JUNIT_DIR)/junit-all.xml
+AFFECTED ?= 0
+PKG ?=
+SVC ?=
 
 setup:
 	python -V
@@ -61,7 +67,8 @@ test:
 	$(MAKE) test-gate
 
 test-all:
-	python -m pytest -q
+	mkdir -p $(JUNIT_DIR)
+	python -m pytest -q --junitxml=$(JUNIT_ALL)
 
 test-integration:
 	python -m pytest -m "integration" -q
@@ -70,7 +77,8 @@ test-e2e:
 	python -m pytest -m "e2e" -q
 
 test-gate:
-	$(TEST_CMD)
+	mkdir -p $(JUNIT_DIR)
+	$(TEST_CMD) --junitxml=$(JUNIT_FAST)
 
 test-determinism:
 	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
@@ -159,6 +167,8 @@ lint:
 mypy:
 	mypy src --strict --config-file pyproject.toml
 
+typecheck: mypy
+
 ssot:
 	python -m scripts.validate_bibliography
 	python -m scripts.validate_claims
@@ -203,6 +213,15 @@ sbom:
 	python -m pip install --require-hashes --no-deps -r $(SBOM_LOCK_FILE)
 	mkdir -p $(dir $(SBOM_REPORT))
 	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
+
+profile:
+	python -m scripts.profile_kernels --help
+
+ci-artifacts: test-all flake-report
+	python -m scripts.write_evidence_manifest
+
+flake-report:
+	python -m scripts.compute_flake_report --junit $(JUNIT_ALL) --protocol .repo-governor/protocol.yml --output artifacts/flake-report.json --summary artifacts/flake-report.md
 
 cleanroom:
 	$(MAKE) clean

@@ -45,6 +45,7 @@
     "pr_gate.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
+    "repo-governor-evidence.yml",
     "science.yml",
     "scientific_product_gate.yml",
     "smlrs_gate.yml",
