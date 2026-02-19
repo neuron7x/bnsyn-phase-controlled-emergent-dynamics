@@ -10,18 +10,18 @@ Use this repo to run deterministic demos, validate invariants, and inspect evide
 The runtime code lives in `src/bnsyn/`; CI/workflow policy lives in `.github/workflows/`.
 Generated artifacts are written to `artifacts/` for local verification.
 Default development flow is Make-target driven and lockfile-oriented.
-No secrets are required for local demo, fast tests, or reproducibility proof steps.
 For onboarding, use exactly one path: `docs/START_HERE.md`.
 
 [![CI PR](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
 [![Atomic PR Gate](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
 [![Docs](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml)
 
-## Quickstart (canonical)
+## Quickstart
 
 ```bash
 make setup
 make demo
+make test
 ```
 
 ## Canonical links
