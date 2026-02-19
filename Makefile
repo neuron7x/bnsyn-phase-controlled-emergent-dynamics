@@ -20,7 +20,7 @@ setup:
 	python -m pip check
 
 install: setup
-	@echo "✅ install completed via setup"
+	@echo "install completed via setup"
 
 demo:
 	@python -m scripts.run_quickstart_demo
@@ -77,8 +77,7 @@ test-e2e:
 	python -m pytest -m "e2e" -q
 
 test-gate:
-	mkdir -p $(JUNIT_DIR)
-	$(TEST_CMD) --junitxml=$(JUNIT_FAST)
+	$(TEST_CMD)
 
 test-determinism:
 	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
@@ -103,13 +102,13 @@ coverage-gate: coverage
 
 
 mutation:
-	@echo "🧬 Running mutation profile (reproducible local workflow step)..."
+	@echo "Running mutation profile (reproducible local workflow step)..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.run_mutation_pipeline
 
 mutation-ci:
-	@echo "🧬 Emitting mutation CI artifacts to local files..."
+	@echo "Emitting mutation CI artifacts to local files..."
 	@baseline_file=quality/mutation_baseline.json; \
 	output_file=.mutation_ci_output; \
 	summary_file=.mutation_ci_summary.md; \
@@ -118,27 +117,27 @@ mutation-ci:
 	GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
 
 mutation-baseline:
-	@echo "🧬 Running mutation testing to establish baseline..."
+	@echo "Running mutation testing to establish baseline..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.generate_mutation_baseline
 
 mutation-check:
-	@echo "🧬 Running mutation testing against baseline..."
+	@echo "Running mutation testing against baseline..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
-	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline
 	@python -m scripts.run_mutation_pipeline
 	@python -m scripts.check_mutation_score --advisory
 
 mutation-check-strict:
-	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
+	@echo "Running mutation testing against baseline (STRICT MODE)..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
-	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline
 	@python -m scripts.run_mutation_pipeline
 	@python -m scripts.check_mutation_score --strict
@@ -150,7 +149,7 @@ validate-api-maturity:
 	python -m scripts.validate_api_maturity
 
 quality: format lint mypy ssot security
-	@echo "✅ All quality checks passed"
+	@echo "All quality checks passed"
 
 format:
 	ruff format .
@@ -231,7 +230,7 @@ cleanroom:
 	bnsyn --help
 
 check: format lint mypy coverage ssot security
-	@echo "✅ All checks passed"
+	@echo "All checks passed"
 
 docs:
 	python -m pip install -e ".[docs]"
@@ -243,7 +242,7 @@ build:
 	python -m build
 
 release: build release-readiness
-	@echo "✅ release artifacts and readiness report generated"
+	@echo "release artifacts and readiness report generated"
 
 release-readiness:
 	python -m scripts.release_readiness
