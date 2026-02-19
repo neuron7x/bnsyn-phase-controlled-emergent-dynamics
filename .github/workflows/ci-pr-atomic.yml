@@ -292,7 +292,7 @@ jobs:
       - name: Validate Tri-Fix invariants
         run: python -m scripts.validate_trifix_invariants
       - name: Run canonical gate
-        run: make test-gate
+        run: make test
       - name: Validate test integrity
         run: python -m scripts.validate_test_integrity
       - name: Validate dependency declarations against imports

@@ -103,6 +103,7 @@ markers = [
   "benchmark: benchmark regression tests (excluded from mutation runs)",
   "performance: performance regression tests with timing assertions",
   "integration: integration tests requiring multiple components",
+  "e2e: end-to-end tests covering full pipelines",
   "property: property-based tests using Hypothesis",
   "chaos: chaos engineering tests with fault injection",
 ]

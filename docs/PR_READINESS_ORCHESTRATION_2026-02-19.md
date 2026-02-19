@@ -1,106 +1,90 @@
-# Repo Readiness Orchestration — 2026-02-19
+# Test Taxonomy + Flake Elimination Orchestration — 2026-02-19
 
-## Step 1: Inventory (JSON)
+## 1) Inventory updates (targets/markers/config changed)
 
-```json
-{
-  "python_version_targets": {
-    "runtime": ">=3.11",
-    "classifiers": ["3.11", "3.12"],
-    "observed_runner": "3.12.12"
-  },
-  "dependency_files": [
-    "pyproject.toml",
-    "requirements-lock.txt",
-    "bibliography/sources.lock"
-  ],
-  "make_targets": {
-    "core": ["install", "test", "test-gate", "lint", "mypy", "build", "demo", "release"],
-    "reproducibility": ["test-determinism", "wheelhouse-build", "wheelhouse-validate", "manifest", "inventory"],
-    "source": "Makefile"
-  },
-  "test_entrypoints": {
-    "primary": "python -m pytest -m \"not (validation or property)\" -q",
-    "markers": ["validation", "property"],
-    "additional_targets": ["make test", "make test-validation", "make test-property", "make test-gate"]
-  },
-  "ci_workflows": [
-    {"file": ".github/workflows/ci-pr-atomic.yml", "name": "CI PR Atomic", "purpose": "fast PR gate"},
-    {"file": ".github/workflows/ci-pr.yml", "name": "CI PR", "purpose": "pull request CI umbrella"},
-    {"file": ".github/workflows/ci-validation.yml", "name": "CI Validation", "purpose": "validation-marker jobs"},
-    {"file": ".github/workflows/quality-mutation.yml", "name": "Quality Mutation", "purpose": "mutation quality gates"},
-    {"file": ".github/workflows/release-pipeline.yml", "name": "Release Pipeline", "purpose": "release automation"},
-    {"file": ".github/workflows/codeql.yml", "name": "CodeQL", "purpose": "SAST scanning"}
-  ],
-  "docs_entrypoints": [
-    "README.md",
-    "docs/START_HERE.md",
-    "docs/QUICKSTART.md",
-    "docs/REPRODUCIBILITY.md"
-  ],
-  "reproducibility_hooks": {
-    "demo": "make demo",
-    "reproduce": "UNKNOWN",
-    "canonical_artifact_manifest": "manifest/repo_manifest.computed.json"
-  },
-  "unknowns": [
-    "No explicit `make reproduce` target discovered in Makefile.",
-    "Checksum tolerance contract for reproducibility is not codified in one command entrypoint."
-  ]
-}
-```
+- **pytest markers currently registered**: `smoke`, `validation`, `benchmark`, `performance`, `integration`, `e2e`, `property`, `chaos`.
+- **Canonical test entrypoints**:
+  - `make test` (fast default, excludes `validation`, `property`, `e2e`)
+  - `make test-all` (full suite)
+  - `make test-integration`
+  - `make test-e2e`
+  - `make test-property`
+- **CI fast-path alignment**:
+  - `.github/workflows/ci-pr-atomic.yml` runs `make test`.
 
-## Step 2: Risk Triage (ranked)
+### Test taxonomy mapping
 
-1. **RISK:** No single `make reproduce` entrypoint for canonical artifact+manifest generation.
-   - **SCORE:** `0.80 * 9 * 7 = 50.4`
-   - **MITIGATION:** Gate G5 via a focused PR that adds `make reproduce` and writes deterministic manifest/checksums.
-2. **RISK:** Determinism policy is spread across docs/targets, not one explicit SSOT command path.
-   - **SCORE:** `0.70 * 8 * 6 = 33.6`
-   - **MITIGATION:** Gates G0/G1 by codifying a canonical install+lock+hash command and wiring CI reusable workflow to it.
-3. **RISK:** Workflow count is high; role overlap can drift and reduce CI signal quality.
-   - **SCORE:** `0.60 * 7 * 6 = 25.2`
-   - **MITIGATION:** Gate G7 via workflow purpose registry + validation script against drift.
-4. **RISK:** Optional local `pylint` gate may fail on unprepared environments.
-   - **SCORE:** `0.50 * 5 * 8 = 20.0`
-   - **MITIGATION:** Gate G3 by documenting bootstrap (`python -m pip install -e ".[test]"`) and keeping lint commands in `make lint`.
-5. **RISK:** Security evidence is fragmented across docs and workflow outputs.
-   - **SCORE:** `0.40 * 8 * 5 = 16.0`
-   - **MITIGATION:** Gate G4/G10 by centralizing generated evidence pointers under `proof_bundle/logs/` + release artifacts.
+- **unit**: default tests under `tests/` without `validation/property/e2e` markers.
+- **integration**: tests marked `@pytest.mark.integration`.
+- **e2e**: tests marked `@pytest.mark.e2e` (CLI end-to-end smoke path).
+- **property**: tests in `tests/properties/` with `@pytest.mark.property`.
+- **chaos**: tests in `tests/validation/` with `@pytest.mark.chaos`.
 
-## Step 3: PR Series Plan (max 7 PRs)
+## 2) Baseline results (failures + runtime)
 
-### PR-1 — Deterministic install SSOT (G0, G1)
-- **Files:** `Makefile`, `.github/workflows/_reusable_pytest.yml`, `docs/DETERMINISM.md`
-- **Acceptance criteria:** one canonical install command from lockfile with hashes, pip version printed before/after pin in CI.
-- **Evidence commands:** `python --version`; `python -m pip --version`; `make install`; `python -m pip check`.
+### Environment
+- `python --version` → `Python 3.12.12`
+- `python -m pip --version` → `pip 25.3 (...)`
+- `python -m pytest --version` captured in evidence logs.
 
-### PR-2 — Test gate hardening (G2, G3)
-- **Files:** `Makefile`, `pyproject.toml`, `.github/workflows/ci-pr-atomic.yml`, `docs/TESTING.md`
-- **Acceptance criteria:** `make test-gate` stable; marker split remains deterministic; lint/type targets align with docs.
-- **Evidence commands:** `make test-gate`; `ruff check .`; `mypy src --strict --config-file pyproject.toml`.
+### Baseline `make test` (before fixes)
+- **Command**: `time make test`
+- **Runtime**: `real 1m4.104s`
+- **Failing tests**:
+  - `tests/test_generate_inventory.py::test_inventory_json_matches_repository_state`
+  - `tests/test_generate_inventory.py::test_build_inventory_render_matches_file`
+- **Failure type**: assertion failures due stale generated artifact (`INVENTORY.json` docs count mismatch).
 
-### PR-3 — Security gate normalization (G4)
-- **Files:** `.github/workflows/codeql.yml`, `.github/workflows/dependency-review.yml`, `docs/SECURITY_GITLEAKS.md`
-- **Acceptance criteria:** gitleaks + dependency review + code scanning mapped to one security matrix.
-- **Evidence commands:** `make security`; workflow dispatch logs.
+### Root-cause map
 
-### PR-4 — Reproducibility command surface (G5, G10)
-- **Files:** `Makefile`, `scripts/release_pipeline.py`, `docs/REPRODUCIBILITY.md`
-- **Acceptance criteria:** `make reproduce` exists, emits artifact manifest with checksums + git SHA and fails on drift.
-- **Evidence commands:** `make reproduce`; `python -m scripts.verify_reproducible_artifacts --help`.
+| failing test | suspected cause | determinism risk | proposed fix | proof plan |
+|---|---|---|---|---|
+| `test_inventory_json_matches_repository_state` | tracked docs count changed after docs edits, `INVENTORY.json` not regenerated | high | regenerate `INVENTORY.json` via canonical generator | rerun `make test` |
+| `test_build_inventory_render_matches_file` | same stale generated file mismatch | high | regenerate `INVENTORY.json` via canonical generator | rerun `make test` |
 
-### PR-5 — 5-minute onboarding path (G6)
-- **Files:** `docs/START_HERE.md`, `README.md`, `docs/QUICKSTART.md`
-- **Acceptance criteria:** prerequisites/install/demo/reproduce/tests each as single command with expected outputs.
-- **Evidence commands:** `make demo`; `make quickstart-smoke`.
+## 3) Fixes applied (file list + rationale)
 
-### PR-6 — Interface/ADR/version discipline (G8)
-- **Files:** `docs/API_STABILITY.md`, `docs/VERSIONING.md`, `docs/adr/*`
-- **Acceptance criteria:** public interface contract documented and ADR link added for any breaking surface.
-- **Evidence commands:** `make api-contract`; `make public-surfaces`.
+- `Makefile`
+  - added canonical targets: `test-all`, `test-integration`, `test-e2e`.
+  - updated default `TEST_CMD` to exclude `e2e` from fast path.
+- `pyproject.toml`
+  - registered `e2e` marker in pytest marker SSOT.
+- `.github/workflows/ci-pr-atomic.yml`
+  - switched fast test step to `make test` entrypoint.
+- `tests/test_e2e_cli_smoke.py`
+  - added deterministic e2e smoke test to prevent empty e2e bucket and enforce end-to-end CLI health.
+- `docs/TESTING.md`, `README.md`
+  - documented canonical split commands.
+- `INVENTORY.json`
+  - regenerated to fix deterministic generated-artifact drift that broke tests.
 
-### PR-7 — Release readiness bundle (G9, G10)
-- **Files:** `docs/RELEASE_READINESS.md`, `docs/RELEASE_NOTES.md`, `proof_bundle/logs/*`
-- **Acceptance criteria:** tag-ready checklist + artifact map + evidence logs cross-linked.
-- **Evidence commands:** `python -m build`; `make release-readiness`.
+## 4) Verification commands + outputs (key lines)
+
+- `time make test` → pass, `real 1m1.672s`.
+- `time make test-all` → pass, `real 2m25.766s`.
+- `make test-integration` → pass.
+- `make test-e2e` → pass.
+- `python -m pytest -m "not (validation or property)" -q` → pass.
+- `ruff check .` and `mypy src --strict --config-file pyproject.toml` retained as compatible with test gate.
+
+## 5) Gate status
+
+- **G2 Tests**: **yes** (baseline failure fixed; canonical targets pass).
+- **Flake risk**: **low** (failure was deterministic stale generated file, not intermittent timing randomness).
+- **Runtime budget met**:
+  - `make test` budget `<= 120s`: **yes** (`~62s`).
+  - `make test-all` budget `<= 600s`: **yes** (`~146s`).
+
+## 6) PR description scaffold
+
+### WHAT
+Standardized canonical pytest entrypoints (`test`, `test-all`, `test-integration`, `test-e2e`, `test-property`), added e2e marker/test, aligned CI fast path, and regenerated `INVENTORY.json` to resolve deterministic test failures.
+
+### WHY
+`make test` was red due stale generated inventory and there was no fully standardized split entrypoint surface for integration/e2e categories.
+
+### EVIDENCE
+See `proof_bundle/logs/22_*.log` through `proof_bundle/logs/36_*.log` for environment, baseline failures, fixes, and post-fix pass runs with runtimes.
+
+### COMPATIBILITY
+No product logic changes. Changes are test/build orchestration, generated inventory refresh, and a deterministic e2e smoke test.

@@ -1,11 +1,11 @@
-.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
+.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
 PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 SETUP_CMD ?= python -m pip install -e ".[dev,test]"
-TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+TEST_CMD ?= python -m pytest -m "not (validation or property or e2e)" -q
 
 setup:
 	python -V
@@ -53,6 +53,15 @@ wheelhouse-report: wheelhouse-validate
 
 test:
 	$(MAKE) test-gate
+
+test-all:
+	python -m pytest -q
+
+test-integration:
+	python -m pytest -m "integration" -q
+
+test-e2e:
+	python -m pytest -m "e2e" -q
 
 test-gate:
 	$(TEST_CMD)

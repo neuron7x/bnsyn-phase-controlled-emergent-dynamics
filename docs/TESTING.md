@@ -32,6 +32,9 @@ Expected output pattern:
 
 ```bash
 make test-gate
+make test-all
+make test-integration
+make test-e2e
 make test-validation
 make test-property
 ```
