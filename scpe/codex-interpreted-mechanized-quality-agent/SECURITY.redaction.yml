@@ -1,0 +1,22 @@
+scpe_release: v1.0
+schema_version: REDACT-2026.1
+policy:
+  objective: "deterministic log/output redaction"
+  fail_closed: true
+rules:
+  - id: "R.SEC.001"
+    type: "regex"
+    pattern: "(?i)\\b(api[_-]?key|access[_-]?token|auth[_-]?token|secret|private[_-]?key|refresh[_-]?token|session[_-]?token)\\b\\s*[:=]\\s*[^\\s\"']+"
+    replace: "\\1=<REDACTED>"
+  - id: "R.SEC.002"
+    type: "regex"
+    pattern: "\\b(ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{20,})\\b"
+    replace: "<REDACTED_GITHUB_TOKEN>"
+  - id: "R.SEC.005"
+    type: "regex"
+    pattern: "-----BEGIN ([A-Z ]+)?PRIVATE KEY-----[\\s\\S]*?-----END ([A-Z ]+)?PRIVATE KEY-----"
+    replace: "<REDACTED_PRIVATE_KEY_BLOCK>"
+constraints:
+  never_print_env_vars: ["GITHUB_TOKEN","GH_TOKEN","AWS_SECRET_ACCESS_KEY","NPM_TOKEN"]
+enforcement:
+  - "unredacted secret -> FAIL G.SEC.001"
