@@ -10,13 +10,13 @@
       "exit_code": 0,
       "pass_rule": "contradictions==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g0_20260219T081735Z.log"
+        "artifacts/sse_sdo/logs/g0_20260219T083353Z.log"
       ],
       "sha256": [
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       ],
       "evidence": [
-        "\u00a7REF:cmd:python - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('artifacts/sse_sdo/07_quality/CONTRADICTIONS.json')\nobj=json.loads(p.read_text())\nraise SystemExit(0 if len(obj.get('contradictions', []))==0 else 1)\nPY -> log:artifacts/sse_sdo/logs/g0_20260219T081735Z.log#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        "\u00a7REF:cmd:python - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('artifacts/sse_sdo/07_quality/CONTRADICTIONS.json')\nobj=json.loads(p.read_text())\nraise SystemExit(0 if len(obj.get('contradictions', []))==0 else 1)\nPY -> log:artifacts/sse_sdo/logs/g0_20260219T083353Z.log#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       ],
       "status": "PASS"
     },
@@ -27,13 +27,13 @@
       "exit_code": 0,
       "pass_rule": "exit_code==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g1_20260219T081735Z.log"
+        "artifacts/sse_sdo/logs/g1_20260219T083354Z.log"
       ],
       "sha256": [
         "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
       ],
       "evidence": [
-        "\u00a7REF:cmd:scripts/sse_policy_load .github/sse_sdo_fhe.yml -> log:artifacts/sse_sdo/logs/g1_20260219T081735Z.log#a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
+        "\u00a7REF:cmd:scripts/sse_policy_load .github/sse_sdo_fhe.yml -> log:artifacts/sse_sdo/logs/g1_20260219T083354Z.log#a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
       ],
       "status": "PASS"
     },
@@ -44,13 +44,13 @@
       "exit_code": 0,
       "pass_rule": "exit_code==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g2_20260219T081735Z.log"
+        "artifacts/sse_sdo/logs/g2_20260219T083354Z.log"
       ],
       "sha256": [
         "99db33d5c94c6f7da021687c7391181685cc33299c5435b1c861e2db3be3ec87"
       ],
       "evidence": [
-        "\u00a7REF:cmd:python -m pytest -q tests/test_policy_to_execution_contract.py -> log:artifacts/sse_sdo/logs/g2_20260219T081735Z.log#99db33d5c94c6f7da021687c7391181685cc33299c5435b1c861e2db3be3ec87"
+        "\u00a7REF:cmd:python -m pytest -q tests/test_policy_to_execution_contract.py -> log:artifacts/sse_sdo/logs/g2_20260219T083354Z.log#99db33d5c94c6f7da021687c7391181685cc33299c5435b1c861e2db3be3ec87"
       ],
       "status": "PASS"
     },
@@ -61,13 +61,13 @@
       "exit_code": 0,
       "pass_rule": "exit_code==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g3_20260219T081736Z.log"
+        "artifacts/sse_sdo/logs/g3_20260219T083355Z.log"
       ],
       "sha256": [
         "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
       ],
       "evidence": [
-        "\u00a7REF:cmd:python -m pytest -q tests/test_ssot_alignment_contract.py -> log:artifacts/sse_sdo/logs/g3_20260219T081736Z.log#423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
+        "\u00a7REF:cmd:python -m pytest -q tests/test_ssot_alignment_contract.py -> log:artifacts/sse_sdo/logs/g3_20260219T083355Z.log#423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
       ],
       "status": "PASS"
     },
@@ -78,13 +78,13 @@
       "exit_code": 0,
       "pass_rule": "exit_code==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g4_20260219T081736Z.log"
+        "artifacts/sse_sdo/logs/g4_20260219T083356Z.log"
       ],
       "sha256": [
         "423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
       ],
       "evidence": [
-        "\u00a7REF:cmd:python -m pytest -q tests/test_workflow_integrity_contract.py -> log:artifacts/sse_sdo/logs/g4_20260219T081736Z.log#423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
+        "\u00a7REF:cmd:python -m pytest -q tests/test_workflow_integrity_contract.py -> log:artifacts/sse_sdo/logs/g4_20260219T083356Z.log#423b1d0e014eb1eab96f4420f7b344c2615be505dd574b756ac884826ca74f2d"
       ],
       "status": "PASS"
     },
@@ -95,13 +95,13 @@
       "exit_code": 0,
       "pass_rule": "exit_code==0",
       "artifacts": [
-        "artifacts/sse_sdo/logs/g11_20260219T081737Z.log"
+        "artifacts/sse_sdo/logs/g11_20260219T083357Z.log"
       ],
       "sha256": [
         "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
       ],
       "evidence": [
-        "\u00a7REF:cmd:scripts/sse_safety_gate -> log:artifacts/sse_sdo/logs/g11_20260219T081737Z.log#a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
+        "\u00a7REF:cmd:scripts/sse_safety_gate -> log:artifacts/sse_sdo/logs/g11_20260219T083357Z.log#a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87"
       ],
       "status": "PASS"
     }

@@ -1,23 +1,17 @@
 from __future__ import annotations
 
-import sys
+import json
 from pathlib import Path
 
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
-import sse_policy_load  # noqa: E402
+POLICY_PATH = REPO_ROOT / "artifacts" / "ca_dccg" / "05_enforcement" / "POLICY_DECL.json"
+
+REQUIRED_KEYS = {"Claims", "Invariants", "Decisions", "Budgets", "Interfaces"}
 
 
-def test_policy_schema_contract_loads_strictly() -> None:
-    payload = sse_policy_load.load_and_validate(REPO_ROOT / ".github" / "sse_sdo_fhe.yml")
-    assert payload["protocol"] == "SSE-SDO-FHE-2026.06"
-    assert payload["policy"]["law_without_police_forbidden"] is True
-
-
-def test_policy_schema_rejects_unknown_key(tmp_path: Path) -> None:
-    bad = tmp_path / "bad.yml"
-    bad.write_text((REPO_ROOT / ".github" / "sse_sdo_fhe.yml").read_text(encoding="utf-8") + "\nextra_key: true\n", encoding="utf-8")
-    with pytest.raises(ValueError, match="unknown keys"):
-        sse_policy_load.load_and_validate(bad)
+def test_policy_decl_schema_contract() -> None:
+    payload = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    assert isinstance(payload, dict)
+    assert set(payload.keys()) == REQUIRED_KEYS
+    for key in REQUIRED_KEYS:
+        assert isinstance(payload[key], list)

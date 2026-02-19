@@ -29,7 +29,7 @@ def main() -> int:
             "scripts/sse_gate_runner.py",
             "scripts/sse_proof_index.py",
             "scripts/sse_safety_gate",
-            "tests/test_policy_schema_contract.py",
+            "tests/test_sse_policy_schema_contract.py",
             "tests/test_policy_to_execution_contract.py",
             "tests/test_required_checks_contract.py",
             "tests/test_ssot_alignment_contract.py",

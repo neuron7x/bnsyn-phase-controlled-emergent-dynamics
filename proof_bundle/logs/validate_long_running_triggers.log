@@ -1,2 +1,1 @@
-$ python -m scripts.validate_long_running_triggers
-OK: long_running_trigger_policy workflows=30 violations=0
+OK: long_running_trigger_policy workflows=38 violations=0

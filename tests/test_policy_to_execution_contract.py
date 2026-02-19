@@ -23,7 +23,7 @@ def test_policy_to_execution_contract_links_required_scripts() -> None:
 def test_contract_test_map_references_required_contract_tests() -> None:
     payload = json.loads((REPO_ROOT / "artifacts" / "sse_sdo" / "02_contracts" / "CONTRACT_TEST_MAP.json").read_text(encoding="utf-8"))
     expected = {
-        "tests/test_policy_schema_contract.py",
+        "tests/test_sse_policy_schema_contract.py",
         "tests/test_policy_to_execution_contract.py",
         "tests/test_required_checks_contract.py",
         "tests/test_ssot_alignment_contract.py",

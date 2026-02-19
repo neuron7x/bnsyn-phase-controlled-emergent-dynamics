@@ -11,9 +11,9 @@
     "scripts/sse_safety_gate",
     "scripts/verify_integrity",
     "scripts/xrun",
-    "tests/test_policy_schema_contract.py",
     "tests/test_policy_to_execution_contract.py",
     "tests/test_required_checks_contract.py",
+    "tests/test_sse_policy_schema_contract.py",
     "tests/test_ssot_alignment_contract.py",
     "tests/test_workflow_integrity_contract.py"
   ]

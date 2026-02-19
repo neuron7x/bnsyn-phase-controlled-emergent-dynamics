@@ -53,17 +53,17 @@
     {
       "entrypoint": false,
       "exists": true,
-      "path": "tests/test_policy_schema_contract.py"
-    },
-    {
-      "entrypoint": false,
-      "exists": true,
       "path": "tests/test_policy_to_execution_contract.py"
     },
     {
       "entrypoint": false,
       "exists": true,
       "path": "tests/test_required_checks_contract.py"
+    },
+    {
+      "entrypoint": false,
+      "exists": true,
+      "path": "tests/test_sse_policy_schema_contract.py"
     },
     {
       "entrypoint": false,

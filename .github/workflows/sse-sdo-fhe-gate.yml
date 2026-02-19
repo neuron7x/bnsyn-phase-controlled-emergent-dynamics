@@ -1,7 +1,6 @@
 name: sse-sdo-fhe-gate
 
 on:
-  pull_request:
   workflow_dispatch:
 
 permissions:
