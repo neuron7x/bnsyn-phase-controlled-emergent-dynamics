@@ -1,0 +1,14 @@
+{
+  "invariants": [
+    {
+      "id": "INV_CONTRADICTIONS_ZERO",
+      "predicate": "contradictions == 0",
+      "gate_id": "G0"
+    },
+    {
+      "id": "INV_DRIFT_ZERO",
+      "predicate": "drifts length == 0",
+      "gate_id": "G5"
+    }
+  ]
+}
