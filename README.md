@@ -31,6 +31,7 @@ make test
 - Contributing workflow: [docs/TESTING.md](docs/TESTING.md)
 - Security docs: [docs/SECURITY_GITLEAKS.md](docs/SECURITY_GITLEAKS.md)
 - Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Status: [docs/STATUS.md](docs/STATUS.md)
 
 ## Maintainers / Repo Contract
 
