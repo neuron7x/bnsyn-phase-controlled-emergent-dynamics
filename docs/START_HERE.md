@@ -1,50 +1,94 @@
-# Start Here
+# START_HERE
 
-Use this page as the canonical onboarding path for new engineers.
+This is the **only canonical onboarding funnel**.
 
-## 1) What this repository is
+## A) Prerequisites
 
-BN-Syn is a deterministic reference implementation of phase-controlled emergent neural dynamics with specification, governance, and evidence artifacts versioned together.
-
-- System specification: [SPEC.md](SPEC.md)
-- Architecture crosswalk: [ARCHITECTURE.md](ARCHITECTURE.md)
-- API contract: [API_CONTRACT.md](API_CONTRACT.md)
-
-## 2) Local setup
+- OS: Linux/macOS shell.
+- Python: `>=3.11`.
+- Verify toolchain:
 
 ```bash
-python -m pip install -e ".[dev]"
+python --version
+python -m pip --version
 ```
 
-Optional extras:
-
-- Visualization: `python -m pip install -e ".[dev,viz]"`
-- Accelerator experiments: `python -m pip install -e ".[dev,accelerators]"`
-
-## 3) Three canonical commands
+## B) Install (single command)
 
 ```bash
-# Run
-python -m bnsyn.cli --help
-
-# Test
-pytest -q
-
-# Build docs
-python -m sphinx -b html docs docs/_build/html
+make setup
 ```
 
-## 4) Primary documentation paths
+Expected success lines:
+- `python -m pip --version`
+- `Successfully installed ...` (or requirements already satisfied)
+- `python -m pip check` with no dependency conflicts.
 
-- Concepts & architecture: [ARCHITECTURE.md](ARCHITECTURE.md)
-- Scripts & tools registry: [SCRIPTS/index.md](SCRIPTS/index.md)
-- API reference (Sphinx): [api/index.md](api/index.md)
-- Testing and validation workflows: [TESTING.md](TESTING.md)
-- Troubleshooting: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+## C) Demo (single command)
 
-## 5) Reproducibility and evidence
+```bash
+make demo
+```
 
-- Reproducibility envelope: [REPRODUCIBILITY.md](REPRODUCIBILITY.md)
-- CI gates: [CI_GATES.md](CI_GATES.md)
-- Evidence coverage: [EVIDENCE_COVERAGE.md](EVIDENCE_COVERAGE.md)
+Expected success lines:
+- `Demo artifact written: artifacts/demo.json`
+- `Demo output validated against expected snapshot`
 
+Visible output:
+- `artifacts/demo.json`
+
+## D) Tests (single command)
+
+```bash
+make test
+```
+
+Expected success lines:
+- pytest progress dots and final `[100%]`
+- no `FAILED` lines.
+
+## E) Reproduce (single command)
+
+```bash
+make reproduce
+```
+
+Expected success lines:
+- `WROTE artifacts/reproduce_manifest.json`
+- `WROTE artifacts/demo.sha256`
+- `PASS reproducibility`
+
+Expected artifacts:
+- `artifacts/demo.json`
+- `artifacts/demo.sha256`
+- `artifacts/reproduce_manifest.json`
+- `artifacts/reproducibility_report.json`
+
+## F) Troubleshooting (top 10)
+
+| Symptom substring | Likely cause | Fix |
+|---|---|---|
+| `No module named pip` | Python bootstrap missing | `python -m ensurepip --upgrade` |
+| `Could not find a version that satisfies` | stale pip/setuptools | `python -m pip install --upgrade pip setuptools wheel` |
+| `ModuleNotFoundError: hypothesis` | missing test extras | `python -m pip install -e ".[test]"` |
+| `command not found: pylint` | optional lint tool not installed | `python -m pip install -e ".[dev,test]"` |
+| `INVENTORY.json is out of date` | generated file drift | `python tools/generate_inventory.py` |
+| `tests/test_generate_inventory.py` assertion mismatch | repo file-count changed | `python tools/generate_inventory.py && make test` |
+| `PASS reproducibility` missing | nondeterministic or missing artifact | run `make reproduce` again, inspect `artifacts/reproducibility_report.json` |
+| `Failed to capture git SHA` warning | detached/non-git execution context | run inside git checkout; warning is non-fatal in tests |
+| `Permission denied` writing `artifacts/` | filesystem permissions | `mkdir -p artifacts && chmod u+w artifacts` |
+| `make: *** [test] Error` | failing tests in fast gate | rerun `make test`, then inspect failing nodeids in output |
+
+## G) Cleanup
+
+```bash
+make clean
+```
+
+Removes caches and onboarding artifacts (`artifacts/demo.json`, checksum, reproduce manifest, reproducibility report).
+
+## Advanced paths
+
+- Architecture depth: [docs/ARCHITECTURE.md](ARCHITECTURE.md)
+- Testing depth: [docs/TESTING.md](TESTING.md)
+- Reproducibility depth: [docs/REPRODUCIBILITY.md](REPRODUCIBILITY.md)
