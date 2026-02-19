@@ -110,8 +110,8 @@ make format      # Auto-format with ruff
 make lint        # Lint with ruff + pylint
 make mypy        # Type check
 make ssot        # Validate bibliography, claims, normative tags
-make security    # Run gitleaks, pip-audit, bandit (JSON artifacts in artifacts/security/)
-make sbom        # Generate CycloneDX SBOM at artifacts/sbom/sbom.cdx.json
+make security    # Run gitleaks, pip-audit, bandit (JSON artifacts in artifacts/security/) using hash-locked requirements-lock.txt
+make sbom        # Generate CycloneDX SBOM at artifacts/sbom/sbom.cdx.json using hash-locked requirements-sbom-lock.txt
 make coverage    # Test with coverage report
 ```
 

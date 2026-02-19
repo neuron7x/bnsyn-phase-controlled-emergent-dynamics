@@ -101,6 +101,9 @@ make security
 make sbom
 ```
 
+`make security` installs scanner/audit/SAST dependencies from `requirements-lock.txt` with hashes.
+`make sbom` installs `cyclonedx-bom` from `requirements-sbom-lock.txt` with hashes.
+
 Expected security artifacts:
 - `artifacts/security/gitleaks-report.json`
 - `artifacts/security/pip-audit.json`

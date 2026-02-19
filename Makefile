@@ -184,6 +184,8 @@ SECURITY_REPORT ?= $(SECURITY_ARTIFACT_DIR)/pip-audit.json
 SECURITY_SAST_REPORT ?= $(SECURITY_ARTIFACT_DIR)/bandit.json
 
 security:
+	python --version
+	python -m pip --version
 	python -m pip install --upgrade pip==26.0.1
 	python -m pip install --require-hashes -r requirements-lock.txt
 	python -m pip install --no-deps -e .
@@ -193,9 +195,12 @@ security:
 	python -m bandit -r src/ -ll -f json -o $(SECURITY_SAST_REPORT)
 
 SBOM_REPORT ?= artifacts/sbom/sbom.cdx.json
+SBOM_LOCK_FILE ?= requirements-sbom-lock.txt
 
 sbom:
-	python -m pip install cyclonedx-bom==7.1.0
+	python --version
+	python -m pip --version
+	python -m pip install --require-hashes --no-deps -r $(SBOM_LOCK_FILE)
 	mkdir -p $(dir $(SBOM_REPORT))
 	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
 
