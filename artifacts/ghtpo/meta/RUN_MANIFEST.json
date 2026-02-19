@@ -1,0 +1,6 @@
+{
+  "cwd": "/workspace/bnsyn-phase-controlled-emergent-dynamics",
+  "platform": "Linux-6.12.47-x86_64-with-glibc2.39",
+  "protocol": "GHTPO-2026.02",
+  "python": "3.12.12"
+}

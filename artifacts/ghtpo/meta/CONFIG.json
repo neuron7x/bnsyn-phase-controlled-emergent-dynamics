@@ -1,0 +1,22 @@
+{
+  "ci": {
+    "concurrency_control": true,
+    "permissions_model": "least_privilege"
+  },
+  "maturity": "L1",
+  "security": {
+    "dependency_scanning": true,
+    "sast": true,
+    "secrets_scanning": true
+  },
+  "testing": {
+    "contract": true,
+    "coverage": {
+      "enabled": true,
+      "threshold": null
+    },
+    "integration": true,
+    "unit": true
+  },
+  "version": "2026.02"
+}
