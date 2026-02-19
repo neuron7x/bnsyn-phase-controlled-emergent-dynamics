@@ -1,0 +1,16 @@
+{
+  "ecosystem": {
+    "languages": [
+      "python"
+    ],
+    "maturity": "L1"
+  },
+  "gap_score": "87/100",
+  "missing_recommended": [
+    "T12_MUTATION",
+    "T14_PERF",
+    "T17_VISUAL_REGRESSION"
+  ],
+  "missing_required": [],
+  "protocol": "GHTPO-2026.02"
+}

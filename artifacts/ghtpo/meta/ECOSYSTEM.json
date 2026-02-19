@@ -1,0 +1,13 @@
+{
+  "frameworks": [
+    "pytest"
+  ],
+  "languages": [
+    "python"
+  ],
+  "maturity": "L1",
+  "monorepo": false,
+  "package_managers": [
+    "pip"
+  ]
+}

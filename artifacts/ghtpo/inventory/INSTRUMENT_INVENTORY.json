@@ -1,0 +1,56 @@
+[
+  {
+    "id": "SEC_01",
+    "name": "SECURITY.md",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T01_UNIT",
+    "name": "Unit tests",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T02_LINT",
+    "name": "Lint",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T04_TYPECHECK",
+    "name": "Typecheck",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T05_BUILD",
+    "name": "Build verification",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T06_INTEGRATION",
+    "name": "Integration tests",
+    "present": true,
+    "required": false
+  },
+  {
+    "id": "T07_CONTRACT",
+    "name": "Contract tests",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T09_SAST",
+    "name": "Security SAST",
+    "present": true,
+    "required": true
+  },
+  {
+    "id": "T10_DEP_SCAN",
+    "name": "Dependency scanning",
+    "present": true,
+    "required": true
+  }
+]

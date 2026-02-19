@@ -1,0 +1,137 @@
+{
+  "base_branch": "main",
+  "contradictions": 0,
+  "created_files": [],
+  "ecosystem": {
+    "languages": [
+      "python"
+    ],
+    "maturity": "L1"
+  },
+  "gap_score": "87/100",
+  "gates": [
+    {
+      "cmd": "python -c \"import yaml, pathlib; [yaml.safe_load(p.read_text()) for p in sorted(pathlib.Path('.github/workflows').glob('*.yml'))]\"",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:python -c \"import yaml, pathlib; [yaml.safe_load(p.read_text()) for p in sorted(pathlib.Path('.github/workflows').glob('*.yml'))]\" -> log:artifacts/ghtpo/logs/G00.log#sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "\u00a7REF:gate:G00 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G00",
+      "log": "logs/G00.log",
+      "name": "YAML_VALIDITY",
+      "pass": true,
+      "sha256": {
+        "log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "cmd": "python -m pytest -m \"not (validation or property)\" -q",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:python -m pytest -m \"not (validation or property)\" -q -> log:artifacts/ghtpo/logs/G11.log#sha256:819bcade02556461f3c2f6458dad02c273ee55b9e200eaaf29bca79b639d2897",
+        "\u00a7REF:gate:G11 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G11",
+      "log": "logs/G11.log",
+      "name": "UNIT_TESTS_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "819bcade02556461f3c2f6458dad02c273ee55b9e200eaaf29bca79b639d2897"
+      }
+    },
+    {
+      "cmd": "ruff check .",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:ruff check . -> log:artifacts/ghtpo/logs/G12.log#sha256:82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "\u00a7REF:gate:G12 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G12",
+      "log": "logs/G12.log",
+      "name": "LINT_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "cmd": "pylint src/bnsyn",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:pylint src/bnsyn -> log:artifacts/ghtpo/logs/G12B.log#sha256:8fda5322955f2f888fc8b5c784bc7736930700db56fb1dad3d417b9033d96535",
+        "\u00a7REF:gate:G12B -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G12B",
+      "log": "logs/G12B.log",
+      "name": "PYLINT_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "8fda5322955f2f888fc8b5c784bc7736930700db56fb1dad3d417b9033d96535"
+      }
+    },
+    {
+      "cmd": "mypy src --strict --config-file pyproject.toml",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:mypy src --strict --config-file pyproject.toml -> log:artifacts/ghtpo/logs/G14.log#sha256:25499469eab292b707aaafb426bb37ffc20ebb6f29a73f5d9ab147221e899cc4",
+        "\u00a7REF:gate:G14 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G14",
+      "log": "logs/G14.log",
+      "name": "TYPECHECK_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "25499469eab292b707aaafb426bb37ffc20ebb6f29a73f5d9ab147221e899cc4"
+      }
+    },
+    {
+      "cmd": "python -m build",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:python -m build -> log:artifacts/ghtpo/logs/G15.log#sha256:b930f283c0a4af1ca915dcc06cd86bee7a220b7fe84c037a65c252208974d63f",
+        "\u00a7REF:gate:G15 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G15",
+      "log": "logs/G15.log",
+      "name": "BUILD_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "b930f283c0a4af1ca915dcc06cd86bee7a220b7fe84c037a65c252208974d63f"
+      }
+    },
+    {
+      "cmd": "python -m pytest -q tests/test_ci_policy_contract.py",
+      "domain": "MIXED",
+      "evidence": [
+        "\u00a7REF:cmd:python -m pytest -q tests/test_ci_policy_contract.py -> log:artifacts/ghtpo/logs/G17.log#sha256:cf426ab35f3b06fccef8290fde5325d90af130a79da1d1752031518df77c4236",
+        "\u00a7REF:gate:G17 -> verdict:PASS"
+      ],
+      "exit_code": 0,
+      "id": "G17",
+      "log": "logs/G17.log",
+      "name": "CONTRACT_TESTS_PASS",
+      "pass": true,
+      "sha256": {
+        "log": "cf426ab35f3b06fccef8290fde5325d90af130a79da1d1752031518df77c4236"
+      }
+    }
+  ],
+  "instruments": {
+    "missing_recommended": 3,
+    "missing_required": 0,
+    "present": 9,
+    "required": 8
+  },
+  "modified_files": [],
+  "pr_branch": "work",
+  "protocol": "GHTPO-2026.02",
+  "repo": "bnsyn-phase-controlled-emergent-dynamics",
+  "verdict": "PASS"
+}

@@ -1,0 +1,380 @@
+[
+  {
+    "has_permissions": true,
+    "jobs": [
+      "elite-benchmarks",
+      "micro-benchmarks",
+      "nightly-benchmarks",
+      "scenario-benchmarks"
+    ],
+    "path": ".github/workflows/_reusable_benchmarks.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "chaos-tests"
+    ],
+    "path": ".github/workflows/_reusable_chaos_tests.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "formal-science"
+    ],
+    "path": ".github/workflows/_reusable_formal_science.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "profile"
+    ],
+    "path": ".github/workflows/_reusable_gate_profile.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "property-tests"
+    ],
+    "path": ".github/workflows/_reusable_property_tests.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "pytest"
+    ],
+    "path": ".github/workflows/_reusable_pytest.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "mypy",
+      "pylint",
+      "ruff"
+    ],
+    "path": ".github/workflows/_reusable_quality.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "ssot"
+    ],
+    "path": ".github/workflows/_reusable_ssot.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "validation-tests"
+    ],
+    "path": ".github/workflows/_reusable_validation_tests.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "benchmarks-dispatch"
+    ],
+    "path": ".github/workflows/benchmarks.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "benchmarks"
+    ],
+    "path": ".github/workflows/ci-benchmarks-elite.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "benchmarks-dispatch",
+      "benchmarks-elite",
+      "benchmarks-standard"
+    ],
+    "path": ".github/workflows/ci-benchmarks.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "build",
+      "changes",
+      "codeql-pr",
+      "contracts",
+      "determinism",
+      "docs-pr",
+      "finalize",
+      "gate-profile",
+      "launch-gate",
+      "pr-description-policy",
+      "property-tests-pr",
+      "quality",
+      "security",
+      "smoke-wheel-matrix",
+      "ssot",
+      "test-integrity",
+      "tests-smoke",
+      "validation-tests-pr"
+    ],
+    "path": ".github/workflows/ci-pr-atomic.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "ci-pr-atomic"
+    ],
+    "path": ".github/workflows/ci-pr.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "gate-profile",
+      "ssot",
+      "tests-smoke"
+    ],
+    "path": ".github/workflows/ci-smoke.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "chaos-summary",
+      "chaos-tests",
+      "determine",
+      "elite-summary",
+      "gate-profile",
+      "property-tests",
+      "ssot",
+      "validation-tests"
+    ],
+    "path": ".github/workflows/ci-validation.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "health"
+    ],
+    "path": ".github/workflows/codecov-health.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "analyze"
+    ],
+    "path": ".github/workflows/codeql.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "context-compressor"
+    ],
+    "path": ".github/workflows/context_compressor_gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "dependency-review"
+    ],
+    "path": ".github/workflows/dependency-review.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "check-outdated"
+    ],
+    "path": ".github/workflows/dependency-watch.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "build-docs"
+    ],
+    "path": ".github/workflows/docs.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "dsio-gate"
+    ],
+    "path": ".github/workflows/dsio_gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "coq-proof-check"
+    ],
+    "path": ".github/workflows/formal-coq.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "tla-model-check"
+    ],
+    "path": ".github/workflows/formal-tla.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "launch-gate"
+    ],
+    "path": ".github/workflows/launch-gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "math-gate"
+    ],
+    "path": ".github/workflows/math-quality-gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "perfection-gate"
+    ],
+    "path": ".github/workflows/perfection-gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "validate-physics"
+    ],
+    "path": ".github/workflows/physics-equivalence.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "pr-gate"
+    ],
+    "path": ".github/workflows/pr_gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "mutation-testing"
+    ],
+    "path": ".github/workflows/quality-mutation.yml",
+    "triggers": [
+      "schedule",
+      "workflow_dispatch"
+    ],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "release-dry-run"
+    ],
+    "path": ".github/workflows/release-pipeline.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "flagship-experiment"
+    ],
+    "path": ".github/workflows/science.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "scientific-product"
+    ],
+    "path": ".github/workflows/scientific_product_gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "smlrs-gate"
+    ],
+    "path": ".github/workflows/smlrs_gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "sse_sdo_fhe_gate"
+    ],
+    "path": ".github/workflows/sse-sdo-fhe-gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "sse_sdo_max_gate"
+    ],
+    "path": ".github/workflows/sse-sdo-max-gate.yml",
+    "triggers": [],
+    "valid_yaml": true
+  },
+  {
+    "has_permissions": true,
+    "jobs": [
+      "validate-workflows"
+    ],
+    "path": ".github/workflows/workflow-integrity.yml",
+    "triggers": [],
+    "valid_yaml": true
+  }
+]
