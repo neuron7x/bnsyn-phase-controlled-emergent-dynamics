@@ -1,0 +1,16 @@
+cmd: python - <<"PY" inspect failing logs
+--- artifacts/de_tf/logs/workflow_lint.json
+
+VIOLATION: COUNT_MISMATCH contracts=(35,24,11) actual=(36,25,11)
+VIOLATION: MISSING_ROW pr_gate.yml
+
+--- artifacts/de_tf/logs/security_deps.json
+Found 1 known vulnerability in 1 package
+
+Name Version ID            Fix Versions
+---- ------- ------------- ------------
+pip  25.3    CVE-2026-1703 26.0
+Name  Skip Reason
+----- --------------------------------------------------------------------
+bnsyn Dependency not found on PyPI and could not be audited: bnsyn (0.2.0)
+

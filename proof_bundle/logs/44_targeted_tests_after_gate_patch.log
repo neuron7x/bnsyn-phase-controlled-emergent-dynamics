@@ -1,0 +1,2 @@
+cmd: python -m pytest tests/test_ci_pr_gate_completeness.py tests/test_ci_policy_contract.py tests/test_actions_pinned.py tests/test_required_checks_manifest.py -q
+........                                                                 [100%]

@@ -1,0 +1,1 @@
+cmd: cat > tests/test_ci_policy_contract.py

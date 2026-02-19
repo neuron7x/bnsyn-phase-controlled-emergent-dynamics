@@ -1,0 +1,1 @@
+cmd: cat > .github/required_checks.json

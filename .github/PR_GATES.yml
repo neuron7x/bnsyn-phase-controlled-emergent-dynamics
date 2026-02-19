@@ -31,3 +31,8 @@ required_pr_gates:
     workflow_name: "dependency-review"
     required_job_ids:
       - dependency-review
+  - workflow_file: "pr_gate.yml"
+    workflow_name: "pr-gate"
+    required_job_ids:
+      - pr-gate
+

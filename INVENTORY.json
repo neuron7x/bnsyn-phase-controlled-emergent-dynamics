@@ -8,9 +8,9 @@
   ],
   "counts": {
     "src": 74,
-    "tests": 176,
+    "tests": 181,
     "docs": 282,
-    ".github": 47
+    ".github": 50
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -42,6 +42,7 @@
     "math-quality-gate.yml",
     "perfection-gate.yml",
     "physics-equivalence.yml",
+    "pr_gate.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
     "science.yml",

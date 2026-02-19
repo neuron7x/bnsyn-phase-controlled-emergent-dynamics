@@ -1,7 +1,7 @@
 manifest_version: "1.0"
 required_pr_gates:
   source: ".github/PR_GATES.yml"
-  sha256: "d7f1f6149f6ced1a4bb418b932c7f649a2beb83c7d315da8beccf28deb34e9a1"
+  sha256: "1365cd4233371d0bdb92d15c7f6252a121e3c3fed76e21b2f623c36a0ed137d9"
 invariants:
   - id: INV-001
     statement: "Repository manifest markdown and computed snapshot are generated artifacts."

@@ -1,0 +1,1 @@
+cmd: python - <<"PY" update scripts/ci_inventory.py

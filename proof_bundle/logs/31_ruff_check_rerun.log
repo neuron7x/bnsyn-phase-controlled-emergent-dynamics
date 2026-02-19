@@ -1,0 +1,2 @@
+cmd: ruff check .
+All checks passed!

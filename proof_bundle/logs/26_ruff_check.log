@@ -1,0 +1,180 @@
+cmd: ruff check .
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:69:74
+   |
+67 |     OUT_DIR.mkdir(parents=True, exist_ok=True)
+68 |     (OUT_DIR / "workflows_graph.json").write_text(
+69 |         json.dumps({"workflows": workflows}, indent=2, sort_keys=True) + "
+   |                                                                          ^
+70 | ", encoding="utf-8"
+71 |     )
+   |
+
+invalid-syntax: Expected `,`, found name
+  --> scripts/ci_inventory.py:70:14
+   |
+68 |     (OUT_DIR / "workflows_graph.json").write_text(
+69 |         json.dumps({"workflows": workflows}, indent=2, sort_keys=True) + "
+70 | ", encoding="utf-8"
+   |              ^^^
+71 |     )
+72 |     (OUT_DIR / "tools_graph.json").write_text(
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:70:19
+   |
+68 |     (OUT_DIR / "workflows_graph.json").write_text(
+69 |         json.dumps({"workflows": workflows}, indent=2, sort_keys=True) + "
+70 | ", encoding="utf-8"
+   |                   ^
+71 |     )
+72 |     (OUT_DIR / "tools_graph.json").write_text(
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:73:73
+   |
+71 |     )
+72 |     (OUT_DIR / "tools_graph.json").write_text(
+73 |         json.dumps({"tools_by_job": tools}, indent=2, sort_keys=True) + "
+   |                                                                         ^
+74 | ", encoding="utf-8"
+75 |     )
+   |
+
+invalid-syntax: Expected `,`, found name
+  --> scripts/ci_inventory.py:74:14
+   |
+72 |     (OUT_DIR / "tools_graph.json").write_text(
+73 |         json.dumps({"tools_by_job": tools}, indent=2, sort_keys=True) + "
+74 | ", encoding="utf-8"
+   |              ^^^
+75 |     )
+76 |     (OUT_DIR / "gaps.json").write_text(
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:74:19
+   |
+72 |     (OUT_DIR / "tools_graph.json").write_text(
+73 |         json.dumps({"tools_by_job": tools}, indent=2, sort_keys=True) + "
+74 | ", encoding="utf-8"
+   |                   ^
+75 |     )
+76 |     (OUT_DIR / "gaps.json").write_text(
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:77:88
+   |
+75 |     )
+76 |     (OUT_DIR / "gaps.json").write_text(
+77 |         json.dumps({"unpinned_actions": sorted(unpinned)}, indent=2, sort_keys=True) + "
+   |                                                                                        ^
+78 | ",
+79 |         encoding="utf-8",
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_inventory.py:78:1
+   |
+76 |     (OUT_DIR / "gaps.json").write_text(
+77 |         json.dumps({"unpinned_actions": sorted(unpinned)}, indent=2, sort_keys=True) + "
+78 | ",
+   | ^^
+79 |         encoding="utf-8",
+80 |     )
+   |
+
+invalid-syntax: Expected `,`, found name
+  --> scripts/ci_inventory.py:79:9
+   |
+77 |         json.dumps({"unpinned_actions": sorted(unpinned)}, indent=2, sort_keys=True) + "
+78 | ",
+79 |         encoding="utf-8",
+   |         ^^^^^^^^
+80 |     )
+81 |     return 0
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_policy.py:51:56
+   |
+49 |     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+50 |     (OUTPUT_DIR / "ci_policy_resolved.json").write_text(
+51 |         json.dumps(policy, indent=2, sort_keys=True) + "
+   |                                                        ^
+52 | ", encoding="utf-8"
+53 |     )
+   |
+
+invalid-syntax: Expected `,`, found name
+  --> scripts/ci_policy.py:52:14
+   |
+50 |     (OUTPUT_DIR / "ci_policy_resolved.json").write_text(
+51 |         json.dumps(policy, indent=2, sort_keys=True) + "
+52 | ", encoding="utf-8"
+   |              ^^^
+53 |     )
+54 |     manifest_path = REPO_ROOT / policy["required_checks"]["manifest"]
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_policy.py:52:19
+   |
+50 |     (OUTPUT_DIR / "ci_policy_resolved.json").write_text(
+51 |         json.dumps(policy, indent=2, sort_keys=True) + "
+52 | ", encoding="utf-8"
+   |                   ^
+53 |     )
+54 |     manifest_path = REPO_ROOT / policy["required_checks"]["manifest"]
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_policy.py:57:58
+   |
+55 |     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+56 |     (OUTPUT_DIR / "required_checks_resolved.json").write_text(
+57 |         json.dumps(manifest, indent=2, sort_keys=True) + "
+   |                                                          ^
+58 | ", encoding="utf-8"
+59 |     )
+   |
+
+invalid-syntax: Expected `,`, found name
+  --> scripts/ci_policy.py:58:14
+   |
+56 |     (OUTPUT_DIR / "required_checks_resolved.json").write_text(
+57 |         json.dumps(manifest, indent=2, sort_keys=True) + "
+58 | ", encoding="utf-8"
+   |              ^^^
+59 |     )
+60 |     return 0
+   |
+
+invalid-syntax: missing closing quote in string literal
+  --> scripts/ci_policy.py:58:19
+   |
+56 |     (OUTPUT_DIR / "required_checks_resolved.json").write_text(
+57 |         json.dumps(manifest, indent=2, sort_keys=True) + "
+58 | ", encoding="utf-8"
+   |                   ^
+59 |     )
+60 |     return 0
+   |
+
+F401 [*] `typing.Any` imported but unused
+ --> tests/test_required_checks_manifest.py:5:20
+  |
+3 | import json
+4 | from pathlib import Path
+5 | from typing import Any
+  |                    ^^^
+6 |
+7 | import yaml
+  |
+help: Remove unused import: `typing.Any`
+
+Found 16 errors.
+[*] 1 fixable with the `--fix` option.
