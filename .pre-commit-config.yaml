@@ -25,6 +25,13 @@ repos:
       - id: bandit
         args: [-r, src/, -ll]
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.3
+    hooks:
+      - id: gitleaks
+        args: [detect, --no-banner, --redact, --verbose, --source=., --config=.gitleaks.toml]
+
+
   - repo: local
     hooks:
       - id: pytest-smoke-tests

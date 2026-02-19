@@ -468,14 +468,19 @@ jobs:
         uses: ./.github/actions/pin-pip
       - name: Log pip version
         run: python -m pip --version
-      - run: python -m pip install -e ".[dev,test]"
       - name: security-gate
         run: make security
+      - name: generate-sbom
+        run: make sbom
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: security-report-${{ github.sha }}
-          path: artifacts/pip-audit.json
+          path: |
+            artifacts/security/gitleaks-report.json
+            artifacts/security/pip-audit.json
+            artifacts/security/bandit.json
+            artifacts/sbom/sbom.cdx.json
           if-no-files-found: ignore
           retention-days: 30
 

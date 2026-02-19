@@ -92,3 +92,17 @@ Removes caches and onboarding artifacts (`artifacts/demo.json`, checksum, reprod
 - Architecture depth: [docs/ARCHITECTURE.md](ARCHITECTURE.md)
 - Testing depth: [docs/TESTING.md](TESTING.md)
 - Reproducibility depth: [docs/REPRODUCIBILITY.md](REPRODUCIBILITY.md)
+
+
+## H) Security & SBOM (canonical)
+
+```bash
+make security
+make sbom
+```
+
+Expected security artifacts:
+- `artifacts/security/gitleaks-report.json`
+- `artifacts/security/pip-audit.json`
+- `artifacts/security/bandit.json`
+- `artifacts/sbom/sbom.cdx.json`
