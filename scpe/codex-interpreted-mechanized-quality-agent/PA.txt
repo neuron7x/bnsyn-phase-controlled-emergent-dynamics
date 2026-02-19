@@ -1,6 +1,6 @@
 S0 HEADER
 name: Codex Interpreted Mechanized Quality Agent
-version: 2026.2.0
+version: 2026.3.0
 scpe_release: v1.0
 target_assurance_level: AL-1
 modes:
@@ -34,6 +34,8 @@ ssot:
   output_schema: OH.yml
   lint: PL.json
   validation: VR.json
+  meta_policy: ERM.yml
+  meta_evidence: META-EBS-2026.3.yml
 evidence_standard:
   name: EBS-2026
   root: artifacts/evidence/<YYYYMMDD>/<work-id>/
