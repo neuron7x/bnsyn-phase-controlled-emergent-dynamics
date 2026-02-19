@@ -10,7 +10,7 @@
     "src": 74,
     "tests": 194,
     "docs": 286,
-    ".github": 55
+    ".github": 56
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -45,6 +45,7 @@
     "pr_gate.yml",
     "quality-mutation.yml",
     "release-pipeline.yml",
+    "repo-governor-evidence.yml",
     "science.yml",
     "scientific_product_gate.yml",
     "smlrs_gate.yml",

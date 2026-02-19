@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 38
-**Breakdown:** 27 primary + 11 reusable
+**Total workflows:** 39
+**Breakdown:** 28 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -102,6 +102,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `pr_gate.yml` | `pr-gate` | PR-gate | `pull_request, workflow_dispatch` | NO |
 | `quality-mutation.yml` | `quality-mutation` | long-running | `schedule, workflow_dispatch` | NO |
 | `release-pipeline.yml` | `release-pipeline` | long-running | `schedule, workflow_dispatch` | NO |
+| `repo-governor-evidence.yml` | `repo-governor-evidence` | long-running | `schedule, workflow_dispatch` | NO |
 | `science.yml` | `science` | long-running | `schedule, workflow_dispatch` | NO |
 | `smlrs_gate.yml` | `smlrs-gate` | long-running | `schedule, workflow_dispatch` | NO |
 | `scientific_product_gate.yml` | `scientific-product-gate` | PR-gate | `pull_request, push` | NO |

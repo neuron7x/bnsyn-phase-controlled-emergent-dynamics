@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -6,6 +6,12 @@ PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 SETUP_CMD ?= python -m pip install -e ".[dev,test]"
 TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+JUNIT_DIR ?= artifacts/tests
+JUNIT_FAST ?= $(JUNIT_DIR)/junit-fast.xml
+JUNIT_ALL ?= $(JUNIT_DIR)/junit-all.xml
+AFFECTED ?= 0
+PKG ?=
+SVC ?=
 
 setup:
 	python -V
@@ -14,7 +20,7 @@ setup:
 	python -m pip check
 
 install: setup
-	@echo "✅ install completed via setup"
+	@echo "install completed via setup"
 
 demo:
 	@python -m scripts.run_quickstart_demo
@@ -61,7 +67,8 @@ test:
 	$(MAKE) test-gate
 
 test-all:
-	python -m pytest -q
+	mkdir -p $(JUNIT_DIR)
+	python -m pytest -q --junitxml=$(JUNIT_ALL)
 
 test-integration:
 	python -m pytest -m "integration" -q
@@ -95,13 +102,13 @@ coverage-gate: coverage
 
 
 mutation:
-	@echo "🧬 Running mutation profile (reproducible local workflow step)..."
+	@echo "Running mutation profile (reproducible local workflow step)..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.run_mutation_pipeline
 
 mutation-ci:
-	@echo "🧬 Emitting mutation CI artifacts to local files..."
+	@echo "Emitting mutation CI artifacts to local files..."
 	@baseline_file=quality/mutation_baseline.json; \
 	output_file=.mutation_ci_output; \
 	summary_file=.mutation_ci_summary.md; \
@@ -110,27 +117,27 @@ mutation-ci:
 	GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
 
 mutation-baseline:
-	@echo "🧬 Running mutation testing to establish baseline..."
+	@echo "Running mutation testing to establish baseline..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@python -m scripts.generate_mutation_baseline
 
 mutation-check:
-	@echo "🧬 Running mutation testing against baseline..."
+	@echo "Running mutation testing against baseline..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
-	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline
 	@python -m scripts.run_mutation_pipeline
 	@python -m scripts.check_mutation_score --advisory
 
 mutation-check-strict:
-	@echo "🧬 Running mutation testing against baseline (STRICT MODE)..."
+	@echo "Running mutation testing against baseline (STRICT MODE)..."
 	@python -m pip install -e ".[test]" -q
 	@python -m pip install mutmut==2.4.5 -q
 	@rm -rf .mutmut-cache
-	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: ±{baseline['tolerance_delta']}%)\")"
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
 	@python -m scripts.validate_mutation_baseline
 	@python -m scripts.run_mutation_pipeline
 	@python -m scripts.check_mutation_score --strict
@@ -142,7 +149,7 @@ validate-api-maturity:
 	python -m scripts.validate_api_maturity
 
 quality: format lint mypy ssot security
-	@echo "✅ All quality checks passed"
+	@echo "All quality checks passed"
 
 format:
 	ruff format .
@@ -158,6 +165,8 @@ lint:
 
 mypy:
 	mypy src --strict --config-file pyproject.toml
+
+typecheck: mypy
 
 ssot:
 	python -m scripts.validate_bibliography
@@ -204,6 +213,15 @@ sbom:
 	mkdir -p $(dir $(SBOM_REPORT))
 	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
 
+profile:
+	python -m scripts.profile_kernels --help
+
+ci-artifacts: test-all flake-report
+	python -m scripts.write_evidence_manifest
+
+flake-report:
+	python -m scripts.compute_flake_report --junit $(JUNIT_ALL) --protocol .repo-governor/protocol.yml --output artifacts/flake-report.json --summary artifacts/flake-report.md
+
 cleanroom:
 	$(MAKE) clean
 	$(MAKE) install
@@ -212,7 +230,7 @@ cleanroom:
 	bnsyn --help
 
 check: format lint mypy coverage ssot security
-	@echo "✅ All checks passed"
+	@echo "All checks passed"
 
 docs:
 	python -m pip install -e ".[docs]"
@@ -224,7 +242,7 @@ build:
 	python -m build
 
 release: build release-readiness
-	@echo "✅ release artifacts and readiness report generated"
+	@echo "release artifacts and readiness report generated"
 
 release-readiness:
 	python -m scripts.release_readiness
