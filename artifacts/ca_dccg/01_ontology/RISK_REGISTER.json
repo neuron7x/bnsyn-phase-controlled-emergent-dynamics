@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "id": "RISK-001",
+      "class": "P1",
+      "title": "governance drift",
+      "mitigation": "ca_drift_detector"
+    }
+  ]
+}

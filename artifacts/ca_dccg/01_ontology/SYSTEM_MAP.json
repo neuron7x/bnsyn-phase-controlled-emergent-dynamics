@@ -1,0 +1,10 @@
+{
+  "modules": [
+    "src/bnsyn",
+    "scripts",
+    "tests"
+  ],
+  "flows": [
+    "policy->gates->artifacts"
+  ]
+}

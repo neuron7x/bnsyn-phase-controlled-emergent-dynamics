@@ -25,6 +25,8 @@ artifacts/*
 !artifacts/product/**
 !artifacts/merge_ready/
 !artifacts/merge_ready/**
+!artifacts/ca_dccg/
+!artifacts/ca_dccg/**
 benchmarks/baselines/
 !benchmarks/baselines/
 !benchmarks/baselines/golden_baseline.yml

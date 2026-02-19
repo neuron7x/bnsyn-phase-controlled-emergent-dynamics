@@ -44,6 +44,20 @@ jobs:
       - name: Run policy gates
         run: python -m scripts.ci_gate_runner
 
+      - name: Validate CA-DCCG governance contracts
+        run: python -m pytest tests/test_policy_schema_contract.py tests/test_ir_compilation_contract.py tests/test_drift_zero_contract.py tests/test_required_checks_manifest_contract.py tests/test_arb_rules_contract.py tests/test_adr_rfc_gate_mapping_contract.py -q
+
+      - name: Run CA-DCCG governance gate runner
+        run: python -m scripts.ca_governance_gate_runner
+
+      - name: Upload CA-DCCG artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ca-dccg-artifacts-${{ github.sha }}
+          path: artifacts/ca_dccg/**
+          if-no-files-found: error
+
       - name: Upload DE-TF artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
