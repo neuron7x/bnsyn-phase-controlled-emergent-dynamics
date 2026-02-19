@@ -8,9 +8,9 @@
   ],
   "counts": {
     "src": 74,
-    "tests": 187,
+    "tests": 193,
     "docs": 282,
-    ".github": 50
+    ".github": 55
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -48,6 +48,8 @@
     "science.yml",
     "scientific_product_gate.yml",
     "smlrs_gate.yml",
+    "sse-sdo-fhe-gate.yml",
+    "sse-sdo-max-gate.yml",
     "workflow-integrity.yml"
   ],
   "detected_tools": [

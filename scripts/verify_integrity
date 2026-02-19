@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main() -> int:
+    p = argparse.ArgumentParser()
+    p.add_argument("--sha256", action="store_true")
+    p.add_argument("--manifest", required=True)
+    args = p.parse_args()
+
+    manifest_path = ROOT / args.manifest
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    for entry in payload.get("file_sha256", []):
+        rel = entry["path"]
+        expected = entry["sha256"]
+        file_path = ROOT / rel
+        if not file_path.exists():
+            failures.append(f"missing:{rel}")
+            continue
+        got = _sha(file_path)
+        if got != expected:
+            failures.append(f"mismatch:{rel}")
+    print("OK" if not failures else json.dumps(failures))
+    return 0 if not failures else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

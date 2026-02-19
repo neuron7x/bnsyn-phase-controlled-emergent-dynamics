@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "python",
+    "-V"
+  ],
+  "cmd": "python -V",
+  "exit_code": 0,
+  "id": "hel0_python_20260219T081340Z",
+  "log": "artifacts/sse_sdo/logs/hel0_python_20260219T081340Z.log",
+  "log_sha256": "11127b908355ca05c3fd89fb6e7622ae40cd54419cb5d62508fd633c259ee313",
+  "timestamp_utc": "20260219T081340Z"
+}

@@ -1,0 +1,5 @@
+{
+  "workflows": [
+    "sse-sdo-fhe-gate.yml"
+  ]
+}

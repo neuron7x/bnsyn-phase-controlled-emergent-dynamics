@@ -1,0 +1,108 @@
+{
+  "file_sha256": [
+    {
+      "path": "artifacts/sse_sdo/00_meta/ENV_SNAPSHOT.json",
+      "sha256": "a36b017b96137b92b34579506babbe764016faa903de22ed32ea77dc065890ab"
+    },
+    {
+      "path": "artifacts/sse_sdo/00_meta/REPO_FINGERPRINT.json",
+      "sha256": "5253964ee5c69d8612ac114ab912274635ece9e40601dfcd82f074554474dd69"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/SUBSYSTEM_BOUNDARY.md",
+      "sha256": "1dc4096222139dd040898bbc013f9527c7af94732d34de7f5b0bc8be4a4ed87c"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/DEP_GRAPH.json",
+      "sha256": "a0eebfeecdf8909b2250aed439ef79fdddb3abf39792bef876255d1773e8f43f"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/INTERFACE_REGISTRY.json",
+      "sha256": "a3b1b34db9d006300ebfe53b22a6b08113ba2cdc707186fccbb3518c4364dd6a"
+    },
+    {
+      "path": "artifacts/sse_sdo/02_contracts/CONTRACTS.md",
+      "sha256": "91a0af7319df2a7ee6799bb04f5be370f2c01705d4cdf043e3d6001edaf27036"
+    },
+    {
+      "path": "artifacts/sse_sdo/02_contracts/CONTRACT_TEST_MAP.json",
+      "sha256": "6e73a2823c47970d49a09079df8ab6296cc49d25c4629ecb42b4d4e0363f53ba"
+    },
+    {
+      "path": "artifacts/sse_sdo/03_flags/FLAGS.md",
+      "sha256": "d56936ee96e06ae0b5e7b3c3580940f83cedad9585750ab6b3279ec71163db76"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/REQUIRED_CHECKS_MANIFEST.json",
+      "sha256": "05d63dc4fce7f75304c0b293b41931c337e1ae2f45b418cdd5f965b3925c5613"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/DRIFT_REPORT.json",
+      "sha256": "4b6480de473fd1b4a2660361de14edc4a9ee836cda7d23165bd720d4ecc7acd8"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/WORKFLOW_GRAPH.json",
+      "sha256": "7ea3f64379842e8ba9f12e15e194bbf5732e3c421c568eb28496f84c37824b58"
+    },
+    {
+      "path": "artifacts/sse_sdo/05_tests/TEST_PLAN.md",
+      "sha256": "d31a550a59144c778734255d582328b556c2658cdc260e5d00899555ec02767c"
+    },
+    {
+      "path": "artifacts/sse_sdo/06_perf/PERF_REPORT.md",
+      "sha256": "f9adcc5317826f3ded68829fb37fa7aee535fa2d29fddc83c4502912ab6702e2"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/CONTRADICTIONS.json",
+      "sha256": "8d213f32f774b3cb6987a04c31291136797161c385ba99d5fd1968f15bbaa6b6"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/quality.json",
+      "sha256": "81bd66e9269976072b1a9a0fefb25da576765c752dc759f9ca9cdd239018a0e6"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/EVIDENCE_INDEX.md",
+      "sha256": "b84f5c0d98956453a2c66e78e37e4cd3d642c2e0ddb42266b734b95ea4c644d9"
+    }
+  ],
+  "runtime": {
+    "platform": "Linux-6.12.47-x86_64-with-glibc2.39",
+    "python": "3.12.12"
+  },
+  "xrun_records": [
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081503Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T083353Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081353Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081406Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081506Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081737Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T083357Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081504Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T083354Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081504Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T083354Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081352Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081405Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081505Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081736Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T083355Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081352Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081405Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081505Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081736Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T083356Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_collect_20260219T081343Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_git_20260219T081343Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_pip_20260219T081341Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_python_20260219T081340Z.json"
+  ]
+}

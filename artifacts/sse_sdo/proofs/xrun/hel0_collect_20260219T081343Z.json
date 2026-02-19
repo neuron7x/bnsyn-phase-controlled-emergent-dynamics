@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "python",
+    "-m",
+    "pytest",
+    "-q",
+    "--collect-only"
+  ],
+  "cmd": "python -m pytest -q --collect-only",
+  "exit_code": 2,
+  "id": "hel0_collect_20260219T081343Z",
+  "log": "artifacts/sse_sdo/logs/hel0_collect_20260219T081343Z.log",
+  "log_sha256": "b28af32d85a2f78445770e85ab63ca48c2bc1476abe2dd3f29de0340094ee01c",
+  "timestamp_utc": "20260219T081343Z"
+}
