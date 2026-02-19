@@ -1,8 +1,8 @@
 name: repo-governor-evidence
 
 on:
-  pull_request:
-    branches: [main]
+  schedule:
+    - cron: "17 4 * * *"
   workflow_dispatch:
 
 permissions:
