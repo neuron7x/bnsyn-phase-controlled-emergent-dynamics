@@ -1,0 +1,64 @@
+scpe_release: v1.0
+schema_version: QM-2026.1
+quality_dimensions:
+  - id: "Q.LINT"
+    weight: 0.18
+    metrics:
+      - key: "lint.error_count"
+        source: "REPORTS/quality/lint.json"
+        better: "lower"
+        pass: "==0"
+  - id: "Q.TEST"
+    weight: 0.20
+    metrics:
+      - key: "tests.fail_count"
+        source: "REPORTS/quality/tests.json"
+        better: "lower"
+        pass: "==0"
+  - id: "Q.SEC"
+    weight: 0.20
+    metrics:
+      - key: "security.high_count"
+        source: "REPORTS/quality/security.json"
+        better: "lower"
+        pass: "==0"
+  - id: "Q.MAINT"
+    weight: 0.14
+    metrics:
+      - key: "complexity.p95"
+        source: "REPORTS/quality/maintainability.json"
+        better: "lower"
+        threshold_key: "complexity.p95_max"
+  - id: "Q.DUP"
+    weight: 0.10
+    metrics:
+      - key: "duplication.lines"
+        source: "REPORTS/quality/maintainability.json"
+        better: "lower"
+        threshold_key: "duplication.max_lines"
+  - id: "Q.DOC"
+    weight: 0.08
+    metrics:
+      - key: "docs.broken_links"
+        source: "REPORTS/quality/docs.json"
+        better: "lower"
+        pass: "==0"
+  - id: "Q.PERF"
+    weight: 0.10
+    metrics:
+      - key: "perf.regression_detected"
+        source: "REPORTS/quality/perf.json"
+        better: "lower"
+        pass: "==false"
+thresholds:
+  complexity.p95_max: 18
+  duplication.max_lines: 250
+score:
+  scale: "0..100"
+  aggregation: "weighted_pass_ratio"
+  pass_requirement:
+    min_score: 92
+    hard_blockers:
+      - "lint.error_count==0"
+      - "tests.fail_count==0"
+      - "security.high_count==0"

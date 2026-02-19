@@ -1,0 +1,91 @@
+scpe_release: v1.0
+schema_version: IM-2026.1
+purpose: "deterministic interpreted model: signals -> interpretation -> actions"
+signal_sources:
+  - id: "S.REPO.HEAD"
+    type: "command"
+    cmd: "git rev-parse HEAD"
+    output: "REPORTS/signals/git-head.txt"
+  - id: "S.REPO.DIFFSTAT"
+    type: "command"
+    cmd: "git diff --stat"
+    output: "REPORTS/signals/git-diffstat.txt"
+  - id: "S.CI.BASELINE"
+    type: "report"
+    input: "REPORTS/ci-baseline.json"
+  - id: "S.QUALITY.BASELINE"
+    type: "report"
+    input: "REPORTS/quality-baseline.json"
+  - id: "S.LINT"
+    type: "report"
+    input: "REPORTS/quality/lint.json"
+  - id: "S.TEST"
+    type: "report"
+    input: "REPORTS/quality/tests.json"
+  - id: "S.SEC"
+    type: "report"
+    input: "REPORTS/quality/security.json"
+  - id: "S.PERF"
+    type: "report"
+    input: "REPORTS/quality/perf.json"
+interpreter:
+  deterministic_rules:
+    - id: "R.IM.001"
+      if: "missing_any([S.CI.BASELINE,S.QUALITY.BASELINE])"
+      then:
+        interpretation:
+          status: "UNKNOWN"
+          reason: "missing baseline evidence"
+        required_instrumentation:
+          - "emit_quality_reports"
+    - id: "R.IM.010"
+      if: "metric('lint.error_count') > 0"
+      then:
+        interpretation:
+          status: "FAIL"
+          category: "lint"
+          priority: 90
+    - id: "R.IM.020"
+      if: "metric('tests.fail_count') > 0"
+      then:
+        interpretation:
+          status: "FAIL"
+          category: "tests"
+          priority: 100
+    - id: "R.IM.030"
+      if: "metric('security.high_count') > 0"
+      then:
+        interpretation:
+          status: "FAIL"
+          category: "security"
+          priority: 100
+    - id: "R.IM.040"
+      if: "metric('complexity.p95') > threshold('complexity.p95_max')"
+      then:
+        interpretation:
+          status: "FAIL"
+          category: "complexity"
+          priority: 70
+    - id: "R.IM.050"
+      if: "metric('duplication.lines') > threshold('duplication.max_lines')"
+      then:
+        interpretation:
+          status: "FAIL"
+          category: "duplication"
+          priority: 60
+action_mapping:
+  - category: "tests"
+    actions: ["A.FIX.TESTS.MINIMAL", "A.INSTRUMENT.CI"]
+  - category: "security"
+    actions: ["A.FIX.SEC.MINIMAL", "A.INSTRUMENT.SEC.REPORTS"]
+  - category: "lint"
+    actions: ["A.FIX.LINT.MINIMAL", "A.INSTRUMENT.LINT.REPORTS"]
+  - category: "complexity"
+    actions: ["A.REDUCE.COMPLEXITY.TARGETED"]
+  - category: "duplication"
+    actions: ["A.REFACTOR.DEDUP.TARGETED"]
+output_contract:
+  path: "REPORTS/interpretation.json"
+  schema:
+    required_fields: ["status","items","instrumentation_required"]
+    item_fields: ["category","priority","metric","value","threshold","gate_ids","recommended_actions"]
