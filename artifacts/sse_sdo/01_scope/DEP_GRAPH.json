@@ -1,0 +1,17 @@
+{
+  "edges": [],
+  "nodes": [
+    ".github/sse_sdo_max.yml",
+    ".github/workflows/sse-sdo-max-gate.yml",
+    "scripts/sse_drift_check.py",
+    "scripts/sse_gate_runner.py",
+    "scripts/sse_inventory.py",
+    "scripts/sse_policy_load.py",
+    "scripts/sse_proof_index.py",
+    "tests/test_policy_schema_contract.py",
+    "tests/test_policy_to_execution_contract.py",
+    "tests/test_required_checks_contract.py",
+    "tests/test_ssot_alignment_contract.py",
+    "tests/test_workflow_integrity_contract.py"
+  ]
+}

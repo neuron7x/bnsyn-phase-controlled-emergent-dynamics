@@ -48,6 +48,7 @@
     "science.yml",
     "scientific_product_gate.yml",
     "smlrs_gate.yml",
+    "sse-sdo-max-gate.yml",
     "workflow-integrity.yml"
   ],
   "detected_tools": [

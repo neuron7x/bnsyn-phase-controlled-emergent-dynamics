@@ -1,0 +1,52 @@
+{
+  "interfaces": [
+    {
+      "exists": true,
+      "path": ".github/sse_sdo_max.yml"
+    },
+    {
+      "exists": true,
+      "path": ".github/workflows/sse-sdo-max-gate.yml"
+    },
+    {
+      "exists": true,
+      "path": "scripts/sse_drift_check.py"
+    },
+    {
+      "exists": true,
+      "path": "scripts/sse_gate_runner.py"
+    },
+    {
+      "exists": true,
+      "path": "scripts/sse_inventory.py"
+    },
+    {
+      "exists": true,
+      "path": "scripts/sse_policy_load.py"
+    },
+    {
+      "exists": true,
+      "path": "scripts/sse_proof_index.py"
+    },
+    {
+      "exists": true,
+      "path": "tests/test_policy_schema_contract.py"
+    },
+    {
+      "exists": true,
+      "path": "tests/test_policy_to_execution_contract.py"
+    },
+    {
+      "exists": true,
+      "path": "tests/test_required_checks_contract.py"
+    },
+    {
+      "exists": true,
+      "path": "tests/test_ssot_alignment_contract.py"
+    },
+    {
+      "exists": true,
+      "path": "tests/test_workflow_integrity_contract.py"
+    }
+  ]
+}
