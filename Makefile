@@ -189,7 +189,7 @@ security:
 	python -m pip install --no-deps -e .
 	mkdir -p $(SECURITY_ARTIFACT_DIR)
 	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=. --config=.gitleaks.toml --report-format=json --report-path=$(SECURITY_GITLEAKS_REPORT)
-	python -m pip_audit --desc --format json --output $(SECURITY_REPORT)
+	python -m pip_audit --desc --format json --requirement requirements-lock.txt --output $(SECURITY_REPORT)
 	python -m bandit -r src/ -ll -f json -o $(SECURITY_SAST_REPORT)
 
 SBOM_REPORT ?= artifacts/sbom/sbom.cdx.json
