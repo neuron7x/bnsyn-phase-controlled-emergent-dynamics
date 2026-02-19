@@ -38,6 +38,7 @@
     "dsio_gate.yml",
     "formal-coq.yml",
     "formal-tla.yml",
+    "ghtpo-pr.yml",
     "launch-gate.yml",
     "math-quality-gate.yml",
     "perfection-gate.yml",

@@ -5,3 +5,5 @@
 /bibliography/ @neuron7x
 /.github/workflows/ @neuron7x
 /scripts/ @neuron7x
+* @owner
+.github/ @security-team

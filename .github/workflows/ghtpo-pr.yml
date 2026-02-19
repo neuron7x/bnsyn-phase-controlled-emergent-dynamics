@@ -1,0 +1,40 @@
+name: ghtpo-pr
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ghtpo-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Run GHTPO gate runner
+        run: python -m scripts.ghtpo.gate_runner --mode pr
+      - name: Upload GHTPO artifacts
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: ghtpo-artifacts
+          path: artifacts/ghtpo/**
+      - name: Enforce PASS verdict
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          quality = json.loads(Path('artifacts/ghtpo/quality.json').read_text(encoding='utf-8'))
+          if quality.get('verdict') != 'PASS':
+              raise SystemExit('GHTPO quality verdict != PASS')
+          PY
