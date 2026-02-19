@@ -7,12 +7,14 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   scientific-product:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: write
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -64,8 +66,11 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: scientific-product-artifacts
+          name: scientific-product-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             artifacts/context_compressor/
             artifacts/scientific_product/
             artifacts/operational_readiness/
+          if-no-files-found: warn
+          overwrite: true
+          retention-days: 30

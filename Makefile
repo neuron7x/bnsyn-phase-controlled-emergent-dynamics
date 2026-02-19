@@ -1,4 +1,4 @@
-.PHONY: install setup demo dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-gate test-determinism test-validation test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy ssot security sbom cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -18,6 +18,12 @@ install: setup
 
 demo:
 	@python -m scripts.run_quickstart_demo
+
+reproduce:
+	python -m scripts.run_quickstart_demo
+	python -m scripts.write_reproduce_manifest
+	python -m scripts.verify_reproducible_artifacts --spec docs/proof/repro_spec.json --runs 2 --report artifacts/reproducibility_report.json
+
 
 dev-setup:
 	python -m pip install --upgrade pip setuptools wheel
@@ -53,6 +59,15 @@ wheelhouse-report: wheelhouse-validate
 
 test:
 	$(MAKE) test-gate
+
+test-all:
+	python -m pytest -q
+
+test-integration:
+	python -m pytest -m "integration" -q
+
+test-e2e:
+	python -m pytest -m "e2e" -q
 
 test-gate:
 	$(TEST_CMD)
@@ -241,6 +256,7 @@ clean:
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	rm -f .mutmut-cache
 	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+	rm -f artifacts/demo.json artifacts/demo.sha256 artifacts/reproduce_manifest.json artifacts/reproducibility_report.json
 	@echo "Cleaned temporary files"
 
 
