@@ -178,17 +178,21 @@ validate-claims-coverage:
 docs-evidence:
 	python -m scripts.generate_evidence_coverage
 
-SECURITY_REPORT ?= artifacts/pip-audit.json
+SECURITY_ARTIFACT_DIR ?= artifacts/security
+SECURITY_GITLEAKS_REPORT ?= $(SECURITY_ARTIFACT_DIR)/gitleaks-report.json
+SECURITY_REPORT ?= $(SECURITY_ARTIFACT_DIR)/pip-audit.json
+SECURITY_SAST_REPORT ?= $(SECURITY_ARTIFACT_DIR)/bandit.json
 
 security:
 	python -m pip install --upgrade pip==26.0.1
-	python -m pip install -e ".[dev]"
-	mkdir -p artifacts
-	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=.
+	python -m pip install --require-hashes -r requirements-lock.txt
+	python -m pip install --no-deps -e .
+	mkdir -p $(SECURITY_ARTIFACT_DIR)
+	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=. --config=.gitleaks.toml --report-format=json --report-path=$(SECURITY_GITLEAKS_REPORT)
 	python -m pip_audit --desc --format json --output $(SECURITY_REPORT)
-	python -m bandit -r src/ -ll
+	python -m bandit -r src/ -ll -f json -o $(SECURITY_SAST_REPORT)
 
-SBOM_REPORT ?= artifacts/prod_ready/reports/sbom.cdx.json
+SBOM_REPORT ?= artifacts/sbom/sbom.cdx.json
 
 sbom:
 	python -m pip install cyclonedx-bom==7.1.0

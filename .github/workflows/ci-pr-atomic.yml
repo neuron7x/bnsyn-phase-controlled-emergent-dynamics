@@ -475,7 +475,10 @@ jobs:
         if: always()
         with:
           name: security-report-${{ github.sha }}
-          path: artifacts/pip-audit.json
+          path: |
+            artifacts/security/gitleaks-report.json
+            artifacts/security/pip-audit.json
+            artifacts/security/bandit.json
           if-no-files-found: ignore
           retention-days: 30
 
