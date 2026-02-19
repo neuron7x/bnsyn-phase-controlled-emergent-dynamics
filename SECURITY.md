@@ -29,7 +29,7 @@ The security gate is designed to run without repository secrets.
 - Secret scanning uses pinned `gitleaks` via `scripts/ensure_gitleaks.py` and `.gitleaks.toml`.
 - Dependency vulnerability audit uses `pip-audit` JSON output.
 - Baseline SAST uses Bandit JSON output.
-- SBOM generation uses CycloneDX JSON output.
+- SBOM generation uses CycloneDX JSON output, with `cyclonedx-bom` installed from `requirements-sbom-lock.txt` via hash-locked install.
 
 ## Canonical Local Commands
 
