@@ -17,6 +17,25 @@ def eval_pass(expr, ctx):
         return ctx["value"] is False
     raise SystemExit(f"unsupported pass expr: {expr}")
 
+def eval_hard_blocker(expr, observed):
+    if "==" not in expr:
+        raise SystemExit(f"unsupported hard blocker expr: {expr}")
+    key, raw_expected = expr.split("==", 1)
+    key = key.strip()
+    expected_token = raw_expected.strip().lower()
+    if expected_token == "false":
+        expected = False
+    elif expected_token == "true":
+        expected = True
+    else:
+        try:
+            expected = int(expected_token)
+        except ValueError as exc:
+            raise SystemExit(f"unsupported hard blocker value: {raw_expected}") from exc
+    if key not in observed:
+        return False
+    return observed[key] == expected
+
 ap = argparse.ArgumentParser()
 ap.add_argument("qm")
 ap.add_argument("--out", required=True)
@@ -28,6 +47,7 @@ dims_out = []
 hard_blockers = []
 score_num = 0.0
 score_den = 0.0
+observed_metrics = {}
 
 for dim in qm["quality_dimensions"]:
     w = float(dim["weight"])
@@ -39,6 +59,7 @@ for dim in qm["quality_dimensions"]:
         val = get_metric(data, m["key"])
         if val is None:
             raise SystemExit(f"missing metric {m['key']} in {src}")
+        observed_metrics[m["key"]] = val
         thr = None
         passed = None
         if "pass" in m:
@@ -58,7 +79,7 @@ score = int(round(100.0 * (score_num / score_den))) if score_den > 0 else 0
 
 hb = qm["score"]["pass_requirement"]["hard_blockers"]
 for e in hb:
-    hard_blockers.append({"expr": e, "passed": True})
+    hard_blockers.append({"expr": e, "passed": eval_hard_blocker(e, observed_metrics)})
 
 out = {
   "score": score,
