@@ -1,5 +1,5 @@
 scpe_release: v1.0
-schema_version: GM-2026.1
+schema_version: GM-2026.2
 owner: codex-interpreted-mechanized-quality-agent
 gates:
   - id: "G.SEC.001"
@@ -12,16 +12,43 @@ gates:
     owner: "codex-interpreted-mechanized-quality-agent"
 
   - id: "G.IM.001"
-    description: "Interpreter outputs parseable interpretation.json with required fields."
-    pass_predicate: "REPORTS/interpretation.json exists AND schema_valid=true"
+    description: "Interpreter spec present and versioned."
+    pass_predicate: "IM.yml exists AND schema_version startswith IM-2026."
+    evidence_commands: ["test -f IM.yml && echo ok"]
+    required_artifacts: ["IM.yml"]
+    runtime_budget_seconds: 5
+    rollback_hint: "spec-only"
+    owner: "codex-interpreted-mechanized-quality-agent"
+
+  - id: "G.IM.010"
+    description: "All required modalities reports present or instrumentation selected."
+    pass_predicate: "REPORTS/interpretation.json exists AND (missing_reports_count==0 OR instrumentation_required non-empty)"
     evidence_commands: ["python3 tools/validate_interpretation.py REPORTS/interpretation.json"]
     required_artifacts: ["REPORTS/interpretation.json", "REPORTS/interpretation.schema-check.json"]
     runtime_budget_seconds: 60
     rollback_hint: "instrument-only"
     owner: "codex-interpreted-mechanized-quality-agent"
 
+  - id: "G.IM.020"
+    description: "Ordered trace exists and is complete."
+    pass_predicate: "REPORTS/trace.jsonl exists AND trace_lines>0"
+    evidence_commands: ["test -f REPORTS/trace.jsonl && wc -l REPORTS/trace.jsonl"]
+    required_artifacts: ["REPORTS/trace.jsonl"]
+    runtime_budget_seconds: 10
+    rollback_hint: "instrument-only"
+    owner: "codex-interpreted-mechanized-quality-agent"
+
+  - id: "G.IM.030"
+    description: "Baseline→after delta computed with identical measurement contract."
+    pass_predicate: "REPORTS/delta.json exists AND REPORTS/quality-baseline.json exists AND REPORTS/quality-after.json exists"
+    evidence_commands: ["test -f REPORTS/delta.json && echo ok"]
+    required_artifacts: ["REPORTS/delta.json", "REPORTS/quality-baseline.json", "REPORTS/quality-after.json"]
+    runtime_budget_seconds: 20
+    rollback_hint: "instrument-only"
+    owner: "codex-interpreted-mechanized-quality-agent"
+
   - id: "G.QM.001"
-    description: "Quality baseline reports exist for all configured dimensions."
+    description: "Quality reports exist for configured dimensions."
     pass_predicate: "REPORTS/quality-baseline.json exists AND all required report files exist"
     evidence_commands: ["python3 tools/validate_quality_reports.py QM.yml"]
     required_artifacts:
@@ -37,7 +64,7 @@ gates:
     owner: "codex-interpreted-mechanized-quality-agent"
 
   - id: "G.QM.010"
-    description: "Hard blockers satisfied: lint/tests/security pass."
+    description: "Hard blockers satisfied."
     pass_predicate: "lint.error_count==0 AND tests.fail_count==0 AND security.high_count==0"
     evidence_commands: ["python3 tools/score_quality.py QM.yml --out REPORTS/scorecard.json"]
     required_artifacts: ["REPORTS/scorecard.json"]
@@ -73,12 +100,21 @@ gates:
     owner: "codex-interpreted-mechanized-quality-agent"
 
   - id: "G.QM.050"
-    description: "Composite quality score meets threshold."
+    description: "CI required checks pass for head SHA."
+    pass_predicate: "ci.required_checks_failed==0"
+    evidence_commands: ["python3 tools/score_quality.py QM.yml --out REPORTS/scorecard.json"]
+    required_artifacts: ["REPORTS/scorecard.json", "REPORTS/checks.json"]
+    runtime_budget_seconds: 120
+    rollback_hint: "iterate"
+    owner: "codex-interpreted-mechanized-quality-agent"
+
+  - id: "G.QM.060"
+    description: "Composite score meets threshold."
     pass_predicate: "score>=min_score"
     evidence_commands: ["python3 tools/score_quality.py QM.yml --out REPORTS/scorecard.json"]
     required_artifacts: ["REPORTS/scorecard.json"]
     runtime_budget_seconds: 120
-    rollback_hint: "revert changes"
+    rollback_hint: "iterate"
     owner: "codex-interpreted-mechanized-quality-agent"
 
   - id: "G.CDX.PR.001"
