@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-import json, os, sys, yaml
+import json
+import os
+import sys
+
+import yaml
 
 qm = yaml.safe_load(open(sys.argv[1], "r", encoding="utf-8"))
 missing = []

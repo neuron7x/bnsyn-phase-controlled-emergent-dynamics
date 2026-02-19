@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-import argparse, json, os, sys, yaml
+import argparse
+import json
+import os
+import sys
+
+import yaml
 
 def jload(p):
     return json.load(open(p, "r", encoding="utf-8"))

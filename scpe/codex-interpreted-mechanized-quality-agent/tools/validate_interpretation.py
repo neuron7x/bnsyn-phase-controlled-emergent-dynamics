@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import json, sys
+import json
+import sys
 
 REQ = ["status","items","instrumentation_required"]
 ITEM_REQ = ["category","priority","metric","value","threshold","gate_ids","recommended_actions"]

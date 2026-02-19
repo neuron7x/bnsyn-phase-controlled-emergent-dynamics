@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-import argparse, hashlib, json, pathlib, re, time
+import argparse
+import hashlib
+import json
+import pathlib
+import re
+import time
 
 def sha256_file(path: pathlib.Path) -> str:
     h = hashlib.sha256()
