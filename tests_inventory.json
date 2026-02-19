@@ -3,10 +3,10 @@
     "determinism": 1,
     "math_physics": 2,
     "mutation": 5,
-    "pytest": 128,
+    "pytest": 134,
     "workflow_integrity": 2
   },
-  "flaky_indicator_count": 85,
+  "flaky_indicator_count": 89,
   "generated_by": "python -m scripts.generate_tests_inventory",
   "reusable_workflow_jobs": [
     "_reusable_benchmarks.yml",
@@ -19,7 +19,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml"
   ],
-  "test_count": 138,
+  "test_count": 144,
   "tests": [
     {
       "category": "pytest",
@@ -39,6 +39,13 @@
       "category": "pytest",
       "entropy_signals": [],
       "path": "tests/test_adex_smoke.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_adr_rfc_gate_mapping_contract.py"
     },
     {
       "category": "pytest",
@@ -69,6 +76,13 @@
       "category": "pytest",
       "entropy_signals": [],
       "path": "tests/test_api_surface_reexports.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_arb_rules_contract.py"
     },
     {
       "category": "pytest",
@@ -262,6 +276,11 @@
     {
       "category": "pytest",
       "entropy_signals": [],
+      "path": "tests/test_drift_zero_contract.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [],
       "path": "tests/test_dt_invariance.py"
     },
     {
@@ -385,6 +404,11 @@
         "filesystem_io"
       ],
       "path": "tests/test_interactive_smoke.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [],
+      "path": "tests/test_ir_compilation_contract.py"
     },
     {
       "category": "pytest",
@@ -563,6 +587,13 @@
       "entropy_signals": [
         "filesystem_io"
       ],
+      "path": "tests/test_policy_schema_contract.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
       "path": "tests/test_pr_description_policy_template.py"
     },
     {
@@ -655,6 +686,13 @@
         "filesystem_io"
       ],
       "path": "tests/test_required_checks_manifest.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
+      "path": "tests/test_required_checks_manifest_contract.py"
     },
     {
       "category": "pytest",
