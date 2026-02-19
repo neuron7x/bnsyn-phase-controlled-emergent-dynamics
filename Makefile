@@ -5,7 +5,7 @@ WHEELHOUSE_DIR ?= wheelhouse
 PYTHON_VERSION ?= 3.11
 WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
 SETUP_CMD ?= python -m pip install -e ".[dev,test]"
-TEST_CMD ?= python -m pytest -m "not (validation or property or e2e)" -q
+TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
 
 setup:
 	python -V

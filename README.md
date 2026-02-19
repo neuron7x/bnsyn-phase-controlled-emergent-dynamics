@@ -40,3 +40,12 @@ python -m pip install -e .
 python -m bnsyn --help
 bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
 ```
+
+
+## Test commands
+
+```bash
+make test-gate
+make test
+make test-all
+```
