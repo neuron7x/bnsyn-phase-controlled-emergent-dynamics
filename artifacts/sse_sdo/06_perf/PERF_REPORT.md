@@ -1,3 +1,3 @@
 # PERF_REPORT
 
-Baseline execution recorded for gate runner scripts.
+No perf-sensitive code paths changed; baseline required=true retained.

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "status",
+    "--porcelain"
+  ],
+  "cmd": "git status --porcelain",
+  "exit_code": 0,
+  "id": "hel0_git_20260219T081343Z",
+  "log": "artifacts/sse_sdo/logs/hel0_git_20260219T081343Z.log",
+  "log_sha256": "ac125517b73109761fc13a42c0521b9aede9116d1cfbfae0fca14565f452c99a",
+  "timestamp_utc": "20260219T081343Z"
+}

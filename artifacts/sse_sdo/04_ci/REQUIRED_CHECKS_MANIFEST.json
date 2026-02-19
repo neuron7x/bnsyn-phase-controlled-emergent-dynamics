@@ -1,5 +1,5 @@
 {
   "required_checks": [
-    "sse-sdo-max-gate"
+    "sse-sdo-fhe-gate"
   ]
 }

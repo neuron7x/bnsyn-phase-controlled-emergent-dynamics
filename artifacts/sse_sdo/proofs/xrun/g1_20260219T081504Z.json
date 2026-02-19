@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "scripts/sse_policy_load",
+    ".github/sse_sdo_fhe.yml"
+  ],
+  "cmd": "scripts/sse_policy_load .github/sse_sdo_fhe.yml",
+  "exit_code": 0,
+  "id": "g1_20260219T081504Z",
+  "log": "artifacts/sse_sdo/logs/g1_20260219T081504Z.log",
+  "log_sha256": "a12b7cb43c9d9134b5bb1b35e9096b66775d9e92e7611d1cc92b02edd6782a87",
+  "timestamp_utc": "20260219T081504Z"
+}

@@ -1,0 +1,21 @@
+ M scripts/sse_drift_check.py
+ M scripts/sse_gate_runner.py
+ M scripts/sse_inventory.py
+ M scripts/sse_policy_load.py
+ M scripts/sse_proof_index.py
+ M tests/test_policy_schema_contract.py
+ M tests/test_policy_to_execution_contract.py
+ M tests/test_required_checks_contract.py
+ M tests/test_sse_sdo_scaffold.py
+ M tests/test_ssot_alignment_contract.py
+ M tests/test_workflow_integrity_contract.py
+?? .github/sse_sdo_fhe.yml
+?? .github/workflows/sse-sdo-fhe-gate.yml
+?? scripts/sse_drift_check
+?? scripts/sse_gate_runner
+?? scripts/sse_inventory
+?? scripts/sse_policy_load
+?? scripts/sse_proof_index
+?? scripts/sse_safety_gate
+?? scripts/verify_integrity
+?? scripts/xrun

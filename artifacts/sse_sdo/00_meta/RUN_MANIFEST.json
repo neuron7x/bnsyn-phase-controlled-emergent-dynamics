@@ -1,1 +1,102 @@
-{"status":"ok"}
+{
+  "file_sha256": [
+    {
+      "path": "artifacts/sse_sdo/00_meta/ENV_SNAPSHOT.json",
+      "sha256": "a36b017b96137b92b34579506babbe764016faa903de22ed32ea77dc065890ab"
+    },
+    {
+      "path": "artifacts/sse_sdo/00_meta/REPO_FINGERPRINT.json",
+      "sha256": "5491c2297d594bd958899a0e607e76c0e2a7781d8f1f85348558069e1e3a7123"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/SUBSYSTEM_BOUNDARY.md",
+      "sha256": "1dc4096222139dd040898bbc013f9527c7af94732d34de7f5b0bc8be4a4ed87c"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/DEP_GRAPH.json",
+      "sha256": "96d849b39e3df9a2c42c0e8a23cc159fdebf75dcd6141b3816e58c62452844ae"
+    },
+    {
+      "path": "artifacts/sse_sdo/01_scope/INTERFACE_REGISTRY.json",
+      "sha256": "7ae5bf7ea7ef949f345281855766972dbb9bde4a1a46fd43b64da8e047a5839e"
+    },
+    {
+      "path": "artifacts/sse_sdo/02_contracts/CONTRACTS.md",
+      "sha256": "91a0af7319df2a7ee6799bb04f5be370f2c01705d4cdf043e3d6001edaf27036"
+    },
+    {
+      "path": "artifacts/sse_sdo/02_contracts/CONTRACT_TEST_MAP.json",
+      "sha256": "e4e32d4816c7a4dc84bbd1baefb87d9d0c3912dc89318d1af814c38ced1fcb2f"
+    },
+    {
+      "path": "artifacts/sse_sdo/03_flags/FLAGS.md",
+      "sha256": "d56936ee96e06ae0b5e7b3c3580940f83cedad9585750ab6b3279ec71163db76"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/REQUIRED_CHECKS_MANIFEST.json",
+      "sha256": "05d63dc4fce7f75304c0b293b41931c337e1ae2f45b418cdd5f965b3925c5613"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/DRIFT_REPORT.json",
+      "sha256": "4b6480de473fd1b4a2660361de14edc4a9ee836cda7d23165bd720d4ecc7acd8"
+    },
+    {
+      "path": "artifacts/sse_sdo/04_ci/WORKFLOW_GRAPH.json",
+      "sha256": "7ea3f64379842e8ba9f12e15e194bbf5732e3c421c568eb28496f84c37824b58"
+    },
+    {
+      "path": "artifacts/sse_sdo/05_tests/TEST_PLAN.md",
+      "sha256": "d31a550a59144c778734255d582328b556c2658cdc260e5d00899555ec02767c"
+    },
+    {
+      "path": "artifacts/sse_sdo/06_perf/PERF_REPORT.md",
+      "sha256": "f9adcc5317826f3ded68829fb37fa7aee535fa2d29fddc83c4502912ab6702e2"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/CONTRADICTIONS.json",
+      "sha256": "8d213f32f774b3cb6987a04c31291136797161c385ba99d5fd1968f15bbaa6b6"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/quality.json",
+      "sha256": "c43926e48862841f152ef8036684955c1ad6f7b249e488ac511a3c343b359498"
+    },
+    {
+      "path": "artifacts/sse_sdo/07_quality/EVIDENCE_INDEX.md",
+      "sha256": "6495d96bd3035aced671d8b625381809deb67a9dccd121112b400ac8a56fe1c8"
+    }
+  ],
+  "runtime": {
+    "platform": "Linux-6.12.47-x86_64-with-glibc2.39",
+    "python": "3.12.12"
+  },
+  "xrun_records": [
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081503Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g0_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081353Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081406Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081506Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g11_20260219T081737Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081504Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g1_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081351Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081404Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081504Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g2_20260219T081735Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081352Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081405Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081505Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g3_20260219T081736Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081352Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081405Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081505Z.json",
+    "artifacts/sse_sdo/proofs/xrun/g4_20260219T081736Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_collect_20260219T081343Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_git_20260219T081343Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_pip_20260219T081341Z.json",
+    "artifacts/sse_sdo/proofs/xrun/hel0_python_20260219T081340Z.json"
+  ]
+}

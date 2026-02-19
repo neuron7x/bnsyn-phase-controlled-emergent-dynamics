@@ -1,4 +1,4 @@
 # CONTRACTS
 
-- policy schema contract
-- policy-to-execution contract
+- policy schema must reject unknown keys
+- policies must be bound to executable scripts/tests/workflow

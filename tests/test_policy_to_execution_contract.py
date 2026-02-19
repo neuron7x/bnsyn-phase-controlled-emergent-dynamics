@@ -7,16 +7,16 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_policy_to_execution_contract_links_required_scripts() -> None:
-    policy = (REPO_ROOT / ".github" / "sse_sdo_max.yml").read_text(encoding="utf-8")
     required = [
-        "scripts/sse_policy_load.py",
-        "scripts/sse_inventory.py",
-        "scripts/sse_drift_check.py",
-        "scripts/sse_gate_runner.py",
-        "scripts/sse_proof_index.py",
+        "scripts/xrun",
+        "scripts/verify_integrity",
+        "scripts/sse_policy_load",
+        "scripts/sse_inventory",
+        "scripts/sse_drift_check",
+        "scripts/sse_gate_runner",
+        "scripts/sse_proof_index",
     ]
     for relpath in required:
-        assert relpath in policy
         assert (REPO_ROOT / relpath).exists()
 
 

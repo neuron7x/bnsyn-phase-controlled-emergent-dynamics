@@ -8,19 +8,18 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_sse_sdo_max_config_has_required_fields() -> None:
-    config_path = ROOT / ".github" / "sse_sdo_max.yml"
+def test_sse_sdo_fhe_config_has_required_fields() -> None:
+    config_path = ROOT / ".github" / "sse_sdo_fhe.yml"
     payload = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
-    assert payload["protocol"] == "SSE-SDO-MAX-2026.05"
+    assert payload["protocol"] == "SSE-SDO-FHE-2026.06"
     assert payload["toolchain"]["python"] == "3.11"
     assert payload["determinism"]["seed_required"] is True
-    assert payload["evidence"]["anchors"] == "§REF"
-    assert payload["tests"]["coverage"]["line_pct_min"] == 0.90
-    assert payload["ci"]["workflow_integrity"] is True
+    assert payload["evidence"]["required_ratio_P0"] == 1.0
+    assert payload["policy"]["law_without_police_forbidden"] is True
 
 
-def test_sse_sdo_max_artifact_tree_minimum_files_exist() -> None:
+def test_sse_sdo_fhe_artifact_tree_minimum_files_exist() -> None:
     required_paths = [
         "artifacts/sse_sdo/00_meta/REPO_FINGERPRINT.json",
         "artifacts/sse_sdo/00_meta/ENV_SNAPSHOT.json",
@@ -45,6 +44,6 @@ def test_sse_sdo_max_artifact_tree_minimum_files_exist() -> None:
         assert (ROOT / relpath).exists(), relpath
 
     quality = json.loads((ROOT / "artifacts/sse_sdo/07_quality/quality.json").read_text(encoding="utf-8"))
-    assert quality["protocol"] == "SSE-SDO-MAX-2026.05"
+    assert quality["protocol"] == "SSE-SDO-FHE-2026.06"
     assert quality["verdict"] == "PASS"
     assert quality["contradictions"] == 0

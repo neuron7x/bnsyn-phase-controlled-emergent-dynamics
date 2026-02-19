@@ -1,0 +1,1 @@
+{"argv": ["python", "-m", "pip", "--version"], "cmd": "python -m pip --version", "exit_code": 0, "id": "hel0_pip_20260219T081341Z", "log": "artifacts/sse_sdo/logs/hel0_pip_20260219T081341Z.log", "log_sha256": "0c2046eb1a828f150eee5a52ed6c67b9fcac2a047d64cdcae3f79e3fe7af7e85", "timestamp_utc": "20260219T081341Z"}

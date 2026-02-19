@@ -8,31 +8,26 @@ from typing import Any
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = ROOT / ".github" / "sse_sdo_max.yml"
+DEFAULT_POLICY_PATH = ROOT / ".github" / "sse_sdo_fhe.yml"
 
 SCHEMA: dict[str, Any] = {
     "protocol": str,
     "toolchain": {"python": str, "pip": str},
     "determinism": {
-        "stable_ordering_required": (int, float),
+        "stable_ordering_required": bool,
         "seed_required": bool,
         "nondeterminism_whitelist": list,
     },
-    "evidence": {"required_ratio_P0": (int, float), "anchors": str},
-    "scope": {"subsystem_paths": list},
-    "tests": {
-        "coverage": {"line_pct_min": (int, float), "branch_pct_min": (int, float)},
-        "required_suites": list,
-        "optional_suites": list,
-    },
-    "perf": {"baseline_required": bool, "regression_threshold_pct": (int, float)},
-    "flags": {"required_for": list},
+    "evidence": {"required_ratio_P0": (int, float)},
+    "policy": {"law_without_police_forbidden": bool},
     "ci": {
         "required_checks_contract": bool,
         "pinned_actions": bool,
         "least_privilege": bool,
-        "workflow_integrity": bool,
     },
+    "tests": {"required_suites": list},
+    "perf": {"baseline_required": bool, "regression_threshold_pct": (int, float)},
+    "flags": {"required_for": list},
 }
 
 
@@ -49,33 +44,29 @@ def _validate_strict(payload: Any, schema: Any, path: str = "root") -> None:
         for key, sub in schema.items():
             _validate_strict(payload[key], sub, f"{path}.{key}")
         return
-
     if isinstance(schema, tuple):
         if not isinstance(payload, schema):
             raise ValueError(f"{path}: expected {schema}, got {type(payload)}")
         return
-
     if not isinstance(payload, schema):
         raise ValueError(f"{path}: expected {schema}, got {type(payload)}")
 
 
-def load_and_validate(path: Path = POLICY_PATH) -> dict[str, Any]:
+def load_and_validate(path: Path = DEFAULT_POLICY_PATH) -> dict[str, Any]:
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
     _validate_strict(payload, SCHEMA)
-    if payload["protocol"] != "SSE-SDO-MAX-2026.05":
+    if payload["protocol"] != "SSE-SDO-FHE-2026.06":
         raise ValueError("root.protocol: unexpected value")
     return payload
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("policy", nargs="?", default=str(DEFAULT_POLICY_PATH))
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
-    payload = load_and_validate()
-    if args.as_json:
-        print(json.dumps(payload, indent=2, sort_keys=True))
-    else:
-        print("OK")
+    payload = load_and_validate(Path(args.policy))
+    print(json.dumps(payload, indent=2, sort_keys=True) if args.as_json else "OK")
     return 0
 
 

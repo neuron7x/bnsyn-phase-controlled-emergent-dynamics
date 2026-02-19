@@ -8,10 +8,11 @@ SHA_PIN = re.compile(r"@[0-9a-f]{40}$")
 
 
 def test_workflow_integrity_permissions_and_pinning() -> None:
-    workflow = REPO_ROOT / ".github" / "workflows" / "sse-sdo-max-gate.yml"
+    workflow = REPO_ROOT / ".github" / "workflows" / "sse-sdo-fhe-gate.yml"
     content = workflow.read_text(encoding="utf-8")
     assert "permissions:" in content
     assert "contents: read" in content
+    assert "timeout-minutes:" in content
 
     for line in content.splitlines():
         stripped = line.strip()

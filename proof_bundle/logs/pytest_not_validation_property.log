@@ -21,7 +21,7 @@ tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_
     "git_commit": _get_git_commit(resolved_root, resolved_version),
 
 tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
-  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
     "git_commit": _get_git_commit(resolved_root, resolved_version),
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

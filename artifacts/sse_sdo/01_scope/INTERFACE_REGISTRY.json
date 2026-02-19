@@ -1,50 +1,77 @@
 {
   "interfaces": [
     {
+      "entrypoint": false,
       "exists": true,
-      "path": ".github/sse_sdo_max.yml"
+      "path": ".github/sse_sdo_fhe.yml"
     },
     {
+      "entrypoint": true,
       "exists": true,
-      "path": ".github/workflows/sse-sdo-max-gate.yml"
+      "path": ".github/workflows/sse-sdo-fhe-gate.yml"
     },
     {
+      "entrypoint": true,
       "exists": true,
       "path": "scripts/sse_drift_check.py"
     },
     {
+      "entrypoint": true,
       "exists": true,
       "path": "scripts/sse_gate_runner.py"
     },
     {
+      "entrypoint": true,
       "exists": true,
       "path": "scripts/sse_inventory.py"
     },
     {
+      "entrypoint": true,
       "exists": true,
       "path": "scripts/sse_policy_load.py"
     },
     {
+      "entrypoint": true,
       "exists": true,
       "path": "scripts/sse_proof_index.py"
     },
     {
+      "entrypoint": true,
+      "exists": true,
+      "path": "scripts/sse_safety_gate"
+    },
+    {
+      "entrypoint": true,
+      "exists": true,
+      "path": "scripts/verify_integrity"
+    },
+    {
+      "entrypoint": true,
+      "exists": true,
+      "path": "scripts/xrun"
+    },
+    {
+      "entrypoint": false,
       "exists": true,
       "path": "tests/test_policy_schema_contract.py"
     },
     {
+      "entrypoint": false,
       "exists": true,
       "path": "tests/test_policy_to_execution_contract.py"
     },
     {
+      "entrypoint": false,
       "exists": true,
       "path": "tests/test_required_checks_contract.py"
     },
     {
+      "entrypoint": false,
       "exists": true,
       "path": "tests/test_ssot_alignment_contract.py"
     },
     {
+      "entrypoint": false,
       "exists": true,
       "path": "tests/test_workflow_integrity_contract.py"
     }

@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python",
+    "-",
+    "<<PY",
+    "import",
+    "json",
+    "from",
+    "pathlib",
+    "import",
+    "Path",
+    "p=Path(artifacts/sse_sdo/07_quality/CONTRADICTIONS.json)",
+    "obj=json.loads(p.read_text())",
+    "raise",
+    "SystemExit(0",
+    "if",
+    "len(obj.get(contradictions,",
+    "[]))==0",
+    "else",
+    "1)",
+    "PY"
+  ],
+  "cmd": "python - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('artifacts/sse_sdo/07_quality/CONTRADICTIONS.json')\nobj=json.loads(p.read_text())\nraise SystemExit(0 if len(obj.get('contradictions', []))==0 else 1)\nPY",
+  "exit_code": 0,
+  "id": "g0_20260219T081503Z",
+  "log": "artifacts/sse_sdo/logs/g0_20260219T081503Z.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timestamp_utc": "20260219T081503Z"
+}

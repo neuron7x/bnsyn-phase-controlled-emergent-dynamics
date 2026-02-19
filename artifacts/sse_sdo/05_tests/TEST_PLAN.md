@@ -1,4 +1,3 @@
 # TEST_PLAN
 
-- unit: policy loader
-- contract: workflow and checks
+- unit/integration/contract via pytest
