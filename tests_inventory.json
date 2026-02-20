@@ -286,6 +286,7 @@
     {
       "category": "pytest",
       "entropy_signals": [
+        "filesystem_io",
         "subprocess_dependency"
       ],
       "path": "tests/test_e2e_cli_smoke.py"

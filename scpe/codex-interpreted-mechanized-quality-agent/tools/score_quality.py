@@ -82,9 +82,11 @@ for dim in qm["quality_dimensions"]:
 min_score = qm["score"]["pass_requirement"]["min_score"]
 score = int(round(100.0 * (score_num / score_den))) if score_den > 0 else 0
 
-hb = qm["score"]["pass_requirement"]["hard_blockers"]
-for e in hb:
-    hard_blockers.append({"expr": e, "passed": eval_hard_blocker(e, observed_metrics)})
+hb_refs = qm["score"]["pass_requirement"]["hard_blockers"]
+hb_map = {h.get("id"): h.get("expr") for h in qm.get("hard_blockers", [])}
+for ref in hb_refs:
+    expr = hb_map.get(ref, ref)
+    hard_blockers.append({"id": ref, "expr": expr, "passed": eval_hard_blocker(expr, observed_metrics)})
 
 out = {
   "score": score,

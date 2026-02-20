@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -44,8 +46,21 @@ def _normalize(policy: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+
+
+def _install_repro(policy: dict[str, Any]) -> None:
+    install = policy.get("install", {})
+    strategy = install.get("strategy")
+    if strategy != "extras":
+        return
+    extras = install.get("extras", [])
+    extras_suffix = f"[{','.join(extras)}]" if extras else ""
+    cmd = [sys.executable, "-m", "pip", "install", "-e", f".{extras_suffix}"]
+    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+
 def main() -> int:
     policy = _normalize(_load_yaml(POLICY_PATH))
+    _install_repro(policy)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "ci_policy_resolved.json").write_text(
         json.dumps(policy, indent=2, sort_keys=True) + "\n", encoding="utf-8"
