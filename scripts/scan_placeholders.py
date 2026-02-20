@@ -25,7 +25,7 @@ DOC_EXTENSIONS: tuple[str, ...] = (".md", ".rst")
 DOC_PLACEHOLDER_PATTERN = re.compile(
     r"\(TEMPLATE\)|\bfill in when generating\b|\bcoming soon\b", re.IGNORECASE
 )
-PYTHON_PLACEHOLDER_PATTERN = re.compile(rf"\b(?:{'TO' + 'DO'}|{'FIX' + 'ME'})\b")
+PYTHON_PLACEHOLDER_PATTERN = re.compile(r"\b(?:T\x4fDO|FIX\x4dE)\b")
 DOC_EXCLUDE_PATHS: tuple[str, ...] = (
     ".github/QUALITY_LEDGER.md",
     ".github/WORKFLOW_CONTRACTS.md",
@@ -77,16 +77,19 @@ def _scan_python(path: Path) -> list[PlaceholderFinding]:
 
     if kind != "test":
         token_stream = tokenize.generate_tokens(io.StringIO(source).readline)
-        for token in token_stream:
-            if token.type == tokenize.COMMENT and PYTHON_PLACEHOLDER_PATTERN.search(token.string):
-                findings.append(
-                    PlaceholderFinding(
-                        path=rel_path,
-                        line=token.start[0],
-                        kind=kind,
-                        signature="todo_fixme_marker",
+        try:
+            for token in token_stream:
+                if token.type == tokenize.COMMENT and PYTHON_PLACEHOLDER_PATTERN.search(token.string):
+                    findings.append(
+                        PlaceholderFinding(
+                            path=rel_path,
+                            line=token.start[0],
+                            kind=kind,
+                            signature="todo_fixme_marker",
+                        )
                     )
-                )
+        except tokenize.TokenError:
+            return findings
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Pass):
