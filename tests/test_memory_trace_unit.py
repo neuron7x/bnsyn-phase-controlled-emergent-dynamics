@@ -68,3 +68,56 @@ def test_tag_normalizes_patterns_to_float64() -> None:
 
     assert trace.patterns[0].dtype == np.float64
 
+
+
+def test_trace_init_with_seeded_state_and_capacity_guards() -> None:
+    seeded = MemoryTrace(
+        capacity=2,
+        patterns=[np.array([1.0, 0.0], dtype=np.float64)],
+        importance=np.array([0.3], dtype=np.float64),
+        timestamps=np.array([0.0], dtype=np.float64),
+        recall_counters=np.array([1.0], dtype=np.float64),
+    )
+
+    assert seeded.get_state()["count"] == 1
+    np.testing.assert_allclose(seeded.importance, np.array([0.3], dtype=np.float64))
+    np.testing.assert_allclose(seeded.timestamps, np.array([0.0], dtype=np.float64))
+    np.testing.assert_allclose(seeded.recall_counters, np.array([1.0], dtype=np.float64))
+
+    with pytest.raises(ValueError, match="initial patterns exceed capacity"):
+        MemoryTrace(
+            capacity=1,
+            patterns=[
+                np.array([1.0], dtype=np.float64),
+                np.array([2.0], dtype=np.float64),
+            ],
+            importance=np.array([0.1, 0.2], dtype=np.float64),
+            timestamps=np.array([0.0, 1.0], dtype=np.float64),
+            recall_counters=np.array([0.0, 0.0], dtype=np.float64),
+        )
+
+    with pytest.raises(ValueError, match="importance length must match patterns length"):
+        MemoryTrace(
+            capacity=3,
+            patterns=[np.array([1.0], dtype=np.float64)],
+            importance=np.array([], dtype=np.float64),
+            timestamps=np.array([0.0], dtype=np.float64),
+            recall_counters=np.array([0.0], dtype=np.float64),
+        )
+
+
+def test_remove_at_supports_middle_removal_and_invalid_index() -> None:
+    trace = MemoryTrace(capacity=4)
+    trace.tag(np.array([1.0, 0.0], dtype=np.float64), importance=0.1)
+    trace.tag(np.array([0.0, 1.0], dtype=np.float64), importance=0.2)
+    trace.tag(np.array([1.0, 1.0], dtype=np.float64), importance=0.3)
+
+    trace.remove_at(1)
+
+    assert len(trace.patterns) == 2
+    np.testing.assert_allclose(trace.importance, np.array([0.1, 0.3], dtype=np.float64))
+    np.testing.assert_allclose(trace.timestamps, np.array([0.0, 2.0], dtype=np.float64))
+    np.testing.assert_allclose(trace.recall_counters, np.array([0.0, 0.0], dtype=np.float64))
+
+    with pytest.raises(IndexError, match="memory index out of range"):
+        trace.remove_at(5)
