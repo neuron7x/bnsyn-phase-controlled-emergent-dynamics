@@ -1093,7 +1093,7 @@
   },
   {
     "path": "proof_bundle/logs/commands.log",
-    "sha256": "5a76cad65aef438b262a1560a1fa5e643fab007788b4120dabc860b3a7995234"
+    "sha256": "6f83505a4f6476d9058c577f6cb095fe648fa7324e1170418b66305a842b3d21"
   },
   {
     "path": "proof_bundle/logs/final_artifact_check.log",
