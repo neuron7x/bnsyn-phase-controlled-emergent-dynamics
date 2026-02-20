@@ -4,21 +4,23 @@
 **Status:** BLOCKED
 **Contradictions Detected:** 0
 
-## 1. GITHUB TOOLING EVIDENCE (DOMAIN A)
+## 1. GITHUB TOOLING EVIDENCE (DOMAIN A · HOTFIX)
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
-| CI Workflows (Last 5) | `gh` installed, but unauthenticated (`gh auth status` not logged in) | FAIL | `proof_bundle/logs/127_gh_auth_status_stderr.log`, `proof_bundle/logs/129_gh_run_list_stderr.log` |
-| Dependabot Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/134_codeql_export.log`, `proof_bundle/logs/135_dependabot_export.log`, `artifacts/security/security_scan_final.json` |
-| CodeQL/SAST Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/134_codeql_export.log`, `proof_bundle/logs/135_dependabot_export.log`, `artifacts/security/security_scan_final.json` |
-| SSOT Branch Prot. | branch protection not readable without authenticated GitHub API access | FAIL | `proof_bundle/logs/128_gh_repo_view_stderr.log` |
+| Token Presence (`GITHUB_TOKEN`) | Not present (`GITHUB_TOKEN_PRESENT=0`) | FAIL | `proof_bundle/logs/hotfix_github_token_presence.log` |
+| Token Presence (`GH_TOKEN`) | Not present (`GH_TOKEN_PRESENT=0`) | FAIL | `proof_bundle/logs/hotfix_gh_token_presence.log` |
+| `gh auth status` | Not logged in to `github.com` (`EXIT_CODE:1`) | FAIL | `proof_bundle/logs/hotfix_gh_auth_status.log` |
+| CodeQL/SAST Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_code_scanning_alerts.log`, `artifacts/security/security_scan_final.json` |
+| Dependabot Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_dependabot_alerts.log`, `artifacts/security/security_scan_final.json` |
+| CI Pipeline (Last 10) | `gh run list` blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_run_list.log`, `artifacts/security/security_scan_final.json` |
+| Branch Protection (main) | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_branch_protection.log`, `artifacts/security/security_scan_final.json` |
 
 ## 2. TEST & CODEBASE EVIDENCE (DOMAIN B)
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
-| Total Tests Run | 1025 | INFO | `proof_bundle/logs/82_coverage_and_junit_summary.log` |
-| Tests Passed/Failed | Passed: 1019, Failed: 0, Skipped: 6 | PASS | `proof_bundle/logs/81_pytest_protocol_full.log`, `proof_bundle/logs/82_coverage_and_junit_summary.log` |
-| Code Coverage (%) | 99% | PASS | `proof_bundle/logs/81_pytest_protocol_full.log`, `proof_bundle/logs/82_coverage_and_junit_summary.log` |
-| Mypy Strict Errors | 0 (`--strict`, `--strict --ignore-missing-imports`) | PASS | `proof_bundle/logs/113_mypy_strict_final4.log`, `proof_bundle/logs/112_mypy_ignore_final3.log` |
+| Total Tests Run | 1025 | INFO | `proof_bundle/logs/pytest_not_validation_property.log` |
+| Tests Passed/Failed | Passed: 1019, Failed: 0, Skipped: 6 | PASS | `proof_bundle/logs/pytest_not_validation_property.log` |
+| Mypy Strict Errors | 0 (`--strict`) | PASS | `proof_bundle/logs/113_mypy_strict_final4.log` |
 | Ruff Violations | 0 | PASS | `proof_bundle/logs/119_ruff_required_final.log` |
 
 ## 3. FORMAL & META-PROTOCOL EVIDENCE (DOMAIN C)
@@ -32,14 +34,14 @@
 ## 4. PRODUCT UX & BLOCKERS (DOMAIN D)
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
-| CLI Error Path | invalid input returns clean deterministic error, exit code 2, no traceback | PASS | `proof_bundle/logs/94_cli_invalid_gate.log`, `proof_bundle/logs/92_new_cli_exception_test.log` |
-| Evidence Bundles | security + governance evidence bundles generated (final consolidated JSON present) | PASS | `artifacts/security/security_scan_final.json`, `manifest/repo_manifest.json` |
+| CLI Error Path | Invalid input returns deterministic error path (no traceback) | PASS | `proof_bundle/logs/94_cli_invalid_gate.log` |
+| Evidence Bundle Integrity | Consolidated security JSON updated and hash-anchored | PASS | `artifacts/security/security_scan_final.json`, `manifest/repo_manifest.json` |
 
 ## 5. EXECUTIVE VOLUME SUMMARY (28 DAYS)
 - **Total Commits Analyzed:** 911
 - **Total Synthetic Objects Integrated:** 1456
 - **Lines of Code / Tests Written:** Added 402008, Deleted 50811, Total Changed 452819
 - **P0 BLOCKERS:**
-  1. GitHub API telemetry inaccessible without authenticated GitHub session/token.
+  1. Domain A telemetry gates cannot pass without authenticated `gh` session (`gh auth status` must be `EXIT_CODE:0`).
 
 **END OF REPORT.**
