@@ -59,3 +59,12 @@ def test_trace_rejects_invalid_pattern_shape() -> None:
 
     with pytest.raises(ValueError, match="pattern must be 1D array"):
         trace.tag(np.array([[1.0, 2.0]], dtype=np.float64), importance=0.2)
+
+
+def test_tag_normalizes_patterns_to_float64() -> None:
+    trace = MemoryTrace(capacity=2)
+
+    trace.tag(np.array([1.0, 2.0], dtype=np.float32), importance=0.4)
+
+    assert trace.patterns[0].dtype == np.float64
+

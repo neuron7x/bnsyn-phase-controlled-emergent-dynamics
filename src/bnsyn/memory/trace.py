@@ -138,8 +138,7 @@ class MemoryTrace:
 
         # Store new pattern
         timestamp_value = float(len(self.patterns))
-        # Store patterns as float32 to reduce steady-state memory footprint.
-        self.patterns.append(np.asarray(pattern, dtype=np.float32).copy())
+        self.patterns.append(np.asarray(pattern, dtype=np.float64).copy())
         self._importance_store[self._count] = importance
         self._timestamps_store[self._count] = timestamp_value
         self._recall_store[self._count] = 0.0
