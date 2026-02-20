@@ -1,0 +1,129 @@
+header:
+  agent: "CA-ERG"
+  version: "2026.4"
+  mode: rapid-assessment
+  engagement: async
+  scope: audit
+  utc: "2026-02-20T00:54:02Z"
+inputs:
+  missing_required:
+    - "GOAL.AUDIT decision_to_support (not provided explicitly)"
+    - "CONSTRAINTS.allowlist (not provided)"
+    - "CONSTRAINTS.budgets (time/PR/LOC/CI runs not provided)"
+    - "BASELINE_EVIDENCE links (logs/metrics/traces or CI URLs not provided)"
+  permissions:
+    change_permissions: "PR allowed (derived from operator instruction to commit and open PR)"
+    prod_access: "not provided"
+  constraints:
+    allowlist: []
+    budgets: {}
+facts:
+  baseline_evidence:
+    - "proof_bundle/logs/pytest.log"
+    - "proof_bundle/logs/lint.log"
+    - "proof_bundle/logs/mypy.log"
+    - "proof_bundle/logs/build.log"
+  key_observations:
+    - "Pytest suite passes for non-validation/property marker subset."
+    - "Ruff checks pass."
+    - "mypy strict checks pass."
+    - "pylint command is unavailable in current environment."
+    - "python -m build fails because build module is unavailable."
+impact:
+  summary:
+    user_impact: "No runtime incident demonstrated from supplied evidence."
+    delivery_impact: "Release confidence reduced by missing mandatory toolchain components (pylint, build)."
+    blast_radius: "CI parity risk for lint/build stages."
+failure_model:
+  system_map:
+    repository: "/workspace/bnsyn-phase-controlled-emergent-dynamics"
+    validated_planes:
+      - "tests"
+      - "lint (ruff only)"
+      - "typecheck"
+  top_failure_classes:
+    - "dependency failure"
+    - "process/toolchain drift"
+    - "configuration drift"
+hypotheses:
+  ranked:
+    - id: H1
+      statement: "Local environment misses CI-required tools, blocking full gate verification."
+      evidence:
+        - "proof_bundle/logs/pylint.log"
+        - "proof_bundle/logs/build.log"
+    - id: H2
+      statement: "Core code paths remain stable under current non-validation/property test selection."
+      evidence:
+        - "proof_bundle/logs/pytest.log"
+experiments:
+  executed:
+    - "python -m pytest -m \"not (validation or property)\" -q"
+    - "ruff check ."
+    - "pylint src/bnsyn"
+    - "mypy src --strict --config-file pyproject.toml"
+    - "python -m build"
+  pending:
+    - "Install pylint and rerun pylint src/bnsyn"
+    - "Install build module and rerun python -m build"
+options:
+  A_immediate:
+    scope: "Restore missing local toolchain to match project gate commands."
+    prerequisites:
+      - "Install pylint"
+      - "Install build package"
+    risk: "Low"
+    rollback: "Uninstall added tools from venv/container image."
+    verification:
+      - "pylint src/bnsyn exits 0"
+      - "python -m build exits 0"
+  B_short_term:
+    scope: "Codify reproducible dev environment bootstrap in docs/Make target."
+    prerequisites:
+      - "Confirm authoritative dependency source"
+    risk: "Low"
+    rollback: "Revert docs/automation updates"
+    verification:
+      - "Fresh environment passes lint/type/build/test contract"
+  C_strategic:
+    scope: "Containerize CI-equivalent local check runner with locked tooling versions."
+    prerequisites:
+      - "Agreement on maintenance owner"
+    risk: "Medium"
+    rollback: "Fallback to existing host-based checks"
+    verification:
+      - "Deterministic pass/fail parity between local and CI"
+execution:
+  performed: false
+  changes:
+    - "Generated CA-ERG assessment artifacts only; no production code patched."
+  verification:
+    status: "partial"
+    detail: "pytest/ruff/mypy validated; pylint/build blocked by missing toolchain modules."
+risk_register:
+  top_risks:
+    - "Gate drift risk: inability to execute declared lint/build checks locally."
+    - "Decision quality risk: mandatory input contract fields missing for full due diligence."
+decision_log:
+  key_decisions:
+    - "Selected outcome STOP_MISSING_INPUTS due to missing required input contract fields."
+    - "Ran cheapest discriminating checks available in current environment before stop verdict."
+deliverables:
+  runbook_updates:
+    - "None"
+  workshop_outputs:
+    - "Not applicable"
+evidence:
+  evidence_root: "proof_bundle"
+  manifest_path: "proof_bundle/reports/MANIFEST.json"
+  artifacts_sha256_count: 8
+  redaction_policy_path: "proof_bundle/reports/redaction_policy.md"
+final_verdict:
+  outcome: "STOP_MISSING_INPUTS"
+  blockers:
+    - "Missing allowlist and budgets"
+    - "Missing explicit decision target for audit"
+    - "Missing baseline incident/audit evidence links"
+  next_actions:
+    - "Provide required input contract fields from S3."
+    - "Install pylint and build tooling to complete full project command contract verification."

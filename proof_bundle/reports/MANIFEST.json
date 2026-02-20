@@ -1,0 +1,38 @@
+{
+  "generated_utc": "2026-02-20T00:54:02Z",
+  "artifacts": [
+    {
+      "path": "proof_bundle/reports/ca_erg_assessment_2026-02-20.yaml",
+      "sha256": "07bcf9964626051fbf71f0f156b99a7d1674e8ef641283dbbbe09e649c478921"
+    },
+    {
+      "path": "proof_bundle/reports/redaction_policy.md",
+      "sha256": "23d04c86addfea0a68d08d0a96827ac693a1fd61a1dd53ff479a061188553151"
+    },
+    {
+      "path": "proof_bundle/logs/command.log",
+      "sha256": "78bf5ccf98399359c7af89d65880695a1963abaaa8abf0d2308f54d477edfb25"
+    },
+    {
+      "path": "proof_bundle/logs/pytest.log",
+      "sha256": "a7ebf08a2132d5c8b4ec0ed065ad8ee12cd84831cc59ff55bcdf66b038aab598"
+    },
+    {
+      "path": "proof_bundle/logs/lint.log",
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "path": "proof_bundle/logs/pylint.log",
+      "sha256": "7df39da7008b663408bbeaa767d3626abdef469a8e883e56ae36c392ca836c56"
+    },
+    {
+      "path": "proof_bundle/logs/mypy.log",
+      "sha256": "25499469eab292b707aaafb426bb37ffc20ebb6f29a73f5d9ab147221e899cc4"
+    },
+    {
+      "path": "proof_bundle/logs/build.log",
+      "sha256": "ed1518e730da32a233ed99a16985f417d3daab80c6048aba600a8406a92cc664"
+    }
+  ],
+  "artifacts_sha256_count": 8
+}
