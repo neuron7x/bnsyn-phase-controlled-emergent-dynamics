@@ -1093,3 +1093,54 @@ tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 All checks passed!
 Success: no issues found in 75 source files
+=== session start 2026-02-20T01:43:39+00:00 ===
+src/bnsyn/viz/dashboard.py:50:    Imports matplotlib at runtime to avoid mypy checking missing stubs.
+tests/test_experiments_declarative.py:102:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_experiments_declarative.py:105:        return stub_result
+tests/test_experiments_declarative.py:111:    assert payload == stub_result
+tests/test_experiments_declarative.py:116:    stub_result = {"runs": [{"seed": 1, "metrics": {"sigma": 1.0}}]}
+tests/test_experiments_declarative.py:119:    monkeypatch.setattr(declarative, "run_experiment", lambda _: stub_result)
+tests/test_experiments_declarative.py:124:    assert json.dumps(stub_result, indent=2, sort_keys=True) in captured
+tests/test_verify_reproducible_artifacts.py:44:    assert payload[0]["status"] == "pass"
+tests/test_scan_placeholders.py:97:        "    raise NotImplementedError\n"
+tests/test_scan_placeholders.py:99:        "    raise NotImplementedError()\n"
+tests/test_scan_placeholders.py:101:        "    raise builtins.NotImplementedError()\n",
+tests/test_scan_placeholders.py:118:    assert all(item.signature == "raise_NotImplementedError" for item in findings)
+tests/test_scan_placeholders.py:151:        "    # TODO: implement branch\n"
+tests/test_scan_placeholders.py:154:        "# FIXME: remove fallback\n",
+tests/test_scan_placeholders.py:179:        "    # TODO: assertion later\n"
+tests/test_release_readiness.py:69:    assert result.status == "pass"
+tests/test_no_escape_tripwires.py:48:    needles = ("TODO", "FIXME")
+tests/validation/test_verify_hypothesis_v2.py:31:    """Test that bundled v2 results pass hypothesis verification."""
+tests/validation/test_verify_hypothesis_v2.py:45:    # Check consolidation gates pass
+tests/validation/test_verify_hypothesis_v2.py:46:    assert verification["consolidation_gates_pass"], "Consolidation gates should pass"
+ M proof_bundle/logs/session.log
+........................................................................ [  9%]
+........................................................................ [ 19%]
+........................................................................ [ 28%]
+..................................................................ss.... [ 38%]
+ss.............................................................ss....... [ 48%]
+........................................................................ [ 57%]
+.......................................................s................ [ 67%]
+........................................................................ [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 96%]
+...........................                                              [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+All checks passed!
+Success: no issues found in 75 source files
