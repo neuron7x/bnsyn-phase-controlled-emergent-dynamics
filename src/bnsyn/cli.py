@@ -572,6 +572,9 @@ def main() -> None:
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(2) from None
+    except Exception as exc:  # pragma: no cover - exercised via CLI contract tests
+        print(f"Error: unexpected failure: {exc}", file=sys.stderr)
+        raise SystemExit(1) from None
 
 
 if __name__ == "__main__":

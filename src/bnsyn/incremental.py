@@ -15,7 +15,7 @@ import hashlib
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 
-from joblib import Memory  # type: ignore[import-untyped]
+from joblib import Memory
 
 # Create cache directory
 CACHE_DIR = Path(".cache/bnsyn")

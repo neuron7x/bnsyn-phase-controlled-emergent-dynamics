@@ -226,6 +226,39 @@ def test_cli_main_invalid_demo_n_reports_actionable_error(
     assert "Error: N must be greater than 0" in captured.err
 
 
+
+def test_cli_main_unexpected_exception_reports_clean_error(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    argv = [
+        "bnsyn",
+        "demo",
+        "--steps",
+        "1",
+        "--dt-ms",
+        "0.1",
+        "--seed",
+        "1",
+        "--N",
+        "10",
+    ]
+    monkeypatch.setattr(sys, "argv", argv)
+
+    def boom(_args: object) -> int:
+        raise RuntimeError("sim-failure")
+
+    monkeypatch.setattr(cli, "_cmd_demo", boom)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    captured = capsys.readouterr()
+    assert exc.value.code == 1
+    assert "Error: unexpected failure: sim-failure" in captured.err
+    assert "Traceback" not in captured.err
+    assert "Traceback" not in captured.out
+
+
 def test_get_package_version_handles_unexpected_metadata_error(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

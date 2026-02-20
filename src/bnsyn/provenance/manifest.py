@@ -33,10 +33,23 @@ import warnings
 from importlib import metadata
 from typing import Any
 
-try:
-    from importlib.metadata import distributions
-except ImportError:
-    from importlib_metadata import distributions  # type: ignore[import-not-found,no-redef]
+def _distribution_iter() -> Any:
+    """Return distribution iterable with stdlib/backport fallback."""
+    try:
+        from importlib.metadata import distributions as stdlib_distributions
+    except ImportError:
+        import importlib
+
+        backport_module = importlib.import_module("importlib_metadata")
+        return backport_module.distributions()
+    return stdlib_distributions()
+
+
+
+def distributions() -> Any:
+    """Compatibility wrapper for fallback import-path tests."""
+    return _distribution_iter()
+
 
 
 class RunManifest:
@@ -187,8 +200,8 @@ class RunManifest:
         try:
             deps: dict[str, str] = {}
             for dist in distributions():
-                name = dist.metadata.get("Name")  # type: ignore[attr-defined]
-                version = dist.metadata.get("Version")  # type: ignore[attr-defined]
+                name = dist.metadata["Name"] if "Name" in dist.metadata else None
+                version = dist.metadata["Version"] if "Version" in dist.metadata else None
                 if name and version:
                     deps[name] = version
             return deps
