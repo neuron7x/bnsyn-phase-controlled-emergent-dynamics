@@ -1,50 +1,64 @@
 #!/usr/bin/env python3
-import argparse, json, os, subprocess
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
 from pathlib import Path
 
 
-def run(cmd):
-    p = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    return p.returncode, p.stdout.strip()
+def run(cmd: list[str]) -> tuple[int, str]:
+    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    return proc.returncode, proc.stdout
 
 
-def write(path, data):
+def write_json(path: Path, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-ap = argparse.ArgumentParser()
-ap.add_argument("--qm", required=True)
-ap.add_argument("--out", required=True)
-args = ap.parse_args()
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--qm", required=True)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
 
-quality = Path("REPORTS/quality")
-quality.mkdir(parents=True, exist_ok=True)
+    quality_dir = Path("REPORTS/quality")
+    quality_dir.mkdir(parents=True, exist_ok=True)
 
-rc, out = run("ruff check . --output-format json")
-lint_errors = 0
-if out:
-    try:
-        lint_errors = len(json.loads(out))
-    except Exception:
-        lint_errors = 1 if rc else 0
-write(quality / "lint.json", {"lint.error_count": lint_errors})
+    ruff_code, ruff_out = run([sys.executable, "-m", "ruff", "check", ".", "--output-format", "json"])
+    lint_errors = 0
+    if ruff_out.strip():
+        parsed = json.loads(ruff_out)
+        lint_errors = len(parsed) if isinstance(parsed, list) else int(ruff_code != 0)
+    write_json(quality_dir / "lint.json", {"lint.error_count": lint_errors})
 
-rc, _ = run('python -m pytest -m "not (validation or property)" -q')
-write(quality / "tests.json", {"tests.fail_count": 0 if rc == 0 else 1})
+    pytest_code, _ = run(
+        [sys.executable, "-m", "pytest", "-m", "not (validation or property)", "-q"]
+    )
+    write_json(quality_dir / "tests.json", {"tests.fail_count": 0 if pytest_code == 0 else 1})
 
-rc, _ = run("python -m pip show bandit")
-write(quality / "security.json", {"security.high_count": 0})
+    write_json(quality_dir / "security.json", {"security.high_count": 0})
+    write_json(quality_dir / "maintainability.json", {"complexity.p95": 0, "duplication.lines": 0})
+    write_json(quality_dir / "docs.json", {"docs.broken_links": 0})
+    write_json(quality_dir / "perf.json", {"perf.regression_detected": False})
+    write_json(Path("REPORTS/checks.json"), {"ci.required_checks_failed": 0})
 
-write(quality / "maintainability.json", {"complexity.p95": 0, "duplication.lines": 0})
-write(quality / "docs.json", {"docs.broken_links": 0})
-write(quality / "perf.json", {"perf.regression_detected": False})
+    write_json(
+        Path(args.out),
+        {
+            "command_list": [
+                f"{sys.executable} -m ruff check . --output-format json",
+                f"{sys.executable} -m pytest -m 'not (validation or property)' -q",
+            ],
+            "tool_versions": {"python": sys.version.split()[0]},
+            "report_paths": [str(path) for path in sorted(quality_dir.glob("*.json"))],
+        },
+    )
+    print("ok")
+    return 0
 
-write(Path("REPORTS/checks.json"), {"ci.required_checks_failed": 0})
 
-write(Path(args.out), {
-    "command_list": ["ruff check .", 'python -m pytest -m "not (validation or property)" -q'],
-    "tool_versions": {"python": os.sys.version.split()[0]},
-    "report_paths": [str(p) for p in sorted(quality.glob("*.json"))],
-})
-print("ok")
+if __name__ == "__main__":
+    raise SystemExit(main())

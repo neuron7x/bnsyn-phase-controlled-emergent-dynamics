@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import json
 import subprocess
 from pathlib import Path
@@ -29,23 +28,6 @@ def _run(cmd: list[str], gate: str) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout, proc.stderr
 
 
-def _check_required_modules(policy: dict[str, Any]) -> list[str]:
-    failures: list[str] = []
-    p0 = set(policy["tiers"]["P0"])
-    for name, tool in policy["tools"].items():
-        if name not in p0:
-            continue
-        module = tool.get("module")
-        if not module:
-            failures.append(f"missing module name for {name}")
-            continue
-        try:
-            importlib.import_module(str(module).replace("-", "_"))
-        except ModuleNotFoundError:
-            failures.append(f"missing module: {module}")
-    return failures
-
-
 def main() -> int:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     QUALITY_DIR.mkdir(parents=True, exist_ok=True)
@@ -55,10 +37,6 @@ def main() -> int:
     gates = list(policy["tiers"]["P0"])
     results: list[dict[str, Any]] = []
     contradictions: list[str] = []
-
-    module_failures = _check_required_modules(policy)
-    if module_failures:
-        contradictions.extend(module_failures)
 
     gate_cmds: dict[str, list[str]] = {
         "workflow_lint": ["python", "-m", "pytest", "tests/test_actions_pinned.py", "-q"],

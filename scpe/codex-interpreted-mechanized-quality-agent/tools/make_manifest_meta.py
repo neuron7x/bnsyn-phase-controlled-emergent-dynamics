@@ -1,7 +1,26 @@
 #!/usr/bin/env python3
-import argparse, json
+from __future__ import annotations
+
+import argparse
+import json
 from pathlib import Path
-ap=argparse.ArgumentParser(); ap.add_argument('--evidence-root', required=True); ap.add_argument('--out', required=True); args=ap.parse_args()
-Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-Path(args.out).write_text(json.dumps({'meta':True,'evidence_root':args.evidence_root}, indent=2)+'\n')
-print('ok')
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--evidence-root", required=True)
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps({"meta": True, "evidence_root": args.evidence_root}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print("ok")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
