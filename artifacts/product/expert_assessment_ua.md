@@ -8,8 +8,8 @@
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
 | CI Workflows (Last 5) | `gh` installed, but unauthenticated (`gh auth status` not logged in) | FAIL | `proof_bundle/logs/127_gh_auth_status_stderr.log`, `proof_bundle/logs/129_gh_run_list_stderr.log` |
-| Dependabot Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/80_generate_security_scan.log`, `artifacts/security/security_scan.json` |
-| CodeQL/SAST Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/80_generate_security_scan.log`, `artifacts/security/security_scan.json` |
+| Dependabot Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/134_codeql_export.log`, `proof_bundle/logs/135_dependabot_export.log`, `artifacts/security/security_scan_final.json` |
+| CodeQL/SAST Alerts | API call blocked by missing auth token/session | FAIL | `proof_bundle/logs/134_codeql_export.log`, `proof_bundle/logs/135_dependabot_export.log`, `artifacts/security/security_scan_final.json` |
 | SSOT Branch Prot. | branch protection not readable without authenticated GitHub API access | FAIL | `proof_bundle/logs/128_gh_repo_view_stderr.log` |
 
 ## 2. TEST & CODEBASE EVIDENCE (DOMAIN B)
@@ -33,7 +33,7 @@
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
 | CLI Error Path | invalid input returns clean deterministic error, exit code 2, no traceback | PASS | `proof_bundle/logs/94_cli_invalid_gate.log`, `proof_bundle/logs/92_new_cli_exception_test.log` |
-| Evidence Bundles | security + governance evidence bundles generated | PASS | `artifacts/security/security_scan.json`, `manifest/repo_manifest.json` |
+| Evidence Bundles | security + governance evidence bundles generated (final consolidated JSON present) | PASS | `artifacts/security/security_scan_final.json`, `manifest/repo_manifest.json` |
 
 ## 5. EXECUTIVE VOLUME SUMMARY (28 DAYS)
 - **Total Commits Analyzed:** 911

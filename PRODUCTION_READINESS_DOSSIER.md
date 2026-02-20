@@ -17,7 +17,7 @@
 
 ## Evidence Index
 - artifacts/product/expert_assessment_ua.md
-- artifacts/security/security_scan.json
+- artifacts/security/security_scan_final.json
 - manifest/repo_manifest.json
 - proof_bundle/logs/127_gh_auth_status_stderr.log
 - proof_bundle/logs/129_gh_run_list_stderr.log
