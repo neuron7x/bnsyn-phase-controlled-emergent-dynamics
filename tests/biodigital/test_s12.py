@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from bnsyn.biodigital import (
     BioSignalState,
     ThermostatState,
@@ -75,3 +77,33 @@ def test_neuro_consistency_gate_reports_violations() -> None:
     assert "mode_incompatible_with_stress_guard" in result.violations
     assert "high_impulse_requires_extra_certificates" in result.violations
     assert "low_coherence_forbids_untrusted_external_sources" in result.violations
+
+
+def test_input_validation_rejects_invalid_ranges() -> None:
+    with pytest.raises(ValueError, match="distribution must not be empty"):
+        normalized_shannon_entropy([])
+
+    with pytest.raises(ValueError, match="distribution must not contain negative"):
+        normalized_shannon_entropy([0.1, -0.1, 0.4])
+
+    with pytest.raises(ValueError, match="mode must be one of"):
+        evaluate_neuro_consistency(
+            signals=BioSignalState(u=0.2, a=0.4, r=0.1, s=0.2, o=0.8, t=0.3),
+            mode="invalid",  # type: ignore[arg-type]
+            allow_external_sources=False,
+            require_extra_certificates=True,
+        )
+
+    with pytest.raises(ValueError, match="entropy_budget must be > 0"):
+        landauer_thermostat(ThermostatState(erased_bits_proxy=0.0, entropy_budget=0.0, t_max=0.7))
+
+
+def test_al_update_rejects_empty_inputs() -> None:
+    with pytest.raises(ValueError, match="metrics must not be empty"):
+        al_update(metrics=(), budgets=(1.0,), history=(1.0,), horizon_steps=1)
+
+    with pytest.raises(ValueError, match="budgets must not be empty"):
+        al_update(metrics=(1.0,), budgets=(), history=(1.0,), horizon_steps=1)
+
+    with pytest.raises(ValueError, match="history must not be empty"):
+        al_update(metrics=(1.0,), budgets=(1.0,), history=(), horizon_steps=1)

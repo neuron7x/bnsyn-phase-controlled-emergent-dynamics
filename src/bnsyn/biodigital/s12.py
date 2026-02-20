@@ -8,9 +8,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import log2
+from typing import Literal
 
 
 _EPSILON = 1e-12
+_AGENT_MODES = {"explore", "exploit", "verify", "stop"}
+
+
+def _validate_unit_interval(name: str, value: float) -> None:
+    if not 0.0 <= value <= 1.0:
+        raise ValueError(f"{name} must be in [0, 1], got {value}")
+
+
+def _validate_non_negative(name: str, value: float) -> None:
+    if value < 0.0:
+        raise ValueError(f"{name} must be >= 0, got {value}")
 
 
 def clamp01(value: float) -> float:
@@ -34,6 +46,12 @@ class ThermostatState:
     erased_bits_proxy: float
     entropy_budget: float
     t_max: float
+
+    def __post_init__(self) -> None:
+        _validate_non_negative("erased_bits_proxy", self.erased_bits_proxy)
+        if self.entropy_budget <= 0.0:
+            raise ValueError(f"entropy_budget must be > 0, got {self.entropy_budget}")
+        _validate_unit_interval("t_max", self.t_max)
 
 
 @dataclass(frozen=True)
@@ -59,6 +77,15 @@ class BioSignalState:
     o: float
     t: float
 
+    def __post_init__(self) -> None:
+        _validate_unit_interval("u", self.u)
+        _validate_unit_interval("a", self.a)
+        _validate_unit_interval("s", self.s)
+        _validate_unit_interval("o", self.o)
+        _validate_unit_interval("t", self.t)
+        if not -1.0 <= self.r <= 1.0:
+            raise ValueError(f"r must be in [-1, 1], got {self.r}")
+
 
 @dataclass(frozen=True)
 class NeuroConsistencyReport:
@@ -71,6 +98,11 @@ class NeuroConsistencyReport:
 
 def normalized_shannon_entropy(distribution: list[float]) -> float:
     """Compute Shannon entropy normalized to [0, 1] for a finite distribution."""
+    if not distribution:
+        raise ValueError("distribution must not be empty")
+    if any(value < 0.0 for value in distribution):
+        raise ValueError("distribution must not contain negative values")
+
     positives = [x for x in distribution if x > 0.0]
     total = sum(positives)
     if total <= _EPSILON:
@@ -116,6 +148,12 @@ def al_update(
     """Deterministic bounded AL update without unbounded search."""
     if horizon_steps < 1:
         raise ValueError("horizon_steps must be >= 1")
+    if not metrics:
+        raise ValueError("metrics must not be empty")
+    if not budgets:
+        raise ValueError("budgets must not be empty")
+    if not history:
+        raise ValueError("history must not be empty")
 
     mean_metric = sum(metrics) / max(1, len(metrics))
     mean_budget = sum(budgets) / max(1, len(budgets))
@@ -157,7 +195,7 @@ def landauer_thermostat(state: ThermostatState) -> ThermostatReport:
 
 def evaluate_neuro_consistency(
     signals: BioSignalState,
-    mode: str,
+    mode: Literal["explore", "exploit", "verify", "stop"],
     allow_external_sources: bool,
     require_extra_certificates: bool,
     s_hi: float = 0.9,
@@ -165,6 +203,12 @@ def evaluate_neuro_consistency(
     o_lo: float = 0.2,
 ) -> NeuroConsistencyReport:
     """Evaluate G.BIO.001 consistency rules and derive r_effective."""
+    if mode not in _AGENT_MODES:
+        raise ValueError(f"mode must be one of {_AGENT_MODES}, got {mode}")
+    _validate_unit_interval("s_hi", s_hi)
+    _validate_unit_interval("t_hi", t_hi)
+    _validate_unit_interval("o_lo", o_lo)
+
     violations: list[str] = []
     r_effective = signals.r
 
