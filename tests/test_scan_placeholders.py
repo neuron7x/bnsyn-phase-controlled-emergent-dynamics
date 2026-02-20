@@ -140,3 +140,55 @@ def test_placeholder_scan_and_registry_have_no_open_entries() -> None:
 
     assert statuses
     assert all(status not in {"OPEN", "IN_PROGRESS"} for status in statuses)
+
+
+def test_scan_python_detects_todo_fixme_markers_outside_tests(tmp_path: Path) -> None:
+    scan_root = tmp_path / "repo"
+    script_file = scan_root / "scripts" / "sample.py"
+    script_file.parent.mkdir(parents=True, exist_ok=True)
+    script_file.write_text(
+        "def f():\n"
+        "    # TODO: implement branch\n"
+        "    return 1\n"
+        "\n"
+        "# FIXME: remove fallback\n",
+        encoding="utf-8",
+    )
+
+    original_root = scan_placeholders.ROOT
+    original_targets = scan_placeholders.TARGET_DIRS
+    try:
+        scan_placeholders.ROOT = scan_root
+        scan_placeholders.TARGET_DIRS = ("scripts",)
+        findings = scan_placeholders.collect_findings()
+    finally:
+        scan_placeholders.ROOT = original_root
+        scan_placeholders.TARGET_DIRS = original_targets
+
+    assert [item.signature for item in findings] == ["todo_fixme_marker", "todo_fixme_marker"]
+    assert [item.line for item in findings] == [2, 5]
+    assert all(item.kind == "script" for item in findings)
+
+
+def test_scan_python_ignores_todo_fixme_markers_in_tests(tmp_path: Path) -> None:
+    scan_root = tmp_path / "repo"
+    test_file = scan_root / "tests" / "test_sample.py"
+    test_file.parent.mkdir(parents=True, exist_ok=True)
+    test_file.write_text(
+        "def test_x():\n"
+        "    # TODO: assertion later\n"
+        "    assert True\n",
+        encoding="utf-8",
+    )
+
+    original_root = scan_placeholders.ROOT
+    original_targets = scan_placeholders.TARGET_DIRS
+    try:
+        scan_placeholders.ROOT = scan_root
+        scan_placeholders.TARGET_DIRS = ("tests",)
+        findings = scan_placeholders.collect_findings()
+    finally:
+        scan_placeholders.ROOT = original_root
+        scan_placeholders.TARGET_DIRS = original_targets
+
+    assert findings == []

@@ -9,9 +9,11 @@ from __future__ import annotations
 
 import argparse
 import ast
+import io
 import json
 import re
 import sys
+import tokenize
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
@@ -23,6 +25,7 @@ DOC_EXTENSIONS: tuple[str, ...] = (".md", ".rst")
 DOC_PLACEHOLDER_PATTERN = re.compile(
     r"\(TEMPLATE\)|\bfill in when generating\b|\bcoming soon\b", re.IGNORECASE
 )
+PYTHON_PLACEHOLDER_PATTERN = re.compile(r"\b(?:T\x4fDO|FIX\x4dE)\b")
 DOC_EXCLUDE_PATHS: tuple[str, ...] = (
     ".github/QUALITY_LEDGER.md",
     ".github/WORKFLOW_CONTRACTS.md",
@@ -51,7 +54,11 @@ def _iter_files() -> Iterable[Path]:
 def _scan_python(path: Path) -> list[PlaceholderFinding]:
     findings: list[PlaceholderFinding] = []
     try:
-        tree = ast.parse(path.read_text(encoding="utf-8"))
+        source = path.read_text(encoding="utf-8")
+    except OSError:
+        return findings
+    try:
+        tree = ast.parse(source)
     except (OSError, SyntaxError):
         return findings
 
@@ -67,6 +74,22 @@ def _scan_python(path: Path) -> list[PlaceholderFinding]:
         kind = "script"
     else:
         kind = "code"
+
+    if kind != "test":
+        token_stream = tokenize.generate_tokens(io.StringIO(source).readline)
+        try:
+            for token in token_stream:
+                if token.type == tokenize.COMMENT and PYTHON_PLACEHOLDER_PATTERN.search(token.string):
+                    findings.append(
+                        PlaceholderFinding(
+                            path=rel_path,
+                            line=token.start[0],
+                            kind=kind,
+                            signature="todo_fixme_marker",
+                        )
+                    )
+        except tokenize.TokenError:
+            return findings
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Pass):
