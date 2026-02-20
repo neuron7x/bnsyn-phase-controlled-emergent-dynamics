@@ -1,14 +1,14 @@
 ........................................................................ [  9%]
 ........................................................................ [ 19%]
-........................................................................ [ 29%]
-..........................................................ss....ss...... [ 39%]
-........................................................................ [ 48%]
-........................................................................ [ 58%]
-........................................................................ [ 68%]
-........................................................................ [ 78%]
-........................................................................ [ 88%]
-........................................................................ [ 97%]
-................                                                         [100%]
+........................................................................ [ 28%]
+..................................................................ss.... [ 38%]
+ss.............................................................ss....... [ 48%]
+........................................................................ [ 57%]
+.......................................................s................ [ 67%]
+........................................................................ [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 96%]
+...........................                                              [100%]
 =============================== warnings summary ===============================
 tests/test_cli_interactive.py::test_cli_module_main_executes
   <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
@@ -21,7 +21,7 @@ tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_
     "git_commit": _get_git_commit(resolved_root, resolved_version),
 
 tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
-  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.2.0
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
     "git_commit": _get_git_commit(resolved_root, resolved_version),
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html

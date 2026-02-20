@@ -1,17 +1,14 @@
-* Creating isolated environment: venv+pip...
-* Installing packages in isolated environment:
-  - setuptools==79.0.1
-* Getting build dependencies for sdist...
 running egg_info
+creating src/bnsyn.egg-info
 writing src/bnsyn.egg-info/PKG-INFO
 writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
 writing entry points to src/bnsyn.egg-info/entry_points.txt
 writing requirements to src/bnsyn.egg-info/requires.txt
 writing top-level names to src/bnsyn.egg-info/top_level.txt
+writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
 reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
 adding license file 'LICENSE'
 writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
-* Building sdist...
 running sdist
 running egg_info
 writing src/bnsyn.egg-info/PKG-INFO
@@ -27,6 +24,7 @@ creating bnsyn-0.2.0
 creating bnsyn-0.2.0/src/bnsyn
 creating bnsyn-0.2.0/src/bnsyn.egg-info
 creating bnsyn-0.2.0/src/bnsyn/benchmarks
+creating bnsyn-0.2.0/src/bnsyn/biodigital
 creating bnsyn-0.2.0/src/bnsyn/calibration
 creating bnsyn-0.2.0/src/bnsyn/connectivity
 creating bnsyn-0.2.0/src/bnsyn/consolidation
@@ -76,6 +74,8 @@ copying src/bnsyn.egg-info/requires.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
 copying src/bnsyn.egg-info/top_level.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
 copying src/bnsyn/benchmarks/__init__.py -> bnsyn-0.2.0/src/bnsyn/benchmarks
 copying src/bnsyn/benchmarks/regime.py -> bnsyn-0.2.0/src/bnsyn/benchmarks
+copying src/bnsyn/biodigital/__init__.py -> bnsyn-0.2.0/src/bnsyn/biodigital
+copying src/bnsyn/biodigital/s12.py -> bnsyn-0.2.0/src/bnsyn/biodigital
 copying src/bnsyn/calibration/__init__.py -> bnsyn-0.2.0/src/bnsyn/calibration
 copying src/bnsyn/calibration/accuracy_speed.py -> bnsyn-0.2.0/src/bnsyn/calibration
 copying src/bnsyn/calibration/fit.py -> bnsyn-0.2.0/src/bnsyn/calibration
@@ -176,6 +176,7 @@ copying tests/test_crystallizer_edge_cases.py -> bnsyn-0.2.0/tests
 copying tests/test_determinism.py -> bnsyn-0.2.0/tests
 copying tests/test_drift_zero_contract.py -> bnsyn-0.2.0/tests
 copying tests/test_dt_invariance.py -> bnsyn-0.2.0/tests
+copying tests/test_e2e_cli_smoke.py -> bnsyn-0.2.0/tests
 copying tests/test_edge_cases_adex.py -> bnsyn-0.2.0/tests
 copying tests/test_edge_cases_criticality.py -> bnsyn-0.2.0/tests
 copying tests/test_edge_cases_synapse.py -> bnsyn-0.2.0/tests
@@ -289,11 +290,6 @@ copying src/bnsyn.egg-info/SOURCES.txt -> bnsyn-0.2.0/src/bnsyn.egg-info
 Writing bnsyn-0.2.0/setup.cfg
 Creating tar archive
 removing 'bnsyn-0.2.0' (and everything under it)
-* Building wheel from sdist
-* Creating isolated environment: venv+pip...
-* Installing packages in isolated environment:
-  - setuptools==79.0.1
-* Getting build dependencies for wheel...
 running egg_info
 writing src/bnsyn.egg-info/PKG-INFO
 writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
@@ -303,7 +299,6 @@ writing top-level names to src/bnsyn.egg-info/top_level.txt
 reading manifest file 'src/bnsyn.egg-info/SOURCES.txt'
 adding license file 'LICENSE'
 writing manifest file 'src/bnsyn.egg-info/SOURCES.txt'
-* Building wheel...
 running bdist_wheel
 running build
 running build_py
@@ -311,100 +306,103 @@ creating build/lib/contracts
 copying src/contracts/__init__.py -> build/lib/contracts
 copying src/contracts/math_contracts.py -> build/lib/contracts
 creating build/lib/bnsyn
-copying src/bnsyn/incremental.py -> build/lib/bnsyn
-copying src/bnsyn/config.py -> build/lib/bnsyn
-copying src/bnsyn/vcg.py -> build/lib/bnsyn
 copying src/bnsyn/rng.py -> build/lib/bnsyn
-copying src/bnsyn/__init__.py -> build/lib/bnsyn
-copying src/bnsyn/control.py -> build/lib/bnsyn
-copying src/bnsyn/simulation.py -> build/lib/bnsyn
-copying src/bnsyn/neurons.py -> build/lib/bnsyn
-copying src/bnsyn/synapses.py -> build/lib/bnsyn
 copying src/bnsyn/cli.py -> build/lib/bnsyn
-copying src/bnsyn/api.py -> build/lib/bnsyn
+copying src/bnsyn/vcg.py -> build/lib/bnsyn
+copying src/bnsyn/config.py -> build/lib/bnsyn
+copying src/bnsyn/__init__.py -> build/lib/bnsyn
 copying src/bnsyn/__main__.py -> build/lib/bnsyn
-creating build/lib/bnsyn/experiments
-copying src/bnsyn/experiments/__init__.py -> build/lib/bnsyn/experiments
-copying src/bnsyn/experiments/declarative.py -> build/lib/bnsyn/experiments
-creating build/lib/bnsyn/neuron
-copying src/bnsyn/neuron/__init__.py -> build/lib/bnsyn/neuron
-copying src/bnsyn/neuron/adex.py -> build/lib/bnsyn/neuron
-creating build/lib/bnsyn/criticality
-copying src/bnsyn/criticality/__init__.py -> build/lib/bnsyn/criticality
-copying src/bnsyn/criticality/analysis.py -> build/lib/bnsyn/criticality
-copying src/bnsyn/criticality/phase_transition.py -> build/lib/bnsyn/criticality
-copying src/bnsyn/criticality/branching.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/synapses.py -> build/lib/bnsyn
+copying src/bnsyn/api.py -> build/lib/bnsyn
+copying src/bnsyn/simulation.py -> build/lib/bnsyn
+copying src/bnsyn/control.py -> build/lib/bnsyn
+copying src/bnsyn/neurons.py -> build/lib/bnsyn
+copying src/bnsyn/incremental.py -> build/lib/bnsyn
 creating build/lib/bnsyn/consolidation
-copying src/bnsyn/consolidation/__init__.py -> build/lib/bnsyn/consolidation
 copying src/bnsyn/consolidation/dual_weight.py -> build/lib/bnsyn/consolidation
-creating build/lib/bnsyn/memory
-copying src/bnsyn/memory/trace.py -> build/lib/bnsyn/memory
-copying src/bnsyn/memory/__init__.py -> build/lib/bnsyn/memory
-copying src/bnsyn/memory/ledger.py -> build/lib/bnsyn/memory
-copying src/bnsyn/memory/consolidator.py -> build/lib/bnsyn/memory
-creating build/lib/bnsyn/calibration
-copying src/bnsyn/calibration/__init__.py -> build/lib/bnsyn/calibration
-copying src/bnsyn/calibration/accuracy_speed.py -> build/lib/bnsyn/calibration
-copying src/bnsyn/calibration/fit.py -> build/lib/bnsyn/calibration
+copying src/bnsyn/consolidation/__init__.py -> build/lib/bnsyn/consolidation
+creating build/lib/bnsyn/energy
+copying src/bnsyn/energy/__init__.py -> build/lib/bnsyn/energy
+copying src/bnsyn/energy/regularization.py -> build/lib/bnsyn/energy
+creating build/lib/bnsyn/neuron
+copying src/bnsyn/neuron/adex.py -> build/lib/bnsyn/neuron
+copying src/bnsyn/neuron/__init__.py -> build/lib/bnsyn/neuron
+creating build/lib/bnsyn/tools
+copying src/bnsyn/tools/__init__.py -> build/lib/bnsyn/tools
+copying src/bnsyn/tools/run_scaled_sleep_stack.py -> build/lib/bnsyn/tools
+copying src/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/lib/bnsyn/tools
+creating build/lib/bnsyn/viz
+copying src/bnsyn/viz/interactive.py -> build/lib/bnsyn/viz
+copying src/bnsyn/viz/dashboard.py -> build/lib/bnsyn/viz
+copying src/bnsyn/viz/__init__.py -> build/lib/bnsyn/viz
 creating build/lib/bnsyn/sim
 copying src/bnsyn/sim/__init__.py -> build/lib/bnsyn/sim
 copying src/bnsyn/sim/network.py -> build/lib/bnsyn/sim
 creating build/lib/bnsyn/testing
 copying src/bnsyn/testing/__init__.py -> build/lib/bnsyn/testing
 copying src/bnsyn/testing/faults.py -> build/lib/bnsyn/testing
-creating build/lib/bnsyn/validation
-copying src/bnsyn/validation/__init__.py -> build/lib/bnsyn/validation
-copying src/bnsyn/validation/inputs.py -> build/lib/bnsyn/validation
+creating build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/phase_transition.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/__init__.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/analysis.py -> build/lib/bnsyn/criticality
+copying src/bnsyn/criticality/branching.py -> build/lib/bnsyn/criticality
 creating build/lib/bnsyn/emergence
-copying src/bnsyn/emergence/__init__.py -> build/lib/bnsyn/emergence
 copying src/bnsyn/emergence/crystallizer.py -> build/lib/bnsyn/emergence
-creating build/lib/bnsyn/benchmarks
-copying src/bnsyn/benchmarks/__init__.py -> build/lib/bnsyn/benchmarks
-copying src/bnsyn/benchmarks/regime.py -> build/lib/bnsyn/benchmarks
+copying src/bnsyn/emergence/__init__.py -> build/lib/bnsyn/emergence
+creating build/lib/bnsyn/temperature
+copying src/bnsyn/temperature/schedule.py -> build/lib/bnsyn/temperature
+copying src/bnsyn/temperature/__init__.py -> build/lib/bnsyn/temperature
 creating build/lib/bnsyn/schemas
 copying src/bnsyn/schemas/__init__.py -> build/lib/bnsyn/schemas
 copying src/bnsyn/schemas/experiment.py -> build/lib/bnsyn/schemas
-creating build/lib/bnsyn/tools
-copying src/bnsyn/tools/run_scaled_sleep_stack.py -> build/lib/bnsyn/tools
-copying src/bnsyn/tools/__init__.py -> build/lib/bnsyn/tools
-copying src/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/lib/bnsyn/tools
-creating build/lib/bnsyn/viz
-copying src/bnsyn/viz/dashboard.py -> build/lib/bnsyn/viz
-copying src/bnsyn/viz/__init__.py -> build/lib/bnsyn/viz
-copying src/bnsyn/viz/interactive.py -> build/lib/bnsyn/viz
+creating build/lib/bnsyn/production
+copying src/bnsyn/production/adex.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/__init__.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/jax_backend.py -> build/lib/bnsyn/production
+copying src/bnsyn/production/connectivity.py -> build/lib/bnsyn/production
+creating build/lib/bnsyn/experiments
+copying src/bnsyn/experiments/__init__.py -> build/lib/bnsyn/experiments
+copying src/bnsyn/experiments/declarative.py -> build/lib/bnsyn/experiments
+creating build/lib/bnsyn/biodigital
+copying src/bnsyn/biodigital/__init__.py -> build/lib/bnsyn/biodigital
+copying src/bnsyn/biodigital/s12.py -> build/lib/bnsyn/biodigital
+creating build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/accuracy_speed.py -> build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/__init__.py -> build/lib/bnsyn/calibration
+copying src/bnsyn/calibration/fit.py -> build/lib/bnsyn/calibration
+creating build/lib/bnsyn/connectivity
+copying src/bnsyn/connectivity/sparse.py -> build/lib/bnsyn/connectivity
+copying src/bnsyn/connectivity/__init__.py -> build/lib/bnsyn/connectivity
+creating build/lib/bnsyn/synapse
+copying src/bnsyn/synapse/__init__.py -> build/lib/bnsyn/synapse
+copying src/bnsyn/synapse/conductance.py -> build/lib/bnsyn/synapse
+creating build/lib/bnsyn/validation
+copying src/bnsyn/validation/inputs.py -> build/lib/bnsyn/validation
+copying src/bnsyn/validation/__init__.py -> build/lib/bnsyn/validation
+creating build/lib/bnsyn/memory
+copying src/bnsyn/memory/consolidator.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/trace.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/ledger.py -> build/lib/bnsyn/memory
+copying src/bnsyn/memory/__init__.py -> build/lib/bnsyn/memory
+creating build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/replay.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/cycle.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/__init__.py -> build/lib/bnsyn/sleep
+copying src/bnsyn/sleep/stages.py -> build/lib/bnsyn/sleep
 creating build/lib/bnsyn/plasticity
-copying src/bnsyn/plasticity/stdp.py -> build/lib/bnsyn/plasticity
 copying src/bnsyn/plasticity/__init__.py -> build/lib/bnsyn/plasticity
 copying src/bnsyn/plasticity/three_factor.py -> build/lib/bnsyn/plasticity
-creating build/lib/bnsyn/temperature
-copying src/bnsyn/temperature/__init__.py -> build/lib/bnsyn/temperature
-copying src/bnsyn/temperature/schedule.py -> build/lib/bnsyn/temperature
-creating build/lib/bnsyn/production
-copying src/bnsyn/production/__init__.py -> build/lib/bnsyn/production
-copying src/bnsyn/production/connectivity.py -> build/lib/bnsyn/production
-copying src/bnsyn/production/adex.py -> build/lib/bnsyn/production
-copying src/bnsyn/production/jax_backend.py -> build/lib/bnsyn/production
-creating build/lib/bnsyn/connectivity
-copying src/bnsyn/connectivity/__init__.py -> build/lib/bnsyn/connectivity
-copying src/bnsyn/connectivity/sparse.py -> build/lib/bnsyn/connectivity
+copying src/bnsyn/plasticity/stdp.py -> build/lib/bnsyn/plasticity
 creating build/lib/bnsyn/provenance
 copying src/bnsyn/provenance/manifest.py -> build/lib/bnsyn/provenance
 copying src/bnsyn/provenance/__init__.py -> build/lib/bnsyn/provenance
 copying src/bnsyn/provenance/manifest_builder.py -> build/lib/bnsyn/provenance
-creating build/lib/bnsyn/sleep
-copying src/bnsyn/sleep/replay.py -> build/lib/bnsyn/sleep
-copying src/bnsyn/sleep/__init__.py -> build/lib/bnsyn/sleep
-copying src/bnsyn/sleep/stages.py -> build/lib/bnsyn/sleep
-copying src/bnsyn/sleep/cycle.py -> build/lib/bnsyn/sleep
-creating build/lib/bnsyn/synapse
-copying src/bnsyn/synapse/__init__.py -> build/lib/bnsyn/synapse
-copying src/bnsyn/synapse/conductance.py -> build/lib/bnsyn/synapse
-creating build/lib/bnsyn/energy
-copying src/bnsyn/energy/regularization.py -> build/lib/bnsyn/energy
-copying src/bnsyn/energy/__init__.py -> build/lib/bnsyn/energy
+creating build/lib/bnsyn/benchmarks
+copying src/bnsyn/benchmarks/__init__.py -> build/lib/bnsyn/benchmarks
+copying src/bnsyn/benchmarks/regime.py -> build/lib/bnsyn/benchmarks
 creating build/lib/bnsyn/numerics
-copying src/bnsyn/numerics/__init__.py -> build/lib/bnsyn/numerics
 copying src/bnsyn/numerics/integrators.py -> build/lib/bnsyn/numerics
+copying src/bnsyn/numerics/__init__.py -> build/lib/bnsyn/numerics
 running egg_info
 writing src/bnsyn.egg-info/PKG-INFO
 writing dependency_links to src/bnsyn.egg-info/dependency_links.txt
@@ -423,106 +421,109 @@ creating build/bdist.linux-x86_64/wheel/contracts
 copying build/lib/contracts/__init__.py -> build/bdist.linux-x86_64/wheel/./contracts
 copying build/lib/contracts/math_contracts.py -> build/bdist.linux-x86_64/wheel/./contracts
 creating build/bdist.linux-x86_64/wheel/bnsyn
-creating build/bdist.linux-x86_64/wheel/bnsyn/experiments
-copying build/lib/bnsyn/experiments/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
-copying build/lib/bnsyn/experiments/declarative.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
-copying build/lib/bnsyn/incremental.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-copying build/lib/bnsyn/config.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/rng.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/consolidation
+copying build/lib/bnsyn/consolidation/dual_weight.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
+copying build/lib/bnsyn/consolidation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
+copying build/lib/bnsyn/cli.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/energy
+copying build/lib/bnsyn/energy/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
+copying build/lib/bnsyn/energy/regularization.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
 copying build/lib/bnsyn/vcg.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 creating build/bdist.linux-x86_64/wheel/bnsyn/neuron
-copying build/lib/bnsyn/neuron/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/neuron
 copying build/lib/bnsyn/neuron/adex.py -> build/bdist.linux-x86_64/wheel/./bnsyn/neuron
-creating build/bdist.linux-x86_64/wheel/bnsyn/criticality
-copying build/lib/bnsyn/criticality/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
-copying build/lib/bnsyn/criticality/analysis.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
-copying build/lib/bnsyn/criticality/phase_transition.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
-copying build/lib/bnsyn/criticality/branching.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
-creating build/bdist.linux-x86_64/wheel/bnsyn/consolidation
-copying build/lib/bnsyn/consolidation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
-copying build/lib/bnsyn/consolidation/dual_weight.py -> build/bdist.linux-x86_64/wheel/./bnsyn/consolidation
-creating build/bdist.linux-x86_64/wheel/bnsyn/memory
-copying build/lib/bnsyn/memory/trace.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
-copying build/lib/bnsyn/memory/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
-copying build/lib/bnsyn/memory/ledger.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
-copying build/lib/bnsyn/memory/consolidator.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
-creating build/bdist.linux-x86_64/wheel/bnsyn/calibration
-copying build/lib/bnsyn/calibration/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
-copying build/lib/bnsyn/calibration/accuracy_speed.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
-copying build/lib/bnsyn/calibration/fit.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
-copying build/lib/bnsyn/rng.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-copying build/lib/bnsyn/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/neuron/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/neuron
+creating build/bdist.linux-x86_64/wheel/bnsyn/tools
+copying build/lib/bnsyn/tools/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+copying build/lib/bnsyn/tools/run_scaled_sleep_stack.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+copying build/lib/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
+creating build/bdist.linux-x86_64/wheel/bnsyn/viz
+copying build/lib/bnsyn/viz/interactive.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+copying build/lib/bnsyn/viz/dashboard.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+copying build/lib/bnsyn/viz/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+copying build/lib/bnsyn/config.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 creating build/bdist.linux-x86_64/wheel/bnsyn/sim
 copying build/lib/bnsyn/sim/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sim
 copying build/lib/bnsyn/sim/network.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sim
-copying build/lib/bnsyn/control.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 creating build/bdist.linux-x86_64/wheel/bnsyn/testing
 copying build/lib/bnsyn/testing/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/testing
 copying build/lib/bnsyn/testing/faults.py -> build/bdist.linux-x86_64/wheel/./bnsyn/testing
-creating build/bdist.linux-x86_64/wheel/bnsyn/validation
-copying build/lib/bnsyn/validation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
-copying build/lib/bnsyn/validation/inputs.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
+creating build/bdist.linux-x86_64/wheel/bnsyn/criticality
+copying build/lib/bnsyn/criticality/phase_transition.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/analysis.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
+copying build/lib/bnsyn/criticality/branching.py -> build/bdist.linux-x86_64/wheel/./bnsyn/criticality
 creating build/bdist.linux-x86_64/wheel/bnsyn/emergence
-copying build/lib/bnsyn/emergence/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/emergence
 copying build/lib/bnsyn/emergence/crystallizer.py -> build/bdist.linux-x86_64/wheel/./bnsyn/emergence
-copying build/lib/bnsyn/simulation.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-copying build/lib/bnsyn/neurons.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-copying build/lib/bnsyn/synapses.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-copying build/lib/bnsyn/cli.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-creating build/bdist.linux-x86_64/wheel/bnsyn/benchmarks
-copying build/lib/bnsyn/benchmarks/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
-copying build/lib/bnsyn/benchmarks/regime.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
-copying build/lib/bnsyn/api.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/emergence/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/emergence
+copying build/lib/bnsyn/py.typed -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/temperature
+copying build/lib/bnsyn/temperature/schedule.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
+copying build/lib/bnsyn/temperature/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
+copying build/lib/bnsyn/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/__main__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 creating build/bdist.linux-x86_64/wheel/bnsyn/schemas
 copying build/lib/bnsyn/schemas/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/schemas
 copying build/lib/bnsyn/schemas/experiment.py -> build/bdist.linux-x86_64/wheel/./bnsyn/schemas
-creating build/bdist.linux-x86_64/wheel/bnsyn/tools
-copying build/lib/bnsyn/tools/run_scaled_sleep_stack.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
-copying build/lib/bnsyn/tools/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
-copying build/lib/bnsyn/tools/benchmark_sleep_stack_scale.py -> build/bdist.linux-x86_64/wheel/./bnsyn/tools
-creating build/bdist.linux-x86_64/wheel/bnsyn/viz
-copying build/lib/bnsyn/viz/dashboard.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
-copying build/lib/bnsyn/viz/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
-copying build/lib/bnsyn/viz/interactive.py -> build/bdist.linux-x86_64/wheel/./bnsyn/viz
+creating build/bdist.linux-x86_64/wheel/bnsyn/production
+copying build/lib/bnsyn/production/adex.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/jax_backend.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+copying build/lib/bnsyn/production/connectivity.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
+creating build/bdist.linux-x86_64/wheel/bnsyn/experiments
+copying build/lib/bnsyn/experiments/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
+copying build/lib/bnsyn/experiments/declarative.py -> build/bdist.linux-x86_64/wheel/./bnsyn/experiments
+copying build/lib/bnsyn/synapses.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/biodigital
+copying build/lib/bnsyn/biodigital/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/biodigital
+copying build/lib/bnsyn/biodigital/s12.py -> build/bdist.linux-x86_64/wheel/./bnsyn/biodigital
+creating build/bdist.linux-x86_64/wheel/bnsyn/calibration
+copying build/lib/bnsyn/calibration/accuracy_speed.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+copying build/lib/bnsyn/calibration/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+copying build/lib/bnsyn/calibration/fit.py -> build/bdist.linux-x86_64/wheel/./bnsyn/calibration
+creating build/bdist.linux-x86_64/wheel/bnsyn/connectivity
+copying build/lib/bnsyn/connectivity/sparse.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
+copying build/lib/bnsyn/connectivity/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
+creating build/bdist.linux-x86_64/wheel/bnsyn/synapse
+copying build/lib/bnsyn/synapse/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
+copying build/lib/bnsyn/synapse/conductance.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
+copying build/lib/bnsyn/api.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/simulation.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+creating build/bdist.linux-x86_64/wheel/bnsyn/validation
+copying build/lib/bnsyn/validation/inputs.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
+copying build/lib/bnsyn/validation/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/validation
+creating build/bdist.linux-x86_64/wheel/bnsyn/memory
+copying build/lib/bnsyn/memory/consolidator.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/trace.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/ledger.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+copying build/lib/bnsyn/memory/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/memory
+creating build/bdist.linux-x86_64/wheel/bnsyn/sleep
+copying build/lib/bnsyn/sleep/replay.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/cycle.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
+copying build/lib/bnsyn/sleep/stages.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
 creating build/bdist.linux-x86_64/wheel/bnsyn/plasticity
-copying build/lib/bnsyn/plasticity/stdp.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
 copying build/lib/bnsyn/plasticity/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
 copying build/lib/bnsyn/plasticity/three_factor.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
-creating build/bdist.linux-x86_64/wheel/bnsyn/temperature
-copying build/lib/bnsyn/temperature/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
-copying build/lib/bnsyn/temperature/schedule.py -> build/bdist.linux-x86_64/wheel/./bnsyn/temperature
-copying build/lib/bnsyn/py.typed -> build/bdist.linux-x86_64/wheel/./bnsyn
-creating build/bdist.linux-x86_64/wheel/bnsyn/production
-copying build/lib/bnsyn/production/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
-copying build/lib/bnsyn/production/connectivity.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
-copying build/lib/bnsyn/production/adex.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
-copying build/lib/bnsyn/production/jax_backend.py -> build/bdist.linux-x86_64/wheel/./bnsyn/production
-creating build/bdist.linux-x86_64/wheel/bnsyn/connectivity
-copying build/lib/bnsyn/connectivity/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
-copying build/lib/bnsyn/connectivity/sparse.py -> build/bdist.linux-x86_64/wheel/./bnsyn/connectivity
+copying build/lib/bnsyn/plasticity/stdp.py -> build/bdist.linux-x86_64/wheel/./bnsyn/plasticity
+copying build/lib/bnsyn/control.py -> build/bdist.linux-x86_64/wheel/./bnsyn
+copying build/lib/bnsyn/neurons.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 creating build/bdist.linux-x86_64/wheel/bnsyn/provenance
 copying build/lib/bnsyn/provenance/manifest.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
 copying build/lib/bnsyn/provenance/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
 copying build/lib/bnsyn/provenance/manifest_builder.py -> build/bdist.linux-x86_64/wheel/./bnsyn/provenance
-copying build/lib/bnsyn/__main__.py -> build/bdist.linux-x86_64/wheel/./bnsyn
-creating build/bdist.linux-x86_64/wheel/bnsyn/sleep
-copying build/lib/bnsyn/sleep/replay.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
-copying build/lib/bnsyn/sleep/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
-copying build/lib/bnsyn/sleep/stages.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
-copying build/lib/bnsyn/sleep/cycle.py -> build/bdist.linux-x86_64/wheel/./bnsyn/sleep
-creating build/bdist.linux-x86_64/wheel/bnsyn/synapse
-copying build/lib/bnsyn/synapse/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
-copying build/lib/bnsyn/synapse/conductance.py -> build/bdist.linux-x86_64/wheel/./bnsyn/synapse
-creating build/bdist.linux-x86_64/wheel/bnsyn/energy
-copying build/lib/bnsyn/energy/regularization.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
-copying build/lib/bnsyn/energy/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/energy
+creating build/bdist.linux-x86_64/wheel/bnsyn/benchmarks
+copying build/lib/bnsyn/benchmarks/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
+copying build/lib/bnsyn/benchmarks/regime.py -> build/bdist.linux-x86_64/wheel/./bnsyn/benchmarks
 creating build/bdist.linux-x86_64/wheel/bnsyn/numerics
-copying build/lib/bnsyn/numerics/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/numerics
 copying build/lib/bnsyn/numerics/integrators.py -> build/bdist.linux-x86_64/wheel/./bnsyn/numerics
+copying build/lib/bnsyn/numerics/__init__.py -> build/bdist.linux-x86_64/wheel/./bnsyn/numerics
+copying build/lib/bnsyn/incremental.py -> build/bdist.linux-x86_64/wheel/./bnsyn
 running install_egg_info
 Copying src/bnsyn.egg-info to build/bdist.linux-x86_64/wheel/./bnsyn-0.2.0-py3.12.egg-info
 running install_scripts
 creating build/bdist.linux-x86_64/wheel/bnsyn-0.2.0.dist-info/WHEEL
-creating '/workspace/bnsyn-phase-controlled-emergent-dynamics/dist/.tmp-c_io0lq6/bnsyn-0.2.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+creating '/workspace/bnsyn-phase-controlled-emergent-dynamics/dist/.tmp-1kqrju77/bnsyn-0.2.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
 adding 'bnsyn/__init__.py'
 adding 'bnsyn/__main__.py'
 adding 'bnsyn/api.py'
@@ -538,6 +539,8 @@ adding 'bnsyn/synapses.py'
 adding 'bnsyn/vcg.py'
 adding 'bnsyn/benchmarks/__init__.py'
 adding 'bnsyn/benchmarks/regime.py'
+adding 'bnsyn/biodigital/__init__.py'
+adding 'bnsyn/biodigital/s12.py'
 adding 'bnsyn/calibration/__init__.py'
 adding 'bnsyn/calibration/accuracy_speed.py'
 adding 'bnsyn/calibration/fit.py'
