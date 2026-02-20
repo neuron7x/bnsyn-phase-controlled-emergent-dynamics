@@ -30,7 +30,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
+from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+from bnsyn.sim.network import run_simulation
 
 def _get_package_version() -> str:
     """Return the installed package version with a safe fallback."""
@@ -128,8 +129,6 @@ def _cmd_demo(args: argparse.Namespace) -> int:
             print(f"Error launching dashboard: {e}")
             return 1
 
-    from bnsyn.sim.network import run_simulation
-
     _validate_demo_args(args)
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
@@ -157,8 +156,6 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
     ----------
     docs/SPEC.md#P2-12
     """
-    from bnsyn.sim.network import run_simulation
-
     m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
     # compare mean rates and sigma; dt2 should be close
@@ -356,8 +353,6 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     print(f"Metrics written to {metrics_path}")
 
     # Generate manifest
-    from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
-
     manifest = build_sleep_stack_manifest(
         seed=args.seed,
         steps_wake=args.steps_wake,
@@ -451,8 +446,6 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    from bnsyn.sim.network import run_simulation
-
     metrics = run_simulation(steps=40, dt_ms=0.1, seed=args.seed, N=32)
     canonical_metrics = json.dumps(metrics, sort_keys=True, separators=(",", ":"))
     report: dict[str, Any] = {

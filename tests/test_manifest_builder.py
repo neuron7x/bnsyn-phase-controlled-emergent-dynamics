@@ -30,6 +30,22 @@ def test_get_git_commit_handles_errors(tmp_path: Path, monkeypatch) -> None:
     assert commit.startswith(f"release-{version}+nogit.")
 
 
+
+
+def test_build_lineage_fallback_is_directory_invariant(tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    (repo_root / "pyproject.toml").write_text(
+        "[project]\nname='bnsyn'\nversion='1.2.3'\n", encoding="utf-8"
+    )
+    nested = repo_root / "a" / "b"
+    nested.mkdir(parents=True)
+
+    first = manifest_builder._build_lineage_fallback(repo_root, "1.2.3")
+    second = manifest_builder._build_lineage_fallback(nested, "1.2.3")
+
+    assert first == second
+
 def test_extract_spec_version_falls_back_to_hash(tmp_path: Path) -> None:
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("Spec header without version\nMore\n", encoding="utf-8")

@@ -100,9 +100,8 @@ def test_cli_module_main_executes() -> None:
     old_argv = sys.argv
     sys.argv = argv
     try:
-        sys.modules.pop("bnsyn.cli", None)
         with pytest.raises(SystemExit):
-            runpy.run_module("bnsyn.cli", run_name="__main__")
+            runpy.run_path(str(Path(cli.__file__)), run_name="__main__")
     finally:
         sys.argv = old_argv
 

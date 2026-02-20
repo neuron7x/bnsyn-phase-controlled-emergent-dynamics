@@ -21,11 +21,24 @@ from pathlib import Path
 from typing import Any
 
 
+def _find_repo_root(start: Path) -> Path:
+    """Find repository root by locating pyproject.toml in current/parent paths."""
+    for candidate in (start, *start.parents):
+        if (candidate / "pyproject.toml").exists():
+            return candidate
+    return start
+
+
 def _build_lineage_fallback(cwd: Path, package_version: str | None = None) -> str:
     """Build deterministic fallback git identifier when git metadata is unavailable."""
-    version = package_version or _resolve_package_version(cwd)
-    fingerprint = f"{cwd.resolve().as_posix()}::{version}".encode("utf-8")
-    digest = hashlib.sha256(fingerprint).hexdigest()[:12]
+    repo_root = _find_repo_root(cwd.resolve())
+    version = package_version or _resolve_package_version(repo_root)
+    pyproject_path = repo_root / "pyproject.toml"
+    if pyproject_path.exists():
+        digest_source = pyproject_path.read_bytes()
+    else:
+        digest_source = version.encode("utf-8")
+    digest = hashlib.sha256(digest_source).hexdigest()[:12]
     return f"release-{version}+nogit.{digest}"
 
 
