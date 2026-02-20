@@ -10384,3 +10384,5 @@ EXIT:0
 
 STDERR:
 
+[2026-02-20T01:39:03Z] CMD: python -m pytest -m "not (validation or property)" -q
+EXIT: 0
