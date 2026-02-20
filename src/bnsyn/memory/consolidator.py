@@ -143,7 +143,7 @@ class MemoryConsolidator:
         # Return ConsolidatedMemory snapshot
         idx = len(self._storage.patterns) - 1
         return ConsolidatedMemory(
-            pattern=self._storage.patterns[idx].copy(),
+            pattern=self._storage.patterns[idx].astype(np.float64, copy=True),
             importance=float(self._storage.importance[idx]),
             tag_step=self._tag_steps[idx],
             consolidated=self._consolidated_flags[idx],
@@ -191,10 +191,7 @@ class MemoryConsolidator:
         idx : int
             Index to evict.
         """
-        self._storage.patterns.pop(idx)
-        self._storage.importance = np.delete(self._storage.importance, idx)
-        self._storage.timestamps = np.delete(self._storage.timestamps, idx)
-        self._storage.recall_counters = np.delete(self._storage.recall_counters, idx)
+        self._storage.remove_at(idx)
         self._consolidated_flags.pop(idx)
         self._strengths.pop(idx)
         self._tag_steps.pop(idx)
@@ -243,7 +240,7 @@ class MemoryConsolidator:
                     self._consolidated_flags[i] = True
                     consolidated_traces.append(
                         ConsolidatedMemory(
-                            pattern=self._storage.patterns[i].copy(),
+                            pattern=self._storage.patterns[i].astype(np.float64, copy=True),
                             importance=float(self._storage.importance[i]),
                             tag_step=self._tag_steps[i],
                             consolidated=True,
@@ -293,7 +290,7 @@ class MemoryConsolidator:
         # Return best match (first in sorted list)
         best_idx = indices[0]
         return ConsolidatedMemory(
-            pattern=self._storage.patterns[best_idx].copy(),
+            pattern=self._storage.patterns[best_idx].astype(np.float64, copy=True),
             importance=float(self._storage.importance[best_idx]),
             tag_step=self._tag_steps[best_idx],
             consolidated=self._consolidated_flags[best_idx],

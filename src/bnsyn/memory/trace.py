@@ -17,6 +17,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
+FloatArray = NDArray[np.floating[Any]]
 Float64Array = NDArray[np.float64]
 
 
@@ -28,7 +29,7 @@ class MemoryTrace:
     ----------
     capacity : int
         Maximum number of patterns to store (must be positive).
-    patterns : list[Float64Array]
+    patterns : list[FloatArray]
         Stored pattern vectors.
     importance : Float64Array
         Importance scores for each pattern.
@@ -49,10 +50,14 @@ class MemoryTrace:
     """
 
     capacity: int
-    patterns: list[Float64Array] = field(default_factory=list)
+    patterns: list[FloatArray] = field(default_factory=list)
     importance: Float64Array = field(default_factory=lambda: np.array([], dtype=np.float64))
     timestamps: Float64Array = field(default_factory=lambda: np.array([], dtype=np.float64))
     recall_counters: Float64Array = field(default_factory=lambda: np.array([], dtype=np.float64))
+    _importance_store: Float64Array = field(init=False, repr=False)
+    _timestamps_store: Float64Array = field(init=False, repr=False)
+    _recall_store: Float64Array = field(init=False, repr=False)
+    _count: int = field(init=False, default=0, repr=False)
 
     def __post_init__(self) -> None:
         """Validate capacity parameter.
@@ -65,12 +70,39 @@ class MemoryTrace:
         if self.capacity <= 0:
             raise ValueError("capacity must be positive")
 
-    def tag(self, pattern: Float64Array, importance: float) -> None:
+        self._importance_store = np.empty(self.capacity, dtype=np.float64)
+        self._timestamps_store = np.empty(self.capacity, dtype=np.float64)
+        self._recall_store = np.empty(self.capacity, dtype=np.float64)
+
+        initial_count = len(self.patterns)
+        if initial_count > self.capacity:
+            raise ValueError("initial patterns exceed capacity")
+        if initial_count > 0:
+            if len(self.importance) != initial_count:
+                raise ValueError("importance length must match patterns length")
+            if len(self.timestamps) != initial_count:
+                raise ValueError("timestamps length must match patterns length")
+            if len(self.recall_counters) != initial_count:
+                raise ValueError("recall_counters length must match patterns length")
+            self._importance_store[:initial_count] = self.importance
+            self._timestamps_store[:initial_count] = self.timestamps
+            self._recall_store[:initial_count] = self.recall_counters
+
+        self._count = initial_count
+        self._refresh_public_arrays()
+
+    def _refresh_public_arrays(self) -> None:
+        """Expose active slices without allocating new arrays."""
+        self.importance = self._importance_store[: self._count]
+        self.timestamps = self._timestamps_store[: self._count]
+        self.recall_counters = self._recall_store[: self._count]
+
+    def tag(self, pattern: FloatArray, importance: float) -> None:
         """Store a memory pattern with importance score.
 
         Parameters
         ----------
-        pattern : Float64Array
+        pattern : FloatArray
             Pattern vector to store (must be 1D).
         importance : float
             Importance score for the pattern (must be non-negative).
@@ -98,23 +130,42 @@ class MemoryTrace:
         # Remove oldest pattern if at capacity
         if len(self.patterns) >= self.capacity:
             self.patterns.pop(0)
-            self.importance = self.importance[1:]
-            self.timestamps = self.timestamps[1:]
-            self.recall_counters = self.recall_counters[1:]
+            if self._count > 1:
+                self._importance_store[: self._count - 1] = self._importance_store[1 : self._count]
+                self._timestamps_store[: self._count - 1] = self._timestamps_store[1 : self._count]
+                self._recall_store[: self._count - 1] = self._recall_store[1 : self._count]
+            self._count -= 1
 
         # Store new pattern
         timestamp_value = float(len(self.patterns))
-        self.patterns.append(pattern.copy())
-        self.importance = np.append(self.importance, importance)
-        self.timestamps = np.append(self.timestamps, timestamp_value)
-        self.recall_counters = np.append(self.recall_counters, 0.0)
+        self.patterns.append(np.asarray(pattern, dtype=np.float64).copy())
+        self._importance_store[self._count] = importance
+        self._timestamps_store[self._count] = timestamp_value
+        self._recall_store[self._count] = 0.0
+        self._count += 1
+        self._refresh_public_arrays()
 
-    def recall(self, cue: Float64Array, threshold: float) -> list[int]:
+
+    def remove_at(self, idx: int) -> None:
+        """Remove a stored pattern by index."""
+        if not 0 <= idx < self._count:
+            raise IndexError("memory index out of range")
+
+        self.patterns.pop(idx)
+        tail = self._count - idx - 1
+        if tail > 0:
+            self._importance_store[idx : self._count - 1] = self._importance_store[idx + 1 : self._count]
+            self._timestamps_store[idx : self._count - 1] = self._timestamps_store[idx + 1 : self._count]
+            self._recall_store[idx : self._count - 1] = self._recall_store[idx + 1 : self._count]
+        self._count -= 1
+        self._refresh_public_arrays()
+
+    def recall(self, cue: FloatArray, threshold: float) -> list[int]:
         """Retrieve patterns similar to the cue using cosine similarity.
 
         Parameters
         ----------
-        cue : Float64Array
+        cue : FloatArray
             Query pattern vector (must be 1D, non-zero norm).
         threshold : float
             Minimum cosine similarity for recall (must be in [-1, 1]).
