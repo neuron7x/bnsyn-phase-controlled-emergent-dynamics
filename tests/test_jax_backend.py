@@ -124,6 +124,39 @@ def test_adex_step_jax_with_numpy_shim(monkeypatch: pytest.MonkeyPatch) -> None:
     sys.modules.pop("jax", None)
 
 
+def test_jax_backend_propagates_non_import_errors(monkeypatch: pytest.MonkeyPatch) -> None:
+    module_name = "bnsyn.production.jax_backend"
+    module = importlib.import_module(module_name)
+    original_import = importlib.import_module
+
+    def boom(name: str, *args: object, **kwargs: object) -> ModuleType:
+        if name == "jax.numpy":
+            raise ValueError("unexpected failure")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(importlib, "import_module", boom)
+
+    with pytest.raises(ValueError, match="unexpected failure"):
+        module.adex_step_jax(
+            np.array([-55.0], dtype=float),
+            np.array([0.0], dtype=float),
+            np.array([0.0], dtype=float),
+            C=200.0,
+            gL=10.0,
+            EL=-65.0,
+            VT=-50.0,
+            DeltaT=2.0,
+            tau_w=100.0,
+            a=2.0,
+            b=50.0,
+            V_reset=-65.0,
+            V_spike=-40.0,
+            dt=0.1,
+        )
+
+    sys.modules.pop(module_name, None)
+
+
 def test_jax_backend_handles_find_spec_value_error(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
