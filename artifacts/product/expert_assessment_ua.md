@@ -4,14 +4,16 @@
 **Status:** BLOCKED
 **Contradictions Detected:** 0
 
-## 1. GITHUB TOOLING EVIDENCE (DOMAIN A)
+## 1. GITHUB TOOLING EVIDENCE (DOMAIN A · HOTFIX)
 | Metric | Extracted Data | Status | Anchor / Ref |
 |--------|----------------|--------|--------------|
-| `gh auth status` | CLI installed; authentication unavailable in current environment (`EXIT_CODE:1`) | FAIL | `proof_bundle/logs/omega_gh_auth_status.log` |
-| CodeQL/SAST Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/omega_gh_code_scanning_alerts.log`, `artifacts/security/security_scan_final.json` |
-| Dependabot Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/omega_gh_dependabot_alerts.log`, `artifacts/security/security_scan_final.json` |
-| CI Pipeline (Last 10) | `gh run list` blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/omega_gh_run_list.log`, `artifacts/security/security_scan_final.json` |
-| Branch Protection (main) | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/omega_gh_branch_protection.log`, `artifacts/security/security_scan_final.json` |
+| Token Presence (`GITHUB_TOKEN`) | Not present (`GITHUB_TOKEN_PRESENT=0`) | FAIL | `proof_bundle/logs/hotfix_github_token_presence.log` |
+| Token Presence (`GH_TOKEN`) | Not present (`GH_TOKEN_PRESENT=0`) | FAIL | `proof_bundle/logs/hotfix_gh_token_presence.log` |
+| `gh auth status` | Not logged in to `github.com` (`EXIT_CODE:1`) | FAIL | `proof_bundle/logs/hotfix_gh_auth_status.log` |
+| CodeQL/SAST Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_code_scanning_alerts.log`, `artifacts/security/security_scan_final.json` |
+| Dependabot Alerts | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_dependabot_alerts.log`, `artifacts/security/security_scan_final.json` |
+| CI Pipeline (Last 10) | `gh run list` blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_run_list.log`, `artifacts/security/security_scan_final.json` |
+| Branch Protection (main) | API extraction blocked by missing auth (`EXIT_CODE:4`) | FAIL | `proof_bundle/logs/hotfix_gh_branch_protection.log`, `artifacts/security/security_scan_final.json` |
 
 ## 2. TEST & CODEBASE EVIDENCE (DOMAIN B)
 | Metric | Extracted Data | Status | Anchor / Ref |
@@ -40,6 +42,6 @@
 - **Total Synthetic Objects Integrated:** 1456
 - **Lines of Code / Tests Written:** Added 402008, Deleted 50811, Total Changed 452819
 - **P0 BLOCKERS:**
-  1. Domain A telemetry requires a valid GitHub auth token/session to satisfy extraction gates.
+  1. Domain A telemetry gates cannot pass without authenticated `gh` session (`gh auth status` must be `EXIT_CODE:0`).
 
 **END OF REPORT.**
