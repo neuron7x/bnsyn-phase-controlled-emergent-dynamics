@@ -101,7 +101,7 @@ def test_cli_module_main_executes() -> None:
     sys.argv = argv
     try:
         with pytest.raises(SystemExit):
-            runpy.run_module("bnsyn.cli", run_name="__main__")
+            runpy.run_path(str(Path(cli.__file__)), run_name="__main__")
     finally:
         sys.argv = old_argv
 

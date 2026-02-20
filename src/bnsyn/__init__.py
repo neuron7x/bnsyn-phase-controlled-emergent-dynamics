@@ -10,8 +10,7 @@ None
 
 Notes
 -----
-This module exposes the package version and provides top-level access to
-core configuration and RNG utilities without modifying simulation behavior.
+This module exposes package version metadata and canonical API callables.
 
 References
 ----------
@@ -29,4 +28,4 @@ try:
 except metadata.PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0"
 
-__all__ = ["__version__", "rng", "config", "neurons", "synapses", "control", "simulation", "run", "phase_atlas", "sleep_stack"]
+__all__ = ["__version__", "run", "phase_atlas", "sleep_stack"]

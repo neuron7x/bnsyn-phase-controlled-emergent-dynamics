@@ -50,6 +50,8 @@ NMDA_FRACTION = 0.3  # Fraction of excitatory current through NMDA receptors
 GAIN_CURRENT_SCALE_PA = 50.0  # Current scaling factor for criticality gain (pA)
 INITIAL_V_STD_MV = 5.0  # Standard deviation for initial voltage distribution (mV)
 
+MAX_SAFE_NEURONS = 2000
+
 __all__ = ["Network", "NetworkParams", "run_simulation"]
 
 
@@ -515,6 +517,14 @@ def run_simulation(
 
     if not isinstance(steps, Integral):
         raise TypeError("steps must be a positive integer")
+    if not isinstance(dt_ms, Real):
+        raise TypeError("dt_ms must be a finite real number")
+    dt_checked = float(dt_ms)
+    if not np.isfinite(dt_checked):
+        raise ValueError("dt_ms must be a finite real number")
+    if dt_checked < 1e-9:
+        raise ValueError("dt_ms must be >= 1e-9")
+
     if steps <= 0:
         raise ValueError("steps must be greater than 0")
     if not isinstance(external_current_pA, Real):
@@ -523,7 +533,16 @@ def run_simulation(
     if not np.isfinite(external_current):
         raise ValueError("external_current_pA must be a finite real number")
 
-    _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
+    try:
+        _ = NetworkValidationConfig(N=N, dt_ms=dt_checked)
+    except Exception as exc:
+        raise ValueError(f"invalid simulation configuration: {exc}") from exc
+
+    if N > MAX_SAFE_NEURONS:
+        raise ValueError(
+            f"N={N} exceeds MAX_SAFE_NEURONS={MAX_SAFE_NEURONS}; "
+            "use specialized scaled/benchmark pipelines for larger networks"
+        )
     pack = seed_all(seed)
     rng = pack.np_rng
     nparams = NetworkParams(N=N)
@@ -532,23 +551,23 @@ def run_simulation(
         AdExParams(),
         SynapseParams(),
         CriticalityParams(),
-        dt_ms=dt_ms,
+        dt_ms=dt_checked,
         rng=rng,
         backend=backend,
     )
 
-    sigmas: list[float] = []
-    rates: list[float] = []
+    sigmas = np.empty(steps, dtype=np.float64)
+    rates = np.empty(steps, dtype=np.float64)
 
     # Prepare external current array if needed
     injected_current: NDArray[np.float64] | None = None
     if abs(external_current) > 1e-9:  # Robust check for non-zero
         injected_current = np.full(N, external_current, dtype=np.float64)
 
-    for _ in range(steps):
+    for idx in range(steps):
         m = net.step(external_current_pA=injected_current)
-        sigmas.append(m["sigma"])
-        rates.append(m["spike_rate_hz"])
+        sigmas[idx] = m["sigma"]
+        rates[idx] = m["spike_rate_hz"]
 
     return {
         "sigma_mean": float(np.mean(sigmas)),

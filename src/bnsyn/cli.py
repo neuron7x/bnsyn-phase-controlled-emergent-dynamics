@@ -33,7 +33,6 @@ from typing import Any
 from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
 from bnsyn.sim.network import run_simulation
 
-
 def _get_package_version() -> str:
     """Return the installed package version with a safe fallback."""
     version: str | None = None
