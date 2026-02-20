@@ -100,6 +100,7 @@ def test_cli_module_main_executes() -> None:
     old_argv = sys.argv
     sys.argv = argv
     try:
+        sys.modules.pop("bnsyn.cli", None)
         with pytest.raises(SystemExit):
             runpy.run_module("bnsyn.cli", run_name="__main__")
     finally:

@@ -16,10 +16,17 @@ import shutil
 import subprocess  # nosec B404
 import sys
 import tomllib
-import warnings
 from importlib import metadata
 from pathlib import Path
 from typing import Any
+
+
+def _build_lineage_fallback(cwd: Path, package_version: str | None = None) -> str:
+    """Build deterministic fallback git identifier when git metadata is unavailable."""
+    version = package_version or _resolve_package_version(cwd)
+    fingerprint = f"{cwd.resolve().as_posix()}::{version}".encode("utf-8")
+    digest = hashlib.sha256(fingerprint).hexdigest()[:12]
+    return f"release-{version}+nogit.{digest}"
 
 
 def _get_git_commit(cwd: Path, package_version: str | None = None) -> str:
@@ -33,38 +40,25 @@ def _get_git_commit(cwd: Path, package_version: str | None = None) -> str:
     Returns
     -------
     str
-        Commit hash or fallback release identifier if not in git repo.
+        Commit hash or deterministic lineage fallback when not in a git repo.
     """
-    try:
-        git_path = shutil.which("git")
-        if not git_path:
-            raise FileNotFoundError("git executable not found")
-        # Fixed git command without shell; inputs are constant.
-        result = subprocess.run(  # nosec B603
-            [git_path, "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True,
-            cwd=cwd,
-        )
-        sha = result.stdout.strip()
-        if sha:
-            return sha
-    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        warnings.warn(f"Failed to capture git SHA: {exc}", stacklevel=2)
-    fallback = _fallback_git_id(package_version)
-    warnings.warn(f"Using fallback git identifier: {fallback}", stacklevel=2)
-    return fallback
-
-
-def _fallback_git_id(package_version: str | None) -> str:
-    if package_version:
-        return f"release-{package_version}"
-    try:
-        version = metadata.version("bnsyn")
-    except metadata.PackageNotFoundError:
-        version = "0.0.0"
-    return f"release-{version}"
+    git_path = shutil.which("git")
+    if git_path:
+        try:
+            # Fixed git command without shell; inputs are constant.
+            result = subprocess.run(  # nosec B603
+                [git_path, "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=cwd,
+            )
+            sha = result.stdout.strip()
+            if sha:
+                return sha
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return _build_lineage_fallback(cwd, package_version)
+    return _build_lineage_fallback(cwd, package_version)
 
 
 def _resolve_package_version(repo_root: Path) -> str:

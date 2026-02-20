@@ -19,15 +19,15 @@ def test_get_git_commit_handles_errors(tmp_path: Path, monkeypatch) -> None:
         raise subprocess.CalledProcessError(1, ["git", "rev-parse", "HEAD"])
 
     monkeypatch.setattr(manifest_builder.subprocess, "run", raise_called)
-    with pytest.warns(UserWarning):
-        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
+    commit = manifest_builder._get_git_commit(tmp_path)
+    assert commit.startswith(f"release-{version}+nogit.")
 
     def raise_missing(*args, **kwargs) -> None:
         raise FileNotFoundError("git not available")
 
     monkeypatch.setattr(manifest_builder.subprocess, "run", raise_missing)
-    with pytest.warns(UserWarning):
-        assert manifest_builder._get_git_commit(tmp_path) == f"release-{version}"
+    commit = manifest_builder._get_git_commit(tmp_path)
+    assert commit.startswith(f"release-{version}+nogit.")
 
 
 def test_extract_spec_version_falls_back_to_hash(tmp_path: Path) -> None:
@@ -117,14 +117,13 @@ def test_build_sleep_stack_manifest_uses_fallback_git_id(
 ) -> None:
     monkeypatch.setattr(manifest_builder.shutil, "which", lambda _: None)
 
-    with pytest.warns(UserWarning):
-        manifest = manifest_builder.build_sleep_stack_manifest(
-            seed=1,
-            steps_wake=2,
-            steps_sleep=3,
-            N=4,
-            package_version="0.2.0",
-            repo_root=tmp_path,
-        )
+    manifest = manifest_builder.build_sleep_stack_manifest(
+        seed=1,
+        steps_wake=2,
+        steps_sleep=3,
+        N=4,
+        package_version="0.2.0",
+        repo_root=tmp_path,
+    )
 
-    assert manifest["git_sha"] == "release-0.2.0"
+    assert manifest["git_sha"].startswith("release-0.2.0+nogit.")

@@ -437,4 +437,5 @@ def test_viz_interactive_optional_dependency_errors(monkeypatch: pytest.MonkeyPa
     monkeypatch.setattr(builtins, "__import__", fake_import)
 
     with pytest.raises(RuntimeError):
+        sys.modules.pop("bnsyn.viz.interactive", None)
         runpy.run_module("bnsyn.viz.interactive", run_name="__main__")
