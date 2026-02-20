@@ -121,3 +121,51 @@ def test_remove_at_supports_middle_removal_and_invalid_index() -> None:
 
     with pytest.raises(IndexError, match="memory index out of range"):
         trace.remove_at(5)
+
+
+
+def test_trace_init_rejects_timestamp_and_recall_length_mismatch() -> None:
+    with pytest.raises(ValueError, match="timestamps length must match patterns length"):
+        MemoryTrace(
+            capacity=3,
+            patterns=[np.array([1.0], dtype=np.float64)],
+            importance=np.array([0.1], dtype=np.float64),
+            timestamps=np.array([], dtype=np.float64),
+            recall_counters=np.array([0.0], dtype=np.float64),
+        )
+
+    with pytest.raises(ValueError, match="recall_counters length must match patterns length"):
+        MemoryTrace(
+            capacity=3,
+            patterns=[np.array([1.0], dtype=np.float64)],
+            importance=np.array([0.1], dtype=np.float64),
+            timestamps=np.array([0.0], dtype=np.float64),
+            recall_counters=np.array([], dtype=np.float64),
+        )
+
+
+def test_get_state_returns_safe_copies() -> None:
+    trace = MemoryTrace(capacity=2)
+    trace.tag(np.array([1.0, 0.0], dtype=np.float64), importance=0.5)
+
+    state = trace.get_state()
+    state["importance"][0] = 99.0
+    state["timestamps"][0] = 88.0
+    state["recall_counters"][0] = 77.0
+
+    np.testing.assert_allclose(trace.importance, np.array([0.5], dtype=np.float64))
+    np.testing.assert_allclose(trace.timestamps, np.array([0.0], dtype=np.float64))
+    np.testing.assert_allclose(trace.recall_counters, np.array([0.0], dtype=np.float64))
+
+
+def test_remove_at_last_index_covers_tail_zero_path() -> None:
+    trace = MemoryTrace(capacity=3)
+    trace.tag(np.array([1.0, 0.0], dtype=np.float64), importance=0.1)
+    trace.tag(np.array([0.0, 1.0], dtype=np.float64), importance=0.2)
+
+    trace.remove_at(1)
+
+    assert len(trace.patterns) == 1
+    np.testing.assert_allclose(trace.importance, np.array([0.1], dtype=np.float64))
+    np.testing.assert_allclose(trace.timestamps, np.array([0.0], dtype=np.float64))
+    np.testing.assert_allclose(trace.recall_counters, np.array([0.0], dtype=np.float64))
