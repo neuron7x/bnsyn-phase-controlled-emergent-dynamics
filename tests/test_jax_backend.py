@@ -125,7 +125,8 @@ def test_adex_step_jax_with_numpy_shim(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_jax_backend_propagates_non_import_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    module = _import_module_without_jax(monkeypatch)
+    module_name = "bnsyn.production.jax_backend"
+    module = importlib.import_module(module_name)
     original_import = importlib.import_module
 
     def boom(name: str, *args: object, **kwargs: object) -> ModuleType:
@@ -152,6 +153,8 @@ def test_jax_backend_propagates_non_import_errors(monkeypatch: pytest.MonkeyPatc
             V_spike=-40.0,
             dt=0.1,
         )
+
+    sys.modules.pop(module_name, None)
 
 
 def test_jax_backend_handles_find_spec_value_error(
