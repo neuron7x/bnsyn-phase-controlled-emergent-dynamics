@@ -1,0 +1,13 @@
+{
+  "generated_by": "PARALYSIS-BREAK-2026.02",
+  "hashes": {
+    "GHTPO-2026.02.md": "694232b5701484079e0be12a98c1bffed576bcbb0d1ef8f1d32765670e9c3f12",
+    "ELPEG-2026.04.md": "1ca374efce87c380a72e71e6826b666dc081e215aaea6e35dc3ae36a73ae5fe8",
+    "BIO-DIGITAL-S12.yaml": "84e6429d3177fe4bd9dcc4882fffad66e3011740e760abe530afb60f2bb5691d",
+    "artifacts/product/expert_assessment_ua.md": "b0c288ed9ad9d9a6977d2e487bdc19b781fd13d11499bee5e42974cb1d8a5bf1",
+    "scorecard.json": "9fc2ca97abab53d523bc8f036ec78851d0351d6eac79ecd8aafc24857ef3c29f",
+    "assumptions.json": "ea63ccba255384e27ed93ce9709ab7a1a540bb6e5bd625157f104f6ce91dd01e",
+    "specs/tla/BNsyn.tla": "b94d832c2a9a8cb4508cb04171b5a24440cd1b0953e758de291059277a3c69c6",
+    "specs/coq/BNsyn_Sigma.v": "6c182c5461874d22799c10e4d000425f06460e118bbdcb6c9e28c1b2d5daad4a"
+  }
+}
