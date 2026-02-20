@@ -39,7 +39,7 @@ JAX_AVAILABLE = _jax_available()
 def _require_jax_numpy() -> Any:
     try:
         return importlib.import_module("jax.numpy")
-    except Exception as exc:
+    except ImportError as exc:
         raise RuntimeError(
             "JAX is required for the JAX backend. Install with: pip install jax jaxlib"
         ) from exc
