@@ -112,7 +112,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck
       - name: Lint workflows with actionlint
-        uses: rhysd/actionlint@03d0035246f3e81f36aed592ffb4bebf33a03106
+        uses: rhysd/actionlint@393031adb9afb225ee52ae2ccd7a5af5525e03e8
         with:
           args: -shellcheck=shellcheck -verbose
       - name: Set up Python
