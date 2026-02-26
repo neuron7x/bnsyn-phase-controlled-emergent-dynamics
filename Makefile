@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -87,6 +87,9 @@ test-validation:
 
 test-property:
 	python -m pytest -m "property" -q
+
+entropy-gate:
+	python -m tools.entropy_gate --mode current
 
 coverage:
 	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
