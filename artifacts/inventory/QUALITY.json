@@ -1,0 +1,55 @@
+{
+  "verdict": "FAIL",
+  "readiness_score_100": 75.45,
+  "raw_score_110": 83,
+  "category_percentages": {
+    "ARCH": 95.0,
+    "INFRA": 86.67,
+    "FUNC": 80.0,
+    "CONFIG": 43.33,
+    "DOCS": 90.0
+  },
+  "ric_status": "PASS",
+  "gates": {
+    "G0_repo_inventory": 10,
+    "G1_make_targets_mapped": 9,
+    "G2_ci_workflows_mapped": 9,
+    "G3_dependency_locks_mapped": 8,
+    "G4_test_gate_exec": 8,
+    "G5_lint_gate_exec": 3,
+    "G6_typecheck_gate_exec": 8,
+    "G7_build_gate_exec": 2,
+    "G8_docs_code_ric": 9,
+    "G9_evidence_logging": 8,
+    "G10_sha256_anchors": 9
+  },
+  "evidence_logs": {
+    "make_test": "proof_bundle/logs/make_test.log",
+    "make_lint": "proof_bundle/logs/make_lint.log",
+    "make_mypy": "proof_bundle/logs/make_mypy.log",
+    "python_build": "proof_bundle/logs/python_build.log",
+    "files_inventory": "proof_bundle/logs/files_inventory.log"
+  },
+  "top5_sha256_anchors": [
+    {
+      "file": "artifacts/inventory/FULL_MAP.json",
+      "sha256": "fee9d2d50955c8fe659c8724d4d00ebafe89c95670c055cd2bcf1f22c8c28138"
+    },
+    {
+      "file": "proof_bundle/logs/make_test.log",
+      "sha256": "d3cd82ab5752dc6449786397e8a78cb8933528490c8fb274138aef8d8f12fc46"
+    },
+    {
+      "file": "proof_bundle/logs/make_mypy.log",
+      "sha256": "6935258c43f7894c0710e8282b170c18954a060aa69cbee0fb27c84dba7031d3"
+    },
+    {
+      "file": "proof_bundle/logs/make_lint.log",
+      "sha256": "e070a8e15170405e4d8b79a5e38813ed9eedd16b3bbd1f254c845c0f8147baf2"
+    },
+    {
+      "file": "proof_bundle/logs/python_build.log",
+      "sha256": "f9db0e387ffc59c00b2f752e8320dd31b2e3c7d35b0ffe71fb4d8f9c70964052"
+    }
+  ]
+}

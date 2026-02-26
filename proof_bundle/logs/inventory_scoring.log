@@ -1,0 +1,7 @@
++ python inventory scoring
+{
+  "normalized": 75.45,
+  "verdict": "FAIL",
+  "ric": "PASS"
+}
+EXIT_CODE=0
