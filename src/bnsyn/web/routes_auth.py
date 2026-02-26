@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hmac
 import sqlite3
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, Form, Header, HTTPException, Request, Response, status
 
@@ -13,6 +14,26 @@ from bnsyn.web.models import TokenResponse, UserClaims
 from bnsyn.web.security import create_access_token, derive_csrf_token, verify_password
 
 router = APIRouter()
+
+
+def _header_origin(value: str) -> str:
+    parsed = urlparse(value)
+    if not parsed.scheme or not parsed.netloc:
+        return ""
+    return f"{parsed.scheme}://{parsed.netloc}".lower()
+
+
+def _validate_logout_origin(request: Request, settings: Settings) -> None:
+    if settings.environment not in {"dev", "prod"}:
+        return
+    allowed = {origin.lower() for origin in settings.allowed_origins}
+    origin = request.headers.get("origin")
+    referer = request.headers.get("referer")
+    candidate = origin if origin is not None else referer
+    if candidate is None:
+        return
+    if _header_origin(candidate) not in allowed:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Origin not allowed")
 
 
 @router.post("/token", response_model=TokenResponse)
@@ -78,6 +99,8 @@ def logout(
     csrf_cookie = request.cookies.get(settings.csrf_cookie_name)
     if not csrf_cookie or not x_bnsyn_csrf or not hmac.compare_digest(csrf_cookie, x_bnsyn_csrf):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="CSRF validation failed")
+
+    _validate_logout_origin(request, settings)
 
     conn.execute(
         "INSERT OR IGNORE INTO token_revocations (jti, revoked_at) VALUES (?, ?)",
