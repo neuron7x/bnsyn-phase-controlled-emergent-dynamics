@@ -1,0 +1,4 @@
++ git status --short
+ M proof_bundle/logs/make_mypy.log
+ M proof_bundle/logs/python_build.log
+EXIT_CODE=0

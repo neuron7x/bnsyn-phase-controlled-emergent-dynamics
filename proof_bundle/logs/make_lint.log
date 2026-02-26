@@ -1,0 +1,7 @@
++ make lint
+ruff check .
+All checks passed!
+pylint --fail-under=9.5 src/bnsyn
+make: pylint: No such file or directory
+make: *** [Makefile:164: lint] Error 127
+EXIT_CODE=2

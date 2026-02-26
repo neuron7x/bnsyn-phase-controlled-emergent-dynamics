@@ -1,2 +1,4 @@
++ make mypy
 mypy src --strict --config-file pyproject.toml
-Success: no issues found in 73 source files
+Success: no issues found in 75 source files
+EXIT_CODE=0
