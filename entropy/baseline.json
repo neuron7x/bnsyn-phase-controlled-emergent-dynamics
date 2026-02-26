@@ -8,7 +8,7 @@
   "determinism": {
     "global_np_random_offenders": 0,
     "python_random_offenders": 0,
-    "time_calls_offenders": 0
+    "time_calls_offenders": 1
   },
   "docs": {
     "src_todo_fixme_count": 0
@@ -16,7 +16,9 @@
   "offenders": {
     "np": [],
     "py": [],
-    "time": []
+    "time": [
+      "src/bnsyn/web/security.py:49:return int(datetime.now(tz=UTC).timestamp())"
+    ]
   },
   "process": {
     "gh_workflows_missing_job_permissions_count": 43,

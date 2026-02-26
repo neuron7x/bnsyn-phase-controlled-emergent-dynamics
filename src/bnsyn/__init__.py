@@ -29,4 +29,15 @@ try:
 except metadata.PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0"
 
-__all__ = ["__version__", "rng", "config", "neurons", "synapses", "control", "simulation", "run", "phase_atlas", "sleep_stack"]
+__all__ = [
+    "__version__",
+    "rng",
+    "config",
+    "neurons",
+    "synapses",
+    "control",
+    "simulation",
+    "run",
+    "phase_atlas",
+    "sleep_stack",
+]

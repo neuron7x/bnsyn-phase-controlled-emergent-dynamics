@@ -8,9 +8,15 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name="BN-Syn Contributors"}]
 dependencies = [
+  "fastapi==0.121.1",
   "numpy==2.4.1",
+  "argon2-cffi==25.1.0",
+  "passlib==1.7.4",
+  "pyjwt==2.10.1",
+  "python-multipart==0.0.20",
   "pydantic==2.12.5",
   "scipy==1.17.1",
+  "uvicorn==0.38.0",
   "jsonschema==4.26.0",
   "joblib==1.4.2",
   "pyyaml==6.0.3",
@@ -30,6 +36,7 @@ dev = [
   "pre-commit==4.5.1",
   "pip-audit==2.10.0",
   "build==1.3.0",
+  "httpx==0.28.1",
   "psutil==7.2.2",
   "packaging==25.0",
 ]
@@ -38,6 +45,7 @@ test = [
   "hypothesis==6.151.5",
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
+  "httpx==0.28.1",
   "psutil==7.2.2",
   "packaging==25.0",
   "ruff==0.15.0",
@@ -149,6 +157,14 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 module = ["plotly.*", "streamlit.*", "matplotlib.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["fastapi", "fastapi.*", "jwt", "passlib.*", "uvicorn"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["bnsyn.web.routes_core", "bnsyn.web.routes_auth", "bnsyn.web.routes_admin"]
+disable_error_code = ["untyped-decorator"]
 
 [tool.pylint.main]
 recursive = true

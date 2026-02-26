@@ -470,6 +470,13 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
     return 0 if report["status"] == "PASS" else 1
 
 
+def _cmd_web(_: argparse.Namespace) -> int:
+    """Run the FastAPI web perimeter service."""
+    from bnsyn.web.cli import run_web
+
+    return run_web()
+
+
 def main() -> None:
     """Entry point for the BN-Syn CLI.
 
@@ -565,6 +572,9 @@ def main() -> None:
         help="Output path for smoke report",
     )
     smoke.set_defaults(func=_cmd_smoke)
+
+    web = sub.add_parser("web", help="Run FastAPI web security perimeter")
+    web.set_defaults(func=_cmd_web)
 
     args = p.parse_args()
     try:
