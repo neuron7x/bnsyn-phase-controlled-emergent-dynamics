@@ -215,7 +215,7 @@ jobs:
       
       - name: Upload artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: pytest-failure-${{ github.sha }}
           path: |
@@ -229,7 +229,7 @@ jobs:
       
       - name: Upload mandatory coverage.xml artifact
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: coverage-xml-${{ github.sha }}
           path: coverage.xml
@@ -238,7 +238,7 @@ jobs:
 
       - name: Upload coverage HTML report artifact
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: coverage-html-${{ github.sha }}
           path: htmlcov/
@@ -247,7 +247,7 @@ jobs:
 
       - name: Upload coverage trend metrics artifact
         if: always() && hashFiles('artifacts/coverage-trend/coverage-trend.json') != ''
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: coverage-trend-metrics
           path: artifacts/coverage-trend/

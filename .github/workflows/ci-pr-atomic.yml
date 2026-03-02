@@ -187,7 +187,7 @@ jobs:
           python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
       - name: Upload contract artifacts
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: no-escape-contracts-${{ github.sha }}
           path: |
@@ -472,7 +472,7 @@ jobs:
         run: make security
       - name: generate-sbom
         run: make sbom
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: always()
         with:
           name: security-report-${{ github.sha }}
@@ -546,7 +546,7 @@ jobs:
           PY
       - name: Upload launch gate artifacts
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: launch-gate-ci-pr-atomic-${{ github.sha }}
           path: artifacts/
@@ -598,7 +598,7 @@ jobs:
           JSON
 
       - name: Upload CI run evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: ci-evidence-ci-pr-atomic-${{ github.sha }}
           path: artifacts/ci-evidence/ci-pr-atomic-${{ github.sha }}.json
