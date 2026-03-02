@@ -817,9 +817,9 @@ pygments==2.19.2 \
     # via
     #   pytest
     #   rich
-pylint==3.3.5 \
-    --hash=sha256:38d0f784644ed493d91f76b5333a0e370a1c1bc97c22068a77523b4bf1e82c31 \
-    --hash=sha256:7cb170929a371238530b2eeea09f5f28236d106b70308c3d46a9c0cf11634633
+pylint==4.0.5 \
+    --hash=sha256:00f51c9b14a3b3ae08cff6b2cdd43f28165c78b165b628692e428fb1f8dc2cf2 \
+    --hash=sha256:8cd6a618df75deb013bd7eb98327a95f02a6fb839205a6bbf5456ef96afb317c
     # via bnsyn (pyproject.toml)
 pyparsing==3.3.2 \
     --hash=sha256:850ba148bd908d7e2411587e247a1e4f0327839c40e2e5e6d05a007ecc69911d \
