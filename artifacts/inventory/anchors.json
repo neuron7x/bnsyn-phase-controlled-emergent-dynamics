@@ -1,0 +1,22 @@
+[
+  {
+    "file": "artifacts/inventory/FULL_MAP.json",
+    "sha256": "fee9d2d50955c8fe659c8724d4d00ebafe89c95670c055cd2bcf1f22c8c28138"
+  },
+  {
+    "file": "proof_bundle/logs/make_test.log",
+    "sha256": "d3cd82ab5752dc6449786397e8a78cb8933528490c8fb274138aef8d8f12fc46"
+  },
+  {
+    "file": "proof_bundle/logs/make_mypy.log",
+    "sha256": "6935258c43f7894c0710e8282b170c18954a060aa69cbee0fb27c84dba7031d3"
+  },
+  {
+    "file": "proof_bundle/logs/make_lint.log",
+    "sha256": "e070a8e15170405e4d8b79a5e38813ed9eedd16b3bbd1f254c845c0f8147baf2"
+  },
+  {
+    "file": "proof_bundle/logs/python_build.log",
+    "sha256": "f9db0e387ffc59c00b2f752e8320dd31b2e3c7d35b0ffe71fb4d8f9c70964052"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "source": "README.md vs Makefile targets",
+  "mentioned_make_targets": [
+    "demo",
+    "quickstart-smoke",
+    "setup",
+    "test",
+    "test-all",
+    "test-gate"
+  ],
+  "missing_in_makefile": [],
+  "status": "PASS"
+}
