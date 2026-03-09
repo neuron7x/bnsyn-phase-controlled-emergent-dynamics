@@ -61,6 +61,12 @@ make demo
 make test
 ```
 
+## Canonical test gate command
+
+```bash
+make test-gate
+```
+
 ## Canonical links
 
 - Onboarding funnel: [docs/START_HERE.md](docs/START_HERE.md)
