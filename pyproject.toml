@@ -88,7 +88,7 @@ accelerators = [
 bnsyn = "bnsyn.cli:main"
 
 [build-system]
-requires = ["setuptools==79.0.1"]
+requires = ["setuptools==82.0.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
