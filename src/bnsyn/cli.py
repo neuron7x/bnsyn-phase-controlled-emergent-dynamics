@@ -22,7 +22,6 @@ docs/SPEC.md#P2-12
 from __future__ import annotations
 
 import argparse
-import datetime
 import hashlib
 import importlib.metadata
 import json
@@ -472,6 +471,52 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
     return 0 if report["status"] == "PASS" else 1
 
 
+def _render_emergence_plot(
+    plot_path: Path,
+    sigma_trace: list[float],
+    coherence_trace: list[float],
+    rate_trace: list[float],
+    raster_points: list[tuple[int, int]],
+) -> None:  # pragma: no cover - optional matplotlib rendering path
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
+
+    ax = axes[0, 0]
+    if raster_points:
+        xs = [p[0] for p in raster_points]
+        ys = [p[1] for p in raster_points]
+        ax.scatter(xs, ys, s=2, alpha=0.6)
+    ax.set_title("Spike raster")
+    ax.set_ylabel("Neuron index")
+    ax.grid(alpha=0.2)
+
+    ax = axes[0, 1]
+    ax.plot(sigma_trace, color="tab:blue", linewidth=1.2)
+    ax.axhline(1.0, color="black", linestyle="--", linewidth=0.8, alpha=0.5)
+    ax.set_title("Criticality (sigma)")
+    ax.set_ylabel("Sigma")
+    ax.grid(alpha=0.2)
+
+    ax = axes[1, 0]
+    ax.plot(coherence_trace, color="tab:green", linewidth=1.2)
+    ax.set_title("Synchronization / coherence")
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Active fraction")
+    ax.grid(alpha=0.2)
+
+    ax = axes[1, 1]
+    ax.plot(rate_trace, color="tab:orange", linewidth=1.2)
+    ax.set_title("Population activity")
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Spike rate (Hz)")
+    ax.grid(alpha=0.2)
+
+    plt.tight_layout()
+    plt.savefig(plot_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
 def _cmd_plot(args: argparse.Namespace) -> int:
     """Run canonical emergence proof and write buyer-facing artifacts."""
     from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
@@ -528,43 +573,7 @@ def _cmd_plot(args: argparse.Namespace) -> int:
         plot_path.write_bytes(b"")
     else:
         try:
-            import matplotlib.pyplot as plt
-
-            fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
-
-            ax = axes[0, 0]
-            if raster_points:
-                xs = [p[0] for p in raster_points]
-                ys = [p[1] for p in raster_points]
-                ax.scatter(xs, ys, s=2, alpha=0.6)
-            ax.set_title("Spike raster")
-            ax.set_ylabel("Neuron index")
-            ax.grid(alpha=0.2)
-
-            ax = axes[0, 1]
-            ax.plot(sigma_trace, color="tab:blue", linewidth=1.2)
-            ax.axhline(1.0, color="black", linestyle="--", linewidth=0.8, alpha=0.5)
-            ax.set_title("Criticality (sigma)")
-            ax.set_ylabel("Sigma")
-            ax.grid(alpha=0.2)
-
-            ax = axes[1, 0]
-            ax.plot(coherence_trace, color="tab:green", linewidth=1.2)
-            ax.set_title("Synchronization / coherence")
-            ax.set_xlabel("Step")
-            ax.set_ylabel("Active fraction")
-            ax.grid(alpha=0.2)
-
-            ax = axes[1, 1]
-            ax.plot(rate_trace, color="tab:orange", linewidth=1.2)
-            ax.set_title("Population activity")
-            ax.set_xlabel("Step")
-            ax.set_ylabel("Spike rate (Hz)")
-            ax.grid(alpha=0.2)
-
-            plt.tight_layout()
-            plt.savefig(plot_path, dpi=150, bbox_inches="tight")
-            plt.close(fig)
+            _render_emergence_plot(plot_path, sigma_trace, coherence_trace, rate_trace, raster_points)
         except ImportError:
             print(
                 "Error: matplotlib is required for bnsyn plot. "
@@ -576,7 +585,7 @@ def _cmd_plot(args: argparse.Namespace) -> int:
     manifest = {
         "schema_version": "1.0.0",
         "cmd": "bnsyn plot",
-        "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "timestamp_utc": "1970-01-01T00:00:00Z",
         "seed": int(args.seed),
         "steps": int(args.steps),
         "N": int(args.N),

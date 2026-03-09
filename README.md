@@ -8,9 +8,9 @@ BN-Syn is a deterministic simulation repository for phase-controlled emergent ne
 
 ## Canonical Project Vectors (Permanent)
 
-- **V1 — Result:** one canonical proof command, `bnsyn plot`, must generate visual and metrics evidence of emergent network dynamics.
-- **V2 — Narrative:** repository documentation must explain mechanism, measurements, and reproducibility for technical research readers.
-- **V3 — Audience:** repository surfaces must stay runnable and inspectable for AI lab, neuroscience grant, and technical investor diligence.
+- **V1 — Result:** [NORMATIVE][CLM-0001] one canonical proof command, `bnsyn plot`, must generate visual and metrics evidence of emergent network dynamics.
+- **V2 — Narrative:** [NORMATIVE][CLM-0002] repository documentation must explain mechanism, measurements, and reproducibility for technical research readers.
+- **V3 — Audience:** [NORMATIVE][CLM-0003] repository surfaces must stay runnable and inspectable for AI lab, neuroscience grant, and technical investor diligence.
 
 All contributor work is expected to strengthen these vectors and avoid drift.
 
@@ -57,7 +57,7 @@ Inspect:
 
 ```bash
 make setup
-bnsyn plot
+make demo
 make test
 ```
 

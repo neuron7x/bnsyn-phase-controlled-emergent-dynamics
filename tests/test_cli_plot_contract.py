@@ -28,6 +28,7 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
         N=64,
         dt_ms=0.5,
         backend="reference",
+        no_plot=True,
         out=str(out_dir),
     )
     rc = _cmd_plot(args)
@@ -49,9 +50,11 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["cmd"] == "bnsyn plot"
+    assert manifest["plot_skipped"] is True
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]
+    assert manifest["timestamp_utc"] == "1970-01-01T00:00:00Z"
 
 
 def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
@@ -68,6 +71,7 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
             "64",
             "--seed",
             "321",
+            "--no-plot",
             "--out",
             str(out_dir),
         ],
