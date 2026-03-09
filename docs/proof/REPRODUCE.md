@@ -1,5 +1,19 @@
 # Proof: Reproduce
 
+Primary visual proof command:
+
+```bash
+bnsyn plot
+```
+
+Expected canonical artifacts:
+
+- `artifacts/canonical_plot/emergence_plot.png`
+- `artifacts/canonical_plot/summary_metrics.json`
+- `artifacts/canonical_plot/run_manifest.json`
+
+---
+
 Canonical command:
 
 ```bash

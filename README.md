@@ -4,34 +4,70 @@
 
 # BN-Syn Thermostated Bio-AI System
 
-BN-Syn is an engineering-grade simulation repository for phase-controlled emergent neural dynamics.
-It ships code, tests, reproducibility checks, and governance artifacts in one versioned tree.
-Use this repo to run deterministic demos, validate invariants, and inspect evidence-backed outputs.
-The runtime code lives in `src/bnsyn/`; CI/workflow policy lives in `.github/workflows/`.
-Generated artifacts are written to `artifacts/` for local verification.
-Default development flow is Make-target driven and lockfile-oriented.
-For onboarding, use exactly one path: `docs/START_HERE.md`.
+BN-Syn is a deterministic simulation repository for phase-controlled emergent neural dynamics with AdEx neurons, STDP plasticity, and criticality control.
 
-[![CI PR](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr.yml)
-[![Atomic PR Gate](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/ci-pr-atomic.yml)
-[![Docs](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/docs.yml)
+## Canonical Project Vectors (Permanent)
+
+- **V1 — Result:** one canonical proof command, `bnsyn plot`, must generate visual and metrics evidence of emergent network dynamics.
+- **V2 — Narrative:** repository documentation must explain mechanism, measurements, and reproducibility for technical research readers.
+- **V3 — Audience:** repository surfaces must stay runnable and inspectable for AI lab, neuroscience grant, and technical investor diligence.
+
+All contributor work is expected to strengthen these vectors and avoid drift.
+
+## Canonical proof path (single command)
+
+```bash
+bnsyn plot
+```
+
+Default artifact contract (`artifacts/canonical_plot/`):
+- `emergence_plot.png`
+- `summary_metrics.json`
+- `run_manifest.json`
+
+This is the primary buyer/reviewer command path.
+
+## Interpretation and claim boundaries
+
+Supported from the canonical proof bundle:
+- direct measured traces from one run: spike raster events, sigma trace, active-fraction coherence trace, spike-rate trace
+- derived summary statistics in `summary_metrics.json`
+- reproducibility metadata and artifact hashes in `run_manifest.json`
+
+Not supported from this proof command alone:
+- biological equivalence to in vivo neural tissue
+- claims about cognition, consciousness, or AGI-level capability
+- generalization claims beyond tested parameter settings and implemented model scope
+
+## Canonical user path (clone -> install -> run -> inspect)
+
+```bash
+git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git
+cd bnsyn-phase-controlled-emergent-dynamics
+python -m pip install -e .
+bnsyn plot
+```
+
+Inspect:
+- `artifacts/canonical_plot/emergence_plot.png`
+- `artifacts/canonical_plot/summary_metrics.json`
+- `artifacts/canonical_plot/run_manifest.json`
 
 ## Quickstart
 
 ```bash
 make setup
-make demo
+bnsyn plot
 make test
 ```
 
 ## Canonical links
 
 - Onboarding funnel: [docs/START_HERE.md](docs/START_HERE.md)
+- Canonical proof contract: [docs/CANONICAL_PROOF.md](docs/CANONICAL_PROOF.md)
 - Reproduce proof: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
-- Contributing workflow: [docs/TESTING.md](docs/TESTING.md)
-- Security docs: [docs/SECURITY_GITLEAKS.md](docs/SECURITY_GITLEAKS.md)
+- Contributing workflow: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- Status: [docs/STATUS.md](docs/STATUS.md)
 
 ## Maintainers / Repo Contract
 
@@ -39,14 +75,5 @@ make test
 make quickstart-smoke
 python -m pip install -e .
 python -m bnsyn --help
-bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
-```
-
-
-## Test commands
-
-```bash
-make test-gate
-make test
-make test-all
+bnsyn plot
 ```
