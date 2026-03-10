@@ -191,7 +191,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     docs/LEGENDARY_QUICKSTART.md
     schemas/experiment.schema.json
     """
-    from bnsyn.experiments.declarative import run_from_yaml
+    from bnsyn.experiments.declarative import run_canonical_live_bundle, run_from_yaml
 
     config_path = getattr(args, "config", None)
     profile = getattr(args, "profile", None)
@@ -205,12 +205,27 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         print("Error running experiment: provide CONFIG or --profile canonical", file=sys.stderr)
         return 2
 
+    if profile == "canonical":
+        if export_proof:
+            print(
+                "Notice: --export-proof remains reserved; canonical run currently emits a live-run bundle, not full proof packaging"
+            )
+        try:
+            bundle = run_canonical_live_bundle(config_path, output or "artifacts/canonical_run")
+        except Exception as e:
+            print(f"Error running experiment: {e}")
+            return 1
+
+        if plot:
+            print("Notice: --plot acknowledged; canonical live-run plots are emitted by default")
+
+        print(json.dumps({"status": "ok", **bundle}, indent=2, sort_keys=True))
+        return 0
+
     if plot:
-        print("Notice: --plot is part of the reserved canonical interface; run-profile plotting is not fully wired at M0")
+        print("Notice: --plot only applies to --profile canonical at this milestone")
     if export_proof:
-        print(
-            "Notice: --export-proof is part of the reserved canonical interface; proof export is not fully wired at M0"
-        )
+        print("Notice: --export-proof reserved; full proof export is not wired for generic run")
 
     try:
         run_from_yaml(config_path, output)
@@ -782,17 +797,17 @@ def main() -> None:
     run_parser.add_argument(
         "--profile",
         choices=["canonical"],
-        help="Bootstrap profile selector for future canonical run path",
+        help="Canonical profile selector for live canonical run path",
     )
     run_parser.add_argument(
         "--plot",
         action="store_true",
-        help="Reserved bootstrap flag for future canonical plot wiring",
+        help="Emit canonical live-run visual artifacts (default for canonical profile)",
     )
     run_parser.add_argument(
         "--export-proof",
         action="store_true",
-        help="Reserved bootstrap flag for future proof export wiring",
+        help="Reserved flag for future full proof export packaging",
     )
     run_parser.add_argument("-o", "--output", help="Output JSON path (default: stdout)")
     run_parser.set_defaults(func=_cmd_run_experiment)

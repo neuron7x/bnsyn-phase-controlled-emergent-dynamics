@@ -11,9 +11,12 @@ schemas/experiment.schema.json
 from __future__ import annotations
 
 import json
+import struct
+import zlib
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import yaml  # type: ignore[import-untyped]
 
 from bnsyn.experiments.emergence import run_emergence_to_disk
@@ -106,3 +109,120 @@ def run_from_yaml(config_path: str | Path, output_path: str | Path | None = None
         print(f"✓ Results saved to {output_path}")
     else:
         print(json.dumps(results, indent=2, sort_keys=True))
+
+
+def _write_grayscale_png(image: np.ndarray, output_path: Path) -> None:
+    """Write a uint8 grayscale image to PNG without external plotting deps."""
+    if image.dtype != np.uint8:
+        raise ValueError("image must be uint8")
+    if image.ndim != 2:
+        raise ValueError("image must be 2-D")
+
+    height, width = image.shape
+    raw = b"".join(b"\x00" + image[row].tobytes() for row in range(height))
+    compressed = zlib.compress(raw, level=9)
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+
+    header = struct.pack(">IIBBBBB", width, height, 8, 0, 0, 0, 0)
+    png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", compressed) + chunk(b"IEND", b"")
+    output_path.write_bytes(png)
+
+
+def _build_raster_image(spike_steps: np.ndarray, spike_neurons: np.ndarray, steps: int, n_neurons: int) -> np.ndarray:
+    """Build monochrome raster image (white background, black spikes)."""
+    width = max(steps, 2)
+    height = max(n_neurons, 2)
+    image = np.full((height, width), 255, dtype=np.uint8)
+    for step, neuron in zip(spike_steps.tolist(), spike_neurons.tolist()):
+        if 0 <= step < width and 0 <= neuron < height:
+            image[height - 1 - neuron, step] = 0
+    return image
+
+
+def _build_rate_image(rate_trace_hz: np.ndarray, width: int = 1000, height: int = 300) -> np.ndarray:
+    """Build monochrome line-plot style image for population-rate trace."""
+    image = np.full((height, width), 255, dtype=np.uint8)
+    if rate_trace_hz.size == 0:
+        return image
+
+    max_rate = float(np.max(rate_trace_hz))
+    if max_rate <= 0:
+        max_rate = 1.0
+
+    sample_x = np.linspace(0, rate_trace_hz.size - 1, width)
+    sampled = np.interp(sample_x, np.arange(rate_trace_hz.size), rate_trace_hz)
+
+    for x, value in enumerate(sampled):
+        y = int(round((1.0 - min(1.0, max(0.0, float(value) / max_rate))) * (height - 1)))
+        image[y, x] = 0
+        if y + 1 < height:
+            image[y + 1, x] = 60
+        if y > 0:
+            image[y - 1, x] = 60
+
+    image[height - 1, :] = 0
+    return image
+
+
+def run_canonical_live_bundle(
+    config_path: str | Path,
+    artifact_dir: str | Path = "artifacts/canonical_run",
+) -> dict[str, str | dict[str, float | int]]:
+    """Execute canonical profile and write deterministic live-run artifacts."""
+    config = load_config(config_path)
+    seed = int(config.experiment.seeds[0])
+
+    metrics, artifact_npz = run_emergence_to_disk(
+        N=config.network.size,
+        dt_ms=config.simulation.dt_ms,
+        duration_ms=config.simulation.duration_ms,
+        seed=seed,
+        external_current_pA=config.simulation.external_current_pA,
+        output_dir=artifact_dir,
+    )
+
+    with np.load(artifact_npz) as data:
+        spike_steps = np.asarray(data["spike_steps"], dtype=np.int64)
+        sigma_trace = np.asarray(data["sigma_trace"], dtype=np.float64)
+        rate_trace_hz = np.asarray(data["rate_trace_hz"], dtype=np.float64)
+        spike_neurons = np.asarray(data["spike_neurons"], dtype=np.int64)
+        steps = int(np.asarray(data["steps"]).item())
+        n_neurons = int(np.asarray(data["N"]).item())
+
+    out_dir = Path(artifact_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    summary_metrics: dict[str, float | int] = {
+        "spike_events": int(spike_steps.size),
+        "rate_mean_hz": float(np.mean(rate_trace_hz)),
+        "rate_variance": float(np.var(rate_trace_hz)),
+        "sigma_mean": float(np.mean(sigma_trace)),
+        "sigma_variance": float(np.var(sigma_trace)),
+        "seed": seed,
+        "N": int(config.network.size),
+        "duration_ms": float(config.simulation.duration_ms),
+        "dt_ms": float(config.simulation.dt_ms),
+        "external_current_pA": float(config.simulation.external_current_pA),
+    }
+    summary_path = out_dir / "summary_metrics.json"
+    summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    raster_path = out_dir / "raster_plot.png"
+    raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
+    _write_grayscale_png(raster_image, raster_path)
+
+    rate_plot_path = out_dir / "population_rate_plot.png"
+    rate_image = _build_rate_image(rate_trace_hz)
+    _write_grayscale_png(rate_image, rate_plot_path)
+
+    return {
+        "artifact_dir": out_dir.as_posix(),
+        "artifact_npz": artifact_npz,
+        "summary_metrics": summary_metrics,
+        "summary_metrics_path": summary_path.as_posix(),
+        "raster_plot_path": raster_path.as_posix(),
+        "population_rate_plot_path": rate_plot_path.as_posix(),
+        "emergence_metrics": metrics,
+    }

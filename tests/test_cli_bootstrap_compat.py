@@ -13,7 +13,11 @@ def test_cmd_run_experiment_compat_without_optional_attrs(monkeypatch: pytest.Mo
     def fake_run_from_yaml(config: str, output: str | None) -> None:
         calls.append((config, output))
 
-    monkeypatch.setitem(__import__("sys").modules, "bnsyn.experiments.declarative", SimpleNamespace(run_from_yaml=fake_run_from_yaml))
+    monkeypatch.setitem(
+        __import__("sys").modules,
+        "bnsyn.experiments.declarative",
+        SimpleNamespace(run_from_yaml=fake_run_from_yaml, run_canonical_live_bundle=lambda *_: {}),
+    )
 
     args = SimpleNamespace(config="examples/configs/quickstart.yaml", output=None)
     rc = cli._cmd_run_experiment(args)
@@ -25,13 +29,17 @@ def test_cmd_run_experiment_compat_without_optional_attrs(monkeypatch: pytest.Mo
 def test_cmd_run_experiment_routes_profile_canonical(monkeypatch: pytest.MonkeyPatch) -> None:
     seen: list[str] = []
 
-    def fake_run_from_yaml(config: str, output: str | None) -> None:
-        del output
+    def fake_live_bundle(config: str, output: str | None) -> dict[str, str]:
         seen.append(config)
+        return {"artifact_dir": str(output)}
 
-    monkeypatch.setitem(__import__("sys").modules, "bnsyn.experiments.declarative", SimpleNamespace(run_from_yaml=fake_run_from_yaml))
+    monkeypatch.setitem(
+        __import__("sys").modules,
+        "bnsyn.experiments.declarative",
+        SimpleNamespace(run_from_yaml=lambda *_: None, run_canonical_live_bundle=fake_live_bundle),
+    )
 
-    args = SimpleNamespace(config=None, profile="canonical", output=None)
+    args = SimpleNamespace(config=None, profile="canonical", output=None, plot=False, export_proof=False)
     rc = cli._cmd_run_experiment(args)
 
     assert rc == 0
@@ -53,12 +61,16 @@ def test_cmd_run_experiment_prints_reserved_flag_notices(
     def fake_run_from_yaml(config: str, output: str | None) -> None:
         del config, output
 
-    monkeypatch.setitem(__import__("sys").modules, "bnsyn.experiments.declarative", SimpleNamespace(run_from_yaml=fake_run_from_yaml))
+    monkeypatch.setitem(
+        __import__("sys").modules,
+        "bnsyn.experiments.declarative",
+        SimpleNamespace(run_from_yaml=fake_run_from_yaml, run_canonical_live_bundle=lambda *_: {}),
+    )
 
-    args = SimpleNamespace(config="examples/configs/quickstart.yaml", output=None, plot=True, export_proof=True)
+    args = SimpleNamespace(config="examples/configs/quickstart.yaml", output=None, plot=True, export_proof=True, profile=None)
     rc = cli._cmd_run_experiment(args)
     captured = capsys.readouterr()
 
     assert rc == 0
-    assert "--plot is part of the reserved canonical interface" in captured.out
-    assert "--export-proof is part of the reserved canonical interface" in captured.out
+    assert "--plot only applies to --profile canonical" in captured.out
+    assert "--export-proof reserved; full proof export is not wired" in captured.out
