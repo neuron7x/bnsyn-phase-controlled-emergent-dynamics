@@ -155,7 +155,7 @@ def test_run_without_config_or_profile_fails() -> None:
 
 
 def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None:
-    output_path = tmp_path / "canonical_run.json"
+    output_dir = tmp_path / "canonical_run"
     proc = subprocess.run(
         [
             sys.executable,
@@ -167,7 +167,7 @@ def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None
             "--plot",
             "--export-proof",
             "--output",
-            str(output_path),
+            str(output_dir),
         ],
         check=False,
         capture_output=True,
@@ -176,6 +176,8 @@ def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None
         cwd=ROOT,
     )
     assert proc.returncode == 0, proc.stderr
-    assert "reserved canonical interface" in proc.stdout
-    payload = _load_json(output_path)
-    assert payload["config"]["name"] == "canonical_profile_bootstrap"
+    assert "--export-proof remains reserved" in proc.stdout
+    summary_path = output_dir / "summary_metrics.json"
+    assert summary_path.exists()
+    payload = _load_json(summary_path)
+    assert payload["spike_events"] > 0
