@@ -20,13 +20,14 @@ All contributor work is expected to strengthen these vectors and avoid drift.
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-Default artifact contract (`artifacts/canonical_run/`):
+Base canonical artifact contract (`artifacts/canonical_run/`):
 - `emergence_plot.png`
 - `summary_metrics.json`
 - `run_manifest.json`
 - `criticality_report.json`
 - `avalanche_report.json`
 - `phase_space_report.json`
+- `proof_report.json` (when `--export-proof` is enabled)
 
 This is the primary buyer/reviewer command path.
 
@@ -61,6 +62,7 @@ Inspect:
 - `artifacts/canonical_run/criticality_report.json`
 - `artifacts/canonical_run/avalanche_report.json`
 - `artifacts/canonical_run/phase_space_report.json`
+- `artifacts/canonical_run/proof_report.json` (when `--export-proof` is enabled)
 
 ## Quickstart
 

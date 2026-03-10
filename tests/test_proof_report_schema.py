@@ -1,0 +1,97 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import jsonschema
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _full_gates() -> dict[str, dict[str, str]]:
+    return {
+        "G1_active_spiking": {"status": "PASS"},
+        "G2_rate_in_bounds": {"status": "PASS"},
+        "G3_sigma_in_range": {"status": "PASS"},
+        "G4_core_artifacts_complete": {"status": "PASS"},
+        "G5_manifest_valid": {"status": "PASS"},
+        "G6_determinism_replay": {"status": "INCONCLUSIVE"},
+        "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
+        "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"},
+    }
+
+
+def test_proof_report_schema_accepts_full_payload() -> None:
+    schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
+    payload = {
+        "schema_version": "1.0.0",
+        "verdict": "INCONCLUSIVE",
+        "verdict_code": 1,
+        "timestamp_utc": "1970-01-01T00:00:00Z",
+        "seed": 42,
+        "gates": _full_gates(),
+        "metrics": {},
+        "artifacts_verified": ["summary_metrics.json"],
+        "failure_reasons": ["G6_determinism_replay unresolved"],
+    }
+    jsonschema.validate(instance=payload, schema=schema)
+
+
+def test_proof_report_schema_accepts_gate_errors_payload() -> None:
+    schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
+    gates = _full_gates()
+    gates["G5_manifest_valid"] = {"status": "FAIL", "errors": ["summary_metrics.json hash mismatch"]}
+    payload = {
+        "schema_version": "1.0.0",
+        "verdict": "FAIL",
+        "verdict_code": 2,
+        "timestamp_utc": "1970-01-01T00:00:00Z",
+        "seed": 42,
+        "gates": gates,
+        "metrics": {},
+        "artifacts_verified": ["summary_metrics.json"],
+        "failure_reasons": ["G5_manifest_valid failed"],
+    }
+    jsonschema.validate(instance=payload, schema=schema)
+
+
+def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
+    schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
+    payload = {
+        "schema_version": "1.0.0",
+        "verdict": "PASS",
+        "verdict_code": 0,
+        "timestamp_utc": "1970-01-01T00:00:00Z",
+        "seed": 42,
+        "gates": {"G1_active_spiking": {"status": "PASS"}},
+        "metrics": {},
+        "artifacts_verified": [],
+        "failure_reasons": [],
+    }
+    try:
+        jsonschema.validate(instance=payload, schema=schema)
+    except jsonschema.ValidationError:
+        return
+    raise AssertionError("schema accepted payload without required gates")
+
+
+def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
+    schema = _load_json(ROOT / "schemas" / "run-manifest.schema.json")
+    payload = {
+        "schema_version": "1.0.0",
+        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "seed": 123,
+        "steps": 100,
+        "N": 10,
+        "dt_ms": 0.1,
+        "duration_ms": 10.0,
+        "artifacts": {
+            "summary_metrics.json": "0" * 64,
+            "run_manifest.json": "self-unhashed",
+        },
+    }
+    jsonschema.validate(instance=payload, schema=schema)

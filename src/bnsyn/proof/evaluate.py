@@ -1,0 +1,372 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import jsonschema  # type: ignore[import-untyped]
+
+ROOT = Path(__file__).resolve().parents[3]
+PROOF_SCHEMA_PATH = ROOT / "schemas" / "proof-report.schema.json"
+RUN_MANIFEST_SCHEMA_PATH = ROOT / "schemas" / "run-manifest.schema.json"
+VALIDATION_GATES_PATH = ROOT / "ci" / "validation_gates.json"
+PROOF_SCHEMA_VERSION = "1.0.0"
+DETERMINISTIC_TIMESTAMP_UTC = "1970-01-01T00:00:00Z"
+EXPECTED_GATE_IDS = (
+    "G1_active_spiking",
+    "G2_rate_in_bounds",
+    "G3_sigma_in_range",
+    "G4_core_artifacts_complete",
+    "G5_manifest_valid",
+    "G6_determinism_replay",
+    "G7_avalanche_evidence_sufficient",
+    "G8_reproducibility_envelope",
+)
+
+
+@dataclass(frozen=True)
+class EvaluationResult:
+    report: dict[str, Any]
+    report_path: Path
+
+
+def _load_json(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        msg = f"Expected JSON object in {path}"
+        raise ValueError(msg)
+    return payload
+
+
+def sha256_file(path: str | Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _load_gate_registry() -> dict[str, dict[str, Any]]:
+    payload = _load_json(VALIDATION_GATES_PATH)
+    registry_raw = payload.get("registry")
+    if not isinstance(registry_raw, list):
+        raise ValueError("validation gate registry missing")
+    registry: dict[str, dict[str, Any]] = {}
+    for gate in registry_raw:
+        if not isinstance(gate, dict) or not isinstance(gate.get("id"), str):
+            raise ValueError("malformed gate registry entry")
+        registry[gate["id"]] = gate
+
+    missing = [gate_id for gate_id in EXPECTED_GATE_IDS if gate_id not in registry]
+    if missing:
+        raise ValueError(f"missing expected gates: {missing}")
+    return registry
+
+
+def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], require_proof_artifact: bool) -> tuple[str, ...]:
+    g4 = registry["G4_core_artifacts_complete"]
+    threshold = g4.get("threshold")
+    if not isinstance(threshold, dict):
+        raise ValueError("G4 threshold missing")
+    required = threshold.get("required_artifacts")
+    if not isinstance(required, list) or not required or not all(isinstance(x, str) and x for x in required):
+        raise ValueError("G4 required_artifacts invalid")
+    required_artifacts = tuple(required)
+    if require_proof_artifact and "proof_report.json" not in required_artifacts:
+        required_artifacts = required_artifacts + ("proof_report.json",)
+    return required_artifacts
+
+
+def _manifest_has_proof_artifact(manifest: dict[str, Any]) -> bool:
+    artifacts = manifest.get("artifacts")
+    return isinstance(artifacts, dict) and isinstance(artifacts.get("proof_report.json"), str)
+
+
+def load_artifacts(artifact_dir: str | Path) -> dict[str, Any]:
+    root = Path(artifact_dir)
+    summary = _load_json(root / "summary_metrics.json")
+    manifest = _load_json(root / "run_manifest.json")
+    registry = _load_gate_registry()
+    return {"artifact_dir": root, "summary": summary, "manifest": manifest, "registry": registry}
+
+
+def _evaluate_numeric_gate(gate: dict[str, Any], metrics: dict[str, Any]) -> tuple[bool, float, str]:
+    threshold = gate.get("threshold")
+    if not isinstance(threshold, dict):
+        raise ValueError("numeric gate threshold missing")
+    metric_name = threshold.get("metric")
+    op = threshold.get("op")
+    value = threshold.get("value")
+    if not isinstance(metric_name, str):
+        raise ValueError("numeric gate metric missing")
+    if metric_name not in metrics:
+        raise ValueError(f"metric {metric_name} missing from summary metrics")
+    metric_value = float(metrics[metric_name])
+
+    if op == ">":
+        if not isinstance(value, (int, float)):
+            raise ValueError("numeric gate value missing")
+        return metric_value > float(value), metric_value, f"{metric_name} > {value}"
+
+    if op == "between":
+        if not isinstance(value, list) or len(value) != 2:
+            raise ValueError("between gate requires [min,max]")
+        lower = float(value[0])
+        upper = float(value[1])
+        return lower <= metric_value <= upper, metric_value, f"{lower} <= {metric_name} <= {upper}"
+
+    raise ValueError(f"unsupported gate op: {op}")
+
+
+def evaluate_gate_g1_active_spiking(metrics: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
+    ok, metric_value, details = _evaluate_numeric_gate(gate, metrics)
+    return {"status": "PASS" if ok else "FAIL", "value": metric_value, "details": details}
+
+
+def evaluate_gate_g2_rate_bounds(metrics: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
+    ok, metric_value, details = _evaluate_numeric_gate(gate, metrics)
+    return {"status": "PASS" if ok else "FAIL", "value": metric_value, "details": details}
+
+
+def evaluate_gate_g3_sigma_range(metrics: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
+    ok, metric_value, details = _evaluate_numeric_gate(gate, metrics)
+    return {"status": "PASS" if ok else "FAIL", "value": metric_value, "details": details}
+
+
+def evaluate_gate_g4_artifact_contract(
+    artifact_dir: Path,
+    manifest: dict[str, Any],
+    required_artifacts: tuple[str, ...],
+) -> tuple[dict[str, Any], list[str]]:
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, dict):
+        missing = list(required_artifacts)
+        return (
+            {
+                "status": "FAIL",
+                "details": "manifest artifacts must be object",
+                "missing_artifacts": missing,
+            },
+            [],
+        )
+
+    missing_in_manifest = [name for name in required_artifacts if name not in artifacts]
+    missing_on_disk = [name for name in required_artifacts if not (artifact_dir / name).is_file()]
+    missing = sorted(set(missing_in_manifest + missing_on_disk))
+    verified = [name for name in required_artifacts if name not in missing and (artifact_dir / name).is_file()]
+
+    status = "PASS" if not missing else "FAIL"
+    return (
+        {
+            "status": status,
+            "details": "required artifacts present in manifest and on disk",
+            "missing_artifacts": missing,
+        },
+        verified,
+    )
+
+
+def evaluate_gate_g5_manifest_valid(
+    artifact_dir: Path,
+    manifest: dict[str, Any],
+    require_proof_artifact: bool,
+) -> dict[str, Any]:
+    failures: list[str] = []
+
+    run_manifest_schema = _load_json(RUN_MANIFEST_SCHEMA_PATH)
+    try:
+        jsonschema.validate(instance=manifest, schema=run_manifest_schema)
+    except jsonschema.ValidationError as exc:
+        failures.append(f"schema violation: {exc.message}")
+
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, dict):
+        failures.append("manifest artifacts is not an object")
+    else:
+        self_entry = artifacts.get("run_manifest.json")
+        if self_entry != "self-unhashed":
+            failures.append("run_manifest.json entry must be self-unhashed")
+
+        if require_proof_artifact and "proof_report.json" not in artifacts:
+            failures.append("proof_report.json entry required for export-proof contract")
+
+        for name, expected in artifacts.items():
+            if not isinstance(name, str) or not isinstance(expected, str):
+                failures.append("artifact entries must be string:string")
+                continue
+            if name == "run_manifest.json":
+                continue
+            if len(expected) != 64 or any(ch not in "0123456789abcdef" for ch in expected):
+                failures.append(f"{name} has malformed hash")
+                continue
+            path = artifact_dir / name
+            if not path.is_file():
+                failures.append(f"{name} missing on disk")
+                continue
+            actual = sha256_file(path)
+            if actual != expected:
+                failures.append(f"{name} hash mismatch")
+
+    return {
+        "status": "PASS" if not failures else "FAIL",
+        "details": "manifest schema + hash integrity + self-unhashed rule",
+        **({"errors": failures} if failures else {}),
+    }
+
+
+def evaluate_gate_g6_determinism_placeholder() -> dict[str, Any]:
+    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+
+
+def evaluate_gate_g7_avalanche_placeholder() -> dict[str, Any]:
+    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+
+
+def evaluate_gate_g8_repro_envelope_placeholder() -> dict[str, Any]:
+    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+
+
+def _gate_state(registry: dict[str, dict[str, Any]], gate_id: str) -> str:
+    state = registry[gate_id].get("status")
+    if state not in {"wired", "planned"}:
+        raise ValueError(f"invalid gate status for {gate_id}: {state}")
+    return str(state)
+
+
+def _compute_verdict(gates: dict[str, dict[str, Any]], registry: dict[str, dict[str, Any]]) -> tuple[str, int, list[str]]:
+    wired_failures = [
+        gate_id
+        for gate_id, payload in gates.items()
+        if _gate_state(registry, gate_id) == "wired" and payload["status"] == "FAIL"
+    ]
+    if wired_failures:
+        return "FAIL", 2, [f"{gate_id} failed" for gate_id in wired_failures]
+
+    unresolved = [
+        gate_id
+        for gate_id, payload in gates.items()
+        if payload["status"] == "INCONCLUSIVE"
+    ]
+    if unresolved:
+        return "INCONCLUSIVE", 1, [f"{gate_id} unresolved" for gate_id in unresolved]
+
+    return "PASS", 0, []
+
+
+def _discover_seed(artifact_dir: Path) -> int:
+    try:
+        summary = _load_json(artifact_dir / "summary_metrics.json")
+        value = summary.get("seed")
+        if isinstance(value, int) and value >= 0:
+            return value
+    except Exception:
+        pass
+    return 0
+
+
+def _fail_closed_report(artifact_dir: Path, reason: str) -> dict[str, Any]:
+    gates = {gate_id: {"status": "FAIL", "details": f"fail-closed: {reason}"} for gate_id in EXPECTED_GATE_IDS}
+    return {
+        "schema_version": PROOF_SCHEMA_VERSION,
+        "verdict": "FAIL",
+        "verdict_code": 2,
+        "timestamp_utc": DETERMINISTIC_TIMESTAMP_UTC,
+        "seed": _discover_seed(artifact_dir),
+        "gates": gates,
+        "metrics": {},
+        "artifacts_verified": [],
+        "failure_reasons": [f"fail-closed: {reason}"],
+    }
+
+
+def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = False) -> dict[str, Any]:
+    artifact_root = Path(artifact_dir)
+    try:
+        loaded = load_artifacts(artifact_root)
+        metrics = loaded["summary"]
+        manifest = loaded["manifest"]
+        registry = loaded["registry"]
+        proof_required = require_proof_artifact or _manifest_has_proof_artifact(manifest)
+        required_artifacts = _required_artifacts_from_registry(registry, proof_required)
+
+        gates: dict[str, dict[str, Any]] = {
+            "G1_active_spiking": evaluate_gate_g1_active_spiking(metrics, registry["G1_active_spiking"]),
+            "G2_rate_in_bounds": evaluate_gate_g2_rate_bounds(metrics, registry["G2_rate_in_bounds"]),
+            "G3_sigma_in_range": evaluate_gate_g3_sigma_range(metrics, registry["G3_sigma_in_range"]),
+            "G6_determinism_replay": evaluate_gate_g6_determinism_placeholder(),
+            "G7_avalanche_evidence_sufficient": evaluate_gate_g7_avalanche_placeholder(),
+            "G8_reproducibility_envelope": evaluate_gate_g8_repro_envelope_placeholder(),
+        }
+
+        g4_result, artifacts_verified = evaluate_gate_g4_artifact_contract(artifact_root, manifest, required_artifacts)
+        gates["G4_core_artifacts_complete"] = g4_result
+        gates["G5_manifest_valid"] = evaluate_gate_g5_manifest_valid(
+            artifact_root,
+            manifest,
+            require_proof_artifact=proof_required,
+        )
+
+        ordered_gates = {gate_id: gates[gate_id] for gate_id in EXPECTED_GATE_IDS}
+        verdict, verdict_code, failure_reasons = _compute_verdict(ordered_gates, registry)
+
+        report = {
+            "schema_version": PROOF_SCHEMA_VERSION,
+            "verdict": verdict,
+            "verdict_code": verdict_code,
+            "timestamp_utc": DETERMINISTIC_TIMESTAMP_UTC,
+            "seed": int(metrics.get("seed", manifest.get("seed", 0))),
+            "gates": ordered_gates,
+            "metrics": {
+                "spike_events": int(metrics.get("spike_events", 0)),
+                "rate_mean_hz": float(metrics.get("rate_mean_hz", 0.0)),
+                "sigma_mean": float(metrics.get("sigma_mean", 0.0)),
+            },
+            "artifacts_verified": artifacts_verified,
+            "failure_reasons": failure_reasons,
+        }
+    except Exception as exc:  # pragma: no cover
+        report = _fail_closed_report(artifact_root, f"{exc.__class__.__name__}: {exc}")
+
+    proof_schema = _load_json(PROOF_SCHEMA_PATH)
+    jsonschema.validate(instance=report, schema=proof_schema)
+    return report
+
+
+def emit_proof_report(result: dict[str, Any], artifact_dir: str | Path) -> Path:
+    artifact_root = Path(artifact_dir)
+    proof_schema = _load_json(PROOF_SCHEMA_PATH)
+    jsonschema.validate(instance=result, schema=proof_schema)
+    report_path = artifact_root / "proof_report.json"
+    report_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return report_path
+
+
+def _update_manifest_proof_hash(artifact_dir: Path, proof_hash: str) -> None:
+    manifest_path = artifact_dir / "run_manifest.json"
+    manifest = _load_json(manifest_path)
+    artifacts = manifest.get("artifacts")
+    if not isinstance(artifacts, dict):
+        raise ValueError("run_manifest artifacts must be object")
+    artifacts["proof_report.json"] = proof_hash
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def evaluate_and_emit(artifact_dir: str | Path) -> EvaluationResult:
+    root = Path(artifact_dir)
+
+    provisional_report = evaluate_all_gates(root, require_proof_artifact=False)
+    provisional_path = emit_proof_report(provisional_report, root)
+    _update_manifest_proof_hash(root, sha256_file(provisional_path))
+
+    final_report = evaluate_all_gates(root, require_proof_artifact=True)
+    final_path = emit_proof_report(final_report, root)
+    _update_manifest_proof_hash(root, sha256_file(final_path))
+
+    consistency_report = evaluate_all_gates(root, require_proof_artifact=True)
+    if consistency_report != final_report:
+        consistency_path = emit_proof_report(consistency_report, root)
+        _update_manifest_proof_hash(root, sha256_file(consistency_path))
+        terminal_report = evaluate_all_gates(root, require_proof_artifact=True)
+        if terminal_report != consistency_report:
+            raise RuntimeError("proof/manifest finalization failed to stabilize")
+        return EvaluationResult(report=terminal_report, report_path=consistency_path)
+
+    return EvaluationResult(report=final_report, report_path=final_path)

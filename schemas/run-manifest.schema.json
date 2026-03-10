@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BN-Syn Canonical Run Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cmd",
+    "seed",
+    "steps",
+    "N",
+    "dt_ms",
+    "duration_ms",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "minLength": 1},
+    "cmd": {"type": "string", "minLength": 1},
+    "seed": {"type": "integer", "minimum": 0},
+    "steps": {"type": "integer", "minimum": 1},
+    "N": {"type": "integer", "minimum": 1},
+    "dt_ms": {"type": "number", "exclusiveMinimum": 0},
+    "duration_ms": {"type": "number", "exclusiveMinimum": 0},
+    "artifacts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(self-unhashed|[a-f0-9]{64})$"
+      }
+    }
+  }
+}

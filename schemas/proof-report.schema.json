@@ -1,45 +1,142 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "BN-Syn Canonical Proof Report (Bootstrap Contract)",
+  "title": "BN-Syn Canonical Proof Report",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
-    "timestamp_utc",
-    "git_commit",
-    "config_hash",
-    "seed",
     "verdict",
     "verdict_code",
+    "timestamp_utc",
+    "seed",
     "gates",
     "metrics",
     "artifacts_verified",
     "failure_reasons"
   ],
   "properties": {
-    "schema_version": {"type": "string", "minLength": 1},
-    "timestamp_utc": {"type": "string", "minLength": 1},
-    "git_commit": {"type": "string", "pattern": "^[a-f0-9]{7,64}$"},
-    "config_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "seed": {"type": "integer", "minimum": 0},
-    "verdict": {"type": "string", "enum": ["PASS", "INCONCLUSIVE", "FAIL"]},
-    "verdict_code": {"type": "integer", "minimum": 0},
+    "schema_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INCONCLUSIVE"
+      ]
+    },
+    "verdict_code": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
     "gates": {
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["status"],
-        "properties": {
-          "status": {"type": "string", "enum": ["PASS", "INCONCLUSIVE", "FAIL", "NOT_IMPLEMENTED"]},
-          "value": {"type": ["number", "null"]},
-          "threshold": {"type": ["number", "array", "object", "null"]},
-          "details": {"type": "string"}
+      "additionalProperties": false,
+      "required": [
+        "G1_active_spiking",
+        "G2_rate_in_bounds",
+        "G3_sigma_in_range",
+        "G4_core_artifacts_complete",
+        "G5_manifest_valid",
+        "G6_determinism_replay",
+        "G7_avalanche_evidence_sufficient",
+        "G8_reproducibility_envelope"
+      ],
+      "properties": {
+        "G1_active_spiking": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G2_rate_in_bounds": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G3_sigma_in_range": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G4_core_artifacts_complete": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G5_manifest_valid": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G6_determinism_replay": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G7_avalanche_evidence_sufficient": {
+          "$ref": "#/definitions/gateResult"
+        },
+        "G8_reproducibility_envelope": {
+          "$ref": "#/definitions/gateResult"
         }
       }
     },
-    "metrics": {"type": "object"},
-    "artifacts_verified": {"type": "boolean"},
-    "failure_reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "artifacts_verified": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "failure_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "definitions": {
+    "gateResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INCONCLUSIVE"
+          ]
+        },
+        "details": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "integer"
+          ]
+        },
+        "missing_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
   }
 }
