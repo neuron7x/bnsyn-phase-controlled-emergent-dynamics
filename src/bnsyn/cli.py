@@ -193,22 +193,27 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     """
     from bnsyn.experiments.declarative import run_from_yaml
 
-    config_path = args.config
-    if config_path is None and args.profile == "canonical":
+    config_path = getattr(args, "config", None)
+    profile = getattr(args, "profile", None)
+    plot = bool(getattr(args, "plot", False))
+    export_proof = bool(getattr(args, "export_proof", False))
+    output = getattr(args, "output", None)
+
+    if config_path is None and profile == "canonical":
         config_path = "configs/canonical_profile.yaml"
     if config_path is None:
         print("Error running experiment: provide CONFIG or --profile canonical", file=sys.stderr)
         return 2
 
-    if args.plot:
+    if plot:
         print("Notice: --plot is part of the reserved canonical interface; run-profile plotting is not fully wired at M0")
-    if args.export_proof:
+    if export_proof:
         print(
             "Notice: --export-proof is part of the reserved canonical interface; proof export is not fully wired at M0"
         )
 
     try:
-        run_from_yaml(config_path, args.output)
+        run_from_yaml(config_path, output)
         return 0
     except Exception as e:
         print(f"Error running experiment: {e}")
