@@ -22,6 +22,7 @@ docs/SPEC.md#P2-12
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.metadata
 import json
 import tomllib
@@ -552,6 +553,153 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
     return 0 if report["status"] == "PASS" else 1
 
 
+def _render_emergence_plot(
+    plot_path: Path,
+    sigma_trace: list[float],
+    coherence_trace: list[float],
+    rate_trace: list[float],
+    raster_points: list[tuple[int, int]],
+) -> None:  # pragma: no cover - optional matplotlib rendering path
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
+
+    ax = axes[0, 0]
+    if raster_points:
+        xs = [p[0] for p in raster_points]
+        ys = [p[1] for p in raster_points]
+        ax.scatter(xs, ys, s=2, alpha=0.6)
+    ax.set_title("Spike raster")
+    ax.set_ylabel("Neuron index")
+    ax.grid(alpha=0.2)
+
+    ax = axes[0, 1]
+    ax.plot(sigma_trace, color="tab:blue", linewidth=1.2)
+    ax.axhline(1.0, color="black", linestyle="--", linewidth=0.8, alpha=0.5)
+    ax.set_title("Criticality (sigma)")
+    ax.set_ylabel("Sigma")
+    ax.grid(alpha=0.2)
+
+    ax = axes[1, 0]
+    ax.plot(coherence_trace, color="tab:green", linewidth=1.2)
+    ax.set_title("Synchronization / coherence")
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Active fraction")
+    ax.grid(alpha=0.2)
+
+    ax = axes[1, 1]
+    ax.plot(rate_trace, color="tab:orange", linewidth=1.2)
+    ax.set_title("Population activity")
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Spike rate (Hz)")
+    ax.grid(alpha=0.2)
+
+    plt.tight_layout()
+    plt.savefig(plot_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+
+
+def _cmd_plot(args: argparse.Namespace) -> int:
+    """Run canonical emergence proof and write buyer-facing artifacts."""
+    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
+    from bnsyn.rng import seed_all
+    from bnsyn.sim.network import Network, NetworkParams
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    pack = seed_all(args.seed)
+    net = Network(
+        NetworkParams(N=int(args.N)),
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=float(args.dt_ms),
+        rng=pack.np_rng,
+        backend=args.backend,
+    )
+
+    sigma_trace: list[float] = []
+    rate_trace: list[float] = []
+    coherence_trace: list[float] = []
+    raster_points: list[tuple[int, int]] = []
+
+    for step in range(int(args.steps)):
+        metrics = net.step()
+        sigma_trace.append(float(metrics["sigma"]))
+        rate_trace.append(float(metrics["spike_rate_hz"]))
+        spike_indices = net.state.spiked.nonzero()[0]
+        coherence_trace.append(float(len(spike_indices)) / float(args.N))
+        raster_points.extend((step, int(idx)) for idx in spike_indices)
+
+    summary_metrics: dict[str, float | int] = {
+        "steps": int(args.steps),
+        "seed": int(args.seed),
+        "N": int(args.N),
+        "dt_ms": float(args.dt_ms),
+        "sigma_mean": float(sum(sigma_trace) / max(1, len(sigma_trace))),
+        "sigma_final": float(sigma_trace[-1]),
+        "spike_rate_hz_mean": float(sum(rate_trace) / max(1, len(rate_trace))),
+        "spike_rate_hz_peak": float(max(rate_trace)),
+        "coherence_mean": float(sum(coherence_trace) / max(1, len(coherence_trace))),
+        "coherence_peak": float(max(coherence_trace)),
+        "spike_events": int(len(raster_points)),
+    }
+
+    summary_path = out_dir / "summary_metrics.json"
+    summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    plot_path = out_dir / "emergence_plot.png"
+    plot_skipped = bool(getattr(args, "no_plot", False))
+    if plot_skipped:
+        plot_path.write_bytes(b"")
+    else:
+        try:
+            _render_emergence_plot(plot_path, sigma_trace, coherence_trace, rate_trace, raster_points)
+        except ImportError:
+            print(
+                "Error: matplotlib is required for bnsyn plot. "
+                'Install with: pip install -e ".[viz]" or run with --no-plot',
+                file=sys.stderr,
+            )
+            return 1
+
+    manifest = {
+        "schema_version": "1.0.0",
+        "cmd": "bnsyn plot",
+        "timestamp_utc": "1970-01-01T00:00:00Z",
+        "seed": int(args.seed),
+        "steps": int(args.steps),
+        "N": int(args.N),
+        "dt_ms": float(args.dt_ms),
+        "backend": str(args.backend),
+        "package_version": _get_package_version(),
+        "artifacts": {
+            "emergence_plot.png": hashlib.sha256(plot_path.read_bytes()).hexdigest(),
+            "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
+        },
+        "plot_skipped": plot_skipped,
+    }
+    manifest_path = out_dir / "run_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "artifact_dir": out_dir.as_posix(),
+                "artifacts": [
+                    "emergence_plot.png",
+                    "summary_metrics.json",
+                    "run_manifest.json",
+                ],
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def main() -> None:
     """Entry point for the BN-Syn CLI.
 
@@ -679,6 +827,36 @@ def main() -> None:
         help="Output path for smoke report",
     )
     smoke.set_defaults(func=_cmd_smoke)
+
+    plot = sub.add_parser(
+        "plot",
+        help=(
+            "Canonical emergence proof command. Writes emergence_plot.png, "
+            "summary_metrics.json, run_manifest.json"
+        ),
+    )
+    plot.add_argument("--seed", type=int, default=123, help="RNG seed")
+    plot.add_argument("--steps", type=int, default=500, help="Number of simulation steps")
+    plot.add_argument("--N", type=int, default=128, help="Number of neurons")
+    plot.add_argument("--dt-ms", type=float, default=0.5, help="Simulation dt in ms")
+    plot.add_argument(
+        "--backend",
+        choices=["reference", "accelerated"],
+        default="reference",
+        help="Simulation backend",
+    )
+    plot.add_argument(
+        "--out",
+        type=str,
+        default="artifacts/canonical_plot",
+        help="Output directory for canonical proof artifacts",
+    )
+    plot.add_argument(
+        "--no-plot",
+        action="store_true",
+        help="Skip image rendering but preserve canonical artifact contract",
+    )
+    plot.set_defaults(func=_cmd_plot)
 
     args = p.parse_args()
     try:

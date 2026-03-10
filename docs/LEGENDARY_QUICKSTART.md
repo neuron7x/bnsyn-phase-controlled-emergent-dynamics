@@ -1,10 +1,10 @@
 # 🚀 60-Second Quickstart
 
-Get from zero to a deterministic BN-Syn run in about 60 seconds.
+Get from zero to one deterministic BN-Syn proof run.
 
 ## Canonical install path
 
-BN-Syn is currently **source-first** in this repository.
+BN-Syn is source-first in this repository.
 Use an editable install from source as the canonical path.
 
 ## Supported Python versions
@@ -23,13 +23,13 @@ python -m pip install -e .
 python -m bnsyn --help
 ```
 
-## Run deterministic quickstart demo
+## Run canonical proof command
 
 ```bash
-bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32
+bnsyn plot
 ```
 
-Expected output contract: JSON with top-level key `"demo"`.
+Expected output contract: JSON with `status="ok"` and canonical artifacts list.
 
 ## Reproducible smoke target
 

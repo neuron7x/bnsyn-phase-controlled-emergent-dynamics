@@ -1,38 +1,20 @@
 # BN-Syn Offline Demo (Deterministic)
 
-This demo runs fully offline and deterministically using a fixed seed. It produces
-reproducible artifacts under `results/` without network access.
+This demo runs fully offline with a fixed seed and writes reproducible artifacts.
 
-For full conference preparation (release readiness + backup plan), see
-[`docs/CONFERENCE_RUNBOOK.md`](CONFERENCE_RUNBOOK.md).
-
-## Release Readiness (Blocking)
+## Canonical demo command
 
 ```bash
-python -m scripts.release_readiness
+bnsyn plot
 ```
 
-**Expected output:**
-- `artifacts/release_readiness.json`
-- `artifacts/release_readiness.md`
-- Terminal message: `Release readiness: READY`
+Outputs:
+- `artifacts/canonical_plot/emergence_plot.png`
+- `artifacts/canonical_plot/summary_metrics.json`
+- `artifacts/canonical_plot/run_manifest.json`
 
-## Quick Demo (Recommended)
+## Alternate output directory
 
 ```bash
-bnsyn sleep-stack --seed 123 --steps-wake 240 --steps-sleep 180 --out results/demo_rc
+bnsyn plot --seed 7 --steps 300 --N 96 --out results/demo_smoke
 ```
-
-**Expected outputs**
-- `results/demo_rc/manifest.json`
-- `results/demo_rc/metrics.json`
-- `results/demo_rc/summary.json`
-- `figures/demo_rc/summary.png` (if `matplotlib` is installed)
-
-## Minimal Sanity Demo (Fast)
-
-```bash
-bnsyn sleep-stack --seed 7 --steps-wake 60 --steps-sleep 40 --out results/demo_smoke
-```
-
-This run completes in a few seconds and verifies deterministic execution.
