@@ -78,7 +78,7 @@ def test_validation_gate_registry_contract() -> None:
     assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
 
     required_artifacts = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"]
-    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "run_manifest.json", "criticality_report.json"]
+    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
 
     assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
 
@@ -179,8 +179,12 @@ def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None
     assert "--export-proof remains reserved" in proc.stderr
     summary_path = output_dir / "summary_metrics.json"
     criticality_path = output_dir / "criticality_report.json"
+    avalanche_path = output_dir / "avalanche_report.json"
+    phase_space_path = output_dir / "phase_space_report.json"
     assert summary_path.exists()
     assert criticality_path.exists()
+    assert avalanche_path.exists()
+    assert phase_space_path.exists()
     payload = _load_json(summary_path)
     criticality = _load_json(criticality_path)
     assert payload["spike_events"] > 0

@@ -12,18 +12,24 @@ REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
     ),
     "docs/QUICKSTART.md": (
         "python -m pip install -e .",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
     ),
     "docs/LEGENDARY_QUICKSTART.md": (
         "python -m pip install -e .",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
     ),
 }
 

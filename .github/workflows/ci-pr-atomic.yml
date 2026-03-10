@@ -181,9 +181,10 @@ jobs:
         run: python -m scripts.validate_calibration_summary
       - name: Run no-escape contract tests
         run: |
-          pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_schema_contracts.py             tests/test_verify_reproducible_artifacts.py
+          pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_tests_inventory.py             tests/test_verify_reproducible_artifacts.py
       - name: Verify reproducible generated artifacts
         run: |
+          mkdir -p evidence/zqsg_2026_02_12
           python -m scripts.verify_reproducible_artifacts             --spec evidence/zqsg_2026_02_12/repro_spec.json             --runs 3             --report evidence/zqsg_2026_02_12/repro_report_ci.json
       - name: Upload contract artifacts
         if: always()

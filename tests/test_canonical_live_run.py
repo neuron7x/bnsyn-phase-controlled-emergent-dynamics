@@ -20,12 +20,16 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     summary_path = out_dir / "summary_metrics.json"
     manifest_path = out_dir / "run_manifest.json"
     criticality_report_path = out_dir / "criticality_report.json"
+    avalanche_report_path = out_dir / "avalanche_report.json"
+    phase_space_report_path = out_dir / "phase_space_report.json"
     emergence_plot_path = out_dir / "emergence_plot.png"
     raster_path = out_dir / "raster_plot.png"
     rate_plot_path = out_dir / "population_rate_plot.png"
     assert summary_path.exists()
     assert manifest_path.exists()
     assert criticality_report_path.exists()
+    assert avalanche_report_path.exists()
+    assert phase_space_report_path.exists()
     assert emergence_plot_path.exists()
     assert raster_path.exists()
     assert rate_plot_path.exists()
@@ -58,6 +62,25 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     }
     assert criticality_required.issubset(criticality)
 
+    avalanche = json.loads(avalanche_report_path.read_text(encoding="utf-8"))
+    avalanche_required = {
+        "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
+        "bin_width_steps", "avalanche_count", "active_bin_fraction", "size_mean",
+        "size_max", "duration_mean", "duration_max", "sizes", "durations",
+        "nonempty_bins", "largest_avalanche_fraction", "size_variance", "duration_variance",
+    }
+    assert avalanche_required.issubset(avalanche)
+
+
+    phase_space = json.loads(phase_space_report_path.read_text(encoding="utf-8"))
+    phase_space_required = {
+        "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
+        "state_axes", "point_count", "rate_mean_hz", "sigma_mean",
+        "rate_sigma_correlation", "trajectory_length_l2", "bounding_box",
+        "centroid", "occupied_cell_fraction",
+    }
+    assert set(phase_space.keys()) == phase_space_required
+
 
 def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
     out_a = tmp_path / "a"
@@ -69,8 +92,18 @@ def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
     summary_b = json.loads((out_b / "summary_metrics.json").read_text(encoding="utf-8"))
     criticality_a = json.loads((out_a / "criticality_report.json").read_text(encoding="utf-8"))
     criticality_b = json.loads((out_b / "criticality_report.json").read_text(encoding="utf-8"))
+    avalanche_a = json.loads((out_a / "avalanche_report.json").read_text(encoding="utf-8"))
+    avalanche_b = json.loads((out_b / "avalanche_report.json").read_text(encoding="utf-8"))
+    phase_a = json.loads((out_a / "phase_space_report.json").read_text(encoding="utf-8"))
+    phase_b = json.loads((out_b / "phase_space_report.json").read_text(encoding="utf-8"))
     assert summary_a == summary_b
     assert criticality_a == criticality_b
+    assert avalanche_a == avalanche_b
+    assert phase_a == phase_b
+
+    manifest_a = json.loads((out_a / "run_manifest.json").read_text(encoding="utf-8"))
+    assert "avalanche_report.json" in manifest_a["artifacts"]
+    assert "phase_space_report.json" in manifest_a["artifacts"]
 
 
 def test_cli_run_profile_canonical_end_to_end(monkeypatch, tmp_path: Path) -> None:

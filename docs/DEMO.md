@@ -13,6 +13,8 @@ Outputs:
 - `artifacts/canonical_run/summary_metrics.json`
 - `artifacts/canonical_run/run_manifest.json`
 - `artifacts/canonical_run/criticality_report.json`
+- `artifacts/canonical_run/avalanche_report.json`
+- `artifacts/canonical_run/phase_space_report.json`
 
 ## Alternate output directory
 

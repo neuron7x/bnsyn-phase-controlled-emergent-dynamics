@@ -33,8 +33,8 @@ Do not remove or rename these headings.
 ```
 
 ## Canonical Vector Check (Required)
-- [ ] Preserves `bnsyn plot` as the canonical proof command.
-- [ ] Preserves canonical artifacts: `emergence_plot.png`, `summary_metrics.json`, `run_manifest.json`.
+- [ ] Preserves `bnsyn run --profile canonical --plot --export-proof` as the canonical proof command.
+- [ ] Preserves canonical artifacts: `emergence_plot.png`, `summary_metrics.json`, `criticality_report.json`, `avalanche_report.json`, `phase_space_report.json`, `run_manifest.json`.
 - [ ] Strengthens at least one of Result / Narrative / Audience vectors without introducing drift.
 
 ## Labels policy
