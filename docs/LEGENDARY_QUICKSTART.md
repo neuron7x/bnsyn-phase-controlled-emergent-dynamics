@@ -26,10 +26,10 @@ python -m bnsyn --help
 ## Run canonical proof command
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
-Expected output contract: JSON with `status="ok"` and canonical artifacts list.
+Expected output contract: JSON with `status="ok"` and canonical artifacts list, including `criticality_report.json`.
 
 ## Reproducible smoke target
 

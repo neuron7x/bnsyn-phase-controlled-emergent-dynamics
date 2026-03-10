@@ -11,6 +11,7 @@ schemas/experiment.schema.json
 from __future__ import annotations
 
 import json
+import hashlib
 import struct
 import zlib
 from pathlib import Path
@@ -166,10 +167,29 @@ def _build_rate_image(rate_trace_hz: np.ndarray, width: int = 1000, height: int 
     return image
 
 
+def _build_emergence_image(raster_image: np.ndarray, rate_image: np.ndarray) -> np.ndarray:
+    """Build canonical emergence image as a composite of raster + rate traces."""
+    if raster_image.ndim != 2 or rate_image.ndim != 2:
+        raise ValueError("raster_image and rate_image must be 2D arrays")
+
+    width = max(raster_image.shape[1], rate_image.shape[1])
+
+    def _pad_to_width(image: np.ndarray, target_width: int) -> np.ndarray:
+        if image.shape[1] == target_width:
+            return image
+        pad = np.full((image.shape[0], target_width - image.shape[1]), 255, dtype=np.uint8)
+        return np.hstack((image, pad))
+
+    raster = _pad_to_width(raster_image, width)
+    rate = _pad_to_width(rate_image, width)
+    separator = np.full((4, width), 180, dtype=np.uint8)
+    return np.vstack((raster, separator, rate))
+
+
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
-) -> dict[str, str | dict[str, float | int]]:
+) -> dict[str, Any]:
     """Execute canonical profile and write deterministic live-run artifacts."""
     config = load_config(config_path)
     seed = int(config.experiment.seeds[0])
@@ -197,17 +217,51 @@ def run_canonical_live_bundle(
     summary_metrics: dict[str, float | int] = {
         "spike_events": int(spike_steps.size),
         "rate_mean_hz": float(np.mean(rate_trace_hz)),
+        "rate_peak_hz": float(np.max(rate_trace_hz)),
         "rate_variance": float(np.var(rate_trace_hz)),
         "sigma_mean": float(np.mean(sigma_trace)),
+        "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
         "sigma_variance": float(np.var(sigma_trace)),
         "seed": seed,
         "N": int(config.network.size),
+        "steps": steps,
         "duration_ms": float(config.simulation.duration_ms),
         "dt_ms": float(config.simulation.dt_ms),
         "external_current_pA": float(config.simulation.external_current_pA),
     }
     summary_path = out_dir / "summary_metrics.json"
     summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    spike_steps_per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
+    active_steps = int(np.count_nonzero(spike_steps_per_step)) if steps > 0 else 0
+    nonzero_rate_steps = int(np.count_nonzero(rate_trace_hz > 0.0))
+    sigma_band = np.abs(sigma_trace - 1.0) <= 0.2
+    sigma_distance = np.abs(sigma_trace - 1.0)
+
+    criticality_report: dict[str, float | int | str] = {
+        "schema_version": "1.0.0",
+        "seed": seed,
+        "N": int(config.network.size),
+        "dt_ms": float(config.simulation.dt_ms),
+        "duration_ms": float(config.simulation.duration_ms),
+        "steps": steps,
+        "sigma_mean": float(np.mean(sigma_trace)),
+        "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
+        "sigma_variance": float(np.var(sigma_trace)),
+        "rate_mean_hz": float(np.mean(rate_trace_hz)),
+        "rate_peak_hz": float(np.max(rate_trace_hz)),
+        "spike_events": int(spike_steps.size),
+        "sigma_distance_from_1": float(np.mean(sigma_distance)) if sigma_distance.size else 0.0,
+        "sigma_within_band_fraction": float(np.mean(sigma_band)) if sigma_band.size else 0.0,
+        "active_steps_fraction": float(active_steps / steps) if steps > 0 else 0.0,
+        "nonzero_rate_steps_fraction": float(nonzero_rate_steps / steps) if steps > 0 else 0.0,
+        "rate_cv": float(np.std(rate_trace_hz) / np.mean(rate_trace_hz)) if np.mean(rate_trace_hz) > 0 else 0.0,
+        "burstiness_proxy": float(np.var(spike_steps_per_step) / np.mean(spike_steps_per_step)) if np.mean(spike_steps_per_step) > 0 else 0.0,
+    }
+    criticality_report_path = out_dir / "criticality_report.json"
+    criticality_report_path.write_text(
+        json.dumps(criticality_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
 
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
@@ -217,11 +271,39 @@ def run_canonical_live_bundle(
     rate_image = _build_rate_image(rate_trace_hz)
     _write_grayscale_png(rate_image, rate_plot_path)
 
+    emergence_plot_path = out_dir / "emergence_plot.png"
+    emergence_image = _build_emergence_image(raster_image, rate_image)
+    _write_grayscale_png(emergence_image, emergence_plot_path)
+
+    manifest = {
+        "schema_version": "1.0.0",
+        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "seed": seed,
+        "steps": steps,
+        "N": int(config.network.size),
+        "dt_ms": float(config.simulation.dt_ms),
+        "duration_ms": float(config.simulation.duration_ms),
+        "artifacts": {
+            "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
+            "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
+            "criticality_report.json": hashlib.sha256(criticality_report_path.read_bytes()).hexdigest(),
+            "run_manifest.json": "self-unhashed",
+            "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
+            "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
+        },
+    }
+    manifest_path = out_dir / "run_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
     return {
         "artifact_dir": out_dir.as_posix(),
         "artifact_npz": artifact_npz,
+        "run_manifest_path": manifest_path.as_posix(),
         "summary_metrics": summary_metrics,
         "summary_metrics_path": summary_path.as_posix(),
+        "criticality_report": criticality_report,
+        "criticality_report_path": criticality_report_path.as_posix(),
+        "emergence_plot_path": emergence_plot_path.as_posix(),
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),
         "emergence_metrics": metrics,

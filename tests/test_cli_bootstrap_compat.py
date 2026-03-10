@@ -72,8 +72,8 @@ def test_cmd_run_experiment_prints_reserved_flag_notices(
     captured = capsys.readouterr()
 
     assert rc == 0
-    assert "--plot only applies to --profile canonical" in captured.out
-    assert "--export-proof reserved; full proof export is not wired" in captured.out
+    assert "--plot only applies to --profile canonical" in captured.err
+    assert "--export-proof reserved; full proof export is not wired" in captured.err
 
 
 def test_cmd_run_experiment_canonical_prints_plot_notice(
@@ -89,7 +89,7 @@ def test_cmd_run_experiment_canonical_prints_plot_notice(
     captured = capsys.readouterr()
 
     assert rc == 0
-    assert "--plot acknowledged; canonical live-run plots are emitted by default" in captured.out
+    assert "--plot acknowledged; canonical live-run plots are emitted by default" in captured.err
 
 
 def test_cmd_run_experiment_canonical_prints_export_proof_reserved_notice(
@@ -105,7 +105,7 @@ def test_cmd_run_experiment_canonical_prints_export_proof_reserved_notice(
     captured = capsys.readouterr()
 
     assert rc == 0
-    assert "--export-proof remains reserved; canonical run currently emits a live-run bundle" in captured.out
+    assert "--export-proof remains reserved; canonical run currently emits a live-run bundle" in captured.err
 
 
 def test_cmd_run_experiment_canonical_uses_default_output_dir(monkeypatch: pytest.MonkeyPatch) -> None:

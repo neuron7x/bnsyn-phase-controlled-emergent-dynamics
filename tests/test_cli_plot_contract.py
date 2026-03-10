@@ -21,16 +21,8 @@ def _cli_env() -> dict[str, str]:
 
 
 def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
-    out_dir = tmp_path / "canonical_plot"
-    args = argparse.Namespace(
-        seed=123,
-        steps=100,
-        N=64,
-        dt_ms=0.5,
-        backend="reference",
-        no_plot=True,
-        out=str(out_dir),
-    )
+    out_dir = tmp_path / "canonical_run"
+    args = argparse.Namespace(out=str(out_dir))
     rc = _cmd_plot(args)
     assert rc == 0
 
@@ -44,17 +36,17 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
 
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     assert summary["seed"] == 123
-    assert summary["steps"] == 100
-    assert "coherence_mean" in summary
+    assert summary["N"] > 0
+    assert "rate_mean_hz" in summary
     assert "sigma_mean" in summary
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["cmd"] == "bnsyn plot"
-    assert manifest["plot_skipped"] is True
+    assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]
-    assert manifest["timestamp_utc"] == "1970-01-01T00:00:00Z"
+    assert "criticality_report.json" in manifest["artifacts"]
+    assert manifest["artifacts"]["run_manifest.json"] == "self-unhashed"
 
 
 def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
@@ -65,13 +57,6 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
             "-m",
             "bnsyn.cli",
             "plot",
-            "--steps",
-            "50",
-            "--N",
-            "64",
-            "--seed",
-            "321",
-            "--no-plot",
             "--out",
             str(out_dir),
         ],
@@ -86,5 +71,6 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
     assert payload["artifacts"] == [
         "emergence_plot.png",
         "summary_metrics.json",
+        "criticality_report.json",
         "run_manifest.json",
     ]

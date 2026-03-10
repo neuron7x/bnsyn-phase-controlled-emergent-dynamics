@@ -11,13 +11,14 @@ make setup
 ## 2) Run canonical emergence proof
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
-Expected artifacts in `artifacts/canonical_plot/`:
+Expected artifacts in `artifacts/canonical_run/`:
 - `emergence_plot.png`
 - `summary_metrics.json`
 - `run_manifest.json`
+- `criticality_report.json`
 
 ## 3) Run tests
 
