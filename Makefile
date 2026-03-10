@@ -42,8 +42,8 @@ quickstart-smoke:
 	python -m pip install -e .
 	python -m pip show bnsyn
 	bnsyn --help
-	bnsyn sleep-stack --help
-	bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32 | python -c "import json,sys; data=json.load(sys.stdin); assert 'demo' in data, 'missing demo key'; print('quickstart demo output validated')"
+	bnsyn plot --help
+	bnsyn plot --no-plot | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and len(d['artifacts'])==3 and 'emergence_plot.png' in d['artifacts'], f'smoke failed: {d}'; print('quickstart plot output validated')"
 
 
 wheelhouse-build:

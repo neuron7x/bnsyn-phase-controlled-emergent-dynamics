@@ -10,17 +10,17 @@ REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
         "make quickstart-smoke",
         "python -m pip install -e .",
         "python -m bnsyn --help",
-        "bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32",
+        "bnsyn plot",
     ),
     "docs/QUICKSTART.md": (
         "python -m pip install -e .",
         "python -m bnsyn --help",
-        "bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32",
+        "bnsyn plot",
     ),
     "docs/LEGENDARY_QUICKSTART.md": (
         "python -m pip install -e .",
         "python -m bnsyn --help",
-        "bnsyn demo --steps 120 --dt-ms 0.1 --seed 123 --N 32",
+        "bnsyn plot",
     ),
 }
 
