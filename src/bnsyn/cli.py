@@ -66,8 +66,6 @@ def _get_package_version() -> str:
     return "unknown"
 
 
-
-
 def _validate_demo_args(args: argparse.Namespace) -> None:
     """Validate demo command arguments and raise user-actionable errors."""
     if args.steps <= 0:
@@ -76,6 +74,7 @@ def _validate_demo_args(args: argparse.Namespace) -> None:
         raise ValueError("dt-ms must be greater than 0")
     if args.N <= 0:
         raise ValueError("N must be greater than 0")
+
 
 def _cmd_demo(args: argparse.Namespace) -> int:
     """Run a deterministic demo simulation and print metrics.
@@ -471,7 +470,11 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
     }
     report["status"] = "PASS" if all(report["checks"].values()) else "FAIL"
     out_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"smoke_report": out_path.as_posix(), "status": report["status"]}, sort_keys=True))
+    print(
+        json.dumps(
+            {"smoke_report": out_path.as_posix(), "status": report["status"]}, sort_keys=True
+        )
+    )
     return 0 if report["status"] == "PASS" else 1
 
 
@@ -569,7 +572,9 @@ def _cmd_plot(args: argparse.Namespace) -> int:
     }
 
     summary_path = out_dir / "summary_metrics.json"
-    summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    summary_path.write_text(
+        json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
     plot_path = out_dir / "emergence_plot.png"
     plot_skipped = bool(getattr(args, "no_plot", False))
@@ -577,7 +582,9 @@ def _cmd_plot(args: argparse.Namespace) -> int:
         plot_path.write_bytes(b"")
     else:
         try:
-            _render_emergence_plot(plot_path, sigma_trace, coherence_trace, rate_trace, raster_points)
+            _render_emergence_plot(
+                plot_path, sigma_trace, coherence_trace, rate_trace, raster_points
+            )
         except ImportError:
             print(
                 "Error: matplotlib is required for bnsyn plot. "
@@ -603,7 +610,9 @@ def _cmd_plot(args: argparse.Namespace) -> int:
         "plot_skipped": plot_skipped,
     }
     manifest_path = out_dir / "run_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
     print(
         json.dumps(
@@ -670,7 +679,19 @@ def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
         )
     report_path = out_dir / "emergence_sweep_report.json"
     report_path.write_text(
-        json.dumps({"params": {"N": args.N, "dt_ms": args.dt_ms, "duration_ms": args.duration_ms, "seed": args.seed}, "runs": runs}, indent=2, sort_keys=True)
+        json.dumps(
+            {
+                "params": {
+                    "N": args.N,
+                    "dt_ms": args.dt_ms,
+                    "duration_ms": args.duration_ms,
+                    "seed": args.seed,
+                },
+                "runs": runs,
+            },
+            indent=2,
+            sort_keys=True,
+        )
         + "\n",
         encoding="utf-8",
     )
@@ -768,7 +789,6 @@ def main() -> None:
         help="Output directory for results",
     )
     sleep.set_defaults(func=_cmd_sleep_stack)
-
 
     smoke = sub.add_parser("smoke", help="Run deterministic operational readiness smoke test")
     smoke.add_argument("--seed", type=int, default=20260218)

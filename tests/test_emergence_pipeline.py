@@ -113,7 +113,9 @@ def test_plotter_rejects_wrong_format_version(tmp_path: Path) -> None:
         plot_emergence_npz(npz_path, tmp_path / "x.png")
 
 
-def test_plotter_reports_missing_matplotlib(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_plotter_reports_missing_matplotlib(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     npz_path = tmp_path / "in.npz"
     _write_npz(npz_path)
     monkeypatch.setitem(sys.modules, "matplotlib", None)
@@ -150,9 +152,7 @@ def test_cli_emergence_run_via_main(monkeypatch: pytest.MonkeyPatch, tmp_path: P
     assert Path(report["artifact_npz"]).exists()
 
 
-def test_cli_emergence_sweep_via_main(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_cli_emergence_sweep_via_main(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     test_args = [
         "bnsyn",
         "emergence-sweep",
@@ -178,7 +178,6 @@ def test_cli_emergence_sweep_via_main(
     assert len(artifacts) == len(cli.EMERGENCE_SWEEP_CURRENTS_PA)
     assert len(set(artifacts)) == len(artifacts)
     assert all(Path(path).exists() for path in artifacts)
-
 
 
 def test_compute_steps_exact_rejects_nonpositive_dt() -> None:
@@ -231,7 +230,6 @@ def test_plotter_rejects_shape_invariant_violation(tmp_path: Path) -> None:
     )
     with pytest.raises(ValueError, match="identical shapes"):
         plot_emergence_npz(npz_path, tmp_path / "x.png")
-
 
 
 def test_plotter_rejects_invalid_trace_dimensions(tmp_path: Path) -> None:
@@ -291,11 +289,16 @@ def test_plotter_rejects_out_of_bounds_spikes(tmp_path: Path) -> None:
         plot_emergence_npz(npz_path, tmp_path / "out.png")
 
 
-def test_cli_emergence_plot_via_main(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_cli_emergence_plot_via_main(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(cli, "plot_emergence_npz", lambda i, o: None)
-    test_args = ["bnsyn", "emergence-plot", "--input", "in.npz", "--output", str(tmp_path / "out.png")]
+    test_args = [
+        "bnsyn",
+        "emergence-plot",
+        "--input",
+        "in.npz",
+        "--output",
+        str(tmp_path / "out.png"),
+    ]
     monkeypatch.setattr("sys.argv", test_args)
 
     with pytest.raises(SystemExit) as exc:
