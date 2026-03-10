@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BN-Syn Canonical Proof Report (Bootstrap Contract)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "timestamp_utc",
+    "git_commit",
+    "config_hash",
+    "seed",
+    "verdict",
+    "verdict_code",
+    "gates",
+    "metrics",
+    "artifacts_verified",
+    "failure_reasons"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "minLength": 1},
+    "timestamp_utc": {"type": "string", "minLength": 1},
+    "git_commit": {"type": "string", "pattern": "^[a-f0-9]{7,64}$"},
+    "config_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "seed": {"type": "integer", "minimum": 0},
+    "verdict": {"type": "string", "enum": ["PASS", "INCONCLUSIVE", "FAIL"]},
+    "verdict_code": {"type": "integer", "minimum": 0},
+    "gates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status"],
+        "properties": {
+          "status": {"type": "string", "enum": ["PASS", "INCONCLUSIVE", "FAIL", "NOT_IMPLEMENTED"]},
+          "value": {"type": ["number", "null"]},
+          "threshold": {"type": ["number", "array", "object", "null"]},
+          "details": {"type": "string"}
+        }
+      }
+    },
+    "metrics": {"type": "object"},
+    "artifacts_verified": {"type": "boolean"},
+    "failure_reasons": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

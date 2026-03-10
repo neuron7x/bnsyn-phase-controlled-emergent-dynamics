@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.1.0",
+  "policy_scope": "canonical_avalanche_admission_stub",
+  "enforcement_status": "planned",
+  "avalanche_admission": {
+    "N_min": 128,
+    "duration_min_ms": 2000,
+    "bin_width_ms": 1.0,
+    "min_avalanche_count": 200,
+    "min_tail_count": 40,
+    "p_value_threshold": 0.05,
+    "ks_max": 0.1
+  },
+  "notes": "Future canonical admission thresholds for M2+ evaluators; recorded now for deterministic control-plane alignment, not as a claim of present scientific sufficiency."
+}

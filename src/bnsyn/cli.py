@@ -193,8 +193,22 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     """
     from bnsyn.experiments.declarative import run_from_yaml
 
+    config_path = args.config
+    if config_path is None and args.profile == "canonical":
+        config_path = "configs/canonical_profile.yaml"
+    if config_path is None:
+        print("Error running experiment: provide CONFIG or --profile canonical")
+        return 2
+
+    if args.plot:
+        print("Notice: --plot is part of the reserved canonical interface; run-profile plotting is not fully wired at M0")
+    if args.export_proof:
+        print(
+            "Notice: --export-proof is part of the reserved canonical interface; proof export is not fully wired at M0"
+        )
+
     try:
-        run_from_yaml(args.config, args.output)
+        run_from_yaml(config_path, args.output)
         return 0
     except Exception as e:
         print(f"Error running experiment: {e}")
@@ -759,7 +773,22 @@ def main() -> None:
     demo.set_defaults(func=_cmd_demo)
 
     run_parser = sub.add_parser("run", help="Run experiment from YAML config")
-    run_parser.add_argument("config", help="Path to YAML configuration file")
+    run_parser.add_argument("config", nargs="?", help="Path to YAML configuration file")
+    run_parser.add_argument(
+        "--profile",
+        choices=["canonical"],
+        help="Bootstrap profile selector for future canonical run path",
+    )
+    run_parser.add_argument(
+        "--plot",
+        action="store_true",
+        help="Reserved bootstrap flag for future canonical plot wiring",
+    )
+    run_parser.add_argument(
+        "--export-proof",
+        action="store_true",
+        help="Reserved bootstrap flag for future proof export wiring",
+    )
     run_parser.add_argument("-o", "--output", help="Output JSON path (default: stdout)")
     run_parser.set_defaults(func=_cmd_run_experiment)
 
