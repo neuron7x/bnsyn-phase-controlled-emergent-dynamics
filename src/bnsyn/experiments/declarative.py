@@ -189,7 +189,7 @@ def _build_emergence_image(raster_image: np.ndarray, rate_image: np.ndarray) -> 
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
-) -> dict[str, str | dict[str, float | int]]:
+) -> dict[str, Any]:
     """Execute canonical profile and write deterministic live-run artifacts."""
     config = load_config(config_path)
     seed = int(config.experiment.seeds[0])
