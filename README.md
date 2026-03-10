@@ -74,6 +74,7 @@ make test-gate
 - Reproduce proof: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
 - Contributing workflow: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Status: [docs/STATUS.md](docs/STATUS.md)
 
 ## Maintainers / Repo Contract
 
