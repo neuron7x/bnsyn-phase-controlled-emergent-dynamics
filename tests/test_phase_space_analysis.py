@@ -145,3 +145,38 @@ def test_phase_space_fail_closed_on_trace_length_mismatch() -> None:
     except ValueError:
         return
     raise AssertionError("expected ValueError for trace length mismatch")
+
+
+def test_phase_space_zero_and_constant_traces_cover_edge_branches() -> None:
+    # constant traces exercise zero-variance correlation branch and collapsed bbox indexing branch
+    rates = np.asarray([5.0, 5.0, 5.0], dtype=np.float64)
+    sigmas = np.asarray([1.2, 1.2, 1.2], dtype=np.float64)
+    report = _build_phase_space_report(
+        seed=9,
+        n_neurons=3,
+        dt_ms=1.0,
+        duration_ms=3.0,
+        steps=3,
+        rate_trace_hz=rates,
+        sigma_trace=sigmas,
+    )
+    assert report["rate_sigma_correlation"] == 0.0
+    assert report["trajectory_length_l2"] == 0.0
+    assert report["occupied_cell_fraction"] == 1.0 / (32.0 * 32.0)
+
+
+def test_phase_space_empty_trace_edge_branch() -> None:
+    rates = np.asarray([], dtype=np.float64)
+    sigmas = np.asarray([], dtype=np.float64)
+    report = _build_phase_space_report(
+        seed=11,
+        n_neurons=1,
+        dt_ms=1.0,
+        duration_ms=0.0,
+        steps=0,
+        rate_trace_hz=rates,
+        sigma_trace=sigmas,
+    )
+    assert report["point_count"] == 0
+    assert report["trajectory_length_l2"] == 0.0
+    assert report["occupied_cell_fraction"] == 0.0

@@ -53,3 +53,36 @@ def test_avalanche_report_schema_and_semantics() -> None:
     assert report["bin_width_steps"] >= 1
     assert 0.0 <= float(report["active_bin_fraction"]) <= 1.0
     assert 0.0 <= float(report["largest_avalanche_fraction"]) <= 1.0
+
+
+def test_build_avalanche_report_rebin_and_edge_cases() -> None:
+    spike_counts = np.asarray([0, 1, 2, 0, 0, 3], dtype=np.int64)
+    report = _build_avalanche_report(
+        seed=42,
+        n_neurons=8,
+        dt_ms=0.5,
+        duration_ms=3.0,
+        steps=6,
+        spike_steps_per_step=spike_counts,
+        bin_width_steps=2,
+    )
+    assert report["sizes"] == [6]
+    assert report["durations"] == [3]
+    assert report["avalanche_count"] == 1
+
+
+def test_build_avalanche_report_invalid_bin_width_raises() -> None:
+    spike_counts = np.asarray([1, 0, 1], dtype=np.int64)
+    try:
+        _build_avalanche_report(
+            seed=1,
+            n_neurons=3,
+            dt_ms=1.0,
+            duration_ms=3.0,
+            steps=3,
+            spike_steps_per_step=spike_counts,
+            bin_width_steps=0,
+        )
+    except ValueError:
+        return
+    raise AssertionError("expected ValueError for bin_width_steps <= 0")
