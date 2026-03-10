@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 import sys
 from pathlib import Path
@@ -124,27 +123,56 @@ def test_plotter_reports_missing_matplotlib(monkeypatch: pytest.MonkeyPatch, tmp
         plot_emergence_npz(npz_path, tmp_path / "x.png")
 
 
-def test_cli_emergence_run_writes_report_and_artifact(tmp_path: Path) -> None:
-    rc = cli._cmd_emergence_run(
-        argparse.Namespace(
-            N=24,
-            dt_ms=0.1,
-            duration_ms=10.0,
-            seed=42,
-            external_current_pA=410.0,
-            out=tmp_path,
-        )
-    )
-    assert rc == 0
+def test_cli_emergence_run_via_main(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    test_args = [
+        "bnsyn",
+        "emergence-run",
+        "--N",
+        "24",
+        "--dt-ms",
+        "0.1",
+        "--duration-ms",
+        "10.0",
+        "--seed",
+        "42",
+        "--external-current-pA",
+        "410.0",
+        "--out",
+        str(tmp_path),
+    ]
+    monkeypatch.setattr("sys.argv", test_args)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    assert exc.value.code == 0
     report = json.loads((tmp_path / "emergence_run_report.json").read_text(encoding="utf-8"))
     assert Path(report["artifact_npz"]).exists()
 
 
-def test_cli_emergence_sweep_writes_unique_artifacts(tmp_path: Path) -> None:
-    rc = cli._cmd_emergence_sweep(
-        argparse.Namespace(N=24, dt_ms=0.1, duration_ms=10.0, seed=42, out=tmp_path)
-    )
-    assert rc == 0
+def test_cli_emergence_sweep_via_main(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    test_args = [
+        "bnsyn",
+        "emergence-sweep",
+        "--N",
+        "24",
+        "--dt-ms",
+        "0.1",
+        "--duration-ms",
+        "10.0",
+        "--seed",
+        "42",
+        "--out",
+        str(tmp_path),
+    ]
+    monkeypatch.setattr("sys.argv", test_args)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    assert exc.value.code == 0
     report = json.loads((tmp_path / "emergence_sweep_report.json").read_text(encoding="utf-8"))
     artifacts = [run["artifact_npz"] for run in report["runs"]]
     assert len(artifacts) == len(cli.EMERGENCE_SWEEP_CURRENTS_PA)
@@ -263,9 +291,19 @@ def test_plotter_rejects_out_of_bounds_spikes(tmp_path: Path) -> None:
         plot_emergence_npz(npz_path, tmp_path / "out.png")
 
 
-def test_cli_emergence_plot_executes_successfully(
+def test_cli_emergence_plot_via_main(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    args = argparse.Namespace(input="in.npz", output=tmp_path / "out.png")
     monkeypatch.setattr(cli, "plot_emergence_npz", lambda i, o: None)
-    assert cli._cmd_emergence_plot(args) == 0
+    test_args = ["bnsyn", "emergence-plot", "--input", "in.npz", "--output", str(tmp_path / "out.png")]
+    monkeypatch.setattr("sys.argv", test_args)
+
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+
+    assert exc.value.code == 0
+
+
+def test_compute_steps_exact_rejects_tolerance_mismatch() -> None:
+    with pytest.raises(ValueError, match="within tolerance"):
+        compute_steps_exact(duration_ms=10.0, dt_ms=0.3)
