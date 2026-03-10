@@ -51,3 +51,24 @@ def test_experiment_config_rejects_duration_not_multiple_of_dt() -> None:
             network={"size": 10},
             simulation={"duration_ms": 1.25, "dt_ms": 0.1},
         )
+
+
+
+def test_experiment_config_rejects_non_finite_external_current() -> None:
+    with pytest.raises(ValidationError, match=r"external_current_pA must be a finite real number"):
+        BNSynExperimentConfig(
+            experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+            network={"size": 10},
+            simulation={"duration_ms": 1.0, "dt_ms": 0.1, "external_current_pA": float("inf")},
+        )
+
+
+
+def test_experiment_config_defaults_include_artifact_fields() -> None:
+    config = BNSynExperimentConfig(
+        experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+        network={"size": 10},
+        simulation={"duration_ms": 1.0, "dt_ms": 0.1},
+    )
+    assert config.simulation.external_current_pA == 0.0
+    assert config.simulation.artifact_dir is None

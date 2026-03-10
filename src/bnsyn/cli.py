@@ -32,7 +32,11 @@ from pathlib import Path
 from typing import Any
 
 from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
+from bnsyn.viz.emergence_plot import plot_emergence_npz
+
+EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
 
 
 def _get_package_version() -> str:
@@ -618,6 +622,68 @@ def _cmd_plot(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_emergence_run(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out)
+    metrics, artifact_path = run_emergence_to_disk(
+        N=int(args.N),
+        dt_ms=float(args.dt_ms),
+        duration_ms=float(args.duration_ms),
+        seed=int(args.seed),
+        external_current_pA=float(args.external_current_pA),
+        output_dir=out_dir,
+    )
+    report = {
+        "params": {
+            "N": int(args.N),
+            "dt_ms": float(args.dt_ms),
+            "duration_ms": float(args.duration_ms),
+            "seed": int(args.seed),
+            "external_current_pA": float(args.external_current_pA),
+        },
+        "metrics": metrics,
+        "artifact_npz": artifact_path,
+    }
+    report_path = out_dir / "emergence_run_report.json"
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(json.dumps({"status": "ok", "report": report_path.as_posix()}, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out)
+    runs: list[dict[str, Any]] = []
+    for current in EMERGENCE_SWEEP_CURRENTS_PA:
+        metrics, artifact_path = run_emergence_to_disk(
+            N=int(args.N),
+            dt_ms=float(args.dt_ms),
+            duration_ms=float(args.duration_ms),
+            seed=int(args.seed),
+            external_current_pA=current,
+            output_dir=out_dir,
+        )
+        runs.append(
+            {
+                "external_current_pA": current,
+                "metrics": metrics,
+                "artifact_npz": artifact_path,
+            }
+        )
+    report_path = out_dir / "emergence_sweep_report.json"
+    report_path.write_text(
+        json.dumps({"params": {"N": args.N, "dt_ms": args.dt_ms, "duration_ms": args.duration_ms, "seed": args.seed}, "runs": runs}, indent=2, sort_keys=True)
+        + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps({"status": "ok", "report": report_path.as_posix()}, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_plot(args: argparse.Namespace) -> int:
+    plot_emergence_npz(args.input, args.output)
+    print(json.dumps({"status": "ok", "output": str(args.output)}, sort_keys=True))
+    return 0
+
+
 def main() -> None:
     """Entry point for the BN-Syn CLI.
 
@@ -743,6 +809,28 @@ def main() -> None:
         help="Skip image rendering but preserve canonical artifact contract",
     )
     plot.set_defaults(func=_cmd_plot)
+
+    emergence_run = sub.add_parser("emergence-run", help="Run emergence artifact capture")
+    emergence_run.add_argument("--N", type=int, default=500)
+    emergence_run.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_run.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_run.add_argument("--seed", type=int, default=42)
+    emergence_run.add_argument("--external-current-pA", type=float, default=410.0)
+    emergence_run.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
+    emergence_run.set_defaults(func=_cmd_emergence_run)
+
+    emergence_sweep = sub.add_parser("emergence-sweep", help="Run fixed emergence current sweep")
+    emergence_sweep.add_argument("--N", type=int, default=500)
+    emergence_sweep.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_sweep.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_sweep.add_argument("--seed", type=int, default=42)
+    emergence_sweep.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
+    emergence_sweep.set_defaults(func=_cmd_emergence_sweep)
+
+    emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")
+    emergence_plot.add_argument("--input", required=True)
+    emergence_plot.add_argument("--output", required=True)
+    emergence_plot.set_defaults(func=_cmd_emergence_plot)
 
     args = p.parse_args()
     try:
