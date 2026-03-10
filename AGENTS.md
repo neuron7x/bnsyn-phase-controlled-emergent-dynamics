@@ -26,6 +26,13 @@
 - Introducing new external services without explicit repo precedent.
 - Disabling tests/linters/typechecks.
 
+## Canonical Vectors and Anti-Drift
+- V1 Result: keep `bnsyn plot` as the single canonical visual proof command.
+- V2 Narrative: keep README + docs/CANONICAL_PROOF.md aligned with mechanism (AdEx + STDP + criticality), measurable outputs, and reproducibility.
+- V3 Audience: keep clone->install->`bnsyn plot`->inspect path obvious for external technical reviewers.
+- Canonical artifact contract for `bnsyn plot`: `emergence_plot.png`, `summary_metrics.json`, `run_manifest.json`.
+- Treat changes that obscure or fragment canonical proof path as drift.
+
 ## Tooling & Commands (Project-Specific)
 - Tests: `python -m pytest -m "not (validation or property)" -q` (Makefile `test`, used by CI reusable pytest workflows)
 - Linters: `ruff check .` and `pylint src/bnsyn` (Makefile `lint`)

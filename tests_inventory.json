@@ -159,6 +159,13 @@
       "entropy_signals": [
         "filesystem_io"
       ],
+      "path": "tests/test_claim_boundaries_contract.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io"
+      ],
       "path": "tests/test_claims_enforcement.py"
     },
     {
@@ -168,6 +175,14 @@
         "subprocess_dependency"
       ],
       "path": "tests/test_cli_interactive.py"
+    },
+    {
+      "category": "pytest",
+      "entropy_signals": [
+        "filesystem_io",
+        "subprocess_dependency"
+      ],
+      "path": "tests/test_cli_plot_contract.py"
     },
     {
       "category": "pytest",
