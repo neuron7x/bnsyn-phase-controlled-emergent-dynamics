@@ -41,7 +41,7 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     assert "sigma_mean" in summary
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
+    assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]

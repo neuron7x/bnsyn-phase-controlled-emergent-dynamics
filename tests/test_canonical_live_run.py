@@ -34,6 +34,13 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert raster_path.exists()
     assert rate_plot_path.exists()
 
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
+    assert manifest["bundle_contract"] == "canonical-base"
+    assert manifest["export_proof"] is False
+    assert "proof_report.json" not in manifest["artifacts"]
+
     metrics = json.loads(summary_path.read_text(encoding="utf-8"))
     required = {
         "spike_events",
@@ -122,3 +129,15 @@ def test_cli_run_profile_canonical_end_to_end(monkeypatch, tmp_path: Path) -> No
     assert summary_path.exists()
     metrics = json.loads(summary_path.read_text(encoding="utf-8"))
     assert metrics["spike_events"] > 0
+
+
+def test_canonical_export_proof_manifest_command_truth(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical_export"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
+    assert manifest["bundle_contract"] == "canonical-export-proof"
+    assert manifest["export_proof"] is True
+    assert "proof_report.json" in manifest["artifacts"]
+    assert (out_dir / "proof_report.json").exists()

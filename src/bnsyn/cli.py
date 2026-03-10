@@ -34,6 +34,7 @@ from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
 from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
 from bnsyn.viz.emergence_plot import plot_emergence_npz
+from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
 
 EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
 
@@ -218,23 +219,12 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         if plot:
             print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
 
-        bundle_contract = "canonical-export-proof" if export_proof else "canonical-base"
-
-        artifacts = [
-            "emergence_plot.png",
-            "summary_metrics.json",
-            "criticality_report.json",
-            "avalanche_report.json",
-            "phase_space_report.json",
-            "run_manifest.json",
-        ]
-        if export_proof:
-            artifacts.append("proof_report.json")
+        bundle_contract = bundle_contract_for_export_proof(export_proof)
 
         payload = {
             "status": "ok",
             "bundle_contract": bundle_contract,
-            "artifacts": artifacts,
+            "artifacts": list(artifacts_for_export_proof(export_proof)),
             **bundle,
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
@@ -538,7 +528,6 @@ def _render_emergence_plot(
     raster_points: list[tuple[int, int]],
 ) -> None:  # pragma: no cover - optional matplotlib rendering path
     import matplotlib.pyplot as plt
-
     fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
 
     ax = axes[0, 0]

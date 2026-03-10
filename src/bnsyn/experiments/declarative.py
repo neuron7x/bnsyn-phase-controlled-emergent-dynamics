@@ -24,6 +24,7 @@ from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.numerics import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
+from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof
 
 
 def load_config(config_path: str | Path) -> BNSynExperimentConfig:
@@ -471,7 +472,9 @@ def run_canonical_live_bundle(
 
     manifest: dict[str, Any] = {
         "schema_version": "1.0.0",
-        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "cmd": command_for_export_proof(export_proof),
+        "bundle_contract": bundle_contract_for_export_proof(export_proof),
+        "export_proof": bool(export_proof),
         "seed": seed,
         "steps": steps,
         "N": int(config.network.size),

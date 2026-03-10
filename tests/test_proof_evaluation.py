@@ -207,8 +207,7 @@ def test_registry_alignment_for_required_artifacts(tmp_path: Path) -> None:
 
     registry = _load_json(ROOT / "ci" / "validation_gates.json")
     by_id = {gate["id"]: gate for gate in registry["registry"]}
-    required = set(by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"])
-    required.add("proof_report.json")
+    required = set(by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]["canonical-export-proof"])
     report = _load_json(out_dir / "proof_report.json")
 
     assert required == set(report["artifacts_verified"])

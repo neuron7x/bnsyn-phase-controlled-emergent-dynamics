@@ -57,14 +57,25 @@
       "description": "Canonical proof artifact contract is complete.",
       "status": "wired",
       "threshold": {
-        "required_artifacts": [
-          "emergence_plot.png",
-          "summary_metrics.json",
-          "criticality_report.json",
-          "avalanche_report.json",
-          "phase_space_report.json",
-          "run_manifest.json"
-        ]
+        "required_artifacts_by_mode": {
+          "canonical-base": [
+            "emergence_plot.png",
+            "summary_metrics.json",
+            "criticality_report.json",
+            "avalanche_report.json",
+            "phase_space_report.json",
+            "run_manifest.json"
+          ],
+          "canonical-export-proof": [
+            "emergence_plot.png",
+            "summary_metrics.json",
+            "criticality_report.json",
+            "avalanche_report.json",
+            "phase_space_report.json",
+            "run_manifest.json",
+            "proof_report.json"
+          ]
+        }
       },
       "evidence": {
         "artifact": "run_manifest.json",

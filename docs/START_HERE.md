@@ -21,6 +21,7 @@ Expected artifacts in `artifacts/canonical_run/`:
 - `criticality_report.json`
 - `avalanche_report.json`
 - `phase_space_report.json`
+- `proof_report.json`
 
 ## 3) Run tests
 

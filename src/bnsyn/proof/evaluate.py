@@ -8,6 +8,12 @@ from typing import Any
 
 import jsonschema  # type: ignore[import-untyped]
 
+from .contracts import (
+    CANONICAL_BASE_CONTRACT,
+    CANONICAL_EXPORT_PROOF_CONTRACT,
+    EXPORT_PROOF_ARTIFACTS,
+)
+
 ROOT = Path(__file__).resolve().parents[3]
 PROOF_SCHEMA_PATH = ROOT / "schemas" / "proof-report.schema.json"
 RUN_MANIFEST_SCHEMA_PATH = ROOT / "schemas" / "run-manifest.schema.json"
@@ -66,18 +72,19 @@ def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], requi
     threshold = g4.get("threshold")
     if not isinstance(threshold, dict):
         raise ValueError("G4 threshold missing")
-    required = threshold.get("required_artifacts")
-    if not isinstance(required, list) or not required or not all(isinstance(x, str) and x for x in required):
-        raise ValueError("G4 required_artifacts invalid")
-    required_artifacts = tuple(required)
-    if require_proof_artifact and "proof_report.json" not in required_artifacts:
-        required_artifacts = required_artifacts + ("proof_report.json",)
+
+    expected_mode = CANONICAL_EXPORT_PROOF_CONTRACT if require_proof_artifact else CANONICAL_BASE_CONTRACT
+    required_by_mode = threshold.get("required_artifacts_by_mode")
+    if not isinstance(required_by_mode, dict):
+        raise ValueError("G4 required_artifacts_by_mode missing")
+    mode_required = required_by_mode.get(expected_mode)
+    if not isinstance(mode_required, list) or not mode_required or not all(isinstance(x, str) and x for x in mode_required):
+        raise ValueError(f"G4 required_artifacts_by_mode invalid for {expected_mode}")
+
+    required_artifacts = tuple(mode_required)
+    if require_proof_artifact and required_artifacts != EXPORT_PROOF_ARTIFACTS:
+        raise ValueError("export-proof artifact contract drift detected")
     return required_artifacts
-
-
-def _manifest_has_proof_artifact(manifest: dict[str, Any]) -> bool:
-    artifacts = manifest.get("artifacts")
-    return isinstance(artifacts, dict) and isinstance(artifacts.get("proof_report.json"), str)
 
 
 def load_artifacts(artifact_dir: str | Path) -> dict[str, Any]:
@@ -266,6 +273,8 @@ def _fail_closed_report(artifact_dir: Path, reason: str) -> dict[str, Any]:
     gates = {gate_id: {"status": "FAIL", "details": f"fail-closed: {reason}"} for gate_id in EXPECTED_GATE_IDS}
     return {
         "schema_version": PROOF_SCHEMA_VERSION,
+        "bundle_contract": CANONICAL_BASE_CONTRACT,
+        "export_proof": False,
         "verdict": "FAIL",
         "verdict_code": 2,
         "timestamp_utc": DETERMINISTIC_TIMESTAMP_UTC,
@@ -284,8 +293,7 @@ def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = 
         metrics = loaded["summary"]
         manifest = loaded["manifest"]
         registry = loaded["registry"]
-        proof_required = require_proof_artifact or _manifest_has_proof_artifact(manifest)
-        required_artifacts = _required_artifacts_from_registry(registry, proof_required)
+        required_artifacts = _required_artifacts_from_registry(registry, require_proof_artifact)
 
         gates: dict[str, dict[str, Any]] = {
             "G1_active_spiking": evaluate_gate_g1_active_spiking(metrics, registry["G1_active_spiking"]),
@@ -301,7 +309,7 @@ def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = 
         gates["G5_manifest_valid"] = evaluate_gate_g5_manifest_valid(
             artifact_root,
             manifest,
-            require_proof_artifact=proof_required,
+            require_proof_artifact=require_proof_artifact,
         )
 
         ordered_gates = {gate_id: gates[gate_id] for gate_id in EXPECTED_GATE_IDS}
@@ -309,6 +317,8 @@ def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = 
 
         report = {
             "schema_version": PROOF_SCHEMA_VERSION,
+            "bundle_contract": CANONICAL_EXPORT_PROOF_CONTRACT if require_proof_artifact else CANONICAL_BASE_CONTRACT,
+            "export_proof": bool(require_proof_artifact),
             "verdict": verdict,
             "verdict_code": verdict_code,
             "timestamp_utc": DETERMINISTIC_TIMESTAMP_UTC,

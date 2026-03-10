@@ -29,6 +29,8 @@ def test_proof_report_schema_accepts_full_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
         "verdict": "INCONCLUSIVE",
         "verdict_code": 1,
         "timestamp_utc": "1970-01-01T00:00:00Z",
@@ -47,6 +49,8 @@ def test_proof_report_schema_accepts_gate_errors_payload() -> None:
     gates["G5_manifest_valid"] = {"status": "FAIL", "errors": ["summary_metrics.json hash mismatch"]}
     payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
         "verdict": "FAIL",
         "verdict_code": 2,
         "timestamp_utc": "1970-01-01T00:00:00Z",
@@ -63,6 +67,8 @@ def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-base",
+        "export_proof": False,
         "verdict": "PASS",
         "verdict_code": 0,
         "timestamp_utc": "1970-01-01T00:00:00Z",
@@ -83,7 +89,29 @@ def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "run-manifest.schema.json")
     payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
         "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "seed": 123,
+        "steps": 100,
+        "N": 10,
+        "dt_ms": 0.1,
+        "duration_ms": 10.0,
+        "artifacts": {
+            "summary_metrics.json": "0" * 64,
+            "run_manifest.json": "self-unhashed",
+        },
+    }
+    jsonschema.validate(instance=payload, schema=schema)
+
+
+def test_run_manifest_schema_accepts_base_manifest_payload() -> None:
+    schema = _load_json(ROOT / "schemas" / "run-manifest.schema.json")
+    payload = {
+        "schema_version": "1.0.0",
+        "bundle_contract": "canonical-base",
+        "export_proof": False,
+        "cmd": "bnsyn run --profile canonical --plot",
         "seed": 123,
         "steps": 100,
         "N": 10,

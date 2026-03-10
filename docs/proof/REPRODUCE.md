@@ -14,6 +14,7 @@ Expected canonical artifacts:
 - `artifacts/canonical_run/criticality_report.json`
 - `artifacts/canonical_run/avalanche_report.json`
 - `artifacts/canonical_run/phase_space_report.json`
+- `artifacts/canonical_run/proof_report.json`
 
 ---
 

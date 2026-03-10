@@ -77,8 +77,9 @@ def test_validation_gate_registry_contract() -> None:
     assert by_id["G2_rate_in_bounds"]["threshold"]["metric"] == "rate_mean_hz"
     assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
 
-    required_artifacts = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"]
-    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
+    required_by_mode = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]
+    assert required_by_mode["canonical-base"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
+    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json", "proof_report.json"]
 
     assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
 
@@ -96,6 +97,8 @@ def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
         "timestamp_utc": "1970-01-01T00:00:00Z",
         "seed": 123,
         "verdict": "INCONCLUSIVE",
@@ -121,6 +124,8 @@ def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     invalid_payload = {
         "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
         "timestamp_utc": "1970-01-01T00:00:00Z",
         "seed": 123,
         "verdict": "FAIL",
