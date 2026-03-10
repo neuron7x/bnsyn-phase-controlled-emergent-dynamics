@@ -17886,3 +17886,1719 @@ tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_
 [work 934f60f] Harden emergence contracts and validation paths
  7 files changed, 3707 insertions(+), 90 deletions(-)
  M proof_bundle/logs/agent.log
+b34c225 Add emergence run/sweep/plot pipeline with NPZ artifacts, CLI, schema and plotting
+f85e949 Merge pull request #343 from neuron7x/dependabot/pip/setuptools-82.0.0
+41189e9 Merge pull request #347 from neuron7x/dependabot/pip/pillow-12.1.1
+ M proof_bundle/logs/agent.log
+tests/test_emergence_pipeline.py:25:        external_current_pA=100.0,
+tests/test_emergence_pipeline.py:26:        artifact_dir=tmp_path,
+tests/test_emergence_pipeline.py:34:            "format_version",
+tests/test_emergence_pipeline.py:43:            "external_current_pA",
+tests/test_emergence_pipeline.py:45:        assert int(data["format_version"]) == 1
+tests/test_emergence_pipeline.py:57:        external_current_pA=120.0,
+tests/test_emergence_pipeline.py:58:        artifact_dir=tmp_path,
+tests/test_emergence_pipeline.py:136:    low = run_simulation(steps=50, dt_ms=0.1, seed=42, N=60, external_current_pA=365.0)
+tests/test_emergence_pipeline.py:137:    high = run_simulation(steps=50, dt_ms=0.1, seed=42, N=60, external_current_pA=450.0)
+tests/test_emergence_pipeline.py:141:def test_declarative_passes_external_current_and_artifact_dir(
+tests/test_emergence_pipeline.py:150:            "external_current_pA": 410.0,
+tests/test_emergence_pipeline.py:151:            "artifact_dir": "artifacts/test",
+tests/test_emergence_pipeline.py:162:    assert calls[0]["external_current_pA"] == 410.0
+tests/test_emergence_pipeline.py:163:    assert calls[0]["artifact_dir"] == "artifacts/test"
+schemas/experiment.schema.json:50:          "minimum": 10,
+schemas/experiment.schema.json:65:          "minimum": 1,
+schemas/experiment.schema.json:79:        "external_current_pA": {
+schemas/experiment.schema.json:84:        "artifact_dir": {
+src/bnsyn/experiments/declarative.py:107:            "external_current_pA": config.simulation.external_current_pA,
+src/bnsyn/experiments/declarative.py:120:            external_current_pA=config.simulation.external_current_pA,
+src/bnsyn/experiments/declarative.py:121:            artifact_dir=config.simulation.artifact_dir,
+src/bnsyn/experiments/declarative.py:159:        f"I_ext: {config.simulation.external_current_pA}pA"
+src/bnsyn/sim/network.py:56:RUN_ARTIFACT_FORMAT_VERSION = 1
+src/bnsyn/sim/network.py:219:        external_current_pA: NDArray[np.float64] | None = None,
+src/bnsyn/sim/network.py:225:        external_current_pA : NDArray[np.float64] | None, optional
+src/bnsyn/sim/network.py:237:            If external_current_pA shape does not match number of neurons.
+src/bnsyn/sim/network.py:253:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:254:            if external_current_pA.shape != (N,):
+src/bnsyn/sim/network.py:256:                    f"external_current_pA shape {external_current_pA.shape} "
+src/bnsyn/sim/network.py:315:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:316:            I_ext += external_current_pA
+src/bnsyn/sim/network.py:344:        external_current_pA: NDArray[np.float64] | None = None,
+src/bnsyn/sim/network.py:355:        external_current_pA : NDArray[np.float64] | None, optional
+src/bnsyn/sim/network.py:367:            If external_current_pA shape does not match number of neurons.
+src/bnsyn/sim/network.py:382:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:383:            if external_current_pA.shape != (N,):
+src/bnsyn/sim/network.py:385:                    f"external_current_pA shape {external_current_pA.shape} "
+src/bnsyn/sim/network.py:437:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:438:            I_ext += external_current_pA
+src/bnsyn/sim/network.py:476:    artifact_dir: str | os.PathLike[str],
+src/bnsyn/sim/network.py:486:    external_current_pA: float,
+src/bnsyn/sim/network.py:489:    artifact_path = Path(artifact_dir)
+src/bnsyn/sim/network.py:494:        format_version=np.int64(RUN_ARTIFACT_FORMAT_VERSION),
+src/bnsyn/sim/network.py:503:        external_current_pA=np.float64(external_current_pA),
+src/bnsyn/sim/network.py:508:def run_simulation(
+src/bnsyn/sim/network.py:514:    external_current_pA: float = 0.0,
+src/bnsyn/sim/network.py:515:    artifact_dir: str | os.PathLike[str] | None = None,
+src/bnsyn/sim/network.py:531:    external_current_pA : float, optional
+src/bnsyn/sim/network.py:535:    artifact_dir : str | os.PathLike[str] | None, optional
+src/bnsyn/sim/network.py:537:        contract fields: ``format_version``, spike raster arrays, sigma/rate traces,
+src/bnsyn/sim/network.py:561:    if not isinstance(external_current_pA, Real):
+src/bnsyn/sim/network.py:562:        raise TypeError("external_current_pA must be a finite real number")
+src/bnsyn/sim/network.py:563:    external_current = float(external_current_pA)
+src/bnsyn/sim/network.py:565:        raise ValueError("external_current_pA must be a finite real number")
+src/bnsyn/sim/network.py:592:        m = net.step(external_current_pA=injected_current)
+src/bnsyn/sim/network.py:600:    if artifact_dir is not None:
+src/bnsyn/sim/network.py:602:            artifact_dir,
+src/bnsyn/sim/network.py:611:            external_current_pA=external_current,
+src/bnsyn/viz/emergence_plot.py:13:    "format_version",
+src/bnsyn/viz/emergence_plot.py:22:    "external_current_pA",
+src/bnsyn/viz/emergence_plot.py:80:        current = float(data["external_current_pA"])
+src/bnsyn/schemas/experiment.py:71:    external_current_pA : float, optional
+src/bnsyn/schemas/experiment.py:73:    artifact_dir : str | None, optional
+src/bnsyn/schemas/experiment.py:79:    external_current_pA: float = 0.0
+src/bnsyn/schemas/experiment.py:80:    artifact_dir: str | None = None
+src/bnsyn/cli.py:206:def _compute_steps_exact(duration_ms: float, dt_ms: float) -> int:
+src/bnsyn/cli.py:232:    external_current_pA: float,
+src/bnsyn/cli.py:242:        external_current_pA=external_current_pA,
+src/bnsyn/cli.py:243:        artifact_dir=out_dir,
+src/bnsyn/cli.py:249:        "external_current_pA": external_current_pA,
+src/bnsyn/cli.py:261:    steps = _compute_steps_exact(args.duration_ms, args.dt_ms)
+src/bnsyn/cli.py:262:    if require_current and not math.isfinite(float(args.external_current_pA)):
+src/bnsyn/cli.py:276:        external_current_pA=args.external_current_pA,
+src/bnsyn/cli.py:284:        "external_current_pA": args.external_current_pA,
+src/bnsyn/cli.py:306:                external_current_pA=current,
+quality/api_contract_baseline.json:42:      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0, artifact_dir: 'str | os.PathLike[str] | None' = None) -> 'dict[str, float]'"
+quality/api_contract_baseline.json:47:      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0, artifact_dir: 'str | os.PathLike[str] | None' = None) -> 'dict[str, float]'"
+"""Command-line interface for BN-Syn demos and checks.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Provides deterministic demo runs, dt invariance checks, and sleep-stack experiments
+per SPEC P2-11/P2-12.
+
+References
+----------
+docs/SPEC.md#P2-11
+docs/SPEC.md#P2-12
+"""
+
+from __future__ import annotations
+
+import argparse
+import importlib.metadata
+import json
+import math
+import tomllib
+import warnings
+import sys
+from pathlib import Path
+from typing import Any
+
+from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
+from bnsyn.sim.network import run_simulation
+
+
+def _get_package_version() -> str:
+    """Return the installed package version with a safe fallback."""
+    version: str | None = None
+    try:
+        version = importlib.metadata.version("bnsyn")
+    except importlib.metadata.PackageNotFoundError:
+        version = None
+    except Exception as exc:
+        warnings.warn(f"Failed to read package version: {exc}", stacklevel=2)
+        version = None
+
+    if version:
+        return version
+
+    pyproject_path = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    if pyproject_path.exists():
+        try:
+            data = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        except (OSError, tomllib.TOMLDecodeError):
+            return "unknown"
+        version = data.get("project", {}).get("version")
+        if isinstance(version, str) and version:
+            return version
+
+    return "unknown"
+
+
+
+
+def _validate_demo_args(args: argparse.Namespace) -> None:
+    """Validate demo command arguments and raise user-actionable errors."""
+    if args.steps <= 0:
+        raise ValueError("steps must be greater than 0")
+    if args.dt_ms <= 0:
+        raise ValueError("dt-ms must be greater than 0")
+    if args.N <= 0:
+        raise ValueError("N must be greater than 0")
+
+def _cmd_demo(args: argparse.Namespace) -> int:
+    """Run a deterministic demo simulation and print metrics.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the demo subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Calls the deterministic simulation harness with explicit dt and seed.
+    If --interactive flag is set, launches Streamlit dashboard instead.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    docs/LEGENDARY_QUICKSTART.md
+    """
+    if getattr(args, "interactive", False):
+        # Launch interactive Streamlit dashboard
+        import importlib.util
+
+        # subprocess used for controlled dashboard launch (no shell).
+        import subprocess  # nosec B404
+        import sys
+
+        # Find the interactive.py script
+        script_path = Path(__file__).parent / "viz" / "interactive.py"
+        if not script_path.exists():
+            print(f"Error: Interactive dashboard not found at {script_path}")
+            return 1
+        if importlib.util.find_spec("streamlit") is None:
+            print('Error: Streamlit is not installed. Install with: pip install -e ".[viz]"')
+            return 1
+
+        print("🚀 Launching interactive dashboard...")
+        print("   Press Ctrl+C to stop")
+        try:
+            # Fixed module invocation without shell; inputs are local paths only.
+            result = subprocess.run(  # nosec B603
+                [sys.executable, "-m", "streamlit", "run", str(script_path)]
+            )
+            if result.returncode != 0:
+                print(f"Error: Dashboard exited with code {result.returncode}")
+                return 1
+            return 0
+        except KeyboardInterrupt:
+            print("\n✓ Dashboard stopped")
+            return 0
+        except Exception as e:
+            print(f"Error launching dashboard: {e}")
+            return 1
+
+    _validate_demo_args(args)
+    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_dtcheck(args: argparse.Namespace) -> int:
+    """Run dt vs dt/2 invariance check and print metrics.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the dt invariance subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+
+    References
+    ----------
+    docs/SPEC.md#P2-12
+    """
+    m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+    m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
+    # compare mean rates and sigma; dt2 should be close
+    out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_run_experiment(args: argparse.Namespace) -> int:
+    """Run experiment from YAML configuration.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the run subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Loads YAML config, validates against schema, runs experiment.
+
+    References
+    ----------
+    docs/LEGENDARY_QUICKSTART.md
+    schemas/experiment.schema.json
+    """
+    from bnsyn.experiments.declarative import run_from_yaml
+
+    try:
+        run_from_yaml(args.config, args.output)
+        return 0
+    except Exception as e:
+        print(f"Error running experiment: {e}")
+        return 1
+
+
+
+
+EMERGENCE_SWEEP_CURRENTS_PA: tuple[float, ...] = (365.0, 380.0, 395.0, 410.0, 450.0)
+
+
+def _compute_steps_exact(duration_ms: float, dt_ms: float) -> int:
+    """Convert duration/dt to integer steps without silent truncation."""
+    if dt_ms <= 0.0:
+        raise ValueError("dt-ms must be greater than 0")
+    if duration_ms <= 0.0:
+        raise ValueError("duration-ms must be greater than 0")
+    ratio = duration_ms / dt_ms
+    rounded = round(ratio)
+    if abs(ratio - rounded) > 1e-9:
+        raise ValueError("duration-ms must be an integer multiple of dt-ms")
+    return int(rounded)
+
+
+def _write_json_report(report_path: Path, payload: dict[str, Any]) -> None:
+    """Write report as deterministic JSON."""
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def _run_emergence_once(
+    *,
+    out_dir: Path,
+    steps: int,
+    dt_ms: float,
+    seed: int,
+    N: int,
+    external_current_pA: float,
+    artifact_name: str,
+) -> dict[str, Any]:
+    """Run one emergence simulation and return metrics + artifact path."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    run_metrics = run_simulation(
+        steps=steps,
+        dt_ms=dt_ms,
+        seed=seed,
+        N=N,
+        external_current_pA=external_current_pA,
+        artifact_dir=out_dir,
+    )
+    canonical_npz = out_dir / f"run_{seed}.npz"
+    target_npz = out_dir / artifact_name
+    canonical_npz.replace(target_npz)
+    return {
+        "external_current_pA": external_current_pA,
+        "metrics": run_metrics,
+        "artifact_npz": str(target_npz),
+    }
+
+
+def _validate_emergence_args(args: argparse.Namespace, *, require_current: bool) -> int:
+    """Validate shared emergence CLI arguments and return exact steps."""
+    if args.N <= 0:
+        raise ValueError("N must be greater than 0")
+    if args.seed <= 0:
+        raise ValueError("seed must be greater than 0")
+        raise ValueError("seed must be greater than 0")
+    steps = _compute_steps_exact(args.duration_ms, args.dt_ms)
+    if require_current and not math.isfinite(float(args.external_current_pA)):
+        raise ValueError("external-current-pA must be a finite real number")
+    return steps
+
+
+def _cmd_emergence_run(args: argparse.Namespace) -> int:
+    """Run one emergence simulation and write JSON/NPZ artifacts."""
+    steps = _validate_emergence_args(args, require_current=True)
+    run = _run_emergence_once(
+        out_dir=args.out,
+        steps=steps,
+        dt_ms=args.dt_ms,
+        seed=args.seed,
+        N=args.N,
+        external_current_pA=args.external_current_pA,
+        artifact_name=f"run_{args.seed}.npz",
+    )
+    report = {
+        "N": args.N,
+        "dt_ms": args.dt_ms,
+        "duration_ms": args.duration_ms,
+        "seed": args.seed,
+        "external_current_pA": args.external_current_pA,
+        "steps": steps,
+        "metrics": run["metrics"],
+        "artifact_npz": run["artifact_npz"],
+    }
+    _write_json_report(args.out / "emergence_run_report.json", report)
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
+    """Run fixed-current sweep and emit one structured JSON report."""
+    steps = _validate_emergence_args(args, require_current=False)
+    runs: list[dict[str, Any]] = []
+    for current in EMERGENCE_SWEEP_CURRENTS_PA:
+        runs.append(
+            _run_emergence_once(
+                out_dir=args.out,
+                steps=steps,
+                dt_ms=args.dt_ms,
+                seed=args.seed,
+                N=args.N,
+                external_current_pA=current,
+                artifact_name=f"run_{args.seed}_Iext_{int(current)}pA.npz",
+            )
+        )
+
+    report = {
+        "N": args.N,
+        "dt_ms": args.dt_ms,
+        "duration_ms": args.duration_ms,
+        "seed": args.seed,
+        "steps": steps,
+        "currents_pA": list(EMERGENCE_SWEEP_CURRENTS_PA),
+        "runs": runs,
+    }
+    _write_json_report(args.out / "emergence_sweep_report.json", report)
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_plot(args: argparse.Namespace) -> int:
+    """Render emergence raster/rate/sigma plot from one NPZ artifact."""
+    from bnsyn.viz.emergence_plot import plot_emergence_npz
+
+    plot_emergence_npz(args.input, args.output)
+    print(f"✓ Plot saved to {args.output}")
+    return 0
+
+def _cmd_sleep_stack(args: argparse.Namespace) -> int:
+    """Run sleep-stack demo with attractor crystallization and consolidation.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the sleep-stack subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Runs wake→sleep cycle with memory recording, consolidation, replay,
+    attractor tracking, and phase transition detection.
+
+    References
+    ----------
+    docs/sleep_stack.md
+    docs/emergence_tracking.md
+    """
+    # Import here to avoid circular dependencies and keep CLI fast
+    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+    from bnsyn.criticality import PhaseTransitionDetector
+    from bnsyn.emergence import AttractorCrystallizer
+    from bnsyn.memory import MemoryConsolidator
+    from bnsyn.rng import seed_all
+    from bnsyn.sim.network import Network, NetworkParams
+    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
+    from bnsyn.temperature.schedule import TemperatureSchedule
+
+    # Setup output directory
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    fig_dir = out_dir.parent / "figures" / out_dir.name
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    # Seed RNG
+    pack = seed_all(args.seed)
+    rng = pack.np_rng
+
+    # Create network
+    N = int(args.N)
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+"""Declarative experiment execution from YAML configurations.
+
+Provides YAML-driven experiment runner with schema validation.
+
+References
+----------
+docs/LEGENDARY_QUICKSTART.md
+schemas/experiment.schema.json
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+import yaml  # type: ignore[import-untyped]
+
+from bnsyn.schemas.experiment import BNSynExperimentConfig
+from bnsyn.sim.network import run_simulation
+
+
+def load_config(config_path: str | Path) -> BNSynExperimentConfig:
+    """Load and validate experiment configuration from YAML file.
+
+    Parameters
+    ----------
+    config_path : str | Path
+        Path to YAML configuration file
+
+    Returns
+    -------
+    BNSynExperimentConfig
+        Validated configuration object
+
+    Raises
+    ------
+    FileNotFoundError
+        If config file doesn't exist
+    ValueError
+        If YAML is invalid or doesn't match schema
+
+    Examples
+    --------
+    Load configuration::
+
+        from bnsyn.experiments.declarative import load_config
+
+        config = load_config("examples/configs/quickstart.yaml")
+        print(f"Running {config.experiment.name} v{config.experiment.version}")
+    """
+    path = Path(config_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+
+    with open(path) as f:
+        try:
+            data = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise ValueError(f"Invalid YAML in {config_path}: {e}") from e
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Config must be a YAML object, got {type(data).__name__}")
+
+    try:
+        return BNSynExperimentConfig(**data)
+    except Exception as e:
+        # Provide helpful error message
+        msg = f"❌ Config validation failed: {config_path}\n\nError: {e}"
+        raise ValueError(msg) from e
+
+
+def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
+    """Run experiment from validated configuration.
+
+    Parameters
+    ----------
+    config : BNSynExperimentConfig
+        Validated experiment configuration
+
+    Returns
+    -------
+    dict[str, Any]
+        Experiment results with metrics for each seed
+
+    Notes
+    -----
+    Executes simulation for each seed and aggregates results.
+
+    Examples
+    --------
+    Run experiment::
+
+        from bnsyn.experiments.declarative import load_config, run_experiment
+
+        config = load_config("examples/configs/quickstart.yaml")
+        results = run_experiment(config)
+        print(f"Completed {len(results['runs'])} runs")
+    """
+    results: dict[str, Any] = {
+        "config": {
+            "name": config.experiment.name,
+            "version": config.experiment.version,
+            "network_size": config.network.size,
+            "duration_ms": config.simulation.duration_ms,
+            "dt_ms": config.simulation.dt_ms,
+            "external_current_pA": config.simulation.external_current_pA,
+        },
+        "runs": [],
+    }
+
+    steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
+
+    for seed in config.experiment.seeds:
+        metrics = run_simulation(
+            steps=steps,
+            dt_ms=config.simulation.dt_ms,
+            seed=seed,
+            N=config.network.size,
+            external_current_pA=config.simulation.external_current_pA,
+            artifact_dir=config.simulation.artifact_dir,
+        )
+        results["runs"].append({"seed": seed, "metrics": metrics})
+
+    return results
+
+
+def run_from_yaml(config_path: str | Path, output_path: str | Path | None = None) -> None:
+    """Load config from YAML, run experiment, and save results.
+
+    Parameters
+    ----------
+    config_path : str | Path
+        Path to YAML configuration file
+    output_path : str | Path | None, optional
+        Path to save results JSON (default: None = print to stdout)
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    Run and save results::
+
+        from bnsyn.experiments.declarative import run_from_yaml
+
+        run_from_yaml(
+            "examples/configs/quickstart.yaml",
+            "results/quickstart_v1.json"
+        )
+    """
+    config = load_config(config_path)
+    print(f"✓ Config validated: {config.experiment.name} {config.experiment.version}")
+    print(
+        f"  Network: N={config.network.size}, "
+        f"Duration: {config.simulation.duration_ms}ms, "
+        f"dt: {config.simulation.dt_ms}ms, "
+        f"I_ext: {config.simulation.external_current_pA}pA"
+    )
+    print(f"  Seeds: {len(config.experiment.seeds)} runs")
+
+    results = run_experiment(config)
+
+    if output_path:
+        output = Path(output_path)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with open(output, "w") as f:
+            json.dump(results, f, indent=2, sort_keys=True)
+        print(f"✓ Results saved to {output_path}")
+    else:
+        print(json.dumps(results, indent=2, sort_keys=True))
+"""Pydantic models for experiment configuration schema.
+
+Auto-generated from schemas/experiment.schema.json.
+Provides type-safe experiment configuration with validation.
+
+References
+----------
+docs/LEGENDARY_QUICKSTART.md
+"""
+
+from __future__ import annotations
+
+from math import isclose
+
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+
+class ExperimentConfig(BaseModel):
+    """Experiment metadata configuration.
+
+    Parameters
+    ----------
+    name : str
+        Experiment name (lowercase alphanumeric, underscore, dash)
+    version : str
+        Version identifier (e.g., v1, v2)
+    seeds : list[int]
+        Random seeds for reproducibility (1-100 unique positive integers)
+    """
+
+    name: str = Field(..., pattern=r"^[a-z0-9_-]+$")
+    version: str = Field(..., pattern=r"^v[0-9]+$")
+    seeds: list[int] = Field(..., min_length=1, max_length=100)
+
+    @field_validator("seeds")
+    @classmethod
+    def validate_seeds(cls, v: list[int]) -> list[int]:
+        """Validate that seeds are unique positive integers."""
+        if any(not isinstance(seed, int) or isinstance(seed, bool) or seed <= 0 for seed in v):
+            raise ValueError("seeds must contain only positive integers")
+        if len(set(v)) != len(v):
+            raise ValueError("seeds must be unique positive integers")
+        return v
+
+    model_config = {"extra": "forbid"}
+
+
+class NetworkConfig(BaseModel):
+    """Network configuration.
+
+    Parameters
+    ----------
+    size : int
+        Number of neurons (10-100000)
+    """
+
+    size: int = Field(..., ge=10, le=100000)
+
+    model_config = {"extra": "forbid"}
+
+
+class SimulationConfig(BaseModel):
+    """Simulation parameters configuration.
+
+    Parameters
+    ----------
+    duration_ms : float
+        Simulation duration in milliseconds (≥1)
+    dt_ms : float
+        Timestep in milliseconds (must be 0.01, 0.05, 0.1, 0.5, or 1.0)
+    external_current_pA : float, optional
+        Constant external current injection in pA applied to every neuron.
+    artifact_dir : str | None, optional
+        Optional directory where per-run npz artifacts are written.
+    """
+
+    duration_ms: float = Field(..., ge=1)
+    dt_ms: float
+    external_current_pA: float = 0.0
+    artifact_dir: str | None = None
+
+    @field_validator("dt_ms")
+    @classmethod
+    def validate_dt_ms(cls, v: float) -> float:
+        """Validate that dt_ms is one of the allowed values."""
+        allowed_values = [0.01, 0.05, 0.1, 0.5, 1.0]
+        if v not in allowed_values:
+            raise ValueError(f"dt_ms must be one of {allowed_values}, got {v}")
+        return v
+
+    @model_validator(mode="after")
+    def validate_duration_multiple(self) -> "SimulationConfig":
+        """Validate that duration_ms is an integer multiple of dt_ms."""
+        ratio = self.duration_ms / self.dt_ms
+        nearest = round(ratio)
+        if not isclose(ratio, nearest, rel_tol=0.0, abs_tol=1e-6):
+            raise ValueError(
+                "duration_ms must be an integer multiple of dt_ms within tolerance; "
+                f"got duration_ms={self.duration_ms}, dt_ms={self.dt_ms}"
+            )
+        return self
+
+    model_config = {"extra": "forbid"}
+
+
+class BNSynExperimentConfig(BaseModel):
+    """Complete BN-Syn experiment configuration.
+
+    Parameters
+    ----------
+    experiment : ExperimentConfig
+        Experiment metadata
+    network : NetworkConfig
+        Network configuration
+    simulation : SimulationConfig
+        Simulation parameters
+
+    Examples
+    --------
+    Load from YAML::
+
+        import yaml
+        from bnsyn.schemas.experiment import BNSynExperimentConfig
+
+        with open("config.yaml") as f:
+            data = yaml.safe_load(f)
+        config = BNSynExperimentConfig(**data)
+    """
+
+    experiment: ExperimentConfig
+    network: NetworkConfig
+    simulation: SimulationConfig
+
+    model_config = {"extra": "forbid"}
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BN-Syn Experiment Configuration",
+  "type": "object",
+  "required": [
+    "experiment",
+    "network",
+    "simulation"
+  ],
+  "properties": {
+    "experiment": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "seeds"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$",
+          "description": "Experiment name (lowercase alphanumeric, underscore, dash)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v[0-9]+$",
+          "description": "Version identifier (e.g., v1, v2)"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "description": "Random seeds for reproducibility"
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "required": [
+        "size"
+      ],
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 100000,
+          "description": "Number of neurons in the network"
+        }
+      }
+    },
+    "simulation": {
+      "type": "object",
+      "required": [
+        "duration_ms",
+        "dt_ms"
+      ],
+      "properties": {
+        "duration_ms": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Simulation duration in milliseconds"
+        },
+        "dt_ms": {
+          "type": "number",
+          "enum": [
+            0.01,
+            0.05,
+            0.1,
+            0.5,
+            1.0
+          ],
+          "description": "Timestep in milliseconds"
+        },
+        "external_current_pA": {
+          "type": "number",
+          "description": "Constant external current injection in picoamps applied to each neuron",
+          "default": 0.0
+        },
+        "artifact_dir": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional output directory for per-run run_<seed>.npz artifacts"
+        }
+      }
+    }
+  }
+}
+"""Reference network simulator for BN-Syn.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Implements SPEC P2-11 reference network dynamics for deterministic tests.
+
+References
+----------
+docs/SPEC.md#P2-11
+docs/SSOT.md
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from numbers import Integral, Real
+from pathlib import Path
+from typing import Any, Literal, cast
+
+import os
+import numpy as np
+from numpy.typing import NDArray
+
+from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
+from bnsyn.connectivity import SparseConnectivity
+from bnsyn.criticality.branching import BranchingEstimator, SigmaController
+from bnsyn.neuron.adex import AdExState, adex_step, adex_step_adaptive
+from bnsyn.numerics.integrators import exp_decay_step
+from bnsyn.synapse.conductance import nmda_mg_block
+from bnsyn.validation import NetworkValidationConfig, validate_connectivity_matrix
+
+torch: Any | None
+try:
+    import torch as torch_module
+except Exception:  # pragma: no cover - optional GPU support
+    torch = None
+else:
+    torch = torch_module
+
+# Physics constants for synaptic transmission
+AMPA_FRACTION = 0.7  # Fraction of excitatory current through AMPA receptors
+NMDA_FRACTION = 0.3  # Fraction of excitatory current through NMDA receptors
+GAIN_CURRENT_SCALE_PA = 50.0  # Current scaling factor for criticality gain (pA)
+INITIAL_V_STD_MV = 5.0  # Standard deviation for initial voltage distribution (mV)
+
+__all__ = ["Network", "NetworkParams", "run_simulation"]
+
+RUN_ARTIFACT_FORMAT_VERSION = 1
+
+
+@dataclass(frozen=True)
+class NetworkParams:
+    """Network configuration parameters.
+
+    Parameters
+    ----------
+    N : int
+        Number of neurons.
+    frac_inhib : float
+        Fraction of inhibitory neurons (0, 1).
+    p_conn : float
+        Connection probability for random connectivity.
+    w_exc_nS : float
+        Excitatory synaptic weight in nS.
+    w_inh_nS : float
+        Inhibitory synaptic weight in nS.
+    ext_rate_hz : float
+        External Poisson drive rate per neuron (Hz).
+    ext_w_nS : float
+        External synaptic weight in nS.
+    V_min_mV : float
+        Minimum membrane voltage bound (mV).
+    V_max_mV : float
+        Maximum membrane voltage bound (mV).
+
+    Notes
+    -----
+    Configuration values are validated at network initialization.
+    """
+
+    N: int = 200
+    frac_inhib: float = 0.2
+    p_conn: float = 0.05
+    w_exc_nS: float = 0.5
+    w_inh_nS: float = 1.0
+    ext_rate_hz: float = 2.0  # Poisson external drive per neuron
+    ext_w_nS: float = 0.3
+
+    # Simulation bounds
+    V_min_mV: float = -100.0
+    V_max_mV: float = 50.0
+
+
+class Network:
+    """Small reference network (dense enough for tests, not optimized).
+
+    Parameters
+    ----------
+    nparams : NetworkParams
+        Network configuration parameters.
+    adex : AdExParams
+        AdEx neuron parameters.
+    syn : SynapseParams
+        Synapse parameters.
+    crit : CriticalityParams
+        Criticality control parameters.
+    dt_ms : float
+        Timestep in milliseconds.
+    rng : np.random.Generator
+        NumPy RNG for deterministic sampling.
+
+    Raises
+    ------
+    ValueError
+        If parameters are invalid.
+
+    Notes
+    -----
+    Implements SPEC P2-11 and integrates SPEC P0-1, P0-2, P0-4 components.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    docs/SSOT.md
+    """
+
+    def __init__(
+        self,
+        nparams: NetworkParams,
+        adex: AdExParams,
+        syn: SynapseParams,
+        crit: CriticalityParams,
+        dt_ms: float,
+        rng: np.random.Generator,
+        backend: Literal["reference", "accelerated"] = "reference",
+    ):
+        if nparams.N <= 0:
+            raise ValueError("N must be positive")
+        if not 0.0 < nparams.frac_inhib < 1.0:
+            raise ValueError("frac_inhib must be in (0,1)")
+        if dt_ms <= 0:
+            raise ValueError("dt_ms must be positive")
+        if backend not in ("reference", "accelerated"):
+            raise ValueError("backend must be 'reference' or 'accelerated'")
+
+        self.np = nparams
+        self.adex = adex
+        self.syn = syn
+        self.dt_ms = dt_ms
+        self.rng = rng
+        self.backend = backend
+
+        N = nparams.N
+        nI = int(round(N * nparams.frac_inhib))
+        nE = N - nI
+        self.nE, self.nI = nE, nI
+        self.is_inhib = np.zeros(N, dtype=bool)
+        self.is_inhib[nE:] = True
+
+        # adjacency masks
+        mask = rng.random((N, N)) < nparams.p_conn
+        np.fill_diagonal(mask, False)
+        # excitatory weights (E->*)
+        W_exc = np.asarray((mask[:nE, :].astype(np.float64) * nparams.w_exc_nS).T)
+        # inhibitory weights (I->*)
+        W_inh = np.asarray((mask[nE:, :].astype(np.float64) * nparams.w_inh_nS).T)
+
+        validate_connectivity_matrix(W_exc, shape=(N, nE), name="W_exc")
+        validate_connectivity_matrix(W_inh, shape=(N, nI), name="W_inh")
+
+        # Backend-aware connectivity (reference = force dense, accelerated = force sparse)
+        if backend == "reference":
+            self.W_exc = SparseConnectivity(W_exc, force_format="dense")
+            self.W_inh = SparseConnectivity(W_inh, force_format="dense")
+        else:  # accelerated
+            self.W_exc = SparseConnectivity(W_exc, force_format="sparse")
+            self.W_inh = SparseConnectivity(W_inh, force_format="sparse")
+
+        # neuron state
+        V0 = np.asarray(
+            rng.normal(loc=adex.EL_mV, scale=INITIAL_V_STD_MV, size=N), dtype=np.float64
+        )
+        w0 = np.zeros(N, dtype=np.float64)
+        self.state = AdExState(V_mV=V0, w_pA=w0, spiked=np.zeros(N, dtype=bool))
+
+        # conductances
+        self.g_ampa = np.zeros(N, dtype=np.float64)
+        self.g_nmda = np.zeros(N, dtype=np.float64)
+        self.g_gabaa = np.zeros(N, dtype=np.float64)
+        self._I_ext_buffer = np.zeros(N, dtype=np.float64)
+
+        # criticality tracking
+        self.branch = BranchingEstimator()
+        self.sigma_ctl = SigmaController(params=crit, gain=1.0)
+        self.gain = 1.0
+        self._A_prev = 1.0
+        self._use_torch = False
+        self._torch_device = None
+        self._W_exc_t = None
+        self._W_inh_t = None
+
+        if torch is not None and os.environ.get("BNSYN_USE_TORCH") == "1":
+            device = os.environ.get("BNSYN_DEVICE", "cpu")
+            self._torch_device = torch.device(device)
+            self._W_exc_t = torch.as_tensor(self.W_exc.to_dense(), device=self._torch_device)
+            self._W_inh_t = torch.as_tensor(self.W_inh.to_dense(), device=self._torch_device)
+            self._use_torch = True
+
+    def step(
+        self,
+        external_current_pA: NDArray[np.float64] | None = None,
+    ) -> dict[str, float]:
+            "A_t": A_t,
+            "A_t1": A_t1,
+            "sigma": float(sigma),
+            "gain": float(self.gain),
+            "spike_rate_hz": float(A_t1 / N) / (dt / 1000.0),
+        }
+
+    def _raise_if_voltage_out_of_bounds(self) -> None:
+        if (
+            float(np.min(self.state.V_mV)) < self.np.V_min_mV
+            or float(np.max(self.state.V_mV)) > self.np.V_max_mV
+        ):
+            raise RuntimeError("Voltage bounds violation (numerical instability)")
+
+
+def _write_run_artifact(
+    artifact_dir: str | os.PathLike[str],
+    *,
+    seed: int,
+    spike_steps: list[int],
+    spike_neurons: list[int],
+    sigma_trace: list[float],
+    rate_trace_hz: list[float],
+    dt_ms: float,
+    steps: int,
+    N: int,
+    external_current_pA: float,
+) -> Path:
+    """Write ``run_<seed>.npz`` artifact and return the saved path."""
+    artifact_path = Path(artifact_dir)
+    artifact_path.mkdir(parents=True, exist_ok=True)
+    output_path = artifact_path / f"run_{seed}.npz"
+    np.savez(
+        output_path,
+        format_version=np.int64(RUN_ARTIFACT_FORMAT_VERSION),
+        spike_steps=np.asarray(spike_steps, dtype=np.int64),
+        spike_neurons=np.asarray(spike_neurons, dtype=np.int64),
+        sigma_trace=np.asarray(sigma_trace, dtype=np.float64),
+        rate_trace_hz=np.asarray(rate_trace_hz, dtype=np.float64),
+        dt_ms=np.float64(dt_ms),
+        steps=np.int64(steps),
+        N=np.int64(N),
+        seed=np.int64(seed),
+        external_current_pA=np.float64(external_current_pA),
+    )
+    return output_path
+
+
+def run_simulation(
+    steps: int,
+    dt_ms: float,
+    seed: int,
+    N: int = 200,
+    backend: Literal["reference", "accelerated"] = "reference",
+    external_current_pA: float = 0.0,
+    artifact_dir: str | os.PathLike[str] | None = None,
+) -> dict[str, float]:
+    """Run a deterministic simulation and return summary metrics.
+
+    Parameters
+    ----------
+    steps : int
+        Number of simulation steps.
+    dt_ms : float
+        Timestep in milliseconds.
+    seed : int
+        RNG seed.
+    N : int, optional
+        Number of neurons.
+    backend : Literal["reference", "accelerated"], optional
+        Backend mode: 'reference' (default) or 'accelerated'.
+    external_current_pA : float, optional
+        Constant external current injection per neuron in picoamps.
+        Default is 0.0 (no injection). Use positive values to increase
+        network excitability and ensure spiking activity.
+    artifact_dir : str | os.PathLike[str] | None, optional
+        If provided, write per-run artifact ``run_<seed>.npz`` with explicit
+        contract fields: ``format_version``, spike raster arrays, sigma/rate traces,
+        and run metadata.
+
+    Returns
+    -------
+    dict[str, float]
+        Summary metrics with mean and standard deviation for sigma and firing rate.
+
+    Notes
+    -----
+    Uses explicit seeding and validation to satisfy the determinism contract.
+    External current injection can be used to ensure network activity for testing.
+
+    References
+    ----------
+    docs/SPEC.md#P2-11
+    docs/REPRODUCIBILITY.md
+    """
+    from bnsyn.rng import seed_all
+
+    if not isinstance(steps, Integral):
+        raise TypeError("steps must be a positive integer")
+    if steps <= 0:
+        raise ValueError("steps must be greater than 0")
+    if not isinstance(external_current_pA, Real):
+        raise TypeError("external_current_pA must be a finite real number")
+    external_current = float(external_current_pA)
+    if not np.isfinite(external_current):
+        raise ValueError("external_current_pA must be a finite real number")
+
+    _ = NetworkValidationConfig(N=N, dt_ms=dt_ms)
+    pack = seed_all(seed)
+    rng = pack.np_rng
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=dt_ms,
+        rng=rng,
+        backend=backend,
+    )
+
+    sigma_trace: list[float] = []
+    rate_trace_hz: list[float] = []
+    spike_steps: list[int] = []
+    spike_neurons: list[int] = []
+
+    # Prepare external current array if needed
+    injected_current: NDArray[np.float64] | None = None
+    if abs(external_current) > 1e-9:  # Robust check for non-zero
+        injected_current = np.full(N, external_current, dtype=np.float64)
+
+    for step in range(steps):
+        m = net.step(external_current_pA=injected_current)
+        sigma_trace.append(m["sigma"])
+        rate_trace_hz.append(m["spike_rate_hz"])
+        spiked_idx = np.flatnonzero(net.state.spiked)
+        if spiked_idx.size > 0:
+            spike_steps.extend([step] * int(spiked_idx.size))
+            spike_neurons.extend(spiked_idx.astype(int).tolist())
+
+    if artifact_dir is not None:
+        _write_run_artifact(
+            artifact_dir,
+            seed=seed,
+            spike_steps=spike_steps,
+            spike_neurons=spike_neurons,
+            sigma_trace=sigma_trace,
+            rate_trace_hz=rate_trace_hz,
+            dt_ms=dt_ms,
+            steps=steps,
+            N=N,
+            external_current_pA=external_current,
+        )
+
+    sigma_values = np.asarray(sigma_trace, dtype=np.float64)
+    rate_values = np.asarray(rate_trace_hz, dtype=np.float64)
+    return {
+        "sigma_mean": float(np.mean(sigma_values)),
+        "rate_mean_hz": float(np.mean(rate_values)),
+        "sigma_std": float(np.std(sigma_values)),
+        "rate_std": float(np.std(rate_values)),
+    }
+"""Plot emergence artifacts from ``run_<seed>.npz`` outputs."""
+
+from __future__ import annotations
+
+import importlib
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+
+_PLOT_REQUIRED_FIELDS = {
+    "format_version",
+    "spike_steps",
+    "spike_neurons",
+    "sigma_trace",
+    "rate_trace_hz",
+    "dt_ms",
+    "steps",
+    "N",
+    "seed",
+    "external_current_pA",
+}
+
+_plt: Any | None = None
+
+
+def _load_pyplot() -> Any:
+    """Load matplotlib.pyplot lazily for optional visualization support."""
+    global _plt
+    if _plt is not None:
+        return _plt
+    try:
+        _plt = importlib.import_module("matplotlib.pyplot")
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+        ) from exc
+    return _plt
+
+
+def _validate_npz_contract(data: np.lib.npyio.NpzFile) -> None:
+    """Validate required emergence artifact fields and core shape invariants."""
+    missing = _PLOT_REQUIRED_FIELDS - set(data.files)
+    if missing:
+        raise ValueError(f"NPZ artifact missing required fields: {sorted(missing)}")
+
+    spike_steps = data["spike_steps"]
+    spike_neurons = data["spike_neurons"]
+    rate_trace = data["rate_trace_hz"]
+    sigma_trace = data["sigma_trace"]
+    steps = int(data["steps"])
+
+    if spike_steps.shape != spike_neurons.shape:
+        raise ValueError("NPZ artifact invalid: spike_steps and spike_neurons shapes must match")
+    if rate_trace.shape != sigma_trace.shape:
+        raise ValueError("NPZ artifact invalid: rate_trace_hz and sigma_trace shapes must match")
+    if rate_trace.ndim != 1:
+        raise ValueError("NPZ artifact invalid: rate_trace_hz must be 1D")
+    if sigma_trace.ndim != 1:
+        raise ValueError("NPZ artifact invalid: sigma_trace must be 1D")
+    if rate_trace.shape[0] != steps:
+        raise ValueError("NPZ artifact invalid: trace lengths must match steps")
+
+
+def plot_emergence_npz(npz_path: str | Path, output_path: str | Path) -> Path:
+    """Render raster/population-rate/sigma plots from a saved emergence NPZ."""
+    src = Path(npz_path)
+    out = Path(output_path)
+
+    with np.load(src) as data:
+        _validate_npz_contract(data)
+
+        spike_steps = data["spike_steps"]
+        spike_neurons = data["spike_neurons"]
+        rate_trace = data["rate_trace_hz"]
+        sigma_trace = data["sigma_trace"]
+        dt_ms = float(data["dt_ms"])
+        n = int(data["N"])
+        current = float(data["external_current_pA"])
+
+    time_ms = np.arange(rate_trace.shape[0], dtype=np.float64) * dt_ms
+
+    plt = _load_pyplot()
+    fig, axes = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+
+    if spike_steps.size > 0:
+        axes[0].scatter(spike_steps * dt_ms, spike_neurons, s=2, alpha=0.7)
+    axes[0].set_ylabel("neuron")
+    axes[0].set_title(f"Raster (N={n}, I_ext={current:.1f} pA)")
+
+    axes[1].plot(time_ms, rate_trace)
+    axes[1].set_ylabel("rate (Hz)")
+    axes[1].set_title("Population rate")
+
+    axes[2].plot(time_ms, sigma_trace)
+    axes[2].set_ylabel("sigma")
+    axes[2].set_xlabel("time (ms)")
+    axes[2].set_title("Branching ratio")
+
+    fig.tight_layout()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=150)
+    plt.close(fig)
+    return out
+"""Tests for emergence run/sweep/plot reproducibility and contracts."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+from bnsyn import cli
+from bnsyn.experiments import declarative
+from bnsyn.schemas.experiment import BNSynExperimentConfig
+from bnsyn.sim.network import run_simulation
+from bnsyn.viz.emergence_plot import plot_emergence_npz
+
+
+def test_run_simulation_writes_npz_artifact_contract(tmp_path: Path) -> None:
+    metrics = run_simulation(
+        steps=10,
+        dt_ms=0.1,
+        seed=7,
+        N=20,
+        external_current_pA=100.0,
+        artifact_dir=tmp_path,
+    )
+    assert metrics["sigma_mean"] >= 0.0
+    npz_path = tmp_path / "run_7.npz"
+    assert npz_path.exists()
+
+    with np.load(npz_path) as data:
+        assert set(data.files) == {
+            "format_version",
+            "spike_steps",
+            "spike_neurons",
+            "sigma_trace",
+            "rate_trace_hz",
+            "dt_ms",
+            "steps",
+            "N",
+            "seed",
+            "external_current_pA",
+        }
+        assert int(data["format_version"]) == 1
+        assert int(data["steps"]) == 10
+        assert data["rate_trace_hz"].shape[0] == 10
+        assert data["sigma_trace"].shape[0] == 10
+
+
+def test_emergence_plot_from_npz(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    run_simulation(
+        steps=10,
+        dt_ms=0.1,
+        seed=8,
+        N=20,
+        external_current_pA=120.0,
+        artifact_dir=tmp_path,
+    )
+
+    class _FakeFigure:
+        def tight_layout(self) -> None:
+            return None
+
+        def savefig(self, out_path: Path, dpi: int) -> None:
+            _ = dpi
+            out_path.write_bytes(b"fake")
+
+    class _FakeAxes:
+        def scatter(self, *_args: object, **_kwargs: object) -> None:
+            return None
+
+        def plot(self, *_args: object, **_kwargs: object) -> None:
+            return None
+
+        def set_ylabel(self, _label: str) -> None:
+            return None
+
+        def set_title(self, _title: str) -> None:
+            return None
+
+        def set_xlabel(self, _label: str) -> None:
+            return None
+
+    class _FakePlt:
+        def subplots(
+            self, _rows: int, _cols: int, figsize: tuple[int, int], sharex: bool
+        ) -> tuple[_FakeFigure, list[_FakeAxes]]:
+            _ = (figsize, sharex)
+            return _FakeFigure(), [_FakeAxes(), _FakeAxes(), _FakeAxes()]
+
+        def close(self, _fig: _FakeFigure) -> None:
+            return None
+
+    monkeypatch.setattr("bnsyn.viz.emergence_plot._load_pyplot", lambda: _FakePlt())
+    out = tmp_path / "emergence.png"
+    plot_emergence_npz(tmp_path / "run_8.npz", out)
+    assert out.exists()
+
+
+def test_emergence_plot_reports_missing_matplotlib(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "bnsyn.viz.emergence_plot.importlib.import_module",
+        lambda _name: (_ for _ in ()).throw(ModuleNotFoundError("missing matplotlib")),
+    )
+    monkeypatch.setattr("bnsyn.viz.emergence_plot._plt", None)
+    with pytest.raises(RuntimeError, match="Visualization requires matplotlib"):
+        import bnsyn.viz.emergence_plot as emergence_plot
+
+        emergence_plot._load_pyplot()
+
+
+def test_emergence_cli_sweep_writes_structured_report(tmp_path: Path) -> None:
+    args = argparse.Namespace(N=20, dt_ms=0.1, duration_ms=20.0, seed=42, out=tmp_path)
+    rc = cli._cmd_emergence_sweep(args)
+    assert rc == 0
+
+    report_path = tmp_path / "emergence_sweep_report.json"
+    report = json.loads(report_path.read_text())
+    assert report["currents_pA"] == [365.0, 380.0, 395.0, 410.0, 450.0]
+    assert report["steps"] == 200
+    assert len(report["runs"]) == 5
+    artifact_paths = [Path(run["artifact_npz"]) for run in report["runs"]]
+    assert len(set(artifact_paths)) == 5
+    for path in artifact_paths:
+        assert path.exists()
+
+
+def test_emergence_cli_rejects_non_integral_step_count(tmp_path: Path) -> None:
+    args = argparse.Namespace(N=20, dt_ms=0.3, duration_ms=20.0, seed=42, out=tmp_path)
+    with pytest.raises(ValueError, match="duration-ms must be an integer multiple of dt-ms"):
+        cli._cmd_emergence_sweep(args)
+
+
+def test_external_current_trend_sanity() -> None:
+    low = run_simulation(steps=50, dt_ms=0.1, seed=42, N=60, external_current_pA=365.0)
+    high = run_simulation(steps=50, dt_ms=0.1, seed=42, N=60, external_current_pA=450.0)
+    assert high["rate_mean_hz"] >= low["rate_mean_hz"]
+
+
+def test_declarative_passes_external_current_and_artifact_dir(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cfg = BNSynExperimentConfig(
+        experiment={"name": "emergence", "version": "v1", "seeds": [1]},
+        network={"size": 20},
+        simulation={
+            "duration_ms": 1.0,
+            "dt_ms": 0.1,
+            "external_current_pA": 410.0,
+            "artifact_dir": "artifacts/test",
+        },
+    )
+    calls: list[dict[str, object]] = []
+
+    def fake_run_simulation(**kwargs: object) -> dict[str, float]:
+        calls.append(kwargs)
+        return {"sigma_mean": 1.0, "rate_mean_hz": 1.0, "sigma_std": 0.0, "rate_std": 0.0}
+
+    monkeypatch.setattr(declarative, "run_simulation", fake_run_simulation)
+    declarative.run_experiment(cfg)
+    assert calls[0]["external_current_pA"] == 410.0
+    assert calls[0]["artifact_dir"] == "artifacts/test"
+"""Numerical integration helpers for deterministic updates.
+
+Parameters
+----------
+None
+
+Returns
+-------
+None
+
+Notes
+-----
+Exports integration helpers used by neuron and synapse dynamics.
+
+References
+----------
+docs/SPEC.md
+"""
+
+from .integrators import (
+    clamp_exp_arg as clamp_exp_arg,
+    euler_step as euler_step,
+    exp_decay_step as exp_decay_step,
+    rk2_step as rk2_step,
+)
+
+__all__ = ["euler_step", "rk2_step", "exp_decay_step", "clamp_exp_arg"]
+rewrote run_simulation
+updated numerics __init__
+"""Experiment execution utilities."""
+
+from __future__ import annotations
+
+from bnsyn.experiments.declarative import load_config, run_experiment, run_from_yaml
+
+__all__ = ["load_config", "run_experiment", "run_from_yaml"]
+updated experiments __init__
+patched cli emergence to orchestrator
+patched declarative steps + signature
+schema updated
+pydantic updated
+plotter version gating added
+updated test_experiments_declarative
+baseline restored
+quality/api_contract_baseline.json:42:      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0) -> 'dict[str, float]'"
+quality/api_contract_baseline.json:47:      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0) -> 'dict[str, float]'"
+tests/test_emergence_pipeline.py:31:        external_current_pA=100.0,
+tests/test_emergence_pipeline.py:49:            "external_current_pA",
+tests/test_emergence_pipeline.py:60:        external_current_pA=120.0,
+tests/test_emergence_pipeline.py:137:            "external_current_pA": 410.0,
+tests/test_emergence_pipeline.py:138:            "artifact_dir": "artifacts/test",
+tests/test_emergence_pipeline.py:149:    assert calls[0]["external_current_pA"] == 410.0
+tests/test_emergence_pipeline.py:150:    assert "artifact_dir" not in calls[0]
+src/bnsyn/sim/network.py:217:        external_current_pA: NDArray[np.float64] | None = None,
+src/bnsyn/sim/network.py:223:        external_current_pA : NDArray[np.float64] | None, optional
+src/bnsyn/sim/network.py:235:            If external_current_pA shape does not match number of neurons.
+src/bnsyn/sim/network.py:251:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:252:            if external_current_pA.shape != (N,):
+src/bnsyn/sim/network.py:254:                    f"external_current_pA shape {external_current_pA.shape} "
+src/bnsyn/sim/network.py:313:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:314:            I_ext += external_current_pA
+src/bnsyn/sim/network.py:342:        external_current_pA: NDArray[np.float64] | None = None,
+src/bnsyn/sim/network.py:353:        external_current_pA : NDArray[np.float64] | None, optional
+src/bnsyn/sim/network.py:365:            If external_current_pA shape does not match number of neurons.
+src/bnsyn/sim/network.py:380:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:381:            if external_current_pA.shape != (N,):
+src/bnsyn/sim/network.py:383:                    f"external_current_pA shape {external_current_pA.shape} "
+src/bnsyn/sim/network.py:435:        if external_current_pA is not None:
+src/bnsyn/sim/network.py:436:            I_ext += external_current_pA
+src/bnsyn/sim/network.py:479:    external_current_pA: float = 0.0,
+src/bnsyn/sim/network.py:495:    external_current_pA : float, optional
+src/bnsyn/sim/network.py:521:    if not isinstance(external_current_pA, Real):
+src/bnsyn/sim/network.py:522:        raise TypeError("external_current_pA must be a finite real number")
+src/bnsyn/sim/network.py:523:    external_current = float(external_current_pA)
+src/bnsyn/sim/network.py:525:        raise ValueError("external_current_pA must be a finite real number")
+src/bnsyn/sim/network.py:549:        metrics = net.step(external_current_pA=injected_current)
+src/bnsyn/experiments/emergence.py:23:    external_current_pA: float,
+src/bnsyn/experiments/emergence.py:45:        np.full(N, external_current_pA, dtype=np.float64)
+src/bnsyn/experiments/emergence.py:46:        if abs(external_current_pA) > 1e-9
+src/bnsyn/experiments/emergence.py:51:        metrics = net.step(external_current_pA=injected_current)
+src/bnsyn/experiments/emergence.py:67:    target_path = output_dir / f"run_{seed}_Iext_{int(external_current_pA)}pA.npz"
+src/bnsyn/experiments/emergence.py:80:        external_current_pA=np.float64(external_current_pA),
+src/bnsyn/experiments/declarative.py:108:            "external_current_pA": config.simulation.external_current_pA,
+src/bnsyn/experiments/declarative.py:121:            external_current_pA=config.simulation.external_current_pA,
+src/bnsyn/experiments/declarative.py:159:        f"I_ext: {config.simulation.external_current_pA}pA"
+schemas/experiment.schema.json:33:            "minimum": 1
+schemas/experiment.schema.json:41:      "additionalProperties": false
+schemas/experiment.schema.json:51:          "minimum": 10,
+schemas/experiment.schema.json:56:      "additionalProperties": false
+schemas/experiment.schema.json:67:          "minimum": 1,
+schemas/experiment.schema.json:81:        "external_current_pA": {
+schemas/experiment.schema.json:86:        "artifact_dir": {
+schemas/experiment.schema.json:94:      "additionalProperties": false
+src/bnsyn/cli.py:214:        external_current_pA=args.external_current_pA,
+src/bnsyn/cli.py:222:        "external_current_pA": args.external_current_pA,
+src/bnsyn/cli.py:246:            external_current_pA=current,
+src/bnsyn/cli.py:251:                "external_current_pA": current,
+src/bnsyn/schemas/experiment.py:72:    external_current_pA : float, optional
+src/bnsyn/schemas/experiment.py:74:    artifact_dir : str | None, optional
+src/bnsyn/schemas/experiment.py:80:    external_current_pA: float = 0.0
+src/bnsyn/schemas/experiment.py:81:    artifact_dir: str | None = None
+src/bnsyn/schemas/experiment.py:93:    @field_validator("external_current_pA")
+src/bnsyn/schemas/experiment.py:98:            raise ValueError("external_current_pA must be a finite real number")
+src/bnsyn/viz/emergence_plot.py:22:    "external_current_pA",
+src/bnsyn/viz/emergence_plot.py:96:        current = float(data["external_current_pA"])
+tests/test_experiments_declarative.py:18:        simulation={"duration_ms": 1.0, "dt_ms": 0.1, "external_current_pA": 0.0},
+tests/test_experiments_declarative.py:56:                "  external_current_pA: 0.0",
+tests/test_experiments_declarative.py:74:        external_current_pA: float,
+tests/test_experiments_declarative.py:81:            "external_current_pA": external_current_pA,
+tests/test_experiments_declarative.py:93:        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10, "external_current_pA": 0.0},
+tests/test_experiments_declarative.py:94:        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10, "external_current_pA": 0.0},
+tests/test_experiments_declarative.py:112:                "  external_current_pA: 0.0",
+28:import os
+208:        if torch is not None and os.environ.get("BNSYN_USE_TORCH") == "1":
+209:            device = os.environ.get("BNSYN_DEVICE", "cpu")
+F401 [*] `pathlib.Path` imported but unused
+  --> src/bnsyn/sim/network.py:25:21
+   |
+23 | from dataclasses import dataclass
+24 | from numbers import Integral, Real
+25 | from pathlib import Path
+   |                     ^^^^
+26 | from typing import Any, Literal, cast
+   |
+help: Remove unused import: `pathlib.Path`
+
+invalid-syntax: Unexpected indentation
+  --> src/bnsyn/viz/emergence_plot.py:91:1
+   |
+90 |     spike_steps = data["spike_steps"]
+91 |         spike_neurons = data["spike_neurons"]
+   | ^^^^^^^^
+92 |         rate_trace = data["rate_trace_hz"]
+93 |         sigma_trace = data["sigma_trace"]
+   |
+
+invalid-syntax: Expected a statement
+   --> src/bnsyn/viz/emergence_plot.py:122:1
+    |
+120 |     plt.close(fig)
+121 |     return out
+    |               ^
+    |
+
+Found 3 errors.
+[*] 1 fixable with the `--fix` option.
+fixed files
+All checks passed!
+Success: no issues found in 78 source files
+......................                                                   [100%]
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 28%]
+........................................................................ [ 37%]
+.ss....ss.............................................................ss [ 47%]
+........................................................................ [ 56%]
+....................................................................s... [ 66%]
+........................................................................ [ 75%]
+........................................................................ [ 85%]
+........................................................................ [ 94%]
+........................................                                 [100%]
+=============================== warnings summary ===============================
+tests/test_cli_interactive.py::test_cli_module_main_executes
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.cli' found in sys.modules after import of package 'bnsyn', but prior to execution of 'bnsyn.cli'; this may result in unpredictable behaviour
+
+tests/test_coverage_gap_extensions.py::test_viz_interactive_optional_dependency_errors
+  <frozen runpy>:128: RuntimeWarning: 'bnsyn.viz.interactive' found in sys.modules after import of package 'bnsyn.viz', but prior to execution of 'bnsyn.viz.interactive'; this may result in unpredictable behaviour
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Failed to capture git SHA: Command '['/usr/bin/git', 'rev-parse', 'HEAD']' returned non-zero exit status 128.
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+tests/test_manifest_builder.py::test_build_experiment_manifest_filters_manifest_json
+  /workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/provenance/manifest_builder.py:145: UserWarning: Using fallback git identifier: release-0.0.0
+    "git_commit": _get_git_commit(resolved_root, resolved_version),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+UPDATED: INVENTORY.json
+
+tests/test_principal_test_hardening.py:29:        first = subprocess.check_output(["python", "-m", "scripts.generate_tests_inventory"], text=True)
+tests/test_principal_test_hardening.py:31:        inventory_path = REPO_ROOT / "tests_inventory.json"
+tests/test_principal_test_hardening.py:34:        second = subprocess.check_output(["python", "-m", "scripts.generate_tests_inventory"], text=True)
+tests/test_schema_contracts.py:12:def test_tests_inventory_schema_contract() -> None:
+tests/test_schema_contracts.py:13:    payload = json.loads((REPO_ROOT / "tests_inventory.json").read_text(encoding="utf-8"))
+.......                                                                  [100%]
+ M proof_bundle/logs/agent.log
+ M quality/api_contract_baseline.json
+ M schemas/experiment.schema.json
+ M src/bnsyn/cli.py
+ M src/bnsyn/experiments/__init__.py
+ M src/bnsyn/experiments/declarative.py
+ M src/bnsyn/numerics/__init__.py
+ M src/bnsyn/schemas/experiment.py
+ M src/bnsyn/sim/network.py
+ M src/bnsyn/viz/emergence_plot.py
+ M tests/test_emergence_pipeline.py
+ M tests/test_experiments_declarative.py
+?? src/bnsyn/experiments/emergence.py
+?? src/bnsyn/numerics/time.py
+[work c090215] Refactor emergence pipeline into orchestrator and restore core API
+ 14 files changed, 1924 insertions(+), 219 deletions(-)
+ create mode 100644 src/bnsyn/experiments/emergence.py
+ create mode 100644 src/bnsyn/numerics/time.py
+ M proof_bundle/logs/agent.log

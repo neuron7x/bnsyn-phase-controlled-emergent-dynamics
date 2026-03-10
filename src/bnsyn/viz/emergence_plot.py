@@ -21,6 +21,7 @@ _PLOT_REQUIRED_FIELDS = {
     "seed",
     "external_current_pA",
 }
+EXPECTED_ARTIFACT_FORMAT_VERSION = "1.1.0"
 
 _plt: Any | None = None
 
@@ -44,6 +45,13 @@ def _validate_npz_contract(data: np.lib.npyio.NpzFile) -> None:
     missing = _PLOT_REQUIRED_FIELDS - set(data.files)
     if missing:
         raise ValueError(f"NPZ artifact missing required fields: {sorted(missing)}")
+
+    format_version = str(data["format_version"])
+    if format_version != EXPECTED_ARTIFACT_FORMAT_VERSION:
+        raise RuntimeError(
+            "Artifact format mismatch: "
+            f"expected {EXPECTED_ARTIFACT_FORMAT_VERSION}, got {format_version}"
+        )
 
     spike_steps = data["spike_steps"]
     spike_neurons = data["spike_neurons"]
@@ -70,7 +78,6 @@ def plot_emergence_npz(npz_path: str | Path, output_path: str | Path) -> Path:
 
     with np.load(src) as data:
         _validate_npz_contract(data)
-
         spike_steps = data["spike_steps"]
         spike_neurons = data["spike_neurons"]
         rate_trace = data["rate_trace_hz"]

@@ -16,6 +16,7 @@ from typing import Any
 
 import yaml  # type: ignore[import-untyped]
 
+from bnsyn.numerics.time import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
 
@@ -109,7 +110,7 @@ def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
         "runs": [],
     }
 
-    steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
+    steps = compute_steps_exact(config.simulation.duration_ms, config.simulation.dt_ms)
 
     for seed in config.experiment.seeds:
         metrics = run_simulation(
@@ -118,7 +119,6 @@ def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
             seed=seed,
             N=config.network.size,
             external_current_pA=config.simulation.external_current_pA,
-            artifact_dir=config.simulation.artifact_dir,
         )
         results["runs"].append({"seed": seed, "metrics": metrics})
 

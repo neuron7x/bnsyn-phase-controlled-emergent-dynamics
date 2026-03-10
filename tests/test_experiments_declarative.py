@@ -72,7 +72,6 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
         seed: int,
         N: int,
         external_current_pA: float,
-        artifact_dir: str | None,
     ) -> dict[str, Any]:
         calls.append({
             "steps": steps,
@@ -80,7 +79,6 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
             "seed": seed,
             "N": N,
             "external_current_pA": external_current_pA,
-            "artifact_dir": artifact_dir,
         })
         return {"seed": seed, "steps": steps}
 
@@ -92,8 +90,8 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
 
     expected_steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
     assert calls == [
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10, "external_current_pA": 0.0, "artifact_dir": None},
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10, "external_current_pA": 0.0, "artifact_dir": None},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10, "external_current_pA": 0.0},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10, "external_current_pA": 0.0},
     ]
 
 

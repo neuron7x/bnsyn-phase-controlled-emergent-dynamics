@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
-import math
 import tomllib
 import warnings
 import sys
@@ -203,78 +202,17 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
 EMERGENCE_SWEEP_CURRENTS_PA: tuple[float, ...] = (365.0, 380.0, 395.0, 410.0, 450.0)
 
 
-def _compute_steps_exact(duration_ms: float, dt_ms: float) -> int:
-    """Convert duration/dt to integer steps without silent truncation."""
-    if dt_ms <= 0.0:
-        raise ValueError("dt-ms must be greater than 0")
-    if duration_ms <= 0.0:
-        raise ValueError("duration-ms must be greater than 0")
-    ratio = duration_ms / dt_ms
-    rounded = round(ratio)
-    if abs(ratio - rounded) > 1e-9:
-        raise ValueError("duration-ms must be an integer multiple of dt-ms")
-    return int(rounded)
-
-
-def _write_json_report(report_path: Path, payload: dict[str, Any]) -> None:
-    """Write report as deterministic JSON."""
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-
-
-def _run_emergence_once(
-    *,
-    out_dir: Path,
-    steps: int,
-    dt_ms: float,
-    seed: int,
-    N: int,
-    external_current_pA: float,
-    artifact_name: str,
-) -> dict[str, Any]:
-    """Run one emergence simulation and return metrics + artifact path."""
-    out_dir.mkdir(parents=True, exist_ok=True)
-    run_metrics = run_simulation(
-        steps=steps,
-        dt_ms=dt_ms,
-        seed=seed,
-        N=N,
-        external_current_pA=external_current_pA,
-        artifact_dir=out_dir,
-    )
-    canonical_npz = out_dir / f"run_{seed}.npz"
-    target_npz = out_dir / artifact_name
-    canonical_npz.replace(target_npz)
-    return {
-        "external_current_pA": external_current_pA,
-        "metrics": run_metrics,
-        "artifact_npz": str(target_npz),
-    }
-
-
-def _validate_emergence_args(args: argparse.Namespace, *, require_current: bool) -> int:
-    """Validate shared emergence CLI arguments and return exact steps."""
-    if args.N <= 0:
-        raise ValueError("N must be greater than 0")
-    if args.seed <= 0:
-        raise ValueError("seed must be greater than 0")
-    steps = _compute_steps_exact(args.duration_ms, args.dt_ms)
-    if require_current and not math.isfinite(float(args.external_current_pA)):
-        raise ValueError("external-current-pA must be a finite real number")
-    return steps
-
-
 def _cmd_emergence_run(args: argparse.Namespace) -> int:
-    """Run one emergence simulation and write JSON/NPZ artifacts."""
-    steps = _validate_emergence_args(args, require_current=True)
-    run = _run_emergence_once(
-        out_dir=args.out,
-        steps=steps,
-        dt_ms=args.dt_ms,
-        seed=args.seed,
+    """Run emergence experiment once and write report/artifact paths."""
+    from bnsyn.experiments.emergence import run_emergence_to_disk
+
+    metrics, artifact_path = run_emergence_to_disk(
         N=args.N,
+        dt_ms=args.dt_ms,
+        duration_ms=args.duration_ms,
+        seed=args.seed,
         external_current_pA=args.external_current_pA,
-        artifact_name=f"run_{args.seed}.npz",
+        output_dir=args.out,
     )
     report = {
         "N": args.N,
@@ -282,30 +220,38 @@ def _cmd_emergence_run(args: argparse.Namespace) -> int:
         "duration_ms": args.duration_ms,
         "seed": args.seed,
         "external_current_pA": args.external_current_pA,
-        "steps": steps,
-        "metrics": run["metrics"],
-        "artifact_npz": run["artifact_npz"],
+        "metrics": metrics,
+        "artifact_npz": artifact_path,
     }
-    _write_json_report(args.out / "emergence_run_report.json", report)
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "emergence_run_report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 
 
 def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
-    """Run fixed-current sweep and emit one structured JSON report."""
-    steps = _validate_emergence_args(args, require_current=False)
+    """Run fixed emergence sweep and write one structured report."""
+    from bnsyn.experiments.emergence import run_emergence_to_disk
+
     runs: list[dict[str, Any]] = []
     for current in EMERGENCE_SWEEP_CURRENTS_PA:
+        metrics, artifact_path = run_emergence_to_disk(
+            N=args.N,
+            dt_ms=args.dt_ms,
+            duration_ms=args.duration_ms,
+            seed=args.seed,
+            external_current_pA=current,
+            output_dir=args.out,
+        )
         runs.append(
-            _run_emergence_once(
-                out_dir=args.out,
-                steps=steps,
-                dt_ms=args.dt_ms,
-                seed=args.seed,
-                N=args.N,
-                external_current_pA=current,
-                artifact_name=f"run_{args.seed}_Iext_{int(current)}pA.npz",
-            )
+            {
+                "external_current_pA": current,
+                "metrics": metrics,
+                "artifact_npz": artifact_path,
+            }
         )
 
     report = {
@@ -313,11 +259,14 @@ def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
         "dt_ms": args.dt_ms,
         "duration_ms": args.duration_ms,
         "seed": args.seed,
-        "steps": steps,
         "currents_pA": list(EMERGENCE_SWEEP_CURRENTS_PA),
         "runs": runs,
     }
-    _write_json_report(args.out / "emergence_sweep_report.json", report)
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "emergence_sweep_report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0
 

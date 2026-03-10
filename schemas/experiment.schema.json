@@ -30,14 +30,15 @@
           "type": "array",
           "items": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
           },
           "minItems": 1,
           "maxItems": 100,
           "uniqueItems": true,
           "description": "Random seeds for reproducibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "network": {
       "type": "object",
@@ -51,7 +52,8 @@
           "maximum": 100000,
           "description": "Number of neurons in the network"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "simulation": {
       "type": "object",
@@ -88,7 +90,8 @@
           ],
           "description": "Optional output directory for per-run run_<seed>.npz artifacts"
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }
