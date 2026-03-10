@@ -11,3 +11,4 @@ bnsyn.numerics
    :recursive:
 
    integrators
+   time

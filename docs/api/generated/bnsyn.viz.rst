@@ -11,4 +11,5 @@ bnsyn.viz
    :recursive:
 
    dashboard
+   emergence_plot
    interactive

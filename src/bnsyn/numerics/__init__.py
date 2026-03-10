@@ -24,4 +24,6 @@ from .integrators import (
     rk2_step as rk2_step,
 )
 
-__all__ = ["euler_step", "rk2_step", "exp_decay_step", "clamp_exp_arg"]
+__all__ = ["euler_step", "rk2_step", "exp_decay_step", "clamp_exp_arg", "compute_steps_exact"]
+
+from .time import compute_steps_exact as compute_steps_exact

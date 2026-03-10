@@ -2,11 +2,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "BN-Syn Experiment Configuration",
   "type": "object",
-  "required": ["experiment", "network", "simulation"],
+  "required": [
+    "experiment",
+    "network",
+    "simulation"
+  ],
   "properties": {
     "experiment": {
       "type": "object",
-      "required": ["name", "version", "seeds"],
+      "required": [
+        "name",
+        "version",
+        "seeds"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -22,18 +30,21 @@
           "type": "array",
           "items": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
           },
           "minItems": 1,
           "maxItems": 100,
           "uniqueItems": true,
           "description": "Random seeds for reproducibility"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "network": {
       "type": "object",
-      "required": ["size"],
+      "required": [
+        "size"
+      ],
       "properties": {
         "size": {
           "type": "integer",
@@ -41,11 +52,15 @@
           "maximum": 100000,
           "description": "Number of neurons in the network"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "simulation": {
       "type": "object",
-      "required": ["duration_ms", "dt_ms"],
+      "required": [
+        "duration_ms",
+        "dt_ms"
+      ],
       "properties": {
         "duration_ms": {
           "type": "number",
@@ -54,10 +69,29 @@
         },
         "dt_ms": {
           "type": "number",
-          "enum": [0.01, 0.05, 0.1, 0.5, 1.0],
+          "enum": [
+            0.01,
+            0.05,
+            0.1,
+            0.5,
+            1.0
+          ],
           "description": "Timestep in milliseconds"
+        },
+        "external_current_pA": {
+          "type": "number",
+          "description": "Constant external current injection in picoamps applied to each neuron",
+          "default": 0.0
+        },
+        "artifact_dir": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional output directory for per-run run_<seed>.npz artifacts"
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }
