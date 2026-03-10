@@ -104,6 +104,7 @@ def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
             "network_size": config.network.size,
             "duration_ms": config.simulation.duration_ms,
             "dt_ms": config.simulation.dt_ms,
+            "external_current_pA": config.simulation.external_current_pA,
         },
         "runs": [],
     }
@@ -112,7 +113,12 @@ def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
 
     for seed in config.experiment.seeds:
         metrics = run_simulation(
-            steps=steps, dt_ms=config.simulation.dt_ms, seed=seed, N=config.network.size
+            steps=steps,
+            dt_ms=config.simulation.dt_ms,
+            seed=seed,
+            N=config.network.size,
+            external_current_pA=config.simulation.external_current_pA,
+            artifact_dir=config.simulation.artifact_dir,
         )
         results["runs"].append({"seed": seed, "metrics": metrics})
 
@@ -149,7 +155,8 @@ def run_from_yaml(config_path: str | Path, output_path: str | Path | None = None
     print(
         f"  Network: N={config.network.size}, "
         f"Duration: {config.simulation.duration_ms}ms, "
-        f"dt: {config.simulation.dt_ms}ms"
+        f"dt: {config.simulation.dt_ms}ms, "
+        f"I_ext: {config.simulation.external_current_pA}pA"
     )
     print(f"  Seeds: {len(config.experiment.seeds)} runs")
 

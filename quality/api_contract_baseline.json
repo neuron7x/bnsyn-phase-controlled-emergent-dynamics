@@ -39,12 +39,12 @@
     "bnsyn.sim.network": {
       "Network": "(nparams: 'NetworkParams', adex: 'AdExParams', syn: 'SynapseParams', crit: 'CriticalityParams', dt_ms: 'float', rng: 'np.random.Generator', backend: \"Literal['reference', 'accelerated']\" = 'reference')",
       "NetworkParams": "(N: 'int' = 200, frac_inhib: 'float' = 0.2, p_conn: 'float' = 0.05, w_exc_nS: 'float' = 0.5, w_inh_nS: 'float' = 1.0, ext_rate_hz: 'float' = 2.0, ext_w_nS: 'float' = 0.3, V_min_mV: 'float' = -100.0, V_max_mV: 'float' = 50.0) -> None",
-      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0) -> 'dict[str, float]'"
+      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0, artifact_dir: 'str | os.PathLike[str] | None' = None) -> 'dict[str, float]'"
     },
     "bnsyn.simulation": {
       "Network": "(nparams: 'NetworkParams', adex: 'AdExParams', syn: 'SynapseParams', crit: 'CriticalityParams', dt_ms: 'float', rng: 'np.random.Generator', backend: \"Literal['reference', 'accelerated']\" = 'reference')",
       "NetworkParams": "(N: 'int' = 200, frac_inhib: 'float' = 0.2, p_conn: 'float' = 0.05, w_exc_nS: 'float' = 0.5, w_inh_nS: 'float' = 1.0, ext_rate_hz: 'float' = 2.0, ext_w_nS: 'float' = 0.3, V_min_mV: 'float' = -100.0, V_max_mV: 'float' = 50.0) -> None",
-      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0) -> 'dict[str, float]'"
+      "run_simulation": "(steps: 'int', dt_ms: 'float', seed: 'int', N: 'int' = 200, backend: \"Literal['reference', 'accelerated']\" = 'reference', external_current_pA: 'float' = 0.0, artifact_dir: 'str | os.PathLike[str] | None' = None) -> 'dict[str, float]'"
     },
     "bnsyn.synapse.conductance": {
       "ConductanceState": "(g_ampa_nS: 'Float64Array', g_nmda_nS: 'Float64Array', g_gabaa_nS: 'Float64Array') -> None",

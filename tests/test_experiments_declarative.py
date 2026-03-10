@@ -15,7 +15,7 @@ def _minimal_config() -> BNSynExperimentConfig:
     return BNSynExperimentConfig(
         experiment={"name": "quickstart", "version": "v1", "seeds": [1, 2]},
         network={"size": 10},
-        simulation={"duration_ms": 1.0, "dt_ms": 0.1},
+        simulation={"duration_ms": 1.0, "dt_ms": 0.1, "external_current_pA": 0.0},
     )
 
 
@@ -53,6 +53,7 @@ def test_load_config_validation_error(tmp_path: Path) -> None:
                 "simulation:",
                 "  duration_ms: 1.0",
                 "  dt_ms: 0.1",
+                "  external_current_pA: 0.0",
             ]
         )
     )
@@ -64,8 +65,23 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
     config = _minimal_config()
     calls: list[dict[str, Any]] = []
 
-    def fake_run_simulation(*, steps: int, dt_ms: float, seed: int, N: int) -> dict[str, Any]:
-        calls.append({"steps": steps, "dt_ms": dt_ms, "seed": seed, "N": N})
+    def fake_run_simulation(
+        *,
+        steps: int,
+        dt_ms: float,
+        seed: int,
+        N: int,
+        external_current_pA: float,
+        artifact_dir: str | None,
+    ) -> dict[str, Any]:
+        calls.append({
+            "steps": steps,
+            "dt_ms": dt_ms,
+            "seed": seed,
+            "N": N,
+            "external_current_pA": external_current_pA,
+            "artifact_dir": artifact_dir,
+        })
         return {"seed": seed, "steps": steps}
 
     monkeypatch.setattr(declarative, "run_simulation", fake_run_simulation)
@@ -76,8 +92,8 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
 
     expected_steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
     assert calls == [
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10},
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10, "external_current_pA": 0.0, "artifact_dir": None},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10, "external_current_pA": 0.0, "artifact_dir": None},
     ]
 
 
@@ -95,6 +111,7 @@ def test_run_from_yaml_writes_output(monkeypatch: pytest.MonkeyPatch, tmp_path: 
                 "simulation:",
                 "  duration_ms: 1.0",
                 "  dt_ms: 0.1",
+                "  external_current_pA: 0.0",
             ]
         )
     )

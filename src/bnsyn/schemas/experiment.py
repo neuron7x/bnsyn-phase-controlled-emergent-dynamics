@@ -68,10 +68,16 @@ class SimulationConfig(BaseModel):
         Simulation duration in milliseconds (≥1)
     dt_ms : float
         Timestep in milliseconds (must be 0.01, 0.05, 0.1, 0.5, or 1.0)
+    external_current_pA : float, optional
+        Constant external current injection in pA applied to every neuron.
+    artifact_dir : str | None, optional
+        Optional directory where per-run npz artifacts are written.
     """
 
     duration_ms: float = Field(..., ge=1)
     dt_ms: float
+    external_current_pA: float = 0.0
+    artifact_dir: str | None = None
 
     @field_validator("dt_ms")
     @classmethod

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from numbers import Integral, Real
+from pathlib import Path
 from typing import Any, Literal, cast
 
 import os
@@ -51,6 +52,8 @@ GAIN_CURRENT_SCALE_PA = 50.0  # Current scaling factor for criticality gain (pA)
 INITIAL_V_STD_MV = 5.0  # Standard deviation for initial voltage distribution (mV)
 
 __all__ = ["Network", "NetworkParams", "run_simulation"]
+
+RUN_ARTIFACT_FORMAT_VERSION = 1
 
 
 @dataclass(frozen=True)
@@ -469,6 +472,39 @@ class Network:
             raise RuntimeError("Voltage bounds violation (numerical instability)")
 
 
+def _write_run_artifact(
+    artifact_dir: str | os.PathLike[str],
+    *,
+    seed: int,
+    spike_steps: list[int],
+    spike_neurons: list[int],
+    sigma_trace: list[float],
+    rate_trace_hz: list[float],
+    dt_ms: float,
+    steps: int,
+    N: int,
+    external_current_pA: float,
+) -> Path:
+    """Write ``run_<seed>.npz`` artifact and return the saved path."""
+    artifact_path = Path(artifact_dir)
+    artifact_path.mkdir(parents=True, exist_ok=True)
+    output_path = artifact_path / f"run_{seed}.npz"
+    np.savez(
+        output_path,
+        format_version=np.int64(RUN_ARTIFACT_FORMAT_VERSION),
+        spike_steps=np.asarray(spike_steps, dtype=np.int64),
+        spike_neurons=np.asarray(spike_neurons, dtype=np.int64),
+        sigma_trace=np.asarray(sigma_trace, dtype=np.float64),
+        rate_trace_hz=np.asarray(rate_trace_hz, dtype=np.float64),
+        dt_ms=np.float64(dt_ms),
+        steps=np.int64(steps),
+        N=np.int64(N),
+        seed=np.int64(seed),
+        external_current_pA=np.float64(external_current_pA),
+    )
+    return output_path
+
+
 def run_simulation(
     steps: int,
     dt_ms: float,
@@ -476,6 +512,7 @@ def run_simulation(
     N: int = 200,
     backend: Literal["reference", "accelerated"] = "reference",
     external_current_pA: float = 0.0,
+    artifact_dir: str | os.PathLike[str] | None = None,
 ) -> dict[str, float]:
     """Run a deterministic simulation and return summary metrics.
 
@@ -495,6 +532,10 @@ def run_simulation(
         Constant external current injection per neuron in picoamps.
         Default is 0.0 (no injection). Use positive values to increase
         network excitability and ensure spiking activity.
+    artifact_dir : str | os.PathLike[str] | None, optional
+        If provided, write per-run artifact ``run_<seed>.npz`` with explicit
+        contract fields: ``format_version``, spike raster arrays, sigma/rate traces,
+        and run metadata.
 
     Returns
     -------
@@ -537,22 +578,44 @@ def run_simulation(
         backend=backend,
     )
 
-    sigmas: list[float] = []
-    rates: list[float] = []
+    sigma_trace: list[float] = []
+    rate_trace_hz: list[float] = []
+    spike_steps: list[int] = []
+    spike_neurons: list[int] = []
 
     # Prepare external current array if needed
     injected_current: NDArray[np.float64] | None = None
     if abs(external_current) > 1e-9:  # Robust check for non-zero
         injected_current = np.full(N, external_current, dtype=np.float64)
 
-    for _ in range(steps):
+    for step in range(steps):
         m = net.step(external_current_pA=injected_current)
-        sigmas.append(m["sigma"])
-        rates.append(m["spike_rate_hz"])
+        sigma_trace.append(m["sigma"])
+        rate_trace_hz.append(m["spike_rate_hz"])
+        spiked_idx = np.flatnonzero(net.state.spiked)
+        if spiked_idx.size > 0:
+            spike_steps.extend([step] * int(spiked_idx.size))
+            spike_neurons.extend(spiked_idx.astype(int).tolist())
 
+    if artifact_dir is not None:
+        _write_run_artifact(
+            artifact_dir,
+            seed=seed,
+            spike_steps=spike_steps,
+            spike_neurons=spike_neurons,
+            sigma_trace=sigma_trace,
+            rate_trace_hz=rate_trace_hz,
+            dt_ms=dt_ms,
+            steps=steps,
+            N=N,
+            external_current_pA=external_current,
+        )
+
+    sigma_values = np.asarray(sigma_trace, dtype=np.float64)
+    rate_values = np.asarray(rate_trace_hz, dtype=np.float64)
     return {
-        "sigma_mean": float(np.mean(sigmas)),
-        "rate_mean_hz": float(np.mean(rates)),
-        "sigma_std": float(np.std(sigmas)),
-        "rate_std": float(np.std(rates)),
+        "sigma_mean": float(np.mean(sigma_values)),
+        "rate_mean_hz": float(np.mean(rate_values)),
+        "sigma_std": float(np.std(sigma_values)),
+        "rate_std": float(np.std(rate_values)),
     }
