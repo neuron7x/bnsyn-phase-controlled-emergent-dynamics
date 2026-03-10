@@ -197,6 +197,88 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         return 1
 
 
+
+
+EMERGENCE_SWEEP_CURRENTS_PA: tuple[float, ...] = (365.0, 380.0, 395.0, 410.0, 450.0)
+
+
+def _cmd_emergence_run(args: argparse.Namespace) -> int:
+    """Run emergence experiment once and write report/artifact paths."""
+    from bnsyn.experiments.emergence import run_emergence_to_disk
+
+    metrics, artifact_path = run_emergence_to_disk(
+        N=args.N,
+        dt_ms=args.dt_ms,
+        duration_ms=args.duration_ms,
+        seed=args.seed,
+        external_current_pA=args.external_current_pA,
+        output_dir=args.out,
+    )
+    report = {
+        "N": args.N,
+        "dt_ms": args.dt_ms,
+        "duration_ms": args.duration_ms,
+        "seed": args.seed,
+        "external_current_pA": args.external_current_pA,
+        "metrics": metrics,
+        "artifact_npz": artifact_path,
+    }
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "emergence_run_report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
+    """Run fixed emergence sweep and write one structured report."""
+    from bnsyn.experiments.emergence import run_emergence_to_disk
+
+    runs: list[dict[str, Any]] = []
+    for current in EMERGENCE_SWEEP_CURRENTS_PA:
+        metrics, artifact_path = run_emergence_to_disk(
+            N=args.N,
+            dt_ms=args.dt_ms,
+            duration_ms=args.duration_ms,
+            seed=args.seed,
+            external_current_pA=current,
+            output_dir=args.out,
+        )
+        runs.append(
+            {
+                "external_current_pA": current,
+                "metrics": metrics,
+                "artifact_npz": artifact_path,
+            }
+        )
+
+    report = {
+        "N": args.N,
+        "dt_ms": args.dt_ms,
+        "duration_ms": args.duration_ms,
+        "seed": args.seed,
+        "currents_pA": list(EMERGENCE_SWEEP_CURRENTS_PA),
+        "runs": runs,
+    }
+    args.out.mkdir(parents=True, exist_ok=True)
+    (args.out / "emergence_sweep_report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_emergence_plot(args: argparse.Namespace) -> int:
+    """Render emergence raster/rate/sigma plot from one NPZ artifact."""
+    from bnsyn.viz.emergence_plot import plot_emergence_npz
+
+    plot_emergence_npz(args.input, args.output)
+    print(f"✓ Plot saved to {args.output}")
+    return 0
+
 def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     """Run sleep-stack demo with attractor crystallization and consolidation.
 
@@ -555,6 +637,38 @@ def main() -> None:
     )
     sleep.set_defaults(func=_cmd_sleep_stack)
 
+
+
+    emergence_run = sub.add_parser(
+        "emergence-run",
+        help="Run canonical emergence experiment with artifact output",
+    )
+    emergence_run.add_argument("--N", type=int, default=500)
+    emergence_run.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_run.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_run.add_argument("--seed", type=int, default=42)
+    emergence_run.add_argument("--external-current-pA", type=float, default=410.0)
+    emergence_run.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
+    emergence_run.set_defaults(func=_cmd_emergence_run)
+
+    emergence_sweep = sub.add_parser(
+        "emergence-sweep",
+        help="Run fixed current sweep and save structured report",
+    )
+    emergence_sweep.add_argument("--N", type=int, default=500)
+    emergence_sweep.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_sweep.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_sweep.add_argument("--seed", type=int, default=42)
+    emergence_sweep.add_argument("--out", type=Path, default=Path("artifacts/emergence_sweep"))
+    emergence_sweep.set_defaults(func=_cmd_emergence_sweep)
+
+    emergence_plot = sub.add_parser(
+        "emergence-plot",
+        help="Generate raster/rate/sigma figure from run_<seed>.npz artifact",
+    )
+    emergence_plot.add_argument("--input", type=Path, required=True)
+    emergence_plot.add_argument("--output", type=Path, required=True)
+    emergence_plot.set_defaults(func=_cmd_emergence_plot)
 
     smoke = sub.add_parser("smoke", help="Run deterministic operational readiness smoke test")
     smoke.add_argument("--seed", type=int, default=20260218)

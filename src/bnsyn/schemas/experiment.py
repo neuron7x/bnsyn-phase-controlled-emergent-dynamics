@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from math import isclose
 
+import numpy as np
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
@@ -68,10 +69,16 @@ class SimulationConfig(BaseModel):
         Simulation duration in milliseconds (≥1)
     dt_ms : float
         Timestep in milliseconds (must be 0.01, 0.05, 0.1, 0.5, or 1.0)
+    external_current_pA : float, optional
+        Constant external current injection in pA applied to every neuron.
+    artifact_dir : str | None, optional
+        Optional directory where per-run npz artifacts are written.
     """
 
     duration_ms: float = Field(..., ge=1)
     dt_ms: float
+    external_current_pA: float = 0.0
+    artifact_dir: str | None = None
 
     @field_validator("dt_ms")
     @classmethod
@@ -80,6 +87,15 @@ class SimulationConfig(BaseModel):
         allowed_values = [0.01, 0.05, 0.1, 0.5, 1.0]
         if v not in allowed_values:
             raise ValueError(f"dt_ms must be one of {allowed_values}, got {v}")
+        return v
+
+
+    @field_validator("external_current_pA")
+    @classmethod
+    def validate_finite(cls, v: float) -> float:
+        """Validate that external current is finite."""
+        if not np.isfinite(v):
+            raise ValueError("external_current_pA must be a finite real number")
         return v
 
     @model_validator(mode="after")

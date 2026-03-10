@@ -15,7 +15,7 @@ def _minimal_config() -> BNSynExperimentConfig:
     return BNSynExperimentConfig(
         experiment={"name": "quickstart", "version": "v1", "seeds": [1, 2]},
         network={"size": 10},
-        simulation={"duration_ms": 1.0, "dt_ms": 0.1},
+        simulation={"duration_ms": 1.0, "dt_ms": 0.1, "external_current_pA": 0.0},
     )
 
 
@@ -53,6 +53,7 @@ def test_load_config_validation_error(tmp_path: Path) -> None:
                 "simulation:",
                 "  duration_ms: 1.0",
                 "  dt_ms: 0.1",
+                "  external_current_pA: 0.0",
             ]
         )
     )
@@ -64,8 +65,21 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
     config = _minimal_config()
     calls: list[dict[str, Any]] = []
 
-    def fake_run_simulation(*, steps: int, dt_ms: float, seed: int, N: int) -> dict[str, Any]:
-        calls.append({"steps": steps, "dt_ms": dt_ms, "seed": seed, "N": N})
+    def fake_run_simulation(
+        *,
+        steps: int,
+        dt_ms: float,
+        seed: int,
+        N: int,
+        external_current_pA: float,
+    ) -> dict[str, Any]:
+        calls.append({
+            "steps": steps,
+            "dt_ms": dt_ms,
+            "seed": seed,
+            "N": N,
+            "external_current_pA": external_current_pA,
+        })
         return {"seed": seed, "steps": steps}
 
     monkeypatch.setattr(declarative, "run_simulation", fake_run_simulation)
@@ -76,8 +90,8 @@ def test_run_experiment_collects_runs(monkeypatch: pytest.MonkeyPatch) -> None:
 
     expected_steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
     assert calls == [
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10},
-        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 1, "N": 10, "external_current_pA": 0.0},
+        {"steps": expected_steps, "dt_ms": 0.1, "seed": 2, "N": 10, "external_current_pA": 0.0},
     ]
 
 
@@ -95,6 +109,7 @@ def test_run_from_yaml_writes_output(monkeypatch: pytest.MonkeyPatch, tmp_path: 
                 "simulation:",
                 "  duration_ms: 1.0",
                 "  dt_ms: 0.1",
+                "  external_current_pA: 0.0",
             ]
         )
     )
@@ -122,3 +137,33 @@ def test_run_from_yaml_prints_when_no_output(monkeypatch: pytest.MonkeyPatch, ca
     captured = capsys.readouterr().out
     assert "Config validated" in captured
     assert json.dumps(stub_result, indent=2, sort_keys=True) in captured
+
+
+def test_run_experiment_uses_emergence_orchestrator_when_artifact_dir_set(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cfg = BNSynExperimentConfig(
+        experiment={"name": "emergence", "version": "v1", "seeds": [7]},
+        network={"size": 10},
+        simulation={
+            "duration_ms": 1.0,
+            "dt_ms": 0.1,
+            "external_current_pA": 410.0,
+            "artifact_dir": "artifacts/emergence/test",
+        },
+    )
+
+    calls: list[dict[str, object]] = []
+
+    def fake_run_emergence_to_disk(**kwargs: object) -> tuple[dict[str, float], str]:
+        calls.append(kwargs)
+        return (
+            {"sigma_mean": 1.0, "rate_mean_hz": 2.0, "sigma_std": 0.1, "rate_std": 0.2},
+            "artifacts/emergence/test/run_7_Iext_410pA.npz",
+        )
+
+    monkeypatch.setattr(declarative, "run_emergence_to_disk", fake_run_emergence_to_disk)
+    out = declarative.run_experiment(cfg)
+
+    assert calls[0]["seed"] == 7
+    assert out["runs"][0]["artifact_npz"].endswith("run_7_Iext_410pA.npz")
