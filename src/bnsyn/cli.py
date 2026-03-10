@@ -207,7 +207,8 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     if profile == "canonical":
         if export_proof:
             print(
-                "Notice: --export-proof remains reserved; canonical run currently emits a live-run bundle, not full proof packaging"
+                "Notice: --export-proof remains reserved; canonical run currently emits a live-run bundle, not full proof packaging",
+                file=sys.stderr,
             )
         try:
             bundle = run_canonical_live_bundle(config_path, output or "artifacts/canonical_run")
@@ -216,15 +217,20 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
             return 1
 
         if plot:
-            print("Notice: --plot acknowledged; canonical live-run plots are emitted by default")
+            print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
 
-        print(json.dumps({"status": "ok", **bundle}, indent=2, sort_keys=True))
+        payload = {
+            "status": "ok",
+            "artifacts": ["emergence_plot.png", "summary_metrics.json", "run_manifest.json"],
+            **bundle,
+        }
+        print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
 
     if plot:
-        print("Notice: --plot only applies to --profile canonical at this milestone")
+        print("Notice: --plot only applies to --profile canonical at this milestone", file=sys.stderr)
     if export_proof:
-        print("Notice: --export-proof reserved; full proof export is not wired for generic run")
+        print("Notice: --export-proof reserved; full proof export is not wired for generic run", file=sys.stderr)
 
     try:
         run_from_yaml(config_path, output)
@@ -781,26 +787,11 @@ def main() -> None:
         "plot",
         help="Compatibility wrapper to canonical run command. Writes canonical artifacts",
     )
-    plot.add_argument("--seed", type=int, default=123, help="RNG seed")
-    plot.add_argument("--steps", type=int, default=500, help="Number of simulation steps")
-    plot.add_argument("--N", type=int, default=128, help="Number of neurons")
-    plot.add_argument("--dt-ms", type=float, default=0.5, help="Simulation dt in ms")
-    plot.add_argument(
-        "--backend",
-        choices=["reference", "accelerated"],
-        default="reference",
-        help="Simulation backend",
-    )
     plot.add_argument(
         "--out",
         type=str,
         default="artifacts/canonical_run",
         help="Output directory for canonical run artifacts (compatibility wrapper)",
-    )
-    plot.add_argument(
-        "--no-plot",
-        action="store_true",
-        help="Skip image rendering but preserve canonical artifact contract",
     )
     plot.set_defaults(func=_cmd_plot)
 

@@ -31,13 +31,8 @@ def test_milestone_state_contract() -> None:
     milestones = payload["milestones"]
     expected = [f"M{i}" for i in range(12)]
     assert list(milestones.keys()) == expected
-    for milestone, entry in milestones.items():
-        if milestone in {"M2", "M3"}:
-            assert entry["closed"] is True
-            assert entry["commit"] == "TBD"
-            assert entry["ci_run"] == "local-verified"
-        else:
-            assert entry == {"closed": False, "commit": None, "ci_run": None}
+    for entry in milestones.values():
+        assert entry == {"closed": False, "commit": None, "ci_run": None}
 
 
 def test_statistical_power_config_shape_matches_canonical_stub() -> None:
@@ -181,7 +176,7 @@ def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None
         cwd=ROOT,
     )
     assert proc.returncode == 0, proc.stderr
-    assert "--export-proof remains reserved" in proc.stdout
+    assert "--export-proof remains reserved" in proc.stderr
     summary_path = output_dir / "summary_metrics.json"
     assert summary_path.exists()
     payload = _load_json(summary_path)

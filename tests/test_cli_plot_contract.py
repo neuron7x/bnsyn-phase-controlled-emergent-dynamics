@@ -22,15 +22,7 @@ def _cli_env() -> dict[str, str]:
 
 def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     out_dir = tmp_path / "canonical_run"
-    args = argparse.Namespace(
-        seed=123,
-        steps=100,
-        N=64,
-        dt_ms=0.5,
-        backend="reference",
-        no_plot=True,
-        out=str(out_dir),
-    )
+    args = argparse.Namespace(out=str(out_dir))
     rc = _cmd_plot(args)
     assert rc == 0
 
@@ -53,7 +45,7 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]
-    assert "run_manifest.json" in manifest["artifacts"]
+    assert manifest["artifacts"]["run_manifest.json"] == "self-unhashed"
 
 
 def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:

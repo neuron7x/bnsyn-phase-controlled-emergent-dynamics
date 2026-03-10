@@ -13,14 +13,14 @@
       "ci_run": null
     },
     "M2": {
-      "closed": true,
-      "commit": "TBD",
-      "ci_run": "local-verified"
+      "closed": false,
+      "commit": null,
+      "ci_run": null
     },
     "M3": {
-      "closed": true,
-      "commit": "TBD",
-      "ci_run": "local-verified"
+      "closed": false,
+      "commit": null,
+      "ci_run": null
     },
     "M4": {
       "closed": false,

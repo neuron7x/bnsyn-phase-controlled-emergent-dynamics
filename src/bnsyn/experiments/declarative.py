@@ -167,6 +167,25 @@ def _build_rate_image(rate_trace_hz: np.ndarray, width: int = 1000, height: int 
     return image
 
 
+def _build_emergence_image(raster_image: np.ndarray, rate_image: np.ndarray) -> np.ndarray:
+    """Build canonical emergence image as a composite of raster + rate traces."""
+    if raster_image.ndim != 2 or rate_image.ndim != 2:
+        raise ValueError("raster_image and rate_image must be 2D arrays")
+
+    width = max(raster_image.shape[1], rate_image.shape[1])
+
+    def _pad_to_width(image: np.ndarray, target_width: int) -> np.ndarray:
+        if image.shape[1] == target_width:
+            return image
+        pad = np.full((image.shape[0], target_width - image.shape[1]), 255, dtype=np.uint8)
+        return np.hstack((image, pad))
+
+    raster = _pad_to_width(raster_image, width)
+    rate = _pad_to_width(rate_image, width)
+    separator = np.full((4, width), 180, dtype=np.uint8)
+    return np.vstack((raster, separator, rate))
+
+
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
@@ -213,16 +232,17 @@ def run_canonical_live_bundle(
     summary_path = out_dir / "summary_metrics.json"
     summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
-    emergence_plot_path = out_dir / "emergence_plot.png"
-    rate_image = _build_rate_image(rate_trace_hz)
-    _write_grayscale_png(rate_image, emergence_plot_path)
-
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
     _write_grayscale_png(raster_image, raster_path)
 
     rate_plot_path = out_dir / "population_rate_plot.png"
+    rate_image = _build_rate_image(rate_trace_hz)
     _write_grayscale_png(rate_image, rate_plot_path)
+
+    emergence_plot_path = out_dir / "emergence_plot.png"
+    emergence_image = _build_emergence_image(raster_image, rate_image)
+    _write_grayscale_png(emergence_image, emergence_plot_path)
 
     manifest = {
         "schema_version": "1.0.0",
@@ -235,14 +255,12 @@ def run_canonical_live_bundle(
         "artifacts": {
             "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
             "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
-            "run_manifest.json": "pending",
+            "run_manifest.json": "self-unhashed",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
         },
     }
     manifest_path = out_dir / "run_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    manifest["artifacts"]["run_manifest.json"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     return {

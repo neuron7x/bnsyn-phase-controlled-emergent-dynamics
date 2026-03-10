@@ -18,13 +18,9 @@ bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical
 
 The command writes exactly this proof bundle to the output directory:
 
-- `emergence_plot.png` — four-panel visual evidence:
-  - spike raster
-  - criticality sigma trace
-  - synchronization/coherence trace (active neuron fraction)
-  - population activity (spike rate)
+- `emergence_plot.png` — primary canonical emergence visual, a composite image built from spike raster activity and population rate dynamics.
 - `summary_metrics.json` — numeric summary for the run.
-- `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes.
+- `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes for external artifacts; self-entry uses sentinel `"self-unhashed"` to avoid false self-hash claims.
 
 ## Mechanism narrative (research-facing)
 
