@@ -32,6 +32,11 @@ Do not remove or rename these headings.
 # add exact verification commands
 ```
 
+## Canonical Vector Check (Required)
+- [ ] Preserves `bnsyn plot` as the canonical proof command.
+- [ ] Preserves canonical artifacts: `emergence_plot.png`, `summary_metrics.json`, `run_manifest.json`.
+- [ ] Strengthens at least one of Result / Narrative / Audience vectors without introducing drift.
+
 ## Labels policy
 
 Supported control labels:
