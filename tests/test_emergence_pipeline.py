@@ -203,3 +203,69 @@ def test_plotter_rejects_shape_invariant_violation(tmp_path: Path) -> None:
     )
     with pytest.raises(ValueError, match="identical shapes"):
         plot_emergence_npz(npz_path, tmp_path / "x.png")
+
+
+
+def test_plotter_rejects_invalid_trace_dimensions(tmp_path: Path) -> None:
+    npz_path = tmp_path / "bad_dims.npz"
+    np.savez(
+        npz_path,
+        format_version=np.asarray("1.1.0"),
+        spike_steps=np.asarray([0]),
+        spike_neurons=np.asarray([0]),
+        sigma_trace=np.asarray([[1.0]]),
+        rate_trace_hz=np.asarray([5.0]),
+        dt_ms=np.asarray(0.1),
+        steps=np.asarray(1),
+        N=np.asarray(10),
+        seed=np.asarray(42),
+        external_current_pA=np.asarray(410.0),
+    )
+    with pytest.raises(ValueError, match="1-D arrays"):
+        plot_emergence_npz(npz_path, tmp_path / "out.png")
+
+
+def test_plotter_rejects_trace_length_mismatch(tmp_path: Path) -> None:
+    npz_path = tmp_path / "bad_len.npz"
+    np.savez(
+        npz_path,
+        format_version=np.asarray("1.1.0"),
+        spike_steps=np.asarray([]),
+        spike_neurons=np.asarray([]),
+        sigma_trace=np.asarray([1.0, 2.0]),
+        rate_trace_hz=np.asarray([5.0, 6.0]),
+        dt_ms=np.asarray(0.1),
+        steps=np.asarray(1),
+        N=np.asarray(10),
+        seed=np.asarray(42),
+        external_current_pA=np.asarray(410.0),
+    )
+    with pytest.raises(ValueError, match="Trace lengths must equal steps"):
+        plot_emergence_npz(npz_path, tmp_path / "out.png")
+
+
+def test_plotter_rejects_out_of_bounds_spikes(tmp_path: Path) -> None:
+    npz_path = tmp_path / "bad_spikes.npz"
+    np.savez(
+        npz_path,
+        format_version=np.asarray("1.1.0"),
+        spike_steps=np.asarray([5]),
+        spike_neurons=np.asarray([0]),
+        sigma_trace=np.asarray([1.0]),
+        rate_trace_hz=np.asarray([5.0]),
+        dt_ms=np.asarray(0.1),
+        steps=np.asarray(1),
+        N=np.asarray(10),
+        seed=np.asarray(42),
+        external_current_pA=np.asarray(410.0),
+    )
+    with pytest.raises(ValueError, match=r"spike_steps values must be in \[0, steps\)"):
+        plot_emergence_npz(npz_path, tmp_path / "out.png")
+
+
+def test_cli_emergence_plot_executes_successfully(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    args = argparse.Namespace(input="in.npz", output=tmp_path / "out.png")
+    monkeypatch.setattr(cli, "plot_emergence_npz", lambda i, o: None)
+    assert cli._cmd_emergence_plot(args) == 0
