@@ -6,7 +6,7 @@ Welcome! BN-Syn follows rigorous engineering standards. This guide helps you con
 
 ## Anti-Drift Contract (Required)
 
-- Canonical proof command is `bnsyn plot`.
+- Canonical proof command is `bnsyn run --profile canonical --plot --export-proof`.
 - Canonical artifact set is `emergence_plot.png`, `summary_metrics.json`, `run_manifest.json`.
 - Changes are in-scope when they strengthen Result/Narrative/Audience vectors in README.
 - Changes are drift when they obscure canonical command path or weaken reproducibility evidence.

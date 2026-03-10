@@ -9,16 +9,16 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_tests_inventory_schema_contract() -> None:
-    payload = json.loads((REPO_ROOT / "tests_inventory.json").read_text(encoding="utf-8"))
+def test_tests_inventory_matches_repository_state() -> None:
+    inventory = json.loads((REPO_ROOT / "tests_inventory.json").read_text(encoding="utf-8"))
 
-    assert isinstance(payload["generated_by"], str)
-    assert isinstance(payload["test_count"], int)
-    assert payload["test_count"] >= 1
-    assert isinstance(payload["coverage_surface"], dict)
-    assert isinstance(payload["reusable_workflow_jobs"], list)
-    assert isinstance(payload["tests"], list)
-    assert payload["test_count"] == len(payload["tests"])
+    assert inventory["test_count"] == len(inventory["tests"])
+    pytest_entries = [entry for entry in inventory["tests"] if entry.get("category") == "pytest"]
+    assert inventory["coverage_surface"]["pytest"] == len(pytest_entries)
+    paths = [entry["path"] for entry in inventory["tests"]]
+    assert len(paths) == len(set(paths))
+    assert "tests/test_avalanche_analysis.py" in paths
+    assert "tests/test_phase_space_analysis.py" in paths
 
 
 def test_acceptance_map_contains_no_escape_contract() -> None:

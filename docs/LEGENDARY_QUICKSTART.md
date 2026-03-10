@@ -29,7 +29,7 @@ python -m bnsyn --help
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-Expected output contract: JSON with `status="ok"` and canonical artifacts list, including `criticality_report.json`.
+Expected output contract: JSON with `status="ok"` and canonical artifacts list including `criticality_report.json`, `avalanche_report.json`, and `phase_space_report.json`.
 
 ## Reproducible smoke target
 

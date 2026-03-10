@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Phase Space Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "seed",
+    "N",
+    "dt_ms",
+    "duration_ms",
+    "steps",
+    "state_axes",
+    "point_count",
+    "rate_mean_hz",
+    "sigma_mean",
+    "rate_sigma_correlation",
+    "trajectory_length_l2",
+    "bounding_box",
+    "centroid",
+    "occupied_cell_fraction"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "seed": {"type": "integer"},
+    "N": {"type": "integer", "minimum": 1},
+    "dt_ms": {"type": "number", "exclusiveMinimum": 0},
+    "duration_ms": {"type": "number", "minimum": 0},
+    "steps": {"type": "integer", "minimum": 0},
+    "state_axes": {
+      "type": "array",
+      "const": ["population_rate_hz", "sigma"]
+    },
+    "point_count": {"type": "integer", "minimum": 0},
+    "rate_mean_hz": {"type": "number"},
+    "sigma_mean": {"type": "number"},
+    "rate_sigma_correlation": {"type": "number"},
+    "trajectory_length_l2": {"type": "number", "minimum": 0},
+    "bounding_box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rate_min", "rate_max", "sigma_min", "sigma_max"],
+      "properties": {
+        "rate_min": {"type": "number"},
+        "rate_max": {"type": "number"},
+        "sigma_min": {"type": "number"},
+        "sigma_max": {"type": "number"}
+      }
+    },
+    "centroid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rate", "sigma"],
+      "properties": {
+        "rate": {"type": "number"},
+        "sigma": {"type": "number"}
+      }
+    },
+    "occupied_cell_fraction": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+  }
+}

@@ -186,6 +186,169 @@ def _build_emergence_image(raster_image: np.ndarray, rate_image: np.ndarray) -> 
     return np.vstack((raster, separator, rate))
 
 
+def _segment_avalanches(spike_counts: np.ndarray) -> tuple[list[int], list[int]]:
+    """Segment contiguous nonzero bins into avalanche sizes and durations."""
+    sizes: list[int] = []
+    durations: list[int] = []
+    current_size = 0
+    current_duration = 0
+
+    for count in spike_counts.tolist():
+        count_i = int(count)
+        if count_i > 0:
+            current_size += count_i
+            current_duration += 1
+            continue
+        if current_duration > 0:
+            sizes.append(current_size)
+            durations.append(current_duration)
+            current_size = 0
+            current_duration = 0
+
+    if current_duration > 0:
+        sizes.append(current_size)
+        durations.append(current_duration)
+
+    return sizes, durations
+
+
+def _build_avalanche_report(
+    *,
+    seed: int,
+    n_neurons: int,
+    dt_ms: float,
+    duration_ms: float,
+    steps: int,
+    spike_steps_per_step: np.ndarray,
+    bin_width_steps: int = 1,
+) -> dict[str, float | int | str | list[int]]:
+    """Build deterministic avalanche analysis metrics from per-step spike counts."""
+    if bin_width_steps <= 0:
+        raise ValueError("bin_width_steps must be >= 1")
+    if bin_width_steps != 1:
+        usable = (spike_steps_per_step.size // bin_width_steps) * bin_width_steps
+        rebinned = spike_steps_per_step[:usable].reshape(-1, bin_width_steps).sum(axis=1)
+    else:
+        rebinned = spike_steps_per_step
+
+    sizes, durations = _segment_avalanches(np.asarray(rebinned, dtype=np.int64))
+    nonempty_bins = int(np.count_nonzero(rebinned > 0))
+    total_spikes = int(np.sum(rebinned))
+    largest_size = max(sizes) if sizes else 0
+
+    return {
+        "schema_version": "1.0.0",
+        "seed": seed,
+        "N": int(n_neurons),
+        "dt_ms": float(dt_ms),
+        "duration_ms": float(duration_ms),
+        "steps": int(steps),
+        "bin_width_steps": int(bin_width_steps),
+        "avalanche_count": int(len(sizes)),
+        "active_bin_fraction": float(nonempty_bins / rebinned.size) if rebinned.size > 0 else 0.0,
+        "size_mean": float(np.mean(sizes)) if sizes else 0.0,
+        "size_max": int(largest_size),
+        "duration_mean": float(np.mean(durations)) if durations else 0.0,
+        "duration_max": int(max(durations)) if durations else 0,
+        "sizes": sizes,
+        "durations": durations,
+        "nonempty_bins": nonempty_bins,
+        "largest_avalanche_fraction": float(largest_size / total_spikes) if total_spikes > 0 else 0.0,
+        "size_variance": float(np.var(sizes)) if sizes else 0.0,
+        "duration_variance": float(np.var(durations)) if durations else 0.0,
+    }
+
+
+def _build_phase_space_report(
+    *,
+    seed: int,
+    n_neurons: int,
+    dt_ms: float,
+    duration_ms: float,
+    steps: int,
+    rate_trace_hz: np.ndarray,
+    sigma_trace: np.ndarray,
+) -> dict[str, float | int | str | list[str] | dict[str, float]]:
+    """Build deterministic state-space trajectory report from canonical traces."""
+    rates = np.asarray(rate_trace_hz, dtype=np.float64)
+    sigmas = np.asarray(sigma_trace, dtype=np.float64)
+
+    if rates.size != sigmas.size:
+        raise ValueError("rate_trace_hz and sigma_trace must have equal length")
+    if rates.size != int(steps):
+        raise ValueError("rate_trace_hz and sigma_trace length must equal steps")
+
+    if rates.size == 0:
+        rate_sigma_correlation = 0.0
+        trajectory_length_l2 = 0.0
+        rate_min = 0.0
+        rate_max = 0.0
+        sigma_min = 0.0
+        sigma_max = 0.0
+        centroid_rate = 0.0
+        centroid_sigma = 0.0
+        occupied_cell_fraction = 0.0
+    else:
+        rate_std = float(np.std(rates))
+        sigma_std = float(np.std(sigmas))
+        if rates.size < 2 or rate_std == 0.0 or sigma_std == 0.0:
+            rate_sigma_correlation = 0.0
+        else:
+            rate_sigma_correlation = float(np.corrcoef(rates, sigmas)[0, 1])
+
+        deltas_rate = np.diff(rates)
+        deltas_sigma = np.diff(sigmas)
+        trajectory_length_l2 = float(np.sum(np.sqrt(np.square(deltas_rate) + np.square(deltas_sigma))))
+
+        rate_min = float(np.min(rates))
+        rate_max = float(np.max(rates))
+        sigma_min = float(np.min(sigmas))
+        sigma_max = float(np.max(sigmas))
+
+        centroid_rate = float(np.mean(rates))
+        centroid_sigma = float(np.mean(sigmas))
+
+        grid_size = 32
+        visited = np.zeros((grid_size, grid_size), dtype=np.bool_)
+
+        def _axis_idx(values: np.ndarray, vmin: float, vmax: float) -> np.ndarray:
+            if vmax <= vmin:
+                return np.zeros(values.size, dtype=np.int64)
+            scaled = (values - vmin) / (vmax - vmin)
+            return np.clip((scaled * (grid_size - 1)).astype(np.int64), 0, grid_size - 1)
+
+        x_idx = _axis_idx(rates, rate_min, rate_max)
+        y_idx = _axis_idx(sigmas, sigma_min, sigma_max)
+        visited[y_idx, x_idx] = True
+        occupied_cell_fraction = float(np.count_nonzero(visited) / (grid_size * grid_size))
+
+    return {
+        "schema_version": "1.0.0",
+        "seed": seed,
+        "N": int(n_neurons),
+        "dt_ms": float(dt_ms),
+        "duration_ms": float(duration_ms),
+        "steps": int(steps),
+        "state_axes": ["population_rate_hz", "sigma"],
+        "point_count": int(rates.size),
+        "rate_mean_hz": float(np.mean(rates)) if rates.size else 0.0,
+        "sigma_mean": float(np.mean(sigmas)) if sigmas.size else 0.0,
+        "rate_sigma_correlation": rate_sigma_correlation,
+        "trajectory_length_l2": trajectory_length_l2,
+        "bounding_box": {
+            "rate_min": rate_min,
+            "rate_max": rate_max,
+            "sigma_min": sigma_min,
+            "sigma_max": sigma_max,
+        },
+        "centroid": {
+            "rate": centroid_rate,
+            "sigma": centroid_sigma,
+        },
+        "occupied_cell_fraction": occupied_cell_fraction,
+    }
+
+
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
@@ -263,6 +426,36 @@ def run_canonical_live_bundle(
         encoding="utf-8",
     )
 
+    avalanche_report = _build_avalanche_report(
+        seed=seed,
+        n_neurons=int(config.network.size),
+        dt_ms=float(config.simulation.dt_ms),
+        duration_ms=float(config.simulation.duration_ms),
+        steps=steps,
+        spike_steps_per_step=spike_steps_per_step,
+        bin_width_steps=1,
+    )
+    avalanche_report_path = out_dir / "avalanche_report.json"
+    avalanche_report_path.write_text(
+        json.dumps(avalanche_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    phase_space_report = _build_phase_space_report(
+        seed=seed,
+        n_neurons=int(config.network.size),
+        dt_ms=float(config.simulation.dt_ms),
+        duration_ms=float(config.simulation.duration_ms),
+        steps=steps,
+        rate_trace_hz=rate_trace_hz,
+        sigma_trace=sigma_trace,
+    )
+    phase_space_report_path = out_dir / "phase_space_report.json"
+    phase_space_report_path.write_text(
+        json.dumps(phase_space_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
     _write_grayscale_png(raster_image, raster_path)
@@ -287,6 +480,8 @@ def run_canonical_live_bundle(
             "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
             "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
             "criticality_report.json": hashlib.sha256(criticality_report_path.read_bytes()).hexdigest(),
+            "avalanche_report.json": hashlib.sha256(avalanche_report_path.read_bytes()).hexdigest(),
+            "phase_space_report.json": hashlib.sha256(phase_space_report_path.read_bytes()).hexdigest(),
             "run_manifest.json": "self-unhashed",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
@@ -303,6 +498,10 @@ def run_canonical_live_bundle(
         "summary_metrics_path": summary_path.as_posix(),
         "criticality_report": criticality_report,
         "criticality_report_path": criticality_report_path.as_posix(),
+        "avalanche_report": avalanche_report,
+        "avalanche_report_path": avalanche_report_path.as_posix(),
+        "phase_space_report": phase_space_report,
+        "phase_space_report_path": phase_space_report_path.as_posix(),
         "emergence_plot_path": emergence_plot_path.as_posix(),
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),

@@ -36,3 +36,5 @@ CLI stdout is a JSON object containing:
   - `summary_metrics.json`
   - `run_manifest.json`
   - `criticality_report.json`
+  - `avalanche_report.json`
+  - `phase_space_report.json`
