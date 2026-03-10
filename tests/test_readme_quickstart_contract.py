@@ -29,6 +29,7 @@ def test_readme_quickstart_contract_matches_make_target() -> None:
         "artifacts/canonical_run/emergence_plot.png",
         "artifacts/canonical_run/summary_metrics.json",
         "artifacts/canonical_run/run_manifest.json",
+        "artifacts/canonical_run/criticality_report.json",
     }
     for command in expected:
         assert command in readme

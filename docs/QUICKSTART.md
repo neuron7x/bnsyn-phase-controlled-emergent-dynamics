@@ -35,3 +35,4 @@ CLI stdout is a JSON object containing:
   - `emergence_plot.png`
   - `summary_metrics.json`
   - `run_manifest.json`
+  - `criticality_report.json`

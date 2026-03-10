@@ -45,6 +45,7 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]
+    assert "criticality_report.json" in manifest["artifacts"]
     assert manifest["artifacts"]["run_manifest.json"] == "self-unhashed"
 
 
@@ -70,5 +71,6 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
     assert payload["artifacts"] == [
         "emergence_plot.png",
         "summary_metrics.json",
+        "criticality_report.json",
         "run_manifest.json",
     ]

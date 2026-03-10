@@ -18,6 +18,7 @@ Expected artifacts in `artifacts/canonical_run/`:
 - `emergence_plot.png`
 - `summary_metrics.json`
 - `run_manifest.json`
+- `criticality_report.json`
 
 ## 3) Run tests
 

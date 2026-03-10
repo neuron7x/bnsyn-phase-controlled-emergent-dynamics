@@ -21,6 +21,7 @@ The command writes exactly this proof bundle to the output directory:
 - `emergence_plot.png` — primary canonical emergence visual, a composite image built from spike raster activity and population rate dynamics.
 - `summary_metrics.json` — numeric summary for the run.
 - `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes for external artifacts; self-entry uses sentinel `"self-unhashed"` to avoid false self-hash claims.
+- `criticality_report.json` — machine-readable criticality metrics derived from the canonical run traces.
 
 ## Mechanism narrative (research-facing)
 
@@ -35,7 +36,7 @@ The canonical proof path is intentionally one-run and one-command so external re
 ## Reproducibility
 
 Reproducibility is enforced through explicit seed, deterministic simulation path, and manifest hashing.
-Use `run_manifest.json` + `summary_metrics.json` to compare repeated runs under same parameters.
+Use `run_manifest.json` + `criticality_report.json` + `summary_metrics.json` to compare repeated runs under same parameters.
 
 ## Interpretation layer and limits
 

@@ -221,7 +221,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
 
         payload = {
             "status": "ok",
-            "artifacts": ["emergence_plot.png", "summary_metrics.json", "run_manifest.json"],
+            "artifacts": ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "run_manifest.json"],
             **bundle,
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
@@ -589,6 +589,7 @@ def _cmd_plot(args: argparse.Namespace) -> int:
                 "artifacts": [
                     "emergence_plot.png",
                     "summary_metrics.json",
+                    "criticality_report.json",
                     "run_manifest.json",
                 ],
                 "compatibility_wrapper": "bnsyn plot",

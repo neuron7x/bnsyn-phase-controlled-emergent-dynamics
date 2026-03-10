@@ -19,11 +19,13 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
 
     summary_path = out_dir / "summary_metrics.json"
     manifest_path = out_dir / "run_manifest.json"
+    criticality_report_path = out_dir / "criticality_report.json"
     emergence_plot_path = out_dir / "emergence_plot.png"
     raster_path = out_dir / "raster_plot.png"
     rate_plot_path = out_dir / "population_rate_plot.png"
     assert summary_path.exists()
     assert manifest_path.exists()
+    assert criticality_report_path.exists()
     assert emergence_plot_path.exists()
     assert raster_path.exists()
     assert rate_plot_path.exists()
@@ -46,6 +48,16 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert metrics["rate_mean_hz"] > 0.0
     assert metrics["rate_variance"] > 0.0
 
+    criticality = json.loads(criticality_report_path.read_text(encoding="utf-8"))
+    criticality_required = {
+        "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
+        "sigma_mean", "sigma_final", "sigma_variance", "rate_mean_hz",
+        "rate_peak_hz", "spike_events", "sigma_distance_from_1",
+        "sigma_within_band_fraction", "active_steps_fraction",
+        "nonzero_rate_steps_fraction", "burstiness_proxy", "rate_cv",
+    }
+    assert criticality_required.issubset(criticality)
+
 
 def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
     out_a = tmp_path / "a"
@@ -55,7 +67,10 @@ def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
 
     summary_a = json.loads((out_a / "summary_metrics.json").read_text(encoding="utf-8"))
     summary_b = json.loads((out_b / "summary_metrics.json").read_text(encoding="utf-8"))
+    criticality_a = json.loads((out_a / "criticality_report.json").read_text(encoding="utf-8"))
+    criticality_b = json.loads((out_b / "criticality_report.json").read_text(encoding="utf-8"))
     assert summary_a == summary_b
+    assert criticality_a == criticality_b
 
 
 def test_cli_run_profile_canonical_end_to_end(monkeypatch, tmp_path: Path) -> None:

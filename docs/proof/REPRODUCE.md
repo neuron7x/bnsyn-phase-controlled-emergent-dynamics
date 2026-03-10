@@ -11,6 +11,7 @@ Expected canonical artifacts:
 - `artifacts/canonical_run/emergence_plot.png`
 - `artifacts/canonical_run/summary_metrics.json`
 - `artifacts/canonical_run/run_manifest.json`
+- `artifacts/canonical_run/criticality_report.json`
 
 ---
 

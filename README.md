@@ -24,6 +24,7 @@ Default artifact contract (`artifacts/canonical_run/`):
 - `emergence_plot.png`
 - `summary_metrics.json`
 - `run_manifest.json`
+- `criticality_report.json`
 
 This is the primary buyer/reviewer command path.
 
@@ -33,6 +34,7 @@ Supported from the canonical proof bundle:
 - direct measured traces from one run: spike raster events, sigma trace, active-fraction coherence trace, spike-rate trace
 - derived summary statistics in `summary_metrics.json`
 - reproducibility metadata and artifact hashes in `run_manifest.json`
+- `criticality_report.json`
 
 Not supported from this proof command alone:
 - biological equivalence to in vivo neural tissue
@@ -52,6 +54,7 @@ Inspect:
 - `artifacts/canonical_run/emergence_plot.png`
 - `artifacts/canonical_run/summary_metrics.json`
 - `artifacts/canonical_run/run_manifest.json`
+- `artifacts/canonical_run/criticality_report.json`
 
 ## Quickstart
 

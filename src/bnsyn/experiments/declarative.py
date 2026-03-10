@@ -231,6 +231,37 @@ def run_canonical_live_bundle(
     }
     summary_path = out_dir / "summary_metrics.json"
     summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    spike_steps_per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
+    active_steps = int(np.count_nonzero(spike_steps_per_step)) if steps > 0 else 0
+    nonzero_rate_steps = int(np.count_nonzero(rate_trace_hz > 0.0))
+    sigma_band = np.abs(sigma_trace - 1.0) <= 0.2
+    sigma_distance = np.abs(sigma_trace - 1.0)
+
+    criticality_report: dict[str, float | int | str] = {
+        "schema_version": "1.0.0",
+        "seed": seed,
+        "N": int(config.network.size),
+        "dt_ms": float(config.simulation.dt_ms),
+        "duration_ms": float(config.simulation.duration_ms),
+        "steps": steps,
+        "sigma_mean": float(np.mean(sigma_trace)),
+        "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
+        "sigma_variance": float(np.var(sigma_trace)),
+        "rate_mean_hz": float(np.mean(rate_trace_hz)),
+        "rate_peak_hz": float(np.max(rate_trace_hz)),
+        "spike_events": int(spike_steps.size),
+        "sigma_distance_from_1": float(np.mean(sigma_distance)) if sigma_distance.size else 0.0,
+        "sigma_within_band_fraction": float(np.mean(sigma_band)) if sigma_band.size else 0.0,
+        "active_steps_fraction": float(active_steps / steps) if steps > 0 else 0.0,
+        "nonzero_rate_steps_fraction": float(nonzero_rate_steps / steps) if steps > 0 else 0.0,
+        "rate_cv": float(np.std(rate_trace_hz) / np.mean(rate_trace_hz)) if np.mean(rate_trace_hz) > 0 else 0.0,
+        "burstiness_proxy": float(np.var(spike_steps_per_step) / np.mean(spike_steps_per_step)) if np.mean(spike_steps_per_step) > 0 else 0.0,
+    }
+    criticality_report_path = out_dir / "criticality_report.json"
+    criticality_report_path.write_text(
+        json.dumps(criticality_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
 
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
@@ -255,6 +286,7 @@ def run_canonical_live_bundle(
         "artifacts": {
             "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
             "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
+            "criticality_report.json": hashlib.sha256(criticality_report_path.read_bytes()).hexdigest(),
             "run_manifest.json": "self-unhashed",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
@@ -269,6 +301,8 @@ def run_canonical_live_bundle(
         "run_manifest_path": manifest_path.as_posix(),
         "summary_metrics": summary_metrics,
         "summary_metrics_path": summary_path.as_posix(),
+        "criticality_report": criticality_report,
+        "criticality_report_path": criticality_report_path.as_posix(),
         "emergence_plot_path": emergence_plot_path.as_posix(),
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),

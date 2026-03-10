@@ -43,7 +43,7 @@ quickstart-smoke:
 	python -m pip show bnsyn
 	bnsyn --help
 	bnsyn run --help
-	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','run_manifest.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','run_manifest.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
 
 
 wheelhouse-build:

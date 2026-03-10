@@ -60,7 +60,8 @@
         "required_artifacts": [
           "emergence_plot.png",
           "summary_metrics.json",
-          "run_manifest.json"
+          "run_manifest.json",
+          "criticality_report.json"
         ]
       },
       "evidence": {
