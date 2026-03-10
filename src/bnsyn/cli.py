@@ -197,7 +197,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     if config_path is None and args.profile == "canonical":
         config_path = "configs/canonical_profile.yaml"
     if config_path is None:
-        print("Error running experiment: provide CONFIG or --profile canonical")
+        print("Error running experiment: provide CONFIG or --profile canonical", file=sys.stderr)
         return 2
 
     if args.plot:

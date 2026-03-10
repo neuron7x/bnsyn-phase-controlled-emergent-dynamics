@@ -120,6 +120,23 @@ def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
     raise AssertionError("invalid verdict_code type was accepted")
 
 
+
+
+def test_run_without_config_or_profile_fails() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "run",
+        ],
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+        cwd=ROOT,
+    )
+    assert proc.returncode == 2
+    assert "provide CONFIG or --profile canonical" in proc.stderr
 def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None:
     output_path = tmp_path / "canonical_run.json"
     proc = subprocess.run(
