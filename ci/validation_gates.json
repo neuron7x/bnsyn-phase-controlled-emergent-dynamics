@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.2.0",
+  "registry": [
+    {
+      "id": "G1_active_spiking",
+      "description": "Canonical proof path reports non-zero mean firing rate.",
+      "status": "planned",
+      "threshold": {
+        "metric": "rate_mean_hz",
+        "op": ">",
+        "value": 0.0
+      },
+      "evidence": {
+        "artifact": "summary_metrics.json",
+        "source": "metrics.rate_mean_hz"
+      },
+      "on_fail": "FAIL"
+    },
+    {
+      "id": "G2_rate_in_bounds",
+      "description": "Canonical proof path mean firing rate stays in acceptable operational bounds.",
+      "status": "planned",
+      "threshold": {
+        "metric": "rate_mean_hz",
+        "op": "between",
+        "value": [
+          0.1,
+          200.0
+        ]
+      },
+      "evidence": {
+        "artifact": "summary_metrics.json",
+        "source": "metrics.rate_mean_hz"
+      },
+      "on_fail": "FAIL"
+    },
+    {
+      "id": "G3_sigma_in_range",
+      "description": "Canonical proof path sigma_mean remains in admissible range.",
+      "status": "wired",
+      "threshold": {
+        "metric": "sigma_mean",
+        "op": "between",
+        "value": [
+          0.7,
+          1.3
+        ]
+      },
+      "evidence": {
+        "artifact": "summary_metrics.json",
+        "source": "metrics.sigma_mean"
+      },
+      "on_fail": "FAIL"
+    },
+    {
+      "id": "G4_core_artifacts_complete",
+      "description": "Canonical proof artifact contract is complete.",
+      "status": "wired",
+      "threshold": {
+        "required_artifacts": [
+          "emergence_plot.png",
+          "summary_metrics.json",
+          "run_manifest.json"
+        ]
+      },
+      "evidence": {
+        "artifact": "run_manifest.json",
+        "source": "artifacts"
+      },
+      "on_fail": "FAIL"
+    },
+    {
+      "id": "G5_manifest_valid",
+      "description": "Canonical run manifest validation against planned dedicated manifest schema.",
+      "status": "planned",
+      "threshold": {
+        "schema_ref": "planned://schemas/run_manifest.schema.json"
+      },
+      "evidence": {
+        "artifact": "run_manifest.json",
+        "source": "manifest"
+      },
+      "on_fail": "INCONCLUSIVE"
+    },
+    {
+      "id": "G6_determinism_replay",
+      "description": "Replay with identical seed reproduces canonical verdict inputs.",
+      "status": "planned",
+      "threshold": {
+        "policy_ref": "ci/statistical_power_config.json"
+      },
+      "evidence": {
+        "artifact": "proof_report.json",
+        "source": "gates.G6_determinism_replay"
+      },
+      "on_fail": "INCONCLUSIVE"
+    },
+    {
+      "id": "G7_avalanche_evidence_sufficient",
+      "description": "Avalanche evidence passes minimum sample and fit thresholds.",
+      "status": "planned",
+      "threshold": {
+        "policy_ref": "ci/statistical_power_config.json"
+      },
+      "evidence": {
+        "artifact": "proof_report.json",
+        "source": "gates.G7_avalanche_evidence_sufficient"
+      },
+      "on_fail": "INCONCLUSIVE"
+    },
+    {
+      "id": "G8_reproducibility_envelope",
+      "description": "Cross-run variability remains inside canonical reproducibility envelope.",
+      "status": "planned",
+      "threshold": {
+        "policy_ref": "ci/statistical_power_config.json"
+      },
+      "evidence": {
+        "artifact": "proof_report.json",
+        "source": "gates.G8_reproducibility_envelope"
+      },
+      "on_fail": "INCONCLUSIVE"
+    }
+  ]
+}

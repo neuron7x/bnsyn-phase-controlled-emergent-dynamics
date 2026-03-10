@@ -1,0 +1,181 @@
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+import jsonschema
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _cli_env() -> dict[str, str]:
+    env = os.environ.copy()
+    src_path = str((ROOT / "src").resolve())
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = f"{src_path}{os.pathsep}{existing}" if existing else src_path
+    return env
+
+
+def test_milestone_state_contract() -> None:
+    payload = _load_json(ROOT / "ci" / "milestone_state.json")
+    assert payload["schema_version"] == "1.1.0"
+    assert payload["track"] == "canonical_foundation"
+    milestones = payload["milestones"]
+    expected = [f"M{i}" for i in range(12)]
+    assert list(milestones.keys()) == expected
+    for entry in milestones.values():
+        assert entry == {"closed": False, "commit": None, "ci_run": None}
+
+
+def test_statistical_power_config_shape_matches_canonical_stub() -> None:
+    payload = _load_json(ROOT / "ci" / "statistical_power_config.json")
+    assert payload["schema_version"] == "1.2.0"
+    assert payload["policy_scope"] == "canonical_avalanche_admission_stub"
+    assert payload["enforcement_status"] == "planned"
+
+    policy = payload["avalanche_admission"]
+    required_keys = {
+        "N_min",
+        "duration_min_ms",
+        "bin_width_ms",
+        "min_avalanche_count",
+        "min_tail_count",
+        "p_value_threshold",
+        "ks_max",
+    }
+    assert set(policy.keys()) == required_keys
+    assert policy["N_min"] >= 1
+    assert 0.0 < policy["p_value_threshold"] <= 1.0
+
+
+def test_validation_gate_registry_contract() -> None:
+    payload = _load_json(ROOT / "ci" / "validation_gates.json")
+    assert payload["schema_version"] == "1.2.0"
+    gates = payload["registry"]
+    gate_ids = [gate["id"] for gate in gates]
+    assert gate_ids == [
+        "G1_active_spiking",
+        "G2_rate_in_bounds",
+        "G3_sigma_in_range",
+        "G4_core_artifacts_complete",
+        "G5_manifest_valid",
+        "G6_determinism_replay",
+        "G7_avalanche_evidence_sufficient",
+        "G8_reproducibility_envelope",
+    ]
+
+    by_id = {gate["id"]: gate for gate in gates}
+    assert by_id["G1_active_spiking"]["threshold"]["metric"] == "rate_mean_hz"
+    assert by_id["G2_rate_in_bounds"]["threshold"]["metric"] == "rate_mean_hz"
+    assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
+
+    required_artifacts = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"]
+    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "run_manifest.json"]
+
+    assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
+
+    serialized = json.dumps(payload, sort_keys=True)
+    assert "canonical_proof_plot.png" not in serialized
+    assert "canonical_summary_metrics.json" not in serialized
+    assert "canonical_manifest.json" not in serialized
+    assert "spike_rate_hz_mean" not in serialized
+
+    wired = {gate_id for gate_id, gate in by_id.items() if gate["status"] == "wired"}
+    assert wired == {"G3_sigma_in_range", "G4_core_artifacts_complete"}
+
+
+def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
+    schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
+    payload = {
+        "schema_version": "1.1.0",
+        "timestamp_utc": "2026-01-01T00:00:00Z",
+        "git_commit": "abc1234",
+        "config_hash": "0" * 64,
+        "seed": 123,
+        "verdict": "INCONCLUSIVE",
+        "verdict_code": 1001,
+        "gates": {
+            "G6_determinism_replay": {
+                "status": "NOT_IMPLEMENTED",
+                "details": "planned gate"
+            }
+        },
+        "metrics": {},
+        "artifacts_verified": False,
+        "failure_reasons": ["Gate G6_determinism_replay is planned but not wired"],
+    }
+    jsonschema.validate(instance=payload, schema=schema)
+
+
+def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
+    schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
+    invalid_payload = {
+        "schema_version": "1.1.0",
+        "timestamp_utc": "2026-01-01T00:00:00Z",
+        "git_commit": "abc1234",
+        "config_hash": "0" * 64,
+        "seed": 123,
+        "verdict": "FAIL",
+        "verdict_code": "not-integer",
+        "gates": {},
+        "metrics": {},
+        "artifacts_verified": False,
+        "failure_reasons": ["bad code type"],
+    }
+    try:
+        jsonschema.validate(instance=invalid_payload, schema=schema)
+    except jsonschema.ValidationError:
+        return
+    raise AssertionError("invalid verdict_code type was accepted")
+
+
+def test_run_without_config_or_profile_fails() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "run",
+        ],
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+        cwd=ROOT,
+    )
+    assert proc.returncode == 2
+    assert "provide CONFIG or --profile canonical" in proc.stderr
+
+
+def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None:
+    output_path = tmp_path / "canonical_run.json"
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "run",
+            "--profile",
+            "canonical",
+            "--plot",
+            "--export-proof",
+            "--output",
+            str(output_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+        cwd=ROOT,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert "reserved canonical interface" in proc.stdout
+    payload = _load_json(output_path)
+    assert payload["config"]["name"] == "canonical_profile_bootstrap"
