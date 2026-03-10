@@ -5,16 +5,16 @@ This demo runs fully offline with a fixed seed and writes reproducible artifacts
 ## Canonical demo command
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
 Outputs:
-- `artifacts/canonical_plot/emergence_plot.png`
-- `artifacts/canonical_plot/summary_metrics.json`
-- `artifacts/canonical_plot/run_manifest.json`
+- `artifacts/canonical_run/emergence_plot.png`
+- `artifacts/canonical_run/summary_metrics.json`
+- `artifacts/canonical_run/run_manifest.json`
 
 ## Alternate output directory
 
 ```bash
-bnsyn plot --seed 7 --steps 300 --N 96 --out results/demo_smoke
+bnsyn run --profile canonical --plot --export-proof --output results/demo_smoke
 ```

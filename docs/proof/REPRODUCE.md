@@ -3,14 +3,14 @@
 Primary visual proof command:
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
 Expected canonical artifacts:
 
-- `artifacts/canonical_plot/emergence_plot.png`
-- `artifacts/canonical_plot/summary_metrics.json`
-- `artifacts/canonical_plot/run_manifest.json`
+- `artifacts/canonical_run/emergence_plot.png`
+- `artifacts/canonical_run/summary_metrics.json`
+- `artifacts/canonical_run/run_manifest.json`
 
 ---
 

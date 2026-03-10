@@ -11,6 +11,7 @@ schemas/experiment.schema.json
 from __future__ import annotations
 
 import json
+import hashlib
 import struct
 import zlib
 from pathlib import Path
@@ -197,11 +198,14 @@ def run_canonical_live_bundle(
     summary_metrics: dict[str, float | int] = {
         "spike_events": int(spike_steps.size),
         "rate_mean_hz": float(np.mean(rate_trace_hz)),
+        "rate_peak_hz": float(np.max(rate_trace_hz)),
         "rate_variance": float(np.var(rate_trace_hz)),
         "sigma_mean": float(np.mean(sigma_trace)),
+        "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
         "sigma_variance": float(np.var(sigma_trace)),
         "seed": seed,
         "N": int(config.network.size),
+        "steps": steps,
         "duration_ms": float(config.simulation.duration_ms),
         "dt_ms": float(config.simulation.dt_ms),
         "external_current_pA": float(config.simulation.external_current_pA),
@@ -209,19 +213,45 @@ def run_canonical_live_bundle(
     summary_path = out_dir / "summary_metrics.json"
     summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
+    emergence_plot_path = out_dir / "emergence_plot.png"
+    rate_image = _build_rate_image(rate_trace_hz)
+    _write_grayscale_png(rate_image, emergence_plot_path)
+
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
     _write_grayscale_png(raster_image, raster_path)
 
     rate_plot_path = out_dir / "population_rate_plot.png"
-    rate_image = _build_rate_image(rate_trace_hz)
     _write_grayscale_png(rate_image, rate_plot_path)
+
+    manifest = {
+        "schema_version": "1.0.0",
+        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "seed": seed,
+        "steps": steps,
+        "N": int(config.network.size),
+        "dt_ms": float(config.simulation.dt_ms),
+        "duration_ms": float(config.simulation.duration_ms),
+        "artifacts": {
+            "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
+            "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
+            "run_manifest.json": "pending",
+            "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
+            "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
+        },
+    }
+    manifest_path = out_dir / "run_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest["artifacts"]["run_manifest.json"] = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     return {
         "artifact_dir": out_dir.as_posix(),
         "artifact_npz": artifact_npz,
+        "run_manifest_path": manifest_path.as_posix(),
         "summary_metrics": summary_metrics,
         "summary_metrics_path": summary_path.as_posix(),
+        "emergence_plot_path": emergence_plot_path.as_posix(),
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),
         "emergence_metrics": metrics,

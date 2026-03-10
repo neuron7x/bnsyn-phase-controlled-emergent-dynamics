@@ -22,7 +22,7 @@ python -m bnsyn --help
 ## Run canonical proof command
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
 ## Expected output contract

@@ -18,9 +18,13 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert out_dir == tmp_path / "canonical_run"
 
     summary_path = out_dir / "summary_metrics.json"
+    manifest_path = out_dir / "run_manifest.json"
+    emergence_plot_path = out_dir / "emergence_plot.png"
     raster_path = out_dir / "raster_plot.png"
     rate_plot_path = out_dir / "population_rate_plot.png"
     assert summary_path.exists()
+    assert manifest_path.exists()
+    assert emergence_plot_path.exists()
     assert raster_path.exists()
     assert rate_plot_path.exists()
 
@@ -28,9 +32,14 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     required = {
         "spike_events",
         "rate_mean_hz",
+        "rate_peak_hz",
         "rate_variance",
         "sigma_mean",
+        "sigma_final",
         "sigma_variance",
+        "steps",
+        "dt_ms",
+        "duration_ms",
     }
     assert required.issubset(metrics)
     assert metrics["spike_events"] > 0

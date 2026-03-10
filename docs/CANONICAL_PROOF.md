@@ -1,17 +1,17 @@
 # Canonical Emergence Proof Path
 
-`bnsyn plot` is the canonical command for a single reproducible BN-Syn emergence proof run.
+`bnsyn run --profile canonical --plot --export-proof` is the canonical command for a single reproducible BN-Syn emergence proof run.
 
 ## Command
 
 ```bash
-bnsyn plot
+bnsyn run --profile canonical --plot --export-proof
 ```
 
 Optional controls:
 
 ```bash
-bnsyn plot --seed 123 --steps 500 --N 128 --dt-ms 0.5 --backend reference --out artifacts/canonical_plot
+bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
 ```
 
 ## Artifact contract (required)
