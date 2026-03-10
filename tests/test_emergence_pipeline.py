@@ -307,3 +307,34 @@ def test_cli_emergence_plot_via_main(
 def test_compute_steps_exact_rejects_tolerance_mismatch() -> None:
     with pytest.raises(ValueError, match="within tolerance"):
         compute_steps_exact(duration_ms=10.0, dt_ms=0.3)
+
+
+def test_run_emergence_to_disk_rejects_non_real_current(tmp_path: Path) -> None:
+    with pytest.raises(TypeError, match="finite real number"):
+        run_emergence_to_disk(
+            N=20,
+            dt_ms=0.1,
+            duration_ms=10.0,
+            seed=1,
+            external_current_pA="invalid_type",  # type: ignore[arg-type]
+            output_dir=tmp_path,
+        )
+
+
+def test_plotter_rejects_out_of_bounds_neurons(tmp_path: Path) -> None:
+    npz_path = tmp_path / "bad_neurons.npz"
+    np.savez(
+        npz_path,
+        format_version=np.asarray("1.1.0"),
+        spike_steps=np.asarray([0]),
+        spike_neurons=np.asarray([999]),
+        sigma_trace=np.asarray([1.0]),
+        rate_trace_hz=np.asarray([5.0]),
+        dt_ms=np.asarray(0.1),
+        steps=np.asarray(1),
+        N=np.asarray(10),
+        seed=np.asarray(42),
+        external_current_pA=np.asarray(410.0),
+    )
+    with pytest.raises(ValueError, match=r"spike_neurons values must be in \[0, N\)"):
+        plot_emergence_npz(npz_path, tmp_path / "out.png")

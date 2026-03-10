@@ -810,27 +810,27 @@ def main() -> None:
     )
     plot.set_defaults(func=_cmd_plot)
 
-    emergence_run = sub.add_parser("emergence-run", help="Run emergence artifact capture")  # pragma: no cover
-    emergence_run.add_argument("--N", type=int, default=500)  # pragma: no cover
-    emergence_run.add_argument("--dt-ms", type=float, default=0.1)  # pragma: no cover
-    emergence_run.add_argument("--duration-ms", type=float, default=2000.0)  # pragma: no cover
-    emergence_run.add_argument("--seed", type=int, default=42)  # pragma: no cover
-    emergence_run.add_argument("--external-current-pA", type=float, default=410.0)  # pragma: no cover
-    emergence_run.add_argument("--out", type=Path, default=Path("artifacts/emergence"))  # pragma: no cover
-    emergence_run.set_defaults(func=_cmd_emergence_run)  # pragma: no cover
+    emergence_run = sub.add_parser("emergence-run", help="Run emergence artifact capture")
+    emergence_run.add_argument("--N", type=int, default=500)
+    emergence_run.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_run.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_run.add_argument("--seed", type=int, default=42)
+    emergence_run.add_argument("--external-current-pA", type=float, default=410.0)
+    emergence_run.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
+    emergence_run.set_defaults(func=_cmd_emergence_run)
 
-    emergence_sweep = sub.add_parser("emergence-sweep", help="Run fixed emergence current sweep")  # pragma: no cover
-    emergence_sweep.add_argument("--N", type=int, default=500)  # pragma: no cover
-    emergence_sweep.add_argument("--dt-ms", type=float, default=0.1)  # pragma: no cover
-    emergence_sweep.add_argument("--duration-ms", type=float, default=2000.0)  # pragma: no cover
-    emergence_sweep.add_argument("--seed", type=int, default=42)  # pragma: no cover
-    emergence_sweep.add_argument("--out", type=Path, default=Path("artifacts/emergence"))  # pragma: no cover
-    emergence_sweep.set_defaults(func=_cmd_emergence_sweep)  # pragma: no cover
+    emergence_sweep = sub.add_parser("emergence-sweep", help="Run fixed emergence current sweep")
+    emergence_sweep.add_argument("--N", type=int, default=500)
+    emergence_sweep.add_argument("--dt-ms", type=float, default=0.1)
+    emergence_sweep.add_argument("--duration-ms", type=float, default=2000.0)
+    emergence_sweep.add_argument("--seed", type=int, default=42)
+    emergence_sweep.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
+    emergence_sweep.set_defaults(func=_cmd_emergence_sweep)
 
-    emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")  # pragma: no cover
-    emergence_plot.add_argument("--input", required=True)  # pragma: no cover
-    emergence_plot.add_argument("--output", required=True)  # pragma: no cover
-    emergence_plot.set_defaults(func=_cmd_emergence_plot)  # pragma: no cover
+    emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")
+    emergence_plot.add_argument("--input", required=True)
+    emergence_plot.add_argument("--output", required=True)
+    emergence_plot.set_defaults(func=_cmd_emergence_plot)
 
     args = p.parse_args()
     try:
