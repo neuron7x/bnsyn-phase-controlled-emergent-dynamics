@@ -1,28 +1,24 @@
-# M0 Bootstrap Foundation (PR-00 direction correction)
+# M0 Bootstrap Foundation (canonical contract normalization)
 
-M0 establishes a machine-readable control plane that is explicitly aligned to the canonical proof objective:
+M0 defines the machine-readable control plane for the canonical objective:
 
 Clone → Run → See → Verify emergent dynamics.
 
-## Foundation controls
+This normalization pass aligns bootstrap naming to canonical proof vocabulary so later milestones can build without rename churn.
 
-- `ci/milestone_state.json`: lifecycle state for milestones `M0` through `M11`.
-- `ci/statistical_power_config.json`: planned canonical avalanche-admission thresholds (stored now, enforced later).
-- `ci/validation_gates.json`: canonical gate registry using `G1`..`G8` IDs and explicit `wired` vs `planned` statuses.
-- `schemas/proof-report.schema.json`: bootstrap proof-report contract for verdict + gate-level machine validation.
-- `configs/canonical_profile.yaml`: deterministic canonical profile scaffold used by `bnsyn run --profile canonical`.
+## Normalized controls
 
-## Canonical command shape and honesty
+- `ci/statistical_power_config.json`
+  - keeps avalanche admission as `planned` policy (future enforcement),
+  - uses canonical admission keys: `N_min`, `duration_min_ms`, `bin_width_ms`, `min_avalanche_count`, `min_tail_count`, `p_value_threshold`, `ks_max`.
+- `ci/validation_gates.json`
+  - uses canonical gate IDs `G1`..`G8`,
+  - uses canonical metric vocabulary (`rate_mean_hz`, `sigma_mean`),
+  - points `G4_core_artifacts_complete` to canonical artifact contract: `emergence_plot.png`, `summary_metrics.json`, `run_manifest.json`.
+- `schemas/proof-report.schema.json`
+  - remains minimal and strict for bootstrap (`verdict`, numeric `verdict_code`, `gates`, `metrics`, `artifacts_verified`, `failure_reasons`).
 
-Bootstrap CLI compatibility remains:
+## Honesty boundary at M0
 
-```bash
-bnsyn run --profile canonical --plot --export-proof
-```
-
-At M0 this means:
-- profile routing is deterministic and active;
-- the interface is reserved for canonical run/proof flow;
-- `--plot` and `--export-proof` are accepted but not yet fully wired.
-
-This keeps the interface stable without claiming proof-export completeness before M1/M2 implementation.
+The control plane is normalized and machine-readable, but full proof execution and all gate evaluators remain partially planned.
+Only gates with evidence paths already present in the canonical artifact path are marked `wired`.

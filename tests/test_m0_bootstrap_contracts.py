@@ -37,6 +37,7 @@ def test_milestone_state_contract() -> None:
 
 def test_statistical_power_config_shape_matches_canonical_stub() -> None:
     payload = _load_json(ROOT / "ci" / "statistical_power_config.json")
+    assert payload["schema_version"] == "1.2.0"
     assert payload["policy_scope"] == "canonical_avalanche_admission_stub"
     assert payload["enforcement_status"] == "planned"
 
@@ -57,6 +58,7 @@ def test_statistical_power_config_shape_matches_canonical_stub() -> None:
 
 def test_validation_gate_registry_contract() -> None:
     payload = _load_json(ROOT / "ci" / "validation_gates.json")
+    assert payload["schema_version"] == "1.2.0"
     gates = payload["registry"]
     gate_ids = [gate["id"] for gate in gates]
     assert gate_ids == [
@@ -69,10 +71,25 @@ def test_validation_gate_registry_contract() -> None:
         "G7_avalanche_evidence_sufficient",
         "G8_reproducibility_envelope",
     ]
-    planned = [gate for gate in gates if gate["status"] == "planned"]
-    assert len(planned) >= 1
+
+    by_id = {gate["id"]: gate for gate in gates}
+    assert by_id["G1_active_spiking"]["threshold"]["metric"] == "rate_mean_hz"
+    assert by_id["G2_rate_in_bounds"]["threshold"]["metric"] == "rate_mean_hz"
+    assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
+
+    required_artifacts = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"]
+    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "run_manifest.json"]
+
+    assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
+
     serialized = json.dumps(payload, sort_keys=True)
-    assert "emergence_plot.png" not in serialized
+    assert "canonical_proof_plot.png" not in serialized
+    assert "canonical_summary_metrics.json" not in serialized
+    assert "canonical_manifest.json" not in serialized
+    assert "spike_rate_hz_mean" not in serialized
+
+    wired = {gate_id for gate_id, gate in by_id.items() if gate["status"] == "wired"}
+    assert wired == {"G3_sigma_in_range", "G4_core_artifacts_complete"}
 
 
 def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
@@ -120,8 +137,6 @@ def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
     raise AssertionError("invalid verdict_code type was accepted")
 
 
-
-
 def test_run_without_config_or_profile_fails() -> None:
     proc = subprocess.run(
         [
@@ -137,6 +152,8 @@ def test_run_without_config_or_profile_fails() -> None:
     )
     assert proc.returncode == 2
     assert "provide CONFIG or --profile canonical" in proc.stderr
+
+
 def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None:
     output_path = tmp_path / "canonical_run.json"
     proc = subprocess.run(

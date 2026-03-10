@@ -1,27 +1,27 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "registry": [
     {
       "id": "G1_active_spiking",
-      "description": "Canonical run reports non-zero spiking activity.",
-      "status": "wired",
+      "description": "Canonical proof path reports non-zero mean firing rate.",
+      "status": "planned",
       "threshold": {
-        "metric": "spike_rate_hz_mean",
+        "metric": "rate_mean_hz",
         "op": ">",
         "value": 0.0
       },
       "evidence": {
         "artifact": "summary_metrics.json",
-        "source": "metrics.spike_rate_hz_mean"
+        "source": "metrics.rate_mean_hz"
       },
       "on_fail": "FAIL"
     },
     {
       "id": "G2_rate_in_bounds",
-      "description": "Canonical run mean spike rate remains inside accepted operational bounds.",
-      "status": "wired",
+      "description": "Canonical proof path mean firing rate stays in acceptable operational bounds.",
+      "status": "planned",
       "threshold": {
-        "metric": "spike_rate_hz_mean",
+        "metric": "rate_mean_hz",
         "op": "between",
         "value": [
           0.1,
@@ -30,13 +30,13 @@
       },
       "evidence": {
         "artifact": "summary_metrics.json",
-        "source": "metrics.spike_rate_hz_mean"
+        "source": "metrics.rate_mean_hz"
       },
       "on_fail": "FAIL"
     },
     {
       "id": "G3_sigma_in_range",
-      "description": "Canonical run criticality sigma remains in admissible range.",
+      "description": "Canonical proof path sigma_mean remains in admissible range.",
       "status": "wired",
       "threshold": {
         "metric": "sigma_mean",
@@ -50,35 +50,34 @@
         "artifact": "summary_metrics.json",
         "source": "metrics.sigma_mean"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     },
     {
       "id": "G4_core_artifacts_complete",
-      "description": "Canonical proof bundle completeness check for canonical proof artifacts.",
-      "status": "planned",
+      "description": "Canonical proof artifact contract is complete.",
+      "status": "wired",
       "threshold": {
         "required_artifacts": [
-          "canonical_proof_plot.png",
-          "canonical_summary_metrics.json",
-          "canonical_manifest.json",
-          "proof_report.json"
+          "emergence_plot.png",
+          "summary_metrics.json",
+          "run_manifest.json"
         ]
       },
       "evidence": {
-        "artifact": "proof_report.json",
-        "source": "artifacts_verified"
+        "artifact": "run_manifest.json",
+        "source": "artifacts"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     },
     {
       "id": "G5_manifest_valid",
-      "description": "Canonical manifest conforms to planned proof-manifest schema.",
+      "description": "Canonical run manifest validation against planned dedicated manifest schema.",
       "status": "planned",
       "threshold": {
-        "schema_ref": "schemas/proof-report.schema.json"
+        "schema_ref": "planned://schemas/run_manifest.schema.json"
       },
       "evidence": {
-        "artifact": "canonical_manifest.json",
+        "artifact": "run_manifest.json",
         "source": "manifest"
       },
       "on_fail": "INCONCLUSIVE"
