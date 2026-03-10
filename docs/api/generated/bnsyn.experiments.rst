@@ -11,3 +11,4 @@ bnsyn.experiments
    :recursive:
 
    declarative
+   emergence

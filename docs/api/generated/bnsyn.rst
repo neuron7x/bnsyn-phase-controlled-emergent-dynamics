@@ -10,7 +10,9 @@
    :toctree:
    :recursive:
 
+   api
    benchmarks
+   biodigital
    calibration
    cli
    config

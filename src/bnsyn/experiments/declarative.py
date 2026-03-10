@@ -16,6 +16,8 @@ from typing import Any
 
 import yaml  # type: ignore[import-untyped]
 
+from bnsyn.experiments.emergence import run_emergence_to_disk
+from bnsyn.numerics.time import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
 
@@ -104,15 +106,34 @@ def run_experiment(config: BNSynExperimentConfig) -> dict[str, Any]:
             "network_size": config.network.size,
             "duration_ms": config.simulation.duration_ms,
             "dt_ms": config.simulation.dt_ms,
+            "external_current_pA": config.simulation.external_current_pA,
         },
         "runs": [],
     }
 
-    steps = int(config.simulation.duration_ms / config.simulation.dt_ms)
+    steps = compute_steps_exact(config.simulation.duration_ms, config.simulation.dt_ms)
 
     for seed in config.experiment.seeds:
+        if config.simulation.artifact_dir is not None:
+            metrics, artifact_path = run_emergence_to_disk(
+                N=config.network.size,
+                dt_ms=config.simulation.dt_ms,
+                duration_ms=config.simulation.duration_ms,
+                seed=seed,
+                external_current_pA=config.simulation.external_current_pA,
+                output_dir=Path(config.simulation.artifact_dir),
+            )
+            results["runs"].append(
+                {"seed": seed, "metrics": metrics, "artifact_npz": artifact_path}
+            )
+            continue
+
         metrics = run_simulation(
-            steps=steps, dt_ms=config.simulation.dt_ms, seed=seed, N=config.network.size
+            steps=steps,
+            dt_ms=config.simulation.dt_ms,
+            seed=seed,
+            N=config.network.size,
+            external_current_pA=config.simulation.external_current_pA,
         )
         results["runs"].append({"seed": seed, "metrics": metrics})
 
@@ -149,7 +170,8 @@ def run_from_yaml(config_path: str | Path, output_path: str | Path | None = None
     print(
         f"  Network: N={config.network.size}, "
         f"Duration: {config.simulation.duration_ms}ms, "
-        f"dt: {config.simulation.dt_ms}ms"
+        f"dt: {config.simulation.dt_ms}ms, "
+        f"I_ext: {config.simulation.external_current_pA}pA"
     )
     print(f"  Seeds: {len(config.experiment.seeds)} runs")
 
