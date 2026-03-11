@@ -251,8 +251,8 @@ def _discover_seed(artifact_dir: Path) -> int:
         value = summary.get("seed")
         if isinstance(value, int) and value >= 0:
             return value
-    except Exception:
-        pass
+    except (OSError, ValueError, json.JSONDecodeError):
+        return 0
     return 0
 
 
