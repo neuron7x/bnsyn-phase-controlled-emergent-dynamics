@@ -6,7 +6,7 @@ Primary visual proof command:
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-Expected canonical artifacts:
+Base-mode artifacts (`bnsyn run --profile canonical --plot`):
 
 - `artifacts/canonical_run/emergence_plot.png`
 - `artifacts/canonical_run/summary_metrics.json`
@@ -14,6 +14,10 @@ Expected canonical artifacts:
 - `artifacts/canonical_run/criticality_report.json`
 - `artifacts/canonical_run/avalanche_report.json`
 - `artifacts/canonical_run/phase_space_report.json`
+
+Export-proof additional artifact (`bnsyn run --profile canonical --plot --export-proof`):
+
+- `artifacts/canonical_run/proof_report.json`
 
 ---
 

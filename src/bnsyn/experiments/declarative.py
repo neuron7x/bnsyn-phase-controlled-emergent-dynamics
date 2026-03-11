@@ -24,6 +24,7 @@ from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.numerics import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
+from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof
 
 
 def load_config(config_path: str | Path) -> BNSynExperimentConfig:
@@ -352,6 +353,7 @@ def _build_phase_space_report(
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
+    export_proof: bool = False,
 ) -> dict[str, Any]:
     """Execute canonical profile and write deterministic live-run artifacts."""
     config = load_config(config_path)
@@ -468,9 +470,11 @@ def run_canonical_live_bundle(
     emergence_image = _build_emergence_image(raster_image, rate_image)
     _write_grayscale_png(emergence_image, emergence_plot_path)
 
-    manifest = {
+    manifest: dict[str, Any] = {
         "schema_version": "1.0.0",
-        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+        "cmd": command_for_export_proof(export_proof),
+        "bundle_contract": bundle_contract_for_export_proof(export_proof),
+        "export_proof": bool(export_proof),
         "seed": seed,
         "steps": steps,
         "N": int(config.network.size),
@@ -490,6 +494,15 @@ def run_canonical_live_bundle(
     manifest_path = out_dir / "run_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
+    proof_report_path: Path | None = None
+    proof_report: dict[str, Any] | None = None
+    if export_proof:
+        from bnsyn.proof.evaluate import evaluate_and_emit
+
+        evaluation = evaluate_and_emit(out_dir)
+        proof_report_path = evaluation.report_path
+        proof_report = evaluation.report
+
     return {
         "artifact_dir": out_dir.as_posix(),
         "artifact_npz": artifact_npz,
@@ -506,4 +519,6 @@ def run_canonical_live_bundle(
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),
         "emergence_metrics": metrics,
+        "proof_report": proof_report,
+        "proof_report_path": proof_report_path.as_posix() if proof_report_path is not None else None,
     }

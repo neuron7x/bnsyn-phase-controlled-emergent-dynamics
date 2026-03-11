@@ -34,6 +34,7 @@ from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
 from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
 from bnsyn.viz.emergence_plot import plot_emergence_npz
+from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
 
 EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
 
@@ -205,13 +206,12 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         return 2
 
     if profile == "canonical":
-        if export_proof:
-            print(
-                "Notice: --export-proof remains reserved; canonical run currently emits a live-run bundle, not full proof packaging",
-                file=sys.stderr,
-            )
         try:
-            bundle = run_canonical_live_bundle(config_path, output or "artifacts/canonical_run")
+            bundle = run_canonical_live_bundle(
+                config_path,
+                output or "artifacts/canonical_run",
+                export_proof=export_proof,
+            )
         except Exception as e:
             print(f"Error running experiment: {e}")
             return 1
@@ -219,9 +219,12 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         if plot:
             print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
 
+        bundle_contract = bundle_contract_for_export_proof(export_proof)
+
         payload = {
             "status": "ok",
-            "artifacts": ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"],
+            "bundle_contract": bundle_contract,
+            "artifacts": list(artifacts_for_export_proof(export_proof)),
             **bundle,
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
@@ -230,7 +233,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     if plot:
         print("Notice: --plot only applies to --profile canonical at this milestone", file=sys.stderr)
     if export_proof:
-        print("Notice: --export-proof reserved; full proof export is not wired for generic run", file=sys.stderr)
+        print("Notice: --export-proof only applies to --profile canonical at this milestone", file=sys.stderr)
 
     try:
         run_from_yaml(config_path, output)
@@ -525,7 +528,6 @@ def _render_emergence_plot(
     raster_points: list[tuple[int, int]],
 ) -> None:  # pragma: no cover - optional matplotlib rendering path
     import matplotlib.pyplot as plt
-
     fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
 
     ax = axes[0, 0]
@@ -676,6 +678,25 @@ def _cmd_emergence_plot(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_proof_evaluate(args: argparse.Namespace) -> int:
+    from bnsyn.proof.evaluate import evaluate_and_emit
+
+    evaluation = evaluate_and_emit(args.artifact_dir)
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "artifact_dir": str(args.artifact_dir),
+                "proof_report_path": evaluation.report_path.as_posix(),
+                "verdict": evaluation.report["verdict"],
+                "verdict_code": evaluation.report["verdict_code"],
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def main() -> None:
     """Entry point for the BN-Syn CLI.
 
@@ -744,7 +765,7 @@ def main() -> None:
     run_parser.add_argument(
         "--export-proof",
         action="store_true",
-        help="Reserved flag for future full proof export packaging",
+        help="Emit proof_report.json and finalize manifest/proof consistency for canonical profile",
     )
     run_parser.add_argument("-o", "--output", help="Output directory path (default: artifacts/canonical_run for canonical profile)")
     run_parser.set_defaults(func=_cmd_run_experiment)
@@ -814,6 +835,15 @@ def main() -> None:
     emergence_sweep.add_argument("--seed", type=int, default=42)
     emergence_sweep.add_argument("--out", type=Path, default=Path("artifacts/emergence"))
     emergence_sweep.set_defaults(func=_cmd_emergence_sweep)
+
+
+    proof_eval = sub.add_parser("proof-evaluate", help="Evaluate canonical artifacts and emit proof report")
+    proof_eval.add_argument(
+        "artifact_dir",
+        type=Path,
+        help="Artifact directory containing summary_metrics.json and run_manifest.json",
+    )
+    proof_eval.set_defaults(func=_cmd_proof_evaluate)
 
     emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")
     emergence_plot.add_argument("--input", required=True)

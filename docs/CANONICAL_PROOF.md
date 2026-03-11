@@ -16,7 +16,7 @@ bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical
 
 ## Artifact contract (required)
 
-The command writes exactly this proof bundle to the output directory:
+Canonical base bundle (`bnsyn run --profile canonical --plot`):
 
 - `emergence_plot.png` — primary canonical emergence visual, a composite image built from spike raster activity and population rate dynamics.
 - `summary_metrics.json` — numeric summary for the run.
@@ -24,6 +24,11 @@ The command writes exactly this proof bundle to the output directory:
 - `criticality_report.json` — machine-readable criticality metrics derived from the canonical run traces.
 - `avalanche_report.json` — machine-readable avalanche event-structure metrics from contiguous nonzero spike-count bins.
 - `phase_space_report.json` — machine-readable state-space trajectory metrics from population rate and sigma traces.
+
+Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-proof`):
+
+- all base bundle artifacts, plus
+- `proof_report.json` — gate-evaluated proof verdict evaluated against the finalized `run_manifest.json` state.
 
 ## Mechanism narrative (research-facing)
 

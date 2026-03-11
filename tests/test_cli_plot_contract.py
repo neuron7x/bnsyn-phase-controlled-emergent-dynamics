@@ -6,8 +6,11 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
-from bnsyn.cli import _cmd_plot
+import pytest
+
+from bnsyn.cli import _cmd_plot, _cmd_proof_evaluate
 
 
 def _cli_env() -> dict[str, str]:
@@ -41,7 +44,7 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     assert "sigma_mean" in summary
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
+    assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
     assert "artifacts" in manifest
     assert "emergence_plot.png" in manifest["artifacts"]
     assert "summary_metrics.json" in manifest["artifacts"]
@@ -78,3 +81,33 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
         "phase_space_report.json",
         "run_manifest.json",
     ]
+
+
+def test_cmd_plot_returns_error_when_bundle_raises(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    def _boom(*_args: object, **_kwargs: object) -> dict[str, object]:
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr("bnsyn.experiments.declarative.run_canonical_live_bundle", _boom)
+    rc = _cmd_plot(argparse.Namespace(out=str(tmp_path / "ignored")))
+    captured = capsys.readouterr()
+    assert rc == 1
+    assert "Error running canonical compatibility plot wrapper: boom" in captured.out
+
+
+def test_cmd_proof_evaluate_emits_expected_payload(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    expected_path = tmp_path / "proof_report.json"
+    expected = SimpleNamespace(report={"verdict": "PASS", "verdict_code": 0}, report_path=expected_path)
+    monkeypatch.setattr("bnsyn.proof.evaluate.evaluate_and_emit", lambda _artifact_dir: expected)
+
+    rc = _cmd_proof_evaluate(SimpleNamespace(artifact_dir=tmp_path))
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert rc == 0
+    assert payload == {
+        "status": "ok",
+        "artifact_dir": str(tmp_path),
+        "proof_report_path": expected_path.as_posix(),
+        "verdict": "PASS",
+        "verdict_code": 0,
+    }

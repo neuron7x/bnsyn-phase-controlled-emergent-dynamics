@@ -14,13 +14,16 @@ make setup
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-Expected artifacts in `artifacts/canonical_run/`:
+Base mode artifacts (`bnsyn run --profile canonical --plot`):
 - `emergence_plot.png`
 - `summary_metrics.json`
 - `run_manifest.json`
 - `criticality_report.json`
 - `avalanche_report.json`
 - `phase_space_report.json`
+
+Export-proof additional artifact (`bnsyn run --profile canonical --plot --export-proof`):
+- `proof_report.json`
 
 ## 3) Run tests
 

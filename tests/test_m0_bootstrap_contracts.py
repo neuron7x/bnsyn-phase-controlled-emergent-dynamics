@@ -73,12 +73,13 @@ def test_validation_gate_registry_contract() -> None:
     ]
 
     by_id = {gate["id"]: gate for gate in gates}
-    assert by_id["G1_active_spiking"]["threshold"]["metric"] == "rate_mean_hz"
+    assert by_id["G1_active_spiking"]["threshold"]["metric"] == "spike_events"
     assert by_id["G2_rate_in_bounds"]["threshold"]["metric"] == "rate_mean_hz"
     assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
 
-    required_artifacts = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts"]
-    assert required_artifacts == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
+    required_by_mode = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]
+    assert required_by_mode["canonical-base"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
+    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json", "proof_report.json"]
 
     assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
 
@@ -89,27 +90,31 @@ def test_validation_gate_registry_contract() -> None:
     assert "spike_rate_hz_mean" not in serialized
 
     wired = {gate_id for gate_id, gate in by_id.items() if gate["status"] == "wired"}
-    assert wired == {"G3_sigma_in_range", "G4_core_artifacts_complete"}
+    assert wired == {"G1_active_spiking", "G2_rate_in_bounds", "G3_sigma_in_range", "G4_core_artifacts_complete", "G5_manifest_valid"}
 
 
 def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
-        "schema_version": "1.1.0",
-        "timestamp_utc": "2026-01-01T00:00:00Z",
-        "git_commit": "abc1234",
-        "config_hash": "0" * 64,
+        "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
+        "timestamp_utc": "1970-01-01T00:00:00Z",
         "seed": 123,
         "verdict": "INCONCLUSIVE",
         "verdict_code": 1001,
         "gates": {
-            "G6_determinism_replay": {
-                "status": "NOT_IMPLEMENTED",
-                "details": "planned gate"
-            }
+            "G1_active_spiking": {"status": "PASS"},
+            "G2_rate_in_bounds": {"status": "PASS"},
+            "G3_sigma_in_range": {"status": "PASS"},
+            "G4_core_artifacts_complete": {"status": "PASS"},
+            "G5_manifest_valid": {"status": "PASS"},
+            "G6_determinism_replay": {"status": "INCONCLUSIVE", "details": "planned gate"},
+            "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
+            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"}
         },
         "metrics": {},
-        "artifacts_verified": False,
+        "artifacts_verified": [],
         "failure_reasons": ["Gate G6_determinism_replay is planned but not wired"],
     }
     jsonschema.validate(instance=payload, schema=schema)
@@ -118,16 +123,25 @@ def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
 def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     invalid_payload = {
-        "schema_version": "1.1.0",
-        "timestamp_utc": "2026-01-01T00:00:00Z",
-        "git_commit": "abc1234",
-        "config_hash": "0" * 64,
+        "schema_version": "1.0.0",
+        "bundle_contract": "canonical-export-proof",
+        "export_proof": True,
+        "timestamp_utc": "1970-01-01T00:00:00Z",
         "seed": 123,
         "verdict": "FAIL",
         "verdict_code": "not-integer",
-        "gates": {},
+        "gates": {
+            "G1_active_spiking": {"status": "PASS"},
+            "G2_rate_in_bounds": {"status": "PASS"},
+            "G3_sigma_in_range": {"status": "PASS"},
+            "G4_core_artifacts_complete": {"status": "PASS"},
+            "G5_manifest_valid": {"status": "PASS"},
+            "G6_determinism_replay": {"status": "INCONCLUSIVE"},
+            "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
+            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"}
+        },
         "metrics": {},
-        "artifacts_verified": False,
+        "artifacts_verified": [],
         "failure_reasons": ["bad code type"],
     }
     try:
@@ -176,7 +190,6 @@ def test_run_profile_canonical_executes_bootstrap_config(tmp_path: Path) -> None
         cwd=ROOT,
     )
     assert proc.returncode == 0, proc.stderr
-    assert "--export-proof remains reserved" in proc.stderr
     summary_path = output_dir / "summary_metrics.json"
     criticality_path = output_dir / "criticality_report.json"
     avalanche_path = output_dir / "avalanche_report.json"

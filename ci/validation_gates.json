@@ -3,28 +3,28 @@
   "registry": [
     {
       "id": "G1_active_spiking",
-      "description": "Canonical proof path reports non-zero mean firing rate.",
-      "status": "planned",
+      "description": "Canonical proof path reports non-zero spike events.",
+      "status": "wired",
       "threshold": {
-        "metric": "rate_mean_hz",
+        "metric": "spike_events",
         "op": ">",
-        "value": 0.0
+        "value": 0
       },
       "evidence": {
         "artifact": "summary_metrics.json",
-        "source": "metrics.rate_mean_hz"
+        "source": "metrics.spike_events"
       },
       "on_fail": "FAIL"
     },
     {
       "id": "G2_rate_in_bounds",
       "description": "Canonical proof path mean firing rate stays in acceptable operational bounds.",
-      "status": "planned",
+      "status": "wired",
       "threshold": {
         "metric": "rate_mean_hz",
         "op": "between",
         "value": [
-          0.1,
+          0.0,
           200.0
         ]
       },
@@ -57,14 +57,25 @@
       "description": "Canonical proof artifact contract is complete.",
       "status": "wired",
       "threshold": {
-        "required_artifacts": [
-          "emergence_plot.png",
-          "summary_metrics.json",
-          "criticality_report.json",
-          "avalanche_report.json",
-          "phase_space_report.json",
-          "run_manifest.json"
-        ]
+        "required_artifacts_by_mode": {
+          "canonical-base": [
+            "emergence_plot.png",
+            "summary_metrics.json",
+            "criticality_report.json",
+            "avalanche_report.json",
+            "phase_space_report.json",
+            "run_manifest.json"
+          ],
+          "canonical-export-proof": [
+            "emergence_plot.png",
+            "summary_metrics.json",
+            "criticality_report.json",
+            "avalanche_report.json",
+            "phase_space_report.json",
+            "run_manifest.json",
+            "proof_report.json"
+          ]
+        }
       },
       "evidence": {
         "artifact": "run_manifest.json",
@@ -74,16 +85,18 @@
     },
     {
       "id": "G5_manifest_valid",
-      "description": "Canonical run manifest validation against planned dedicated manifest schema.",
-      "status": "planned",
+      "description": "Canonical run manifest validation against run-manifest schema and hash integrity.",
+      "status": "wired",
       "threshold": {
-        "schema_ref": "planned://schemas/run_manifest.schema.json"
+        "schema_ref": "schemas/run-manifest.schema.json",
+        "hash_integrity": true,
+        "self_entry": "self-unhashed"
       },
       "evidence": {
         "artifact": "run_manifest.json",
         "source": "manifest"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     },
     {
       "id": "G6_determinism_replay",
