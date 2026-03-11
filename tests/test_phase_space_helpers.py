@@ -93,3 +93,44 @@ def test_phase_space_report_trajectory_metric_semantics_3d() -> None:
     )
     expected = float(np.sqrt(3.0**2 + 4.0**2 + 0.12**2))
     assert report["trajectory_length_l2"] == pytest.approx(expected)
+
+
+def test_coherence_from_voltages_rejects_invalid_thresholds() -> None:
+    with pytest.raises(ValueError, match="must be finite"):
+        coherence_from_voltages(np.asarray([0.0], dtype=np.float64), np.nan, -55.0)
+    with pytest.raises(ValueError, match="greater than"):
+        coherence_from_voltages(np.asarray([0.0], dtype=np.float64), -55.0, -55.0)
+
+
+def test_phase_trajectory_image_rejects_invalid_dims_and_non_1d_trace() -> None:
+    with pytest.raises(ValueError, match="positive integer"):
+        build_phase_trajectory_image(np.asarray([1.0]), np.asarray([1.0]), width=0)
+    with pytest.raises(ValueError, match="1-D"):
+        build_phase_trajectory_image(np.asarray([[1.0]], dtype=np.float64), np.asarray([1.0]))
+
+
+def test_phase_trajectory_image_empty_trace_returns_blank_canvas() -> None:
+    image = build_phase_trajectory_image(np.asarray([], dtype=np.float64), np.asarray([], dtype=np.float64), width=8, height=6)
+    assert image.shape == (6, 8)
+    assert np.all(image == 255)
+
+
+def test_activity_map_rejects_mismatch_and_invalid_grid() -> None:
+    with pytest.raises(ValueError, match="positive integer"):
+        build_activity_map(np.asarray([1.0]), np.asarray([1.0]), grid_size=0)
+    with pytest.raises(ValueError, match="equal length"):
+        build_activity_map(np.asarray([1.0, 2.0]), np.asarray([1.0]), grid_size=4)
+
+
+def test_phase_space_report_rejects_negative_steps() -> None:
+    with pytest.raises(ValueError, match="non-negative integer"):
+        build_phase_space_report(
+            seed=1,
+            n_neurons=2,
+            dt_ms=1.0,
+            duration_ms=1.0,
+            steps=-1,
+            rate_trace_hz=np.asarray([], dtype=np.float64),
+            sigma_trace=np.asarray([], dtype=np.float64),
+            coherence_trace=np.asarray([], dtype=np.float64),
+        )
