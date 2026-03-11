@@ -66,8 +66,10 @@ def mode_from_manifest(manifest: dict[str, Any]) -> tuple[ManifestMode | None, l
     if errors:
         return None, errors
 
-    if artifacts is None or cmd is None or bundle_contract is None or export_proof is None:
-        return None, errors
+    assert artifacts is not None
+    assert cmd is not None
+    assert bundle_contract is not None
+    assert export_proof is not None
 
     has_proof_entry = "proof_report.json" in artifacts
 
