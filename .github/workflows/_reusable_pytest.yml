@@ -129,10 +129,10 @@ jobs:
           echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
 
       - name: Enforce mandatory coverage.xml artifact input
-        if: always()
+        if: env.AUTHORITATIVE_RUN_RESULT == '0'
         run: |
           if [ ! -f coverage.xml ]; then
-            echo "coverage.xml is required for smoke/unit coverage jobs"
+            echo "coverage.xml is required when authoritative run succeeds"
             exit 1
           fi
       
@@ -238,7 +238,7 @@ jobs:
           retention-days: 7
       
       - name: Upload mandatory coverage.xml artifact
-        if: always()
+        if: always() && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-xml-${{ github.sha }}

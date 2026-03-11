@@ -205,3 +205,9 @@ def test_reusable_workflow_uses_authoritative_result_variable_for_gating() -> No
     assert "if: env.AUTHORITATIVE_RUN_RESULT != '0'" in workflow
     assert 'name: Fail if authoritative run failed' in workflow
     assert 'PYTEST_RESULT' not in workflow
+
+
+def test_reusable_workflow_coverage_artifact_upload_is_guarded() -> None:
+    workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
+    assert "if: always() && hashFiles('coverage.xml') != ''" in workflow
+    assert "if: env.AUTHORITATIVE_RUN_RESULT == '0'" in workflow

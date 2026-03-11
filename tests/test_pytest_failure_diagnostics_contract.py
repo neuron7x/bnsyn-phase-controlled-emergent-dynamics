@@ -298,3 +298,19 @@ def test_bounded_tail_log_enrichment_match_outside_tail_is_safe(tmp_path: Path) 
         log_file=log,
     )
     assert payload["failures"][0]["raw_text_excerpt"] is None
+
+
+def test_parse_junit_xml_fallback_without_defusedxml(monkeypatch: object) -> None:
+    import builtins
+    from bnsyn.qa import pytest_failure_diagnostics as diag
+
+    real_import = builtins.__import__
+
+    def fake_import(name: str, *args: object, **kwargs: object):
+        if name.startswith('defusedxml'):
+            raise ModuleNotFoundError('simulated missing defusedxml')
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, '__import__', fake_import)
+    root = diag._parse_junit_xml('<testsuite tests="0" failures="0" errors="0" skipped="0"/>')
+    assert root.tag == 'testsuite'
