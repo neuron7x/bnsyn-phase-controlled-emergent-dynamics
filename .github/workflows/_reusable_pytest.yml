@@ -79,6 +79,15 @@ jobs:
           echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
           exit "$PYTEST_EXIT"
+
+
+      - name: Generate pytest failure diagnostics
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p artifacts/tests
+          python scripts/aggregate_pytest_failures.py             --junit junit.xml             --log pytest.log             --output-json artifacts/tests/failure-diagnostics.json             --output-md artifacts/tests/failure-diagnostics.md             --pytest-exit-code "${{ env.PYTEST_RESULT || 1 }}"             --annotations-file artifacts/tests/failure-annotations.txt             --max-annotations 20             --write-step-summary
+
       
       - name: Coverage regression gate
         if: success()
@@ -253,7 +262,18 @@ jobs:
           path: artifacts/coverage-trend/
           if-no-files-found: error
           retention-days: 90
-      
+      - name: Upload pytest diagnostics artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pytest-diagnostics-${{ github.sha }}
+          path: |
+            artifacts/tests/failure-diagnostics.json
+            artifacts/tests/failure-diagnostics.md
+            artifacts/tests/failure-annotations.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Fail if tests failed
         if: env.PYTEST_RESULT != '0'
         run: exit 1

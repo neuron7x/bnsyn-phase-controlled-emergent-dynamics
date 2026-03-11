@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -78,6 +78,14 @@ test-e2e:
 
 test-gate:
 	$(TEST_CMD)
+
+test-diagnostics:
+	python -m scripts.run_pytest_with_diagnostics \
+		--markers "not (validation or property)" \
+		--junit $(JUNIT_FAST) \
+		--log $(JUNIT_DIR)/pytest-fast.log \
+		--output-json $(JUNIT_DIR)/failure-diagnostics.json \
+		--output-md $(JUNIT_DIR)/failure-diagnostics.md
 
 test-determinism:
 	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
