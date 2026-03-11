@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, TextIO
 
 import jsonschema  # type: ignore[import-untyped]
+from defusedxml import ElementTree as DefusedET
 
 SCHEMA_VERSION = "1.0.0"
 _STATUS_CLEAN = "clean"
@@ -331,7 +332,7 @@ def generate_diagnostics(
     output_md.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        root = ET.fromstring(_read_text(junit_xml))
+        root = DefusedET.fromstring(_read_text(junit_xml))
         summary = _extract_summary(root)
         log_text = _read_tail(log_file) if log_file is not None and log_file.exists() else None
         failures = _extract_failures(root, log_text)
