@@ -17,7 +17,7 @@ import struct
 import tempfile
 import zlib
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import yaml  # type: ignore[import-untyped]
@@ -71,7 +71,7 @@ def _fit_power_law(sizes: list[int], seed: int) -> dict[str, Any]:
     if positive.size == 0:
         return {"schema_version":"1.0.0","fit_method":"clauset_continuous_mle_gridsearch","tau_meaning":"tau is the avalanche size-distribution exponent estimated as alpha","alpha":0.0,"tau":0.0,"xmin":0,"ks_distance":1.0,"p_value":0.0,"likelihood_ratio":0.0,"sample_size":0,"validity":{"verdict":"FAIL","reasons":["no positive avalanches"],"thresholds":{"min_tail_count":min_tail,"p_value_min":p_thresh,"ks_max":ks_max}}}
 
-    best = None
+    best: dict[str, Any] | None = None
     for xmin in sorted(set(int(x) for x in positive.tolist())):
         tail = positive[positive >= xmin]
         if tail.size < max(5, min_tail):
@@ -86,7 +86,7 @@ def _fit_power_law(sizes: list[int], seed: int) -> dict[str, Any]:
     if best is None:
         return {"schema_version":"1.0.0","fit_method":"clauset_continuous_mle_gridsearch","tau_meaning":"tau is the avalanche size-distribution exponent estimated as alpha","alpha":0.0,"tau":0.0,"xmin":0,"ks_distance":1.0,"p_value":0.0,"likelihood_ratio":0.0,"sample_size":int(positive.size),"validity":{"verdict":"FAIL","reasons":["insufficient tail sample for fit"],"thresholds":{"min_tail_count":min_tail,"p_value_min":p_thresh,"ks_max":ks_max}}}
 
-    tail = best["tail"]
+    tail = cast(np.ndarray, best["tail"])
     alpha = float(best["alpha"])
     xmin = int(best["xmin"])
     ks = float(best["ks"])
@@ -153,12 +153,12 @@ def _build_repro_reports(config: BNSynExperimentConfig) -> tuple[dict[str, Any],
                 steps = int(np.asarray(data["steps"]).item())
             per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
             aval = _build_avalanche_report(seed=seed,n_neurons=config.network.size,dt_ms=config.simulation.dt_ms,duration_ms=config.simulation.duration_ms,steps=steps,spike_steps_per_step=per_step,bin_width_steps=1)
-            fit = _fit_power_law(aval["sizes"], seed=seed)
+            fit = _fit_power_law(cast(list[int], aval["sizes"]), seed=seed)
             metrics_by_seed.append({
                 "seed": seed,
                 "rate_mean_hz": float(metrics["rate_mean_hz"]),
                 "sigma_mean": float(metrics["sigma_mean"]),
-                "avalanche_count": int(aval["avalanche_count"]),
+                "avalanche_count": int(cast(int, aval["avalanche_count"])),
                 "avalanche_exponent": float(fit["alpha"]),
             })
             if seed == CANONICAL_REPRO_SEEDS[0]:
@@ -575,7 +575,7 @@ def run_canonical_live_bundle(
         encoding="utf-8",
     )
 
-    avalanche_fit_report = _fit_power_law(avalanche_report["sizes"], seed=seed)
+    avalanche_fit_report = _fit_power_law(cast(list[int], avalanche_report["sizes"]), seed=seed)
     avalanche_fit_report_path = out_dir / "avalanche_fit_report.json"
     avalanche_fit_report_path.write_text(
         json.dumps(avalanche_fit_report, indent=2, sort_keys=True) + "\n",
