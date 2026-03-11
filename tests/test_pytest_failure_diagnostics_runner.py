@@ -155,3 +155,27 @@ def test_runner_internal_diagnostics_failure_writes_schema_valid_fallback(tmp_pa
     payload = json.loads((tmp_path / "diag.json").read_text(encoding="utf-8"))
     assert payload["status"] == "input_error"
     assert payload["pytest_exit_code"] == 0
+
+
+def test_cli_exit_semantics_pytest_pass_diag_fail(monkeypatch, capsys) -> None:
+    import scripts.run_pytest_with_diagnostics as runner
+    from bnsyn.qa.pytest_failure_diagnostics import RunResult
+    import bnsyn.qa.pytest_failure_diagnostics as diag
+
+    monkeypatch.setattr(diag, "run_pytest_with_diagnostics", lambda **_kwargs: RunResult(pytest_exit_code=0, diagnostics_exit_code=3))
+    monkeypatch.setattr(sys, "argv", ["run_pytest_with_diagnostics.py"])
+    rc = runner.main()
+    captured = capsys.readouterr()
+    assert rc == 3
+    assert "pytest passed but diagnostics generation failed" in captured.err
+
+
+def test_cli_exit_semantics_pytest_fail_still_wins(monkeypatch) -> None:
+    import scripts.run_pytest_with_diagnostics as runner
+    from bnsyn.qa.pytest_failure_diagnostics import RunResult
+    import bnsyn.qa.pytest_failure_diagnostics as diag
+
+    monkeypatch.setattr(diag, "run_pytest_with_diagnostics", lambda **_kwargs: RunResult(pytest_exit_code=5, diagnostics_exit_code=2))
+    monkeypatch.setattr(sys, "argv", ["run_pytest_with_diagnostics.py"])
+    rc = runner.main()
+    assert rc == 5

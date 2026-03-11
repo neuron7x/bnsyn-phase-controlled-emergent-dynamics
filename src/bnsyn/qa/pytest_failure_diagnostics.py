@@ -99,6 +99,29 @@ def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _read_tail(path: Path, max_bytes: int = 5 * 1024 * 1024) -> str:
+    """Read a bounded UTF-8 tail from a file deterministically.
+
+    If seeking starts mid-line, the first partial line is discarded.
+    """
+    file_size = path.stat().st_size
+    if file_size <= max_bytes:
+        return path.read_text(encoding="utf-8", errors="replace")
+
+    start = file_size - max_bytes
+    with path.open("rb") as handle:
+        handle.seek(start)
+        chunk = handle.read(max_bytes)
+
+    if start > 0:
+        newline_idx = chunk.find(b"\n")
+        if newline_idx == -1:
+            return ""
+        chunk = chunk[newline_idx + 1 :]
+
+    return chunk.decode("utf-8", errors="replace")
+
+
 def _collect_suites(root: ET.Element) -> list[ET.Element]:
     if root.tag == "testsuite":
         return [root]
@@ -310,7 +333,7 @@ def generate_diagnostics(
     try:
         root = ET.fromstring(_read_text(junit_xml))
         summary = _extract_summary(root)
-        log_text = _read_text(log_file) if log_file is not None and log_file.exists() else None
+        log_text = _read_tail(log_file) if log_file is not None and log_file.exists() else None
         failures = _extract_failures(root, log_text)
         payload = _build_payload(
             status=_STATUS_FAILURES if failures else _STATUS_CLEAN,

@@ -236,3 +236,65 @@ def test_publication_metadata_written_and_schema_valid(tmp_path: Path) -> None:
     assert "publication" in payload
     assert payload["publication"]["annotations_file"] == str(annotations)
     assert payload["publication"]["github_step_summary"] == str(summary)
+
+
+def test_bounded_tail_log_enrichment_match_in_tail(tmp_path: Path) -> None:
+    junit = tmp_path / "junit.xml"
+    nodeid = "tests/test_tail.py::test_tail"
+    _write(
+        junit,
+        f"""
+<testsuite name="suite" tests="1" failures="1" errors="0" skipped="0">
+  <testcase classname="tests.test_tail" name="test_tail" file="tests/test_tail.py">
+    <failure message="failed">tb</failure>
+  </testcase>
+</testsuite>
+""".strip(),
+    )
+    log = tmp_path / "pytest.log"
+    # Force nodeid to exist only near the end of a file larger than 5MiB.
+    prefix = ("x" * (5 * 1024 * 1024 + 1024)) + "\n"
+    suffix = f"FAILED {nodeid} - assertion\n"
+    log.write_text(prefix + suffix, encoding="utf-8")
+
+    out_json = tmp_path / "out.json"
+    out_md = tmp_path / "out.md"
+    payload = generate_diagnostics(
+        junit_xml=junit,
+        output_json=out_json,
+        output_md=out_md,
+        pytest_exit_code=1,
+        schema_path=SCHEMA,
+        log_file=log,
+    )
+    assert payload["failures"][0]["raw_text_excerpt"] is not None
+    assert nodeid in payload["failures"][0]["raw_text_excerpt"]
+
+
+def test_bounded_tail_log_enrichment_match_outside_tail_is_safe(tmp_path: Path) -> None:
+    junit = tmp_path / "junit.xml"
+    nodeid = "tests/test_old.py::test_old"
+    _write(
+        junit,
+        f"""
+<testsuite name="suite" tests="1" failures="1" errors="0" skipped="0">
+  <testcase classname="tests.test_old" name="test_old" file="tests/test_old.py">
+    <failure message="failed">tb</failure>
+  </testcase>
+</testsuite>
+""".strip(),
+    )
+    log = tmp_path / "pytest.log"
+    log.write_text(f"FAILED {nodeid}\n" + ("y" * (5 * 1024 * 1024 + 2048)), encoding="utf-8")
+
+    out_json = tmp_path / "out.json"
+    out_md = tmp_path / "out.md"
+    payload = generate_diagnostics(
+        junit_xml=junit,
+        output_json=out_json,
+        output_md=out_md,
+        pytest_exit_code=1,
+        schema_path=SCHEMA,
+        log_file=log,
+    )
+    assert payload["failures"][0]["raw_text_excerpt"] is None

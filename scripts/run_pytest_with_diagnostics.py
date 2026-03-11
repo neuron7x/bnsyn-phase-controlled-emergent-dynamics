@@ -58,7 +58,13 @@ def main() -> int:
         schema_path=args.schema,
         publication=publication,
     )
-    return result.pytest_exit_code
+
+    if result.pytest_exit_code != 0:
+        return result.pytest_exit_code
+    if result.diagnostics_exit_code != 0:
+        print("[pytest-diagnostics] pytest passed but diagnostics generation failed", file=sys.stderr)
+        return result.diagnostics_exit_code
+    return 0
 
 
 if __name__ == "__main__":
