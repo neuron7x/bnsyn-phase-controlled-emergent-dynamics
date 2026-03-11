@@ -1,40 +1,57 @@
 # Pytest Failure Diagnostics
 
 ## Source of truth
-Pytest remains the only pass/fail source of truth. The diagnostics subsystem is post-run and additive.
+Pytest remains the only pass/fail source of truth. Diagnostics are additive and never convert a failing suite into a passing one.
 
-## Artifact contract
-The diagnostics flow writes:
-- `artifacts/tests/failure-diagnostics.json`
-- `artifacts/tests/failure-diagnostics.md`
+## Authoritative orchestration path
+Both local and CI use the same authoritative runner:
+- `python -m scripts.run_pytest_with_diagnostics ...`
 
-The JSON payload is validated against:
-- `schemas/pytest-failure-diagnostics.schema.json`
+`make test-diagnostics` delegates to this runner.
 
-## Local flow
-`make test-diagnostics` runs `scripts/run_pytest_with_diagnostics.py`, which:
-1. runs pytest with JUnit output
-2. tees pytest output to a log file
-3. always runs diagnostics generation
-4. exits with the original pytest exit code
+The runner:
+1. executes pytest,
+2. captures JUnit XML + tee log,
+3. always generates diagnostics,
+4. returns the original pytest exit code unchanged.
 
-## CI flow
-Reusable pytest workflow executes diagnostics with `if: always()` and uploads diagnostics artifacts on both success and failure.
+## Artifacts
+The diagnostics contract emits:
+- `artifacts/tests/failure-diagnostics.json` (schema-validated)
+- `artifacts/tests/failure-diagnostics.md` (human/LLM-oriented)
+
+Optional publication artifacts:
+- `artifacts/tests/failure-annotations.txt` (artifact copy of annotation commands)
+
+## CI publication behavior
+In GitHub Actions reusable pytest workflow:
+- diagnostics are generated from the authoritative runner step,
+- `::error ...` workflow commands are emitted (bounded top-N) for UI annotations,
+- diagnostics artifacts are uploaded on both success and failure,
+- `$GITHUB_STEP_SUMMARY` gets a derived diagnostics summary section.
+
+UI annotations and artifact annotation files are distinct outputs.
 
 ## Redaction policy
-Redaction applies only to published excerpts (`message`, traceback/log excerpts, stdout/stderr snippets). Raw JUnit and logs are not mutated.
-Patterns include:
+Redaction is bounded and deterministic. It applies only to published excerpts and never mutates raw JUnit/log source inputs.
+
+Patterns include common token-like forms:
 - `ghp_...`
 - `github_pat_...`
 - `Bearer ...`
-- long hex/key-like blobs
+- long hex / key-like blobs
 
-This is bounded, deterministic masking, not perfect secret detection.
+This is practical masking, not perfect secret detection.
 
-## Limitations
-- JUnit is primary; log parsing is secondary enrichment.
-- Only top-N annotations are emitted when enabled.
-- No timestamps or host metadata are added, for deterministic outputs.
+## Determinism and schema discipline
+- Stable ordering for failures and annotations.
+- Stable clipping behavior.
+- No timestamps/host-specific payload fields.
+- Normal payloads and fail-closed `input_error` payloads validate against `schemas/pytest-failure-diagnostics.schema.json`.
 
-## LLM diagnosis workflow
-Copy `artifacts/tests/failure-diagnostics.md` into an LLM prompt when triaging failures. It includes normalized failure reasons and per-test reproduce commands.
+## Pytest passthrough
+`run_pytest_with_diagnostics.py` supports robust pytest arg passthrough via either:
+- unknown-arg forwarding, or
+- explicit `--` separator.
+
+This enables forwarding pytest flags beginning with `-` safely.

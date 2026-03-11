@@ -1,6 +1,6 @@
-"""Pytest failure diagnostics aggregation and publication.
+"""Pytest failure diagnostics aggregation and CI publication helpers.
 
-This module is additive-only: pytest remains the source of truth for pass/fail.
+Pytest remains the sole pass/fail source of truth. This module is additive-only.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import sys
 import xml.etree.ElementTree as ET
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, TextIO
 
 import jsonschema  # type: ignore[import-untyped]
 
@@ -34,8 +34,6 @@ _REDACTION_PATTERNS = [
 
 @dataclass(frozen=True)
 class FailureEntry:
-    """Normalized failure entry in diagnostics output."""
-
     nodeid: str
     file: str
     classname: str
@@ -52,17 +50,14 @@ class FailureEntry:
 
 @dataclass(frozen=True)
 class PublicationOptions:
-    """Optional publication features for CI integration."""
-
     annotations_file: Path | None = None
+    emit_github_annotations: bool = False
     max_annotations: int = 10
     github_step_summary: Path | None = None
 
 
 @dataclass(frozen=True)
 class RunResult:
-    """Runner execution result."""
-
     pytest_exit_code: int
     diagnostics_exit_code: int
 
@@ -80,23 +75,17 @@ def _safe_int(value: str | None) -> int:
 
 
 def _redact_text(text: str) -> str:
-    """Deterministically redact common secret-looking patterns."""
     redacted = text
     for pattern in _REDACTION_PATTERNS:
         redacted = pattern.sub("[REDACTED]", redacted)
     return redacted
 
 
-def _redact_optional(text: str | None) -> str | None:
+def _ensure_redacted(text: str | None) -> str | None:
     if text is None:
         return None
-    return _redact_text(text)
-
-
-def _ensure_redacted(text: str | None) -> str | None:
-    """Fail closed if redaction pipeline errors."""
     try:
-        return _redact_optional(text)
+        return _redact_text(text)
     except Exception:
         return "[REDACTION_ERROR]"
 
@@ -119,9 +108,6 @@ def _collect_suites(root: ET.Element) -> list[ET.Element]:
 
 
 def _extract_summary(root: ET.Element) -> dict[str, int]:
-    if root.tag not in {"testsuite", "testsuites"}:
-        raise ValueError(f"Unsupported JUnit root element: {root.tag}")
-
     tests_total = _safe_int(root.attrib.get("tests"))
     failures = _safe_int(root.attrib.get("failures"))
     errors = _safe_int(root.attrib.get("errors"))
@@ -134,12 +120,7 @@ def _extract_summary(root: ET.Element) -> dict[str, int]:
             errors += _safe_int(suite.attrib.get("errors"))
             skipped += _safe_int(suite.attrib.get("skipped"))
 
-    return {
-        "tests_total": tests_total,
-        "failures": failures,
-        "errors": errors,
-        "skipped": skipped,
-    }
+    return {"tests_total": tests_total, "failures": failures, "errors": errors, "skipped": skipped}
 
 
 def _build_nodeid(file_attr: str, classname: str, test_name: str) -> str:
@@ -159,16 +140,16 @@ def _build_nodeid(file_attr: str, classname: str, test_name: str) -> str:
 def _extract_log_excerpt(log_text: str | None, nodeid: str) -> str | None:
     if not log_text:
         return None
-    match = re.search(re.escape(nodeid), log_text)
-    if match is None:
+    found = re.search(re.escape(nodeid), log_text)
+    if found is None:
         return None
-    start = max(0, match.start() - 200)
-    end = min(len(log_text), match.end() + 300)
+    start = max(0, found.start() - 200)
+    end = min(len(log_text), found.end() + 300)
     return _clip(log_text[start:end], _MAX_LOG_EXCERPT)
 
 
 def _extract_failures(root: ET.Element, log_text: str | None) -> list[FailureEntry]:
-    failures: list[FailureEntry] = []
+    entries: list[FailureEntry] = []
     for suite in _collect_suites(root):
         suite_name = suite.attrib.get("name")
         for testcase in suite.findall("testcase"):
@@ -186,31 +167,24 @@ def _extract_failures(root: ET.Element, log_text: str | None) -> list[FailureEnt
             test_name = testcase.attrib.get("name", "")
             nodeid = _build_nodeid(file_attr, classname, test_name)
 
-            message = detail.attrib.get("message", "")
-            traceback_excerpt = _clip(detail.text or "")
-            raw_text_excerpt = _extract_log_excerpt(log_text, nodeid)
-
-            stdout_text = testcase.findtext("system-out")
-            stderr_text = testcase.findtext("system-err")
-
-            failures.append(
+            entries.append(
                 FailureEntry(
                     nodeid=nodeid,
                     file=file_attr,
                     classname=classname,
                     test_name=test_name,
                     kind=kind,
-                    message=message,
-                    traceback_excerpt=traceback_excerpt,
-                    raw_text_excerpt=raw_text_excerpt,
+                    message=detail.attrib.get("message", ""),
+                    traceback_excerpt=_clip(detail.text or ""),
+                    raw_text_excerpt=_extract_log_excerpt(log_text, nodeid),
                     reproduce=f"python -m pytest -q {nodeid}",
-                    stdout_excerpt=_clip(stdout_text) if stdout_text else None,
-                    stderr_excerpt=_clip(stderr_text) if stderr_text else None,
+                    stdout_excerpt=_clip(testcase.findtext("system-out") or "") if testcase.findtext("system-out") else None,
+                    stderr_excerpt=_clip(testcase.findtext("system-err") or "") if testcase.findtext("system-err") else None,
                     suite_name=suite_name,
                 )
             )
 
-    return sorted(failures, key=lambda item: (item.nodeid, item.kind, item.message))
+    return sorted(entries, key=lambda x: (x.nodeid, x.kind, x.message))
 
 
 def _render_markdown(payload: dict[str, Any]) -> str:
@@ -227,19 +201,22 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- skipped: `{summary['skipped']}`",
         "",
     ]
+
     failures: list[dict[str, Any]] = payload["failures"]
     if not failures:
-        lines.append("No failures detected.")
-        return "\n".join(lines) + "\n"
+        return "\n".join(lines + ["No failures detected.", ""])
 
     lines.extend(["## Failing tests", ""])
-    for index, failure in enumerate(failures, start=1):
+    for idx, failure in enumerate(failures, start=1):
         reason = failure["message"] or failure["traceback_excerpt"] or "No details available"
-        lines.append(f"{index}. `{failure['nodeid']}` ({failure['kind']})")
-        lines.append(f"   - reason: `{_clip(reason, 300)}`")
-        lines.append(f"   - reproduce: `{failure['reproduce']}`")
-    lines.append("")
-    return "\n".join(lines)
+        lines.extend(
+            [
+                f"{idx}. `{failure['nodeid']}` ({failure['kind']})",
+                f"   - reason: `{_clip(str(reason), 300)}`",
+                f"   - reproduce: `{failure['reproduce']}`",
+            ]
+        )
+    return "\n".join(lines + [""])
 
 
 def _build_payload(
@@ -250,9 +227,8 @@ def _build_payload(
         "status": status,
         "pytest_exit_code": pytest_exit_code,
         "summary": summary,
-        "failures": [],
+        "failures": [asdict(entry) for entry in failures],
     }
-    payload["failures"] = [asdict(entry) for entry in failures]
     if input_error is not None:
         payload["input_error"] = input_error
     return payload
@@ -261,7 +237,7 @@ def _build_payload(
 def _redact_payload(payload: dict[str, Any]) -> dict[str, Any]:
     sanitized: dict[str, Any] = json.loads(json.dumps(payload))
     for failure in sanitized.get("failures", []):
-        for key in ["message", "traceback_excerpt", "raw_text_excerpt", "stdout_excerpt", "stderr_excerpt"]:
+        for key in ("message", "traceback_excerpt", "raw_text_excerpt", "stdout_excerpt", "stderr_excerpt"):
             failure[key] = _ensure_redacted(failure.get(key))
     if "input_error" in sanitized:
         sanitized["input_error"]["message"] = _ensure_redacted(sanitized["input_error"].get("message"))
@@ -269,8 +245,53 @@ def _redact_payload(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def validate_payload(payload: dict[str, Any], schema_path: Path) -> None:
-    schema = _load_schema(schema_path)
-    jsonschema.validate(instance=payload, schema=schema)
+    jsonschema.validate(instance=payload, schema=_load_schema(schema_path))
+
+
+def _annotation_line(failure: dict[str, Any]) -> str:
+    file_path = failure.get("file") or "unknown"
+    nodeid = str(failure.get("nodeid", "<unknown_nodeid>"))
+    message = failure.get("message") or failure.get("traceback_excerpt") or "pytest failure"
+    compact = _clip(str(message), 180).replace("\n", " ")
+    return f"::error file={file_path},title=pytest diagnostics::{nodeid} - {compact}"
+
+
+def publish_ci_outputs(payload: dict[str, Any], options: PublicationOptions, annotation_stream: TextIO | None = None) -> dict[str, Any]:
+    metadata: dict[str, Any] = {}
+    failures: list[dict[str, Any]] = payload.get("failures", [])
+    selected = list(failures)[: max(0, options.max_annotations)]
+    annotations = [_annotation_line(item) for item in selected]
+
+    if options.annotations_file is not None:
+        options.annotations_file.parent.mkdir(parents=True, exist_ok=True)
+        options.annotations_file.write_text("\n".join(annotations) + ("\n" if annotations else ""), encoding="utf-8")
+        metadata["annotations_file"] = str(options.annotations_file)
+
+    if options.emit_github_annotations:
+        stream = annotation_stream if annotation_stream is not None else sys.stderr
+        for line in annotations:
+            print(line, file=stream)
+        metadata["annotations_emitted"] = len(annotations)
+
+    if options.github_step_summary is not None:
+        options.github_step_summary.parent.mkdir(parents=True, exist_ok=True)
+        summary_lines = [
+            "## Pytest Failure Diagnostics",
+            "",
+            f"- status: `{payload['status']}`",
+            f"- pytest_exit_code: `{payload['pytest_exit_code']}`",
+            f"- failures: `{payload['summary']['failures']}`",
+            f"- errors: `{payload['summary']['errors']}`",
+        ]
+        if selected:
+            summary_lines.extend(["", "### Top failures"])
+            for item in selected[:5]:
+                summary_lines.append(f"- `{item['nodeid']}` ({item['kind']})")
+        with options.github_step_summary.open("a", encoding="utf-8") as handle:
+            handle.write("\n".join(summary_lines) + "\n")
+        metadata["github_step_summary"] = str(options.github_step_summary)
+
+    return metadata
 
 
 def generate_diagnostics(
@@ -291,9 +312,8 @@ def generate_diagnostics(
         summary = _extract_summary(root)
         log_text = _read_text(log_file) if log_file is not None and log_file.exists() else None
         failures = _extract_failures(root, log_text)
-        status = _STATUS_FAILURES if failures else _STATUS_CLEAN
         payload = _build_payload(
-            status=status,
+            status=_STATUS_FAILURES if failures else _STATUS_CLEAN,
             pytest_exit_code=pytest_exit_code,
             summary=summary,
             failures=failures,
@@ -308,62 +328,35 @@ def generate_diagnostics(
             input_error={"type": exc.__class__.__name__, "message": str(exc)},
         )
 
-    sanitized_payload = _redact_payload(payload)
-    validate_payload(sanitized_payload, schema_path)
+    sanitized = _redact_payload(payload)
+    validate_payload(sanitized, schema_path)
 
-    output_json.write_text(json.dumps(sanitized_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    output_md.write_text(_render_markdown(sanitized_payload), encoding="utf-8")
+    output_json.write_text(json.dumps(sanitized, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    output_md.write_text(_render_markdown(sanitized), encoding="utf-8")
 
     if publication is not None:
-        publication_meta = publish_ci_outputs(sanitized_payload, publication)
-        if publication_meta:
-            reloaded = json.loads(output_json.read_text(encoding="utf-8"))
-            reloaded["publication"] = publication_meta
-            validate_payload(reloaded, schema_path)
-            output_json.write_text(json.dumps(reloaded, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-            sanitized_payload = reloaded
+        meta = publish_ci_outputs(sanitized, publication)
+        if meta:
+            enriched: dict[str, Any] = json.loads(output_json.read_text(encoding="utf-8"))
+            enriched["publication"] = meta
+            validate_payload(enriched, schema_path)
+            output_json.write_text(json.dumps(enriched, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            return enriched
 
-    return sanitized_payload
-
-
-def _to_annotation(failure: dict[str, Any]) -> str:
-    file_path = failure.get("file") or "unknown"
-    message = failure.get("message") or failure.get("traceback_excerpt") or "pytest failure"
-    message = _clip(str(message), 180).replace("\n", " ")
-    return f"::error file={file_path},title=pytest diagnostics::{failure.get('nodeid')} - {message}"
+    return sanitized
 
 
-def publish_ci_outputs(payload: dict[str, Any], options: PublicationOptions) -> dict[str, Any]:
-    metadata: dict[str, Any] = {}
-    failures = payload.get("failures", [])
-
-    if options.annotations_file is not None:
-        options.annotations_file.parent.mkdir(parents=True, exist_ok=True)
-        selected = list(failures)[: max(0, options.max_annotations)]
-        lines = [_to_annotation(item) for item in selected]
-        options.annotations_file.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
-        metadata["annotations_file"] = str(options.annotations_file)
-        metadata["annotations_emitted"] = len(lines)
-
-    if options.github_step_summary is not None:
-        options.github_step_summary.parent.mkdir(parents=True, exist_ok=True)
-        summary_lines = [
-            "## Pytest Failure Diagnostics",
-            "",
-            f"- status: `{payload['status']}`",
-            f"- pytest_exit_code: `{payload['pytest_exit_code']}`",
-            f"- failures: `{payload['summary']['failures']}`",
-            f"- errors: `{payload['summary']['errors']}`",
-        ]
-        top = list(failures)[:5]
-        if top:
-            summary_lines.extend(["", "### Top failures"])
-            for item in top:
-                summary_lines.append(f"- `{item['nodeid']}` ({item['kind']})")
-        options.github_step_summary.write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
-        metadata["github_step_summary"] = str(options.github_step_summary)
-
-    return metadata
+def _schema_valid_fallback(pytest_exit_code: int, schema_path: Path, err: Exception) -> dict[str, Any]:
+    fallback: dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "status": _STATUS_INPUT_ERROR,
+        "pytest_exit_code": pytest_exit_code,
+        "summary": {"tests_total": 0, "failures": 0, "errors": 0, "skipped": 0},
+        "failures": [],
+        "input_error": {"type": err.__class__.__name__, "message": _ensure_redacted(str(err)) or "[REDACTION_ERROR]"},
+    }
+    validate_payload(fallback, schema_path)
+    return fallback
 
 
 def run_pytest_with_diagnostics(
@@ -409,16 +402,9 @@ def run_pytest_with_diagnostics(
         )
     except Exception as exc:
         diagnostics_exit_code = 1
+        fallback = _schema_valid_fallback(pytest_exit_code, schema_path, exc)
         output_json.parent.mkdir(parents=True, exist_ok=True)
         output_md.parent.mkdir(parents=True, exist_ok=True)
-        fallback = {
-            "schema_version": SCHEMA_VERSION,
-            "status": _STATUS_INPUT_ERROR,
-            "pytest_exit_code": pytest_exit_code,
-            "summary": {"tests_total": 0, "failures": 0, "errors": 0, "skipped": 0},
-            "failures": [],
-            "input_error": {"type": exc.__class__.__name__, "message": _ensure_redacted(str(exc)) or "[REDACTION_ERROR]"},
-        }
         output_json.write_text(json.dumps(fallback, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         output_md.write_text("# Pytest Failure Diagnostic Aggregator\n\n- status: `input_error`\n", encoding="utf-8")
         print(f"[pytest-diagnostics] generation failed: {exc}", file=sys.stderr)

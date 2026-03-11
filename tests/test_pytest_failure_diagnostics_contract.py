@@ -201,3 +201,38 @@ def test_json_output_deterministic_order(tmp_path: Path) -> None:
     generate_diagnostics(junit_xml=junit, output_json=out2, output_md=md2, pytest_exit_code=1, schema_path=SCHEMA)
     assert out1.read_text(encoding="utf-8") == out2.read_text(encoding="utf-8")
     assert md1.read_text(encoding="utf-8") == md2.read_text(encoding="utf-8")
+
+
+def test_publication_metadata_written_and_schema_valid(tmp_path: Path) -> None:
+    from bnsyn.qa.pytest_failure_diagnostics import PublicationOptions
+
+    junit = tmp_path / "junit.xml"
+    _write(
+        junit,
+        """
+<testsuite name="suite" tests="1" failures="1" errors="0" skipped="0">
+  <testcase classname="tests.test_meta" name="test_meta" file="tests/test_meta.py"><failure message="boom">tb</failure></testcase>
+</testsuite>
+""".strip(),
+    )
+    out_json = tmp_path / "out.json"
+    out_md = tmp_path / "out.md"
+    annotations = tmp_path / "ann.txt"
+    summary = tmp_path / "summary.md"
+
+    payload = generate_diagnostics(
+        junit_xml=junit,
+        output_json=out_json,
+        output_md=out_md,
+        pytest_exit_code=1,
+        schema_path=SCHEMA,
+        publication=PublicationOptions(
+            annotations_file=annotations,
+            emit_github_annotations=False,
+            max_annotations=1,
+            github_step_summary=summary,
+        ),
+    )
+    assert "publication" in payload
+    assert payload["publication"]["annotations_file"] == str(annotations)
+    assert payload["publication"]["github_step_summary"] == str(summary)

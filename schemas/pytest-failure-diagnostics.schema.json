@@ -3,20 +3,11 @@
   "$id": "https://bnsyn/schemas/pytest-failure-diagnostics.schema.json",
   "title": "Pytest Failure Diagnostics",
   "type": "object",
-  "required": [
-    "schema_version",
-    "status",
-    "pytest_exit_code",
-    "summary",
-    "failures"
-  ],
+  "required": ["schema_version", "status", "pytest_exit_code", "summary", "failures"],
   "additionalProperties": false,
   "properties": {
     "schema_version": { "type": "string", "const": "1.0.0" },
-    "status": {
-      "type": "string",
-      "enum": ["clean", "failures_detected", "input_error"]
-    },
+    "status": { "type": "string", "enum": ["clean", "failures_detected", "input_error"] },
     "pytest_exit_code": { "type": "integer" },
     "summary": {
       "type": "object",
@@ -33,17 +24,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "nodeid",
-          "file",
-          "classname",
-          "test_name",
-          "kind",
-          "message",
-          "traceback_excerpt",
-          "raw_text_excerpt",
-          "reproduce"
-        ],
+        "required": ["nodeid", "file", "classname", "test_name", "kind", "message", "traceback_excerpt", "raw_text_excerpt", "reproduce"],
         "additionalProperties": false,
         "properties": {
           "nodeid": { "type": "string" },

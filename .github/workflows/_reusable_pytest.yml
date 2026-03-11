@@ -59,38 +59,39 @@ jobs:
       - name: Verify full test collection
         run: python -m pytest --collect-only -q
       
-      - name: Run pytest
+      - name: Run pytest with diagnostics (authoritative)
         id: pytest
         run: |
           START_TIME=$(date +%s)
-          python -m pytest \
-            -m "${{ inputs.markers }}" \
+          set +e
+          python -m scripts.run_pytest_with_diagnostics \
+            --markers "${{ inputs.markers }}" \
+            --junit junit.xml \
+            --log pytest.log \
+            --output-json artifacts/tests/failure-diagnostics.json \
+            --output-md artifacts/tests/failure-diagnostics.md \
+            --annotations-file artifacts/tests/failure-annotations.txt \
+            --emit-github-annotations \
+            --max-annotations 20 \
+            --write-step-summary \
+            -- \
             --cov=bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
             --cov-report=xml:coverage.xml \
             --cov-report=html \
             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
-            --junit-xml=junit.xml \
-            -v 2>&1 | tee pytest.log
+            -v
           PYTEST_EXIT=$?
+          set -e
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
           echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
-          exit "$PYTEST_EXIT"
+          exit 0
 
-
-      - name: Generate pytest failure diagnostics
-        if: always()
-        continue-on-error: true
-        run: |
-          mkdir -p artifacts/tests
-          python scripts/aggregate_pytest_failures.py             --junit junit.xml             --log pytest.log             --output-json artifacts/tests/failure-diagnostics.json             --output-md artifacts/tests/failure-diagnostics.md             --pytest-exit-code "${{ env.PYTEST_RESULT || 1 }}"             --annotations-file artifacts/tests/failure-annotations.txt             --max-annotations 20             --write-step-summary
-
-      
       - name: Coverage regression gate
-        if: success()
+        if: env.PYTEST_RESULT == '0'
         run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
 
       - name: Parse coverage

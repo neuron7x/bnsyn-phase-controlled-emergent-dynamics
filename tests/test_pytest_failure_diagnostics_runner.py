@@ -1,7 +1,8 @@
-"""Runner integration tests for pytest diagnostics exit semantics and publication."""
+"""Runner integration tests for pytest diagnostics behavior."""
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
@@ -13,14 +14,16 @@ from bnsyn.qa.pytest_failure_diagnostics import PublicationOptions, generate_dia
 SCHEMA = Path("schemas/pytest-failure-diagnostics.schema.json")
 
 
-def _run_runner(tmp_path: Path, test_code: str, markers: str = "", extra_pytest_args: list[str] | None = None) -> subprocess.CompletedProcess[str]:
+def _run_runner(
+    tmp_path: Path,
+    test_code: str,
+    *,
+    markers: str = "",
+    passthrough: list[str] | None = None,
+    use_separator: bool = False,
+) -> subprocess.CompletedProcess[str]:
     test_file = tmp_path / "synthetic_test.py"
     test_file.write_text(test_code, encoding="utf-8")
-
-    junit = tmp_path / "junit.xml"
-    log = tmp_path / "pytest.log"
-    out_json = tmp_path / "diag.json"
-    out_md = tmp_path / "diag.md"
 
     cmd = [
         sys.executable,
@@ -29,19 +32,21 @@ def _run_runner(tmp_path: Path, test_code: str, markers: str = "", extra_pytest_
         "--markers",
         markers,
         "--junit",
-        str(junit),
+        str(tmp_path / "junit.xml"),
         "--log",
-        str(log),
+        str(tmp_path / "pytest.log"),
         "--output-json",
-        str(out_json),
+        str(tmp_path / "diag.json"),
         "--output-md",
-        str(out_md),
+        str(tmp_path / "diag.md"),
         "--schema",
         str(SCHEMA),
-        str(test_file),
     ]
-    if extra_pytest_args:
-        cmd.extend(extra_pytest_args)
+
+    args = passthrough[:] if passthrough else [str(test_file)]
+    if use_separator:
+        cmd.append("--")
+    cmd.extend(args)
 
     env = dict(os.environ)
     env["PYTHONPATH"] = f"{Path.cwd() / 'src'}:{env.get('PYTHONPATH', '')}"
@@ -70,7 +75,19 @@ def test_runner_invalid_marker_preserves_error_semantics(tmp_path: Path) -> None
     assert payload["pytest_exit_code"] == result.returncode
 
 
-def test_publication_helpers_are_bounded_and_deterministic(tmp_path: Path) -> None:
+def test_runner_passthrough_supports_flags_and_separator(tmp_path: Path) -> None:
+    test_file = tmp_path / "synthetic_test.py"
+    test_file.write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+    result = _run_runner(
+        tmp_path,
+        "def test_ok():\n    assert True\n",
+        passthrough=[str(test_file), "-k", "test_ok"],
+        use_separator=True,
+    )
+    assert result.returncode == 0
+
+
+def test_publication_helpers_emit_bounded_deterministic_annotations_and_summary(tmp_path: Path) -> None:
     junit = tmp_path / "junit.xml"
     junit.write_text(
         """
@@ -92,14 +109,49 @@ def test_publication_helpers_are_bounded_and_deterministic(tmp_path: Path) -> No
         schema_path=SCHEMA,
     )
 
+    annotation_stream = io.StringIO()
     annotations = tmp_path / "ann.txt"
     summary = tmp_path / "summary.md"
     meta = publish_ci_outputs(
         payload,
-        PublicationOptions(annotations_file=annotations, max_annotations=2, github_step_summary=summary),
+        PublicationOptions(
+            annotations_file=annotations,
+            emit_github_annotations=True,
+            max_annotations=2,
+            github_step_summary=summary,
+        ),
+        annotation_stream=annotation_stream,
     )
     assert meta["annotations_emitted"] == 2
     annotation_lines = annotations.read_text(encoding="utf-8").strip().splitlines()
     assert len(annotation_lines) == 2
     assert annotation_lines == sorted(annotation_lines)
+    assert annotation_stream.getvalue().strip().splitlines() == annotation_lines
     assert "status:" in summary.read_text(encoding="utf-8")
+
+
+def test_runner_internal_diagnostics_failure_writes_schema_valid_fallback(tmp_path: Path, monkeypatch) -> None:
+    from bnsyn.qa import pytest_failure_diagnostics as diag
+
+    test_file = tmp_path / "t.py"
+    test_file.write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+
+    def boom(**_kwargs):
+        raise RuntimeError("forced generation error")
+
+    monkeypatch.setattr(diag, "generate_diagnostics", boom)
+
+    result = diag.run_pytest_with_diagnostics(
+        pytest_args=["-q", str(test_file)],
+        junit_xml=tmp_path / "junit.xml",
+        log_file=tmp_path / "pytest.log",
+        output_json=tmp_path / "diag.json",
+        output_md=tmp_path / "diag.md",
+        schema_path=SCHEMA,
+    )
+
+    assert result.pytest_exit_code == 0
+    assert result.diagnostics_exit_code == 1
+    payload = json.loads((tmp_path / "diag.json").read_text(encoding="utf-8"))
+    assert payload["status"] == "input_error"
+    assert payload["pytest_exit_code"] == 0
