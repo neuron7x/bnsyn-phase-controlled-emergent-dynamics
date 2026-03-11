@@ -2,6 +2,7 @@ version: '1'
 required_status_contexts:
 - Math Quality Gate / math-gate
 - Workflow Integrity / Validate workflow files
+- canonical-proof-spine / canonical-proof-spine
 - ci-pr-atomic / build
 - ci-pr-atomic / determinism
 - ci-pr-atomic / finalize

@@ -7,10 +7,10 @@
     ".github"
   ],
   "counts": {
-    "src": 85,
+    "src": 86,
     "tests": 211,
     "docs": 291,
-    ".github": 56
+    ".github": 57
   },
   "workflows": [
     "_reusable_benchmarks.yml",
@@ -23,6 +23,7 @@
     "_reusable_ssot.yml",
     "_reusable_validation_tests.yml",
     "benchmarks.yml",
+    "canonical-proof-spine.yml",
     "ci-benchmarks-elite.yml",
     "ci-benchmarks.yml",
     "ci-pr-atomic.yml",

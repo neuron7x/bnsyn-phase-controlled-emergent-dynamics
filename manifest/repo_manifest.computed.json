@@ -53,10 +53,10 @@
     "coverage_minimum_percent": 99.0,
     "mutation_baseline_score": 51.61,
     "mutation_total_mutants": 31,
-    "required_pr_gate_total": 6,
+    "required_pr_gate_total": 7,
     "workflow_call_total": 11,
     "workflow_reusable_total": 9,
-    "workflow_total": 39
+    "workflow_total": 40
   },
   "policies": {
     "deterministic_sorting": true,
@@ -67,10 +67,10 @@
     ],
     "generated_files_are_readonly": true
   },
-  "repo_ref": "a8125f9ed17e4f37d108d395f6b0a1a250d80f1c432a023571639294c4b12989",
+  "repo_ref": "10230b460e1b3bf3fa323ccccfaf12dedd0d52c147643b3a005e79ab18291a5e",
   "required_pr_gates": {
-    "required_pr_gate_total": 6,
-    "sha256": "1365cd4233371d0bdb92d15c7f6252a121e3c3fed76e21b2f623c36a0ed137d9",
+    "required_pr_gate_total": 7,
+    "sha256": "59532c13c9abd19c616750408820390c172e85a32cc76efab39fbff47bc45f39",
     "source": ".github/PR_GATES.yml"
   }
 }

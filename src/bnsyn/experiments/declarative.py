@@ -12,7 +12,9 @@ from __future__ import annotations
 
 import json
 import hashlib
+import math
 import struct
+import tempfile
 import zlib
 from pathlib import Path
 from typing import Any
@@ -30,6 +32,197 @@ from bnsyn.numerics import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
 from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof
+from bnsyn.rng import seed_all
+
+CANONICAL_REPRO_SEEDS: tuple[int, ...] = (11, 23, 37, 41, 53, 67, 79, 83, 97, 101)
+ENVELOPE_SPEC_PATH = Path(__file__).resolve().parents[3] / "ci" / "envelope_spec.json"
+STAT_POWER_CONFIG_PATH = Path(__file__).resolve().parents[3] / "ci" / "statistical_power_config.json"
+
+
+def _derive_subseed(seed: int, *, context: str) -> int:
+    payload = f"{context}:{seed}".encode("utf-8")
+    digest = hashlib.sha256(payload).digest()
+    return int.from_bytes(digest[:4], "big")
+
+
+def _powerlaw_mle_alpha(tail: np.ndarray, xmin: int) -> float:
+    logs = np.log(tail / (float(xmin) - 0.5))
+    return 1.0 + float(tail.size) / float(np.sum(logs))
+
+
+def _powerlaw_ks_distance(tail: np.ndarray, alpha: float, xmin: int) -> float:
+    uniq = np.sort(np.unique(tail))
+    n = float(tail.size)
+    ecdf = np.array([np.count_nonzero(tail <= x) / n for x in uniq], dtype=np.float64)
+    cdf = 1.0 - (uniq / (float(xmin) - 0.5)) ** (1.0 - alpha)
+    cdf = np.clip(cdf, 0.0, 1.0)
+    return float(np.max(np.abs(ecdf - cdf)))
+
+
+def _fit_power_law(sizes: list[int], seed: int) -> dict[str, Any]:
+    policy = json.loads(STAT_POWER_CONFIG_PATH.read_text(encoding="utf-8"))
+    min_tail = int(policy["avalanche_admission"]["min_tail_count"])
+    p_thresh = float(policy["avalanche_admission"]["p_value_threshold"])
+    ks_max = float(policy["avalanche_admission"]["ks_max"])
+    monte_carlo_sims = int(policy["avalanche_admission"]["monte_carlo_simulations"])
+
+    all_sizes = np.asarray(sizes, dtype=np.int64)
+    positive = all_sizes[all_sizes >= 1]
+    if positive.size == 0:
+        return {"schema_version":"1.0.0","fit_method":"clauset_continuous_mle_gridsearch","tau_meaning":"tau is the avalanche size-distribution exponent estimated as alpha","alpha":0.0,"tau":0.0,"xmin":0,"ks_distance":1.0,"p_value":0.0,"likelihood_ratio":0.0,"sample_size":0,"validity":{"verdict":"FAIL","reasons":["no positive avalanches"],"thresholds":{"min_tail_count":min_tail,"p_value_min":p_thresh,"ks_max":ks_max}}}
+
+    best = None
+    for xmin in sorted(set(int(x) for x in positive.tolist())):
+        tail = positive[positive >= xmin]
+        if tail.size < max(5, min_tail):
+            continue
+        alpha = _powerlaw_mle_alpha(tail.astype(np.float64), xmin)
+        if not math.isfinite(alpha) or alpha <= 1.0:
+            continue
+        ks = _powerlaw_ks_distance(tail.astype(np.float64), alpha, xmin)
+        if best is None or ks < best["ks"]:
+            best = {"xmin":xmin,"tail":tail.astype(np.float64),"alpha":alpha,"ks":ks}
+
+    if best is None:
+        return {"schema_version":"1.0.0","fit_method":"clauset_continuous_mle_gridsearch","tau_meaning":"tau is the avalanche size-distribution exponent estimated as alpha","alpha":0.0,"tau":0.0,"xmin":0,"ks_distance":1.0,"p_value":0.0,"likelihood_ratio":0.0,"sample_size":int(positive.size),"validity":{"verdict":"FAIL","reasons":["insufficient tail sample for fit"],"thresholds":{"min_tail_count":min_tail,"p_value_min":p_thresh,"ks_max":ks_max}}}
+
+    tail = best["tail"]
+    alpha = float(best["alpha"])
+    xmin = int(best["xmin"])
+    ks = float(best["ks"])
+    rng = seed_all(_derive_subseed(seed, context="avalanche_fit_monte_carlo")).np_rng
+    sims = monte_carlo_sims
+    sim_ks = []
+    for _ in range(sims):
+        u = rng.random(tail.size)
+        sim = (float(xmin) - 0.5) * (1.0 - u) ** (-1.0 / (alpha - 1.0))
+        sim_ks.append(_powerlaw_ks_distance(sim, alpha, xmin))
+    p_value = float(np.mean(np.asarray(sim_ks, dtype=np.float64) >= ks))
+
+    ll_power = float(np.sum(np.log((alpha - 1.0) / (float(xmin) - 0.5)) - alpha * np.log(tail / (float(xmin) - 0.5))))
+    lam = 1.0 / max(np.mean(tail - float(xmin)), 1e-12)
+    ll_exp = float(np.sum(np.log(lam) - lam * (tail - float(xmin))))
+    lr = ll_power - ll_exp
+
+    reasons: list[str] = []
+    if tail.size < min_tail:
+        reasons.append("tail sample below min_tail_count")
+    if p_value < p_thresh:
+        reasons.append("p_value below threshold")
+    if ks > ks_max:
+        reasons.append("ks_distance above threshold")
+    verdict = "PASS" if not reasons else "FAIL"
+
+    return {
+        "schema_version": "1.0.0",
+        "fit_method": "clauset_continuous_mle_gridsearch",
+        "tau_meaning": "tau is the avalanche size-distribution exponent estimated as alpha",
+        "alpha": alpha,
+        "tau": alpha,
+        "xmin": xmin,
+        "ks_distance": ks,
+        "p_value": p_value,
+        "likelihood_ratio": float(lr),
+        "sample_size": int(tail.size),
+        "validity": {
+            "verdict": verdict,
+            "reasons": reasons,
+            "thresholds": {"min_tail_count": min_tail, "p_value_min": p_thresh, "ks_max": ks_max},
+        },
+    }
+
+
+def _build_repro_reports(config: BNSynExperimentConfig) -> tuple[dict[str, Any], dict[str, Any]]:
+    spec = json.loads(ENVELOPE_SPEC_PATH.read_text(encoding="utf-8"))
+    metrics_by_seed: list[dict[str, Any]] = []
+    replay_hashes: list[dict[str, str]] = []
+
+    with tempfile.TemporaryDirectory(prefix="bnsyn_repro_") as tmp:
+        tmp_root = Path(tmp)
+        for seed in CANONICAL_REPRO_SEEDS:
+            metrics, npz_path = run_emergence_to_disk(
+                N=config.network.size,
+                dt_ms=config.simulation.dt_ms,
+                duration_ms=config.simulation.duration_ms,
+                seed=seed,
+                external_current_pA=config.simulation.external_current_pA,
+                output_dir=tmp_root / f"seed_{seed}",
+            )
+            with np.load(npz_path) as data:
+                spike_steps = np.asarray(data["spike_steps"], dtype=np.int64)
+                steps = int(np.asarray(data["steps"]).item())
+            per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
+            aval = _build_avalanche_report(seed=seed,n_neurons=config.network.size,dt_ms=config.simulation.dt_ms,duration_ms=config.simulation.duration_ms,steps=steps,spike_steps_per_step=per_step,bin_width_steps=1)
+            fit = _fit_power_law(aval["sizes"], seed=seed)
+            metrics_by_seed.append({
+                "seed": seed,
+                "rate_mean_hz": float(metrics["rate_mean_hz"]),
+                "sigma_mean": float(metrics["sigma_mean"]),
+                "avalanche_count": int(aval["avalanche_count"]),
+                "avalanche_exponent": float(fit["alpha"]),
+            })
+            if seed == CANONICAL_REPRO_SEEDS[0]:
+                # deterministic replay check for required traces
+                replay_traces: dict[str, dict[str, np.ndarray]] = {}
+                for run_name in ("run_a", "run_b"):
+                    run_dir = tmp_root / run_name
+                    _, replay_npz = run_emergence_to_disk(
+                        N=config.network.size,
+                        dt_ms=config.simulation.dt_ms,
+                        duration_ms=config.simulation.duration_ms,
+                        seed=seed,
+                        external_current_pA=config.simulation.external_current_pA,
+                        output_dir=run_dir,
+                    )
+                    with np.load(replay_npz) as replay_data:
+                        replay_traces[run_name] = {
+                            "rate_trace_hz": np.asarray(replay_data["rate_trace_hz"], dtype=np.float64),
+                            "sigma_trace": np.asarray(replay_data["sigma_trace"], dtype=np.float64),
+                            "coherence_trace": np.asarray(replay_data["coherence_trace"], dtype=np.float64),
+                        }
+
+                trace_names = (
+                    ("population_rate_trace.npy", "rate_trace_hz"),
+                    ("sigma_trace.npy", "sigma_trace"),
+                    ("coherence_trace.npy", "coherence_trace"),
+                )
+                for artifact_name, trace_key in trace_names:
+                    run_a_trace = replay_traces["run_a"][trace_key]
+                    run_b_trace = replay_traces["run_b"][trace_key]
+                    h1 = hashlib.sha256(run_a_trace.tobytes()).hexdigest()
+                    h2 = hashlib.sha256(run_b_trace.tobytes()).hexdigest()
+                    replay_hashes.append({"artifact": artifact_name, "run_a": h1, "run_b": h2})
+
+    tolerances = spec["tolerances"]
+    envelope_checks: dict[str, dict[str, Any]] = {}
+    fail_reasons: list[str] = []
+    for metric in ("rate_mean_hz", "sigma_mean", "avalanche_count", "avalanche_exponent"):
+        vals = [float(row[metric]) for row in metrics_by_seed]
+        lo = float(min(vals))
+        hi = float(max(vals))
+        allowed_lo = float(tolerances[metric]["min"])
+        allowed_hi = float(tolerances[metric]["max"])
+        ok = lo >= allowed_lo and hi <= allowed_hi
+        if not ok:
+            fail_reasons.append(metric)
+        envelope_checks[metric] = {"observed_min": lo, "observed_max": hi, "allowed_min": allowed_lo, "allowed_max": allowed_hi, "status": "PASS" if ok else "FAIL"}
+
+    replay_ok = all(entry["run_a"] == entry["run_b"] for entry in replay_hashes)
+    robustness = {
+        "schema_version": "1.0.0",
+        "seed_set": list(CANONICAL_REPRO_SEEDS),
+        "replay_check": {"seed": CANONICAL_REPRO_SEEDS[0], "required_traces": ["population_rate_trace.npy", "sigma_trace.npy", "coherence_trace.npy"], "hashes": replay_hashes, "identical": replay_ok},
+        "runs": metrics_by_seed,
+    }
+    envelope = {
+        "schema_version": "1.0.0",
+        "spec_version": str(spec["spec_version"]),
+        "seed_set": list(CANONICAL_REPRO_SEEDS),
+        "metric_checks": envelope_checks,
+        "verdict": "PASS" if not fail_reasons else "FAIL",
+        "failure_reasons": fail_reasons,
+    }
+    return robustness, envelope
 
 
 def load_config(config_path: str | Path) -> BNSynExperimentConfig:
@@ -382,6 +575,19 @@ def run_canonical_live_bundle(
         encoding="utf-8",
     )
 
+    avalanche_fit_report = _fit_power_law(avalanche_report["sizes"], seed=seed)
+    avalanche_fit_report_path = out_dir / "avalanche_fit_report.json"
+    avalanche_fit_report_path.write_text(
+        json.dumps(avalanche_fit_report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    robustness_report, envelope_report = _build_repro_reports(config)
+    robustness_report_path = out_dir / "robustness_report.json"
+    envelope_report_path = out_dir / "envelope_report.json"
+    robustness_report_path.write_text(json.dumps(robustness_report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    envelope_report_path.write_text(json.dumps(envelope_report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
     phase_space_report = _build_phase_space_report(
         seed=seed,
         n_neurons=int(config.network.size),
@@ -451,6 +657,9 @@ def run_canonical_live_bundle(
             "phase_space_rate_sigma.png": hashlib.sha256(phase_space_rate_sigma_path.read_bytes()).hexdigest(),
             "phase_space_rate_coherence.png": hashlib.sha256(phase_space_rate_coherence_path.read_bytes()).hexdigest(),
             "phase_space_activity_map.png": hashlib.sha256(phase_space_activity_map_path.read_bytes()).hexdigest(),
+            "avalanche_fit_report.json": hashlib.sha256(avalanche_fit_report_path.read_bytes()).hexdigest(),
+            "robustness_report.json": hashlib.sha256(robustness_report_path.read_bytes()).hexdigest(),
+            "envelope_report.json": hashlib.sha256(envelope_report_path.read_bytes()).hexdigest(),
             "run_manifest.json": "self-unhashed",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
@@ -478,6 +687,12 @@ def run_canonical_live_bundle(
         "criticality_report_path": criticality_report_path.as_posix(),
         "avalanche_report": avalanche_report,
         "avalanche_report_path": avalanche_report_path.as_posix(),
+        "avalanche_fit_report": avalanche_fit_report,
+        "avalanche_fit_report_path": avalanche_fit_report_path.as_posix(),
+        "robustness_report": robustness_report,
+        "robustness_report_path": robustness_report_path.as_posix(),
+        "envelope_report": envelope_report,
+        "envelope_report_path": envelope_report_path.as_posix(),
         "phase_space_report": phase_space_report,
         "phase_space_report_path": phase_space_report_path.as_posix(),
         "population_rate_trace_path": population_rate_trace_path.as_posix(),

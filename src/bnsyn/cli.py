@@ -600,6 +600,9 @@ def _cmd_plot(args: argparse.Namespace) -> int:
                     "phase_space_rate_sigma.png",
                     "phase_space_rate_coherence.png",
                     "phase_space_activity_map.png",
+                    "avalanche_fit_report.json",
+                    "robustness_report.json",
+                    "envelope_report.json",
                     "run_manifest.json",
                 ],
                 "compatibility_wrapper": "bnsyn plot",
@@ -701,6 +704,30 @@ def _cmd_proof_evaluate(args: argparse.Namespace) -> int:
         )
     )
     return 0
+
+
+def _cmd_proof_validate_bundle(args: argparse.Namespace) -> int:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    result = validate_canonical_bundle(args.artifact_dir)
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["status"] == "PASS" else 2
+
+
+def _cmd_proof_check_determinism(args: argparse.Namespace) -> int:
+    from bnsyn.proof.evaluate import evaluate_gate_g6_determinism
+
+    result = evaluate_gate_g6_determinism(Path(args.artifact_dir))
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["status"] == "PASS" else 2
+
+
+def _cmd_proof_check_envelope(args: argparse.Namespace) -> int:
+    from bnsyn.proof.evaluate import evaluate_gate_g8_repro_envelope
+
+    result = evaluate_gate_g8_repro_envelope(Path(args.artifact_dir))
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["status"] == "PASS" else 2
 
 
 def main() -> None:
@@ -850,6 +877,18 @@ def main() -> None:
         help="Artifact directory containing summary_metrics.json and run_manifest.json",
     )
     proof_eval.set_defaults(func=_cmd_proof_evaluate)
+
+    proof_validate = sub.add_parser("proof-validate-bundle", help="Validate canonical proof bundle manifest lineage + covered JSON schemas")
+    proof_validate.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
+    proof_validate.set_defaults(func=_cmd_proof_validate_bundle)
+
+    proof_det = sub.add_parser("proof-check-determinism", help="Validate same-seed canonical replay hash equality")
+    proof_det.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
+    proof_det.set_defaults(func=_cmd_proof_check_determinism)
+
+    proof_env = sub.add_parser("proof-check-envelope", help="Validate 10-seed canonical admissibility band")
+    proof_env.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
+    proof_env.set_defaults(func=_cmd_proof_check_envelope)
 
     emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")
     emergence_plot.add_argument("--input", required=True)

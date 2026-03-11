@@ -32,6 +32,9 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     phase_space_rate_sigma_path = out_dir / "phase_space_rate_sigma.png"
     phase_space_rate_coherence_path = out_dir / "phase_space_rate_coherence.png"
     phase_space_activity_map_path = out_dir / "phase_space_activity_map.png"
+    avalanche_fit_report_path = out_dir / "avalanche_fit_report.json"
+    robustness_report_path = out_dir / "robustness_report.json"
+    envelope_report_path = out_dir / "envelope_report.json"
     assert summary_path.exists()
     assert manifest_path.exists()
     assert criticality_report_path.exists()
@@ -46,6 +49,9 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert phase_space_rate_sigma_path.exists()
     assert phase_space_rate_coherence_path.exists()
     assert phase_space_activity_map_path.exists()
+    assert avalanche_fit_report_path.exists()
+    assert robustness_report_path.exists()
+    assert envelope_report_path.exists()
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
@@ -82,6 +88,16 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert criticality_required.issubset(criticality)
 
     avalanche = json.loads(avalanche_report_path.read_text(encoding="utf-8"))
+    avalanche_fit = json.loads(avalanche_fit_report_path.read_text(encoding="utf-8"))
+    assert {"alpha", "tau", "xmin", "ks_distance", "p_value", "likelihood_ratio", "fit_method", "sample_size", "validity"}.issubset(avalanche_fit)
+
+    robustness = json.loads(robustness_report_path.read_text(encoding="utf-8"))
+    assert len(robustness["seed_set"]) == 10
+    assert robustness["replay_check"]["identical"] is True
+
+    envelope = json.loads(envelope_report_path.read_text(encoding="utf-8"))
+    assert envelope["verdict"] == "PASS"
+
     avalanche_required = {
         "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
         "bin_width_steps", "avalanche_count", "active_bin_fraction", "size_mean",
@@ -141,6 +157,9 @@ def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
         "phase_space_rate_sigma.png",
         "phase_space_rate_coherence.png",
         "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
     ]:
         assert (out_a / filename).read_bytes() == (out_b / filename).read_bytes()
 
@@ -173,3 +192,41 @@ def test_canonical_export_proof_manifest_command_truth(tmp_path: Path) -> None:
     assert manifest["export_proof"] is True
     assert "proof_report.json" in manifest["artifacts"]
     assert (out_dir / "proof_report.json").exists()
+
+
+def test_build_repro_reports_is_stateless_across_invocations(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from bnsyn.experiments import declarative as decl
+
+    config = decl.load_config("configs/canonical_profile.yaml")
+    monkeypatch.setattr(decl, "CANONICAL_REPRO_SEEDS", (11,))
+
+    call_count = {"n": 0}
+
+    def _fake_run_emergence_to_disk(*, N: int, dt_ms: float, duration_ms: float, seed: int, external_current_pA: float, output_dir: Path | str):
+        call_count["n"] += 1
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        artifact = out / f"run_{seed}_Iext_{int(round(external_current_pA))}pA.npz"
+        trace = np.asarray([1.0, 2.0, 3.0], dtype=np.float64)
+        np.savez(
+            artifact,
+            spike_steps=np.asarray([0, 1], dtype=np.int64),
+            spike_neurons=np.asarray([0, 1], dtype=np.int64),
+            sigma_trace=trace,
+            rate_trace_hz=trace,
+            coherence_trace=trace / 3.0,
+            dt_ms=np.asarray(dt_ms, dtype=np.float64),
+            steps=np.asarray(3, dtype=np.int64),
+            N=np.asarray(N, dtype=np.int64),
+            seed=np.asarray(seed, dtype=np.int64),
+            external_current_pA=np.asarray(external_current_pA, dtype=np.float64),
+        )
+        return {"sigma_mean": 1.0, "rate_mean_hz": 2.0}, artifact.as_posix()
+
+    monkeypatch.setattr(decl, "run_emergence_to_disk", _fake_run_emergence_to_disk)
+
+    decl._build_repro_reports(config)
+    decl._build_repro_reports(config)
+
+    # 1 seed run + 2 replay runs per invocation; repeated calls must recompute fully.
+    assert call_count["n"] == 6

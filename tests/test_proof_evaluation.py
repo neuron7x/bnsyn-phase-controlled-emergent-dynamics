@@ -186,6 +186,9 @@ def test_proof_report_is_deterministic_across_repeated_runs(tmp_path: Path) -> N
         "phase_space_rate_sigma.png",
         "phase_space_rate_coherence.png",
         "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
         "proof_report.json",
         "emergence_plot.png",
         "raster_plot.png",
@@ -330,6 +333,9 @@ def test_cli_canonical_run_artifact_list_without_export_proof(tmp_path: Path) ->
         "phase_space_rate_sigma.png",
         "phase_space_rate_coherence.png",
         "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
         "run_manifest.json",
     ]
 
@@ -371,7 +377,38 @@ def test_cli_canonical_export_proof_internal_consistency(tmp_path: Path) -> None
         "phase_space_rate_sigma.png",
         "phase_space_rate_coherence.png",
         "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
         "run_manifest.json",
         "proof_report.json",
     ]
     _assert_consistent_bundle(out_dir)
+
+
+def test_proof_validate_bundle_fails_when_envelope_report_missing(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    (out_dir / "envelope_report.json").unlink()
+
+    result = validate_canonical_bundle(out_dir)
+    assert result["status"] == "FAIL"
+    assert any("missing artifact: envelope_report.json" in err for err in result["errors"])
+
+
+def test_proof_validate_bundle_schema_error_reports_json_path(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    envelope_path = out_dir / "envelope_report.json"
+    envelope = _load_json(envelope_path)
+    del envelope["verdict"]
+    _write_json(envelope_path, envelope)
+
+    result = validate_canonical_bundle(out_dir)
+    assert result["status"] == "FAIL"
+    assert any("json_path" in err or "$" in err for err in result["errors"])

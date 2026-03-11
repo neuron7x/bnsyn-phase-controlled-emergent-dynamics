@@ -31,3 +31,8 @@ This document defines the reproducibility guarantees enforced by BN-Syn benchmar
 
 The `benchmarks.yml` workflow (standard tier, `ci` profile) enforces determinism, Δt-invariance,
 criticality thresholds, and rejects regressions outside the envelope.
+
+
+## Canonical proof spine note
+
+The canonical proof spine gate (`bnsyn proof-check-envelope`) currently enforces a fixed-policy 10-seed **admissibility band** (sanity envelope), not a calibrated statistical confidence envelope.
