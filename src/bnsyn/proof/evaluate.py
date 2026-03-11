@@ -10,8 +10,10 @@ import jsonschema  # type: ignore[import-untyped]
 
 from .contracts import (
     CANONICAL_BASE_CONTRACT,
-    CANONICAL_EXPORT_PROOF_CONTRACT,
+    BASE_ARTIFACTS,
     EXPORT_PROOF_ARTIFACTS,
+    ManifestMode,
+    mode_from_manifest,
 )
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -67,23 +69,22 @@ def _load_gate_registry() -> dict[str, dict[str, Any]]:
     return registry
 
 
-def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], require_proof_artifact: bool) -> tuple[str, ...]:
+def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], mode: ManifestMode) -> tuple[str, ...]:
     g4 = registry["G4_core_artifacts_complete"]
     threshold = g4.get("threshold")
     if not isinstance(threshold, dict):
         raise ValueError("G4 threshold missing")
-
-    expected_mode = CANONICAL_EXPORT_PROOF_CONTRACT if require_proof_artifact else CANONICAL_BASE_CONTRACT
     required_by_mode = threshold.get("required_artifacts_by_mode")
     if not isinstance(required_by_mode, dict):
         raise ValueError("G4 required_artifacts_by_mode missing")
-    mode_required = required_by_mode.get(expected_mode)
-    if not isinstance(mode_required, list) or not mode_required or not all(isinstance(x, str) and x for x in mode_required):
-        raise ValueError(f"G4 required_artifacts_by_mode invalid for {expected_mode}")
+    mode_required = required_by_mode.get(mode.bundle_contract)
+    if not isinstance(mode_required, list) or not all(isinstance(x, str) and x for x in mode_required):
+        raise ValueError(f"G4 required_artifacts_by_mode invalid for {mode.bundle_contract}")
 
     required_artifacts = tuple(mode_required)
-    if require_proof_artifact and required_artifacts != EXPORT_PROOF_ARTIFACTS:
-        raise ValueError("export-proof artifact contract drift detected")
+    expected = EXPORT_PROOF_ARTIFACTS if mode.export_proof else BASE_ARTIFACTS
+    if required_artifacts != expected:
+        raise ValueError("registry/runtime artifact contract drift")
     return required_artifacts
 
 
@@ -141,19 +142,15 @@ def evaluate_gate_g3_sigma_range(metrics: dict[str, Any], gate: dict[str, Any]) 
 def evaluate_gate_g4_artifact_contract(
     artifact_dir: Path,
     manifest: dict[str, Any],
+    mode_errors: list[str],
     required_artifacts: tuple[str, ...],
 ) -> tuple[dict[str, Any], list[str]]:
     artifacts = manifest.get("artifacts")
     if not isinstance(artifacts, dict):
-        missing = list(required_artifacts)
-        return (
-            {
-                "status": "FAIL",
-                "details": "manifest artifacts must be object",
-                "missing_artifacts": missing,
-            },
-            [],
-        )
+        return ({"status": "FAIL", "details": "manifest artifacts must be object", "missing_artifacts": list(required_artifacts)}, [])
+
+    if mode_errors:
+        return ({"status": "FAIL", "details": "manifest mode invalid", "missing_artifacts": list(required_artifacts)}, [])
 
     missing_in_manifest = [name for name in required_artifacts if name not in artifacts]
     missing_on_disk = [name for name in required_artifacts if not (artifact_dir / name).is_file()]
@@ -161,22 +158,27 @@ def evaluate_gate_g4_artifact_contract(
     verified = [name for name in required_artifacts if name not in missing and (artifact_dir / name).is_file()]
 
     status = "PASS" if not missing else "FAIL"
-    return (
-        {
-            "status": status,
-            "details": "required artifacts present in manifest and on disk",
-            "missing_artifacts": missing,
-        },
-        verified,
-    )
+    return ({"status": status, "details": "required artifacts present in manifest and on disk", "missing_artifacts": missing}, verified)
 
 
-def evaluate_gate_g5_manifest_valid(
-    artifact_dir: Path,
-    manifest: dict[str, Any],
-    require_proof_artifact: bool,
-) -> dict[str, Any]:
-    failures: list[str] = []
+def _validate_proof_report_mode_pair(artifact_dir: Path, manifest: dict[str, Any], errors: list[str]) -> None:
+    proof_path = artifact_dir / "proof_report.json"
+    if not proof_path.is_file():
+        return
+    try:
+        proof_payload = _load_json(proof_path)
+    except Exception as exc:
+        errors.append(f"proof_report.json unreadable: {exc}")
+        return
+
+    if proof_payload.get("bundle_contract") != manifest.get("bundle_contract"):
+        errors.append("proof_report bundle_contract mismatch vs manifest")
+    if proof_payload.get("export_proof") != manifest.get("export_proof"):
+        errors.append("proof_report export_proof mismatch vs manifest")
+
+
+def evaluate_gate_g5_manifest_valid(artifact_dir: Path, manifest: dict[str, Any], mode_errors: list[str]) -> dict[str, Any]:
+    failures: list[str] = list(mode_errors)
 
     run_manifest_schema = _load_json(RUN_MANIFEST_SCHEMA_PATH)
     try:
@@ -192,8 +194,7 @@ def evaluate_gate_g5_manifest_valid(
         if self_entry != "self-unhashed":
             failures.append("run_manifest.json entry must be self-unhashed")
 
-        if require_proof_artifact and "proof_report.json" not in artifacts:
-            failures.append("proof_report.json entry required for export-proof contract")
+        _validate_proof_report_mode_pair(artifact_dir, manifest, failures)
 
         for name, expected in artifacts.items():
             if not isinstance(name, str) or not isinstance(expected, str):
@@ -208,15 +209,10 @@ def evaluate_gate_g5_manifest_valid(
             if not path.is_file():
                 failures.append(f"{name} missing on disk")
                 continue
-            actual = sha256_file(path)
-            if actual != expected:
+            if sha256_file(path) != expected:
                 failures.append(f"{name} hash mismatch")
 
-    return {
-        "status": "PASS" if not failures else "FAIL",
-        "details": "manifest schema + hash integrity + self-unhashed rule",
-        **({"errors": failures} if failures else {}),
-    }
+    return {"status": "PASS" if not failures else "FAIL", "details": "manifest schema + semantic mode + hash integrity", **({"errors": failures} if failures else {})}
 
 
 def evaluate_gate_g6_determinism_placeholder() -> dict[str, Any]:
@@ -239,22 +235,13 @@ def _gate_state(registry: dict[str, dict[str, Any]], gate_id: str) -> str:
 
 
 def _compute_verdict(gates: dict[str, dict[str, Any]], registry: dict[str, dict[str, Any]]) -> tuple[str, int, list[str]]:
-    wired_failures = [
-        gate_id
-        for gate_id, payload in gates.items()
-        if _gate_state(registry, gate_id) == "wired" and payload["status"] == "FAIL"
-    ]
+    wired_failures = [gate_id for gate_id, payload in gates.items() if _gate_state(registry, gate_id) == "wired" and payload["status"] == "FAIL"]
     if wired_failures:
         return "FAIL", 2, [f"{gate_id} failed" for gate_id in wired_failures]
 
-    unresolved = [
-        gate_id
-        for gate_id, payload in gates.items()
-        if payload["status"] == "INCONCLUSIVE"
-    ]
+    unresolved = [gate_id for gate_id, payload in gates.items() if payload["status"] == "INCONCLUSIVE"]
     if unresolved:
         return "INCONCLUSIVE", 1, [f"{gate_id} unresolved" for gate_id in unresolved]
-
     return "PASS", 0, []
 
 
@@ -286,14 +273,25 @@ def _fail_closed_report(artifact_dir: Path, reason: str) -> dict[str, Any]:
     }
 
 
-def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = False) -> dict[str, Any]:
+def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
     artifact_root = Path(artifact_dir)
     try:
         loaded = load_artifacts(artifact_root)
         metrics = loaded["summary"]
         manifest = loaded["manifest"]
         registry = loaded["registry"]
-        required_artifacts = _required_artifacts_from_registry(registry, require_proof_artifact)
+
+        mode, mode_errors = mode_from_manifest(manifest)
+        if mode is not None:
+            required_artifacts = _required_artifacts_from_registry(registry, mode)
+        else:
+            export_hint = bool(manifest.get("export_proof"))
+            fallback_mode = ManifestMode(
+                bundle_contract="canonical-export-proof" if export_hint else "canonical-base",
+                export_proof=export_hint,
+                cmd=str(manifest.get("cmd", "")),
+            )
+            required_artifacts = _required_artifacts_from_registry(registry, fallback_mode)
 
         gates: dict[str, dict[str, Any]] = {
             "G1_active_spiking": evaluate_gate_g1_active_spiking(metrics, registry["G1_active_spiking"]),
@@ -304,21 +302,21 @@ def evaluate_all_gates(artifact_dir: str | Path, require_proof_artifact: bool = 
             "G8_reproducibility_envelope": evaluate_gate_g8_repro_envelope_placeholder(),
         }
 
-        g4_result, artifacts_verified = evaluate_gate_g4_artifact_contract(artifact_root, manifest, required_artifacts)
+        g4_result, artifacts_verified = evaluate_gate_g4_artifact_contract(artifact_root, manifest, mode_errors, required_artifacts)
         gates["G4_core_artifacts_complete"] = g4_result
-        gates["G5_manifest_valid"] = evaluate_gate_g5_manifest_valid(
-            artifact_root,
-            manifest,
-            require_proof_artifact=require_proof_artifact,
-        )
+        gates["G5_manifest_valid"] = evaluate_gate_g5_manifest_valid(artifact_root, manifest, mode_errors)
 
         ordered_gates = {gate_id: gates[gate_id] for gate_id in EXPECTED_GATE_IDS}
         verdict, verdict_code, failure_reasons = _compute_verdict(ordered_gates, registry)
 
+        manifest_contract = manifest.get("bundle_contract")
+        bundle_contract = manifest_contract if manifest_contract in {"canonical-base", "canonical-export-proof"} else CANONICAL_BASE_CONTRACT
+        export_proof = manifest.get("export_proof") if isinstance(manifest.get("export_proof"), bool) else False
+
         report = {
             "schema_version": PROOF_SCHEMA_VERSION,
-            "bundle_contract": CANONICAL_EXPORT_PROOF_CONTRACT if require_proof_artifact else CANONICAL_BASE_CONTRACT,
-            "export_proof": bool(require_proof_artifact),
+            "bundle_contract": bundle_contract,
+            "export_proof": export_proof,
             "verdict": verdict,
             "verdict_code": verdict_code,
             "timestamp_utc": DETERMINISTIC_TIMESTAMP_UTC,
@@ -361,20 +359,27 @@ def _update_manifest_proof_hash(artifact_dir: Path, proof_hash: str) -> None:
 
 def evaluate_and_emit(artifact_dir: str | Path) -> EvaluationResult:
     root = Path(artifact_dir)
+    manifest = _load_json(root / "run_manifest.json")
+    export_requested = manifest.get("export_proof") is True
 
-    provisional_report = evaluate_all_gates(root, require_proof_artifact=False)
+    if not export_requested:
+        report = evaluate_all_gates(root)
+        report_path = emit_proof_report(report, root)
+        return EvaluationResult(report=report, report_path=report_path)
+
+    provisional_report = evaluate_all_gates(root)
     provisional_path = emit_proof_report(provisional_report, root)
     _update_manifest_proof_hash(root, sha256_file(provisional_path))
 
-    final_report = evaluate_all_gates(root, require_proof_artifact=True)
+    final_report = evaluate_all_gates(root)
     final_path = emit_proof_report(final_report, root)
     _update_manifest_proof_hash(root, sha256_file(final_path))
 
-    consistency_report = evaluate_all_gates(root, require_proof_artifact=True)
+    consistency_report = evaluate_all_gates(root)
     if consistency_report != final_report:
         consistency_path = emit_proof_report(consistency_report, root)
         _update_manifest_proof_hash(root, sha256_file(consistency_path))
-        terminal_report = evaluate_all_gates(root, require_proof_artifact=True)
+        terminal_report = evaluate_all_gates(root)
         if terminal_report != consistency_report:
             raise RuntimeError("proof/manifest finalization failed to stabilize")
         return EvaluationResult(report=terminal_report, report_path=consistency_path)

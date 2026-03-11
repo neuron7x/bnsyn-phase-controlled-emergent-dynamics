@@ -100,6 +100,7 @@ def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
         "artifacts": {
             "summary_metrics.json": "0" * 64,
             "run_manifest.json": "self-unhashed",
+            "proof_report.json": "1" * 64,
         },
     }
     jsonschema.validate(instance=payload, schema=schema)

@@ -38,4 +38,4 @@ CLI stdout is a JSON object containing:
   - `criticality_report.json`
   - `avalanche_report.json`
   - `phase_space_report.json`
-  - `proof_report.json`
+  - `proof_report.json` (only with `--export-proof`)

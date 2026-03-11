@@ -16,10 +16,7 @@
     "artifacts"
   ],
   "properties": {
-    "schema_version": {
-      "type": "string",
-      "minLength": 1
-    },
+    "schema_version": {"type": "string", "minLength": 1},
     "cmd": {
       "type": "string",
       "enum": [
@@ -27,26 +24,16 @@
         "bnsyn run --profile canonical --plot --export-proof"
       ]
     },
-    "seed": {
-      "type": "integer",
-      "minimum": 0
+    "bundle_contract": {
+      "type": "string",
+      "enum": ["canonical-base", "canonical-export-proof"]
     },
-    "steps": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "N": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "dt_ms": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
-    "duration_ms": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
+    "export_proof": {"type": "boolean"},
+    "seed": {"type": "integer", "minimum": 0},
+    "steps": {"type": "integer", "minimum": 1},
+    "N": {"type": "integer", "minimum": 1},
+    "dt_ms": {"type": "number", "exclusiveMinimum": 0},
+    "duration_ms": {"type": "number", "exclusiveMinimum": 0},
     "artifacts": {
       "type": "object",
       "minProperties": 1,
@@ -54,16 +41,28 @@
         "type": "string",
         "pattern": "^(self-unhashed|[a-f0-9]{64})$"
       }
-    },
-    "bundle_contract": {
-      "type": "string",
-      "enum": [
-        "canonical-base",
-        "canonical-export-proof"
-      ]
-    },
-    "export_proof": {
-      "type": "boolean"
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"export_proof": {"const": true}}},
+      "then": {
+        "properties": {
+          "cmd": {"const": "bnsyn run --profile canonical --plot --export-proof"},
+          "bundle_contract": {"const": "canonical-export-proof"},
+          "artifacts": {"required": ["proof_report.json"]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"export_proof": {"const": false}}},
+      "then": {
+        "properties": {
+          "cmd": {"const": "bnsyn run --profile canonical --plot"},
+          "bundle_contract": {"const": "canonical-base"},
+          "artifacts": {"not": {"required": ["proof_report.json"]}}
+        }
+      }
+    }
+  ]
 }

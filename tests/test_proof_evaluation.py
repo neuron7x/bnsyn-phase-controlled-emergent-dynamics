@@ -38,7 +38,7 @@ def _assert_consistent_bundle(out_dir: Path) -> None:
     manifest_hash = manifest["artifacts"]["proof_report.json"]
     actual_hash = hashlib.sha256((out_dir / "proof_report.json").read_bytes()).hexdigest()
     assert manifest_hash == actual_hash
-    reevaluated = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    reevaluated = evaluate_all_gates(out_dir)
     assert report == reevaluated
 
 
@@ -59,7 +59,7 @@ def test_g5_fails_when_artifact_hash_corrupted(tmp_path: Path) -> None:
     manifest["artifacts"]["summary_metrics.json"] = "0" * 64
     _write_json(out_dir / "run_manifest.json", manifest)
 
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
     assert report["verdict"] == "FAIL"
 
@@ -72,7 +72,7 @@ def test_g5_fails_when_proof_report_hash_corrupted(tmp_path: Path) -> None:
     manifest["artifacts"]["proof_report.json"] = "0" * 64
     _write_json(out_dir / "run_manifest.json", manifest)
 
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
 
 
@@ -81,7 +81,7 @@ def test_g4_fails_when_required_artifact_missing_on_disk(tmp_path: Path) -> None
     run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
 
     (out_dir / "phase_space_report.json").unlink()
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
 
     assert report["gates"]["G4_core_artifacts_complete"]["status"] == "FAIL"
     assert "phase_space_report.json" in report["gates"]["G4_core_artifacts_complete"]["missing_artifacts"]
@@ -95,7 +95,7 @@ def test_g4_fails_when_required_artifact_missing_in_manifest(tmp_path: Path) -> 
     del manifest["artifacts"]["criticality_report.json"]
     _write_json(out_dir / "run_manifest.json", manifest)
 
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G4_core_artifacts_complete"]["status"] == "FAIL"
     assert "criticality_report.json" in report["gates"]["G4_core_artifacts_complete"]["missing_artifacts"]
 
@@ -105,7 +105,7 @@ def test_g4_fails_when_proof_report_missing_for_export_contract(tmp_path: Path) 
     run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
 
     (out_dir / "proof_report.json").unlink()
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G4_core_artifacts_complete"]["status"] == "FAIL"
     assert "proof_report.json" in report["gates"]["G4_core_artifacts_complete"]["missing_artifacts"]
 
@@ -118,7 +118,7 @@ def test_g5_fails_on_malformed_manifest_hash(tmp_path: Path) -> None:
     manifest["artifacts"]["summary_metrics.json"] = "xyz"
     _write_json(out_dir / "run_manifest.json", manifest)
 
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
 
 
@@ -130,7 +130,7 @@ def test_g5_fails_on_invalid_run_manifest_schema(tmp_path: Path) -> None:
     del manifest["schema_version"]
     _write_json(out_dir / "run_manifest.json", manifest)
 
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
 
 
@@ -143,16 +143,16 @@ def test_proof_tamper_after_finalization_causes_fail(tmp_path: Path) -> None:
     report["failure_reasons"].append("tampered")
     _write_json(report_path, report)
 
-    reevaluated = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    reevaluated = evaluate_all_gates(out_dir)
     assert reevaluated["gates"]["G5_manifest_valid"]["status"] == "FAIL"
 
 
 def test_proof_evaluate_updates_manifest_with_proof_hash(tmp_path: Path) -> None:
     out_dir = tmp_path / "bundle"
-    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
 
     manifest = _load_json(out_dir / "run_manifest.json")
-    manifest["artifacts"].pop("proof_report.json", None)
+    manifest["artifacts"]["proof_report.json"] = "0" * 64
     _write_json(out_dir / "run_manifest.json", manifest)
 
     proc = subprocess.run(
@@ -233,8 +233,58 @@ def test_fail_closed_on_malformed_run_manifest_schema(monkeypatch: pytest.Monkey
 
     out_dir = tmp_path / "canonical"
     run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
-    report = evaluate_all_gates(out_dir, require_proof_artifact=True)
+    report = evaluate_all_gates(out_dir)
 
+    assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
+
+
+def test_export_manifest_tamper_cmd_to_base_fails_g5(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    manifest = _load_json(out_dir / "run_manifest.json")
+    manifest["cmd"] = "bnsyn run --profile canonical --plot"
+    _write_json(out_dir / "run_manifest.json", manifest)
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
+
+
+def test_export_manifest_tamper_contract_to_base_fails_g5(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    manifest = _load_json(out_dir / "run_manifest.json")
+    manifest["bundle_contract"] = "canonical-base"
+    _write_json(out_dir / "run_manifest.json", manifest)
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
+
+
+def test_export_manifest_tamper_export_proof_false_fails_g5(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    manifest = _load_json(out_dir / "run_manifest.json")
+    manifest["export_proof"] = False
+    _write_json(out_dir / "run_manifest.json", manifest)
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
+
+
+def test_base_manifest_tamper_add_proof_entry_fails_g5(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=False)
+    manifest = _load_json(out_dir / "run_manifest.json")
+    manifest["artifacts"]["proof_report.json"] = "0" * 64
+    _write_json(out_dir / "run_manifest.json", manifest)
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
+
+
+def test_proof_report_mode_mismatch_vs_manifest_fails_g5(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    proof = _load_json(out_dir / "proof_report.json")
+    proof["bundle_contract"] = "canonical-base"
+    _write_json(out_dir / "proof_report.json", proof)
+    report = evaluate_all_gates(out_dir)
     assert report["gates"]["G5_manifest_valid"]["status"] == "FAIL"
 
 
