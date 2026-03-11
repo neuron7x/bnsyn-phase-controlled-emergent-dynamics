@@ -13,7 +13,7 @@ The runner:
 1. executes pytest,
 2. captures JUnit XML + tee log,
 3. always generates diagnostics,
-4. returns the original pytest exit code unchanged.
+4. returns `pytest_exit_code` when pytest fails, otherwise returns `diagnostics_exit_code` if diagnostics generation fails, otherwise `0`.
 
 ## Artifacts
 The diagnostics contract emits:

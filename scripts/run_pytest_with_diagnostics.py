@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run pytest and always emit diagnostics while preserving pytest's exit code."""
+"""Run pytest and emit diagnostics with authoritative run exit semantics."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ if str(SRC) not in sys.path:
 
 
 def parse_args(argv: list[str] | None = None) -> tuple[argparse.Namespace, list[str]]:
-    parser = argparse.ArgumentParser(description="Run pytest with post-run diagnostics")
+    parser = argparse.ArgumentParser(description="Run pytest with post-run diagnostics and authoritative exit semantics")
     parser.add_argument("--markers", default="not (validation or property)")
     parser.add_argument("--junit", type=Path, default=Path("artifacts/tests/junit-fast.xml"))
     parser.add_argument("--log", type=Path, default=Path("artifacts/tests/pytest-fast.log"))

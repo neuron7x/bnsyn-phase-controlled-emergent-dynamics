@@ -179,3 +179,29 @@ def test_cli_exit_semantics_pytest_fail_still_wins(monkeypatch) -> None:
     monkeypatch.setattr(sys, "argv", ["run_pytest_with_diagnostics.py"])
     rc = runner.main()
     assert rc == 5
+
+
+
+def test_reusable_workflow_invokes_authoritative_runner_with_required_paths() -> None:
+    workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
+    assert 'python -m scripts.run_pytest_with_diagnostics' in workflow
+    assert '--junit junit.xml' in workflow
+    assert '--log pytest.log' in workflow
+    assert '--output-json artifacts/tests/failure-diagnostics.json' in workflow
+    assert '--output-md artifacts/tests/failure-diagnostics.md' in workflow
+
+
+def test_reusable_workflow_uploads_diagnostics_artifacts() -> None:
+    workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
+    assert 'name: Upload pytest diagnostics artifacts' in workflow
+    assert 'artifacts/tests/failure-diagnostics.json' in workflow
+    assert 'artifacts/tests/failure-diagnostics.md' in workflow
+
+
+def test_reusable_workflow_uses_authoritative_result_variable_for_gating() -> None:
+    workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
+    assert 'AUTHORITATIVE_RUN_RESULT=' in workflow
+    assert "if: env.AUTHORITATIVE_RUN_RESULT == '0'" in workflow
+    assert "if: env.AUTHORITATIVE_RUN_RESULT != '0'" in workflow
+    assert 'name: Fail if authoritative run failed' in workflow
+    assert 'PYTEST_RESULT' not in workflow

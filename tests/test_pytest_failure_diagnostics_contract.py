@@ -243,7 +243,7 @@ def test_bounded_tail_log_enrichment_match_in_tail(tmp_path: Path) -> None:
     nodeid = "tests/test_tail.py::test_tail"
     _write(
         junit,
-        f"""
+        """
 <testsuite name="suite" tests="1" failures="1" errors="0" skipped="0">
   <testcase classname="tests.test_tail" name="test_tail" file="tests/test_tail.py">
     <failure message="failed">tb</failure>
@@ -276,7 +276,7 @@ def test_bounded_tail_log_enrichment_match_outside_tail_is_safe(tmp_path: Path) 
     nodeid = "tests/test_old.py::test_old"
     _write(
         junit,
-        f"""
+        """
 <testsuite name="suite" tests="1" failures="1" errors="0" skipped="0">
   <testcase classname="tests.test_old" name="test_old" file="tests/test_old.py">
     <failure message="failed">tb</failure>

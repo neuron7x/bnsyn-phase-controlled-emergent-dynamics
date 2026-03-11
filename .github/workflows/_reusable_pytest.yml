@@ -86,12 +86,12 @@ jobs:
           set -e
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+          echo "AUTHORITATIVE_RUN_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
           exit 0
 
       - name: Coverage regression gate
-        if: env.PYTEST_RESULT == '0'
+        if: env.AUTHORITATIVE_RUN_RESULT == '0'
         run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
 
       - name: Parse coverage
@@ -145,7 +145,7 @@ jobs:
             echo ""
             echo "| Metric | Value |"
             echo "|--------|-------|"
-            if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+            if [ "${{ env.AUTHORITATIVE_RUN_RESULT }}" = "0" ]; then
               echo "| Status |  PASS |"
             else
               echo "| Status |  FAIL |"
@@ -160,7 +160,7 @@ jobs:
             echo ""
             
             # Show failure details if tests failed
-            if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+            if [ "${{ env.AUTHORITATIVE_RUN_RESULT }}" != "0" ]; then
               echo "###  Failure Details"
               echo ""
               
@@ -275,6 +275,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Fail if tests failed
-        if: env.PYTEST_RESULT != '0'
+      - name: Fail if authoritative run failed
+        if: env.AUTHORITATIVE_RUN_RESULT != '0'
         run: exit 1
