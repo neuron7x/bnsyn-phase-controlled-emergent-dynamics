@@ -314,3 +314,40 @@ def test_parse_junit_xml_fallback_without_defusedxml(monkeypatch: object) -> Non
     monkeypatch.setattr(builtins, '__import__', fake_import)
     root = diag._parse_junit_xml('<testsuite tests="0" failures="0" errors="0" skipped="0"/>')
     assert root.tag == 'testsuite'
+
+
+def test_missing_junit_input_is_fail_closed_with_explicit_context(tmp_path: Path) -> None:
+    missing = tmp_path / "missing.xml"
+    out_json = tmp_path / "out.json"
+    out_md = tmp_path / "out.md"
+
+    payload = generate_diagnostics(
+        junit_xml=missing,
+        output_json=out_json,
+        output_md=out_md,
+        pytest_exit_code=2,
+        schema_path=SCHEMA,
+    )
+
+    assert payload["status"] == "input_error"
+    assert payload["input_error"]["type"] == "FileNotFoundError"
+    assert str(missing) in payload["input_error"]["message"]
+
+
+def test_empty_junit_input_is_fail_closed_with_explicit_context(tmp_path: Path) -> None:
+    junit = tmp_path / "empty.xml"
+    _write(junit, "   \n")
+    out_json = tmp_path / "out.json"
+    out_md = tmp_path / "out.md"
+
+    payload = generate_diagnostics(
+        junit_xml=junit,
+        output_json=out_json,
+        output_md=out_md,
+        pytest_exit_code=2,
+        schema_path=SCHEMA,
+    )
+
+    assert payload["status"] == "input_error"
+    assert payload["input_error"]["type"] == "ValueError"
+    assert "JUnit XML input is empty" in payload["input_error"]["message"]

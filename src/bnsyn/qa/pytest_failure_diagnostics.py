@@ -342,7 +342,10 @@ def generate_diagnostics(
     output_md.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        root = _parse_junit_xml(_read_text(junit_xml))
+        xml_text = _read_text(junit_xml)
+        if not xml_text.strip():
+            raise ValueError(f"JUnit XML input is empty: {junit_xml}")
+        root = _parse_junit_xml(xml_text)
         summary = _extract_summary(root)
         log_text = _read_tail(log_file) if log_file is not None and log_file.exists() else None
         failures = _extract_failures(root, log_text)
