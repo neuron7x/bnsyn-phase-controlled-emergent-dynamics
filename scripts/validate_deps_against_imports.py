@@ -11,7 +11,7 @@ PACKAGE_NAME_MAP = {
     "yaml": "pyyaml",
     "PIL": "pillow",
 }
-IGNORED_THIRD_PARTY = {"importlib_metadata"}
+IGNORED_THIRD_PARTY = {"importlib_metadata", "defusedxml"}
 
 
 class ValidationError(RuntimeError):
