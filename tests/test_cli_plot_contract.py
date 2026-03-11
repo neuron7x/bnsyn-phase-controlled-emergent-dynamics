@@ -51,6 +51,12 @@ def test_cmd_plot_writes_canonical_artifacts(tmp_path: Path) -> None:
     assert "criticality_report.json" in manifest["artifacts"]
     assert "avalanche_report.json" in manifest["artifacts"]
     assert "phase_space_report.json" in manifest["artifacts"]
+    assert "population_rate_trace.npy" in manifest["artifacts"]
+    assert "sigma_trace.npy" in manifest["artifacts"]
+    assert "coherence_trace.npy" in manifest["artifacts"]
+    assert "phase_space_rate_sigma.png" in manifest["artifacts"]
+    assert "phase_space_rate_coherence.png" in manifest["artifacts"]
+    assert "phase_space_activity_map.png" in manifest["artifacts"]
     assert manifest["artifacts"]["run_manifest.json"] == "self-unhashed"
 
 
@@ -79,6 +85,12 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
         "criticality_report.json",
         "avalanche_report.json",
         "phase_space_report.json",
+        "population_rate_trace.npy",
+        "sigma_trace.npy",
+        "coherence_trace.npy",
+        "phase_space_rate_sigma.png",
+        "phase_space_rate_coherence.png",
+        "phase_space_activity_map.png",
         "run_manifest.json",
     ]
 

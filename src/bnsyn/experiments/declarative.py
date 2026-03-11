@@ -21,6 +21,11 @@ import numpy as np
 import yaml  # type: ignore[import-untyped]
 
 from bnsyn.experiments.emergence import run_emergence_to_disk
+from bnsyn.experiments.phase_space import (
+    build_activity_map,
+    build_phase_space_report,
+    build_phase_trajectory_image,
+)
 from bnsyn.numerics import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
@@ -269,86 +274,19 @@ def _build_phase_space_report(
     steps: int,
     rate_trace_hz: np.ndarray,
     sigma_trace: np.ndarray,
-) -> dict[str, float | int | str | list[str] | dict[str, float]]:
+    coherence_trace: np.ndarray,
+) -> dict[str, Any]:
     """Build deterministic state-space trajectory report from canonical traces."""
-    rates = np.asarray(rate_trace_hz, dtype=np.float64)
-    sigmas = np.asarray(sigma_trace, dtype=np.float64)
-
-    if rates.size != sigmas.size:
-        raise ValueError("rate_trace_hz and sigma_trace must have equal length")
-    if rates.size != int(steps):
-        raise ValueError("rate_trace_hz and sigma_trace length must equal steps")
-
-    if rates.size == 0:
-        rate_sigma_correlation = 0.0
-        trajectory_length_l2 = 0.0
-        rate_min = 0.0
-        rate_max = 0.0
-        sigma_min = 0.0
-        sigma_max = 0.0
-        centroid_rate = 0.0
-        centroid_sigma = 0.0
-        occupied_cell_fraction = 0.0
-    else:
-        rate_std = float(np.std(rates))
-        sigma_std = float(np.std(sigmas))
-        if rates.size < 2 or rate_std == 0.0 or sigma_std == 0.0:
-            rate_sigma_correlation = 0.0
-        else:
-            rate_sigma_correlation = float(np.corrcoef(rates, sigmas)[0, 1])
-
-        deltas_rate = np.diff(rates)
-        deltas_sigma = np.diff(sigmas)
-        trajectory_length_l2 = float(np.sum(np.sqrt(np.square(deltas_rate) + np.square(deltas_sigma))))
-
-        rate_min = float(np.min(rates))
-        rate_max = float(np.max(rates))
-        sigma_min = float(np.min(sigmas))
-        sigma_max = float(np.max(sigmas))
-
-        centroid_rate = float(np.mean(rates))
-        centroid_sigma = float(np.mean(sigmas))
-
-        grid_size = 32
-        visited = np.zeros((grid_size, grid_size), dtype=np.bool_)
-
-        def _axis_idx(values: np.ndarray, vmin: float, vmax: float) -> np.ndarray:
-            if vmax <= vmin:
-                return np.zeros(values.size, dtype=np.int64)
-            scaled = (values - vmin) / (vmax - vmin)
-            return np.clip((scaled * (grid_size - 1)).astype(np.int64), 0, grid_size - 1)
-
-        x_idx = _axis_idx(rates, rate_min, rate_max)
-        y_idx = _axis_idx(sigmas, sigma_min, sigma_max)
-        visited[y_idx, x_idx] = True
-        occupied_cell_fraction = float(np.count_nonzero(visited) / (grid_size * grid_size))
-
-    return {
-        "schema_version": "1.0.0",
-        "seed": seed,
-        "N": int(n_neurons),
-        "dt_ms": float(dt_ms),
-        "duration_ms": float(duration_ms),
-        "steps": int(steps),
-        "state_axes": ["population_rate_hz", "sigma"],
-        "point_count": int(rates.size),
-        "rate_mean_hz": float(np.mean(rates)) if rates.size else 0.0,
-        "sigma_mean": float(np.mean(sigmas)) if sigmas.size else 0.0,
-        "rate_sigma_correlation": rate_sigma_correlation,
-        "trajectory_length_l2": trajectory_length_l2,
-        "bounding_box": {
-            "rate_min": rate_min,
-            "rate_max": rate_max,
-            "sigma_min": sigma_min,
-            "sigma_max": sigma_max,
-        },
-        "centroid": {
-            "rate": centroid_rate,
-            "sigma": centroid_sigma,
-        },
-        "occupied_cell_fraction": occupied_cell_fraction,
-    }
-
+    return build_phase_space_report(
+        seed=seed,
+        n_neurons=n_neurons,
+        dt_ms=dt_ms,
+        duration_ms=duration_ms,
+        steps=steps,
+        rate_trace_hz=rate_trace_hz,
+        sigma_trace=sigma_trace,
+        coherence_trace=coherence_trace,
+    )
 
 def run_canonical_live_bundle(
     config_path: str | Path,
@@ -372,6 +310,7 @@ def run_canonical_live_bundle(
         spike_steps = np.asarray(data["spike_steps"], dtype=np.int64)
         sigma_trace = np.asarray(data["sigma_trace"], dtype=np.float64)
         rate_trace_hz = np.asarray(data["rate_trace_hz"], dtype=np.float64)
+        coherence_trace = np.asarray(data["coherence_trace"], dtype=np.float64)
         spike_neurons = np.asarray(data["spike_neurons"], dtype=np.int64)
         steps = int(np.asarray(data["steps"]).item())
         n_neurons = int(np.asarray(data["N"]).item())
@@ -451,12 +390,32 @@ def run_canonical_live_bundle(
         steps=steps,
         rate_trace_hz=rate_trace_hz,
         sigma_trace=sigma_trace,
+        coherence_trace=coherence_trace,
     )
     phase_space_report_path = out_dir / "phase_space_report.json"
     phase_space_report_path.write_text(
         json.dumps(phase_space_report, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+
+    population_rate_trace_path = out_dir / "population_rate_trace.npy"
+    sigma_trace_path = out_dir / "sigma_trace.npy"
+    coherence_trace_path = out_dir / "coherence_trace.npy"
+    np.save(population_rate_trace_path, rate_trace_hz)
+    np.save(sigma_trace_path, sigma_trace)
+    np.save(coherence_trace_path, coherence_trace)
+
+    phase_space_rate_sigma_path = out_dir / "phase_space_rate_sigma.png"
+    phase_space_rate_coherence_path = out_dir / "phase_space_rate_coherence.png"
+    phase_space_activity_map_path = out_dir / "phase_space_activity_map.png"
+
+    phase_space_rate_sigma = build_phase_trajectory_image(rate_trace_hz, sigma_trace)
+    phase_space_rate_coherence = build_phase_trajectory_image(rate_trace_hz, coherence_trace)
+    phase_space_activity_map, _ = build_activity_map(rate_trace_hz, sigma_trace)
+
+    _write_grayscale_png(phase_space_rate_sigma, phase_space_rate_sigma_path)
+    _write_grayscale_png(phase_space_rate_coherence, phase_space_rate_coherence_path)
+    _write_grayscale_png(phase_space_activity_map, phase_space_activity_map_path)
 
     raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
@@ -486,6 +445,12 @@ def run_canonical_live_bundle(
             "criticality_report.json": hashlib.sha256(criticality_report_path.read_bytes()).hexdigest(),
             "avalanche_report.json": hashlib.sha256(avalanche_report_path.read_bytes()).hexdigest(),
             "phase_space_report.json": hashlib.sha256(phase_space_report_path.read_bytes()).hexdigest(),
+            "population_rate_trace.npy": hashlib.sha256(population_rate_trace_path.read_bytes()).hexdigest(),
+            "sigma_trace.npy": hashlib.sha256(sigma_trace_path.read_bytes()).hexdigest(),
+            "coherence_trace.npy": hashlib.sha256(coherence_trace_path.read_bytes()).hexdigest(),
+            "phase_space_rate_sigma.png": hashlib.sha256(phase_space_rate_sigma_path.read_bytes()).hexdigest(),
+            "phase_space_rate_coherence.png": hashlib.sha256(phase_space_rate_coherence_path.read_bytes()).hexdigest(),
+            "phase_space_activity_map.png": hashlib.sha256(phase_space_activity_map_path.read_bytes()).hexdigest(),
             "run_manifest.json": "self-unhashed",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
@@ -515,6 +480,12 @@ def run_canonical_live_bundle(
         "avalanche_report_path": avalanche_report_path.as_posix(),
         "phase_space_report": phase_space_report,
         "phase_space_report_path": phase_space_report_path.as_posix(),
+        "population_rate_trace_path": population_rate_trace_path.as_posix(),
+        "sigma_trace_path": sigma_trace_path.as_posix(),
+        "coherence_trace_path": coherence_trace_path.as_posix(),
+        "phase_space_rate_sigma_path": phase_space_rate_sigma_path.as_posix(),
+        "phase_space_rate_coherence_path": phase_space_rate_coherence_path.as_posix(),
+        "phase_space_activity_map_path": phase_space_activity_map_path.as_posix(),
         "emergence_plot_path": emergence_plot_path.as_posix(),
         "raster_plot_path": raster_path.as_posix(),
         "population_rate_plot_path": rate_plot_path.as_posix(),

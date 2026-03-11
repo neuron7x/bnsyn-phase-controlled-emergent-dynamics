@@ -27,6 +27,12 @@ Base canonical artifact contract (`bnsyn run --profile canonical --plot`):
 - `criticality_report.json`
 - `avalanche_report.json`
 - `phase_space_report.json`
+- `population_rate_trace.npy`
+- `sigma_trace.npy`
+- `coherence_trace.npy`
+- `phase_space_rate_sigma.png`
+- `phase_space_rate_coherence.png`
+- `phase_space_activity_map.png`
 
 Export-proof augmented artifact contract (`bnsyn run --profile canonical --plot --export-proof`):
 - all base artifacts
@@ -65,6 +71,12 @@ Inspect:
 - `artifacts/canonical_run/criticality_report.json`
 - `artifacts/canonical_run/avalanche_report.json`
 - `artifacts/canonical_run/phase_space_report.json`
+- `artifacts/canonical_run/population_rate_trace.npy`
+- `artifacts/canonical_run/sigma_trace.npy`
+- `artifacts/canonical_run/coherence_trace.npy`
+- `artifacts/canonical_run/phase_space_rate_sigma.png`
+- `artifacts/canonical_run/phase_space_rate_coherence.png`
+- `artifacts/canonical_run/phase_space_activity_map.png`
 - `artifacts/canonical_run/proof_report.json` (when `--export-proof` is enabled)
 
 ## Quickstart

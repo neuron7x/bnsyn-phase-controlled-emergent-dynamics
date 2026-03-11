@@ -11,6 +11,7 @@ from bnsyn.config import AdExParams, CriticalityParams, SynapseParams
 from bnsyn.numerics import compute_steps_exact
 from bnsyn.rng import seed_all
 from bnsyn.sim.network import Network, NetworkParams
+from bnsyn.experiments.phase_space import coherence_from_voltages
 
 FORMAT_VERSION = "1.1.0"
 
@@ -48,6 +49,7 @@ def run_emergence_to_disk(
 
     sigma_trace: list[float] = []
     rate_trace_hz: list[float] = []
+    coherence_trace: list[float] = []
     spike_steps: list[int] = []
     spike_neurons: list[int] = []
 
@@ -55,6 +57,13 @@ def run_emergence_to_disk(
         metrics = net.step(external_current_pA=injected_current)
         sigma_trace.append(float(metrics["sigma"]))
         rate_trace_hz.append(float(metrics["spike_rate_hz"]))
+        coherence_trace.append(
+            coherence_from_voltages(
+                net.state.V_mV,
+                vreset_mV=float(net.adex.Vreset_mV),
+                vthreshold_mV=float(net.adex.VT_mV),
+            )
+        )
         for neuron_idx in net.state.spiked.nonzero()[0]:
             spike_steps.append(step)
             spike_neurons.append(int(neuron_idx))
@@ -66,6 +75,7 @@ def run_emergence_to_disk(
 
     sigma_arr = np.asarray(sigma_trace, dtype=np.float64)
     rate_arr = np.asarray(rate_trace_hz, dtype=np.float64)
+    coherence_arr = np.asarray(coherence_trace, dtype=np.float64)
     np.savez(
         artifact_path,
         format_version=np.asarray(FORMAT_VERSION),
@@ -73,6 +83,7 @@ def run_emergence_to_disk(
         spike_neurons=np.asarray(spike_neurons, dtype=np.int64),
         sigma_trace=sigma_arr,
         rate_trace_hz=rate_arr,
+        coherence_trace=coherence_arr,
         dt_ms=np.asarray(float(dt_ms), dtype=np.float64),
         steps=np.asarray(steps, dtype=np.int64),
         N=np.asarray(int(N), dtype=np.int64),

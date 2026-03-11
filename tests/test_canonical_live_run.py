@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+import numpy as np
 
 from bnsyn.experiments.declarative import run_canonical_live_bundle
 
@@ -25,6 +26,12 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     emergence_plot_path = out_dir / "emergence_plot.png"
     raster_path = out_dir / "raster_plot.png"
     rate_plot_path = out_dir / "population_rate_plot.png"
+    population_rate_trace_path = out_dir / "population_rate_trace.npy"
+    sigma_trace_path = out_dir / "sigma_trace.npy"
+    coherence_trace_path = out_dir / "coherence_trace.npy"
+    phase_space_rate_sigma_path = out_dir / "phase_space_rate_sigma.png"
+    phase_space_rate_coherence_path = out_dir / "phase_space_rate_coherence.png"
+    phase_space_activity_map_path = out_dir / "phase_space_activity_map.png"
     assert summary_path.exists()
     assert manifest_path.exists()
     assert criticality_report_path.exists()
@@ -33,7 +40,12 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert emergence_plot_path.exists()
     assert raster_path.exists()
     assert rate_plot_path.exists()
-
+    assert population_rate_trace_path.exists()
+    assert sigma_trace_path.exists()
+    assert coherence_trace_path.exists()
+    assert phase_space_rate_sigma_path.exists()
+    assert phase_space_rate_coherence_path.exists()
+    assert phase_space_activity_map_path.exists()
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
@@ -83,10 +95,21 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     phase_space_required = {
         "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
         "state_axes", "point_count", "rate_mean_hz", "sigma_mean",
-        "rate_sigma_correlation", "trajectory_length_l2", "bounding_box",
-        "centroid", "occupied_cell_fraction",
+        "coherence_mean", "coherence_std", "coherence_min", "coherence_max",
+        "rate_sigma_correlation", "rate_coherence_correlation", "trajectory_length_l2",
+        "bounding_box", "centroid", "activity_map", "artifacts",
     }
     assert set(phase_space.keys()) == phase_space_required
+
+    population_rate_trace = np.load(population_rate_trace_path)
+    sigma_trace = np.load(sigma_trace_path)
+    coherence_trace = np.load(coherence_trace_path)
+    assert population_rate_trace.shape[0] == metrics["steps"]
+    assert sigma_trace.shape[0] == metrics["steps"]
+    assert coherence_trace.shape[0] == metrics["steps"]
+    assert np.all(np.isfinite(coherence_trace))
+    assert np.all(coherence_trace >= 0.0)
+    assert np.all(coherence_trace <= 1.0)
 
 
 def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
@@ -111,6 +134,15 @@ def test_canonical_live_bundle_is_deterministic(tmp_path: Path) -> None:
     manifest_a = json.loads((out_a / "run_manifest.json").read_text(encoding="utf-8"))
     assert "avalanche_report.json" in manifest_a["artifacts"]
     assert "phase_space_report.json" in manifest_a["artifacts"]
+    for filename in [
+        "population_rate_trace.npy",
+        "sigma_trace.npy",
+        "coherence_trace.npy",
+        "phase_space_rate_sigma.png",
+        "phase_space_rate_coherence.png",
+        "phase_space_activity_map.png",
+    ]:
+        assert (out_a / filename).read_bytes() == (out_b / filename).read_bytes()
 
 
 def test_cli_run_profile_canonical_end_to_end(monkeypatch, tmp_path: Path) -> None:
