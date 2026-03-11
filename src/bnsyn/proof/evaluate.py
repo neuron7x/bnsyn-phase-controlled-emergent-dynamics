@@ -10,8 +10,6 @@ import jsonschema  # type: ignore[import-untyped]
 
 from .contracts import (
     CANONICAL_BASE_CONTRACT,
-    BASE_ARTIFACTS,
-    EXPORT_PROOF_ARTIFACTS,
     ManifestMode,
     mode_from_manifest,
 )
@@ -32,6 +30,18 @@ EXPECTED_GATE_IDS = (
     "G7_avalanche_evidence_sufficient",
     "G8_reproducibility_envelope",
 )
+
+# G4 required-artifact floor remains registry-driven and intentionally narrower
+# than canonical CLI payload artifacts, which may include additive evidence files.
+G4_BASE_REQUIRED_ARTIFACTS: tuple[str, ...] = (
+    "emergence_plot.png",
+    "summary_metrics.json",
+    "criticality_report.json",
+    "avalanche_report.json",
+    "phase_space_report.json",
+    "run_manifest.json",
+)
+G4_EXPORT_REQUIRED_ARTIFACTS: tuple[str, ...] = G4_BASE_REQUIRED_ARTIFACTS + ("proof_report.json",)
 
 
 @dataclass(frozen=True)
@@ -82,8 +92,8 @@ def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], mode:
         raise ValueError(f"G4 required_artifacts_by_mode invalid for {mode.bundle_contract}")
 
     required_artifacts = tuple(mode_required)
-    expected = EXPORT_PROOF_ARTIFACTS if mode.export_proof else BASE_ARTIFACTS
-    if required_artifacts != expected:
+    expected_floor = G4_EXPORT_REQUIRED_ARTIFACTS if mode.export_proof else G4_BASE_REQUIRED_ARTIFACTS
+    if required_artifacts != expected_floor:
         raise ValueError("registry/runtime artifact contract drift")
     return required_artifacts
 

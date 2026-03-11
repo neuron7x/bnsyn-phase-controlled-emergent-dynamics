@@ -23,7 +23,13 @@ Canonical base bundle (`bnsyn run --profile canonical --plot`):
 - `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes for external artifacts; self-entry uses sentinel `"self-unhashed"` to avoid false self-hash claims.
 - `criticality_report.json` — machine-readable criticality metrics derived from the canonical run traces.
 - `avalanche_report.json` — machine-readable avalanche event-structure metrics from contiguous nonzero spike-count bins.
-- `phase_space_report.json` — machine-readable state-space trajectory metrics from population rate and sigma traces.
+- `phase_space_report.json` — machine-readable state-space trajectory metrics from population rate, sigma, and coherence traces.
+- `population_rate_trace.npy` — deterministic raw population-rate trace used for phase-space evidence.
+- `sigma_trace.npy` — deterministic raw sigma trace used for phase-space evidence.
+- `coherence_trace.npy` — deterministic raw coherence trace used for phase-space evidence.
+- `phase_space_rate_sigma.png` — deterministic phase-space trajectory rendering in `(rate, sigma)`.
+- `phase_space_rate_coherence.png` — deterministic phase-space trajectory rendering in `(rate, coherence)`.
+- `phase_space_activity_map.png` — deterministic `(rate, sigma)` occupancy/density activity map.
 
 Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-proof`):
 

@@ -30,7 +30,7 @@
 - V1 Result: keep `bnsyn run --profile canonical --plot --export-proof` as the single canonical proof command.
 - V2 Narrative: keep README + docs/CANONICAL_PROOF.md aligned with mechanism (AdEx + STDP + criticality), measurable outputs, and reproducibility.
 - V3 Audience: keep clone->install->`bnsyn run --profile canonical --plot --export-proof`->inspect path obvious for external technical reviewers.
-- Canonical artifact contract for `bnsyn run --profile canonical --plot --export-proof`: `emergence_plot.png`, `summary_metrics.json`, `criticality_report.json`, `avalanche_report.json`, `phase_space_report.json`, `run_manifest.json`.
+- Canonical artifact contract for `bnsyn run --profile canonical --plot --export-proof`: `emergence_plot.png`, `summary_metrics.json`, `criticality_report.json`, `avalanche_report.json`, `phase_space_report.json`, `population_rate_trace.npy`, `sigma_trace.npy`, `coherence_trace.npy`, `phase_space_rate_sigma.png`, `phase_space_rate_coherence.png`, `phase_space_activity_map.png`, `run_manifest.json`, `proof_report.json`.
 - Treat changes that obscure or fragment canonical proof path as drift.
 
 ## Tooling & Commands (Project-Specific)
