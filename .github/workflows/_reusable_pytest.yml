@@ -224,7 +224,7 @@ jobs:
         timeout-minutes: 5
       
       - name: Upload artifacts on failure
-        if: failure()
+        if: always() && (failure() || env.AUTHORITATIVE_RUN_RESULT != '0')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pytest-failure-${{ github.sha }}

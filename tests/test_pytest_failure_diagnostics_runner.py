@@ -211,3 +211,10 @@ def test_reusable_workflow_coverage_artifact_upload_is_guarded() -> None:
     workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
     assert "if: always() && hashFiles('coverage.xml') != ''" in workflow
     assert "if: env.AUTHORITATIVE_RUN_RESULT == '0'" in workflow
+
+
+def test_reusable_workflow_failure_artifact_condition_includes_authoritative_result() -> None:
+    workflow = Path('.github/workflows/_reusable_pytest.yml').read_text(encoding='utf-8')
+    assert 'name: Upload artifacts on failure' in workflow
+    assert "if: always() && (failure() || env.AUTHORITATIVE_RUN_RESULT != '0')" in workflow
+    assert 'if: failure()' not in workflow
