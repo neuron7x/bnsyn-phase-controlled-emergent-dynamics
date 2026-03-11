@@ -59,29 +59,39 @@ jobs:
       - name: Verify full test collection
         run: python -m pytest --collect-only -q
       
-      - name: Run pytest
+      - name: Run pytest with diagnostics (authoritative)
         id: pytest
         run: |
           START_TIME=$(date +%s)
-          python -m pytest \
-            -m "${{ inputs.markers }}" \
+          set +e
+          python -m scripts.run_pytest_with_diagnostics \
+            --markers "${{ inputs.markers }}" \
+            --junit junit.xml \
+            --log pytest.log \
+            --output-json artifacts/tests/failure-diagnostics.json \
+            --output-md artifacts/tests/failure-diagnostics.md \
+            --annotations-file artifacts/tests/failure-annotations.txt \
+            --emit-github-annotations \
+            --max-annotations 20 \
+            --write-step-summary \
+            -- \
             --cov=bnsyn \
             --cov-report=term-missing:skip-covered \
             --cov-report=json \
             --cov-report=xml:coverage.xml \
             --cov-report=html \
             --cov-fail-under="${{ inputs['coverage-threshold'] }}" \
-            --junit-xml=junit.xml \
-            -v 2>&1 | tee pytest.log
+            -v
           PYTEST_EXIT=$?
+          set -e
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          echo "PYTEST_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
+          echo "AUTHORITATIVE_RUN_RESULT=$PYTEST_EXIT" >> "$GITHUB_ENV"
           echo "DURATION=$DURATION" >> "$GITHUB_ENV"
-          exit "$PYTEST_EXIT"
-      
+          exit 0
+
       - name: Coverage regression gate
-        if: success()
+        if: env.AUTHORITATIVE_RUN_RESULT == '0'
         run: python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
 
       - name: Parse coverage
@@ -119,10 +129,10 @@ jobs:
           echo "COVERAGE_STATE=$COVERAGE_STATE" >> "$GITHUB_ENV"
 
       - name: Enforce mandatory coverage.xml artifact input
-        if: always()
+        if: env.AUTHORITATIVE_RUN_RESULT == '0'
         run: |
           if [ ! -f coverage.xml ]; then
-            echo "coverage.xml is required for smoke/unit coverage jobs"
+            echo "coverage.xml is required when authoritative run succeeds"
             exit 1
           fi
       
@@ -135,7 +145,7 @@ jobs:
             echo ""
             echo "| Metric | Value |"
             echo "|--------|-------|"
-            if [ "${{ env.PYTEST_RESULT }}" = "0" ]; then
+            if [ "${{ env.AUTHORITATIVE_RUN_RESULT }}" = "0" ]; then
               echo "| Status |  PASS |"
             else
               echo "| Status |  FAIL |"
@@ -150,7 +160,7 @@ jobs:
             echo ""
             
             # Show failure details if tests failed
-            if [ "${{ env.PYTEST_RESULT }}" != "0" ]; then
+            if [ "${{ env.AUTHORITATIVE_RUN_RESULT }}" != "0" ]; then
               echo "###  Failure Details"
               echo ""
               
@@ -214,7 +224,7 @@ jobs:
         timeout-minutes: 5
       
       - name: Upload artifacts on failure
-        if: failure()
+        if: always() && (failure() || env.AUTHORITATIVE_RUN_RESULT != '0')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pytest-failure-${{ github.sha }}
@@ -228,7 +238,7 @@ jobs:
           retention-days: 7
       
       - name: Upload mandatory coverage.xml artifact
-        if: always()
+        if: always() && hashFiles('coverage.xml') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-xml-${{ github.sha }}
@@ -253,7 +263,18 @@ jobs:
           path: artifacts/coverage-trend/
           if-no-files-found: error
           retention-days: 90
-      
-      - name: Fail if tests failed
-        if: env.PYTEST_RESULT != '0'
+      - name: Upload pytest diagnostics artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pytest-diagnostics-${{ github.sha }}
+          path: |
+            artifacts/tests/failure-diagnostics.json
+            artifacts/tests/failure-diagnostics.md
+            artifacts/tests/failure-annotations.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Fail if authoritative run failed
+        if: env.AUTHORITATIVE_RUN_RESULT != '0'
         run: exit 1

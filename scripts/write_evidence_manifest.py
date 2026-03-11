@@ -40,7 +40,13 @@ def main() -> int:
     )
 
     tracked = []
-    for candidate in [Path("artifacts/flake-report.json"), Path("artifacts/flake-report.md"), Path("artifacts/tests/junit-all.xml")]:
+    for candidate in [
+        Path("artifacts/flake-report.json"),
+        Path("artifacts/flake-report.md"),
+        Path("artifacts/tests/junit-all.xml"),
+        Path("artifacts/tests/failure-diagnostics.json"),
+        Path("artifacts/tests/failure-diagnostics.md"),
+    ]:
         if candidate.exists():
             target = reports / candidate.name
             target.write_bytes(candidate.read_bytes())
