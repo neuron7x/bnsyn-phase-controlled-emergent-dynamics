@@ -551,3 +551,47 @@ def test_recompute_metrics_from_artifacts_zero_rounding_tolerance_is_exact(tmp_p
         "Expected reconstruction to fail with tolerance=0.0, but it passed — "
         "likely the 'or' operator bug is still present"
     )
+
+
+def test_recompute_metrics_from_artifacts_uses_canonical_raw_and_metadata(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
+    np.savez(
+        tmp_path / "traces.npz",
+        spike_steps=np.asarray([1, 2, 3], dtype=np.int64),
+        spike_neurons=np.asarray([0, 1, 2], dtype=np.int64),
+        dt_ms=np.asarray([0.1]),
+        N=np.asarray([10]),
+    )
+
+    result = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        manifest={"dt_ms": 0.1, "N": 10},
+        g9_gate=_g9_gate_payload(),
+    )
+    assert result["spike_events_source"] == "raw_npz"
+    assert result["metrics"]["spike_events"] == 3
+    assert result["sources"]["spike_events"] == "traces.npz"
+    assert result["spike_events_metadata"]["source"] == "traces.npz"
+
+
+def test_recompute_metrics_from_artifacts_steps_mismatch_fails(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
+
+    result = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        manifest={"dt_ms": 0.1, "N": 10, "steps": 3},
+        g9_gate=_g9_gate_payload(),
+    )
+    assert any("steps mismatch" in err for err in result["errors"])
+
+
+def test_metric_consistency_gate_reports_missing_recomputed_metric() -> None:
+    result = proof_evaluate.evaluate_gate_g9_metric_consistency(
+        summary={"spike_events": 1, "rate_mean_hz": 1.0, "sigma_mean": 1.0},
+        recomputed={"metrics": {"spike_events": 1, "rate_mean_hz": 1.0}, "errors": [], "sources": {}},
+        gate=_g9_gate_payload(),
+    )
+    assert result["status"] == "FAIL"
+    assert "sigma_mean: missing recomputed metric" in result["errors"]

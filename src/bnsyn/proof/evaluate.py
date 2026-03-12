@@ -406,8 +406,12 @@ def evaluate_gate_g9_metric_consistency(summary: dict[str, Any], recomputed: dic
         tolerance = float(policy["tolerance"])
         effective_policy = str(policy["policy"])
         if metric_name == "spike_events":
-            per_source = policy.get("policy_by_source") if isinstance(policy.get("policy_by_source"), dict) else {}
-            effective_policy = str(per_source.get(recomputed.get("spike_events_source"), effective_policy))
+            per_source_raw = policy.get("policy_by_source")
+            per_source: dict[str, str] = per_source_raw if isinstance(per_source_raw, dict) else {}
+            source_key = recomputed.get("spike_events_source")
+            if not isinstance(source_key, str):
+                source_key = ""
+            effective_policy = str(per_source.get(source_key, effective_policy))
         comparisons[metric_name] = {
             "tolerance": tolerance,
             "policy": effective_policy,
