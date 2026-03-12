@@ -22,10 +22,12 @@ def test_readme_quickstart_contract_matches_make_target() -> None:
     readme = Path("README.md").read_text(encoding="utf-8")
     expected = {
         "make quickstart-smoke",
-        "python -m pip install -e .",
+        "python -m pip install -e \".[plot]\"",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git",
+        "./scripts/bootstrap_local_linux.sh",
+        "./scripts/run_canonical_local.sh",
         "artifacts/canonical_run/emergence_plot.png",
         "artifacts/canonical_run/summary_metrics.json",
         "artifacts/canonical_run/run_manifest.json",
@@ -39,7 +41,7 @@ def test_readme_quickstart_contract_matches_make_target() -> None:
 
     smoke_commands = _quickstart_smoke_commands()
     assert "python -m scripts.check_quickstart_consistency" in smoke_commands
-    assert "python -m pip install -e ." in smoke_commands
+    assert "python -m pip install -e \".[plot]\"" in smoke_commands
     assert "bnsyn --help" in smoke_commands
     assert "bnsyn run --help" in smoke_commands
     assert any(cmd.startswith("bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c") for cmd in smoke_commands)

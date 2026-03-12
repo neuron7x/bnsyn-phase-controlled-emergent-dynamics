@@ -7,8 +7,10 @@ from pathlib import Path
 
 REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
     "README.md": (
+        "./scripts/bootstrap_local_linux.sh",
+        "./scripts/run_canonical_local.sh",
         "make quickstart-smoke",
-        "python -m pip install -e .",
+        "python -m pip install -e \".[plot]\"",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",
@@ -16,7 +18,9 @@ REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
         "phase_space_report.json",
     ),
     "docs/QUICKSTART.md": (
-        "python -m pip install -e .",
+        "./scripts/bootstrap_local_linux.sh",
+        "./scripts/run_canonical_local.sh",
+        "python -m pip install -e \".[plot]\"",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",
@@ -24,7 +28,7 @@ REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
         "phase_space_report.json",
     ),
     "docs/LEGENDARY_QUICKSTART.md": (
-        "python -m pip install -e .",
+        "python -m pip install -e \".[plot]\"",
         "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
         "criticality_report.json",

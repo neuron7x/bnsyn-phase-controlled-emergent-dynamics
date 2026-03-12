@@ -53,7 +53,7 @@ def plot_emergence_npz(input_npz: str | Path, output_png: str | Path) -> None:
         import matplotlib.pyplot as plt
     except ImportError as exc:
         raise RuntimeError(
-            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+            'Visualization requires matplotlib. Install with: pip install -e ".[plot]" (or ".[viz]" for full interactive stack)'
         ) from exc
 
     fig, axes = plt.subplots(3, 1, figsize=(10, 8), sharex=True)

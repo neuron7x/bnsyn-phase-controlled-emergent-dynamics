@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke local-bootstrap local-run local-verify local-all dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -39,11 +39,25 @@ dev-setup:
 
 quickstart-smoke:
 	python -m scripts.check_quickstart_consistency
-	python -m pip install -e .
+	python -m pip install -e ".[plot]"
 	python -m pip show bnsyn
 	bnsyn --help
 	bnsyn run --help
 	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','avalanche_fit_report.json','robustness_report.json','envelope_report.json','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+
+
+local-bootstrap:
+	./scripts/bootstrap_local_linux.sh
+
+local-verify:
+	@if [ ! -x ./.venv/bin/python ]; then echo "ERROR: .venv missing. Run ./scripts/bootstrap_local_linux.sh"; exit 1; fi
+	./.venv/bin/python -m scripts.local_doctor
+
+local-run:
+	./scripts/run_canonical_local.sh
+
+local-all: local-bootstrap local-run
+	@echo "Local bootstrap + canonical run complete"
 
 
 wheelhouse-build:

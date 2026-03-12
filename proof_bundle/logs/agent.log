@@ -9168,3 +9168,2465 @@ $ git status --short
  M manifest/repo_manifest.computed.json
  M proof_bundle/logs/agent.log
 $ git add .github/REPO_MANIFEST.md .github/WORKFLOW_CONTRACTS.md .github/workflows/repo-governor-evidence.yml INVENTORY.json manifest/repo_manifest.computed.json proof_bundle/logs/agent.log
+# Agent session 2026-03-12T05:31:44+00:00
+readiness_summary.md
+entropy/acceptance_map.yaml
+entropy/commands.log
+entropy/baseline.json
+entropy/policy.json
+entropy/metrics.json
+entropy/current.json
+entropy/__init__.py
+PR_DESCRIPTION_EVIDENCE.md
+acceptance_map.yaml
+tools/generate_inventory.py
+tools/__init__.py
+DOC_CHANGELOG.md
+plan.md
+AGENTS.md
+benchmarks/throughput_gain.json
+benchmarks/metrics.py
+benchmarks/scalability.py
+benchmarks/scaling_plan.md
+benchmarks/scaling.py
+benchmarks/run_benchmarks.py
+benchmarks/equivalence_report.md
+benchmarks/common.py
+benchmarks/determinism.py
+benchmarks/benchmark_plasticity.py
+benchmarks/baseline.json
+benchmarks/bench_adex.py
+benchmarks/performance_utils.py
+benchmarks/README.md
+benchmarks/report.py
+benchmarks/bench_criticality.py
+benchmarks/bench_synapses.py
+benchmarks/benchmark_dt.py
+benchmarks/physics_baseline.json
+benchmarks/benchmark_scale.py
+benchmarks/bench_dt_invariance.py
+benchmarks/bench_plasticity.py
+benchmarks/criticality.py
+benchmarks/kernel_profile.json
+benchmarks/physics_accelerated.json
+benchmarks/__init__.py
+EXECUTION_PLAN.md
+CALIBRATION_REPORT.json
+FINAL_REPORT.md
+hashes.json
+GOVERNANCE_VERIFICATION_REPORT.md
+PROMPT_DE_SPG.txt
+.git/HEAD
+.git/FETCH_HEAD
+.git/packed-refs
+.git/description
+.git/index
+.git/config
+GAP_TABLE.md
+claims/README.md
+claims/claims.yml
+.gitignore
+experiments/temperature_ablation_consolidation.py
+experiments/runner.py
+experiments/registry.py
+experiments/verify_hypothesis.py
+experiments/__init__.py
+audit_reproducibility.json
+IMPLEMENTATION_SUMMARY.md
+figures/tag_activity.png
+figures/hero.png
+figures/comparison_grid.png
+figures/temperature_vs_stability.png
+LICENSE
+calibration_pack/toolchain_fingerprint.txt
+calibration_pack/audit_hash.txt
+executive_summary.md
+ARCH_ASSESSMENT.md
+HARDENING_SUMMARY.md
+noise_cleanup_manifest.json
+schemas/attack_paths_graph.schema.json
+schemas/phase-space-report.schema.json
+schemas/experiment.schema.json
+schemas/phase_atlas.schema.json
+schemas/run-manifest.schema.json
+schemas/pytest-failure-diagnostics.schema.json
+schemas/readiness_report.schema.json
+schemas/robustness-report.schema.json
+schemas/envelope-report.schema.json
+schemas/proof-report.schema.json
+schemas/avalanche-fit-report.schema.json
+schemas/audit_reproducibility.schema.json
+schemas/avalanche-report.schema.json
+CHANGELOG.md
+.github/sse_sdo_fhe.yml
+.github/WORKFLOW_CONTRACTS.md
+.github/CI_SLO.md
+.github/ci_policy.yml
+.github/sse_sdo.yml
+.github/REPO_MANIFEST.md
+.github/sse_sdo_max.yml
+.github/dependabot.yml
+.github/pull_request_template.md
+.github/CODEOWNERS
+.github/PR_GATES.yml
+.github/required_checks.json
+.github/QUALITY_LEDGER.md
+.github/REQUIRED_CHECKS.yml
+.github/REQUIRED_STATUS_CONTEXTS.yml
+.github/BRANCH_PROTECTION_GOVERNANCE.md
+audit_suite_report.json
+Makefile
+.gitleaks.toml
+docker-compose.yml
+readiness_report.json
+requirements-sbom-lock.txt
+PRODUCT_READINESS_DOSSIER.md
+.repo-governor/inventory.json
+.repo-governor/protocol.yml
+PRODUCTION_READINESS_DOSSIER.md
+Dockerfile
+configs/canonical_profile.yaml
+CITATION.cff
+docs/START_HERE.md
+docs/BENCHMARKS.md
+docs/TESTING_MUTATION.md
+docs/PR_READINESS_ORCHESTRATION_2026-02-19.md
+docs/NORMATIVE_LABELING.md
+docs/AUDIT_LEDGER.md
+docs/STATUS.md
+docs/CANONICAL_PROOF.md
+docs/CONFERENCE_RUNBOOK.md
+docs/BIBLIOGRAPHY.md
+docs/MUTATION_GATE.md
+docs/RUNBOOK.md
+docs/RELEASE_NOTES.md
+docs/PERFORMANCE.md
+docs/INPUTS.md
+docs/RELEASE_READINESS.md
+docs/ARCHITECTURE_INVARIANTS.md
+docs/HYPOTHESIS.md
+docs/CI_GATES.md
+docs/M0_BOOTSTRAP_FOUNDATION.md
+docs/QUALITY_INDEX.md
+docs/INVENTORY.md
+docs/THROUGHPUT_SCALING.md
+docs/API_CONTRACT.md
+docs/REPO_STRUCTURE.md
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md
+docs/usage_workflows.md
+docs/PERFORMANCE_REPORT.md
+docs/DEMO.md
+docs/SSOT.md
+docs/AUDIT_FINDINGS.md
+docs/ENTROPY_LEDGER.md
+docs/PLACEHOLDER_BASELINE_CYCLE0.md
+docs/SPEC.md
+docs/QUALITY_INFRASTRUCTURE.md
+docs/emergence_tracking.md
+docs/ASSUMPTIONS.md
+docs/QUICKSTART.md
+docs/ARCHITECTURE.md
+docs/AUDIT_TASKS_2026-02-15.md
+docs/SCALABILITY.md
+docs/_inventory.md
+docs/RISKS.md
+docs/CONSTITUTIONAL_AUDIT.md
+docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md
+docs/API_STABILITY.md
+docs/DOC_DEBT.md
+docs/SECURITY_GITLEAKS.md
+docs/MODULE_RESPONSIBILITY_MATRIX.md
+docs/GOVERNANCE.md
+docs/RELEASE_PIPELINE.md
+docs/PHYSICAL_VALIDITY.md
+docs/REPRODUCIBILITY.md
+docs/BENCHMARK_MAP.md
+docs/TROUBLESHOOTING.md
+docs/api_maturity.json
+docs/COMPONENT_AUDIT.md
+docs/index.rst
+docs/BUILD_DOCS.md
+docs/PLACEHOLDER_REGISTRY.md
+docs/TRACEABILITY.md
+docs/ACTIONS_TEST_PROTOCOL.md
+docs/sleep_stack.md
+docs/TESTING.md
+docs/SSOT_RULES.md
+docs/PROJECT_SURFACES.md
+docs/INDEX.md
+docs/spec_to_code.yml
+docs/ENFORCEMENT_MATRIX.md
+docs/EVIDENCE_COVERAGE.md
+docs/VERSIONING.md
+docs/audit_merge_readiness.md
+docs/TRACEABILITY_MAP.md
+docs/REPRODUCIBILITY_ENVELOPE.md
+docs/DETERMINISM.md
+docs/modules.rst
+docs/PR_AUTOMATION_VECTORS.md
+docs/VCG.md
+docs/repo_map.md
+docs/SCALABILITY_REPORT.md
+docs/conf.py
+docs/INTEGRATION.md
+
+## git status
+ M proof_bundle/logs/agent.log
+
+## key files
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/ci-validation.yml
+.github/workflows/math-quality-gate.yml
+.github/workflows/_reusable_chaos_tests.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/formal-tla.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/codecov-health.yml
+.github/workflows/sse-sdo-max-gate.yml
+.github/workflows/canonical-proof-spine.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/launch-gate.yml
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/benchmarks.yml
+.github/workflows/docs.yml
+.github/workflows/smlrs_gate.yml
+.github/workflows/perfection-gate.yml
+.github/workflows/scientific_product_gate.yml
+.github/workflows/_reusable_ssot.yml
+.github/workflows/sse-sdo-fhe-gate.yml
+.github/workflows/repo-governor-evidence.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/pr_gate.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/codeql.yml
+.github/workflows/release-pipeline.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/dsio_gate.yml
+.github/workflows/formal-coq.yml
+.github/workflows/context_compressor_gate.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/dependency-review.yml
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/science.yml
+.github/workflows/ci-pr.yml
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/workflow-integrity.yml
+.github/workflows/ci-benchmarks.yml
+docs/QUICKSTART.md
+pyproject.toml
+scripts/ci_inventory.py
+scripts/visualize_experiment.py
+scripts/check_internal_links.py
+scripts/ca_cognitive_ir_compile.py
+scripts/sse_policy_load.py
+scripts/lint_ci_truthfulness.py
+scripts/validate_quickstart_contract.py
+scripts/install_smoke.py
+scripts/compute_flake_report.py
+scripts/env_snapshot.py
+scripts/aggregate_pytest_failures.py
+scripts/smlrs_gate.py
+scripts/validate_workflow_contracts.py
+scripts/verify_reproducible_artifacts.py
+scripts/ca_arb_adjudicator.py
+scripts/check_mermaid_syntax.py
+scripts/ensure_gitleaks.py
+scripts/sse_proof_index
+scripts/rebuild_sources_lock.py
+scripts/release_pipeline.py
+scripts/validate_synthetic_claims.py
+scripts/fingerprint_repo.py
+scripts/sse_inventory
+scripts/bench_ci_smoke.py
+scripts/run_mutation_pipeline.py
+scripts/validate_api_maturity.py
+scripts/sse_drift_check
+scripts/dsio_semantic.py
+scripts/ci_policy.py
+scripts/scan_tierS_misuse.py
+Makefile
+README.md
+scripts/check_coverage_gate.py
+scripts/validate_changed_paths.py
+scripts/validate_svg.py
+scripts/collect_ci_run_urls.py
+scripts/ric_check.py
+scripts/run_benchmarks.py
+scripts/validate_required_checks.py
+scripts/build_wheelhouse.py
+scripts/check_api_contract.py
+scripts/pre-push.sh
+scripts/launch_gate.py
+scripts/validate_calibration_summary.py
+scripts/validate_deps_against_imports.py
+scripts/profile_kernels.py
+scripts/validate_branch_protection_governance.py
+scripts/compare_benchmarks.py
+scripts/write_reproduce_manifest.py
+scripts/audit_spec_implementation.py
+scripts/validate_test_integrity.py
+scripts/validate_long_running_triggers.py
+scripts/validate_bibliography.py
+scripts/perfection_gate.py
+scripts/intelligence_cycle.py
+scripts/ca_semantic_miner.py
+scripts/check_quickstart_consistency.py
+scripts/sse_gate_runner
+scripts/verify_integrity
+scripts/ca_governance_gate_runner.py
+scripts/release_readiness.py
+scripts/xrun
+scripts/README.md
+scripts/build_readiness_artifacts.py
+scripts/sse_inventory.py
+scripts/benchmark_sleep_stack_scale.py
+scripts/__init__.py
+scripts/validate_docs_testing_sync.py
+scripts/scan_placeholders.py
+scripts/sse_safety_gate
+scripts/benchmark_production.py
+scripts/scan_governed_docs.py
+scripts/phase_atlas.py
+scripts/math_validate.py
+scripts/sse_gate_runner.py
+scripts/ci_gate_runner.py
+scripts/mutation_counts.py
+scripts/sse_drift_check.py
+scripts/dsio_gate.py
+scripts/run_pytest_with_diagnostics.py
+scripts/generate_benchmark_baseline.py
+scripts/validate_mutation_baseline.py
+scripts/generate_evidence_coverage.py
+scripts/scan_normative_tags.py
+scripts/semantic_mine.py
+scripts/verify_formal_constants.py
+scripts/validate_traceability.py
+scripts/benchmark_physics.py
+scripts/validate_claims.py
+scripts/orchestrate_throughput_scaling.py
+scripts/prr_log_command.py
+scripts/generate_coverage_baseline.py
+scripts/yaml_contracts.py
+scripts/run_scaled_sleep_stack.py
+scripts/sse_proof_index.py
+scripts/mutation_survivors_summary.py
+scripts/ca_drift_detector.py
+scripts/ssot_rules.py
+scripts/validate_claims_coverage.py
+scripts/sse_policy_load
+scripts/ca_policy_load.py
+scripts/calculate_throughput_gain.py
+scripts/mutation_ci_summary.py
+scripts/validate_status_claims.py
+scripts/track_quality.py
+scripts/validate_trifix_invariants.py
+scripts/validate_pr_gates.py
+scripts/generate_coverage_trend.py
+scripts/write_evidence_manifest.py
+scripts/verify_equivalence.py
+scripts/generate_tests_inventory.py
+scripts/validate_codebase_readiness_audit.py
+scripts/_audit_metrics_pr40.py
+scripts/sync_required_status_contexts.py
+scripts/discover_public_surfaces.py
+scripts/check_mutation_score.py
+scripts/generate_mutation_baseline.py
+scripts/check_benchmark_regressions.py
+scripts/run_quickstart_demo.py
+scripts/generate_math_data.py
+scripts/validate_required_status_contexts.py
+scripts/render_workflow_policy_docs.py
+## README
+<div align="center">
+  <img src="docs/assets/hero.svg" alt="BN-Syn project banner" width="100%" />
+</div>
+
+# BN-Syn Thermostated Bio-AI System
+
+BN-Syn is a deterministic simulation repository for phase-controlled emergent neural dynamics with AdEx neurons, STDP plasticity, and criticality control.
+
+## Canonical Project Vectors (Permanent)
+
+- **V1 — Result:** [NORMATIVE][CLM-0001] one canonical proof command, `bnsyn run --profile canonical --plot --export-proof`, must generate visual and metrics evidence of emergent network dynamics.
+- **V2 — Narrative:** [NORMATIVE][CLM-0002] repository documentation must explain mechanism, measurements, and reproducibility for technical research readers.
+- **V3 — Audience:** [NORMATIVE][CLM-0003] repository surfaces must stay runnable and inspectable for AI lab, neuroscience grant, and technical investor diligence.
+
+All contributor work is expected to strengthen these vectors and avoid drift.
+
+## Canonical proof path (single command)
+
+```bash
+bnsyn run --profile canonical --plot --export-proof
+```
+
+Base canonical artifact contract (`bnsyn run --profile canonical --plot`):
+- `emergence_plot.png`
+- `summary_metrics.json`
+- `run_manifest.json`
+- `criticality_report.json`
+- `avalanche_report.json`
+- `phase_space_report.json`
+- `population_rate_trace.npy`
+- `sigma_trace.npy`
+- `coherence_trace.npy`
+- `phase_space_rate_sigma.png`
+- `phase_space_rate_coherence.png`
+- `phase_space_activity_map.png`
+- `avalanche_fit_report.json`
+- `robustness_report.json`
+- `envelope_report.json`
+
+Export-proof augmented artifact contract (`bnsyn run --profile canonical --plot --export-proof`):
+- all base artifacts
+- `proof_report.json`
+
+This is the primary buyer/reviewer command path.
+
+## Interpretation and claim boundaries
+
+Supported from the canonical proof bundle:
+- direct measured traces from one run: spike raster events, sigma trace, active-fraction coherence trace, spike-rate trace
+- derived summary statistics in `summary_metrics.json`
+- reproducibility metadata and artifact hashes in `run_manifest.json`
+- `criticality_report.json`
+- `avalanche_report.json`
+- `phase_space_report.json`
+
+Not supported from this proof command alone:
+- biological equivalence to in vivo neural tissue
+- claims about cognition, consciousness, or AGI-level capability
+- generalization claims beyond tested parameter settings and implemented model scope
+
+## Canonical user path (clone -> install -> run -> inspect)
+
+```bash
+git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git
+cd bnsyn-phase-controlled-emergent-dynamics
+python -m pip install -e .
+bnsyn run --profile canonical --plot --export-proof
+```
+
+Inspect:
+- `artifacts/canonical_run/emergence_plot.png`
+- `artifacts/canonical_run/summary_metrics.json`
+- `artifacts/canonical_run/run_manifest.json`
+- `artifacts/canonical_run/criticality_report.json`
+- `artifacts/canonical_run/avalanche_report.json`
+- `artifacts/canonical_run/phase_space_report.json`
+- `artifacts/canonical_run/population_rate_trace.npy`
+- `artifacts/canonical_run/sigma_trace.npy`
+- `artifacts/canonical_run/coherence_trace.npy`
+- `artifacts/canonical_run/phase_space_rate_sigma.png`
+- `artifacts/canonical_run/phase_space_rate_coherence.png`
+- `artifacts/canonical_run/phase_space_activity_map.png`
+- `artifacts/canonical_run/avalanche_fit_report.json`
+- `artifacts/canonical_run/robustness_report.json`
+- `artifacts/canonical_run/envelope_report.json`
+- `artifacts/canonical_run/proof_report.json` (when `--export-proof` is enabled)
+
+## Quickstart
+
+```bash
+make setup
+make demo
+make test
+```
+
+## Canonical test gate command
+
+```bash
+make test-gate
+```
+
+## Canonical links
+
+- Onboarding funnel: [docs/START_HERE.md](docs/START_HERE.md)
+- Canonical proof contract: [docs/CANONICAL_PROOF.md](docs/CANONICAL_PROOF.md)
+- Reproduce proof: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
+- Contributing workflow: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Status: [docs/STATUS.md](docs/STATUS.md)
+
+## Maintainers / Repo Contract
+
+```bash
+make quickstart-smoke
+python -m pip install -e .
+python -m bnsyn --help
+bnsyn run --profile canonical --plot --export-proof
+```
+## QUICKSTART
+# Deterministic Quickstart Contract
+
+This quickstart is a runnable contract:
+
+1. install
+2. verify CLI
+3. run canonical visual proof command
+4. verify canonical artifact outputs
+
+## Install
+
+```bash
+python -m pip install -e .
+```
+
+## Verify CLI
+
+```bash
+python -m bnsyn --help
+```
+
+## Run canonical proof command
+
+```bash
+bnsyn run --profile canonical --plot --export-proof
+```
+
+## Expected output contract
+
+CLI stdout is a JSON object containing:
+
+- `status` set to `ok`
+- `artifact_dir`
+- `artifacts` containing:
+  - `emergence_plot.png`
+  - `summary_metrics.json`
+  - `run_manifest.json`
+  - `criticality_report.json`
+  - `avalanche_report.json`
+  - `phase_space_report.json`
+  - `proof_report.json` (only with `--export-proof`)
+## pyproject
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.1",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+  "pyyaml==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "build==1.3.0",
+  "psutil==7.2.2",
+  "packaging==25.0",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "psutil==7.2.2",
+  "packaging==25.0",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "build==1.3.0",
+]
+
+
+ci = [
+  "pytest==9.0.2",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pip-audit==2.10.0",
+  "build==1.3.0",
+]
+
+docs = [
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.1",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.9.1",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==82.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "e2e: end-to-end tests covering full pipelines",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "joblib"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "importlib_metadata"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+## Makefile
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+
+LOCK_FILE ?= requirements-lock.txt
+WHEELHOUSE_DIR ?= wheelhouse
+PYTHON_VERSION ?= 3.11
+WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
+SETUP_CMD ?= python -m pip install -e ".[dev,test]"
+TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+JUNIT_DIR ?= artifacts/tests
+JUNIT_FAST ?= $(JUNIT_DIR)/junit-fast.xml
+JUNIT_ALL ?= $(JUNIT_DIR)/junit-all.xml
+AFFECTED ?= 0
+PKG ?=
+SVC ?=
+
+setup:
+	python -V
+	python -m pip --version
+	$(SETUP_CMD)
+	python -m pip check
+
+install: setup
+	@echo "install completed via setup"
+
+demo:
+	@python -m scripts.run_quickstart_demo
+
+reproduce:
+	python -m scripts.run_quickstart_demo
+	python -m scripts.write_reproduce_manifest
+	python -m scripts.verify_reproducible_artifacts --spec docs/proof/repro_spec.json --runs 2 --report artifacts/reproducibility_report.json
+
+
+dev-setup:
+	python -m pip install --upgrade pip setuptools wheel
+	python -m pip install -e ".[dev,test]"
+	pre-commit install
+	pre-commit autoupdate
+
+quickstart-smoke:
+	python -m scripts.check_quickstart_consistency
+	python -m pip install -e .
+	python -m pip show bnsyn
+	bnsyn --help
+	bnsyn run --help
+	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','avalanche_fit_report.json','robustness_report.json','envelope_report.json','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+
+
+wheelhouse-build:
+	python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
+
+wheelhouse-validate:
+	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
+
+dev-env-offline: wheelhouse-validate
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
+	pre-commit install
+
+wheelhouse-clean:
+	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+
+wheelhouse-report: wheelhouse-validate
+	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
+
+test:
+	$(MAKE) test-gate
+
+test-all:
+	mkdir -p $(JUNIT_DIR)
+	python -m pytest -q --junitxml=$(JUNIT_ALL)
+
+test-integration:
+	python -m pytest -m "integration" -q
+
+test-e2e:
+	python -m pytest -m "e2e" -q
+
+test-gate:
+	$(TEST_CMD)
+
+test-diagnostics:
+	python -m scripts.run_pytest_with_diagnostics \
+		--markers "not (validation or property)" \
+		--junit $(JUNIT_FAST) \
+		--log $(JUNIT_DIR)/pytest-fast.log \
+		--output-json $(JUNIT_DIR)/failure-diagnostics.json \
+		--output-md $(JUNIT_DIR)/failure-diagnostics.md
+
+test-determinism:
+	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+
+test-validation:
+	python -m pytest -m "validation" -q
+
+test-property:
+	python -m pytest -m "property" -q
+
+entropy-gate:
+	python -m tools.entropy_gate --mode current
+
+coverage:
+	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+
+coverage-fast:
+	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+
+coverage-baseline: coverage
+	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+
+coverage-gate: coverage
+	python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+
+mutation:
+	@echo "Running mutation profile (reproducible local workflow step)..."
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
+	@python -m scripts.run_mutation_pipeline
+
+mutation-ci:
+	@echo "Emitting mutation CI artifacts to local files..."
+	@baseline_file=quality/mutation_baseline.json; \
+	output_file=.mutation_ci_output; \
+	summary_file=.mutation_ci_summary.md; \
+	: > $$output_file; \
+	: > $$summary_file; \
+	GITHUB_OUTPUT=$$output_file GITHUB_STEP_SUMMARY=$$summary_file python -m scripts.mutation_ci_summary --baseline $$baseline_file --write-output --write-summary
+
+mutation-baseline:
+	@echo "Running mutation testing to establish baseline..."
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
+	@python -m scripts.generate_mutation_baseline
+
+mutation-check:
+	@echo "Running mutation testing against baseline..."
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
+	@rm -rf .mutmut-cache
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
+	@python -m scripts.validate_mutation_baseline
+	@python -m scripts.run_mutation_pipeline
+	@python -m scripts.check_mutation_score --advisory
+
+mutation-check-strict:
+	@echo "Running mutation testing against baseline (STRICT MODE)..."
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
+	@rm -rf .mutmut-cache
+	@python -c "import json; baseline=json.load(open('quality/mutation_baseline.json')); print(f\"Baseline: {baseline['baseline_score']}% (tolerance: +/-{baseline['tolerance_delta']}%)\")"
+	@python -m scripts.validate_mutation_baseline
+	@python -m scripts.run_mutation_pipeline
+	@python -m scripts.check_mutation_score --strict
+
+api-contract:
+	python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+
+validate-api-maturity:
+	python -m scripts.validate_api_maturity
+
+quality: format lint mypy ssot security
+	@echo "All quality checks passed"
+
+format:
+	ruff format .
+	@echo "Formatted code"
+
+fix:
+	ruff check . --fix
+	@echo "Fixed lint issues"
+
+lint:
+	ruff check .
+	pylint --fail-under=9.5 src/bnsyn
+
+mypy:
+	mypy src --strict --config-file pyproject.toml
+
+typecheck: mypy
+
+ssot:
+	python -m scripts.validate_bibliography
+	python -m scripts.validate_claims
+	python -m scripts.scan_normative_tags
+	python -m scripts.validate_pr_gates
+	python -m scripts.validate_required_status_contexts
+	python -m scripts.sync_required_status_contexts --check
+	$(MAKE) inventory-check
+	python -m scripts.validate_api_maturity
+	$(MAKE) api-contract
+	$(MAKE) manifest-check
+	$(MAKE) traceability-check
+
+validate-claims-coverage:
+	python -m scripts.validate_claims_coverage --format markdown
+
+docs-evidence:
+	python -m scripts.generate_evidence_coverage
+
+SECURITY_ARTIFACT_DIR ?= artifacts/security
+SECURITY_GITLEAKS_REPORT ?= $(SECURITY_ARTIFACT_DIR)/gitleaks-report.json
+SECURITY_REPORT ?= $(SECURITY_ARTIFACT_DIR)/pip-audit.json
+SECURITY_SAST_REPORT ?= $(SECURITY_ARTIFACT_DIR)/bandit.json
+
+security:
+	python --version
+	python -m pip --version
+	python -m pip install --upgrade pip==26.0.1
+	python -m pip install --require-hashes -r requirements-lock.txt
+	python -m pip install --no-deps -e .
+	mkdir -p $(SECURITY_ARTIFACT_DIR)
+	python -m scripts.ensure_gitleaks -- detect --redact --verbose --source=. --config=.gitleaks.toml --report-format=json --report-path=$(SECURITY_GITLEAKS_REPORT)
+	python -m pip_audit --desc --format json --requirement requirements-lock.txt --output $(SECURITY_REPORT)
+	python -m bandit -r src/ -ll -f json -o $(SECURITY_SAST_REPORT)
+
+SBOM_REPORT ?= artifacts/sbom/sbom.cdx.json
+SBOM_LOCK_FILE ?= requirements-sbom-lock.txt
+
+sbom:
+	python --version
+	python -m pip --version
+	python -m pip install --require-hashes --no-deps -r $(SBOM_LOCK_FILE)
+	mkdir -p $(dir $(SBOM_REPORT))
+	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
+
+profile:
+	python -m scripts.profile_kernels --help
+
+ci-artifacts: test-all flake-report
+	python -m scripts.write_evidence_manifest
+
+flake-report:
+	python -m scripts.compute_flake_report --junit $(JUNIT_ALL) --protocol .repo-governor/protocol.yml --output artifacts/flake-report.json --summary artifacts/flake-report.md
+
+cleanroom:
+	$(MAKE) clean
+	$(MAKE) install
+	$(MAKE) build
+	$(MAKE) test
+	bnsyn --help
+
+check: format lint mypy coverage ssot security
+	@echo "All checks passed"
+
+docs:
+	python -m pip install -e ".[docs]"
+	python -m sphinx -b html docs docs/_build/html
+	@echo "Docs built at docs/_build/html"
+
+build:
+	python -m pip install -e . build
+	python -m build
+
+release: build release-readiness
+	@echo "release artifacts and readiness report generated"
+
+release-readiness:
+	python -m scripts.release_readiness
+
+[project]
+name = "bnsyn"
+version = "0.2.0"
+description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name="BN-Syn Contributors"}]
+dependencies = [
+  "numpy==2.4.1",
+  "pydantic==2.12.5",
+  "scipy==1.17.1",
+  "jsonschema==4.26.0",
+  "joblib==1.4.2",
+  "pyyaml==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pydocstyle==6.3.0",
+  "bandit==1.9.3",
+  "validate-pyproject==0.25",
+  "pre-commit==4.5.1",
+  "pip-audit==2.10.0",
+  "build==1.3.0",
+  "psutil==7.2.2",
+  "packaging==25.0",
+]
+
+test = [
+  "hypothesis==6.151.5",
+  "pytest==9.0.2",
+  "pytest-cov==7.0.0",
+  "psutil==7.2.2",
+  "packaging==25.0",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "build==1.3.0",
+]
+
+
+ci = [
+  "pytest==9.0.2",
+  "ruff==0.15.0",
+  "mypy==1.19.1",
+  "pylint==3.3.5",
+  "pip-audit==2.10.0",
+  "build==1.3.0",
+]
+
+docs = [
+  "sphinx==9.0.4",
+  "sphinx-autodoc-typehints==3.6.1",
+  "myst-parser==5.0.0",
+  "furo==2025.12.19",
+  "sphinx-copybutton==0.5.2",
+]
+
+viz = [
+  "matplotlib==3.10.8",
+  "pillow==12.1.1",
+  "streamlit==1.42.1",
+  "plotly==6.5.2",
+]
+
+jax = [
+  "jax==0.9.1",
+  "jaxlib==0.9.0",
+]
+
+torch = [
+  "torch==2.10.0",
+]
+
+accelerators = [
+  "bnsyn[jax]",
+  "bnsyn[torch]",
+]
+
+[project.scripts]
+bnsyn = "bnsyn.cli:main"
+
+[build-system]
+requires = ["setuptools==82.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "smoke: fast critical-path tests",
+  "validation: slow statistical/large-N validation tests (excluded from CI by default)",
+  "benchmark: benchmark regression tests (excluded from mutation runs)",
+  "performance: performance regression tests with timing assertions",
+  "integration: integration tests requiring multiple components",
+  "e2e: end-to-end tests covering full pipelines",
+  "property: property-based tests using Hypothesis",
+  "chaos: chaos engineering tests with fault injection",
+]
+
+[tool.hypothesis]
+derandomize = true
+
+[tool.hypothesis.profiles.ci]
+max_examples = 200
+deadline = 10000
+print_blob = true
+
+[tool.hypothesis.profiles.quick]
+max_examples = 100
+deadline = 5000
+print_blob = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 1000
+deadline = 20000
+print_blob = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]
+
+# Optional visualization dependencies (no type stubs available)
+[[tool.mypy.overrides]]
+module = ["plotly.*", "streamlit.*", "matplotlib.*"]
+ignore_missing_imports = true
+
+[tool.pylint.main]
+recursive = true
+ignore-patterns = ["^test_.*\\.py$", "^conftest\\.py$"]
+fail-under = 7.5
+
+[tool.pylint.messages_control]
+disable = [
+  "import-error",
+  "invalid-name",
+  "broad-exception-caught",
+  "useless-import-alias",
+  "missing-function-docstring",
+]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "V", "N", "w", "dt", "dx", "dy", "R", "E"]
+
+[tool.pylint.design]
+max-args = 15
+
+[[tool.mypy.overrides]]
+module = "scipy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "torch"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jax.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "joblib"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "importlib_metadata"
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+.github/workflows/_reusable_pytest.yml:57:        run: python -m pip install -e ".[test]"
+.github/workflows/_reusable_pytest.yml:101:          if [ -f coverage.json ]; then
+.github/workflows/_reusable_pytest.yml:102:            COVERAGE=$(python -c "import json; print(round(float(json.load(open('coverage.json'))['totals']['percent_covered']), 4))")
+.github/workflows/_reusable_pytest.yml:108:          if [ -f junit.xml ]; then
+.github/workflows/_reusable_pytest.yml:128:          COVERAGE_STATE=$(python -c "import json; print(json.load(open('artifacts/coverage-trend/coverage-trend.json'))['coverage_state'])")
+.github/workflows/_reusable_pytest.yml:134:          if [ ! -f coverage.xml ]; then
+.github/workflows/_reusable_pytest.yml:168:              if [ -f pytest.log ]; then
+.github/workflows/_reusable_pytest.yml:181:              if [ -f coverage.json ]; then
+.github/workflows/_reusable_pytest.yml:184:                if python -c 'import json; data = json.load(open("coverage.json")); files = [(k, v["summary"]["percent_covered"]) for k, v in data.get("files", {}).items()]; files.sort(key=lambda x: x[1]); [print(f"{file}: {cov:.1f}%") for file, cov in files[:5]]' 2>/dev/null; then
+.github/workflows/_reusable_pytest.yml:203:              echo "python${{ inputs['python-version'] }} -m pip install -e \".[test]\""
+.github/workflows/canonical-proof-spine.yml:32:        run: python -m pip install -e ".[ci]"
+.github/workflows/canonical-proof-spine.yml:35:        run: bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
+.github/workflows/ci-pr-atomic.yml:106:      - run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-pr-atomic.yml:175:      - run: python -m pip install -e ".[test]"
+.github/workflows/ci-pr-atomic.yml:226:      - run: python -m pip install -e ".[dev,test]" build
+.github/workflows/ci-pr-atomic.yml:229:          python -m pip install pip-tools
+.github/workflows/ci-pr-atomic.yml:237:          python -m pip install --upgrade pip
+.github/workflows/ci-pr-atomic.yml:238:          python -m pip install dist/*.whl
+.github/workflows/ci-pr-atomic.yml:261:      - run: python -m pip install -e ".[dev,test]" build
+.github/workflows/ci-pr-atomic.yml:269:          python -m pip install --upgrade pip
+.github/workflows/ci-pr-atomic.yml:270:          python -m pip install dist/*.whl
+.github/workflows/ci-pr-atomic.yml:288:        run: python -m pip install -e ".[test]"
+.github/workflows/ci-pr-atomic.yml:372:      - run: python -m pip install -e ".[test,docs]"
+.github/workflows/ci-pr-atomic.yml:391:              [...body.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1].trim())
+.github/workflows/ci-pr-atomic.yml:402:              .filter(([, aliases]) => !aliases.some((alias) => hasAlias(alias)))
+.github/workflows/ci-pr-atomic.yml:403:              .map(([section]) => section);
+.github/workflows/ci-pr-atomic.yml:404:            const labels = (context.payload.pull_request?.labels || []).map((l) => l.name);
+.github/workflows/ci-pr-atomic.yml:434:      - run: python -m pip install -e ".[dev,test]"
+.github/workflows/ci-pr-atomic.yml:524:          python -m pip install --upgrade pip
+.github/workflows/ci-pr-atomic.yml:525:          python -m pip install -e ".[dev,test,docs]"
+#!/usr/bin/env python3
+"""Validate canonical install/quickstart commands stay consistent across docs."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
+    "README.md": (
+        "make quickstart-smoke",
+        "python -m pip install -e .",
+        "python -m bnsyn --help",
+        "bnsyn run --profile canonical --plot --export-proof",
+        "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
+    ),
+    "docs/QUICKSTART.md": (
+        "python -m pip install -e .",
+        "python -m bnsyn --help",
+        "bnsyn run --profile canonical --plot --export-proof",
+        "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
+    ),
+    "docs/LEGENDARY_QUICKSTART.md": (
+        "python -m pip install -e .",
+        "python -m bnsyn --help",
+        "bnsyn run --profile canonical --plot --export-proof",
+        "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
+    ),
+}
+
+FORBIDDEN_SNIPPETS: dict[str, tuple[str, ...]] = {
+    "README.md": ("pip install bnsyn",),
+    "docs/LEGENDARY_QUICKSTART.md": ("pip install bnsyn",),
+    "docs/QUICKSTART.md": ("pip install bnsyn",),
+}
+
+
+def main() -> int:
+    failures: list[str] = []
+
+    for rel_path, snippets in REQUIRED_SNIPPETS.items():
+        path = Path(rel_path)
+        if not path.exists():
+            failures.append(f"{rel_path}: file not found")
+            continue
+        text = path.read_text(encoding="utf-8")
+        missing = [snippet for snippet in snippets if snippet not in text]
+        if missing:
+            failures.append(f"{rel_path}: missing required snippets: {missing}")
+
+    for rel_path, snippets in FORBIDDEN_SNIPPETS.items():
+        path = Path(rel_path)
+        if not path.exists():
+            failures.append(f"{rel_path}: file not found")
+            continue
+        text = path.read_text(encoding="utf-8")
+        present = [snippet for snippet in snippets if snippet in text]
+        if present:
+            failures.append(f"{rel_path}: contains forbidden snippets: {present}")
+
+    if failures:
+        print("quickstart consistency check FAILED")
+        for failure in failures:
+            print(f" - {failure}")
+        return 1
+
+    print("quickstart consistency check PASSED")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+#!/usr/bin/env python3
+"""Generate and validate the canonical quickstart demo artifact."""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+DEMO_TIMEOUT_SECONDS = 30
+CANONICAL_DEMO_CMD: tuple[str, ...] = (
+    sys.executable,
+    "-m",
+    "bnsyn",
+    "demo",
+    "--steps",
+    "120",
+    "--dt-ms",
+    "0.1",
+    "--seed",
+    "123",
+    "--N",
+    "32",
+)
+ARTIFACT_PATH = Path("artifacts/demo.json")
+
+
+def _validate_payload(payload: object) -> dict[str, object]:
+    if not isinstance(payload, dict):
+        raise RuntimeError("demo output must be a JSON object")
+    demo = payload.get("demo")
+    if not isinstance(demo, dict) or not demo:
+        raise RuntimeError("demo output must contain a non-empty 'demo' object")
+    return payload
+
+
+def _tail_40_lines(text: str) -> str:
+    lines = text.splitlines()
+    return "\n".join(lines[-40:])
+
+
+def main() -> int:
+    try:
+        ARTIFACT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        raise RuntimeError(f"cannot create artifacts directory: {exc}") from exc
+
+    try:
+        proc = subprocess.run(
+            CANONICAL_DEMO_CMD,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=DEMO_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"timeout {DEMO_TIMEOUT_SECONDS}s: {' '.join(CANONICAL_DEMO_CMD)}"
+        ) from exc
+    except subprocess.CalledProcessError as exc:
+        combined = (exc.stdout or "") + "\n" + (exc.stderr or "")
+        raise RuntimeError(
+            f"command failed rc={exc.returncode}: {' '.join(CANONICAL_DEMO_CMD)} | {_tail_40_lines(combined).strip()}"
+        ) from exc
+
+    try:
+        payload = _validate_payload(json.loads(proc.stdout))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("demo command did not return valid JSON") from exc
+
+    try:
+        with ARTIFACT_PATH.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+    except OSError as exc:
+        raise RuntimeError(f"cannot write artifacts/demo.json: {exc}") from exc
+
+    print("Demo artifact written: artifacts/demo.json")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except RuntimeError as exc:
+        print(f"quickstart demo FAILED: {exc}")
+        raise SystemExit(1)
+# Canonical Emergence Proof Path
+
+`bnsyn run --profile canonical --plot --export-proof` is the canonical command for a single reproducible BN-Syn emergence proof run.
+
+## Command
+
+```bash
+bnsyn run --profile canonical --plot --export-proof
+```
+
+Optional controls:
+
+```bash
+bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
+```
+
+## Artifact contract (required)
+
+Canonical base bundle (`bnsyn run --profile canonical --plot`):
+
+- `emergence_plot.png` — primary canonical emergence visual, a composite image built from spike raster activity and population rate dynamics.
+- `summary_metrics.json` — numeric summary for the run.
+- `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes for external artifacts; self-entry uses sentinel `"self-unhashed"` to avoid false self-hash claims.
+- `criticality_report.json` — machine-readable criticality metrics derived from the canonical run traces.
+- `avalanche_report.json` — machine-readable avalanche event-structure metrics from contiguous nonzero spike-count bins.
+- `phase_space_report.json` — machine-readable state-space trajectory metrics from population rate, sigma, and coherence traces.
+- `population_rate_trace.npy` — deterministic raw population-rate trace used for phase-space evidence.
+- `sigma_trace.npy` — deterministic raw sigma trace used for phase-space evidence.
+- `coherence_trace.npy` — deterministic raw coherence trace used for phase-space evidence.
+- `phase_space_rate_sigma.png` — deterministic phase-space trajectory rendering in `(rate, sigma)`.
+- `phase_space_rate_coherence.png` — deterministic phase-space trajectory rendering in `(rate, coherence)`.
+- `phase_space_activity_map.png` — deterministic `(rate, sigma)` occupancy/density activity map.
+- `avalanche_fit_report.json` — deterministic avalanche fit evidence with machine-readable validity verdict.
+- `robustness_report.json` — fixed 10-seed reproducibility/admissibility run table + same-seed replay trace-hash evidence.
+- `envelope_report.json` — admissibility-band validation summary for the fixed 10-seed run set.
+
+Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-proof`):
+
+- all base bundle artifacts, plus
+- `proof_report.json` — gate-evaluated proof verdict evaluated against the finalized `run_manifest.json` state.
+
+## Mechanism narrative (research-facing)
+
+BN-Syn models a recurrent spiking network where:
+
+- **AdEx neuron dynamics** provide biologically motivated membrane and adaptation behavior.
+- **STDP synapses** implement timing-dependent weight updates; memory/consolidation modules build on these weight dynamics.
+- **Criticality control** tracks branching/sigma behavior and adjusts global excitability.
+
+The canonical proof path is intentionally one-run and one-command so external reviewers can inspect concrete behavior without repository archaeology.
+
+## Reproducibility
+
+Reproducibility is enforced through explicit seed, deterministic simulation path, manifest hashing, and a fixed 10-seed admissibility-band check.
+Use `run_manifest.json` + `criticality_report.json` + `avalanche_report.json` + `phase_space_report.json` + `summary_metrics.json` to compare repeated runs under same parameters.
+
+## Interpretation layer and limits
+
+- **Directly measured signals:** spike events per step, sigma, active-fraction coherence, spike rate.
+- **Derived metrics:** means/peaks and event counts in `summary_metrics.json`.
+- **Interpretation layer:** evidence of emergent network dynamics under this model implementation and parameterization.
+- **Out of scope / unsupported claims:** cognition, consciousness, AGI/ASI capability, or biological equivalence claims not directly validated by repository experiments.
+docs/QUICKSTART.md:3:This quickstart is a runnable contract:
+docs/QUICKSTART.md:25:bnsyn run --profile canonical --plot --export-proof
+docs/QUICKSTART.md:41:  - `proof_report.json` (only with `--export-proof`)
+.github/workflows/canonical-proof-spine.yml:35:        run: bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
+.github/workflows/canonical-proof-spine.yml:38:        run: bnsyn proof-validate-bundle artifacts/canonical_run
+.github/workflows/canonical-proof-spine.yml:41:        run: bnsyn proof-evaluate artifacts/canonical_run
+.github/workflows/canonical-proof-spine.yml:44:        run: bnsyn proof-check-determinism artifacts/canonical_run
+.github/workflows/canonical-proof-spine.yml:47:        run: bnsyn proof-check-envelope artifacts/canonical_run
+README.md:11:- **V1 — Result:** [NORMATIVE][CLM-0001] one canonical proof command, `bnsyn run --profile canonical --plot --export-proof`, must generate visual and metrics evidence of emergent network dynamics.
+README.md:20:bnsyn run --profile canonical --plot --export-proof
+README.md:40:Export-proof augmented artifact contract (`bnsyn run --profile canonical --plot --export-proof`):
+README.md:42:- `proof_report.json`
+README.md:67:bnsyn run --profile canonical --plot --export-proof
+README.md:71:- `artifacts/canonical_run/emergence_plot.png`
+README.md:72:- `artifacts/canonical_run/summary_metrics.json`
+README.md:73:- `artifacts/canonical_run/run_manifest.json`
+README.md:74:- `artifacts/canonical_run/criticality_report.json`
+README.md:75:- `artifacts/canonical_run/avalanche_report.json`
+README.md:76:- `artifacts/canonical_run/phase_space_report.json`
+README.md:77:- `artifacts/canonical_run/population_rate_trace.npy`
+README.md:78:- `artifacts/canonical_run/sigma_trace.npy`
+README.md:79:- `artifacts/canonical_run/coherence_trace.npy`
+README.md:80:- `artifacts/canonical_run/phase_space_rate_sigma.png`
+README.md:81:- `artifacts/canonical_run/phase_space_rate_coherence.png`
+README.md:82:- `artifacts/canonical_run/phase_space_activity_map.png`
+README.md:83:- `artifacts/canonical_run/avalanche_fit_report.json`
+README.md:84:- `artifacts/canonical_run/robustness_report.json`
+README.md:85:- `artifacts/canonical_run/envelope_report.json`
+README.md:86:- `artifacts/canonical_run/proof_report.json` (when `--export-proof` is enabled)
+README.md:114:make quickstart-smoke
+README.md:117:bnsyn run --profile canonical --plot --export-proof
+Makefile:1:.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+Makefile:26:	@python -m scripts.run_quickstart_demo
+Makefile:29:	python -m scripts.run_quickstart_demo
+Makefile:40:quickstart-smoke:
+Makefile:41:	python -m scripts.check_quickstart_consistency
+Makefile:46:	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','avalanche_fit_report.json','robustness_report.json','envelope_report.json','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+Makefile:116:	@echo "Running mutation profile (reproducible local workflow step)..."
+Makefile:122:	@echo "Emitting mutation CI artifacts to local files..."
+tests/test_proof_contracts_and_edges.py:54:        "artifacts": {"proof_report.json": "0" * 64},
+tests/test_proof_contracts_and_edges.py:68:        "artifacts": {"proof_report.json": "0" * 64},
+tests/test_proof_contracts_and_edges.py:72:    assert "base mode forbids proof_report.json manifest entry" in errors
+tests/test_proof_contracts_and_edges.py:143:def test_g4_and_g5_error_paths_and_unreadable_proof_report(tmp_path: Path) -> None:
+tests/test_proof_contracts_and_edges.py:162:    (out_dir / "proof_report.json").write_text("{broken-json", encoding="utf-8")
+tests/test_proof_contracts_and_edges.py:165:    assert any("proof_report.json unreadable" in e for e in g5["errors"])
+tests/test_proof_contracts_and_edges.py:208:    assert result.report_path == out_dir / "proof_report.json"
+tests/test_proof_contracts_and_edges.py:210:    assert (out_dir / "proof_report.json").exists()
+tests/test_proof_contracts_and_edges.py:239:    monkeypatch.setattr(proof_evaluate, "emit_proof_report", lambda result, artifact_dir: Path(artifact_dir) / "proof_report.json")
+tests/test_proof_contracts_and_edges.py:245:    assert result.report_path == out_dir / "proof_report.json"
+tests/test_proof_contracts_and_edges.py:263:    monkeypatch.setattr(proof_evaluate, "emit_proof_report", lambda result, artifact_dir: Path(artifact_dir) / "proof_report.json")
+scripts/write_evidence_manifest.py:24:    root = Path("artifacts") / "evidence" / today / "local"
+tests/test_cli_bootstrap_compat.py:22:    args = SimpleNamespace(config="examples/configs/quickstart.yaml", output=None)
+tests/test_cli_bootstrap_compat.py:26:    assert calls == [("examples/configs/quickstart.yaml", None)]
+tests/test_cli_bootstrap_compat.py:70:    args = SimpleNamespace(config="examples/configs/quickstart.yaml", output=None, plot=True, export_proof=True, profile=None)
+tests/test_cli_bootstrap_compat.py:76:    assert "--export-proof only applies to --profile canonical" in captured.err
+tests/test_cli_bootstrap_compat.py:108:    assert "--export-proof remains reserved; canonical run currently emits a live-run bundle" not in captured.err
+tests/test_cli_bootstrap_compat.py:128:    assert seen == ["artifacts/canonical_run"]
+scripts/run_quickstart_demo.py:2:"""Generate and validate the canonical quickstart demo artifact."""
+scripts/run_quickstart_demo.py:87:        print(f"quickstart demo FAILED: {exc}")
+scripts/README.md:21:| `check_quickstart_consistency.py` | Validate canonical install/quickstart commands stay consistent across docs. | `none` | See page | See page | Safe (read-only checks) | `python -m scripts.check_quickstart_consistency --help` |
+scripts/check_quickstart_consistency.py:2:"""Validate canonical install/quickstart commands stay consistent across docs."""
+scripts/check_quickstart_consistency.py:10:        "make quickstart-smoke",
+scripts/check_quickstart_consistency.py:13:        "bnsyn run --profile canonical --plot --export-proof",
+scripts/check_quickstart_consistency.py:21:        "bnsyn run --profile canonical --plot --export-proof",
+scripts/check_quickstart_consistency.py:29:        "bnsyn run --profile canonical --plot --export-proof",
+scripts/check_quickstart_consistency.py:67:        print("quickstart consistency check FAILED")
+scripts/check_quickstart_consistency.py:72:    print("quickstart consistency check PASSED")
+scripts/perfection_gate.py:6:import locale
+scripts/perfection_gate.py:101:        "locale": locale.getlocale(),
+scripts/validate_svg.py:14:def _local_name(tag: str) -> str:
+scripts/validate_svg.py:38:    if _local_name(root.tag) != "svg":
+scripts/validate_svg.py:58:        if _local_name(elem.tag) != "rect":
+scripts/validate_deps_against_imports.py:35:def _local_modules() -> set[str]:
+scripts/validate_deps_against_imports.py:36:    local = {"bnsyn", "scripts", "tools", "benchmarks", "tests", "contracts", "entropy", "claims"}
+scripts/validate_deps_against_imports.py:43:                local.add(name)
+scripts/validate_deps_against_imports.py:46:                local.add(d.name)
+scripts/validate_deps_against_imports.py:47:    return local
+scripts/validate_deps_against_imports.py:67:def _third_party(modules: set[str], local: set[str]) -> set[str]:
+scripts/validate_deps_against_imports.py:68:    return {_normalize_module(m) for m in modules if m not in STDLIB and m not in local and m not in IGNORED_THIRD_PARTY}
+scripts/validate_deps_against_imports.py:73:    local = _local_modules()
+scripts/validate_deps_against_imports.py:74:    src_imports = _third_party(_imports(Path("src")), local)
+scripts/validate_deps_against_imports.py:75:    test_imports = _third_party(_imports(Path("tests")), local)
+scripts/validate_quickstart_contract.py:2:"""Enforce quickstart setup/demo/test contract consistency."""
+scripts/validate_quickstart_contract.py:31:def extract_quickstart_lines(readme_text: str) -> list[str]:
+scripts/validate_quickstart_contract.py:170:    quickstart_lines = extract_quickstart_lines(readme_text)
+scripts/validate_quickstart_contract.py:171:    if quickstart_lines != QUICKSTART_LINES:
+scripts/validate_quickstart_contract.py:181:    print("quickstart contract validation PASSED")
+scripts/validate_quickstart_contract.py:189:        print(f"quickstart contract validation FAILED: {exc}")
+scripts/env_snapshot.py:5:import locale
+scripts/env_snapshot.py:45:        "locale": locale.getlocale(),
+tests/test_proof_evaluation.py:36:    report = _load_json(out_dir / "proof_report.json")
+tests/test_proof_evaluation.py:38:    manifest_hash = manifest["artifacts"]["proof_report.json"]
+tests/test_proof_evaluation.py:39:    actual_hash = hashlib.sha256((out_dir / "proof_report.json").read_bytes()).hexdigest()
+tests/test_proof_evaluation.py:45:def test_canonical_export_proof_emits_proof_report_and_consistent_manifest(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:49:    assert (out_dir / "proof_report.json").exists()
+tests/test_proof_evaluation.py:50:    assert bundle["proof_report_path"] == (out_dir / "proof_report.json").as_posix()
+tests/test_proof_evaluation.py:67:def test_g5_fails_when_proof_report_hash_corrupted(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:72:    manifest["artifacts"]["proof_report.json"] = "0" * 64
+tests/test_proof_evaluation.py:103:def test_g4_fails_when_proof_report_missing_for_export_contract(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:107:    (out_dir / "proof_report.json").unlink()
+tests/test_proof_evaluation.py:110:    assert "proof_report.json" in report["gates"]["G4_core_artifacts_complete"]["missing_artifacts"]
+tests/test_proof_evaluation.py:141:    report_path = out_dir / "proof_report.json"
+tests/test_proof_evaluation.py:155:    manifest["artifacts"]["proof_report.json"] = "0" * 64
+tests/test_proof_evaluation.py:171:def test_proof_report_is_deterministic_across_repeated_runs(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:192:        "proof_report.json",
+tests/test_proof_evaluation.py:201:def test_final_proof_report_evaluates_against_final_manifest_state(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:219:    required = set(by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]["canonical-export-proof"])
+tests/test_proof_evaluation.py:220:    report = _load_json(out_dir / "proof_report.json")
+tests/test_proof_evaluation.py:284:    manifest["artifacts"]["proof_report.json"] = "0" * 64
+tests/test_proof_evaluation.py:290:def test_proof_report_mode_mismatch_vs_manifest_fails_g5(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:293:    proof = _load_json(out_dir / "proof_report.json")
+tests/test_proof_evaluation.py:295:    _write_json(out_dir / "proof_report.json", proof)
+tests/test_proof_evaluation.py:300:def test_cli_canonical_run_artifact_list_without_export_proof(tmp_path: Path) -> None:
+tests/test_proof_evaluation.py:354:            "--export-proof",
+tests/test_proof_evaluation.py:367:    assert payload["bundle_contract"] == "canonical-export-proof"
+tests/test_proof_evaluation.py:384:        "proof_report.json",
+tests/test_cli_plot_contract.py:33:    out_dir = tmp_path / "canonical_run"
+tests/test_cli_plot_contract.py:119:    expected_path = tmp_path / "proof_report.json"
+tests/test_cli_plot_contract.py:131:        "proof_report_path": expected_path.as_posix(),
+tests/test_interactive_smoke.py:71:    config_path = Path(__file__).parent.parent / "examples" / "configs" / "quickstart.yaml"
+tests/test_interactive_smoke.py:75:        assert config.experiment.name == "quickstart"
+tests/test_interactive_smoke.py:129:        nonlocal call_count
+tests/test_no_escape_tripwires.py:57:def test_markdown_local_links_resolve() -> None:
+tests/test_proof_report_schema.py:28:def test_proof_report_schema_accepts_full_payload() -> None:
+tests/test_proof_report_schema.py:32:        "bundle_contract": "canonical-export-proof",
+tests/test_proof_report_schema.py:46:def test_proof_report_schema_accepts_gate_errors_payload() -> None:
+tests/test_proof_report_schema.py:52:        "bundle_contract": "canonical-export-proof",
+tests/test_proof_report_schema.py:66:def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
+tests/test_proof_report_schema.py:92:        "bundle_contract": "canonical-export-proof",
+tests/test_proof_report_schema.py:94:        "cmd": "bnsyn run --profile canonical --plot --export-proof",
+tests/test_proof_report_schema.py:103:            "proof_report.json": "1" * 64,
+tests/test_m0_bootstrap_contracts.py:84:    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "avalanche_fit_report.json", "robustness_report.json", "envelope_report.json", "run_manifest.json", "proof_report.json"]
+tests/test_m0_bootstrap_contracts.py:98:def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
+tests/test_m0_bootstrap_contracts.py:102:        "bundle_contract": "canonical-export-proof",
+tests/test_m0_bootstrap_contracts.py:125:def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
+tests/test_m0_bootstrap_contracts.py:129:        "bundle_contract": "canonical-export-proof",
+tests/test_m0_bootstrap_contracts.py:174:    output_dir = tmp_path / "canonical_run"
+tests/test_m0_bootstrap_contracts.py:184:            "--export-proof",
+tests/test_quickstart_contract.py:9:def test_quickstart_contract_demo_command() -> None:
+tests/test_experiments_declarative.py:16:        experiment={"name": "quickstart", "version": "v1", "seeds": [1, 2]},
+tests/test_experiments_declarative.py:86:    assert results["config"]["name"] == "quickstart"
+tests/test_experiments_declarative.py:98:        experiment={"name": "quickstart", "version": "v1", "seeds": [11]},
+tests/test_experiments_declarative.py:126:                "  name: quickstart",
+tests/test_check_internal_links.py:14:        ("#local-anchor", None),
+tests/test_quickstart_contract_validator.py:1:"""Unit tests for quickstart contract validator helper functions."""
+tests/test_quickstart_contract_validator.py:7:from scripts.validate_quickstart_contract import count_gate_collected, extract_quickstart_lines
+tests/test_quickstart_contract_validator.py:13:        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+tests/test_quickstart_contract_validator.py:17:        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+tests/test_pytest_collection_contract.py:18:def _guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
+tests/test_pytest_collection_contract.py:21:    return _real_import(name, globals, locals, fromlist, level)
+tests/test_readme_quickstart_contract.py:6:def _quickstart_smoke_commands() -> set[str]:
+tests/test_readme_quickstart_contract.py:11:        if line.startswith("quickstart-smoke:"):
+tests/test_readme_quickstart_contract.py:21:def test_readme_quickstart_contract_matches_make_target() -> None:
+tests/test_readme_quickstart_contract.py:24:        "make quickstart-smoke",
+tests/test_readme_quickstart_contract.py:27:        "bnsyn run --profile canonical --plot --export-proof",
+tests/test_readme_quickstart_contract.py:29:        "artifacts/canonical_run/emergence_plot.png",
+tests/test_readme_quickstart_contract.py:30:        "artifacts/canonical_run/summary_metrics.json",
+tests/test_readme_quickstart_contract.py:31:        "artifacts/canonical_run/run_manifest.json",
+tests/test_readme_quickstart_contract.py:32:        "artifacts/canonical_run/criticality_report.json",
+tests/test_readme_quickstart_contract.py:33:        "artifacts/canonical_run/avalanche_report.json",
+tests/test_readme_quickstart_contract.py:34:        "artifacts/canonical_run/phase_space_report.json",
+tests/test_readme_quickstart_contract.py:35:        "artifacts/canonical_run/proof_report.json",
+tests/test_readme_quickstart_contract.py:40:    smoke_commands = _quickstart_smoke_commands()
+tests/test_readme_quickstart_contract.py:41:    assert "python -m scripts.check_quickstart_consistency" in smoke_commands
+tests/test_readme_quickstart_contract.py:45:    assert any(cmd.startswith("bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c") for cmd in smoke_commands)
+tests/test_schema_experiment_contracts.py:14:            experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+tests/test_schema_experiment_contracts.py:23:            experiment={"name": "quickstart", "version": "v1", "seeds": [1], "extra": 1},
+tests/test_schema_experiment_contracts.py:32:            experiment={"name": "quickstart", "version": "v1", "seeds": []},
+tests/test_schema_experiment_contracts.py:50:            experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+tests/test_schema_experiment_contracts.py:59:            experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+tests/test_schema_experiment_contracts.py:67:        experiment={"name": "quickstart", "version": "v1", "seeds": [1]},
+tests/test_coverage_gap_extensions.py:263:    def fake_import(name: str, globals=None, locals=None, fromlist=(), level=0):
+tests/test_coverage_gap_extensions.py:266:        return real_import(name, globals, locals, fromlist, level)
+tests/test_coverage_gap_extensions.py:432:    def fake_import(name: str, globals=None, locals=None, fromlist=(), level=0):
+tests/test_coverage_gap_extensions.py:435:        return real_import(name, globals, locals, fromlist, level)
+tests/test_tools_benchmark_sleep_stack_scale_unit.py:48:    out = Path("artifacts/local_runs/benchmarks_scale/metrics.json")
+tests/test_canonical_live_run.py:15:        artifact_dir=tmp_path / "canonical_run",
+tests/test_canonical_live_run.py:19:    assert out_dir == tmp_path / "canonical_run"
+tests/test_canonical_live_run.py:60:    assert "proof_report.json" not in manifest["artifacts"]
+tests/test_canonical_live_run.py:172:        ["bnsyn", "run", "--profile", "canonical", "--output", str(tmp_path / "canonical_run")],
+tests/test_canonical_live_run.py:179:    summary_path = tmp_path / "canonical_run" / "summary_metrics.json"
+tests/test_canonical_live_run.py:190:    assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
+tests/test_canonical_live_run.py:191:    assert manifest["bundle_contract"] == "canonical-export-proof"
+tests/test_canonical_live_run.py:193:    assert "proof_report.json" in manifest["artifacts"]
+tests/test_canonical_live_run.py:194:    assert (out_dir / "proof_report.json").exists()
+tests/test_quickstart_consistency_script.py:9:def test_quickstart_consistency_script_passes() -> None:
+tests/test_quickstart_consistency_script.py:11:        [sys.executable, "-m", "scripts.check_quickstart_consistency"],
+tests/test_quickstart_consistency_script.py:19:def test_quickstart_consistency_script_fails_when_docs_missing(tmp_path) -> None:
+tests/test_quickstart_consistency_script.py:24:        [sys.executable, "-m", "scripts.check_quickstart_consistency"],
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+
+LOCK_FILE ?= requirements-lock.txt
+WHEELHOUSE_DIR ?= wheelhouse
+PYTHON_VERSION ?= 3.11
+WHEELHOUSE_REPORT ?= artifacts/wheelhouse_report.json
+SETUP_CMD ?= python -m pip install -e ".[dev,test]"
+TEST_CMD ?= python -m pytest -m "not (validation or property)" -q
+JUNIT_DIR ?= artifacts/tests
+JUNIT_FAST ?= $(JUNIT_DIR)/junit-fast.xml
+JUNIT_ALL ?= $(JUNIT_DIR)/junit-all.xml
+AFFECTED ?= 0
+PKG ?=
+SVC ?=
+
+setup:
+	python -V
+	python -m pip --version
+	$(SETUP_CMD)
+	python -m pip check
+
+install: setup
+	@echo "install completed via setup"
+
+demo:
+	@python -m scripts.run_quickstart_demo
+
+reproduce:
+	python -m scripts.run_quickstart_demo
+	python -m scripts.write_reproduce_manifest
+	python -m scripts.verify_reproducible_artifacts --spec docs/proof/repro_spec.json --runs 2 --report artifacts/reproducibility_report.json
+
+
+dev-setup:
+	python -m pip install --upgrade pip setuptools wheel
+	python -m pip install -e ".[dev,test]"
+	pre-commit install
+	pre-commit autoupdate
+
+quickstart-smoke:
+	python -m scripts.check_quickstart_consistency
+	python -m pip install -e .
+	python -m pip show bnsyn
+	bnsyn --help
+	bnsyn run --help
+	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','avalanche_fit_report.json','robustness_report.json','envelope_report.json','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+
+
+wheelhouse-build:
+	python -m scripts.build_wheelhouse build --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION)
+
+wheelhouse-validate:
+	python -m scripts.build_wheelhouse validate --lock-file $(LOCK_FILE) --wheelhouse $(WHEELHOUSE_DIR) --python-version $(PYTHON_VERSION) --report $(WHEELHOUSE_REPORT)
+
+dev-env-offline: wheelhouse-validate
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) -r $(LOCK_FILE)
+	python -m pip install --no-index --find-links $(WHEELHOUSE_DIR) --no-deps -e .
+	pre-commit install
+
+wheelhouse-clean:
+	rm -rf $(WHEELHOUSE_DIR) $(WHEELHOUSE_REPORT)
+
+wheelhouse-report: wheelhouse-validate
+	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
+
+test:
+	$(MAKE) test-gate
+
+test-all:
+	mkdir -p $(JUNIT_DIR)
+	python -m pytest -q --junitxml=$(JUNIT_ALL)
+
+test-integration:
+	python -m pytest -m "integration" -q
+
+test-e2e:
+	python -m pytest -m "e2e" -q
+
+test-gate:
+	$(TEST_CMD)
+
+test-diagnostics:
+	python -m scripts.run_pytest_with_diagnostics \
+		--markers "not (validation or property)" \
+		--junit $(JUNIT_FAST) \
+		--log $(JUNIT_DIR)/pytest-fast.log \
+		--output-json $(JUNIT_DIR)/failure-diagnostics.json \
+		--output-md $(JUNIT_DIR)/failure-diagnostics.md
+
+test-determinism:
+	python -m pytest tests/test_determinism.py tests/test_properties_determinism.py -q
+
+test-validation:
+	python -m pytest -m "validation" -q
+
+test-property:
+	python -m pytest -m "property" -q
+
+entropy-gate:
+	python -m tools.entropy_gate --mode current
+
+coverage:
+	python -m pytest --cov=bnsyn --cov-report=term-missing:skip-covered --cov-report=xml:coverage.xml -q
+
+coverage-fast:
+	python -m pytest -m "not (validation or property)" --cov=bnsyn --cov-report=term-missing --cov-report=xml:coverage.xml -q
+
+coverage-baseline: coverage
+	python -m scripts.generate_coverage_baseline --coverage-xml coverage.xml --output quality/coverage_gate.json --minimum-percent 99.0
+
+coverage-gate: coverage
+	python -m scripts.check_coverage_gate --coverage-xml coverage.xml --baseline quality/coverage_gate.json
+
+
+mutation:
+	@echo "Running mutation profile (reproducible local workflow step)..."
+	@python -m pip install -e ".[test]" -q
+	@python -m pip install mutmut==2.4.5 -q
+	@python -m scripts.run_mutation_pipeline
+
+name: canonical-proof-spine
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-proof-spine:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
+
+      - name: Install
+        run: python -m pip install -e ".[ci]"
+
+      - name: Run canonical proof
+        run: bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
+
+      - name: Validate canonical bundle
+        run: bnsyn proof-validate-bundle artifacts/canonical_run
+
+      - name: Verify manifest/proof consistency
+        run: bnsyn proof-evaluate artifacts/canonical_run
+
+      - name: Validate determinism replay
+        run: bnsyn proof-check-determinism artifacts/canonical_run
+
+      - name: Validate 10-seed admissibility band
+        run: bnsyn proof-check-envelope artifacts/canonical_run
+src/bnsyn/viz/__init__.py:5:Optional visualization tools requiring matplotlib. Dashboard provides
+src/bnsyn/viz/interactive.py:4:- Raster plot
+src/bnsyn/viz/interactive.py:24:    import plotly.graph_objects as go
+src/bnsyn/viz/interactive.py:133:            fig = create_raster_plot(spike_trains, N, duration_ms)
+src/bnsyn/viz/interactive.py:134:            st.plotly_chart(fig, use_container_width=True)
+src/bnsyn/viz/interactive.py:138:            fig = create_voltage_plot(voltage_history, dt_ms)
+src/bnsyn/viz/interactive.py:139:            st.plotly_chart(fig, use_container_width=True)
+src/bnsyn/viz/interactive.py:143:            fig = create_firing_rate_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:144:            st.plotly_chart(fig, use_container_width=True)
+src/bnsyn/viz/interactive.py:148:            fig = create_stats_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:149:            st.plotly_chart(fig, use_container_width=True)
+src/bnsyn/viz/interactive.py:172:def create_raster_plot(
+src/bnsyn/viz/interactive.py:175:    """Create interactive raster plot of spike times.
+src/bnsyn/viz/interactive.py:198:            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+src/bnsyn/viz/interactive.py:229:def create_voltage_plot(voltage_history: list[np.ndarray], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:230:    """Create voltage trace plot for multiple neurons.
+src/bnsyn/viz/interactive.py:251:            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+src/bnsyn/viz/interactive.py:279:def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:280:    """Create population firing rate plot.
+src/bnsyn/viz/interactive.py:301:            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+src/bnsyn/viz/interactive.py:319:def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:320:    """Create multi-panel statistics plot.
+src/bnsyn/viz/interactive.py:332:        Plotly figure with subplots
+src/bnsyn/viz/interactive.py:341:            f"Cannot create plot: optional dependency missing ({_IMPORT_ERROR}). "
+src/bnsyn/viz/interactive.py:345:    from plotly.subplots import make_subplots
+src/bnsyn/viz/interactive.py:351:    fig = make_subplots(
+src/bnsyn/viz/interactive.py:354:        subplot_titles=("Criticality (Sigma)", "Mean Voltage"),
+src/bnsyn/viz/dashboard.py:6:sleep stages, consolidation, and avalanche dynamics. Matplotlib imports
+src/bnsyn/viz/dashboard.py:30:# Module-level caches for matplotlib imports
+src/bnsyn/viz/dashboard.py:35:def _load_matplotlib() -> tuple[Any, Any]:
+src/bnsyn/viz/dashboard.py:36:    """Load matplotlib modules dynamically.
+src/bnsyn/viz/dashboard.py:41:        Tuple of (pyplot, animation) modules.
+src/bnsyn/viz/dashboard.py:46:        If matplotlib is not installed.
+src/bnsyn/viz/dashboard.py:50:    Imports matplotlib at runtime to avoid mypy checking missing stubs.
+src/bnsyn/viz/dashboard.py:59:        _plt = importlib.import_module("matplotlib.pyplot")
+src/bnsyn/viz/dashboard.py:60:        _animation = importlib.import_module("matplotlib.animation")
+src/bnsyn/viz/dashboard.py:62:        importlib.import_module("mpl_toolkits.mplot3d")
+src/bnsyn/viz/dashboard.py:65:            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+src/bnsyn/viz/dashboard.py:93:    Matplotlib is imported lazily only when visualization methods are called.
+src/bnsyn/viz/dashboard.py:124:        Does not import matplotlib until visualization methods are called.
+src/bnsyn/viz/dashboard.py:234:        Imports matplotlib and renders all panels with accumulated data.
+src/bnsyn/viz/dashboard.py:237:        plt, _ = _load_matplotlib()
+src/bnsyn/viz/dashboard.py:261:        plt, _ = _load_matplotlib()
+src/bnsyn/viz/dashboard.py:269:        """Ensure matplotlib figure and axes are initialized.
+src/bnsyn/viz/dashboard.py:281:        Lazy initialization of matplotlib objects.
+src/bnsyn/viz/dashboard.py:286:        plt, _ = _load_matplotlib()
+src/bnsyn/viz/dashboard.py:291:        self._axes["attractor"] = self._fig.add_subplot(2, 3, 1, projection="3d")
+src/bnsyn/viz/dashboard.py:292:        self._axes["sigma"] = self._fig.add_subplot(2, 3, 2)
+src/bnsyn/viz/dashboard.py:293:        self._axes["temperature"] = self._fig.add_subplot(2, 3, 3)
+src/bnsyn/viz/dashboard.py:294:        self._axes["sleep"] = self._fig.add_subplot(2, 3, 4)
+src/bnsyn/viz/dashboard.py:295:        self._axes["consolidation"] = self._fig.add_subplot(2, 3, 5)
+src/bnsyn/viz/dashboard.py:296:        self._axes["avalanche"] = self._fig.add_subplot(2, 3, 6)
+src/bnsyn/viz/dashboard.py:342:                ax.plot(
+src/bnsyn/viz/dashboard.py:404:            ax.plot(steps, self._sigma_history, linewidth=1, color="darkblue")
+src/bnsyn/viz/dashboard.py:433:            ax.plot(steps, self._temp_history, linewidth=1, color="orangered")
+src/bnsyn/viz/dashboard.py:471:            ax.plot(steps, stages, linewidth=2, color="purple", drawstyle="steps-post")
+src/bnsyn/viz/dashboard.py:500:            ax.plot(steps, self._consol_history, linewidth=1, color="green")
+src/bnsyn/viz/dashboard.py:535:                # Filter out zero counts for log-log plot
+src/bnsyn/viz/emergence_plot.py:23:def plot_emergence_npz(input_npz: str | Path, output_png: str | Path) -> None:
+src/bnsyn/viz/emergence_plot.py:53:        import matplotlib.pyplot as plt
+src/bnsyn/viz/emergence_plot.py:56:            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+src/bnsyn/viz/emergence_plot.py:59:    fig, axes = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+src/bnsyn/viz/emergence_plot.py:64:    axes[1].plot(rate_trace_hz, color="tab:orange", linewidth=1.2)
+src/bnsyn/viz/emergence_plot.py:68:    axes[2].plot(sigma_trace, color="tab:blue", linewidth=1.2)
+src/bnsyn/experiments/phase_space.py:217:            "plots": [
+src/bnsyn/experiments/declarative.py:315:    """Write a uint8 grayscale image to PNG without external plotting deps."""
+src/bnsyn/experiments/declarative.py:345:    """Build monochrome line-plot style image for population-rate trace."""
+src/bnsyn/experiments/declarative.py:626:    raster_path = out_dir / "raster_plot.png"
+src/bnsyn/experiments/declarative.py:630:    rate_plot_path = out_dir / "population_rate_plot.png"
+src/bnsyn/experiments/declarative.py:632:    _write_grayscale_png(rate_image, rate_plot_path)
+src/bnsyn/experiments/declarative.py:634:    emergence_plot_path = out_dir / "emergence_plot.png"
+src/bnsyn/experiments/declarative.py:636:    _write_grayscale_png(emergence_image, emergence_plot_path)
+src/bnsyn/experiments/declarative.py:649:            "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
+src/bnsyn/experiments/declarative.py:664:            "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
+src/bnsyn/experiments/declarative.py:665:            "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
+src/bnsyn/experiments/declarative.py:704:        "emergence_plot_path": emergence_plot_path.as_posix(),
+src/bnsyn/experiments/declarative.py:705:        "raster_plot_path": raster_path.as_posix(),
+src/bnsyn/experiments/declarative.py:706:        "population_rate_plot_path": rate_plot_path.as_posix(),
+src/bnsyn/proof/evaluate.py:37:    "emergence_plot.png",
+src/bnsyn/proof/contracts.py:11:CANONICAL_BASE_COMMAND = "bnsyn run --profile canonical --plot"
+src/bnsyn/proof/contracts.py:12:CANONICAL_EXPORT_PROOF_COMMAND = "bnsyn run --profile canonical --plot --export-proof"
+src/bnsyn/proof/contracts.py:15:    "emergence_plot.png",
+src/bnsyn/tools/run_scaled_sleep_stack.py:145:def _write_plot(out: Path, first_raster: list[tuple[int, int]], n: int) -> None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:147:        import matplotlib.pyplot as plt
+src/bnsyn/tools/run_scaled_sleep_stack.py:185:    ap.add_argument("--no-plots", action="store_true")
+src/bnsyn/tools/run_scaled_sleep_stack.py:328:    if not args.no_plots:
+src/bnsyn/tools/run_scaled_sleep_stack.py:329:        _write_plot(out, first_raster, args.n)
+src/bnsyn/cli.py:36:from bnsyn.viz.emergence_plot import plot_emergence_npz
+src/bnsyn/cli.py:198:    plot = bool(getattr(args, "plot", False))
+src/bnsyn/cli.py:219:        if plot:
+src/bnsyn/cli.py:220:            print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
+src/bnsyn/cli.py:233:    if plot:
+src/bnsyn/cli.py:234:        print("Notice: --plot only applies to --profile canonical at this milestone", file=sys.stderr)
+src/bnsyn/cli.py:417:    # Generate figure (optional, only if matplotlib available)
+src/bnsyn/cli.py:419:        import matplotlib.pyplot as plt
+src/bnsyn/cli.py:422:        fig, axes_raw = plt.subplots(2, 2, figsize=(12, 8))
+src/bnsyn/cli.py:428:        ax.plot(wake_sigmas, label="Wake", alpha=0.7)
+src/bnsyn/cli.py:439:        ax.plot(wake_rates, alpha=0.7, color="orange")
+src/bnsyn/cli.py:473:            "Matplotlib not installed; skipping figure generation. "
+src/bnsyn/cli.py:523:def _render_emergence_plot(
+src/bnsyn/cli.py:524:    plot_path: Path,
+src/bnsyn/cli.py:529:) -> None:  # pragma: no cover - optional matplotlib rendering path
+src/bnsyn/cli.py:530:    import matplotlib.pyplot as plt
+src/bnsyn/cli.py:531:    fig, axes = plt.subplots(2, 2, figsize=(12, 8), sharex="col")
+src/bnsyn/cli.py:543:    ax.plot(sigma_trace, color="tab:blue", linewidth=1.2)
+src/bnsyn/cli.py:550:    ax.plot(coherence_trace, color="tab:green", linewidth=1.2)
+src/bnsyn/cli.py:557:    ax.plot(rate_trace, color="tab:orange", linewidth=1.2)
+src/bnsyn/cli.py:564:    plt.savefig(plot_path, dpi=150, bbox_inches="tight")
+src/bnsyn/cli.py:568:def _cmd_plot(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:573:        "Notice: `bnsyn plot` is a compatibility wrapper; "
+src/bnsyn/cli.py:574:        "canonical command is `bnsyn run --profile canonical --plot --export-proof`",
+src/bnsyn/cli.py:583:        print(f"Error running canonical compatibility plot wrapper: {e}")
+src/bnsyn/cli.py:592:                    "emergence_plot.png",
+src/bnsyn/cli.py:608:                "compatibility_wrapper": "bnsyn plot",
+src/bnsyn/cli.py:684:def _cmd_emergence_plot(args: argparse.Namespace) -> int:
+src/bnsyn/cli.py:685:    plot_emergence_npz(args.input, args.output)
+src/bnsyn/cli.py:794:        "--plot",
+src/bnsyn/cli.py:843:    plot = sub.add_parser(
+src/bnsyn/cli.py:844:        "plot",
+src/bnsyn/cli.py:847:    plot.add_argument(
+src/bnsyn/cli.py:853:    plot.set_defaults(func=_cmd_plot)
+src/bnsyn/cli.py:893:    emergence_plot = sub.add_parser("emergence-plot", help="Render emergence NPZ artifact to PNG")
+src/bnsyn/cli.py:894:    emergence_plot.add_argument("--input", required=True)
+src/bnsyn/cli.py:895:    emergence_plot.add_argument("--output", required=True)
+src/bnsyn/cli.py:896:    emergence_plot.set_defaults(func=_cmd_emergence_plot)
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+
+    References
+    ----------
+    docs/SPEC.md#P2-12
+    """
+    m1 = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+    m2 = run_simulation(steps=args.steps * 2, dt_ms=args.dt2_ms, seed=args.seed, N=args.N)
+    # compare mean rates and sigma; dt2 should be close
+    out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
+    print(json.dumps(out, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_run_experiment(args: argparse.Namespace) -> int:
+    """Run experiment from YAML configuration.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the run subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Loads YAML config, validates against schema, runs experiment.
+
+    References
+    ----------
+    docs/LEGENDARY_QUICKSTART.md
+    schemas/experiment.schema.json
+    """
+    from bnsyn.experiments.declarative import run_canonical_live_bundle, run_from_yaml
+
+    config_path = getattr(args, "config", None)
+    profile = getattr(args, "profile", None)
+    plot = bool(getattr(args, "plot", False))
+    export_proof = bool(getattr(args, "export_proof", False))
+    output = getattr(args, "output", None)
+
+    if config_path is None and profile == "canonical":
+        config_path = "configs/canonical_profile.yaml"
+    if config_path is None:
+        print("Error running experiment: provide CONFIG or --profile canonical", file=sys.stderr)
+        return 2
+
+    if profile == "canonical":
+        try:
+            bundle = run_canonical_live_bundle(
+                config_path,
+                output or "artifacts/canonical_run",
+                export_proof=export_proof,
+            )
+        except Exception as e:
+            print(f"Error running experiment: {e}")
+            return 1
+
+        if plot:
+            print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
+
+        bundle_contract = bundle_contract_for_export_proof(export_proof)
+
+        payload = {
+            "status": "ok",
+            "bundle_contract": bundle_contract,
+            "artifacts": list(artifacts_for_export_proof(export_proof)),
+            **bundle,
+        }
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+
+    if plot:
+        print("Notice: --plot only applies to --profile canonical at this milestone", file=sys.stderr)
+    if export_proof:
+        print("Notice: --export-proof only applies to --profile canonical at this milestone", file=sys.stderr)
+
+    try:
+        run_from_yaml(config_path, output)
+        return 0
+    except Exception as e:
+        print(f"Error running experiment: {e}")
+        return 1
+
+
+def _cmd_sleep_stack(args: argparse.Namespace) -> int:
+    """Run sleep-stack demo with attractor crystallization and consolidation.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments for the sleep-stack subcommand.
+
+    Returns
+    -------
+    int
+        Exit code (0 indicates success).
+
+    Notes
+    -----
+    Runs wake→sleep cycle with memory recording, consolidation, replay,
+    attractor tracking, and phase transition detection.
+
+    References
+    ----------
+    docs/sleep_stack.md
+    docs/emergence_tracking.md
+    """
+    # Import here to avoid circular dependencies and keep CLI fast
+    from bnsyn.config import AdExParams, CriticalityParams, SynapseParams, TemperatureParams
+    from bnsyn.criticality import PhaseTransitionDetector
+    from bnsyn.emergence import AttractorCrystallizer
+    from bnsyn.memory import MemoryConsolidator
+    from bnsyn.rng import seed_all
+    from bnsyn.sim.network import Network, NetworkParams
+    from bnsyn.sleep import SleepCycle, SleepStageConfig, default_human_sleep_cycle
+    from bnsyn.temperature.schedule import TemperatureSchedule
+
+    # Setup output directory
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    fig_dir = out_dir.parent / "figures" / out_dir.name
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    # Seed RNG
+    pack = seed_all(args.seed)
+    rng = pack.np_rng
+
+    # Create network
+    N = int(args.N)
+    nparams = NetworkParams(N=N)
+    net = Network(
+        nparams,
+        AdExParams(),
+        SynapseParams(),
+        CriticalityParams(),
+        dt_ms=0.5,
+        rng=rng,
+        backend=args.backend,
+    )
+
+    # Temperature schedule
+    temp_schedule = TemperatureSchedule(TemperatureParams())
+
+    # Sleep cycle
+    sleep_cycle = SleepCycle(net, temp_schedule, max_memories=100, rng=rng)
+
+    # Memory consolidator
+    consolidator = MemoryConsolidator(capacity=100)
+
+    # Phase transition detector
+    phase_detector = PhaseTransitionDetector()
+
+    # Attractor crystallizer
+    crystallizer = AttractorCrystallizer(
+        state_dim=N,
+        max_buffer_size=500,
+        snapshot_dim=min(50, N),
+        pca_update_interval=50,
+    )
+
+    # Wake phase
+    print(f"Running wake phase ({args.steps_wake} steps)...")
+    wake_metrics = []
+    for _ in range(args.steps_wake):
+        m = net.step()
+        wake_metrics.append(m)
+
+        # Record memory periodically
+        if len(wake_metrics) % 20 == 0:
+            importance = min(1.0, m["spike_rate_hz"] / 10.0)
+            sleep_cycle.record_memory(importance)
+            consolidator.tag(net.state.V_mV, importance)
+
+        # Track phase transitions
+        phase_detector.observe(m["sigma"], len(wake_metrics))
+
+        # Track attractor crystallization
+        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+
+from __future__ import annotations
+
+from pathlib import Path
+
+
+def _quickstart_smoke_commands() -> set[str]:
+    makefile = Path("Makefile").read_text(encoding="utf-8").splitlines()
+    in_target = False
+    commands: set[str] = set()
+    for line in makefile:
+        if line.startswith("quickstart-smoke:"):
+            in_target = True
+            continue
+        if in_target and line and not line.startswith("\t"):
+            break
+        if in_target and line.startswith("\t"):
+            commands.add(line.strip())
+    return commands
+
+
+def test_readme_quickstart_contract_matches_make_target() -> None:
+    readme = Path("README.md").read_text(encoding="utf-8")
+    expected = {
+        "make quickstart-smoke",
+        "python -m pip install -e .",
+        "python -m bnsyn --help",
+        "bnsyn run --profile canonical --plot --export-proof",
+        "git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git",
+        "artifacts/canonical_run/emergence_plot.png",
+        "artifacts/canonical_run/summary_metrics.json",
+        "artifacts/canonical_run/run_manifest.json",
+        "artifacts/canonical_run/criticality_report.json",
+        "artifacts/canonical_run/avalanche_report.json",
+        "artifacts/canonical_run/phase_space_report.json",
+        "artifacts/canonical_run/proof_report.json",
+    }
+    for command in expected:
+        assert command in readme
+
+    smoke_commands = _quickstart_smoke_commands()
+    assert "python -m scripts.check_quickstart_consistency" in smoke_commands
+    assert "python -m pip install -e ." in smoke_commands
+    assert "bnsyn --help" in smoke_commands
+    assert "bnsyn run --help" in smoke_commands
+    assert any(cmd.startswith("bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c") for cmd in smoke_commands)
+from __future__ import annotations
+
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+
+def test_quickstart_consistency_script_passes() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "scripts.check_quickstart_consistency"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert "PASSED" in result.stdout
+
+
+def test_quickstart_consistency_script_fails_when_docs_missing(tmp_path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(repo_root)
+    result = subprocess.run(
+        [sys.executable, "-m", "scripts.check_quickstart_consistency"],
+        cwd=tmp_path,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert "file not found" in result.stdout
+"""Unit tests for quickstart contract validator helper functions."""
+
+from __future__ import annotations
+
+import unittest
+
+from scripts.validate_quickstart_contract import count_gate_collected, extract_quickstart_lines
+
+
+class ExtractQuickstartLinesTests(unittest.TestCase):
+    def test_extracts_lines_with_standard_spacing(self) -> None:
+        readme = """# Title\n\n## Quickstart\n\n```bash\nmake setup\nmake demo\nmake test\n```\n\n## Other\n"""
+        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+
+    def test_extracts_lines_with_extra_blank_lines(self) -> None:
+        readme = """# Title\n## Quickstart\n\n\n```\n\nmake setup\n\nmake demo\nmake test\n\n```\n"""
+        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+
+
+class CountGateCollectedTests(unittest.TestCase):
+    def test_counts_nodeid_style_collect_output(self) -> None:
+        output = "\n".join(
+            [
+                "tests/test_alpha.py::test_a",
+                "tests/test_beta.py::test_b",
+                "= 2 tests collected in 0.10s =",
+            ]
+        )
+        self.assertEqual(count_gate_collected(output), 2)
+
+    def test_counts_summary_collect_output(self) -> None:
+        output = "collected 17 items"
+        self.assertEqual(count_gate_collected(output), 17)
+
+
+if __name__ == "__main__":
+    unittest.main()
+## changed files
+ M Makefile
+ M README.md
+ M docs/LEGENDARY_QUICKSTART.md
+ M docs/QUICKSTART.md
+ M proof_bundle/logs/agent.log
+ M pyproject.toml
+ M scripts/check_quickstart_consistency.py
+ M tests/test_readme_quickstart_contract.py
+?? scripts/bootstrap_local_linux.sh
+?? scripts/local_doctor.py
+?? scripts/run_canonical_local.sh
+?? tests/test_local_deployment_spine.py
+## local_doctor
+#!/usr/bin/env python3
+"""Local Linux environment verifier for canonical proof execution."""
+
+from __future__ import annotations
+
+import argparse
+import importlib
+import os
+import platform
+import shutil
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True)
+class CheckResult:
+    name: str
+    ok: bool
+    detail: str
+    remediation: str | None = None
+
+
+def _is_supported_python(version: tuple[int, int, int]) -> bool:
+    return version >= (3, 11, 0)
+
+
+def _check_linux() -> CheckResult:
+    if platform.system() == "Linux":
+        return CheckResult("linux", True, "Linux host detected.")
+    return CheckResult(
+        "linux",
+        False,
+        f"Unsupported OS: {platform.system()}.",
+        "Use Ubuntu/Linux for the supported local deployment path.",
+    )
+
+
+def _check_python() -> CheckResult:
+    ver = sys.version_info[:3]
+    if _is_supported_python(ver):
+        return CheckResult("python", True, f"Python {ver[0]}.{ver[1]}.{ver[2]} is supported (>=3.11).")
+    return CheckResult(
+        "python",
+        False,
+        f"Python {ver[0]}.{ver[1]}.{ver[2]} is unsupported.",
+        "Install Python 3.11+ and re-run: ./scripts/bootstrap_local_linux.sh",
+    )
+
+
+def _check_venv(repo_root: Path) -> CheckResult:
+    venv_dir = repo_root / ".venv"
+    if os.environ.get("VIRTUAL_ENV"):
+        return CheckResult("venv", True, f"Active virtualenv: {os.environ['VIRTUAL_ENV']}")
+    if (venv_dir / "bin" / "python").exists():
+        return CheckResult(
+            "venv",
+            True,
+            "Project virtualenv found at .venv (not active, scripts will still use it).",
+        )
+    return CheckResult(
+        "venv",
+        False,
+        "No active virtualenv and .venv is missing.",
+        "Run: ./scripts/bootstrap_local_linux.sh",
+    )
+
+
+def _check_bnsyn_install() -> CheckResult:
+    try:
+        importlib.import_module("bnsyn")
+    except Exception:
+        return CheckResult(
+            "bnsyn-install",
+            False,
+            "Package 'bnsyn' is not importable in this interpreter.",
+            "Run: python -m pip install -e '.[plot]'",
+        )
+    return CheckResult("bnsyn-install", True, "Package 'bnsyn' is importable.")
+
+
+def _check_plot_dependencies() -> CheckResult:
+    try:
+        importlib.import_module("matplotlib")
+    except Exception:
+        return CheckResult(
+            "plot-deps",
+            False,
+            "matplotlib is missing, but canonical command includes --plot.",
+            "Run: python -m pip install -e '.[plot]'",
+        )
+    return CheckResult("plot-deps", True, "matplotlib import check passed.")
+
+
+def _check_cli_path() -> CheckResult:
+    if shutil.which("bnsyn"):
+        return CheckResult("cli", True, "bnsyn CLI is available on PATH.")
+    return CheckResult(
+        "cli",
+        False,
+        "bnsyn CLI is not on PATH.",
+        "Use .venv binaries directly or activate env: source .venv/bin/activate",
+    )
+
+
+def run_checks(repo_root: Path) -> list[CheckResult]:
+    return [
+        _check_linux(),
+        _check_python(),
+        _check_venv(repo_root),
+        _check_bnsyn_install(),
+        _check_plot_dependencies(),
+        _check_cli_path(),
+    ]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate local environment for canonical BN-Syn proof run.")
+    parser.add_argument("--strict", action="store_true", help="Fail if CLI is not on PATH.")
+    args = parser.parse_args()
+
+    results = run_checks(Path.cwd())
+    hard_failures = {"linux", "python", "venv", "bnsyn-install", "plot-deps"}
+    if args.strict:
+        hard_failures.add("cli")
+
+    failed = False
+    print("Local environment doctor report:")
+    for result in results:
+        prefix = "PASS" if result.ok else "FAIL"
+        print(f" - [{prefix}] {result.name}: {result.detail}")
+        if not result.ok and result.remediation:
+            print(f"   Fix: {result.remediation}")
+        if not result.ok and result.name in hard_failures:
+            failed = True
+
+    if failed:
+        print("\nEnvironment verification failed. Apply fixes above and rerun.")
+        return 1
+
+    print("\nEnvironment verification passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+## bootstrap
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="${ROOT_DIR}/.venv"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+  echo "ERROR: Unsupported OS $(uname -s). This bootstrap script supports Linux." >&2
+  exit 1
+fi
+
+if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+  echo "ERROR: ${PYTHON_BIN} not found. Install Python 3.11+ first." >&2
+  exit 1
+fi
+
+"${PYTHON_BIN}" - <<'PY'
+import sys
+if sys.version_info < (3, 11):
+    raise SystemExit("ERROR: Python 3.11+ required. Install Python 3.11+ then re-run bootstrap.")
+print(f"Using Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+PY
+
+if [[ ! -x "${VENV_DIR}/bin/python" ]]; then
+  echo "Creating virtualenv at ${VENV_DIR}"
+  "${PYTHON_BIN}" -m venv "${VENV_DIR}"
+else
+  echo "Reusing existing virtualenv at ${VENV_DIR}"
+fi
+
+"${VENV_DIR}/bin/python" -m pip install --upgrade pip setuptools wheel
+"${VENV_DIR}/bin/python" -m pip install -e ".[plot]"
+"${VENV_DIR}/bin/python" -m scripts.local_doctor
+
+echo "Bootstrap complete."
+echo "Run canonical proof with: ./scripts/run_canonical_local.sh"
+## run_canonical_local
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_PYTHON="${ROOT_DIR}/.venv/bin/python"
+VENV_BNSYN="${ROOT_DIR}/.venv/bin/bnsyn"
+OUT_DIR="${ROOT_DIR}/artifacts/canonical_run"
+
+if [[ ! -x "${VENV_PYTHON}" ]]; then
+  echo "ERROR: .venv missing. Run ./scripts/bootstrap_local_linux.sh first." >&2
+  exit 1
+fi
+
+cd "${ROOT_DIR}"
+"${VENV_PYTHON}" -m scripts.local_doctor
+
+mkdir -p "${OUT_DIR}"
+"${VENV_BNSYN}" run --profile canonical --plot --export-proof --output "${OUT_DIR}"
+"${VENV_BNSYN}" proof-validate-bundle "${OUT_DIR}"
+"${VENV_BNSYN}" proof-evaluate "${OUT_DIR}"
+"${VENV_BNSYN}" proof-check-determinism "${OUT_DIR}"
+"${VENV_BNSYN}" proof-check-envelope "${OUT_DIR}"
+
+"${VENV_PYTHON}" - <<'PY'
+import json
+from pathlib import Path
+
+out_dir = Path("artifacts/canonical_run")
+proof_path = out_dir / "proof_report.json"
+if not proof_path.exists():
+    raise SystemExit(f"ERROR: missing {proof_path}")
+proof = json.loads(proof_path.read_text(encoding="utf-8"))
+verdict = str(proof.get("verdict", "UNKNOWN"))
+if verdict.upper() != "PASS":
+    raise SystemExit(f"ERROR: proof_report verdict is {verdict}, expected PASS")
+print(f"Canonical proof verdict: {verdict}")
+print(f"Canonical artifact bundle: {out_dir}")
+PY
+

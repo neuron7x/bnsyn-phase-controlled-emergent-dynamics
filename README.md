@@ -58,13 +58,20 @@ Not supported from this proof command alone:
 - claims about cognition, consciousness, or AGI-level capability
 - generalization claims beyond tested parameter settings and implemented model scope
 
-## Canonical user path (clone -> install -> run -> inspect)
+## Canonical user path (clone -> install -> run -> verify)
 
 ```bash
 git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git
 cd bnsyn-phase-controlled-emergent-dynamics
-python -m pip install -e .
-bnsyn run --profile canonical --plot --export-proof
+./scripts/bootstrap_local_linux.sh
+./scripts/run_canonical_local.sh
+```
+
+Alternative manual install path:
+
+```bash
+python -m pip install -e ".[plot]"
+bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
 ```
 
 Inspect:
@@ -112,7 +119,7 @@ make test-gate
 
 ```bash
 make quickstart-smoke
-python -m pip install -e .
+python -m pip install -e ".[plot]"
 python -m bnsyn --help
 bnsyn run --profile canonical --plot --export-proof
 ```

@@ -471,7 +471,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     except ImportError:
         print(
             "Matplotlib not installed; skipping figure generation. "
-            'Install with: pip install -e ".[viz]"'
+            'Install with: pip install -e ".[plot]" (or ".[viz]" for full interactive stack)'
         )
     except Exception as e:
         print(f"Figure generation failed: {e}")

@@ -2,27 +2,35 @@
 
 This quickstart is a runnable contract:
 
-1. install
-2. verify CLI
+1. bootstrap local Linux environment
+2. verify CLI and dependencies
 3. run canonical visual proof command
 4. verify canonical artifact outputs
 
-## Install
+## One obvious Linux path (recommended)
 
 ```bash
-python -m pip install -e .
+./scripts/bootstrap_local_linux.sh
+./scripts/run_canonical_local.sh
 ```
 
-## Verify CLI
+## Manual install path (equivalent)
 
 ```bash
+python -m pip install -e ".[plot]"
+python -m scripts.local_doctor
 python -m bnsyn --help
+bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
 ```
 
-## Run canonical proof command
+## Makefile helpers
 
 ```bash
-bnsyn run --profile canonical --plot --export-proof
+make local-bootstrap
+make local-verify
+make local-run
+# or do both bootstrap+run:
+make local-all
 ```
 
 ## Expected output contract

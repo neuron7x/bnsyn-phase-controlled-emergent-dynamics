@@ -14,7 +14,7 @@ Use an editable install from source as the canonical path.
 ## Install
 
 ```bash
-python -m pip install -e .
+python -m pip install -e ".[plot]"
 ```
 
 ## Verify CLI

@@ -62,7 +62,7 @@ def _load_matplotlib() -> tuple[Any, Any]:
         importlib.import_module("mpl_toolkits.mplot3d")
     except ModuleNotFoundError as e:
         raise RuntimeError(
-            'Visualization requires matplotlib. Install with: pip install -e ".[viz]"'
+            'Visualization requires matplotlib. Install with: pip install -e ".[plot]" (or ".[viz]" for full interactive stack)'
         ) from e
 
     return _plt, _animation
