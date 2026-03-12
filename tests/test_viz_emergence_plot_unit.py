@@ -26,6 +26,7 @@ def _write_minimal_valid_npz(path: Path) -> None:
 
 def test_plot_emergence_npz_creates_output_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("MPLBACKEND", "Agg")
+    pytest.importorskip("matplotlib")
     from bnsyn.viz.emergence_plot import plot_emergence_npz
 
     npz_path = tmp_path / "traces.npz"
@@ -39,6 +40,7 @@ def test_plot_emergence_npz_creates_output_file(tmp_path: Path, monkeypatch: pyt
 
 def test_plot_emergence_npz_rejects_missing_input(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("MPLBACKEND", "Agg")
+    pytest.importorskip("matplotlib")
     from bnsyn.viz.emergence_plot import plot_emergence_npz
 
     with pytest.raises((FileNotFoundError, ValueError, Exception)):
@@ -50,6 +52,7 @@ def test_plot_emergence_npz_rejects_missing_input(tmp_path: Path, monkeypatch: p
 
 def test_plot_emergence_npz_rejects_wrong_format_version(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("MPLBACKEND", "Agg")
+    pytest.importorskip("matplotlib")
     from bnsyn.viz.emergence_plot import plot_emergence_npz
 
     npz_path = tmp_path / "bad_version.npz"
