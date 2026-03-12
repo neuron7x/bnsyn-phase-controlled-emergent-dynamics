@@ -262,6 +262,22 @@ def _evaluate_numeric_gate_from_value(metric_name: str, metric_value: float, gat
     raise ValueError(f"unsupported gate op: {op}")
 
 
+def _evaluate_numeric_gate(gate: dict[str, Any], metrics: dict[str, Any]) -> tuple[bool, float, str]:
+    """Backward-compatible numeric gate validator used by edge-contract tests."""
+    threshold = gate.get("threshold")
+    if not isinstance(threshold, dict):
+        raise ValueError("numeric gate threshold missing")
+    metric_name = threshold.get("metric")
+    if not isinstance(metric_name, str):
+        raise ValueError("numeric gate metric missing")
+    if metric_name not in metrics:
+        raise ValueError(f"metric {metric_name} missing")
+
+    metric_value = float(metrics[metric_name])
+    result = _evaluate_numeric_gate_from_value(metric_name, metric_value, gate)
+    return result["status"] == "PASS", metric_value, str(result["details"])
+
+
 def evaluate_gate_g1_active_spiking(metrics: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
     metric_name = str(gate.get("threshold", {}).get("metric", "spike_events"))
     if metric_name not in metrics:
