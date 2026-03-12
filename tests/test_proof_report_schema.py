@@ -29,7 +29,7 @@ def _full_gates() -> dict[str, dict[str, str]]:
 def test_proof_report_schema_accepts_full_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-export-proof",
         "export_proof": True,
         "verdict": "INCONCLUSIVE",
@@ -40,8 +40,8 @@ def test_proof_report_schema_accepts_full_payload() -> None:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {"rate_mean_hz": "population_rate_trace.npy", "sigma_mean": "sigma_trace.npy", "spike_events": "traces.npz", "spike_events_source": "raw_npz"},
+        "metric_consistency": {"spike_events": {"status": "PASS", "tolerance": 0.0, "policy": "exact_match", "summary_source": "summary_metrics.json", "source": "traces.npz", "summary": 10, "recomputed": 10, "delta": 0.0}, "rate_mean_hz": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "population_rate_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}, "sigma_mean": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "sigma_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}},
         "artifacts_verified": ["summary_metrics.json"],
         "failure_reasons": ["G6_determinism_replay unresolved"],
     }
@@ -53,7 +53,7 @@ def test_proof_report_schema_accepts_gate_errors_payload() -> None:
     gates = _full_gates()
     gates["G5_manifest_valid"] = {"status": "FAIL", "errors": ["summary_metrics.json hash mismatch"]}
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-export-proof",
         "export_proof": True,
         "verdict": "FAIL",
@@ -64,8 +64,8 @@ def test_proof_report_schema_accepts_gate_errors_payload() -> None:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {"rate_mean_hz": "population_rate_trace.npy", "sigma_mean": "sigma_trace.npy", "spike_events": "traces.npz", "spike_events_source": "raw_npz"},
+        "metric_consistency": {"spike_events": {"status": "PASS", "tolerance": 0.0, "policy": "exact_match", "summary_source": "summary_metrics.json", "source": "traces.npz", "summary": 10, "recomputed": 10, "delta": 0.0}, "rate_mean_hz": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "population_rate_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}, "sigma_mean": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "sigma_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}},
         "artifacts_verified": ["summary_metrics.json"],
         "failure_reasons": ["G5_manifest_valid failed"],
     }
@@ -75,7 +75,7 @@ def test_proof_report_schema_accepts_gate_errors_payload() -> None:
 def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-base",
         "export_proof": False,
         "verdict": "PASS",
@@ -86,8 +86,8 @@ def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {"rate_mean_hz": "population_rate_trace.npy", "sigma_mean": "sigma_trace.npy", "spike_events": "traces.npz", "spike_events_source": "raw_npz"},
+        "metric_consistency": {"spike_events": {"status": "PASS", "tolerance": 0.0, "policy": "exact_match", "summary_source": "summary_metrics.json", "source": "traces.npz", "summary": 10, "recomputed": 10, "delta": 0.0}, "rate_mean_hz": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "population_rate_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}, "sigma_mean": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "sigma_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}},
         "artifacts_verified": [],
         "failure_reasons": [],
     }

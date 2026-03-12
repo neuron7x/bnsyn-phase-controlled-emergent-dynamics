@@ -23,7 +23,7 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "minLength": 1
+      "const": "1.1.0"
     },
     "verdict": {
       "type": "string",
@@ -103,11 +103,247 @@
     },
     "recompute_sources": {
       "type": "object",
-      "additionalProperties": true
+      "additionalProperties": false,
+      "required": [
+        "rate_mean_hz",
+        "sigma_mean",
+        "spike_events",
+        "spike_events_source"
+      ],
+      "properties": {
+        "rate_mean_hz": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sigma_mean": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spike_events": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spike_events_source": {
+          "type": "string",
+          "enum": [
+            "raw_npz",
+            "rate_trace_reconstruction",
+            "unverifiable",
+            "canonical_raw_npz_malformed"
+          ]
+        },
+        "spike_events_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string",
+              "integer"
+            ]
+          }
+        },
+        "spike_events_reconstruction": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string",
+              "integer"
+            ]
+          }
+        }
+      }
     },
     "metric_consistency": {
       "type": "object",
-      "additionalProperties": true
+      "additionalProperties": false,
+      "required": [
+        "spike_events",
+        "rate_mean_hz",
+        "sigma_mean"
+      ],
+      "properties": {
+        "spike_events": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "tolerance",
+            "policy",
+            "summary_source",
+            "source"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "FAIL"
+              ]
+            },
+            "tolerance": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "summary_source": {
+              "type": "string",
+              "const": "summary_metrics.json"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "recomputed": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "delta": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "rate_mean_hz": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "tolerance",
+            "policy",
+            "summary_source",
+            "source"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "FAIL"
+              ]
+            },
+            "tolerance": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "summary_source": {
+              "type": "string",
+              "const": "summary_metrics.json"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "recomputed": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "delta": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "sigma_mean": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "tolerance",
+            "policy",
+            "summary_source",
+            "source"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "FAIL"
+              ]
+            },
+            "tolerance": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "summary_source": {
+              "type": "string",
+              "const": "summary_metrics.json"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "recomputed": {
+              "type": [
+                "number",
+                "integer"
+              ]
+            },
+            "delta": {
+              "type": "number",
+              "minimum": 0.0
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
     },
     "artifacts_verified": {
       "type": "array",

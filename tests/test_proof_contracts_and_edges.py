@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+import jsonschema
 
 from bnsyn.experiments.declarative import run_canonical_live_bundle
 from bnsyn.proof import evaluate as proof_evaluate
@@ -29,6 +30,34 @@ def _write_json(path: Path, payload: dict) -> None:
 
 def _load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _g9_gate_payload(rounding_tolerance: float = 1e-6) -> dict:
+    return {
+        "threshold": {
+            "policy": "summary_is_secondary_snapshot",
+            "metrics": {
+                "spike_events": {
+                    "tolerance": 0.0,
+                    "policy": "exact_match",
+                    "policy_by_source": {
+                        "raw_npz": "exact_match",
+                        "rate_trace_reconstruction": "exact_reconstruction_after_integer_check",
+                        "unverifiable": "unverifiable_fails_closed",
+                        "canonical_raw_npz_malformed": "malformed_raw_fails_closed",
+                    },
+                },
+                "rate_mean_hz": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+                "sigma_mean": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+            },
+            "recompute_policy": {
+                "spike_events": {
+                    "canonical_raw_artifact": "traces.npz",
+                    "rounding_tolerance": rounding_tolerance,
+                }
+            },
+        }
+    }
 
 
 def test_contract_helpers_select_mode_specific_constants() -> None:
@@ -288,28 +317,31 @@ def test_load_numeric_trace_validation_branches(tmp_path: Path, monkeypatch: pyt
         proof_evaluate._load_numeric_trace(arr_path, metric_name="rate_mean_hz")
 
 
-def test_extract_spike_events_from_raw_npz_edge_paths(tmp_path: Path) -> None:
+def test_extract_spike_events_from_canonical_raw_npz_edge_paths(tmp_path: Path) -> None:
     bad_npz = tmp_path / "traces.npz"
     np.savez(bad_npz, spike_steps=np.asarray([[1, 2]], dtype=np.int64))
-    assert proof_evaluate._extract_spike_events_from_raw_npz(tmp_path) is None
+    with pytest.raises(ValueError, match="spike_steps must be 1D"):
+        proof_evaluate._extract_spike_events_from_canonical_raw_npz(bad_npz)
 
-    good_npz = tmp_path / "good.npz"
-    np.savez(good_npz, spike_steps=np.asarray([1, 2, 3], dtype=np.int64), spike_neurons=np.asarray([0, 1, 2], dtype=np.int64))
-    events = proof_evaluate._extract_spike_events_from_raw_npz(tmp_path)
-    assert events == (3, "good.npz")
+    good_npz = tmp_path / "traces.npz"
+    np.savez(good_npz, spike_steps=np.asarray([1, 2, 3], dtype=np.int64), spike_neurons=np.asarray([0, 1, 2], dtype=np.int64), dt_ms=np.asarray([0.1]), N=np.asarray([100]))
+    events, metadata = proof_evaluate._extract_spike_events_from_canonical_raw_npz(good_npz)
+    assert events == 3
+    assert metadata["dt_ms"] == 0.1
+    assert metadata["N"] == 100.0
 
 
 def test_recompute_metrics_from_artifacts_unverifiable_paths(tmp_path: Path) -> None:
     np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
     np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
 
-    no_meta = proof_evaluate.recompute_metrics_from_artifacts(tmp_path, summary={}, manifest={})
+    no_meta = proof_evaluate.recompute_metrics_from_artifacts(tmp_path, manifest={}, g9_gate=_g9_gate_payload())
     assert any("missing dt_ms or N" in err for err in no_meta["errors"])
 
     non_positive = proof_evaluate.recompute_metrics_from_artifacts(
         tmp_path,
-        summary={"dt_ms": 0.1, "N": 100},
         manifest={"dt_ms": -1.0, "N": 100},
+        g9_gate=_g9_gate_payload(),
     )
     assert any("non-positive dt_ms or N" in err for err in non_positive["errors"])
 
@@ -319,8 +351,8 @@ def test_recompute_metrics_from_artifacts_rate_reconstruction_tolerance_failure(
     np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0], dtype=float))
     recomputed = proof_evaluate.recompute_metrics_from_artifacts(
         tmp_path,
-        summary={"dt_ms": 1.0, "N": 1},
         manifest={"dt_ms": 1.0, "N": 1},
+        g9_gate=_g9_gate_payload(),
     )
     assert any("non-integer reconstruction" in err for err in recomputed["errors"])
 
@@ -328,13 +360,238 @@ def test_recompute_metrics_from_artifacts_rate_reconstruction_tolerance_failure(
 def test_metric_consistency_gate_reports_missing_metrics() -> None:
     result = proof_evaluate.evaluate_gate_g9_metric_consistency(
         summary={"rate_mean_hz": 1.0},
-        recomputed={"metrics": {"rate_mean_hz": 1.0, "sigma_mean": 1.0}, "errors": []},
+        recomputed={"metrics": {"rate_mean_hz": 1.0, "sigma_mean": 1.0}, "errors": [], "sources": {}},
+        gate=_g9_gate_payload(),
     )
     assert result["status"] == "FAIL"
     assert "spike_events: missing summary metric" in result["errors"]
 
 
-def test_manifest_float_prefers_manifest_then_summary() -> None:
-    assert proof_evaluate._manifest_float({"dt_ms": 0.5}, {"dt_ms": 0.1}, "dt_ms") == 0.5
-    assert proof_evaluate._manifest_float({}, {"dt_ms": 0.1}, "dt_ms") == 0.1
-    assert proof_evaluate._manifest_float({}, {}, "dt_ms") is None
+def test_extract_manifest_numeric_reads_manifest_only() -> None:
+    assert proof_evaluate._extract_manifest_numeric({"dt_ms": 0.5}, "dt_ms") == 0.5
+    assert proof_evaluate._extract_manifest_numeric({}, "dt_ms") is None
+
+
+def test_parse_g9_runtime_policy_fail_closed_paths() -> None:
+    with pytest.raises(ValueError, match="G9 threshold policy missing"):
+        proof_evaluate._parse_g9_runtime_policy({"threshold": {}})
+
+    with pytest.raises(ValueError, match="G9 metric policy missing for spike_events"):
+        proof_evaluate._parse_g9_runtime_policy(
+            {
+                "threshold": {
+                    "policy": "summary_is_secondary_snapshot",
+                    "metrics": {},
+                    "recompute_policy": {"spike_events": {"canonical_raw_artifact": "traces.npz", "rounding_tolerance": 1e-6}},
+                }
+            }
+        )
+
+    with pytest.raises(ValueError, match="rounding_tolerance must be non-negative"):
+        proof_evaluate._parse_g9_runtime_policy(
+            {
+                "threshold": {
+                    "policy": "summary_is_secondary_snapshot",
+                    "metrics": {
+                        "spike_events": {"tolerance": 0.0, "policy": "exact_match", "policy_by_source": {"raw_npz": "exact_match"}},
+                        "rate_mean_hz": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+                        "sigma_mean": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+                    },
+                    "recompute_policy": {"spike_events": {"canonical_raw_artifact": "traces.npz", "rounding_tolerance": -1e-6}},
+                }
+            }
+        )
+
+
+def test_parse_g9_runtime_policy_accepts_registry_contract() -> None:
+    registry = proof_evaluate._load_gate_registry()
+    policy = proof_evaluate._parse_g9_runtime_policy(registry["G9_metrics_trace_consistency"])
+    assert policy["policy"] == "summary_is_secondary_snapshot"
+    assert policy["metrics"]["spike_events"]["policy_by_source"]["raw_npz"] == "exact_match"
+    assert policy["spike_events_recompute"]["canonical_raw_artifact"] == "traces.npz"
+
+
+def test_fail_closed_report_output_passes_schema_validation(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    schema = json.loads((root / "schemas" / "proof-report.schema.json").read_text(encoding="utf-8"))
+    report = proof_evaluate._fail_closed_report(tmp_path, "test-reason")
+    jsonschema.validate(instance=report, schema=schema)
+    assert report["verdict"] == "FAIL"
+    assert report["recompute_sources"]["spike_events_source"] == "unverifiable"
+    assert report["metric_consistency"]["spike_events"]["status"] == "FAIL"
+    assert report["metric_consistency"]["rate_mean_hz"]["status"] == "FAIL"
+    assert report["metric_consistency"]["sigma_mean"]["status"] == "FAIL"
+
+
+def test_resolve_canonical_spike_source_present_and_absent(tmp_path: Path) -> None:
+    existing = tmp_path / "traces.npz"
+    existing.write_bytes(b"")
+    result = proof_evaluate._resolve_canonical_spike_source(tmp_path, "traces.npz")
+    assert result == existing
+
+    absent = proof_evaluate._resolve_canonical_spike_source(tmp_path, "nonexistent.npz")
+    assert absent is None
+
+
+def test_extract_spike_events_from_canonical_raw_npz_missing_spike_steps(tmp_path: Path) -> None:
+    npz_path = tmp_path / "traces.npz"
+    np.savez(npz_path, other_key=np.asarray([1, 2, 3]))
+    with pytest.raises(ValueError, match="missing spike_steps"):
+        proof_evaluate._extract_spike_events_from_canonical_raw_npz(npz_path)
+
+
+def test_g9_threshold_raises_on_missing_threshold() -> None:
+    with pytest.raises(ValueError, match="G9 threshold missing"):
+        proof_evaluate._g9_threshold({})
+
+    with pytest.raises(ValueError, match="G9 threshold missing"):
+        proof_evaluate._g9_threshold({"threshold": "not-a-dict"})
+
+
+def test_g9_metric_consistency_raises_on_missing_metrics_policy() -> None:
+    with pytest.raises(ValueError, match="G9 threshold.metrics missing"):
+        proof_evaluate.evaluate_gate_g9_metric_consistency(
+            summary={"spike_events": 10},
+            recomputed={"metrics": {}, "errors": [], "sources": {}},
+            gate={"threshold": {"policy": "no_metrics_key"}},
+        )
+
+
+def test_parse_g9_metric_policy_error_paths() -> None:
+    # Path 1: entry not a dict (metric missing from policy)
+    with pytest.raises(ValueError, match="G9 metric policy missing for spike_events"):
+        proof_evaluate._parse_g9_metric_policy({}, "spike_events")
+
+    # Path 2: tolerance not a number
+    with pytest.raises(ValueError, match="G9 metric tolerance missing for rate_mean_hz"):
+        proof_evaluate._parse_g9_metric_policy(
+            {"rate_mean_hz": {"tolerance": "not-a-number", "policy": "abs_delta <= tolerance"}},
+            "rate_mean_hz",
+        )
+
+    # Path 3: tolerance negative
+    with pytest.raises(ValueError, match="G9 metric tolerance must be non-negative for sigma_mean"):
+        proof_evaluate._parse_g9_metric_policy(
+            {"sigma_mean": {"tolerance": -1.0, "policy": "abs_delta <= tolerance"}},
+            "sigma_mean",
+        )
+
+    # Path 4: policy label missing/empty
+    with pytest.raises(ValueError, match="G9 metric policy label missing for rate_mean_hz"):
+        proof_evaluate._parse_g9_metric_policy(
+            {"rate_mean_hz": {"tolerance": 1e-12, "policy": ""}},
+            "rate_mean_hz",
+        )
+
+    # Path 5: policy_by_source malformed for spike_events
+    with pytest.raises(ValueError, match="G9 spike_events policy_by_source malformed"):
+        proof_evaluate._parse_g9_metric_policy(
+            {
+                "spike_events": {
+                    "tolerance": 0.0,
+                    "policy": "exact_match",
+                    "policy_by_source": {"raw_npz": 42},
+                }
+            },
+            "spike_events",
+        )
+
+    # Happy path: 0.0 tolerance is valid (no false-negative from 'or' bug)
+    result = proof_evaluate._parse_g9_metric_policy(
+        {
+            "spike_events": {
+                "tolerance": 0.0,
+                "policy": "exact_match",
+                "policy_by_source": {"raw_npz": "exact_match"},
+            }
+        },
+        "spike_events",
+    )
+    assert result["tolerance"] == 0.0
+
+
+def test_recompute_metrics_from_artifacts_zero_rounding_tolerance_is_exact(tmp_path: Path) -> None:
+    # A rate trace that produces a non-integer per-step count.
+    # With tolerance=0.0, reconstruction must fail.
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([1.23456789], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0], dtype=float))
+
+    gate_with_zero_tolerance = {
+        "threshold": {
+            "policy": "summary_is_secondary_snapshot",
+            "metrics": {
+                "spike_events": {
+                    "tolerance": 0.0,
+                    "policy": "exact_match",
+                    "policy_by_source": {
+                        "raw_npz": "exact_match",
+                        "rate_trace_reconstruction": "exact_reconstruction_after_integer_check",
+                        "unverifiable": "unverifiable_fails_closed",
+                        "canonical_raw_npz_malformed": "malformed_raw_fails_closed",
+                    },
+                },
+                "rate_mean_hz": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+                "sigma_mean": {"tolerance": 1e-12, "policy": "abs_delta <= tolerance"},
+            },
+            "recompute_policy": {
+                "spike_events": {
+                    "canonical_raw_artifact": "traces.npz",
+                    "rounding_tolerance": 0.0,
+                }
+            },
+        }
+    }
+
+    result = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        manifest={"dt_ms": 1.0, "N": 1},
+        g9_gate=gate_with_zero_tolerance,
+    )
+    assert any("non-integer reconstruction" in err for err in result["errors"]), (
+        "Expected reconstruction to fail with tolerance=0.0, but it passed — "
+        "likely the 'or' operator bug is still present"
+    )
+
+
+def test_recompute_metrics_from_artifacts_uses_canonical_raw_and_metadata(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
+    np.savez(
+        tmp_path / "traces.npz",
+        spike_steps=np.asarray([1, 2, 3], dtype=np.int64),
+        spike_neurons=np.asarray([0, 1, 2], dtype=np.int64),
+        dt_ms=np.asarray([0.1]),
+        N=np.asarray([10]),
+    )
+
+    result = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        manifest={"dt_ms": 0.1, "N": 10},
+        g9_gate=_g9_gate_payload(),
+    )
+    assert result["spike_events_source"] == "raw_npz"
+    assert result["metrics"]["spike_events"] == 3
+    assert result["sources"]["spike_events"] == "traces.npz"
+    assert result["spike_events_metadata"]["source"] == "traces.npz"
+
+
+def test_recompute_metrics_from_artifacts_steps_mismatch_fails(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
+
+    result = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        manifest={"dt_ms": 0.1, "N": 10, "steps": 3},
+        g9_gate=_g9_gate_payload(),
+    )
+    assert any("steps mismatch" in err for err in result["errors"])
+
+
+def test_metric_consistency_gate_reports_missing_recomputed_metric() -> None:
+    result = proof_evaluate.evaluate_gate_g9_metric_consistency(
+        summary={"spike_events": 1, "rate_mean_hz": 1.0, "sigma_mean": 1.0},
+        recomputed={"metrics": {"spike_events": 1, "rate_mean_hz": 1.0}, "errors": [], "sources": {}},
+        gate=_g9_gate_payload(),
+    )
+    assert result["status"] == "FAIL"
+    assert "sigma_mean: missing recomputed metric" in result["errors"]

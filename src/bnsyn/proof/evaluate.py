@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[3]
 PROOF_SCHEMA_PATH = ROOT / "schemas" / "proof-report.schema.json"
 RUN_MANIFEST_SCHEMA_PATH = ROOT / "schemas" / "run-manifest.schema.json"
 VALIDATION_GATES_PATH = ROOT / "ci" / "validation_gates.json"
-PROOF_SCHEMA_VERSION = "1.0.0"
+PROOF_SCHEMA_VERSION = "1.1.0"
 DETERMINISTIC_TIMESTAMP_UTC = "1970-01-01T00:00:00Z"
 EXPECTED_GATE_IDS = (
     "G1_active_spiking",
@@ -33,9 +33,8 @@ EXPECTED_GATE_IDS = (
     "G9_metrics_trace_consistency",
 )
 
-RATE_MEAN_TOLERANCE = 1e-12
-SIGMA_MEAN_TOLERANCE = 1e-12
-SPIKE_EVENTS_FALLBACK_ROUNDING_TOLERANCE = 1e-6
+DEFAULT_SPIKE_EVENTS_FALLBACK_ROUNDING_TOLERANCE = 1e-6
+CANONICAL_RAW_SPIKE_ARTIFACT = "traces.npz"
 
 # G4 required-artifact floor remains registry-driven and intentionally narrower
 # than canonical CLI payload artifacts, which may include additive evidence files.
@@ -129,44 +128,124 @@ def _load_numeric_trace(path: Path, *, metric_name: str) -> np.ndarray:
     return values
 
 
-def _extract_spike_events_from_raw_npz(artifact_dir: Path) -> tuple[int, str] | None:
-    candidates = [artifact_dir / "traces.npz", *sorted(artifact_dir.glob("*.npz"))]
-    seen: set[Path] = set()
-    for candidate in candidates:
-        if candidate in seen or not candidate.is_file():
-            continue
-        seen.add(candidate)
-        try:
-            with np.load(candidate, allow_pickle=False) as payload:
-                if "spike_steps" in payload.files:
-                    spike_steps = np.asarray(payload["spike_steps"], dtype=np.int64)
-                    if spike_steps.ndim != 1:
-                        raise ValueError(f"{candidate.name}: spike_steps must be 1D")
-                    if not np.all(np.isfinite(spike_steps)):
-                        raise ValueError(f"{candidate.name}: spike_steps contains non-finite values")
-                    if "spike_neurons" in payload.files:
-                        spike_neurons = np.asarray(payload["spike_neurons"], dtype=np.int64)
-                        if spike_neurons.ndim != 1:
-                            raise ValueError(f"{candidate.name}: spike_neurons must be 1D")
-                        if spike_neurons.size != spike_steps.size:
-                            raise ValueError(f"{candidate.name}: spike_neurons length mismatch")
-                    return int(spike_steps.size), candidate.name
-        except Exception:
-            continue
-    return None
+def _resolve_canonical_spike_source(artifact_dir: Path, raw_artifact: str) -> Path | None:
+    candidate = artifact_dir / raw_artifact
+    return candidate if candidate.is_file() else None
 
 
-def _manifest_float(manifest: dict[str, Any], summary: dict[str, Any], key: str) -> float | None:
+def _extract_spike_events_from_canonical_raw_npz(path: Path) -> tuple[int, dict[str, float]]:
+    with np.load(path, allow_pickle=False) as payload:
+        if "spike_steps" not in payload.files:
+            raise ValueError(f"{path.name}: missing spike_steps")
+        spike_steps = np.asarray(payload["spike_steps"], dtype=np.int64)
+        if spike_steps.ndim != 1:
+            raise ValueError(f"{path.name}: spike_steps must be 1D")
+        if not np.all(np.isfinite(spike_steps)):
+            raise ValueError(f"{path.name}: spike_steps contains non-finite values")
+        if "spike_neurons" in payload.files:
+            spike_neurons = np.asarray(payload["spike_neurons"], dtype=np.int64)
+            if spike_neurons.ndim != 1:
+                raise ValueError(f"{path.name}: spike_neurons must be 1D")
+            if spike_neurons.size != spike_steps.size:
+                raise ValueError(f"{path.name}: spike_neurons length mismatch")
+
+        metadata: dict[str, float] = {}
+        for key in ("dt_ms", "N", "steps"):
+            if key in payload.files:
+                raw_value = np.asarray(payload[key]).reshape(-1)
+                if raw_value.size == 1 and np.isfinite(raw_value[0]):
+                    metadata[key] = float(raw_value[0])
+        return int(spike_steps.size), metadata
+
+
+def _extract_manifest_numeric(manifest: dict[str, Any], key: str) -> float | None:
     value = manifest.get(key)
     if isinstance(value, (int, float)):
         return float(value)
-    fallback = summary.get(key)
-    if isinstance(fallback, (int, float)):
-        return float(fallback)
     return None
 
 
-def recompute_metrics_from_artifacts(artifact_dir: Path, summary: dict[str, Any], manifest: dict[str, Any]) -> dict[str, Any]:
+def _g9_threshold(g9_gate: dict[str, Any]) -> dict[str, Any]:
+    threshold = g9_gate.get("threshold")
+    if not isinstance(threshold, dict):
+        raise ValueError("G9 threshold missing")
+    return threshold
+
+
+def _parse_g9_metric_policy(metrics_policy: dict[str, Any], metric_name: str) -> dict[str, Any]:
+    entry = metrics_policy.get(metric_name)
+    if not isinstance(entry, dict):
+        raise ValueError(f"G9 metric policy missing for {metric_name}")
+
+    tolerance_raw = entry.get("tolerance")
+    if not isinstance(tolerance_raw, (int, float)):
+        raise ValueError(f"G9 metric tolerance missing for {metric_name}")
+    tolerance = float(tolerance_raw)
+    if tolerance < 0.0:
+        raise ValueError(f"G9 metric tolerance must be non-negative for {metric_name}")
+
+    policy = entry.get("policy")
+    if not isinstance(policy, str) or not policy:
+        raise ValueError(f"G9 metric policy label missing for {metric_name}")
+
+    parsed: dict[str, Any] = {"tolerance": tolerance, "policy": policy}
+    if metric_name == "spike_events":
+        by_source = entry.get("policy_by_source", {})
+        if not isinstance(by_source, dict) or not all(isinstance(k, str) and isinstance(v, str) and v for k, v in by_source.items()):
+            raise ValueError("G9 spike_events policy_by_source malformed")
+        parsed["policy_by_source"] = by_source
+    return parsed
+
+
+def _parse_g9_runtime_policy(g9_gate: dict[str, Any]) -> dict[str, Any]:
+    threshold = _g9_threshold(g9_gate)
+
+    policy = threshold.get("policy")
+    if not isinstance(policy, str) or not policy:
+        raise ValueError("G9 threshold policy missing")
+
+    metrics_policy = threshold.get("metrics")
+    if not isinstance(metrics_policy, dict):
+        raise ValueError("G9 threshold.metrics missing")
+
+    parsed_metrics = {
+        metric_name: _parse_g9_metric_policy(metrics_policy, metric_name)
+        for metric_name in ("spike_events", "rate_mean_hz", "sigma_mean")
+    }
+
+    recompute_policy = threshold.get("recompute_policy")
+    if not isinstance(recompute_policy, dict):
+        raise ValueError("G9 recompute_policy missing")
+    spike_recompute = recompute_policy.get("spike_events")
+    if not isinstance(spike_recompute, dict):
+        raise ValueError("G9 spike_events recompute_policy missing")
+
+    raw_artifact = spike_recompute.get("canonical_raw_artifact")
+    if not isinstance(raw_artifact, str) or not raw_artifact:
+        raise ValueError("G9 canonical_raw_artifact missing")
+
+    rounding_tolerance = spike_recompute.get("rounding_tolerance")
+    if not isinstance(rounding_tolerance, (int, float)):
+        raise ValueError("G9 spike_events rounding_tolerance missing")
+    rounding_tolerance_f = float(rounding_tolerance)
+    if rounding_tolerance_f < 0.0:
+        raise ValueError("G9 spike_events rounding_tolerance must be non-negative")
+
+    return {
+        "policy": policy,
+        "metrics": parsed_metrics,
+        "spike_events_recompute": {
+            "canonical_raw_artifact": raw_artifact,
+            "rounding_tolerance": rounding_tolerance_f,
+        },
+    }
+
+
+def recompute_metrics_from_artifacts(artifact_dir: Path, manifest: dict[str, Any], g9_gate: dict[str, Any]) -> dict[str, Any]:
+    runtime_policy = _parse_g9_runtime_policy(g9_gate)
+    raw_artifact = str(runtime_policy["spike_events_recompute"]["canonical_raw_artifact"])
+    rounding_tolerance = float(runtime_policy["spike_events_recompute"]["rounding_tolerance"])
+
     result: dict[str, Any] = {
         "metrics": {},
         "sources": {},
@@ -188,18 +267,26 @@ def recompute_metrics_from_artifacts(artifact_dir: Path, summary: dict[str, Any]
     except ValueError as exc:
         result["errors"].append(str(exc))
 
-    raw_spike = _extract_spike_events_from_raw_npz(artifact_dir)
-    if raw_spike is not None:
-        spike_events, source = raw_spike
+    canonical_raw = _resolve_canonical_spike_source(artifact_dir, raw_artifact)
+    if canonical_raw is not None:
+        try:
+            spike_events, raw_metadata = _extract_spike_events_from_canonical_raw_npz(canonical_raw)
+        except Exception as exc:
+            result["errors"].append(f"canonical raw spike source malformed: {canonical_raw.name}: {exc}")
+            result["spike_events_source"] = "canonical_raw_npz_malformed"
+            return result
         result["metrics"]["spike_events"] = spike_events
-        result["sources"]["spike_events"] = source
+        result["sources"]["spike_events"] = canonical_raw.name
         result["spike_events_source"] = "raw_npz"
+        if raw_metadata:
+            result["spike_events_metadata"] = {"source": canonical_raw.name, **raw_metadata}
         return result
 
-    dt_ms = _manifest_float(manifest, summary, "dt_ms")
-    n_neurons = _manifest_float(manifest, summary, "N")
+    dt_ms = _extract_manifest_numeric(manifest, "dt_ms")
+    n_neurons = _extract_manifest_numeric(manifest, "N")
+    steps = _extract_manifest_numeric(manifest, "steps")
     if dt_ms is None or n_neurons is None:
-        result["errors"].append("spike_events unverifiable: missing dt_ms or N for deterministic rate-trace reconstruction")
+        result["errors"].append("spike_events unverifiable: missing dt_ms or N in run_manifest for deterministic rate-trace reconstruction")
         return result
     if dt_ms <= 0 or n_neurons <= 0:
         result["errors"].append("spike_events unverifiable: non-positive dt_ms or N")
@@ -210,10 +297,13 @@ def recompute_metrics_from_artifacts(artifact_dir: Path, summary: dict[str, Any]
         return result
 
     rate_trace = _load_numeric_trace(artifact_dir / "population_rate_trace.npy", metric_name="spike_events")
+    if steps is not None and steps > 0 and int(steps) != int(rate_trace.size):
+        result["errors"].append("spike_events unverifiable: run_manifest steps mismatch vs population_rate_trace.npy length")
+        return result
     per_step = rate_trace * n_neurons * (dt_ms / 1000.0)
     rounded = np.rint(per_step)
     max_delta = float(np.max(np.abs(per_step - rounded))) if per_step.size else 0.0
-    if max_delta > SPIKE_EVENTS_FALLBACK_ROUNDING_TOLERANCE:
+    if max_delta > rounding_tolerance:
         result["errors"].append(
             "spike_events unverifiable: non-integer reconstruction from population_rate_trace.npy exceeds tolerance"
         )
@@ -224,9 +314,11 @@ def recompute_metrics_from_artifacts(artifact_dir: Path, summary: dict[str, Any]
     result["sources"]["spike_events"] = "population_rate_trace.npy"
     result["spike_events_source"] = "rate_trace_reconstruction"
     result["spike_events_reconstruction"] = {
+        "policy": "deterministic_rate_trace_with_manifest_metadata",
         "dt_ms": dt_ms,
         "N": n_neurons,
-        "rounding_tolerance": SPIKE_EVENTS_FALLBACK_ROUNDING_TOLERANCE,
+        **({"steps": int(steps)} if steps is not None else {}),
+        "rounding_tolerance": rounding_tolerance,
         "max_rounding_delta": max_delta,
     }
     return result
@@ -299,48 +391,68 @@ def evaluate_gate_g3_sigma_range(metrics: dict[str, Any], gate: dict[str, Any]) 
     return _evaluate_numeric_gate_from_value(metric_name, float(metrics[metric_name]), gate)
 
 
-def evaluate_gate_g9_metric_consistency(summary: dict[str, Any], recomputed: dict[str, Any]) -> dict[str, Any]:
+def evaluate_gate_g9_metric_consistency(summary: dict[str, Any], recomputed: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
+    runtime_policy = _parse_g9_runtime_policy(gate)
+    metrics_policy = runtime_policy["metrics"]
+
     recomputed_metrics = recomputed.get("metrics", {})
     if not isinstance(recomputed_metrics, dict):
         return {"status": "FAIL", "details": "invalid recomputed metrics payload"}
+
+    comparisons: dict[str, dict[str, Any]] = {}
+    for metric_name, policy in metrics_policy.items():
+        if not isinstance(metric_name, str) or not isinstance(policy, dict):
+            raise ValueError("G9 threshold.metrics malformed")
+        tolerance = float(policy["tolerance"])
+        effective_policy = str(policy["policy"])
+        if metric_name == "spike_events":
+            per_source_raw = policy.get("policy_by_source")
+            per_source: dict[str, str] = per_source_raw if isinstance(per_source_raw, dict) else {}
+            source_key = recomputed.get("spike_events_source")
+            if not isinstance(source_key, str):
+                source_key = ""
+            effective_policy = str(per_source.get(source_key, effective_policy))
+        comparisons[metric_name] = {
+            "tolerance": tolerance,
+            "policy": effective_policy,
+            "source": recomputed.get("sources", {}).get(metric_name),
+            "summary_source": "summary_metrics.json",
+        }
+
     recompute_errors = recomputed.get("errors", [])
     if isinstance(recompute_errors, list) and recompute_errors:
+        for comparison in comparisons.values():
+            comparison.update({"status": "FAIL", "reason": "recompute failed before consistency comparison"})
         return {
             "status": "FAIL",
             "details": "trace metric recompute failed",
+            "consistency": comparisons,
             "errors": [str(err) for err in recompute_errors],
         }
 
-    spike_policy = "exact_raw_npz" if recomputed.get("spike_events_source") == "raw_npz" else "exact_rate_trace_reconstruction"
-    comparisons: dict[str, dict[str, Any]] = {
-        "spike_events": {"tolerance": 0.0, "policy": spike_policy},
-        "rate_mean_hz": {"tolerance": RATE_MEAN_TOLERANCE, "policy": "abs_delta <= tolerance"},
-        "sigma_mean": {"tolerance": SIGMA_MEAN_TOLERANCE, "policy": "abs_delta <= tolerance"},
-    }
-
     errors: list[str] = []
-    for name, policy in comparisons.items():
+    for name, comparison in comparisons.items():
         expected = summary.get(name)
         actual = recomputed_metrics.get(name)
         if expected is None:
-            policy.update({"status": "FAIL", "reason": "missing summary metric"})
+            comparison.update({"status": "FAIL", "reason": "missing summary metric"})
             errors.append(f"{name}: missing summary metric")
             continue
         if actual is None:
-            policy.update({"status": "FAIL", "reason": "missing recomputed metric"})
+            comparison.update({"status": "FAIL", "reason": "missing recomputed metric"})
             errors.append(f"{name}: missing recomputed metric")
             continue
 
         expected_f = float(expected)
         actual_f = float(actual)
         delta = abs(actual_f - expected_f)
-        policy.update({"summary": expected, "recomputed": actual, "delta": delta})
-        if delta <= float(policy["tolerance"]):
-            policy["status"] = "PASS"
+        comparison.update({"summary": expected, "recomputed": actual, "delta": delta})
+        if delta <= float(comparison["tolerance"]):
+            comparison["status"] = "PASS"
         else:
-            policy["status"] = "FAIL"
-            policy["reason"] = "delta exceeds tolerance"
-            errors.append(f"{name}: delta {delta} exceeds tolerance {policy['tolerance']}")
+            comparison["status"] = "FAIL"
+            comparison["reason"] = "delta exceeds tolerance"
+            errors.append(f"{name}: delta {delta} exceeds tolerance {comparison['tolerance']}")
 
     details = "summary metrics align with trace recompute" if not errors else "summary metrics inconsistent with trace recompute"
     return {
@@ -516,8 +628,38 @@ def _fail_closed_report(artifact_dir: Path, reason: str) -> dict[str, Any]:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {
+            "rate_mean_hz": None,
+            "sigma_mean": None,
+            "spike_events": None,
+            "spike_events_source": "unverifiable",
+        },
+        "metric_consistency": {
+            "spike_events": {
+                "status": "FAIL",
+                "tolerance": 0.0,
+                "policy": "fail_closed",
+                "summary_source": "summary_metrics.json",
+                "source": None,
+                "reason": "proof evaluation failed before consistency check",
+            },
+            "rate_mean_hz": {
+                "status": "FAIL",
+                "tolerance": 0.0,
+                "policy": "fail_closed",
+                "summary_source": "summary_metrics.json",
+                "source": None,
+                "reason": "proof evaluation failed before consistency check",
+            },
+            "sigma_mean": {
+                "status": "FAIL",
+                "tolerance": 0.0,
+                "policy": "fail_closed",
+                "summary_source": "summary_metrics.json",
+                "source": None,
+                "reason": "proof evaluation failed before consistency check",
+            },
+        },
         "artifacts_verified": [],
         "failure_reasons": [f"fail-closed: {reason}"],
     }
@@ -530,7 +672,8 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
         summary_metrics = loaded["summary"]
         manifest = loaded["manifest"]
         registry = loaded["registry"]
-        recomputed = recompute_metrics_from_artifacts(artifact_root, summary_metrics, manifest)
+        g9_gate = registry["G9_metrics_trace_consistency"]
+        recomputed = recompute_metrics_from_artifacts(artifact_root, manifest, g9_gate)
         recomputed_metrics = recomputed.get("metrics", {})
 
         mode, mode_errors = mode_from_manifest(manifest)
@@ -552,7 +695,7 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
             "G6_determinism_replay": evaluate_gate_g6_determinism(artifact_root),
             "G7_avalanche_evidence_sufficient": evaluate_gate_g7_avalanche(artifact_root),
             "G8_reproducibility_envelope": evaluate_gate_g8_repro_envelope(artifact_root),
-            "G9_metrics_trace_consistency": evaluate_gate_g9_metric_consistency(summary_metrics, recomputed),
+            "G9_metrics_trace_consistency": evaluate_gate_g9_metric_consistency(summary_metrics, recomputed, g9_gate),
         }
 
         g4_result, artifacts_verified = evaluate_gate_g4_artifact_contract(artifact_root, manifest, mode_errors, required_artifacts)
@@ -591,6 +734,7 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
                 "sigma_mean": recomputed.get("sources", {}).get("sigma_mean"),
                 "spike_events": recomputed.get("sources", {}).get("spike_events"),
                 "spike_events_source": recomputed.get("spike_events_source"),
+                **({"spike_events_metadata": recomputed["spike_events_metadata"]} if "spike_events_metadata" in recomputed else {}),
                 **({"spike_events_reconstruction": recomputed["spike_events_reconstruction"]} if "spike_events_reconstruction" in recomputed else {}),
             },
             "metric_consistency": gates["G9_metrics_trace_consistency"].get("consistency", {}),

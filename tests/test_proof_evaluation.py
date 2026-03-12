@@ -427,6 +427,10 @@ def test_trace_recompute_happy_path_g9_passes(tmp_path: Path) -> None:
     assert report["recomputed_metrics"]["rate_mean_hz"] == report["metrics"]["rate_mean_hz"]
     assert report["recomputed_metrics"]["sigma_mean"] == report["metrics"]["sigma_mean"]
     assert report["recomputed_metrics"]["spike_events"] == report["metrics"]["spike_events"]
+    assert report["recompute_sources"]["rate_mean_hz"] == "population_rate_trace.npy"
+    assert report["recompute_sources"]["sigma_mean"] == "sigma_trace.npy"
+    assert report["recompute_sources"]["spike_events"] in {"traces.npz", "population_rate_trace.npy"}
+    assert report["metric_consistency"]["rate_mean_hz"]["source"] == "population_rate_trace.npy"
 
 
 def test_trace_recompute_tampered_summary_fails_g9_but_keeps_primary_gates_from_traces(tmp_path: Path) -> None:
@@ -484,3 +488,67 @@ def test_trace_recompute_sigma_nonfinite_fails_closed(tmp_path: Path) -> None:
     assert report["gates"]["G3_sigma_in_range"]["status"] == "FAIL"
     assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
     assert report["verdict"] == "FAIL"
+
+
+def test_trace_recompute_canonical_raw_malformed_fails_closed_without_fallback(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    np.savez(out_dir / "traces.npz", spike_steps=np.asarray([[1, 2]], dtype=np.int64))
+    report = evaluate_all_gates(out_dir)
+
+    assert report["recompute_sources"]["spike_events_source"] == "canonical_raw_npz_malformed"
+    assert report["gates"]["G1_active_spiking"]["status"] == "FAIL"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert any("canonical raw spike source malformed" in err for err in report["gates"]["G9_metrics_trace_consistency"]["errors"])
+
+
+def test_trace_recompute_missing_manifest_metadata_fails_spike_reconstruction(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    for candidate in out_dir.glob("*.npz"):
+        candidate.unlink()
+
+    manifest = _load_json(out_dir / "run_manifest.json")
+    manifest.pop("dt_ms", None)
+    manifest.pop("N", None)
+    _write_json(out_dir / "run_manifest.json", manifest)
+
+    report = evaluate_all_gates(out_dir)
+    assert report["recompute_sources"]["spike_events_source"] == "unverifiable"
+    assert report["gates"]["G1_active_spiking"]["status"] == "FAIL"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+
+
+def test_trace_recompute_missing_population_rate_trace_fails_closed(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    (out_dir / "population_rate_trace.npy").unlink()
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G2_rate_in_bounds"]["status"] == "FAIL"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert report["verdict"] == "FAIL"
+
+
+def test_g9_policy_uses_registry_thresholds(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    registry = _load_json(ROOT / "ci" / "validation_gates.json")
+    for gate in registry["registry"]:
+        if gate["id"] == "G9_metrics_trace_consistency":
+            gate["threshold"]["metrics"]["rate_mean_hz"]["tolerance"] = 0.0
+
+    custom_registry = tmp_path / "validation_gates.custom.json"
+    _write_json(custom_registry, registry)
+    monkeypatch.setattr(proof_evaluate, "VALIDATION_GATES_PATH", custom_registry)
+
+    summary = _load_json(out_dir / "summary_metrics.json")
+    summary["rate_mean_hz"] = float(summary["rate_mean_hz"]) + 1e-10
+    _write_json(out_dir / "summary_metrics.json", summary)
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert "rate_mean_hz" in report["metric_consistency"]
