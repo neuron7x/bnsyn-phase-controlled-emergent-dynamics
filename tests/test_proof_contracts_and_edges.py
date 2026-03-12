@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from bnsyn.experiments.declarative import run_canonical_live_bundle
@@ -266,3 +267,74 @@ def test_evaluate_and_emit_raises_if_not_stable(tmp_path: Path, monkeypatch: pyt
 
     with pytest.raises(RuntimeError, match="failed to stabilize"):
         proof_evaluate.evaluate_and_emit(out_dir)
+
+
+def test_load_numeric_trace_validation_branches(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    missing = tmp_path / "missing.npy"
+    with pytest.raises(ValueError, match="missing required trace artifact"):
+        proof_evaluate._load_numeric_trace(missing, metric_name="rate_mean_hz")
+
+    arr_path = tmp_path / "trace.npy"
+    np.save(arr_path, np.asarray([], dtype=float))
+    with pytest.raises(ValueError, match="is empty"):
+        proof_evaluate._load_numeric_trace(arr_path, metric_name="rate_mean_hz")
+
+    np.save(arr_path, np.asarray([1.0, np.nan], dtype=float))
+    with pytest.raises(ValueError, match="contains non-finite"):
+        proof_evaluate._load_numeric_trace(arr_path, metric_name="rate_mean_hz")
+
+    monkeypatch.setattr(proof_evaluate.np, "load", lambda _: [1.0, 2.0])
+    with pytest.raises(ValueError, match="is not a numpy array"):
+        proof_evaluate._load_numeric_trace(arr_path, metric_name="rate_mean_hz")
+
+
+def test_extract_spike_events_from_raw_npz_edge_paths(tmp_path: Path) -> None:
+    bad_npz = tmp_path / "traces.npz"
+    np.savez(bad_npz, spike_steps=np.asarray([[1, 2]], dtype=np.int64))
+    assert proof_evaluate._extract_spike_events_from_raw_npz(tmp_path) is None
+
+    good_npz = tmp_path / "good.npz"
+    np.savez(good_npz, spike_steps=np.asarray([1, 2, 3], dtype=np.int64), spike_neurons=np.asarray([0, 1, 2], dtype=np.int64))
+    events = proof_evaluate._extract_spike_events_from_raw_npz(tmp_path)
+    assert events == (3, "good.npz")
+
+
+def test_recompute_metrics_from_artifacts_unverifiable_paths(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([0.0, 0.0], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0, 1.0], dtype=float))
+
+    no_meta = proof_evaluate.recompute_metrics_from_artifacts(tmp_path, summary={}, manifest={})
+    assert any("missing dt_ms or N" in err for err in no_meta["errors"])
+
+    non_positive = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        summary={"dt_ms": 0.1, "N": 100},
+        manifest={"dt_ms": -1.0, "N": 100},
+    )
+    assert any("non-positive dt_ms or N" in err for err in non_positive["errors"])
+
+
+def test_recompute_metrics_from_artifacts_rate_reconstruction_tolerance_failure(tmp_path: Path) -> None:
+    np.save(tmp_path / "population_rate_trace.npy", np.asarray([1.23456789], dtype=float))
+    np.save(tmp_path / "sigma_trace.npy", np.asarray([1.0], dtype=float))
+    recomputed = proof_evaluate.recompute_metrics_from_artifacts(
+        tmp_path,
+        summary={"dt_ms": 1.0, "N": 1},
+        manifest={"dt_ms": 1.0, "N": 1},
+    )
+    assert any("non-integer reconstruction" in err for err in recomputed["errors"])
+
+
+def test_metric_consistency_gate_reports_missing_metrics() -> None:
+    result = proof_evaluate.evaluate_gate_g9_metric_consistency(
+        summary={"rate_mean_hz": 1.0},
+        recomputed={"metrics": {"rate_mean_hz": 1.0, "sigma_mean": 1.0}, "errors": []},
+    )
+    assert result["status"] == "FAIL"
+    assert "spike_events: missing summary metric" in result["errors"]
+
+
+def test_manifest_float_prefers_manifest_then_summary() -> None:
+    assert proof_evaluate._manifest_float({"dt_ms": 0.5}, {"dt_ms": 0.1}, "dt_ms") == 0.5
+    assert proof_evaluate._manifest_float({}, {"dt_ms": 0.1}, "dt_ms") == 0.1
+    assert proof_evaluate._manifest_float({}, {}, "dt_ms") is None
