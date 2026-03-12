@@ -111,10 +111,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
+      - name: Install actionlint
+        shell: bash
+        run: |
+          GOBIN="$HOME/.local/bin" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.8
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - name: Lint workflows with actionlint
-        uses: rhysd/actionlint@03d0035246f3e81f36aed592ffb4bebf33a03106
-        with:
-          args: -shellcheck=shellcheck -verbose
+        shell: bash
+        run: actionlint -shellcheck=shellcheck -verbose
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
