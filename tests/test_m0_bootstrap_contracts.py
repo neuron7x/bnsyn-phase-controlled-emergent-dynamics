@@ -60,7 +60,7 @@ def test_statistical_power_config_shape_matches_canonical_stub() -> None:
 
 def test_validation_gate_registry_contract() -> None:
     payload = _load_json(ROOT / "ci" / "validation_gates.json")
-    assert payload["schema_version"] == "1.2.0"
+    assert payload["schema_version"] == "1.3.0"
     gates = payload["registry"]
     gate_ids = [gate["id"] for gate in gates]
     assert gate_ids == [
@@ -72,6 +72,7 @@ def test_validation_gate_registry_contract() -> None:
         "G6_determinism_replay",
         "G7_avalanche_evidence_sufficient",
         "G8_reproducibility_envelope",
+        "G9_metrics_trace_consistency",
     ]
 
     by_id = {gate["id"]: gate for gate in gates}
@@ -113,9 +114,14 @@ def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
             "G5_manifest_valid": {"status": "PASS"},
             "G6_determinism_replay": {"status": "INCONCLUSIVE", "details": "planned gate"},
             "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
-            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"}
+            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"},
+            "G9_metrics_trace_consistency": {"status": "PASS"},
         },
         "metrics": {},
+        "recomputed_metrics": {},
+        "summary_metrics_snapshot": {},
+        "recompute_sources": {},
+        "metric_consistency": {},
         "artifacts_verified": [],
         "failure_reasons": ["Gate G6_determinism_replay is planned but not wired"],
     }
@@ -140,9 +146,14 @@ def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
             "G5_manifest_valid": {"status": "PASS"},
             "G6_determinism_replay": {"status": "INCONCLUSIVE"},
             "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
-            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"}
+            "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"},
+            "G9_metrics_trace_consistency": {"status": "PASS"},
         },
         "metrics": {},
+        "recomputed_metrics": {},
+        "summary_metrics_snapshot": {},
+        "recompute_sources": {},
+        "metric_consistency": {},
         "artifacts_verified": [],
         "failure_reasons": ["bad code type"],
     }

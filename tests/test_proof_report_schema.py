@@ -22,6 +22,7 @@ def _full_gates() -> dict[str, dict[str, str]]:
         "G6_determinism_replay": {"status": "INCONCLUSIVE"},
         "G7_avalanche_evidence_sufficient": {"status": "INCONCLUSIVE"},
         "G8_reproducibility_envelope": {"status": "INCONCLUSIVE"},
+        "G9_metrics_trace_consistency": {"status": "PASS"},
     }
 
 
@@ -37,6 +38,10 @@ def test_proof_report_schema_accepts_full_payload() -> None:
         "seed": 42,
         "gates": _full_gates(),
         "metrics": {},
+        "recomputed_metrics": {},
+        "summary_metrics_snapshot": {},
+        "recompute_sources": {},
+        "metric_consistency": {},
         "artifacts_verified": ["summary_metrics.json"],
         "failure_reasons": ["G6_determinism_replay unresolved"],
     }
@@ -57,6 +62,10 @@ def test_proof_report_schema_accepts_gate_errors_payload() -> None:
         "seed": 42,
         "gates": gates,
         "metrics": {},
+        "recomputed_metrics": {},
+        "summary_metrics_snapshot": {},
+        "recompute_sources": {},
+        "metric_consistency": {},
         "artifacts_verified": ["summary_metrics.json"],
         "failure_reasons": ["G5_manifest_valid failed"],
     }
@@ -75,6 +84,10 @@ def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
         "seed": 42,
         "gates": {"G1_active_spiking": {"status": "PASS"}},
         "metrics": {},
+        "recomputed_metrics": {},
+        "summary_metrics_snapshot": {},
+        "recompute_sources": {},
+        "metric_consistency": {},
         "artifacts_verified": [],
         "failure_reasons": [],
     }

@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import numpy as np
 
 import bnsyn.proof.evaluate as proof_evaluate
 from bnsyn.experiments.declarative import run_canonical_live_bundle
@@ -412,3 +413,74 @@ def test_proof_validate_bundle_schema_error_reports_json_path(tmp_path: Path) ->
     result = validate_canonical_bundle(out_dir)
     assert result["status"] == "FAIL"
     assert any("json_path" in err or "$" in err for err in result["errors"])
+
+
+def test_trace_recompute_happy_path_g9_passes(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G1_active_spiking"]["status"] == "PASS"
+    assert report["gates"]["G2_rate_in_bounds"]["status"] == "PASS"
+    assert report["gates"]["G3_sigma_in_range"]["status"] == "PASS"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "PASS"
+    assert report["recomputed_metrics"]["rate_mean_hz"] == report["metrics"]["rate_mean_hz"]
+    assert report["recomputed_metrics"]["sigma_mean"] == report["metrics"]["sigma_mean"]
+    assert report["recomputed_metrics"]["spike_events"] == report["metrics"]["spike_events"]
+
+
+def test_trace_recompute_tampered_summary_fails_g9_but_keeps_primary_gates_from_traces(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    summary = _load_json(out_dir / "summary_metrics.json")
+    summary["rate_mean_hz"] = 999.0
+    summary["sigma_mean"] = 42.0
+    summary["spike_events"] = 1
+    _write_json(out_dir / "summary_metrics.json", summary)
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G1_active_spiking"]["status"] == "PASS"
+    assert report["gates"]["G2_rate_in_bounds"]["status"] == "PASS"
+    assert report["gates"]["G3_sigma_in_range"]["status"] == "PASS"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert report["verdict"] == "FAIL"
+
+
+def test_trace_recompute_missing_raw_spike_npz_uses_documented_rate_trace_fallback(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    for candidate in out_dir.glob("*.npz"):
+        candidate.unlink()
+
+    report = evaluate_all_gates(out_dir)
+    assert report["recompute_sources"]["spike_events_source"] == "rate_trace_reconstruction"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "PASS"
+
+
+def test_trace_recompute_missing_required_trace_fails_closed(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    (out_dir / "sigma_trace.npy").unlink()
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G3_sigma_in_range"]["status"] == "FAIL"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert report["verdict"] == "FAIL"
+
+
+def test_trace_recompute_sigma_nonfinite_fails_closed(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+    sigma_path = out_dir / "sigma_trace.npy"
+    sigma = np.load(sigma_path)
+    sigma = sigma.astype(float)
+    sigma[0] = float("nan")
+    np.save(sigma_path, sigma)
+
+    report = evaluate_all_gates(out_dir)
+    assert report["gates"]["G3_sigma_in_range"]["status"] == "FAIL"
+    assert report["gates"]["G9_metrics_trace_consistency"]["status"] == "FAIL"
+    assert report["verdict"] == "FAIL"
