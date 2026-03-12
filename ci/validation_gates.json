@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "registry": [
     {
       "id": "G1_active_spiking",
@@ -11,8 +11,8 @@
         "value": 0
       },
       "evidence": {
-        "artifact": "summary_metrics.json",
-        "source": "metrics.spike_events"
+        "artifact": "population_rate_trace.npy + raw spike npz",
+        "source": "recomputed_metrics.spike_events"
       },
       "on_fail": "FAIL"
     },
@@ -29,8 +29,8 @@
         ]
       },
       "evidence": {
-        "artifact": "summary_metrics.json",
-        "source": "metrics.rate_mean_hz"
+        "artifact": "population_rate_trace.npy",
+        "source": "recomputed_metrics.rate_mean_hz"
       },
       "on_fail": "FAIL"
     },
@@ -47,8 +47,8 @@
         ]
       },
       "evidence": {
-        "artifact": "summary_metrics.json",
-        "source": "metrics.sigma_mean"
+        "artifact": "sigma_trace.npy",
+        "source": "recomputed_metrics.sigma_mean"
       },
       "on_fail": "FAIL"
     },
@@ -146,6 +146,31 @@
       "evidence": {
         "artifact": "proof_report.json",
         "source": "gates.G8_reproducibility_envelope"
+      },
+      "on_fail": "FAIL"
+    },
+    {
+      "id": "G9_metrics_trace_consistency",
+      "description": "Summary metrics must match deterministic recompute from canonical traces/raw spikes.",
+      "status": "wired",
+      "threshold": {
+        "metrics": [
+          "spike_events",
+          "rate_mean_hz",
+          "sigma_mean"
+        ],
+        "policy": "summary_is_secondary_snapshot",
+        "spike_events_policy": {
+          "raw_source": "exact_match",
+          "fallback": "exact_reconstruction_after_integer_check",
+          "rounding_tolerance": 1e-06
+        },
+        "rate_mean_hz_tolerance": 1e-12,
+        "sigma_mean_tolerance": 1e-12
+      },
+      "evidence": {
+        "artifact": "population_rate_trace.npy + sigma_trace.npy + raw spike npz + summary_metrics.json",
+        "source": "gates.G9_metrics_trace_consistency"
       },
       "on_fail": "FAIL"
     }

@@ -13,6 +13,10 @@
     "seed",
     "gates",
     "metrics",
+    "recomputed_metrics",
+    "summary_metrics_snapshot",
+    "recompute_sources",
+    "metric_consistency",
     "artifacts_verified",
     "failure_reasons"
   ],
@@ -52,7 +56,8 @@
         "G5_manifest_valid",
         "G6_determinism_replay",
         "G7_avalanche_evidence_sufficient",
-        "G8_reproducibility_envelope"
+        "G8_reproducibility_envelope",
+        "G9_metrics_trace_consistency"
       ],
       "properties": {
         "G1_active_spiking": {
@@ -78,10 +83,29 @@
         },
         "G8_reproducibility_envelope": {
           "$ref": "#/definitions/gateResult"
+        },
+        "G9_metrics_trace_consistency": {
+          "$ref": "#/definitions/gateResult"
         }
       }
     },
     "metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "recomputed_metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "summary_metrics_snapshot": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "recompute_sources": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "metric_consistency": {
       "type": "object",
       "additionalProperties": true
     },
@@ -147,6 +171,10 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "consistency": {
+          "type": "object",
+          "additionalProperties": true
         }
       }
     }
