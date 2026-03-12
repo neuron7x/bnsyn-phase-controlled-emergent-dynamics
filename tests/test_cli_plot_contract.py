@@ -10,7 +10,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from bnsyn.cli import _cmd_plot, _cmd_proof_evaluate
+from bnsyn.cli import (
+    _cmd_plot,
+    _cmd_proof_check_determinism,
+    _cmd_proof_check_envelope,
+    _cmd_proof_evaluate,
+    _cmd_proof_validate_bundle,
+)
 
 
 def _cli_env() -> dict[str, str]:
@@ -91,6 +97,9 @@ def test_cli_plot_runs_and_emits_contract(tmp_path: Path) -> None:
         "phase_space_rate_sigma.png",
         "phase_space_rate_coherence.png",
         "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
         "run_manifest.json",
     ]
 
@@ -123,3 +132,35 @@ def test_cmd_proof_evaluate_emits_expected_payload(monkeypatch: pytest.MonkeyPat
         "verdict": "PASS",
         "verdict_code": 0,
     }
+
+
+def test_cmd_proof_validate_bundle_returns_zero_on_pass(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    monkeypatch.setattr("bnsyn.proof.bundle_validator.validate_canonical_bundle", lambda _p: {"status": "PASS", "errors": []})
+    rc = _cmd_proof_validate_bundle(argparse.Namespace(artifact_dir=tmp_path))
+    payload = json.loads(capsys.readouterr().out)
+    assert rc == 0
+    assert payload["status"] == "PASS"
+
+
+def test_cmd_proof_validate_bundle_returns_nonzero_on_fail(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    monkeypatch.setattr("bnsyn.proof.bundle_validator.validate_canonical_bundle", lambda _p: {"status": "FAIL", "errors": ["x"]})
+    rc = _cmd_proof_validate_bundle(argparse.Namespace(artifact_dir=tmp_path))
+    payload = json.loads(capsys.readouterr().out)
+    assert rc == 2
+    assert payload["status"] == "FAIL"
+
+
+def test_cmd_proof_check_determinism_returns_nonzero_on_fail(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    monkeypatch.setattr("bnsyn.proof.evaluate.evaluate_gate_g6_determinism", lambda _p: {"status": "FAIL", "details": "bad"})
+    rc = _cmd_proof_check_determinism(argparse.Namespace(artifact_dir=tmp_path))
+    payload = json.loads(capsys.readouterr().out)
+    assert rc == 2
+    assert payload["status"] == "FAIL"
+
+
+def test_cmd_proof_check_envelope_returns_nonzero_on_fail(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    monkeypatch.setattr("bnsyn.proof.evaluate.evaluate_gate_g8_repro_envelope", lambda _p: {"status": "FAIL", "details": "bad"})
+    rc = _cmd_proof_check_envelope(argparse.Namespace(artifact_dir=tmp_path))
+    payload = json.loads(capsys.readouterr().out)
+    assert rc == 2
+    assert payload["status"] == "FAIL"

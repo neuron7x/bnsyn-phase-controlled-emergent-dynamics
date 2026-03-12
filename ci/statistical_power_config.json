@@ -9,7 +9,8 @@
     "min_avalanche_count": 200,
     "min_tail_count": 40,
     "p_value_threshold": 0.05,
-    "ks_max": 0.1
+    "ks_max": 0.1,
+    "monte_carlo_simulations": 64
   },
   "notes": "Policy targets for future canonical avalanche admission evaluators; recorded now for control-plane normalization and not as a present scientific sufficiency claim."
 }

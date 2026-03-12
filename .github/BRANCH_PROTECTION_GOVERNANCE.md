@@ -12,8 +12,9 @@
 8. [ ] Add required check: `dependency-review`.
 9. [ ] Add required check: `scientific-product-gate`.
 10. [ ] Add required check: `pr-gate`.
-11. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
-12. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
+11. [ ] Add required check: `canonical-proof-spine`.
+12. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
+13. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
 
 ## Required status contexts (job-level + matrix-level)
 
@@ -34,6 +35,7 @@ All contexts below MUST be green before merge:
 - `dependency-review / dependency-review`
 - `scientific-product-gate / scientific-product`
 - `pr-gate / pr-gate`
+- `canonical-proof-spine / canonical-proof-spine`
 
 ## Governance-proof evidence (blocking semantics)
 

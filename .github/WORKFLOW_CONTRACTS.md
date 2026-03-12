@@ -3,8 +3,8 @@
 **Version:** 1.1
 **Date (UTC):** 2026-02-03
 **Repository:** neuron7x/bnsyn-phase-controlled-emergent-dynamics
-**Total workflows:** 39
-**Breakdown:** 28 primary + 11 reusable
+**Total workflows:** 40
+**Breakdown:** 29 primary + 11 reusable
 
 ## Axiom Dictionary
 
@@ -32,7 +32,7 @@
 ## PR-Gate Definition (Authoritative)
 
 * Required PR checks are defined in `.github/PR_GATES.yml`; this document MUST match it.
-* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `scientific_product_gate.yml`, `dependency-review.yml`, `pr_gate.yml`.
+* Required PR-gates MUST be: `ci-pr-atomic.yml`, `workflow-integrity.yml`, `math-quality-gate.yml`, `scientific_product_gate.yml`, `dependency-review.yml`, `pr_gate.yml`, `canonical-proof-spine.yml`.
 * Required checks MUST NOT include any workflow other than the PR-gates listed above.
 * If any other section conflicts with this, this section wins.
 
@@ -47,6 +47,8 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `math-quality-gate.yml` | `Math Quality Gate` | `math-gate` |
 | `scientific_product_gate.yml` | `scientific-product-gate` | `scientific-product` |
 | `dependency-review.yml` | `dependency-review` | `dependency-review` |
+| `pr_gate.yml` | `pr-gate` | `pr-gate` |
+| `canonical-proof-spine.yml` | `canonical-proof-spine` | `canonical-proof-spine` |
 
 ## Gate Class Policy (Normative)
 
@@ -83,6 +85,7 @@ The workflows below are the required PR gates that must pass on pull requests. S
 | `ci-benchmarks-elite.yml` | `ci-benchmarks-elite` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-benchmarks.yml` | `ci-benchmarks` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-pr-atomic.yml` | `ci-pr-atomic` | PR-gate | `pull_request, push, workflow_dispatch, workflow_call` | YES |
+| `canonical-proof-spine.yml` | `canonical-proof-spine` | PR-gate | `pull_request, workflow_dispatch` | NO |
 | `ci-pr.yml` | `ci-pr` | long-running | `workflow_dispatch, workflow_call` | YES |
 | `ci-smoke.yml` | `ci-smoke` | long-running | `schedule, workflow_dispatch` | NO |
 | `ci-validation.yml` | `ci-validation` | long-running | `schedule, workflow_dispatch` | NO |

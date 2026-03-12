@@ -23,6 +23,9 @@ BASE_ARTIFACTS: tuple[str, ...] = (
     "phase_space_rate_sigma.png",
     "phase_space_rate_coherence.png",
     "phase_space_activity_map.png",
+    "avalanche_fit_report.json",
+    "robustness_report.json",
+    "envelope_report.json",
     "run_manifest.json",
 )
 EXPORT_PROOF_ARTIFACTS: tuple[str, ...] = BASE_ARTIFACTS + ("proof_report.json",)

@@ -39,6 +39,9 @@ G4_BASE_REQUIRED_ARTIFACTS: tuple[str, ...] = (
     "criticality_report.json",
     "avalanche_report.json",
     "phase_space_report.json",
+    "avalanche_fit_report.json",
+    "robustness_report.json",
+    "envelope_report.json",
     "run_manifest.json",
 )
 G4_EXPORT_REQUIRED_ARTIFACTS: tuple[str, ...] = G4_BASE_REQUIRED_ARTIFACTS + ("proof_report.json",)
@@ -93,7 +96,7 @@ def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], mode:
 
     required_artifacts = tuple(mode_required)
     expected_floor = G4_EXPORT_REQUIRED_ARTIFACTS if mode.export_proof else G4_BASE_REQUIRED_ARTIFACTS
-    if required_artifacts != expected_floor:
+    if set(required_artifacts) != set(expected_floor):
         raise ValueError("registry/runtime artifact contract drift")
     return required_artifacts
 
@@ -225,16 +228,50 @@ def evaluate_gate_g5_manifest_valid(artifact_dir: Path, manifest: dict[str, Any]
     return {"status": "PASS" if not failures else "FAIL", "details": "manifest schema + semantic mode + hash integrity", **({"errors": failures} if failures else {})}
 
 
-def evaluate_gate_g6_determinism_placeholder() -> dict[str, Any]:
-    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+def evaluate_gate_g6_determinism(artifact_dir: Path) -> dict[str, Any]:
+    try:
+        payload = _load_json(artifact_dir / "robustness_report.json")
+        replay = payload.get("replay_check")
+        if not isinstance(replay, dict):
+            return {"status": "FAIL", "details": "missing replay_check"}
+        identical = replay.get("identical") is True
+        hashes = replay.get("hashes")
+        if not isinstance(hashes, list) or not hashes:
+            return {"status": "FAIL", "details": "missing replay hashes"}
+        all_equal = all(isinstance(row, dict) and row.get("run_a") == row.get("run_b") for row in hashes)
+        ok = identical and all_equal
+        return {"status": "PASS" if ok else "FAIL", "details": "same-seed replay hash equality for required traces"}
+    except Exception as exc:
+        return {"status": "FAIL", "details": f"determinism gate unreadable: {exc}"}
 
 
-def evaluate_gate_g7_avalanche_placeholder() -> dict[str, Any]:
-    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+def evaluate_gate_g7_avalanche(artifact_dir: Path) -> dict[str, Any]:
+    try:
+        payload = _load_json(artifact_dir / "avalanche_fit_report.json")
+        validity = payload.get("validity")
+        if not isinstance(validity, dict):
+            return {"status": "FAIL", "details": "missing validity section"}
+        reasons = validity.get("reasons", [])
+        return {
+            "status": "PASS" if validity.get("verdict") == "PASS" else "FAIL",
+            "details": "avalanche fit evidence gate",
+            **({"errors": reasons} if isinstance(reasons, list) and reasons else {}),
+        }
+    except Exception as exc:
+        return {"status": "FAIL", "details": f"avalanche gate unreadable: {exc}"}
 
 
-def evaluate_gate_g8_repro_envelope_placeholder() -> dict[str, Any]:
-    return {"status": "INCONCLUSIVE", "details": "planned placeholder"}
+def evaluate_gate_g8_repro_envelope(artifact_dir: Path) -> dict[str, Any]:
+    try:
+        payload = _load_json(artifact_dir / "envelope_report.json")
+        reasons = payload.get("failure_reasons", [])
+        return {
+            "status": "PASS" if payload.get("verdict") == "PASS" else "FAIL",
+            "details": "10-seed canonical admissibility-band gate",
+            **({"errors": reasons} if isinstance(reasons, list) and reasons else {}),
+        }
+    except Exception as exc:
+        return {"status": "FAIL", "details": f"envelope gate unreadable: {exc}"}
 
 
 def _gate_state(registry: dict[str, dict[str, Any]], gate_id: str) -> str:
@@ -307,9 +344,9 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
             "G1_active_spiking": evaluate_gate_g1_active_spiking(metrics, registry["G1_active_spiking"]),
             "G2_rate_in_bounds": evaluate_gate_g2_rate_bounds(metrics, registry["G2_rate_in_bounds"]),
             "G3_sigma_in_range": evaluate_gate_g3_sigma_range(metrics, registry["G3_sigma_in_range"]),
-            "G6_determinism_replay": evaluate_gate_g6_determinism_placeholder(),
-            "G7_avalanche_evidence_sufficient": evaluate_gate_g7_avalanche_placeholder(),
-            "G8_reproducibility_envelope": evaluate_gate_g8_repro_envelope_placeholder(),
+            "G6_determinism_replay": evaluate_gate_g6_determinism(artifact_root),
+            "G7_avalanche_evidence_sufficient": evaluate_gate_g7_avalanche(artifact_root),
+            "G8_reproducibility_envelope": evaluate_gate_g8_repro_envelope(artifact_root),
         }
 
         g4_result, artifacts_verified = evaluate_gate_g4_artifact_contract(artifact_root, manifest, mode_errors, required_artifacts)

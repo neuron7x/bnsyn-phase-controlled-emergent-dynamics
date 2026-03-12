@@ -50,10 +50,12 @@ def test_statistical_power_config_shape_matches_canonical_stub() -> None:
         "min_tail_count",
         "p_value_threshold",
         "ks_max",
+        "monte_carlo_simulations",
     }
     assert set(policy.keys()) == required_keys
     assert policy["N_min"] >= 1
     assert 0.0 < policy["p_value_threshold"] <= 1.0
+    assert policy["monte_carlo_simulations"] >= 1
 
 
 def test_validation_gate_registry_contract() -> None:
@@ -78,8 +80,8 @@ def test_validation_gate_registry_contract() -> None:
     assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
 
     required_by_mode = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]
-    assert required_by_mode["canonical-base"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json"]
-    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "run_manifest.json", "proof_report.json"]
+    assert required_by_mode["canonical-base"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "avalanche_fit_report.json", "robustness_report.json", "envelope_report.json", "run_manifest.json"]
+    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "avalanche_fit_report.json", "robustness_report.json", "envelope_report.json", "run_manifest.json", "proof_report.json"]
 
     assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
 
@@ -90,7 +92,7 @@ def test_validation_gate_registry_contract() -> None:
     assert "spike_rate_hz_mean" not in serialized
 
     wired = {gate_id for gate_id, gate in by_id.items() if gate["status"] == "wired"}
-    assert wired == {"G1_active_spiking", "G2_rate_in_bounds", "G3_sigma_in_range", "G4_core_artifacts_complete", "G5_manifest_valid"}
+    assert wired == set(gate_ids)
 
 
 def test_proof_report_schema_accepts_minimal_valid_payload() -> None:

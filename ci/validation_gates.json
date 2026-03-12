@@ -64,6 +64,9 @@
             "criticality_report.json",
             "avalanche_report.json",
             "phase_space_report.json",
+            "avalanche_fit_report.json",
+            "robustness_report.json",
+            "envelope_report.json",
             "run_manifest.json"
           ],
           "canonical-export-proof": [
@@ -72,6 +75,9 @@
             "criticality_report.json",
             "avalanche_report.json",
             "phase_space_report.json",
+            "avalanche_fit_report.json",
+            "robustness_report.json",
+            "envelope_report.json",
             "run_manifest.json",
             "proof_report.json"
           ]
@@ -101,41 +107,47 @@
     {
       "id": "G6_determinism_replay",
       "description": "Replay with identical seed reproduces canonical verdict inputs.",
-      "status": "planned",
+      "status": "wired",
       "threshold": {
-        "policy_ref": "ci/statistical_power_config.json"
+        "report": "robustness_report.json",
+        "field": "replay_check.identical",
+        "equals": true
       },
       "evidence": {
         "artifact": "proof_report.json",
         "source": "gates.G6_determinism_replay"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     },
     {
       "id": "G7_avalanche_evidence_sufficient",
       "description": "Avalanche evidence passes minimum sample and fit thresholds.",
-      "status": "planned",
+      "status": "wired",
       "threshold": {
-        "policy_ref": "ci/statistical_power_config.json"
+        "report": "avalanche_fit_report.json",
+        "field": "validity.verdict",
+        "equals": "PASS"
       },
       "evidence": {
         "artifact": "proof_report.json",
         "source": "gates.G7_avalanche_evidence_sufficient"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     },
     {
       "id": "G8_reproducibility_envelope",
-      "description": "Cross-run variability remains inside canonical reproducibility envelope.",
-      "status": "planned",
+      "description": "Cross-run variability remains inside canonical admissibility band (sanity envelope).",
+      "status": "wired",
       "threshold": {
-        "policy_ref": "ci/statistical_power_config.json"
+        "report": "envelope_report.json",
+        "field": "verdict",
+        "equals": "PASS"
       },
       "evidence": {
         "artifact": "proof_report.json",
         "source": "gates.G8_reproducibility_envelope"
       },
-      "on_fail": "INCONCLUSIVE"
+      "on_fail": "FAIL"
     }
   ]
 }

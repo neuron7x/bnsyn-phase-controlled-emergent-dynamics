@@ -30,6 +30,9 @@ Canonical base bundle (`bnsyn run --profile canonical --plot`):
 - `phase_space_rate_sigma.png` — deterministic phase-space trajectory rendering in `(rate, sigma)`.
 - `phase_space_rate_coherence.png` — deterministic phase-space trajectory rendering in `(rate, coherence)`.
 - `phase_space_activity_map.png` — deterministic `(rate, sigma)` occupancy/density activity map.
+- `avalanche_fit_report.json` — deterministic avalanche fit evidence with machine-readable validity verdict.
+- `robustness_report.json` — fixed 10-seed reproducibility/admissibility run table + same-seed replay trace-hash evidence.
+- `envelope_report.json` — admissibility-band validation summary for the fixed 10-seed run set.
 
 Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-proof`):
 
@@ -48,7 +51,7 @@ The canonical proof path is intentionally one-run and one-command so external re
 
 ## Reproducibility
 
-Reproducibility is enforced through explicit seed, deterministic simulation path, and manifest hashing.
+Reproducibility is enforced through explicit seed, deterministic simulation path, manifest hashing, and a fixed 10-seed admissibility-band check.
 Use `run_manifest.json` + `criticality_report.json` + `avalanche_report.json` + `phase_space_report.json` + `summary_metrics.json` to compare repeated runs under same parameters.
 
 ## Interpretation layer and limits

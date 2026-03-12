@@ -43,7 +43,7 @@ quickstart-smoke:
 	python -m pip show bnsyn
 	bnsyn --help
 	bnsyn run --help
-	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
+	bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run | python -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok' and d['artifact_dir'].endswith('canonical_run') and d['artifacts']==['emergence_plot.png','summary_metrics.json','criticality_report.json','avalanche_report.json','phase_space_report.json','population_rate_trace.npy','sigma_trace.npy','coherence_trace.npy','phase_space_rate_sigma.png','phase_space_rate_coherence.png','phase_space_activity_map.png','avalanche_fit_report.json','robustness_report.json','envelope_report.json','run_manifest.json','proof_report.json'], f'smoke failed: {d}'; print('quickstart canonical run output validated')"
 
 
 wheelhouse-build:
