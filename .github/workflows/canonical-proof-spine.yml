@@ -22,10 +22,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Pin pip
+        uses: ./.github/actions/pin-pip
+
+      - name: Log pip version
+        run: python -m pip --version
+
       - name: Install
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e ".[ci]"
+        run: python -m pip install -e ".[ci]"
 
       - name: Run canonical proof
         run: bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run

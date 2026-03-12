@@ -23,6 +23,7 @@ jobs:
           set -euo pipefail
           allowlist=(
             "ci-pr-atomic.yml"
+            "canonical-proof-spine.yml"
             "ci-pr.yml"
             "ci-smoke.yml"
             "codeql.yml"
