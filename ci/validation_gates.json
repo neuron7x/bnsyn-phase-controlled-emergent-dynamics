@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "registry": [
     {
       "id": "G1_active_spiking",
@@ -154,19 +154,40 @@
       "description": "Summary metrics must match deterministic recompute from canonical traces/raw spikes.",
       "status": "wired",
       "threshold": {
-        "metrics": [
-          "spike_events",
-          "rate_mean_hz",
-          "sigma_mean"
-        ],
         "policy": "summary_is_secondary_snapshot",
-        "spike_events_policy": {
-          "raw_source": "exact_match",
-          "fallback": "exact_reconstruction_after_integer_check",
-          "rounding_tolerance": 1e-06
+        "metrics": {
+          "spike_events": {
+            "tolerance": 0.0,
+            "policy": "exact_match",
+            "policy_by_source": {
+              "raw_npz": "exact_match",
+              "rate_trace_reconstruction": "exact_reconstruction_after_integer_check",
+              "unverifiable": "unverifiable_fails_closed",
+              "canonical_raw_npz_malformed": "malformed_raw_fails_closed"
+            }
+          },
+          "rate_mean_hz": {
+            "tolerance": 1e-12,
+            "policy": "abs_delta <= tolerance"
+          },
+          "sigma_mean": {
+            "tolerance": 1e-12,
+            "policy": "abs_delta <= tolerance"
+          }
         },
-        "rate_mean_hz_tolerance": 1e-12,
-        "sigma_mean_tolerance": 1e-12
+        "recompute_policy": {
+          "spike_events": {
+            "canonical_raw_artifact": "traces.npz",
+            "fallback": "rate_trace_reconstruction_from_manifest_metadata_only",
+            "manifest_metadata_required": [
+              "dt_ms",
+              "N"
+            ],
+            "manifest_steps_validation": "if_present_must_match_trace_length",
+            "rounding_tolerance": 1e-06,
+            "on_malformed_canonical_raw": "fail_closed_no_fallback"
+          }
+        }
       },
       "evidence": {
         "artifact": "population_rate_trace.npy + sigma_trace.npy + raw spike npz + summary_metrics.json",

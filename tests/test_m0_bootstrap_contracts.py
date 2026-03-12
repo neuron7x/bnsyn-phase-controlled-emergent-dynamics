@@ -60,7 +60,7 @@ def test_statistical_power_config_shape_matches_canonical_stub() -> None:
 
 def test_validation_gate_registry_contract() -> None:
     payload = _load_json(ROOT / "ci" / "validation_gates.json")
-    assert payload["schema_version"] == "1.3.0"
+    assert payload["schema_version"] == "1.4.0"
     gates = payload["registry"]
     gate_ids = [gate["id"] for gate in gates]
     assert gate_ids == [
@@ -99,7 +99,7 @@ def test_validation_gate_registry_contract() -> None:
 def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-export-proof",
         "export_proof": True,
         "timestamp_utc": "1970-01-01T00:00:00Z",
@@ -120,8 +120,8 @@ def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {"rate_mean_hz": "population_rate_trace.npy", "sigma_mean": "sigma_trace.npy", "spike_events": "traces.npz", "spike_events_source": "raw_npz"},
+        "metric_consistency": {"spike_events": {"status": "PASS", "tolerance": 0.0, "policy": "exact_match", "summary_source": "summary_metrics.json", "source": "traces.npz", "summary": 10, "recomputed": 10, "delta": 0.0}, "rate_mean_hz": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "population_rate_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}, "sigma_mean": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "sigma_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}},
         "artifacts_verified": [],
         "failure_reasons": ["Gate G6_determinism_replay is planned but not wired"],
     }
@@ -131,7 +131,7 @@ def test_proof_report_schema_accepts_minimal_valid_payload() -> None:
 def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
     schema = _load_json(ROOT / "schemas" / "proof-report.schema.json")
     invalid_payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-export-proof",
         "export_proof": True,
         "timestamp_utc": "1970-01-01T00:00:00Z",
@@ -152,8 +152,8 @@ def test_proof_report_schema_rejects_invalid_verdict_code_type() -> None:
         "metrics": {},
         "recomputed_metrics": {},
         "summary_metrics_snapshot": {},
-        "recompute_sources": {},
-        "metric_consistency": {},
+        "recompute_sources": {"rate_mean_hz": "population_rate_trace.npy", "sigma_mean": "sigma_trace.npy", "spike_events": "traces.npz", "spike_events_source": "raw_npz"},
+        "metric_consistency": {"spike_events": {"status": "PASS", "tolerance": 0.0, "policy": "exact_match", "summary_source": "summary_metrics.json", "source": "traces.npz", "summary": 10, "recomputed": 10, "delta": 0.0}, "rate_mean_hz": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "population_rate_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}, "sigma_mean": {"status": "PASS", "tolerance": 1e-12, "policy": "abs_delta <= tolerance", "summary_source": "summary_metrics.json", "source": "sigma_trace.npy", "summary": 1.0, "recomputed": 1.0, "delta": 0.0}},
         "artifacts_verified": [],
         "failure_reasons": ["bad code type"],
     }
