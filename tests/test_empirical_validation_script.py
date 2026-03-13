@@ -76,6 +76,15 @@ def test_summarize_stable_surface_has_no_pruned_branches() -> None:
     assert unstable == []
 
 
+def test_summarize_single_row_input_is_supported() -> None:
+    summary, unstable = summarize([_base_row(performance_wall_time_sec_mean=0.25)])
+
+    assert summary.scenario_count == 1
+    assert summary.median_wall_time_sec == pytest.approx(0.25)
+    assert summary.unstable_branch_count == 0
+    assert unstable == []
+
+
 def test_summarize_marks_unstable_branches_for_pruning() -> None:
     results = [
         _base_row(scenario="stable", performance_wall_time_sec_mean=0.1),

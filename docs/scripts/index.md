@@ -23,7 +23,7 @@ This section formalizes every executable in `scripts/` using static source inspe
 | `check_quickstart_consistency.py` | Validate canonical install/quickstart commands stay consistent across docs. | Safe (read-only checks) | [check-quickstart-consistency.md](./check-quickstart-consistency.md) |
 | `collect_ci_run_urls.py` | UNKNOWN/TBD: missing module docstring. | Writes artifacts only | [collect-ci-run-urls.md](./collect-ci-run-urls.md) |
 | `compare_benchmarks.py` | Compare benchmark results against golden baseline. Detects performance regressions by comparing current benchmark result... | Writes artifacts only | [compare-benchmarks.md](./compare-benchmarks.md) |
-| `empirical_validation.py` | Empirical stress-validation summarizer for multidimensional benchmark suites. Converts benchmark JSON outputs into objective metrics and a deterministic calibration report. | Writes artifacts only | [empirical-validation.md](./empirical-validation.md) |
+| `empirical_validation.py` | Summarize aggregate benchmark scenario records into deterministic validation metrics and calibration reports. | Writes artifacts only | [empirical-validation.md](./empirical-validation.md) |
 | `generate_benchmark_baseline.py` | Generate benchmark baselines for the active regime. | Writes artifacts only | [generate-benchmark-baseline.md](./generate-benchmark-baseline.md) |
 | `generate_coverage_baseline.py` | UNKNOWN/TBD: missing module docstring. | Writes artifacts only | [generate-coverage-baseline.md](./generate-coverage-baseline.md) |
 | `generate_coverage_trend.py` | Generate compact coverage trend artifacts for CI observability. | Writes artifacts only | [generate-coverage-trend.md](./generate-coverage-trend.md) |
