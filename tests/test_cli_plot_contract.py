@@ -11,11 +11,13 @@ from types import SimpleNamespace
 import pytest
 
 from bnsyn.cli import (
+    _cmd_demo_product,
     _cmd_plot,
     _cmd_proof_check_determinism,
     _cmd_proof_check_envelope,
     _cmd_proof_evaluate,
     _cmd_proof_validate_bundle,
+    _cmd_validate_bundle,
 )
 
 
@@ -164,3 +166,91 @@ def test_cmd_proof_check_envelope_returns_nonzero_on_fail(monkeypatch: pytest.Mo
     payload = json.loads(capsys.readouterr().out)
     assert rc == 2
     assert payload["status"] == "FAIL"
+
+
+def test_cmd_validate_bundle_returns_zero_on_pass(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    monkeypatch.setattr(
+        "bnsyn.proof.bundle_validator.validate_canonical_bundle",
+        lambda _p, require_product_surface: {"status": "PASS", "errors": []},
+    )
+    rc = _cmd_validate_bundle(argparse.Namespace(artifact_dir=tmp_path))
+    captured = capsys.readouterr()
+    assert rc == 0
+    assert "STATUS: PASS" in captured.out
+
+
+def test_cmd_demo_product_prints_expected_summary(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical"
+
+    def fake_bundle(*_args: object, **_kwargs: object) -> dict[str, object]:
+        return {"summary_metrics": {"seed": 123}, "artifact_dir": str(out_dir)}
+
+    monkeypatch.setattr("bnsyn.experiments.declarative.run_canonical_live_bundle", fake_bundle)
+    monkeypatch.setattr("bnsyn.proof.bundle_validator.validate_canonical_bundle", lambda *_args, **_kwargs: {"status": "PASS", "errors": []})
+    monkeypatch.setattr("bnsyn.cli._get_package_version", lambda: "0.2.0")
+    monkeypatch.setattr("bnsyn.cli.runtime_file", lambda *_args, **_kwargs: Path("configs/canonical_profile.yaml"))
+
+    rc = _cmd_demo_product(argparse.Namespace(output=out_dir))
+    captured = capsys.readouterr().out
+
+    assert rc == 0
+    assert "STATUS: PASS" in captured
+    assert f"REPORT: {(out_dir / 'index.html').as_posix()}" in captured
+    assert "VALIDATE: bnsyn validate-bundle" in captured
+
+
+def test_cmd_demo_product_returns_nonzero_when_validator_fails(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    out_dir = tmp_path / "canonical"
+    monkeypatch.setattr(
+        "bnsyn.experiments.declarative.run_canonical_live_bundle",
+        lambda *_args, **_kwargs: {"summary_metrics": {"seed": 123}, "artifact_dir": str(out_dir)},
+    )
+    monkeypatch.setattr(
+        "bnsyn.proof.bundle_validator.validate_canonical_bundle",
+        lambda *_args, **_kwargs: {"status": "FAIL", "errors": ["missing artifact: index.html"]},
+    )
+    monkeypatch.setattr("bnsyn.cli.runtime_file", lambda *_args, **_kwargs: Path("configs/canonical_profile.yaml"))
+
+    rc = _cmd_demo_product(argparse.Namespace(output=out_dir))
+    output = capsys.readouterr().out
+
+    assert rc == 2
+    assert "STATUS: FAIL" in output
+    assert "missing artifact: index.html" in output
+
+
+def test_cli_demo_product_emits_required_files(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical_run"
+    proc = subprocess.run(
+        [sys.executable, "-m", "bnsyn.cli", "demo-product", "--output", str(out_dir)],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    assert proc.returncode == 0, proc.stderr
+    required = [
+        "emergence_plot.png",
+        "summary_metrics.json",
+        "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
+        "run_manifest.json",
+        "proof_report.json",
+        "product_summary.json",
+        "index.html",
+    ]
+    for name in required:
+        assert (out_dir / name).exists(), f"missing {name}"
+
+    validate_proc = subprocess.run(
+        [sys.executable, "-m", "bnsyn.cli", "validate-bundle", str(out_dir)],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    assert validate_proc.returncode == 0, validate_proc.stdout + validate_proc.stderr
+    assert "STATUS: PASS" in validate_proc.stdout

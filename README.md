@@ -6,6 +6,34 @@
 
 BN-Syn is a deterministic simulation repository for phase-controlled emergent neural dynamics with AdEx neurons, STDP plasticity, and criticality control.
 
+## Install
+
+```bash
+python -m pip install .
+```
+
+## Run
+
+```bash
+bnsyn demo-product
+```
+
+## Inspect
+
+Open `artifacts/canonical_run/index.html` for the human-readable report, and inspect `artifacts/canonical_run/product_summary.json` for machine-readable status.
+
+## Validate
+
+```bash
+bnsyn validate-bundle artifacts/canonical_run
+```
+
+Canonical proof command remains:
+
+```bash
+bnsyn run --profile canonical --plot --export-proof
+```
+
 ## Canonical Project Vectors (Permanent)
 
 - **V1 — Result:** [NORMATIVE][CLM-0001] one canonical proof command, `bnsyn run --profile canonical --plot --export-proof`, must generate visual and metrics evidence of emergent network dynamics.

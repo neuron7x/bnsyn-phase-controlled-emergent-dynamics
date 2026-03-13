@@ -8,8 +8,7 @@ import jsonschema  # type: ignore[import-untyped]
 
 from bnsyn.proof.contracts import EXPORT_PROOF_ARTIFACTS
 from bnsyn.proof.evaluate import sha256_file
-
-ROOT = Path(__file__).resolve().parents[3]
+from bnsyn.paths import runtime_file
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -19,7 +18,9 @@ def _load_json(path: Path) -> dict[str, Any]:
     return payload
 
 
-def validate_canonical_bundle(artifact_dir: str | Path) -> dict[str, Any]:
+def validate_canonical_bundle(
+    artifact_dir: str | Path, *, require_product_surface: bool = False
+) -> dict[str, Any]:
     root = Path(artifact_dir)
     errors: list[str] = []
     manifest = _load_json(root / "run_manifest.json")
@@ -53,10 +54,46 @@ def validate_canonical_bundle(artifact_dir: str | Path) -> dict[str, Any]:
         path = root / artifact
         if not path.exists():
             continue
-        schema = _load_json(ROOT / "schemas" / schema_name)
+        schema = _load_json(runtime_file(f"schemas/{schema_name}"))
         try:
             jsonschema.validate(instance=_load_json(path), schema=schema)
         except jsonschema.ValidationError as exc:
             errors.append(f"{artifact} schema violation at {exc.json_path}: {exc.message}")
+
+    if require_product_surface:
+        product_summary_path = root / "product_summary.json"
+        index_path = root / "index.html"
+        if not product_summary_path.is_file():
+            errors.append("missing artifact: product_summary.json")
+        if not index_path.is_file():
+            errors.append("missing artifact: index.html")
+
+        if product_summary_path.is_file():
+            product_summary = _load_json(product_summary_path)
+            summary_metrics = _load_json(root / "summary_metrics.json")
+            proof_report = _load_json(root / "proof_report.json")
+            if product_summary.get("profile") != "canonical":
+                errors.append("product_summary profile must be canonical")
+            if product_summary.get("proof_verdict") != "PASS":
+                errors.append("product_summary proof_verdict must be PASS")
+            if product_summary.get("status") != product_summary.get("proof_verdict"):
+                errors.append("product_summary status must match proof_verdict")
+            if product_summary.get("proof_verdict") != proof_report.get("verdict"):
+                errors.append("product_summary proof_verdict mismatch vs proof_report verdict")
+            if product_summary.get("primary_visual") != "emergence_plot.png":
+                errors.append("product_summary primary_visual must be emergence_plot.png")
+            if product_summary.get("artifact_dir") != root.as_posix():
+                errors.append("product_summary artifact_dir mismatch")
+            if product_summary.get("bundle_contract_version") != manifest.get("bundle_contract"):
+                errors.append("product_summary bundle_contract_version mismatch vs run_manifest")
+
+            seed = product_summary.get("seed")
+            if seed != manifest.get("seed"):
+                errors.append("product_summary seed mismatch vs run_manifest")
+            if seed != summary_metrics.get("seed"):
+                errors.append("product_summary seed mismatch vs summary_metrics")
+
+        if index_path.is_file() and index_path.stat().st_size == 0:
+            errors.append("index.html is empty")
 
     return {"status": "PASS" if not errors else "FAIL", "errors": errors}

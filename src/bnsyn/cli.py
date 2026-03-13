@@ -35,6 +35,7 @@ from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
 from bnsyn.viz.emergence_plot import plot_emergence_npz
 from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
+from bnsyn.paths import runtime_file
 
 EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
 
@@ -714,6 +715,57 @@ def _cmd_proof_validate_bundle(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "PASS" else 2
 
 
+def _cmd_validate_bundle(args: argparse.Namespace) -> int:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    result = validate_canonical_bundle(args.artifact_dir, require_product_surface=True)
+    if result["status"] == "PASS":
+        print("STATUS: PASS")
+        print(f"ARTIFACT_DIR: {Path(args.artifact_dir).as_posix()}")
+        return 0
+    print("STATUS: FAIL")
+    for error in result["errors"]:
+        print(f"- {error}")
+    return 2
+
+
+def _cmd_demo_product(args: argparse.Namespace) -> int:
+    from bnsyn.experiments.declarative import run_canonical_live_bundle
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    output_dir = Path(getattr(args, "output", "artifacts/canonical_run"))
+    package_version = _get_package_version()
+    config_path = runtime_file("configs/canonical_profile.yaml")
+    try:
+        run_canonical_live_bundle(
+            config_path,
+            artifact_dir=output_dir,
+            export_proof=True,
+            generate_product_report=True,
+            product_package_version=package_version,
+        )
+        validation = validate_canonical_bundle(output_dir, require_product_surface=True)
+    except Exception as exc:
+        print("STATUS: FAIL")
+        print(f"REASON: demo-product execution failed: {exc}")
+        print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+        return 1
+
+    if validation["status"] != "PASS":
+        print("STATUS: FAIL")
+        for error in validation["errors"]:
+            print(f"- {error}")
+        print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+        return 2
+
+    print("STATUS: PASS")
+    print(f"ARTIFACT_DIR: {output_dir.as_posix()}")
+    print(f"REPORT: {(output_dir / 'index.html').as_posix()}")
+    print(f"PRIMARY_VISUAL: {(output_dir / 'emergence_plot.png').as_posix()}")
+    print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+    return 0
+
+
 def _cmd_proof_check_determinism(args: argparse.Namespace) -> int:
     from bnsyn.proof.evaluate import evaluate_gate_g6_determinism
 
@@ -881,6 +933,14 @@ def main() -> None:
     proof_validate = sub.add_parser("proof-validate-bundle", help="Validate canonical proof bundle manifest lineage + covered JSON schemas")
     proof_validate.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
     proof_validate.set_defaults(func=_cmd_proof_validate_bundle)
+
+    validate_bundle = sub.add_parser("validate-bundle", help="Validate canonical product bundle")
+    validate_bundle.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical product artifacts")
+    validate_bundle.set_defaults(func=_cmd_validate_bundle)
+
+    demo_product = sub.add_parser("demo-product", help="Run canonical product demo and emit human-readable bundle report")
+    demo_product.add_argument("--output", type=Path, default=Path("artifacts/canonical_run"), help="Output directory for canonical product bundle")
+    demo_product.set_defaults(func=_cmd_demo_product)
 
     proof_det = sub.add_parser("proof-check-determinism", help="Validate same-seed canonical replay hash equality")
     proof_det.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")

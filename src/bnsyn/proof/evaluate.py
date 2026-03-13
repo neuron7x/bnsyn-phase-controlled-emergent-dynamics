@@ -8,6 +8,7 @@ from typing import Any
 
 import jsonschema  # type: ignore[import-untyped]
 import numpy as np
+from bnsyn.paths import runtime_file
 
 from .contracts import (
     CANONICAL_BASE_CONTRACT,
@@ -15,10 +16,9 @@ from .contracts import (
     mode_from_manifest,
 )
 
-ROOT = Path(__file__).resolve().parents[3]
-PROOF_SCHEMA_PATH = ROOT / "schemas" / "proof-report.schema.json"
-RUN_MANIFEST_SCHEMA_PATH = ROOT / "schemas" / "run-manifest.schema.json"
-VALIDATION_GATES_PATH = ROOT / "ci" / "validation_gates.json"
+PROOF_SCHEMA_PATH = runtime_file("schemas/proof-report.schema.json")
+RUN_MANIFEST_SCHEMA_PATH = runtime_file("schemas/run-manifest.schema.json")
+VALIDATION_GATES_PATH = runtime_file("ci/validation_gates.json")
 PROOF_SCHEMA_VERSION = "1.1.0"
 DETERMINISTIC_TIMESTAMP_UTC = "1970-01-01T00:00:00Z"
 EXPECTED_GATE_IDS = (
