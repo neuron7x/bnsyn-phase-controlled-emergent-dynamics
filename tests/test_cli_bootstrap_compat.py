@@ -27,9 +27,9 @@ def test_cmd_run_experiment_compat_without_optional_attrs(monkeypatch: pytest.Mo
 
 
 def test_cmd_run_experiment_routes_profile_canonical(monkeypatch: pytest.MonkeyPatch) -> None:
-    seen: list[str] = []
+    seen: list[str | object] = []
 
-    def fake_live_bundle(config: str, output: str | None, **__: object) -> dict[str, str]:
+    def fake_live_bundle(config: str | object, output: str | None, **__: object) -> dict[str, str]:
         seen.append(config)
         return {"artifact_dir": str(output)}
 
@@ -43,7 +43,8 @@ def test_cmd_run_experiment_routes_profile_canonical(monkeypatch: pytest.MonkeyP
     rc = cli._cmd_run_experiment(args)
 
     assert rc == 0
-    assert seen == ["configs/canonical_profile.yaml"]
+    assert len(seen) == 1
+    assert str(seen[0]).endswith("configs/canonical_profile.yaml")
 
 
 def test_cmd_run_experiment_missing_config_returns_2(capsys: pytest.CaptureFixture[str]) -> None:

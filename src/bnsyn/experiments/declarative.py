@@ -31,12 +31,14 @@ from bnsyn.experiments.phase_space import (
 from bnsyn.numerics import compute_steps_exact
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
-from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof
+from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof, manifest_self_hash
 from bnsyn.rng import seed_all
+from bnsyn.viz.product_report import write_product_report_bundle
+from bnsyn.paths import runtime_file
 
 CANONICAL_REPRO_SEEDS: tuple[int, ...] = (11, 23, 37, 41, 53, 67, 79, 83, 97, 101)
-ENVELOPE_SPEC_PATH = Path(__file__).resolve().parents[3] / "ci" / "envelope_spec.json"
-STAT_POWER_CONFIG_PATH = Path(__file__).resolve().parents[3] / "ci" / "statistical_power_config.json"
+ENVELOPE_SPEC_PATH = runtime_file("ci/envelope_spec.json")
+STAT_POWER_CONFIG_PATH = runtime_file("ci/statistical_power_config.json")
 
 
 def _derive_subseed(seed: int, *, context: str) -> int:
@@ -485,6 +487,8 @@ def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
     export_proof: bool = False,
+    generate_product_report: bool = False,
+    product_package_version: str = "unknown",
 ) -> dict[str, Any]:
     """Execute canonical profile and write deterministic live-run artifacts."""
     config = load_config(config_path)
@@ -660,11 +664,12 @@ def run_canonical_live_bundle(
             "avalanche_fit_report.json": hashlib.sha256(avalanche_fit_report_path.read_bytes()).hexdigest(),
             "robustness_report.json": hashlib.sha256(robustness_report_path.read_bytes()).hexdigest(),
             "envelope_report.json": hashlib.sha256(envelope_report_path.read_bytes()).hexdigest(),
-            "run_manifest.json": "self-unhashed",
+            "run_manifest.json": "",
             "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
             "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
         },
     }
+    manifest["artifacts"]["run_manifest.json"] = manifest_self_hash(manifest)
     manifest_path = out_dir / "run_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
@@ -676,6 +681,18 @@ def run_canonical_live_bundle(
         evaluation = evaluate_and_emit(out_dir)
         proof_report_path = evaluation.report_path
         proof_report = evaluation.report
+
+    product_summary_path: Path | None = None
+    index_path: Path | None = None
+    if generate_product_report:
+        product_paths = write_product_report_bundle(
+            artifact_dir=out_dir,
+            profile="canonical",
+            seed=seed,
+            package_version=product_package_version,
+        )
+        product_summary_path = product_paths["product_summary"]
+        index_path = product_paths["index_html"]
 
     return {
         "artifact_dir": out_dir.as_posix(),
@@ -707,4 +724,6 @@ def run_canonical_live_bundle(
         "emergence_metrics": metrics,
         "proof_report": proof_report,
         "proof_report_path": proof_report_path.as_posix() if proof_report_path is not None else None,
+        "product_summary_path": product_summary_path.as_posix() if product_summary_path is not None else None,
+        "index_html_path": index_path.as_posix() if index_path is not None else None,
     }

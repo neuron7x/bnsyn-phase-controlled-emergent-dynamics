@@ -112,7 +112,7 @@ def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
         "duration_ms": 10.0,
         "artifacts": {
             "summary_metrics.json": "0" * 64,
-            "run_manifest.json": "self-unhashed",
+            "run_manifest.json": "2" * 64,
             "proof_report.json": "1" * 64,
         },
     }
@@ -133,7 +133,7 @@ def test_run_manifest_schema_accepts_base_manifest_payload() -> None:
         "duration_ms": 10.0,
         "artifacts": {
             "summary_metrics.json": "0" * 64,
-            "run_manifest.json": "self-unhashed",
+            "run_manifest.json": "2" * 64,
         },
     }
     jsonschema.validate(instance=payload, schema=schema)

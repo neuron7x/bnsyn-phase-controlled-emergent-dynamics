@@ -8,17 +8,18 @@ from typing import Any
 
 import jsonschema  # type: ignore[import-untyped]
 import numpy as np
+from bnsyn.paths import runtime_file
 
 from .contracts import (
     CANONICAL_BASE_CONTRACT,
     ManifestMode,
+    manifest_self_hash,
     mode_from_manifest,
 )
 
-ROOT = Path(__file__).resolve().parents[3]
-PROOF_SCHEMA_PATH = ROOT / "schemas" / "proof-report.schema.json"
-RUN_MANIFEST_SCHEMA_PATH = ROOT / "schemas" / "run-manifest.schema.json"
-VALIDATION_GATES_PATH = ROOT / "ci" / "validation_gates.json"
+PROOF_SCHEMA_PATH = runtime_file("schemas/proof-report.schema.json")
+RUN_MANIFEST_SCHEMA_PATH = runtime_file("schemas/run-manifest.schema.json")
+VALIDATION_GATES_PATH = runtime_file("ci/validation_gates.json")
 PROOF_SCHEMA_VERSION = "1.1.0"
 DETERMINISTIC_TIMESTAMP_UTC = "1970-01-01T00:00:00Z"
 EXPECTED_GATE_IDS = (
@@ -515,8 +516,9 @@ def evaluate_gate_g5_manifest_valid(artifact_dir: Path, manifest: dict[str, Any]
         failures.append("manifest artifacts is not an object")
     else:
         self_entry = artifacts.get("run_manifest.json")
-        if self_entry != "self-unhashed":
-            failures.append("run_manifest.json entry must be self-unhashed")
+        expected_self_hash = manifest_self_hash(manifest)
+        if not isinstance(self_entry, str) or self_entry != expected_self_hash:
+            failures.append("run_manifest.json hash mismatch")
 
         _validate_proof_report_mode_pair(artifact_dir, manifest, failures)
 
@@ -765,6 +767,7 @@ def _update_manifest_proof_hash(artifact_dir: Path, proof_hash: str) -> None:
     if not isinstance(artifacts, dict):
         raise ValueError("run_manifest artifacts must be object")
     artifacts["proof_report.json"] = proof_hash
+    artifacts["run_manifest.json"] = manifest_self_hash(manifest)
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 

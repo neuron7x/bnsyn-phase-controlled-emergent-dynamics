@@ -415,6 +415,42 @@ def test_proof_validate_bundle_schema_error_reports_json_path(tmp_path: Path) ->
     assert any("json_path" in err or "$" in err for err in result["errors"])
 
 
+def test_validate_bundle_product_surface_fails_without_proof_report_when_product_summary_exists(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+    )
+
+    (out_dir / "proof_report.json").unlink()
+    result = validate_canonical_bundle(out_dir, require_product_surface=True)
+
+    assert result["status"] == "FAIL"
+    assert "missing artifact: proof_report.json" in result["errors"]
+
+
+def test_validate_bundle_product_surface_fails_without_summary_metrics_when_product_summary_exists(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+    )
+
+    (out_dir / "summary_metrics.json").unlink()
+    result = validate_canonical_bundle(out_dir, require_product_surface=True)
+
+    assert result["status"] == "FAIL"
+    assert "missing artifact: summary_metrics.json" in result["errors"]
+
+
 def test_trace_recompute_happy_path_g9_passes(tmp_path: Path) -> None:
     out_dir = tmp_path / "canonical"
     run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)

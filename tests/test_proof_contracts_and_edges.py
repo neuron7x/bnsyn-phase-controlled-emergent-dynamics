@@ -199,7 +199,7 @@ def test_g4_and_g5_error_paths_and_unreadable_proof_report(tmp_path: Path) -> No
     manifest_bad_self["artifacts"]["run_manifest.json"] = "not-self"
     g5 = proof_evaluate.evaluate_gate_g5_manifest_valid(out_dir, manifest_bad_self, [])
     assert g5["status"] == "FAIL"
-    assert "run_manifest.json entry must be self-unhashed" in g5["errors"]
+    assert "run_manifest.json hash mismatch" in g5["errors"]
 
     manifest_bad_types = dict(manifest)
     manifest_bad_types["artifacts"] = {"summary_metrics.json": 1}
@@ -251,7 +251,7 @@ def test_update_manifest_proof_hash_requires_artifacts_object(tmp_path: Path) ->
 def test_evaluate_and_emit_stabilizes_on_third_pass(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     out_dir = tmp_path / "bundle"
     out_dir.mkdir()
-    _write_json(out_dir / "run_manifest.json", {"export_proof": True, "artifacts": {"run_manifest.json": "self-unhashed"}})
+    _write_json(out_dir / "run_manifest.json", {"export_proof": True, "artifacts": {"run_manifest.json": "0" * 64}})
 
     reports = iter(
         [
@@ -278,7 +278,7 @@ def test_evaluate_and_emit_stabilizes_on_third_pass(tmp_path: Path, monkeypatch:
 def test_evaluate_and_emit_raises_if_not_stable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     out_dir = tmp_path / "bundle"
     out_dir.mkdir()
-    _write_json(out_dir / "run_manifest.json", {"export_proof": True, "artifacts": {"run_manifest.json": "self-unhashed"}})
+    _write_json(out_dir / "run_manifest.json", {"export_proof": True, "artifacts": {"run_manifest.json": "0" * 64}})
 
     reports = iter(
         [
