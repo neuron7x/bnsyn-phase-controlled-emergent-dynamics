@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/hero.svg" alt="BN-Syn project banner" width="100%" />
+  <img src="docs/assets/bnsyn_hero.gif" alt="BN-Syn phase-controlled emergent neural dynamics" width="100%" />
 </div>
 
 # BN-Syn Thermostated Bio-AI System
