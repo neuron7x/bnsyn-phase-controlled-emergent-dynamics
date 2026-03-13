@@ -17,8 +17,10 @@ TESTING_DOC = REPO_ROOT / "docs" / "TESTING.md"
 
 TEST_INSTALL_CMD = 'python -m pip install -e ".[test]"'
 CANONICAL_GATE_CMD = "make test-gate"
+CANONICAL_TEST_CMD = "$(PYTHON) -m pytest -m \"not (validation or property)\" -q"
 COLLECT_CMD = "python -m pytest --collect-only -q"
 VALIDATOR_CMD = "python -m scripts.validate_trifix_invariants"
+COMMAND_TIMEOUT_SECONDS = 1800
 
 
 class ValidationError(RuntimeError):
@@ -112,7 +114,9 @@ def _check_canonical_workflow() -> None:
 
 def _check_ssot_strings() -> None:
     makefile = _read(MAKEFILE)
-    if "test-gate:" not in makefile or 'python -m pytest -m "not (validation or property)" -q' not in makefile:
+    if f"TEST_CMD ?= {CANONICAL_TEST_CMD}" not in makefile:
+        raise ValidationError("I3 violation: Makefile TEST_CMD is out of SSOT sync")
+    if "test-gate:\n\t$(TEST_CMD)" not in makefile:
         raise ValidationError("I3 violation: Makefile test-gate target is out of SSOT sync")
 
     for doc in (README, TESTING_DOC):
@@ -136,7 +140,7 @@ def _run(cmd: str) -> str:
         shell=True,
         text=True,
         capture_output=True,
-        timeout=600,
+        timeout=COMMAND_TIMEOUT_SECONDS,
         check=False,
     )
     out = f"{proc.stdout}\n{proc.stderr}"

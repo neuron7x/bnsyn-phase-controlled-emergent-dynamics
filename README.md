@@ -63,8 +63,9 @@ Not supported from this proof command alone:
 ```bash
 git clone https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics.git
 cd bnsyn-phase-controlled-emergent-dynamics
-python -m pip install -e .
-bnsyn run --profile canonical --plot --export-proof
+python3 -m venv .venv
+./.venv/bin/python -m pip install -e .
+./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
 ```
 
 Inspect:
@@ -112,7 +113,7 @@ make test-gate
 
 ```bash
 make quickstart-smoke
-python -m pip install -e .
-python -m bnsyn --help
-bnsyn run --profile canonical --plot --export-proof
+./.venv/bin/python -m pip install -e .
+./.venv/bin/python -m bnsyn --help
+./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
 ```
