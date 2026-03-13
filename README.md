@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="docs/assets/bnsyn_hero.gif" alt="BN-Syn phase-controlled emergent neural dynamics" width="100%" />
-</div>
-
 # BN-Syn Thermostated Bio-AI System
 
 BN-Syn is a deterministic simulation repository for phase-controlled emergent neural dynamics with AdEx neurons, STDP plasticity, and criticality control.
