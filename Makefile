@@ -233,7 +233,7 @@ sbom:
 	$(PYTHON) -m pip --version
 	$(PYTHON) -m pip install --require-hashes --no-deps -r $(SBOM_LOCK_FILE)
 	mkdir -p $(dir $(SBOM_REPORT))
-	cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
+	./.venv/bin/cyclonedx-py environment --output-format JSON --output-file $(SBOM_REPORT)
 
 profile:
 	$(PYTHON) -m scripts.profile_kernels --help
