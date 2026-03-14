@@ -1,0 +1,21 @@
+task_prompt: "Produce a bounded deterministic artifact for local AOC demonstration"
+acceptance_criteria:
+  - "artifact score reaches threshold"
+  - "artifact remains structurally valid"
+normalized_constraints:
+  target_score: 0.55
+  functional_threshold: 0.55
+  initial_score: 0.05
+  initial_step_size: 0.1
+  required_artifact_keys: ["status", "score", "iteration", "task"]
+innovation_band:
+  min_delta: 0.0
+  max_delta: 0.6
+evaluator_config:
+  deterministic: true
+invariants:
+  - artifact_is_json
+  - non_negative_score
+max_iterations: 8
+coherence_threshold: 0.9
+output_dir: "aoc_output"

@@ -141,3 +141,33 @@ make quickstart-smoke
 ./.venv/bin/python -m bnsyn --help
 ./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
 ```
+
+
+## AOC v1.0 (Adaptive Orchestration Controller)
+
+This repository now includes a local deterministic `aoc` package that can be run with one command.
+
+### Install
+
+```bash
+python -m pip install .
+```
+
+### Run
+
+```bash
+aoc run --config examples/basic_task.yaml
+```
+
+### AOC outputs
+
+A run emits:
+- `final_artifact.json`
+- `zeropoint.json`
+- `run_summary.json`
+- `sigma_trace.json`
+- `delta_trace.json`
+- `audit_trace.json`
+- `auditor_reliability_trace.json`
+- `termination_verdict.json`
+- `evidence_bundle/` (contains copies of required outputs)
