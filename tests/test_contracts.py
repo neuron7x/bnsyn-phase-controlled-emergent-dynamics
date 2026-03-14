@@ -48,3 +48,10 @@ def test_sigma_secondary() -> None:
 def test_innovation_band_bounds() -> None:
     with pytest.raises(ContractError):
         InnovationBand(0.6, 0.2)
+
+
+def test_contract_missing_target_score_in_normalized_constraints_fails() -> None:
+    p = _payload()
+    p["normalized_constraints"] = {"other": 1.0}
+    with pytest.raises(ContractError, match="normalized_constraints.target_score"):
+        load_task_contract(p)

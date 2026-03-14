@@ -52,3 +52,17 @@ def test_no_stop_when_audit_failed() -> None:
         invariants_ok=True,
     )
     assert d.status != "PASS"
+
+
+def test_pass_on_last_allowed_iteration() -> None:
+    d = TerminationOracle().evaluate(
+        iteration=1,
+        max_iterations=1,
+        delta=0.2,
+        band=InnovationBand(0.0, 0.5),
+        sigma=SigmaIndex(0.1, 0.1, 0.1, 0.9),
+        audit=_audit(True),
+        coherence_threshold=0.8,
+        invariants_ok=True,
+    )
+    assert d.status == "PASS"

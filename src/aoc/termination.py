@@ -26,8 +26,6 @@ class TerminationOracle:
     ) -> TerminationDecision:
         if audit.critical_failure or not invariants_ok:
             return TerminationDecision("FAIL", "critical_failure")
-        if iteration >= max_iterations:
-            return TerminationDecision("MAX_ITER", "max_iterations")
         if delta > band.max_delta:
             return TerminationDecision("INCONCLUSIVE", "drift_exceeded")
 
@@ -39,4 +37,6 @@ class TerminationOracle:
         )
         if can_pass:
             return TerminationDecision("PASS", "productive_emergence")
+        if iteration >= max_iterations:
+            return TerminationDecision("MAX_ITER", "max_iterations")
         return TerminationDecision("INCONCLUSIVE", "other")

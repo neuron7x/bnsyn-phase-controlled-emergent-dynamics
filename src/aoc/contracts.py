@@ -191,6 +191,10 @@ class AuditorReliabilityTrace:
 
 
 def load_task_contract(payload: dict[str, Any]) -> TaskContract:
+
+    normalized = payload.get("normalized_constraints")
+    if normalized is not None and "target_score" not in normalized:
+        raise ContractError("normalized_constraints.target_score is required when normalized_constraints is provided")
     return TaskContract(
         task_id=str(payload["task_id"]),
         objective=str(payload["objective"]),
