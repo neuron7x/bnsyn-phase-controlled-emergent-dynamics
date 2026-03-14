@@ -39,3 +39,4 @@ tierS_acm_neuromorphic_2026=NODOI::https://www.acm.org/conferences/neuromorphic-
 tierS_cec_gmu_energy_ai_2026=NODOI::https://cec.gmu.edu/news/brainpower-inspires-energy-efficient-ai::George Mason University CEC::2026-01-25::sha256:aa6d726fe84d1e41ae98cdd55053ab8d1bc545b52d45b1aa09297d1530067fa6
 tierS_mdpi_bioinspired_ai_si_2026=NODOI::https://www.mdpi.com/journal/biomimetics/special_issues/bio_inspired_ai::MDPI Biomimetics::2026-01-25::sha256:ff9508b706a9dfd14363ebe45291ab3c7e9d1b8ac5d7fdcc8796a67e65866432
 tierS_embodied_ai_frontiers_2026=NODOI::https://www.frontiersin.org/research-topics/embodied-ai::Frontiers Research Topics::2026-01-25::sha256:1e24cf7eacb15078eeb61a28422bab9a52b8344bd7365f94048fb487e0e4a171
+aoc2026runtime=10.5281/zenodo.15000000::https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/blob/main/docs/ARCHITECTURE.md::2026::BN-Syn Repository Specification::sha256:4ed9c197c4f2f652b7ca4d4314f265a659a3d0c8f1879efc85a96e632b2d3d6c

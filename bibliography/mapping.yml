@@ -102,3 +102,11 @@ CLM-0026:
   bibkey: cliguidelines2024
   section: P2-12 Bench harness contract
   tier: Tier-S
+CLM-7001:
+  bibkey: aoc2026runtime
+  section: AOC v1.0 Structural delta policy
+  tier: Tier-A
+CLM-7002:
+  bibkey: aoc2026runtime
+  section: AOC v1.0 Functional delta policy
+  tier: Tier-A
