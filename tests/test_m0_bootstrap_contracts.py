@@ -8,6 +8,8 @@ from pathlib import Path
 
 import jsonschema
 
+from bnsyn.proof.contracts import BASE_ARTIFACTS, EXPORT_PROOF_ARTIFACTS
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -81,8 +83,8 @@ def test_validation_gate_registry_contract() -> None:
     assert by_id["G3_sigma_in_range"]["threshold"]["metric"] == "sigma_mean"
 
     required_by_mode = by_id["G4_core_artifacts_complete"]["threshold"]["required_artifacts_by_mode"]
-    assert required_by_mode["canonical-base"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "avalanche_fit_report.json", "robustness_report.json", "envelope_report.json", "run_manifest.json"]
-    assert required_by_mode["canonical-export-proof"] == ["emergence_plot.png", "summary_metrics.json", "criticality_report.json", "avalanche_report.json", "phase_space_report.json", "avalanche_fit_report.json", "robustness_report.json", "envelope_report.json", "run_manifest.json", "proof_report.json"]
+    assert tuple(required_by_mode["canonical-base"]) == BASE_ARTIFACTS
+    assert tuple(required_by_mode["canonical-export-proof"]) == EXPORT_PROOF_ARTIFACTS
 
     assert by_id["G5_manifest_valid"]["threshold"]["schema_ref"] != "schemas/proof-report.schema.json"
 
