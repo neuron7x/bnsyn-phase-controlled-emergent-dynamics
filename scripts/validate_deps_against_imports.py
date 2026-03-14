@@ -33,8 +33,8 @@ def _parse_deps() -> tuple[set[str], set[str], set[str]]:
 
 
 def _local_modules() -> set[str]:
-    local = {"bnsyn", "scripts", "tools", "benchmarks", "tests", "contracts", "entropy", "claims"}
-    for base in (Path("src/bnsyn"), Path("scripts"), Path("benchmarks"), Path("tools")):
+    local = {"bnsyn", "aoc", "scripts", "tools", "benchmarks", "tests", "contracts", "entropy", "claims"}
+    for base in (Path("src/bnsyn"), Path("src/aoc"), Path("scripts"), Path("benchmarks"), Path("tools")):
         if not base.exists():
             continue
         for p in base.rglob("*.py"):
