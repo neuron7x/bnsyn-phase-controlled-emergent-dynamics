@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Literal
 
 from .contracts import AuditResult, InnovationBand, SigmaIndex
+
+AOCStatus = Literal["INIT", "RUNNING", "STABILIZED", "FAILED", "MAX_ITER", "INCONCLUSIVE"]
 
 
 @dataclass
@@ -14,4 +17,7 @@ class AOCState:
     sigma: SigmaIndex
     audit: AuditResult
     band: InnovationBand
-    status: str
+    status: AOCStatus
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)

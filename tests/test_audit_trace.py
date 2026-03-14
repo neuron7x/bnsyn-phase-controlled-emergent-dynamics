@@ -8,20 +8,22 @@ def test_auditor_reliability_trace_emitted(tmp_path: Path, monkeypatch: object) 
     cfg = tmp_path / "cfg.yaml"
     cfg.write_text(
         """
- task_prompt: demo
- acceptance_criteria: [ok]
- normalized_constraints:
-   target_score: 0.55
-   functional_threshold: 0.55
-   initial_score: 0.05
-   initial_step_size: 0.1
-   required_artifact_keys: [status, score, iteration, task]
- innovation_band: {min_delta: 0.0, max_delta: 0.6}
- evaluator_config: {deterministic: true}
- invariants: [artifact_is_json, non_negative_score]
- max_iterations: 8
- coherence_threshold: 0.9
- output_dir: out
+task_prompt: demo
+acceptance_criteria: [ok]
+normalized_constraints:
+  target_score: 0.55
+  functional_threshold: 0.55
+  initial_score: 0.05
+  initial_step_size: 0.1
+  required_artifact_keys: [status, score, iteration, task]
+innovation_band: {min_delta: 0.0, max_delta: 0.6}
+delta_weights: {semantic: 0.4, structural: 0.3, functional: 0.3}
+evaluator_config: {deterministic: true}
+invariants: [artifact_is_json, non_negative_score]
+artifact_expectations: [status, score, iteration, task]
+max_iterations: 8
+coherence_threshold: 0.9
+output_dir: out
 """,
         encoding="utf-8",
     )

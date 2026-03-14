@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .audit import AuditEngine
-from .contracts import AuditResult, AuditorReliabilityRecord, AuditorReliabilityTrace, SigmaIndex, TaskContract
+from .contracts import AuditorReliabilityTrace, SigmaIndex, TaskContract
 from .delta import DeltaEngine
 from .evidence import EvidenceWriter, sha256_json
 from .modulator import ConstraintModulator, ConstraintProfile
@@ -46,31 +46,53 @@ class AOCController:
         sigma_trace: list[dict[str, Any]] = []
         delta_trace: list[dict[str, Any]] = []
         audit_trace: list[dict[str, Any]] = []
+        state_trace: list[dict[str, Any]] = []
+        modulation_trace: list[dict[str, Any]] = []
         reliability = AuditorReliabilityTrace()
 
         profile = ConstraintProfile(
             step_size=float(self.contract.normalized_constraints.get("initial_step_size", 0.1))
         )
         previous_delta = 1.0
-        final_decision = TerminationDecision("MAX_ITER", "max_iterations")
+        final_decision = TerminationDecision("INCONCLUSIVE", "other")
         final_artifact: dict[str, Any] = {}
-        final_state: AOCState | None = None
+        final_state = AOCState(
+            iteration=0,
+            zeropoint_hash=zeropoint_hash,
+            current_artifact_hash="",
+            delta_from_zeropoint=0.0,
+            sigma=SigmaIndex(0.0, 0.0, 0.0, 1.0),
+            audit=self.audit_engine.run({"status": "candidate", "score": 0.0}, self.contract)[0],
+            band=self.contract.innovation_band,
+            status="INIT",
+        )
+        state_trace.append(final_state.to_dict())
 
         for iteration in range(1, self.contract.max_iterations + 1):
             artifact = self._generate_candidate(profile, iteration)
             artifact_hash = sha256_json(artifact)
 
-            deltas = self.delta_engine.compute(self.contract, artifact)
-            sigma = self.sigma_engine.compute(deltas.total, previous_delta, iteration)
-            audit, latency_ms = self.audit_engine.run(artifact, self.contract)
-            reliability.append(
-                AuditorReliabilityRecord(
+            try:
+                deltas = self.delta_engine.compute(self.contract, artifact)
+                sigma = self.sigma_engine.compute(deltas.total, previous_delta, iteration)
+                audit, latency_ms = self.audit_engine.run(artifact, self.contract)
+                reliability.record(iteration, audit, latency_ms)
+            except Exception as exc:  # fail-closed on required metrics
+                final_decision = TerminationDecision("FAIL", "critical_failure")
+                final_artifact = artifact
+                final_state = AOCState(
                     iteration=iteration,
-                    audit_passed=audit.passed,
-                    audit_confidence=audit.confidence,
-                    latency_ms=latency_ms,
+                    zeropoint_hash=zeropoint_hash,
+                    current_artifact_hash=artifact_hash,
+                    delta_from_zeropoint=1.0,
+                    sigma=SigmaIndex(1.0, 1.0, 1.0, 0.0),
+                    audit=self.audit_engine.run({"status": "invalid", "score": -1}, self.contract)[0],
+                    band=self.contract.innovation_band,
+                    status="FAILED",
                 )
-            )
+                audit_trace.append({"iteration": iteration, "error": str(exc)})
+                state_trace.append(final_state.to_dict())
+                break
 
             invariants_ok = self._invariants_ok(artifact)
             decision = self.oracle.evaluate(
@@ -90,6 +112,7 @@ class AOCController:
                     "semantic_delta": deltas.semantic_delta,
                     "structural_delta": deltas.structural_delta,
                     "functional_delta": deltas.functional_delta,
+                    "weights": asdict(deltas.weights),
                     "total_delta": deltas.total,
                 }
             )
@@ -103,6 +126,15 @@ class AOCController:
             )
             audit_trace.append({"iteration": iteration, **asdict(audit)})
 
+            state_status = (
+                "STABILIZED"
+                if decision.status == "PASS"
+                else "FAILED"
+                if decision.status == "FAIL"
+                else "MAX_ITER"
+                if decision.status == "MAX_ITER"
+                else "INCONCLUSIVE"
+            )
             final_state = AOCState(
                 iteration=iteration,
                 zeropoint_hash=zeropoint_hash,
@@ -111,18 +143,19 @@ class AOCController:
                 sigma=sigma,
                 audit=audit,
                 band=self.contract.innovation_band,
-                status="RUNNING",
+                status=state_status,
             )
+            state_trace.append(final_state.to_dict())
             final_artifact = artifact
             final_decision = decision
             previous_delta = deltas.total
 
             if decision.status in {"PASS", "FAIL", "MAX_ITER"}:
                 break
-            profile = self.modulator.update(profile, deltas.total, self.contract.innovation_band)
 
-        if final_state is None:
-            raise RuntimeError("AOC controller produced no state")
+            profile, modulation = self.modulator.update(profile, deltas.total, self.contract.innovation_band)
+            modulation["iteration"] = iteration
+            modulation_trace.append(modulation)
 
         termination_verdict = {
             "status": final_decision.status,
@@ -145,6 +178,8 @@ class AOCController:
         self.evidence.write_trace("sigma_trace.json", sigma_trace)
         self.evidence.write_trace("delta_trace.json", delta_trace)
         self.evidence.write_trace("audit_trace.json", audit_trace)
+        self.evidence.write_trace("state_trace.json", state_trace)
+        self.evidence.write_trace("modulation_trace.json", modulation_trace)
         self.evidence.write_json("auditor_reliability_trace.json", reliability.to_dict())
         self.evidence.write_json("termination_verdict.json", termination_verdict)
         self.evidence.emit_bundle()

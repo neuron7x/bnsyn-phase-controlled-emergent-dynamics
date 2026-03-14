@@ -1,4 +1,4 @@
-from aoc.contracts import InnovationBand, TaskContract
+from aoc.contracts import DeltaWeights, InnovationBand, TaskContract
 from aoc.delta import DeltaEngine
 
 
@@ -14,9 +14,12 @@ def test_delta_components_exposed() -> None:
         innovation_band=InnovationBand(0.0, 1.0),
         evaluator_config={},
         invariants=["artifact_is_json"],
+        artifact_expectations=["status", "score"],
+        delta_weights=DeltaWeights(0.4, 0.3, 0.3),
     )
     artifact = {"status": "candidate", "score": 0.25}
     delta = DeltaEngine().compute(contract, artifact)
     assert delta.semantic_delta == 0.25
     assert delta.structural_delta == 0.0
     assert delta.functional_delta == 0.25
+    assert delta.total == (0.25 * 0.4 + 0.0 * 0.3 + 0.25 * 0.3)

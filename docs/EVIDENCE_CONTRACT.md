@@ -9,6 +9,8 @@ Each run directory must contain:
 - `delta_trace.json`
 - `audit_trace.json`
 - `auditor_reliability_trace.json`
+- `modulation_trace.json`
+- `state_trace.json`
 - `termination_verdict.json`
 - `evidence_bundle/` (contains copies of all the files above)
 

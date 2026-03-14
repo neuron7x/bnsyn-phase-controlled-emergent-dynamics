@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +17,9 @@ class EvidenceWriter:
         self.run_dir = run_dir
 
     def write_json(self, name: str, payload: dict[str, Any]) -> None:
-        (self.run_dir / name).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        (self.run_dir / name).write_text(
+            json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8"
+        )
 
     def write_trace(self, name: str, rows: list[dict[str, Any]]) -> None:
         self.write_json(name, {"trace": rows})
@@ -34,12 +35,10 @@ class EvidenceWriter:
             "audit_trace.json",
             "auditor_reliability_trace.json",
             "termination_verdict.json",
+            "modulation_trace.json",
+            "state_trace.json",
             "final_artifact.json",
         ]:
             src = self.run_dir / fname
             if src.exists():
                 shutil.copy2(src, bundle / fname)
-
-
-def as_dict_dataclass(instance: object) -> dict[str, Any]:
-    return asdict(instance)

@@ -5,20 +5,8 @@ import sys
 from pathlib import Path
 
 
-REQUIRED = [
-    "final_artifact.json",
-    "zeropoint.json",
-    "run_summary.json",
-    "sigma_trace.json",
-    "delta_trace.json",
-    "audit_trace.json",
-    "auditor_reliability_trace.json",
-    "termination_verdict.json",
-]
-
-
-def test_controller_e2e_deterministic(tmp_path: Path) -> None:
-    cfg = tmp_path / "cfg.yaml"
+def test_evidence_bundle_emitted_on_failure_path(tmp_path: Path) -> None:
+    cfg = tmp_path / "cfg_failure.yaml"
     cfg.write_text(
         """
 task_prompt: demo
@@ -32,25 +20,20 @@ normalized_constraints:
 innovation_band: {min_delta: 0.0, max_delta: 0.6}
 delta_weights: {semantic: 0.4, structural: 0.3, functional: 0.3}
 evaluator_config: {deterministic: true}
-invariants: [artifact_is_json, non_negative_score]
+invariants: [artifact_is_json, unknown_invariant]
 artifact_expectations: [status, score, iteration, task]
-max_iterations: 8
+max_iterations: 3
 coherence_threshold: 0.9
 output_dir: out
 """,
         encoding="utf-8",
     )
-
     cmd = [sys.executable, "-m", "aoc.cli", "run", "--config", str(cfg)]
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1] / "src")
     subprocess.run(cmd, cwd=tmp_path, check=True, env=env)
-    verdict1 = json.loads((tmp_path / "out" / "termination_verdict.json").read_text())
-    files = {p.name for p in (tmp_path / "out").iterdir()}
-    for name in REQUIRED:
-        assert name in files
-    assert (tmp_path / "out" / "evidence_bundle").is_dir()
 
-    subprocess.run(cmd, cwd=tmp_path, check=True, env=env)
-    verdict2 = json.loads((tmp_path / "out" / "termination_verdict.json").read_text())
-    assert verdict1 == verdict2
+    verdict = json.loads((tmp_path / "out" / "termination_verdict.json").read_text())
+    assert verdict["status"] in {"FAIL", "MAX_ITER", "INCONCLUSIVE"}
+    assert (tmp_path / "out" / "evidence_bundle" / "termination_verdict.json").exists()
+    assert (tmp_path / "out" / "evidence_bundle" / "zeropoint.json").exists()

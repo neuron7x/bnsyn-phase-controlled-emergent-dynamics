@@ -1,27 +1,54 @@
-# AOC v1.0 Architecture
+# Architecture
 
-## Domains
+This page maps runtime and governance flows to repository paths (see path/docs/ARCHITECTURE.md).
+Back to project landing page: [README.md](../README.md) (see path/README.md).
 
-- **Domain A — Contracts:** `aoc.contracts` defines TaskContract, InnovationBand, SigmaIndex, AuditResult, and reliability trace records.
-- **Domain B — Runtime Kernel:** `aoc.controller`, `aoc.zeropoint`, `aoc.delta`, `aoc.sigma`, `aoc.termination`, `aoc.modulator`.
-- **Domain C — Audit and Validation:** `aoc.audit` with independent functional, structural, and spec gates.
-- **Domain D — Evidence and Traces:** `aoc.evidence` and the controller trace emission path.
-- **Domain E — Delivery Surface:** `aoc.cli`, `examples/basic_task.yaml`, README run flow.
+## Runtime execution flow
 
-## Deterministic loop
+```mermaid
+flowchart LR
+  A["src/bnsyn/cli.py"] --> B["src/bnsyn/"]
+  B --> C["experiments/"]
+  B --> D["results/ + figures/"]
+  C --> D
+```
 
-1. Materialize `zeropoint.json`.
-2. Generate deterministic candidate artifact.
-3. Compute semantic/structural/functional deltas and weighted total.
-4. Compute SigmaIndex.
-5. Execute independent audit gates.
-6. Record delta/sigma/audit/reliability traces.
-7. Apply strict termination oracle.
-8. Modulate constraints for next iteration if continuing.
+The CLI entrypoint is `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py).
+Runtime modules are under `src/bnsyn/` (see path/src/bnsyn).
+Experiment definitions are under `experiments/` (see path/experiments).
+Artifacts are written under `results/` and `figures/` (see path/results) (see path/figures).
 
-## Fail-closed rules
+## Governance and validation flow
 
-- Missing/invalid invariants => FAIL.
-- Critical structural audit failure => FAIL.
-- Delta above innovation band max => INCONCLUSIVE (drift exceeded), never PASS.
-- PASS only when all required conditions satisfy termination policy.
+```mermaid
+flowchart LR
+  A["specs/ + schemas/ + claims/ + docs/"] --> B["scripts/"]
+  B --> C[".github/workflows/"]
+```
+
+SSOT sources are versioned under `specs/`, `schemas/`, `claims/`, and `docs/` (see path/specs) (see path/schemas) (see path/claims) (see path/docs).
+Validation scripts run from `scripts/` (see path/scripts).
+CI gates are defined in `.github/workflows/` (see path/.github/workflows).
+
+## Key Paths
+
+- Runtime entrypoint: `src/bnsyn/cli.py` (see path/src/bnsyn/cli.py)
+- Runtime package: `src/bnsyn/` (see path/src/bnsyn)
+- Experiment assets: `experiments/` (see path/experiments)
+- Result artifacts: `results/` (see path/results)
+- Figure artifacts: `figures/` (see path/figures)
+- Validation scripts: `scripts/` (see path/scripts)
+- CI workflows: `.github/workflows/` (see path/.github/workflows)
+
+## AOC v1.0 Addendum
+
+A deterministic local controller is implemented in `src/aoc/` with contract/state, zeropoint, delta, sigma, audit, termination, modulation, evidence, and CLI modules.
+
+Run path:
+1. Persist immutable `zeropoint.json` before iteration 1.
+2. Generate deterministic candidate artifacts.
+3. Compute semantic + structural + functional deltas and weighted total.
+4. Compute SigmaIndex diagnostics.
+5. Execute independent functional/structural/spec audits.
+6. Apply strict termination rules and deterministic constraint modulation.
+7. Persist traces + verdict + `evidence_bundle/` on all paths.

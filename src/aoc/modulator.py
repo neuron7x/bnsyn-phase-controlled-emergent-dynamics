@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from .contracts import InnovationBand
 
@@ -11,9 +11,28 @@ class ConstraintProfile:
 
 
 class ConstraintModulator:
-    def update(self, profile: ConstraintProfile, delta: float, band: InnovationBand) -> ConstraintProfile:
+    def update(
+        self, profile: ConstraintProfile, delta: float, band: InnovationBand
+    ) -> tuple[ConstraintProfile, dict[str, object]]:
         if delta > band.max_delta:
-            return ConstraintProfile(step_size=max(0.01, profile.step_size * 0.5))
+            new_profile = ConstraintProfile(step_size=max(0.01, profile.step_size * 0.5))
+            return new_profile, {
+                "action": "tighten",
+                "reason": "drift_exceeded",
+                "from": asdict(profile),
+                "to": asdict(new_profile),
+            }
         if delta < band.min_delta:
-            return ConstraintProfile(step_size=min(1.0, profile.step_size * 1.25))
-        return profile
+            new_profile = ConstraintProfile(step_size=min(1.0, profile.step_size * 1.25))
+            return new_profile, {
+                "action": "loosen",
+                "reason": "insufficient_progress",
+                "from": asdict(profile),
+                "to": asdict(new_profile),
+            }
+        return profile, {
+            "action": "hold",
+            "reason": "within_band",
+            "from": asdict(profile),
+            "to": asdict(profile),
+        }

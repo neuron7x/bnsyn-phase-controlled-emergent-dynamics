@@ -11,11 +11,20 @@ normalized_constraints:
 innovation_band:
   min_delta: 0.0
   max_delta: 0.6
+delta_weights:
+  semantic: 0.4
+  structural: 0.3
+  functional: 0.3
 evaluator_config:
   deterministic: true
 invariants:
   - artifact_is_json
   - non_negative_score
+artifact_expectations:
+  - status
+  - score
+  - iteration
+  - task
 max_iterations: 8
 coherence_threshold: 0.9
 output_dir: "aoc_output"

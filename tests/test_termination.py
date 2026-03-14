@@ -3,7 +3,13 @@ from aoc.termination import TerminationOracle
 
 
 def _audit(passed: bool = True, critical: bool = False) -> AuditResult:
-    return AuditResult(passed, 1.0 if passed else 0.2, critical, passed, True, True, "x")
+    return AuditResult(
+        passed=passed,
+        confidence=1.0 if passed else 0.2,
+        critical_failure=critical,
+        reasons=["ok" if passed else "failed"],
+        checks={},
+    )
 
 
 def test_no_pass_when_delta_exceeds_band() -> None:

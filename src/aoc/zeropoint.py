@@ -21,10 +21,17 @@ class ZeroPointManager:
             "innovation_band": asdict(contract.innovation_band),
             "evaluator_config": contract.evaluator_config,
             "invariants": contract.invariants,
+            "artifact_expectations": contract.artifact_expectations,
+            "delta_weights": asdict(contract.delta_weights),
         }
         canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         baseline_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         payload["canonical_baseline_hash"] = baseline_hash
         out_file = self.run_dir / "zeropoint.json"
-        out_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        if out_file.exists():
+            existing = json.loads(out_file.read_text(encoding="utf-8"))
+            if existing.get("canonical_baseline_hash") != baseline_hash:
+                raise RuntimeError("zeropoint.json exists with different baseline hash")
+            return existing
+        out_file.write_text(json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8")
         return payload
