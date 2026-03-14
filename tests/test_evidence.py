@@ -14,7 +14,7 @@ def test_failure_path_emits_evidence_bundle(tmp_path: Path) -> None:
 
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1] / "src")
-    subprocess.run([sys.executable, "-m", "aoc.cli", "run", "--config", str(cfg)], cwd=tmp_path, check=True, env=env)
+    subprocess.run([sys.executable, "-m", "aoc.cli", "run", "--config", str(cfg)], cwd=tmp_path, check=False, env=env)
 
     out = tmp_path / "aoc_output"
     verdict = json.loads((out / "termination_verdict.json").read_text())

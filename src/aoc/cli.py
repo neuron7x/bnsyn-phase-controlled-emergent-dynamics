@@ -34,7 +34,7 @@ def main() -> int:
     run_dir = Path(args.out_dir or payload.get("output_dir", "aoc_output"))
     verdict = AOCController(contract, run_dir).run()
     print(json.dumps(verdict, sort_keys=True))
-    return 0
+    return 0 if verdict.get("status") == "PASS" else 1
 
 
 if __name__ == "__main__":
