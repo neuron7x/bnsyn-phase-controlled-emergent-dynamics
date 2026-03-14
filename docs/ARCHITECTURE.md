@@ -57,6 +57,6 @@ Run path:
 
 - SigmaIndex inputs are normalized in `[0,1]`; out-of-range values fail closed.
 - Semantic delta token normalization: lowercase, punctuation stripped, whitespace split, empty tokens removed.
-- Structural delta uses required markdown heading presence/order.
-- Functional delta uses required check failure ratio.
+- [NORMATIVE][CLM-7001] Structural delta uses required markdown heading presence/order.
+- [NORMATIVE][CLM-7002] Functional delta uses required check failure ratio.
 - ZeroPoint is written before iteration 1 and reused only if hash-identical.
