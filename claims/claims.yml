@@ -472,3 +472,33 @@ claims:
   - src/bnsyn/vcg.py
   verification_paths:
   - tests/test_vcg_smoke.py
+- id: CLM-7001
+  statement: Structural delta for AOC markdown artifacts is computed from required heading presence and ordering.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: AOC v1.0 architecture/runtime contract
+  locator: docs/ARCHITECTURE.md AOC v1.0 Runtime Notes
+  action: KEEP
+  notes: Required for governed normative reference integrity and deterministic structural-delta interpretation.
+  bibkey: aoc2026runtime
+  spec_section: AOC v1.0 Structural delta policy
+  implementation_paths:
+  - src/aoc/delta.py
+  verification_paths:
+  - tests/test_delta.py
+- id: CLM-7002
+  statement: Functional delta for AOC is computed as the ratio of failed required checks to total required checks.
+  status: PROVEN
+  tier: Tier-A
+  normative: true
+  source: AOC v1.0 architecture/runtime contract
+  locator: docs/ARCHITECTURE.md AOC v1.0 Runtime Notes
+  action: KEEP
+  notes: Required for governed normative reference integrity and deterministic functional-delta interpretation.
+  bibkey: aoc2026runtime
+  spec_section: AOC v1.0 Functional delta policy
+  implementation_paths:
+  - src/aoc/delta.py
+  verification_paths:
+  - tests/test_delta.py
