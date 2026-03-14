@@ -1,12 +1,12 @@
 import json
-import os
-import subprocess
-import sys
 from pathlib import Path
 
+from aoc.contracts import load_task_contract
+from aoc.controller import AOCController
 
-REQUIRED = [
-    "final_artifact.json",
+
+REQUIRED = {
+    "final_artifact.md",
     "zeropoint.json",
     "run_summary.json",
     "sigma_trace.json",
@@ -14,43 +14,19 @@ REQUIRED = [
     "audit_trace.json",
     "auditor_reliability_trace.json",
     "termination_verdict.json",
-]
+}
 
 
-def test_controller_e2e_deterministic(tmp_path: Path) -> None:
-    cfg = tmp_path / "cfg.yaml"
-    cfg.write_text(
-        """
-task_prompt: demo
-acceptance_criteria: [ok]
-normalized_constraints:
-  target_score: 0.55
-  functional_threshold: 0.55
-  initial_score: 0.05
-  initial_step_size: 0.1
-  required_artifact_keys: [status, score, iteration, task]
-innovation_band: {min_delta: 0.0, max_delta: 0.6}
-delta_weights: {semantic: 0.4, structural: 0.3, functional: 0.3}
-evaluator_config: {deterministic: true}
-invariants: [artifact_is_json, non_negative_score]
-artifact_expectations: [status, score, iteration, task]
-max_iterations: 8
-coherence_threshold: 0.9
-output_dir: out
-""",
-        encoding="utf-8",
-    )
+def test_full_controller_run_and_determinism(tmp_path: Path) -> None:
+    payload = json.loads(json.dumps(__import__("yaml").safe_load(Path("examples/basic_task.yaml").read_text())))
+    payload["output"]["artifact_filename"] = "final_artifact.md"
+    c = load_task_contract(payload)
 
-    cmd = [sys.executable, "-m", "aoc.cli", "run", "--config", str(cfg)]
-    env = os.environ.copy()
-    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1] / "src")
-    subprocess.run(cmd, cwd=tmp_path, check=True, env=env)
-    verdict1 = json.loads((tmp_path / "out" / "termination_verdict.json").read_text())
-    files = {p.name for p in (tmp_path / "out").iterdir()}
-    for name in REQUIRED:
-        assert name in files
-    assert (tmp_path / "out" / "evidence_bundle").is_dir()
+    out = tmp_path / "run"
+    v1 = AOCController(c, out).run()
+    files = {p.name for p in out.iterdir()}
+    assert REQUIRED.issubset(files)
+    assert (out / "evidence_bundle").is_dir()
 
-    subprocess.run(cmd, cwd=tmp_path, check=True, env=env)
-    verdict2 = json.loads((tmp_path / "out" / "termination_verdict.json").read_text())
-    assert verdict1 == verdict2
+    v2 = AOCController(c, out).run()
+    assert v1 == v2

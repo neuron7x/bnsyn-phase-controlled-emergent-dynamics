@@ -6,32 +6,35 @@ from pathlib import Path
 
 import yaml
 
-from .contracts import task_contract_from_dict
+from .contracts import ContractError, load_task_contract
 from .controller import AOCController
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="aoc", description="Adaptive Orchestration Controller")
     sub = parser.add_subparsers(dest="command", required=True)
-    run = sub.add_parser("run", help="run a deterministic AOC orchestration")
-    run.add_argument("--config", required=True, help="YAML task contract path")
-    run.add_argument("--output-dir", default=None, help="Output directory override")
+    run = sub.add_parser("run", help="run deterministic local AOC")
+    run.add_argument("--config", required=True)
+    run.add_argument("--out-dir", default=None)
+    run.add_argument("--verbose", action="store_true")
     return parser
 
 
 def main() -> int:
-    parser = build_parser()
-    args = parser.parse_args()
-    if args.command == "run":
-        with Path(args.config).open("r", encoding="utf-8") as fh:
-            payload = yaml.safe_load(fh)
-        contract = task_contract_from_dict(payload)
-        output_dir = Path(args.output_dir or payload.get("output_dir", "aoc_output"))
-        controller = AOCController(contract, output_dir)
-        verdict = controller.run()
-        print(json.dumps(verdict, indent=2))
-        return 0
-    return 1
+    args = build_parser().parse_args()
+    if args.command != "run":
+        return 1
+    try:
+        payload = yaml.safe_load(Path(args.config).read_text(encoding="utf-8"))
+        contract = load_task_contract(payload)
+    except (OSError, yaml.YAMLError, KeyError, ValueError, ContractError) as exc:
+        print(json.dumps({"status": "FAIL", "error": str(exc)}, sort_keys=True))
+        return 2
+
+    run_dir = Path(args.out_dir or payload.get("output_dir", "aoc_output"))
+    verdict = AOCController(contract, run_dir).run()
+    print(json.dumps(verdict, sort_keys=True))
+    return 0
 
 
 if __name__ == "__main__":

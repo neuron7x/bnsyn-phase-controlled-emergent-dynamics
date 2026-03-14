@@ -52,3 +52,11 @@ Run path:
 5. Execute independent functional/structural/spec audits.
 6. Apply strict termination rules and deterministic constraint modulation.
 7. Persist traces + verdict + `evidence_bundle/` on all paths.
+
+## AOC v1.0 Runtime Notes
+
+- SigmaIndex inputs are normalized in `[0,1]`; out-of-range values fail closed.
+- Semantic delta token normalization: lowercase, punctuation stripped, whitespace split, empty tokens removed.
+- Structural delta uses required markdown heading presence/order.
+- Functional delta uses required check failure ratio.
+- ZeroPoint is written before iteration 1 and reused only if hash-identical.

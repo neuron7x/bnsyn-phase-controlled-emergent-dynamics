@@ -1,30 +1,33 @@
-task_prompt: "Produce a bounded deterministic artifact for local AOC demonstration"
-acceptance_criteria:
-  - "artifact score reaches threshold"
-  - "artifact remains structurally valid"
-normalized_constraints:
-  target_score: 0.55
-  functional_threshold: 0.55
-  initial_score: 0.05
-  initial_step_size: 0.1
-  required_artifact_keys: ["status", "score", "iteration", "task"]
+task_id: "basic-markdown-task"
+objective: "Summarize deterministic AOC orchestration outcomes"
+artifact_type: "markdown_document"
+max_iterations: 6
+coherence_threshold: 0.9
 innovation_band:
   min_delta: 0.0
-  max_delta: 0.6
+  max_delta: 0.7
 delta_weights:
   semantic: 0.4
   structural: 0.3
   functional: 0.3
-evaluator_config:
-  deterministic: true
+constraints:
+  required_sections:
+    - "Context"
+    - "Method"
+    - "Result"
+  forbidden_terms:
+    - "TODO"
+    - "lorem ipsum"
+  min_length: 120
+  max_length: 4000
 invariants:
-  - artifact_is_json
-  - non_negative_score
-artifact_expectations:
-  - status
-  - score
-  - iteration
-  - task
-max_iterations: 8
-coherence_threshold: 0.9
+  must_include_objective: true
+  must_preserve_required_sections: false
+generator:
+  kind: "deterministic_markdown"
+  deterministic_seed: 7
+auditor:
+  use_cross_model_stub: true
+output:
+  artifact_filename: "final_artifact.md"
 output_dir: "aoc_output"

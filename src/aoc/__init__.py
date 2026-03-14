@@ -1,4 +1,4 @@
-"""AOC v1.0 package."""
+"""Adaptive Orchestration Controller v1.0."""
 
 from .controller import AOCController
 

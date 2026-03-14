@@ -5,7 +5,7 @@ from typing import Any
 
 
 class ContractError(ValueError):
-    """Raised when a contract is invalid."""
+    """Raised when contract data is invalid."""
 
 
 @dataclass(frozen=True)
@@ -14,10 +14,8 @@ class InnovationBand:
     max_delta: float
 
     def __post_init__(self) -> None:
-        if self.min_delta < 0 or self.max_delta < 0:
-            raise ContractError("InnovationBand bounds must be non-negative")
-        if self.min_delta > self.max_delta:
-            raise ContractError("InnovationBand min_delta must be <= max_delta")
+        if not (0 <= self.min_delta <= self.max_delta <= 1):
+            raise ContractError("innovation_band must satisfy 0 <= min_delta <= max_delta <= 1")
 
 
 @dataclass(frozen=True)
@@ -27,11 +25,10 @@ class DeltaWeights:
     functional: float
 
     def __post_init__(self) -> None:
-        for value in (self.semantic, self.structural, self.functional):
-            if value < 0:
-                raise ContractError("Delta weights must be non-negative")
-        if abs(self.semantic + self.structural + self.functional - 1.0) > 1e-9:
-            raise ContractError("Delta weights must sum to 1.0")
+        if any(v < 0 for v in (self.semantic, self.structural, self.functional)):
+            raise ContractError("delta weights must be non-negative")
+        if abs((self.semantic + self.structural + self.functional) - 1.0) > 1e-9:
+            raise ContractError("delta weights must sum to 1.0")
 
 
 @dataclass(frozen=True)
@@ -42,8 +39,9 @@ class SigmaIndex:
     convergence_slope: float
 
     def __post_init__(self) -> None:
-        for name, value in asdict(self).items():
-            if not 0.0 <= value <= 1.0:
+        values = asdict(self)
+        for name, value in values.items():
+            if not 0 <= value <= 1:
                 raise ContractError(f"SigmaIndex.{name} must be in [0,1]")
 
     @property
@@ -64,27 +62,6 @@ class SigmaIndex:
 
 
 @dataclass(frozen=True)
-class DeltaComponents:
-    semantic_delta: float
-    structural_delta: float
-    functional_delta: float
-    weights: DeltaWeights
-
-    def __post_init__(self) -> None:
-        for value in (self.semantic_delta, self.structural_delta, self.functional_delta):
-            if value < 0.0:
-                raise ContractError("Delta components must be non-negative")
-
-    @property
-    def total(self) -> float:
-        return (
-            self.semantic_delta * self.weights.semantic
-            + self.structural_delta * self.weights.structural
-            + self.functional_delta * self.weights.functional
-        )
-
-
-@dataclass(frozen=True)
 class AuditResult:
     passed: bool
     confidence: float
@@ -93,108 +70,145 @@ class AuditResult:
     checks: dict[str, Any]
 
     def __post_init__(self) -> None:
-        if not 0.0 <= self.confidence <= 1.0:
-            raise ContractError("AuditResult.confidence must be in [0,1]")
+        if not 0 <= self.confidence <= 1:
+            raise ContractError("audit confidence must be in [0,1]")
+        hard_failures = [
+            k
+            for k, v in self.checks.items()
+            if isinstance(v, dict) and v.get("required") is True and v.get("passed") is False
+        ]
+        if self.passed and hard_failures:
+            raise ContractError(f"audit passed cannot be true with failed required checks: {hard_failures}")
+
+
+@dataclass(frozen=True)
+class DeltaBreakdown:
+    semantic_delta: float
+    structural_delta: float
+    functional_delta: float
+    total_delta: float
 
 
 @dataclass(frozen=True)
 class TaskContract:
-    task_prompt: str
-    acceptance_criteria: list[str]
-    normalized_constraints: dict[str, Any]
+    task_id: str
+    objective: str
+    artifact_type: str
+    max_iterations: int
+    coherence_threshold: float
     innovation_band: InnovationBand
-    evaluator_config: dict[str, Any]
-    invariants: list[str]
-    artifact_expectations: list[str]
     delta_weights: DeltaWeights
-    max_iterations: int = 10
-    coherence_threshold: float = 0.35
+    constraints: dict[str, Any]
+    invariants: dict[str, bool]
+    generator: dict[str, Any]
+    auditor: dict[str, Any]
+    output: dict[str, Any]
 
     def __post_init__(self) -> None:
-        if not self.task_prompt.strip():
-            raise ContractError("TaskContract.task_prompt is required")
-        if not self.acceptance_criteria:
-            raise ContractError("TaskContract.acceptance_criteria must not be empty")
-        if self.max_iterations <= 0:
-            raise ContractError("TaskContract.max_iterations must be positive")
-        if not 0.0 <= self.coherence_threshold <= 1.0:
-            raise ContractError("TaskContract.coherence_threshold must be in [0,1]")
-        if not self.artifact_expectations:
-            raise ContractError("TaskContract.artifact_expectations must not be empty")
+        if not self.task_id.strip():
+            raise ContractError("task_id is required")
+        if not self.objective.strip():
+            raise ContractError("objective is required")
+        if self.artifact_type != "markdown_document":
+            raise ContractError("artifact_type must be markdown_document for v1.0")
+        if self.max_iterations < 1:
+            raise ContractError("max_iterations must be >= 1")
+        if not 0 <= self.coherence_threshold <= 1:
+            raise ContractError("coherence_threshold must be in [0,1]")
+        for req in ("required_sections", "forbidden_terms", "min_length", "max_length"):
+            if req not in self.constraints:
+                raise ContractError(f"constraints.{req} is required")
+        if self.constraints["min_length"] < 1 or self.constraints["max_length"] < self.constraints["min_length"]:
+            raise ContractError("constraints min/max length invalid")
+        for req in ("must_include_objective", "must_preserve_required_sections"):
+            if req not in self.invariants:
+                raise ContractError(f"invariants.{req} is required")
+        if "kind" not in self.generator or "deterministic_seed" not in self.generator:
+            raise ContractError("generator.kind and generator.deterministic_seed are required")
+        if "use_cross_model_stub" not in self.auditor:
+            raise ContractError("auditor.use_cross_model_stub is required")
+        if "artifact_filename" not in self.output:
+            raise ContractError("output.artifact_filename is required")
+
+
+@dataclass(frozen=True)
+class GeneratedArtifact:
+    content: str
+    metadata: dict[str, Any]
 
 
 @dataclass
-class AuditorReliabilityRecord:
+class AuditRecord:
     iteration: int
     audit_passed: bool
     audit_confidence: float
-    latency_ms: float
-    ground_truth: bool | None = None
+    ground_truth: bool | None
+    latency_iters: int | None
 
 
 @dataclass
 class AuditorReliabilityTrace:
-    records: list[AuditorReliabilityRecord] = field(default_factory=list)
+    history: list[AuditRecord] = field(default_factory=list)
 
-    def record(self, iteration: int, audit: AuditResult, latency_ms: float, ground_truth: bool | None = None) -> None:
-        self.records.append(
-            AuditorReliabilityRecord(
+    def record(self, iteration: int, audit: AuditResult, ground_truth: bool | None = None) -> None:
+        self.history.append(
+            AuditRecord(
                 iteration=iteration,
                 audit_passed=audit.passed,
                 audit_confidence=audit.confidence,
-                latency_ms=latency_ms,
                 ground_truth=ground_truth,
+                latency_iters=1,
             )
         )
 
     def precision(self) -> float | None:
-        positives = [r for r in self.records if r.audit_passed and r.ground_truth is not None]
-        if not positives:
-            return None
-        true_pos = [r for r in positives if r.ground_truth]
-        return len(true_pos) / len(positives)
-
-    def avg_latency(self) -> float | None:
-        if not self.records:
-            return None
-        return sum(r.latency_ms for r in self.records) / len(self.records)
-
-    def false_conservation_rate(self) -> float | None:
-        judged = [r for r in self.records if r.ground_truth is not None]
+        judged = [r for r in self.history if r.ground_truth is not None and r.audit_passed]
         if not judged:
             return None
-        false_ok = [r for r in judged if r.audit_passed and not r.ground_truth]
+        tp = [r for r in judged if r.ground_truth is True]
+        return len(tp) / len(judged)
+
+    def avg_latency(self) -> float | None:
+        observed = [r.latency_iters for r in self.history if r.latency_iters is not None]
+        if not observed:
+            return None
+        return sum(observed) / len(observed)
+
+    def false_conservation_rate(self) -> float | None:
+        judged = [r for r in self.history if r.ground_truth is not None]
+        if not judged:
+            return None
+        false_ok = [r for r in judged if r.audit_passed and r.ground_truth is False]
         return len(false_ok) / len(judged)
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "records": [asdict(r) for r in self.records],
+            "history": [asdict(h) for h in self.history],
             "precision": self.precision(),
             "avg_latency": self.avg_latency(),
             "false_conservation_rate": self.false_conservation_rate(),
         }
 
 
-def task_contract_from_dict(payload: dict[str, Any]) -> TaskContract:
-    band = InnovationBand(
-        min_delta=float(payload["innovation_band"]["min_delta"]),
-        max_delta=float(payload["innovation_band"]["max_delta"]),
-    )
-    weights_payload = payload.get("delta_weights", {"semantic": 0.4, "structural": 0.3, "functional": 0.3})
-    weights = DeltaWeights(
-        semantic=float(weights_payload["semantic"]),
-        structural=float(weights_payload["structural"]),
-        functional=float(weights_payload["functional"]),
-    )
+def load_task_contract(payload: dict[str, Any]) -> TaskContract:
     return TaskContract(
-        task_prompt=str(payload["task_prompt"]),
-        acceptance_criteria=[str(x) for x in payload["acceptance_criteria"]],
-        normalized_constraints=dict(payload.get("normalized_constraints", {})),
-        innovation_band=band,
-        evaluator_config=dict(payload.get("evaluator_config", {})),
-        invariants=[str(x) for x in payload.get("invariants", ["artifact_is_json"])],
-        artifact_expectations=[str(x) for x in payload.get("artifact_expectations", ["status", "score"])],
-        delta_weights=weights,
-        max_iterations=int(payload.get("max_iterations", 10)),
-        coherence_threshold=float(payload.get("coherence_threshold", 0.35)),
+        task_id=str(payload["task_id"]),
+        objective=str(payload["objective"]),
+        artifact_type=str(payload["artifact_type"]),
+        max_iterations=int(payload["max_iterations"]),
+        coherence_threshold=float(payload["coherence_threshold"]),
+        innovation_band=InnovationBand(
+            min_delta=float(payload["innovation_band"]["min_delta"]),
+            max_delta=float(payload["innovation_band"]["max_delta"]),
+        ),
+        delta_weights=DeltaWeights(
+            semantic=float(payload["delta_weights"]["semantic"]),
+            structural=float(payload["delta_weights"]["structural"]),
+            functional=float(payload["delta_weights"]["functional"]),
+        ),
+        constraints=dict(payload["constraints"]),
+        invariants=dict(payload["invariants"]),
+        generator=dict(payload["generator"]),
+        auditor=dict(payload["auditor"]),
+        output=dict(payload["output"]),
     )

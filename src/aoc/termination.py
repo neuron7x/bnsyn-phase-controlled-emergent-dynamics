@@ -24,18 +24,19 @@ class TerminationOracle:
         coherence_threshold: float,
         invariants_ok: bool,
     ) -> TerminationDecision:
-        if not invariants_ok:
-            return TerminationDecision("FAIL", "critical_failure")
-        if audit.critical_failure:
+        if audit.critical_failure or not invariants_ok:
             return TerminationDecision("FAIL", "critical_failure")
         if iteration >= max_iterations:
             return TerminationDecision("MAX_ITER", "max_iterations")
         if delta > band.max_delta:
             return TerminationDecision("INCONCLUSIVE", "drift_exceeded")
-        if delta < band.min_delta:
-            return TerminationDecision("INCONCLUSIVE", "insufficient_progress")
-        if not audit.passed:
-            return TerminationDecision("INCONCLUSIVE", "inconclusive_audit")
-        if sigma.conflict_density >= coherence_threshold:
-            return TerminationDecision("INCONCLUSIVE", "insufficient_progress")
-        return TerminationDecision("PASS", "productive_emergence")
+
+        can_pass = (
+            band.min_delta <= delta <= band.max_delta
+            and sigma.conflict_density < coherence_threshold
+            and audit.passed
+            and invariants_ok
+        )
+        if can_pass:
+            return TerminationDecision("PASS", "productive_emergence")
+        return TerminationDecision("INCONCLUSIVE", "other")

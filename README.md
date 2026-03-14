@@ -142,27 +142,27 @@ make quickstart-smoke
 ./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
 ```
 
-
 ## AOC v1.0 (Adaptive Orchestration Controller)
 
-This repository now includes a local deterministic `aoc` package that can be run with one command.
+Local deterministic controller for bounded emergence under explicit constraints.
 
-### Install
-
+Install:
 ```bash
 python -m pip install .
 ```
 
-### Run
-
+Run:
 ```bash
 aoc run --config examples/basic_task.yaml
 ```
 
-### AOC outputs
+Deterministic local limitations (v1.0):
+- local deterministic markdown generator only,
+- local cross-model auditor stub only,
+- no network calls.
 
-A run emits:
-- `final_artifact.json`
+Outputs:
+- `final_artifact.md`
 - `zeropoint.json`
 - `run_summary.json`
 - `sigma_trace.json`
@@ -170,4 +170,4 @@ A run emits:
 - `audit_trace.json`
 - `auditor_reliability_trace.json`
 - `termination_verdict.json`
-- `evidence_bundle/` (contains copies of required outputs)
+- `evidence_bundle/`

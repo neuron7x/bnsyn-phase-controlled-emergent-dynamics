@@ -12,10 +12,10 @@ AOCStatus = Literal["INIT", "RUNNING", "STABILIZED", "FAILED", "MAX_ITER", "INCO
 class AOCState:
     iteration: int
     zeropoint_hash: str
-    current_artifact_hash: str
-    delta_from_zeropoint: float
-    sigma: SigmaIndex
-    audit: AuditResult
+    current_artifact_hash: str | None
+    delta_from_zeropoint: float | None
+    sigma: SigmaIndex | None
+    audit: AuditResult | None
     band: InnovationBand
     status: AOCStatus
 

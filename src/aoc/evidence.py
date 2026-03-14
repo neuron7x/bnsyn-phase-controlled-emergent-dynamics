@@ -7,9 +7,12 @@ from pathlib import Path
 from typing import Any
 
 
-def sha256_json(payload: dict[str, Any]) -> str:
-    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+def hash_text(content: str) -> str:
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def hash_json(payload: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
 class EvidenceWriter:
@@ -17,28 +20,15 @@ class EvidenceWriter:
         self.run_dir = run_dir
 
     def write_json(self, name: str, payload: dict[str, Any]) -> None:
-        (self.run_dir / name).write_text(
-            json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8"
-        )
+        (self.run_dir / name).write_text(json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8")
 
-    def write_trace(self, name: str, rows: list[dict[str, Any]]) -> None:
-        self.write_json(name, {"trace": rows})
+    def write_markdown(self, name: str, content: str) -> None:
+        (self.run_dir / name).write_text(content, encoding="utf-8")
 
-    def emit_bundle(self) -> None:
+    def copy_bundle(self, files: list[str]) -> None:
         bundle = self.run_dir / "evidence_bundle"
         bundle.mkdir(exist_ok=True)
-        for fname in [
-            "zeropoint.json",
-            "run_summary.json",
-            "sigma_trace.json",
-            "delta_trace.json",
-            "audit_trace.json",
-            "auditor_reliability_trace.json",
-            "termination_verdict.json",
-            "modulation_trace.json",
-            "state_trace.json",
-            "final_artifact.json",
-        ]:
-            src = self.run_dir / fname
+        for f in files:
+            src = self.run_dir / f
             if src.exists():
-                shutil.copy2(src, bundle / fname)
+                shutil.copy2(src, bundle / f)
