@@ -119,22 +119,6 @@ def _load_contract() -> dict[str, Any]:
                 f"canonical proof contract artifact {filename_raw} required_in_modes mismatch vs required_artifacts_by_mode"
             )
 
-    for entry in artifacts:
-        if not isinstance(entry, dict):
-            raise ValueError("canonical proof contract artifact entry must be object")
-        filename_raw = entry.get("filename")
-        required_in_modes_raw = entry.get("required_in_modes")
-        if not isinstance(filename_raw, str) or not isinstance(required_in_modes_raw, list):
-            raise ValueError("canonical proof contract artifact entry invalid")
-        required_mode_set = set(required_in_modes_raw)
-        expected_mode_set = {
-            mode for mode, items in required_artifacts.items() if isinstance(items, list) and filename_raw in items
-        }
-        if required_mode_set != expected_mode_set:
-            raise ValueError(
-                f"canonical proof contract artifact {filename_raw} required_in_modes mismatch vs required_artifacts_by_mode"
-            )
-
     optional_artifacts = payload.get("optional_artifacts")
     if not isinstance(optional_artifacts, list) or any(not isinstance(item, str) for item in optional_artifacts):
         raise ValueError("canonical proof contract optional_artifacts must be list[str]")

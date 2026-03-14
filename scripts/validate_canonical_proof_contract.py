@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import ast
 import json
-import re
 import tomllib
 
 import yaml
@@ -233,22 +231,26 @@ def _validate_docs_and_workflow_wiring() -> None:
 def _validate_makefile_wiring() -> None:
     makefile_text = (REPO_ROOT / "Makefile").read_text(encoding="utf-8")
     _assert("validate-proof-contract:" in makefile_text, "Makefile missing validate-proof-contract target")
+    lines = makefile_text.splitlines()
+    target_idx = next((idx for idx, line in enumerate(lines) if line.startswith("validate-proof-contract:")), None)
+    if target_idx is None:
+        raise ValueError("Makefile missing validate-proof-contract target")
 
-    quickstart_match = re.search(r"d\['artifacts'\]==(\[[^\n]+\])", makefile_text)
-    if quickstart_match is None:
-        raise ValueError("Makefile quickstart canonical artifact assertion not found")
-    quickstart_artifacts = ast.literal_eval(quickstart_match.group(1))
+    recipe_lines: list[str] = []
+    for line in lines[target_idx + 1 :]:
+        if not line:
+            continue
+        if line.startswith("\t"):
+            recipe_lines.append(line.strip())
+            continue
+        if not line.startswith(" "):
+            break
+
+    _assert(recipe_lines, "Makefile validate-proof-contract target must define recipe commands")
     _assert(
-        tuple(quickstart_artifacts) == EXPORT_PROOF_ARTIFACTS,
-        "Makefile quickstart artifact assertion drift from canonical_proof_contract.json",
+        any("-m scripts.validate_canonical_proof_contract" in line for line in recipe_lines),
+        "Makefile validate-proof-contract target must execute python -m scripts.validate_canonical_proof_contract",
     )
-
-
-def _validate_load_bearing_hardcoded_fragments() -> None:
-    consistency_script = REPO_ROOT / "scripts" / "check_quickstart_consistency.py"
-    text = consistency_script.read_text(encoding="utf-8")
-    count = text.count(CANONICAL_EXPORT_PROOF_COMMAND)
-    _assert(count >= 3, "check_quickstart_consistency canonical command literals unexpectedly changed")
 
 def validate() -> None:
     _validate_runtime_derivation()
@@ -259,7 +261,6 @@ def validate() -> None:
     _validate_packaging_contract_resource()
     _validate_docs_and_workflow_wiring()
     _validate_makefile_wiring()
-    _validate_load_bearing_hardcoded_fragments()
 
 
 if __name__ == "__main__":

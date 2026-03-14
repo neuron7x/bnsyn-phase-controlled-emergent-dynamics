@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import yaml
+
 from bnsyn.paths import runtime_file
 from bnsyn.proof.bundle_validator import validate_canonical_bundle
 from bnsyn.proof.contracts import (
@@ -142,3 +144,33 @@ def test_bundle_validator_base_mode_rejects_manifest_proof_entry(tmp_path: Path)
 
     result = validate_canonical_bundle(artifact_dir)
     assert any("base mode forbids proof_report.json manifest entry" in err for err in result["errors"])
+
+
+def test_ci_pr_atomic_logs_pip_version_immediately_after_pin() -> None:
+    workflow = yaml.safe_load(Path(".github/workflows/ci-pr-atomic.yml").read_text(encoding="utf-8"))
+    jobs = workflow["jobs"]
+    for job_name in ("test-integrity", "docs-pr"):
+        steps = jobs[job_name]["steps"]
+        pin_idx = next(i for i, step in enumerate(steps) if step.get("name") == "Pin pip")
+        next_step = steps[pin_idx + 1]
+        assert next_step.get("name") == "Log pip version"
+        assert next_step.get("run") == "python -m pip --version"
+
+
+def test_ci_pr_atomic_uses_python_module_pip_commands() -> None:
+    workflow = yaml.safe_load(Path(".github/workflows/ci-pr-atomic.yml").read_text(encoding="utf-8"))
+    for job in workflow["jobs"].values():
+        steps = job.get("steps", []) if isinstance(job, dict) else []
+        for step in steps:
+            if not isinstance(step, dict):
+                continue
+            run_cmd = step.get("run")
+            if isinstance(run_cmd, str) and "pip" in run_cmd:
+                assert "python -m pip" in run_cmd
+
+
+def test_validator_makefile_wiring_semantic_only() -> None:
+    source = Path("scripts/validate_canonical_proof_contract.py").read_text(encoding="utf-8")
+    assert "quickstart_match" not in source
+    assert "_validate_load_bearing_hardcoded_fragments" not in source
+    assert "scripts/check_quickstart_consistency.py" not in source
