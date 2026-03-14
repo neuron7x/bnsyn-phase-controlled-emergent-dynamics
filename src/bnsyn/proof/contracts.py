@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import copy
+import hashlib
+import json
 from typing import Any
 
 CANONICAL_BASE_CONTRACT = "canonical-base"
@@ -101,3 +104,21 @@ def mode_from_manifest(manifest: dict[str, Any]) -> tuple[ManifestMode | None, l
         return None, errors
 
     return ManifestMode(bundle_contract=bundle_contract, export_proof=export_proof, cmd=cmd), []
+
+
+MANIFEST_SELF_HASH_PLACEHOLDER = "__RUN_MANIFEST_SELF_HASH__"
+
+
+def manifest_self_hash(manifest: dict[str, Any]) -> str:
+    """Compute deterministic self-hash for run_manifest.json.
+
+    The run_manifest.json artifact entry is normalized to a fixed placeholder before
+    hashing to break recursive self-reference while keeping deterministic integrity.
+    """
+    payload = copy.deepcopy(manifest)
+    artifacts_raw = payload.get("artifacts")
+    artifacts: dict[str, Any] = dict(artifacts_raw) if isinstance(artifacts_raw, dict) else {}
+    artifacts["run_manifest.json"] = MANIFEST_SELF_HASH_PLACEHOLDER
+    payload["artifacts"] = artifacts
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()

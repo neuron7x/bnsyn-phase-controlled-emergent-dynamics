@@ -22,6 +22,7 @@ docs/SPEC.md#P2-12
 from __future__ import annotations
 
 import argparse
+from enum import IntEnum
 import importlib.metadata
 import json
 import tomllib
@@ -35,8 +36,20 @@ from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
 from bnsyn.viz.emergence_plot import plot_emergence_npz
 from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
+from bnsyn.paths import runtime_file
 
 EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
+
+
+class CLIExitCode(IntEnum):
+    OK = 0
+    ERROR = 1
+    INVALID_USAGE = 2
+
+
+def _default_canonical_profile_path() -> Path:
+    """Return canonical profile config path from packaged runtime resources."""
+    return runtime_file("configs/canonical_profile.yaml")
 
 
 def _get_package_version() -> str:
@@ -111,10 +124,10 @@ def _cmd_demo(args: argparse.Namespace) -> int:
         script_path = Path(__file__).parent / "viz" / "interactive.py"
         if not script_path.exists():
             print(f"Error: Interactive dashboard not found at {script_path}")
-            return 1
+            return CLIExitCode.ERROR
         if importlib.util.find_spec("streamlit") is None:
             print('Error: Streamlit is not installed. Install with: pip install -e ".[viz]"')
-            return 1
+            return CLIExitCode.ERROR
 
         print("🚀 Launching interactive dashboard...")
         print("   Press Ctrl+C to stop")
@@ -125,19 +138,19 @@ def _cmd_demo(args: argparse.Namespace) -> int:
             )
             if result.returncode != 0:
                 print(f"Error: Dashboard exited with code {result.returncode}")
-                return 1
-            return 0
+                return CLIExitCode.ERROR
+            return CLIExitCode.OK
         except KeyboardInterrupt:
             print("\n✓ Dashboard stopped")
-            return 0
+            return CLIExitCode.OK
         except Exception as e:
             print(f"Error launching dashboard: {e}")
-            return 1
+            return CLIExitCode.ERROR
 
     _validate_demo_args(args)
     metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
     print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_dtcheck(args: argparse.Namespace) -> int:
@@ -166,7 +179,7 @@ def _cmd_dtcheck(args: argparse.Namespace) -> int:
     # compare mean rates and sigma; dt2 should be close
     out: dict[str, Any] = {"dt": args.dt_ms, "dt2": args.dt2_ms, "m_dt": m1, "m_dt2": m2}
     print(json.dumps(out, indent=2, sort_keys=True))
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_run_experiment(args: argparse.Namespace) -> int:
@@ -200,10 +213,10 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     output = getattr(args, "output", None)
 
     if config_path is None and profile == "canonical":
-        config_path = "configs/canonical_profile.yaml"
+        config_path = _default_canonical_profile_path()
     if config_path is None:
         print("Error running experiment: provide CONFIG or --profile canonical", file=sys.stderr)
-        return 2
+        return CLIExitCode.INVALID_USAGE
 
     if profile == "canonical":
         try:
@@ -214,7 +227,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
             )
         except Exception as e:
             print(f"Error running experiment: {e}")
-            return 1
+            return CLIExitCode.ERROR
 
         if plot:
             print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
@@ -228,7 +241,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
             **bundle,
         }
         print(json.dumps(payload, indent=2, sort_keys=True))
-        return 0
+        return CLIExitCode.OK
 
     if plot:
         print("Notice: --plot only applies to --profile canonical at this milestone", file=sys.stderr)
@@ -237,10 +250,10 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
 
     try:
         run_from_yaml(config_path, output)
-        return 0
+        return CLIExitCode.OK
     except Exception as e:
         print(f"Error running experiment: {e}")
-        return 1
+        return CLIExitCode.ERROR
 
 
 def _cmd_sleep_stack(args: argparse.Namespace) -> int:
@@ -483,7 +496,7 @@ def _cmd_sleep_stack(args: argparse.Namespace) -> int:
     print(f"Attractors: {len(attractors)}")
     print(f"Consolidation: {cons_stats['consolidated_count']}/{cons_stats['count']} patterns")
 
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_smoke(args: argparse.Namespace) -> int:
@@ -517,7 +530,7 @@ def _cmd_smoke(args: argparse.Namespace) -> int:
             {"smoke_report": out_path.as_posix(), "status": report["status"]}, sort_keys=True
         )
     )
-    return 0 if report["status"] == "PASS" else 1
+    return CLIExitCode.OK if report["status"] == "PASS" else CLIExitCode.ERROR
 
 
 def _render_emergence_plot(
@@ -575,13 +588,13 @@ def _cmd_plot(args: argparse.Namespace) -> int:
         file=sys.stderr,
     )
 
-    config_path = "configs/canonical_profile.yaml"
+    config_path = _default_canonical_profile_path()
     out_dir = Path(args.out)
     try:
         bundle = run_canonical_live_bundle(config_path, out_dir)
     except Exception as e:
         print(f"Error running canonical compatibility plot wrapper: {e}")
-        return 1
+        return CLIExitCode.ERROR
 
     print(
         json.dumps(
@@ -610,7 +623,7 @@ def _cmd_plot(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_emergence_run(args: argparse.Namespace) -> int:
@@ -637,7 +650,7 @@ def _cmd_emergence_run(args: argparse.Namespace) -> int:
     report_path = out_dir / "emergence_run_report.json"
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": "ok", "report": report_path.as_posix()}, sort_keys=True))
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
@@ -678,13 +691,13 @@ def _cmd_emergence_sweep(args: argparse.Namespace) -> int:
         encoding="utf-8",
     )
     print(json.dumps({"status": "ok", "report": report_path.as_posix()}, sort_keys=True))
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_emergence_plot(args: argparse.Namespace) -> int:
     plot_emergence_npz(args.input, args.output)
     print(json.dumps({"status": "ok", "output": str(args.output)}, sort_keys=True))
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_proof_evaluate(args: argparse.Namespace) -> int:
@@ -703,7 +716,7 @@ def _cmd_proof_evaluate(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
-    return 0
+    return CLIExitCode.OK
 
 
 def _cmd_proof_validate_bundle(args: argparse.Namespace) -> int:
@@ -711,7 +724,58 @@ def _cmd_proof_validate_bundle(args: argparse.Namespace) -> int:
 
     result = validate_canonical_bundle(args.artifact_dir)
     print(json.dumps(result, sort_keys=True))
-    return 0 if result["status"] == "PASS" else 2
+    return CLIExitCode.OK if result["status"] == "PASS" else CLIExitCode.INVALID_USAGE
+
+
+def _cmd_validate_bundle(args: argparse.Namespace) -> int:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    result = validate_canonical_bundle(args.artifact_dir, require_product_surface=True)
+    if result["status"] == "PASS":
+        print("STATUS: PASS")
+        print(f"ARTIFACT_DIR: {Path(args.artifact_dir).as_posix()}")
+        return CLIExitCode.OK
+    print("STATUS: FAIL")
+    for error in result["errors"]:
+        print(f"- {error}")
+    return CLIExitCode.INVALID_USAGE
+
+
+def _cmd_demo_product(args: argparse.Namespace) -> int:
+    from bnsyn.experiments.declarative import run_canonical_live_bundle
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    output_dir = Path(getattr(args, "output", "artifacts/canonical_run"))
+    package_version = _get_package_version()
+    config_path = _default_canonical_profile_path()
+    try:
+        run_canonical_live_bundle(
+            config_path,
+            artifact_dir=output_dir,
+            export_proof=True,
+            generate_product_report=True,
+            product_package_version=package_version,
+        )
+        validation = validate_canonical_bundle(output_dir, require_product_surface=True)
+    except Exception as exc:
+        print("STATUS: FAIL")
+        print(f"REASON: demo-product execution failed: {exc}")
+        print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+        return CLIExitCode.ERROR
+
+    if validation["status"] != "PASS":
+        print("STATUS: FAIL")
+        for error in validation["errors"]:
+            print(f"- {error}")
+        print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+        return CLIExitCode.INVALID_USAGE
+
+    print("STATUS: PASS")
+    print(f"ARTIFACT_DIR: {output_dir.as_posix()}")
+    print(f"REPORT: {(output_dir / 'index.html').as_posix()}")
+    print(f"PRIMARY_VISUAL: {(output_dir / 'emergence_plot.png').as_posix()}")
+    print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
+    return CLIExitCode.OK
 
 
 def _cmd_proof_check_determinism(args: argparse.Namespace) -> int:
@@ -719,7 +783,7 @@ def _cmd_proof_check_determinism(args: argparse.Namespace) -> int:
 
     result = evaluate_gate_g6_determinism(Path(args.artifact_dir))
     print(json.dumps(result, sort_keys=True))
-    return 0 if result["status"] == "PASS" else 2
+    return CLIExitCode.OK if result["status"] == "PASS" else CLIExitCode.INVALID_USAGE
 
 
 def _cmd_proof_check_envelope(args: argparse.Namespace) -> int:
@@ -727,7 +791,7 @@ def _cmd_proof_check_envelope(args: argparse.Namespace) -> int:
 
     result = evaluate_gate_g8_repro_envelope(Path(args.artifact_dir))
     print(json.dumps(result, sort_keys=True))
-    return 0 if result["status"] == "PASS" else 2
+    return CLIExitCode.OK if result["status"] == "PASS" else CLIExitCode.INVALID_USAGE
 
 
 def main() -> None:
@@ -882,6 +946,14 @@ def main() -> None:
     proof_validate.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
     proof_validate.set_defaults(func=_cmd_proof_validate_bundle)
 
+    validate_bundle = sub.add_parser("validate-bundle", help="Validate canonical product bundle")
+    validate_bundle.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical product artifacts")
+    validate_bundle.set_defaults(func=_cmd_validate_bundle)
+
+    demo_product = sub.add_parser("demo-product", help="Run canonical product demo and emit human-readable bundle report")
+    demo_product.add_argument("--output", type=Path, default=Path("artifacts/canonical_run"), help="Output directory for canonical product bundle")
+    demo_product.set_defaults(func=_cmd_demo_product)
+
     proof_det = sub.add_parser("proof-check-determinism", help="Validate same-seed canonical replay hash equality")
     proof_det.add_argument("artifact_dir", type=Path, help="Artifact directory containing canonical proof artifacts")
     proof_det.set_defaults(func=_cmd_proof_check_determinism)
@@ -900,10 +972,10 @@ def main() -> None:
         raise SystemExit(int(args.func(args)))
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
-        raise SystemExit(2) from None
+        raise SystemExit(CLIExitCode.INVALID_USAGE) from None
     except Exception as exc:  # pragma: no cover - exercised via CLI contract tests
         print(f"Error: unexpected failure: {exc}", file=sys.stderr)
-        raise SystemExit(1) from None
+        raise SystemExit(CLIExitCode.ERROR) from None
 
 
 if __name__ == "__main__":
