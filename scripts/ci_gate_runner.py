@@ -57,6 +57,8 @@ def main() -> int:
             contradictions.append(f"gate without command: {gate}")
             results.append({"gate": gate, "status": "fail", "reason": "missing command"})
             continue
+        if gate == "security_deps":
+            _run(["python", "-m", "pip", "install", "--upgrade", "black==26.3.1", "pip-audit"], "security_deps_prepare")
         code, _, _ = _run(cmd, gate)
         status = "pass" if code == 0 else "fail"
         if status == "fail":

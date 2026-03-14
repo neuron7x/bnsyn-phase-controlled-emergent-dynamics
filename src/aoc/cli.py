@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from .contracts import ContractError, load_task_contract
 from .controller import AOCController

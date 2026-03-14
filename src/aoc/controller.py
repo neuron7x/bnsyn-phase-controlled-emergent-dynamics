@@ -4,9 +4,9 @@ from dataclasses import asdict
 from pathlib import Path
 
 from .audit import AuditEngine
-from .contracts import AuditorReliabilityTrace, SigmaIndex, TaskContract
+from .contracts import AuditorReliabilityTrace, TaskContract
 from .delta import DeltaEngine
-from .evidence import EvidenceWriter, hash_json, hash_text
+from .evidence import EvidenceWriter, hash_text
 from .generator import DeterministicMarkdownGenerator
 from .modulator import ConstraintModulator, ModulationState
 from .sigma import SigmaEngine

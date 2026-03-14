@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from typing import cast
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -29,7 +30,7 @@ class ZeroPointManager:
         payload["hash"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         zp_path = self.run_dir / "zeropoint.json"
         if zp_path.exists():
-            existing = json.loads(zp_path.read_text(encoding="utf-8"))
+            existing = cast(dict[str, Any], json.loads(zp_path.read_text(encoding="utf-8")))
             if existing.get("hash") != payload["hash"]:
                 raise RuntimeError("zeropoint immutable violation: existing hash mismatch")
             return existing
