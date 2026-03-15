@@ -1,0 +1,48 @@
+{
+  "determinism_ok": true,
+  "fixture_results": {
+    "FIXTURE_A": {
+      "adjusted_risk": 0.4209,
+      "audit_quality_score": 0.465,
+      "completeness": 0.6,
+      "confidence": 0.6475,
+      "contradiction_flag": false,
+      "contradiction_penalty": 0.0,
+      "evidence_density": 0.3,
+      "evidence_strength_index": 2,
+      "fixture_id": "FIXTURE_A",
+      "non_zero_reset_triggered": false,
+      "posterior_risk": 0.676,
+      "termination_status": "partial"
+    },
+    "FIXTURE_B": {
+      "adjusted_risk": 0.3201,
+      "audit_quality_score": 0.9275,
+      "completeness": 0.95,
+      "confidence": 0.97,
+      "contradiction_flag": false,
+      "contradiction_penalty": 0.0,
+      "evidence_density": 0.9,
+      "evidence_strength_index": 5,
+      "fixture_id": "FIXTURE_B",
+      "non_zero_reset_triggered": false,
+      "posterior_risk": 0.322,
+      "termination_status": "complete"
+    },
+    "FIXTURE_C": {
+      "adjusted_risk": 0.261,
+      "audit_quality_score": 0.755,
+      "completeness": 0.9,
+      "confidence": 0.6525,
+      "contradiction_flag": true,
+      "contradiction_penalty": 0.25,
+      "evidence_density": 0.8,
+      "evidence_strength_index": 4,
+      "fixture_id": "FIXTURE_C",
+      "non_zero_reset_triggered": false,
+      "posterior_risk": 0.388,
+      "termination_status": "partial"
+    }
+  },
+  "schema_validation_exit": 0
+}

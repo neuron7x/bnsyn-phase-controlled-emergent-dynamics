@@ -1,0 +1,55 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.hypothesis/
+.venv/
+.pytest_cache/
+dist/
+build/
+docs/_build/
+
+# Coverage reports
+.coverage
+htmlcov/
+coverage.json
+
+# Incremental computation cache
+.cache/
+
+# Benchmark results (local runs)
+results/*
+!results/temp_ablation_v1/
+!results/temp_ablation_v2/
+artifacts/*
+!artifacts/product/
+!artifacts/product/**
+!artifacts/merge_ready/
+!artifacts/merge_ready/**
+!artifacts/ca_dccg/
+!artifacts/ca_dccg/**
+benchmarks/baselines/
+!benchmarks/baselines/
+!benchmarks/baselines/golden_baseline.yml
+!benchmarks/baselines/physics_baseline.json
+!benchmarks/baselines/kernel_profile.json
+
+# PR artifacts (should not be tracked)
+PR_DIFF.patch
+PR_SUMMARY.md
+
+# Mutation testing cache
+.mutmut-cache
+
+# Backup files
+*.bak
+
+wheelhouse/
+
+artifacts/wheelhouse_report.json
+
+# Local tool bootstrap cache
+.tools/
+
+# Local command/evidence logs
+proof_bundle/logs/*.log
+!proof_bundle/logs/.gitkeep

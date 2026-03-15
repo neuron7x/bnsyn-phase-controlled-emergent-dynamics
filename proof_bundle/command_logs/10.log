@@ -1,0 +1,40 @@
+COMMAND: rg --files .github/workflows
+START_UTC: 2026-02-15T20:06:08.621190Z
+END_UTC: 2026-02-15T20:06:08.645070Z
+TIMEOUT_SEC: 30
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/codecov-health.yml
+.github/workflows/codeql.yml
+.github/workflows/formal-tla.yml
+.github/workflows/math-quality-gate.yml
+.github/workflows/ci-benchmarks.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/workflow-integrity.yml
+.github/workflows/benchmarks.yml
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/_reusable_chaos_tests.yml
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/ci-pr.yml
+.github/workflows/docs.yml
+.github/workflows/formal-coq.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/science.yml
+.github/workflows/dependency-review.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/release-pipeline.yml
+.github/workflows/ci-validation.yml
+.github/workflows/_reusable_ssot.yml
+
+--- STDERR ---
+
+LOG_SHA256: 779e813f9817665dc055003d32f754c5a300899dedc2b697381ff734abbac5e2

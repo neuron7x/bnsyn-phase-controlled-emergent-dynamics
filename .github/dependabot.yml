@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+    open-pull-requests-limit: 5
+    assignees:
+      - "neuron7x"
+    labels:
+      - "dependencies"
+      - "automated"
+      - "security"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+    open-pull-requests-limit: 3
+    assignees:
+      - "neuron7x"
+    labels:
+      - "dependencies"
+      - "automated"
+      - "github-actions"

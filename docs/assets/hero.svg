@@ -1,0 +1,24 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">BN-Syn repository banner</title>
+  <desc id="desc">BN-Syn deterministic research runtime with governance and evidence validation.</desc>
+  <defs>
+    <linearGradient id="lineA" x1="0" y1="0" x2="1200" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="lineB" x1="1200" y1="0" x2="0" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9333EA"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+  <path d="M24 64 C180 24, 360 124, 520 80 S860 24, 1176 88" stroke="url(#lineA)" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+  <path d="M24 256 C200 296, 360 176, 560 224 S860 304, 1176 224" stroke="url(#lineB)" stroke-width="10" stroke-linecap="round" opacity="0.95"/>
+  <circle cx="220" cy="172" r="7" fill="#2563EB"/>
+  <circle cx="600" cy="152" r="7" fill="#9333EA"/>
+  <circle cx="920" cy="180" r="7" fill="#06B6D4"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="64" y="150" font-size="56" font-weight="700" fill="#0F172A">BN-Syn</text>
+    <text x="64" y="198" font-size="28" font-weight="600" fill="#1E293B">Phase-controlled emergent dynamics runtime</text>
+    <text x="64" y="236" font-size="22" font-weight="500" fill="#334155">Deterministic experiments, SSOT governance, and evidence checks</text>
+  </g>
+</svg>

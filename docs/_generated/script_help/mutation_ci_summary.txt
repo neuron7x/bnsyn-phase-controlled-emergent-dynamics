@@ -1,0 +1,10 @@
+usage: mutation_ci_summary.py [-h] [--baseline BASELINE] [--write-output]
+                              [--write-summary]
+
+Generate canonical mutation CI outputs and summary
+
+options:
+  -h, --help           show this help message and exit
+  --baseline BASELINE  Path to mutation baseline JSON
+  --write-output       Write canonical metrics to $GITHUB_OUTPUT
+  --write-summary      Write markdown report to $GITHUB_STEP_SUMMARY

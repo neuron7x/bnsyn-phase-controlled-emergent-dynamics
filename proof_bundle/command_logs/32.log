@@ -1,0 +1,223 @@
+COMMAND: rg -n "(idempot|webhook|auth|token|jwt|tenant|privacy|retention|delete|backup|rollback|alert|slo|trace|rate limit|cors|hsts|csp)" .github/workflows docs src README.md SECURITY.md
+START_UTC: 2026-02-15T19:40:01.504959Z
+END_UTC: 2026-02-15T19:40:01.528927Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+README.md:8:[![codecov](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics/branch/main/graph/badge.svg?token=CODECOV_TOKEN)](https://codecov.io/gh/neuron7x/bnsyn-phase-controlled-emergent-dynamics)
+README.md:69:- [Evidence Coverage](docs/EVIDENCE_COVERAGE.md) — Claims→Evidence traceability
+README.md:276:- ⚡ **Voltage traces**: Membrane potential dynamics
+README.md:495:PR-gate vs long-running workflows (authoritative metadata in [`.github/WORKFLOW_CONTRACTS.md`](.github/WORKFLOW_CONTRACTS.md)):
+README.md:534:See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/SPEC.md`](docs/SPEC.md) for the authoritative architecture and equations.
+src/bnsyn/viz/interactive.py:5:- Voltage traces
+src/bnsyn/viz/interactive.py:210:    fig.add_trace(
+src/bnsyn/viz/interactive.py:230:    """Create voltage trace plot for multiple neurons.
+src/bnsyn/viz/interactive.py:260:        fig.add_trace(
+src/bnsyn/viz/interactive.py:309:    fig.add_trace(go.Scatter(x=times, y=rates, mode="lines", name="Firing Rate", fill="tozeroy"))
+src/bnsyn/viz/interactive.py:358:    fig.add_trace(
+src/bnsyn/viz/interactive.py:366:    fig.add_trace(
+src/bnsyn/viz/dashboard.py:87:    2. Sigma (branching ratio) trace
+src/bnsyn/viz/dashboard.py:88:    3. Temperature trace
+src/bnsyn/viz/dashboard.py:385:        """Render sigma (branching ratio) trace.
+src/bnsyn/viz/dashboard.py:414:        """Render temperature trace.
+src/bnsyn/viz/dashboard.py:481:        """Render consolidation strength trace.
+docs/SSOT.md:4:This document is a human summary of SSOT governance. The authoritative, machine-readable
+docs/conf.py:14:author = "BN-Syn Contributors"
+docs/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+docs/AUDIT_LEDGER.md:7:- **Fix decision:** **FIX** — Moved the authoritative governed docs list to `docs/INVENTORY.md` and upgraded `scan_governed_docs.py` to enforce keyword + tag requirements.
+docs/AUDIT_LEDGER.md:20:- **Blast radius:** Violates G0 “No Soft Text” by leaving normative statements untraceable.
+docs/REPRODUCIBILITY_ENVELOPE.md:8:* Seed values are recorded in benchmark outputs and must be reused for exact trace reproduction.
+docs/REPRODUCIBILITY_ENVELOPE.md:9:* Determinism is verified by asserting bitwise-identical traces for identical seeds.
+docs/REPRODUCIBILITY_ENVELOPE.md:22:* Determinism uses max absolute error ≤ `1e-12` for identical-seed traces.
+docs/SPEC.md:3:This document is the **authoritative** spec for the reference implementation in `src/bnsyn/`.
+docs/SPEC.md:23:| P1-6 | Dual-weight consolidation (fast/slow + tags + protein) | `bnsyn/consolidation/dual_weight.py` | `test_consolidation_smoke.py` |
+docs/SPEC.md:80:Eligibility trace:
+docs/SPEC.md:155:reference implementation) to gate the scalar protein trace.
+src/bnsyn/synapse/conductance.py:69:        Extracellular magnesium concentration in mM.
+src/bnsyn/synapse/conductance.py:84:    >>> # Typical extracellular Mg concentration
+docs/benchmarks/PROTOCOL.md:144:for CI traceability.
+docs/GOVERNANCE.md:4:It links to all authoritative governance artifacts without duplicating their content.
+docs/GOVERNANCE.md:12:- Scientific claims are traceable to peer-reviewed sources
+docs/GOVERNANCE.md:22:| **Rules** | [SSOT_RULES.md](SSOT_RULES.md) | Machine-readable rule registry (authoritative) |
+docs/GOVERNANCE.md:45:- Claim IDs are authoritative in [claims/claims.yml](../claims/claims.yml)
+src/bnsyn/consolidation/dual_weight.py:52:    - Consolidated weights follow slow tracking when Tag & Protein.
+src/bnsyn/consolidation/dual_weight.py:142:        # consolidation: slow tracking towards w_fast when Tag & Protein
+docs/sleep_stack.md:153:- Sigma traces (float equality)
+docs/sleep_stack.md:177:- `src/bnsyn/memory/`: Memory consolidation and trace
+docs/QUALITY_INDEX.md:84:- pip-audit outputs `artifacts/pip-audit.json` for traceability across CI runs.
+src/bnsyn/temperature/schedule.py:40:        Gate slope parameter.
+docs/VCG.md:27:- Define effort proxy (optional, non-normative): `cost_i(t)` (e.g., CPU seconds, tokens, wall-time).
+docs/VCG.md:59:- A1: Replaying the same event log yields identical `S_i(t)` traces (bitwise).
+docs/NORMATIVE_LABELING.md:17:- Claim IDs are authoritative in `claims/claims.yml` and map in `bibliography/mapping.yml`.
+docs/ENTROPY_LEDGER.md:34:6. No entropy-specific evidence snapshots (`evidence/entropy/*.json`) — weak traceability.
+docs/QUALITY_INFRASTRUCTURE.md:226:- `clamp_idempotent` - Clamp is idempotent
+docs/appendix/codebase_readiness_audit_2026-02-15.json:143:        "No proven health endpoint, alert routing, SLO/error-budget policy, or dashboard-as-code evidence found in audited artifacts."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:146:        "Ops telemetry stack (structured logs/metrics/tracing/alerts) is not release-grade in evidence-backed form."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:150:      "category": "J Release Engineering (versioning, changelog, artifacts, rollback)",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:160:        "No explicit rollback procedure or migration rollback test artifact was located."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:171:      "impact": "Production incident detection/triage will be slow and non-deterministic, constraining safe release confidence.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:175:        "Define SLOs plus incident/alert runbook and enforce checks in CI/docs gates."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:179:        "cmd:rg -n \"prometheus|opentelemetry|alert\" src/bnsyn docs: no concrete production telemetry implementation evidence"
+docs/appendix/EXECUTIVE_SUMMARY.md:193:pytest-benchmark compare     # Detect slowdowns
+docs/appendix/PRODUCTION_ROADMAP.md:325:**Problem:** New features slow down hot paths  
+docs/appendix/PRODUCTION_AUDIT.md:312:    DeltaT_mV: float = Field(gt=0, le=10, description="Spike slope factor")
+docs/CI_GATES.md:47:   - pip-audit runs with `--desc --format json` and stores `artifacts/pip-audit.json` for traceability
+docs/INVENTORY.md:3:This document is the **authoritative list** of governed and non-governed paths in the BN-Syn repository.
+docs/INVENTORY.md:19:## Governed documents (authoritative list)
+docs/INVENTORY.md:124:└── validation/                 # Validation tests (slow, statistical)
+docs/INVENTORY.md:140:See [SSOT_RULES.md](SSOT_RULES.md) for the authoritative rule registry.
+docs/ARCHITECTURE.md:5:traceability index, not an independent source of truth. The authoritative definition
+docs/ARCHITECTURE.md:10:## Scope and traceability
+docs/ARCHITECTURE.md:12:- **Spec authority**: equations, invariants, and parameters are defined in `docs/SPEC.md`.
+docs/ARCHITECTURE.md:13:- **Evidence authority**: claim IDs and bibliographic provenance are defined in
+docs/ARCHITECTURE.md:25:- **Macro (slow control)**: criticality controller adjusts global gain to keep σ near target.
+docs/ARCHITECTURE.md:35:| Neuromodulated STDP + eligibility traces | P0-3 | CLM-0005 |
+docs/ARCHITECTURE.md:45:the authoritative claim IDs that substantiate them. For full equations and
+src/bnsyn/config.py:40:        Exponential slope factor (mV).
+src/bnsyn/config.py:94:        Extracellular magnesium concentration (mM).
+src/bnsyn/config.py:114:    mg_mM: PositiveFloat = 1.0  # extracellular Mg2+
+src/bnsyn/config.py:123:        Eligibility trace decay time constant (ms).
+src/bnsyn/config.py:125:        STDP potentiation trace time constant (ms).
+src/bnsyn/config.py:127:        STDP depression trace time constant (ms).
+src/bnsyn/config.py:221:            "Validated temperature-gate slope window from ablation studies; "
+docs/placeholder_cycles/cycle1/acceptance_map.yaml:21:    post_fix_expectation: "passes with deterministic fallback retention behavior"
+docs/placeholder_cycles/cycle1/plan.md:37:| PH-0001 | `src/bnsyn/emergence/crystallizer.py` | `guard_fail_closed` | `regression` | Replace implicit `pass` fallback with deterministic explicit state retention branch and auditable warning path. |
+docs/HYPOTHESIS.md:15:**Rationale**: The temperature schedule (`TemperatureSchedule`) modulates plasticity via `gate_sigmoid(T, Tc, gate_tau)`, which gates the effective learning rate applied to `DualWeights.w_fast`. Piecewise cooling with a warmup phase (`T = T0` for warmup steps, then slow geometric cooling `T0 → Tmin` with `alpha ≈ 0.9995`) provides a controlled annealing process that reduces variance in final consolidated weights (`w_total`) across independent trials while preserving consolidation activity (protein synthesis and w_cons accumulation).
+docs/INTEGRATION.md:150:- No runtime behavior changes; rollback removes documentation/test only.
+docs/PR40_EVIDENCE_REPORT.md:191:**Result:** All existing smoke tests pass. No slowdown or breakage.
+docs/PR40_EVIDENCE_REPORT.md:216:   **Policy:** Acceptable. Results are traceable, compressed (JSON), and serve as ground truth for README figures.
+docs/PR40_EVIDENCE_REPORT.md:335:- [x] A7: Artifacts justified (~1.5 MB total, traceable, essential)
+src/bnsyn/cli.py:366:        # Sigma trace
+docs/DEMO.md:6:For full conference preparation (release readiness + backup plan), see
+docs/CONSTITUTIONAL_AUDIT.md:18:The authoritative claim record lives in `claims/claims.yml`.
+docs/ACTIONS_TEST_PROTOCOL.md:87:   - No GitHub tokens needed for core functionality
+docs/ACTIONS_TEST_PROTOCOL.md:91:   - Artifacts accessible to PR authors
+docs/ACTIONS_TEST_PROTOCOL.md:106:| Claims Coverage | 30 days | ci-pr.yml | Evidence traceability |
+docs/ACTIONS_TEST_PROTOCOL.md:141:**Rationale:** Prevent accidental inclusion of slow tests in PR gates
+docs/ACTIONS_TEST_PROTOCOL.md:235:# With thorough profile (slow, 1000 examples)
+docs/TROUBLESHOOTING.md:206:# Stack trace
+docs/TROUBLESHOOTING.md:220:     author = {Example, Ada and Researcher, Lin},
+docs/TROUBLESHOOTING.md:305:### Simulations are slow
+docs/TROUBLESHOOTING.md:365:   - Full error traceback
+docs/BENCHMARKS.md:12:* **Identical seeds → identical traces**
+docs/BENCHMARKS.md:15:* **Different seeds → statistically different traces**
+docs/BENCHMARKS.md:44:* Power-law slope < 0 (negative)
+docs/SECURITY_GITLEAKS.md:40:4. **Real secrets fail CI**: Any actual secret (API keys, passwords, tokens) will be detected and fail CI
+docs/REPO_STRUCTURE.md:5:This document defines the authoritative structure of the BN-Syn repository. Governed document
+docs/REPO_STRUCTURE.md:32:   - `tests/validation/*.py`: Validation tests (slow, statistical; use `@pytest.mark.validation`)
+docs/REPO_STRUCTURE.md:36:   - `validate_claims.py`: Enforces claim traceability rules
+docs/REPO_STRUCTURE.md:52:   - `claims.yml`: Authoritative claim registry with traceability fields
+docs/INDEX.md:64:| [safety/traceability.yml](safety/traceability.yml) | Requirement → hazard → constraint → test traceability |
+docs/INDEX.md:124:1. **Single source**: Each concept has exactly one authoritative document.
+docs/INDEX.md:126:3. **Claim traceability**: Normative statements bind to identifiers such as `CLM-0001` in `claims/claims.yml`.
+docs/DOCUMENTATION_FORMALIZATION.md:4:binds documentation to authoritative sources, specifies traceability requirements, and
+docs/DOCUMENTATION_FORMALIZATION.md:12:## 1) Scope and authority chain
+docs/DOCUMENTATION_FORMALIZATION.md:14:BN-Syn uses a layered authority chain to keep documentation deterministic, auditable, and
+docs/DOCUMENTATION_FORMALIZATION.md:15:traceable. The layers below define **where truth lives** and how narrative documents must
+docs/DOCUMENTATION_FORMALIZATION.md:18:1. **Formal specification (authoritative)**
+docs/DOCUMENTATION_FORMALIZATION.md:21:2. **Architecture crosswalk (traceability index)**
+docs/DOCUMENTATION_FORMALIZATION.md:25:   - `docs/SSOT_RULES.md` is the authoritative rule registry.
+docs/DOCUMENTATION_FORMALIZATION.md:26:   - `docs/SSOT.md` documents the authority chain and lists validators under `scripts/`.
+docs/DOCUMENTATION_FORMALIZATION.md:35:All normative statements in documentation must link back to the authority chain above.
+docs/DOCUMENTATION_FORMALIZATION.md:54:Formal documentation must support **bidirectional traceability** from spec → implementation
+docs/DOCUMENTATION_FORMALIZATION.md:91:- **No silent divergence**: If the implementation changes, the SPEC and traceability maps
+docs/DOCUMENTATION_FORMALIZATION.md:95:  authoritative and cannot be bypassed by narrative documents.
+docs/DOCUMENTATION_FORMALIZATION.md:108:2. **Update traceability**: Modify `docs/spec_to_code.yml` and `docs/COMPONENT_AUDIT.md` if
+docs/DOCUMENTATION_FORMALIZATION.md:118:## 7) Cross-reference map (authoritative entry points)
+src/bnsyn/memory/trace.py:1:"""Memory trace storage and retrieval for consolidation workflows.
+src/bnsyn/memory/trace.py:4:- ``MemoryTrace``: bounded FIFO trace store with cosine-similarity recall.
+src/bnsyn/memory/trace.py:211:        """Return memory trace state for inspection or serialization.
+docs/api/conf.py:14:author = "BN-Syn Contributors"
+docs/api/conf.py:15:copyright = f"{datetime.now().year}, {author}"
+src/bnsyn/memory/consolidator.py:28:from .trace import MemoryTrace as _InternalMemoryTrace
+src/bnsyn/memory/consolidator.py:54:    Immutable snapshot of a memory trace returned by MemoryConsolidator.
+src/bnsyn/memory/consolidator.py:112:            The stored memory trace.
+src/bnsyn/memory/consolidator.py:195:        self._storage.importance = np.delete(self._storage.importance, idx)
+src/bnsyn/memory/consolidator.py:196:        self._storage.timestamps = np.delete(self._storage.timestamps, idx)
+src/bnsyn/memory/consolidator.py:197:        self._storage.recall_counters = np.delete(self._storage.recall_counters, idx)
+src/bnsyn/memory/consolidator.py:215:            List of newly consolidated memory traces.
+src/bnsyn/memory/consolidator.py:234:        consolidated_traces = []
+src/bnsyn/memory/consolidator.py:244:                    consolidated_traces.append(
+src/bnsyn/memory/consolidator.py:255:        return consolidated_traces
+src/bnsyn/memory/consolidator.py:270:            Most similar memory trace above threshold, or None if no match.
+src/bnsyn/memory/__init__.py:1:"""Memory subpackage for trace storage and consolidation ledger.
+src/bnsyn/memory/__init__.py:23:from .trace import MemoryTrace as MemoryTrace
+src/bnsyn/calibration/fit.py:33:    slope : float
+src/bnsyn/calibration/fit.py:34:        Best-fit slope.
+src/bnsyn/calibration/fit.py:41:    slope: float
+src/bnsyn/calibration/fit.py:47:    """Fit a linear model ``y = slope * x + intercept``.
+src/bnsyn/calibration/fit.py:76:    return LineFit(slope=float(beta[0]), intercept=float(beta[1]), r2=float(r2))
+src/bnsyn/criticality/analysis.py:74:    For each lag k, estimate slope of A(t+k) vs A(t) via least squares, then
+src/bnsyn/criticality/analysis.py:75:    infer sigma_k = slope ** (1/k). Returns the mean sigma_k across lags.
+src/bnsyn/criticality/analysis.py:95:        slope = float(np.dot(x, y) / denom)
+src/bnsyn/criticality/analysis.py:96:        if slope <= 0.0:
+src/bnsyn/criticality/analysis.py:98:        sigma_estimates.append(slope ** (1.0 / k))
+src/bnsyn/plasticity/three_factor.py:36:    """Store eligibility traces for synapses.
+src/bnsyn/plasticity/three_factor.py:45:    Eligibility traces capture pre/post coincidence for three-factor updates.
+src/bnsyn/plasticity/three_factor.py:57:    """Store neuromodulator trace value.
+src/bnsyn/plasticity/three_factor.py:73:    n: float  # scalar dopamine / TD trace
+src/bnsyn/plasticity/three_factor.py:77:    """Apply exponential decay to a trace.
+src/bnsyn/plasticity/three_factor.py:91:        Decayed trace array.
+src/bnsyn/plasticity/three_factor.py:95:    Uses exact exponential decay for deterministic trace updates.
+src/bnsyn/plasticity/three_factor.py:116:        Eligibility trace container.
+src/bnsyn/plasticity/three_factor.py:118:        Neuromodulator trace.
+src/bnsyn/plasticity/three_factor.py:131:        Tuple of (updated weights, updated eligibility traces).
+src/bnsyn/plasticity/three_factor.py:200:    """Update neuromodulator trace with exponential decay and drive.
+src/bnsyn/tools/run_scaled_sleep_stack.py:8:import tracemalloc
+src/bnsyn/tools/run_scaled_sleep_stack.py:50:    sigma_trace: list[float] = []
+src/bnsyn/tools/run_scaled_sleep_stack.py:51:    rate_trace: list[float] = []
+src/bnsyn/tools/run_scaled_sleep_stack.py:57:        sigma_trace.append(float(m["sigma"]))
+src/bnsyn/tools/run_scaled_sleep_stack.py:58:        rate_trace.append(float(m["spike_rate_hz"]))
+src/bnsyn/tools/run_scaled_sleep_stack.py:94:            "mean_sigma": float(np.mean(sigma_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:95:            "std_sigma": float(np.std(sigma_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:96:            "mean_spike_rate": float(np.mean(rate_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:97:            "std_spike_rate": float(np.std(rate_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:108:        "trace": {"sigma": sigma_trace, "rate": rate_trace},
+src/bnsyn/tools/run_scaled_sleep_stack.py:198:    tracemalloc.start()
+src/bnsyn/tools/run_scaled_sleep_stack.py:262:        ref_trace = np.asarray(m_ref["trace"]["sigma"], dtype=np.float64)
+src/bnsyn/tools/run_scaled_sleep_stack.py:263:        acc_trace = np.asarray(m_acc["trace"]["sigma"], dtype=np.float64)
+src/bnsyn/tools/run_scaled_sleep_stack.py:266:            "equivalent": bool(np.allclose(ref_trace, acc_trace, atol=1e-8, rtol=0.0)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:267:            "max_abs_sigma_diff": float(np.max(np.abs(ref_trace - acc_trace))),
+src/bnsyn/tools/run_scaled_sleep_stack.py:271:    current, peak = tracemalloc.get_traced_memory()
+src/bnsyn/tools/run_scaled_sleep_stack.py:273:    tracemalloc.stop()
+.github/workflows/docs.yml:46:          retention-days: 7
+.github/workflows/_reusable_quality.yml:96:          retention-days: 7
+.github/workflows/_reusable_quality.yml:169:          retention-days: 7
+.github/workflows/_reusable_quality.yml:232:          retention-days: 7
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:6:import tracemalloc
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:25:    tracemalloc.start()
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:30:    current, peak = tracemalloc.get_traced_memory()
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:31:    tracemalloc.stop()
+.github/workflows/ci-pr-atomic.yml:190:          retention-days: 30
+.github/workflows/ci-pr-atomic.yml:450:          retention-days: 30
+.github/workflows/ci-pr-atomic.yml:524:          retention-days: 30
+src/bnsyn/production/connectivity.py:26:@dataclass(frozen=True, slots=True)
+.github/workflows/_reusable_chaos_tests.yml:75:          retention-days: 30
+src/bnsyn/production/adex.py:34:@dataclass(frozen=True, slots=True)
+src/bnsyn/production/adex.py:49:        Exponential slope factor (V).
+src/bnsyn/production/adex.py:88:@dataclass(slots=True)
+.github/workflows/codecov-health.yml:24:      - name: Verify token validity
+.github/workflows/physics-equivalence.yml:68:          # Allow accelerated to be slightly slower for small networks
+.github/workflows/physics-equivalence.yml:83:          retention-days: 30
+.github/workflows/_reusable_formal_science.yml:131:          retention-days: 30
+.github/workflows/_reusable_formal_science.yml:312:          retention-days: 30
+.github/workflows/_reusable_pytest.yml:29:        description: 'Codecov token (required if upload-codecov is true)'
+.github/workflows/_reusable_pytest.yml:205:          token: ${{ secrets.CODECOV_TOKEN }}
+.github/workflows/_reusable_pytest.yml:225:          retention-days: 7
+.github/workflows/_reusable_pytest.yml:234:          retention-days: 30
+.github/workflows/_reusable_pytest.yml:243:          retention-days: 30
+.github/workflows/_reusable_pytest.yml:252:          retention-days: 90
+.github/workflows/quality-mutation.yml:78:          retention-days: 30
+.github/workflows/_reusable_validation_tests.yml:102:          retention-days: 30
+.github/workflows/_reusable_property_tests.yml:122:          retention-days: 30
+.github/workflows/_reusable_property_tests.yml:130:          retention-days: 30
+.github/workflows/workflow-integrity.yml:198:          retention-days: 30
+.github/workflows/_reusable_benchmarks.yml:84:          retention-days: 90
+.github/workflows/_reusable_benchmarks.yml:178:          retention-days: 90
+.github/workflows/_reusable_benchmarks.yml:250:          retention-days: 7
+.github/workflows/_reusable_benchmarks.yml:317:          retention-days: 90
+.github/workflows/_reusable_benchmarks.yml:326:          retention-days: 90
+
+--- STDERR ---
+

@@ -1,0 +1,5 @@
+os=Linux 6.12.47 x86_64
+python=Python 3.12.12
+pip=pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+pytest=pytest 9.0.2
+git=git version 2.43.0

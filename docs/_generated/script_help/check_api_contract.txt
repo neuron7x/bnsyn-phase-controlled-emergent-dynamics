@@ -1,0 +1,13 @@
+usage: check_api_contract.py [-h] --baseline BASELINE
+                             [--current-version CURRENT_VERSION]
+                             [--baseline-version BASELINE_VERSION]
+                             [--write-baseline]
+
+Semver-aware API contract checker
+
+options:
+  -h, --help            show this help message and exit
+  --baseline BASELINE
+  --current-version CURRENT_VERSION
+  --baseline-version BASELINE_VERSION
+  --write-baseline

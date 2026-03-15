@@ -1,0 +1,28 @@
+diff --git a/.github/workflows/ci-validation.yml b/.github/workflows/ci-validation.yml
+index 3e17fbc..2a00dee 100644
+--- a/.github/workflows/ci-validation.yml
++++ b/.github/workflows/ci-validation.yml
+@@ -44,6 +44,7 @@ jobs:
+ 
+   determine:
+     runs-on: ubuntu-latest
++    timeout-minutes: 5
+     outputs:
+       mode: ${{ steps.set.outputs.mode }}
+       chaos_subset: ${{ steps.set.outputs.chaos_subset }}
+@@ -109,6 +110,7 @@ jobs:
+ 
+   elite-summary:
+     runs-on: ubuntu-latest
++    timeout-minutes: 5
+     needs: [determine, validation-tests, property-tests]
+     if: needs.determine.outputs.mode == 'elite'
+     steps:
+@@ -129,6 +131,7 @@ jobs:
+ 
+   chaos-summary:
+     runs-on: ubuntu-latest
++    timeout-minutes: 5
+     needs: [determine, chaos-tests, property-tests]
+     if: needs.determine.outputs.mode == 'chaos' && always()
+     steps:

@@ -1,0 +1,60 @@
+COMMAND: rg -n "(openapi|swagger|route|endpoint|api)" docs src README.md
+START_UTC: 2026-02-15T19:39:07.092814Z
+END_UTC: 2026-02-15T19:39:07.119788Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+README.md:245:  - Generate: `python docs/api/_static/tools/update_manifest.py`
+README.md:246:  - Validate: `python docs/api/_static/tools/update_manifest.py --check`
+README.md:247:  - Generate: `python docs/api/_templates/tools/update_manifest.py`
+README.md:248:  - Validate: `python docs/api/_templates/tools/update_manifest.py --check`
+README.md:410:Module maturity tags: [`docs/api_maturity.json`](docs/api_maturity.json).
+README.md:412:API contract baseline and semver gate: [`quality/api_contract_baseline.json`](quality/api_contract_baseline.json), [`scripts/check_api_contract.py`](scripts/check_api_contract.py).
+docs/conf.py:55:templates_path = ["api/_templates"]
+docs/conf.py:59:html_static_path = ["api/_static"]
+docs/modules.rst:5:   :toctree: api/generated
+docs/index.rst:11:   api/index
+docs/SPEC.md:184:All stochasticity is routed through explicit RNG injection; see `bnsyn/rng.py`
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:11:- `quality/api_contract_baseline.json` — baseline для API contract gate.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:12:- `scripts/check_api_contract.py` — реалізація semver-aware API contract checker.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:13:- `Makefile` — canonical target `api-contract`.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:14:- `.github/workflows/ci-pr-atomic.yml` — PR SSOT gate з `make api-contract`.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:21:- `artifacts/local_runs/api_contract.log`
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:29:python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:30:pytest -q tests/test_api_contract_command.py
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:33:Canonical entrypoint для перевірки API-контракту: `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json`.  
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:34:Wrapper для CI/dev: `make api-contract`.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:39:2. **Post-fix команда працює без ручного `PYTHONPATH`:** `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json` завершується успішно.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:40:3. **Визначено canonical entrypoint:** `python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json` працює з кореня репозиторію без ручного `PYTHONPATH`.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:42:5. **Wrapper узгоджений:** `make api-contract` викликає той самий canonical entrypoint для CI/dev-паритету.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:64:2. **Зберігати canonical одну команду для API-contract (`python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json`)**; `make api-contract` використовувати як обгортку.
+src/bnsyn/config.py:274:        Minimum firing rate floor for reward shaping.
+src/bnsyn/config.py:278:    Used by the energy regularization and reward shaping utilities.
+docs/appendix/codebase_readiness_audit_2026-02-15.json:143:        "No proven health endpoint, alert routing, SLO/error-budget policy, or dashboard-as-code evidence found in audited artifacts."
+docs/appendix/PRODUCTION_ROADMAP.md:239:│   ├── api/                  (auto-generated Sphinx)
+docs/INVENTORY.md:55:  - docs/api/api_bnsyn.md
+docs/INVENTORY.md:56:  - docs/api/index.md
+docs/INVENTORY.md:57:  - docs/api/modules.md
+docs/HYPOTHESIS.md:139:The original v1 experiment (`temp_ablation_v1`) demonstrated extreme stability improvement (99.996% variance reduction) but achieved this by essentially disabling consolidation through rapid cooling (alpha=0.95). While scientifically valid, this represents a "trivial win" where stability comes at the cost of plasticity shutdown.
+docs/HYPOTHESIS.md:142:- alpha=0.95 (rapid cooling)
+src/bnsyn/energy/__init__.py:13:Exports energy cost and reward shaping helpers used by control loops.
+docs/PR40_EVIDENCE_REPORT.md:77:- ✅ Correctly computed across 20 seeds on final endpoints
+src/bnsyn/energy/regularization.py:1:"""Energy regularization and reward shaping utilities.
+docs/TROUBLESHOOTING.md:266:id = "generic-api-key"
+docs/SECURITY_GITLEAKS.md:26:| `bibkey:\s+[a-z]+\d{4}[a-z]+` | `bibliography/mapping.yml`, `claims/claims.yml` | Bibliography reference keys (e.g., `bibkey: axelrod1981cooperation`) trigger the `generic-api-key` rule but are not secrets |
+src/bnsyn/sleep/stages.py:38:        Rapid eye movement sleep
+docs/AUDIT_FINDINGS.md:85:- **Rule ID:** `generic-api-key`
+docs/AUDIT_FINDINGS.md:86:- **Root cause:** The `generic-api-key` rule matches patterns like `key: <value>`. The `bibkey:` field in YAML files (bibliography reference keys like `bibkey: axelrod1981cooperation`) triggers false positives.
+docs/TESTING.md:129:make api-contract
+docs/TESTING.md:135:python -m scripts.check_api_contract --baseline quality/api_contract_baseline.json
+docs/api/modules.md:6:api_bnsyn
+docs/api/_static/README.md:5:`docs/api/conf.py` and must remain safe for deterministic builds.
+docs/api/_static/README.md:19:python docs/api/_static/tools/update_manifest.py
+docs/api/_static/README.md:24:python docs/api/_static/tools/update_manifest.py --check
+docs/api/_templates/README.md:4:It is referenced by `templates_path` in `docs/api/conf.py` and should only contain
+docs/api/_templates/README.md:19:python docs/api/_templates/tools/update_manifest.py
+docs/api/_templates/README.md:24:python docs/api/_templates/tools/update_manifest.py --check
+
+--- STDERR ---
+

@@ -1,0 +1,38 @@
+{
+  "product": "bnsyn-phase-controlled-emergent-dynamics",
+  "surface": ["python package", "CLI"],
+  "entrypoints": [
+    "src/bnsyn/cli.py",
+    "src/bnsyn/__main__.py"
+  ],
+  "primary_modules": [
+    "src/bnsyn/sim",
+    "src/bnsyn/simulation.py",
+    "src/bnsyn/sleep",
+    "src/bnsyn/criticality",
+    "src/bnsyn/provenance",
+    "src/bnsyn/validation"
+  ],
+  "governance_docs": [
+    "docs/SPEC.md",
+    "docs/STATUS.md",
+    "docs/RISKS.md",
+    "docs/TRACEABILITY.md"
+  ],
+  "tooling": {
+    "tests": "python -m pytest -m \"not validation\" -q",
+    "lint": ["ruff check .", "pylint src/bnsyn"],
+    "typecheck": "mypy src --strict --config-file pyproject.toml",
+    "build": "python -m build"
+  },
+  "integrations": {
+    "external_services": [],
+    "storage": "local filesystem artifacts/results",
+    "network_dependencies": "none required for core simulation path"
+  },
+  "constraints": {
+    "runtime": "python>=3.11",
+    "compliance_surface": "minimal (no hosted user accounts/payments detected)",
+    "auth": "not applicable for local CLI"
+  }
+}

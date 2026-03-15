@@ -1,0 +1,7 @@
+usage: validate_codebase_readiness_audit.py [-h] [--path PATH]
+
+Validate codebase readiness audit JSON shape and score invariants
+
+options:
+  -h, --help   show this help message and exit
+  --path PATH  Path to audit report JSON file

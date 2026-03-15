@@ -1,0 +1,54 @@
+{
+  "Claims": [
+    {
+      "id": "CLM-001",
+      "text": "Contradictions must be zero",
+      "risk_class": "P1",
+      "owner": "chief-architect",
+      "required_evidence": [
+        "governance_quality"
+      ],
+      "required_gates": [
+        "G0"
+      ]
+    }
+  ],
+  "Invariants": [
+    {
+      "id": "INV-001",
+      "scope": "artifacts/ca_dccg/06_quality",
+      "predicate": "contradictions == 0",
+      "failure_mode": "merge_block",
+      "gate_id": "G0"
+    }
+  ],
+  "Decisions": [
+    {
+      "id": "ADR-0001",
+      "type": "ADR",
+      "status": "accepted",
+      "supersedes": [],
+      "evidence": [
+        "03_decisions/ADR/ADR-0001.md"
+      ]
+    }
+  ],
+  "Budgets": [
+    {
+      "id": "BUD-001",
+      "metric": "max_public_interfaces",
+      "threshold": 12,
+      "gate_id": "G2"
+    }
+  ],
+  "Interfaces": [
+    {
+      "id": "IFACE-001",
+      "contract_path": "scripts/ca_governance_gate_runner.py",
+      "semver_rule": "patch",
+      "tests": [
+        "tests/test_ir_compilation_contract.py"
+      ]
+    }
+  ]
+}

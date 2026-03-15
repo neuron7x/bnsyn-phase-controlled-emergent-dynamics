@@ -1,0 +1,8 @@
+python -m pip --version
+python -m pip install -e '.[test]'
+pytest -q tests/test_principal_test_hardening.py tests/test_actions_pinning.py tests/test_no_escape_tripwires.py tests/test_schema_contracts.py tests/test_verify_reproducible_artifacts.py
+pytest -q
+python -m scripts.generate_tests_inventory
+python tools/generate_inventory.py
+python -m scripts.verify_reproducible_artifacts --spec evidence/zqsg_2026_02_12/repro_spec.json --runs 3 --report evidence/zqsg_2026_02_12/repro_report.json
+bandit -q -r src/bnsyn -f json -o evidence/zqsg_2026_02_12/bandit.json

@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "BN-Syn Thermostated Bio-AI System"
+type: software
+authors:
+  - name: "BN-Syn Contributors"
+version: "0.2.0"
+date-released: "2026-01-23"
+license: "MIT"

@@ -1,0 +1,10 @@
+usage: check_coverage_gate.py [-h] [--coverage-xml COVERAGE_XML]
+                              [--baseline BASELINE] [--tolerance TOLERANCE]
+
+Check coverage gate against baseline and floor
+
+options:
+  -h, --help            show this help message and exit
+  --coverage-xml COVERAGE_XML
+  --baseline BASELINE
+  --tolerance TOLERANCE

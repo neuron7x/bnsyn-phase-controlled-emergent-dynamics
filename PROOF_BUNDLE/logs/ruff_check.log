@@ -1,0 +1,54 @@
+F401 [*] `sys` imported but unused
+ --> scripts/check_quickstart_consistency.py:7:8
+  |
+6 | from pathlib import Path
+7 | import sys
+  |        ^^^
+8 |
+9 | REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
+  |
+help: Remove unused import: `sys`
+
+F401 [*] `math` imported but unused
+ --> scripts/math_validate.py:7:8
+  |
+5 | import hashlib
+6 | import json
+7 | import math
+  |        ^^^^
+8 | import statistics
+9 | import sys
+  |
+help: Remove unused import: `math`
+
+E402 Module level import not at top of file
+  --> scripts/math_validate.py:22:1
+   |
+20 |       sys.path.insert(0, str(ROOT))
+21 |
+22 | / from src.contracts import (
+23 | |     assert_dt_stability,
+24 | |     assert_dtype_consistency,
+25 | |     assert_energy_bounded,
+26 | |     assert_integration_tolerance_consistency,
+27 | |     assert_no_division_by_zero_risk,
+28 | |     assert_no_log_domain_violation,
+29 | |     assert_no_exp_overflow_risk,
+30 | |     assert_no_nan_in_dataset,
+31 | |     assert_non_empty_text,
+32 | |     assert_numeric_finite_and_bounded,
+33 | |     assert_order_parameter_computation,
+34 | |     assert_order_parameter_range,
+35 | |     assert_phase_range,
+36 | |     assert_phase_velocity_finite,
+37 | |     assert_probability_normalization,
+38 | |     assert_state_finite_after_step,
+39 | |     assert_timeseries_monotonic_time,
+40 | | )
+   | |_^
+41 |
+42 |   AUDIT_DIR = ROOT / "artifacts" / "math_audit"
+   |
+
+Found 3 errors.
+[*] 2 fixable with the `--fix` option.

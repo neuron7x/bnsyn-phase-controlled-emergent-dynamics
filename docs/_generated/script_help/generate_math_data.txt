@@ -1,0 +1,3 @@
+wrote:artifacts/math_audit/manifest.json
+wrote:artifacts/math_audit/validator_report.json
+wrote:artifacts/math_audit/validator_report.md

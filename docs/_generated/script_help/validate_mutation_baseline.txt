@@ -1,0 +1,7 @@
+usage: validate_mutation_baseline.py [-h] [--baseline BASELINE]
+
+Validate mutation baseline schema
+
+options:
+  -h, --help           show this help message and exit
+  --baseline BASELINE  Path to mutation baseline JSON

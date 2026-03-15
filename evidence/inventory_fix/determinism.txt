@@ -1,0 +1,7 @@
+$ python tools/generate_inventory.py
+$ sha256sum INVENTORY.json > evidence/inventory_fix/inventory.sha256.1
+f1a8ef6641cc663f87b5f57ae9be3a890f19b16600ca6a9f2de2609056bdf880  INVENTORY.json
+$ python tools/generate_inventory.py
+$ sha256sum INVENTORY.json > evidence/inventory_fix/inventory.sha256.2
+f1a8ef6641cc663f87b5f57ae9be3a890f19b16600ca6a9f2de2609056bdf880  INVENTORY.json
+$ diff -u evidence/inventory_fix/inventory.sha256.1 evidence/inventory_fix/inventory.sha256.2

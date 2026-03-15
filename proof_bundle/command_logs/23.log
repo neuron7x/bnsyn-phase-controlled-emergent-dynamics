@@ -1,0 +1,51 @@
+COMMAND: find .github -maxdepth 3 -type f -print
+START_UTC: 2026-02-15T19:39:07.265384Z
+END_UTC: 2026-02-15T19:39:07.274346Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+.github/dependabot.yml
+.github/REQUIRED_STATUS_CONTEXTS.yml
+.github/BRANCH_PROTECTION_GOVERNANCE.md
+.github/QUALITY_LEDGER.md
+.github/workflows/_reusable_benchmarks.yml
+.github/workflows/workflow-integrity.yml
+.github/workflows/formal-coq.yml
+.github/workflows/ci-pr.yml
+.github/workflows/_reusable_property_tests.yml
+.github/workflows/_reusable_ssot.yml
+.github/workflows/release-pipeline.yml
+.github/workflows/ci-smoke.yml
+.github/workflows/_reusable_validation_tests.yml
+.github/workflows/_reusable_gate_profile.yml
+.github/workflows/quality-mutation.yml
+.github/workflows/_reusable_pytest.yml
+.github/workflows/_reusable_formal_science.yml
+.github/workflows/physics-equivalence.yml
+.github/workflows/codecov-health.yml
+.github/workflows/science.yml
+.github/workflows/ci-validation.yml
+.github/workflows/math-quality-gate.yml
+.github/workflows/ci-benchmarks-elite.yml
+.github/workflows/_reusable_chaos_tests.yml
+.github/workflows/dependency-review.yml
+.github/workflows/benchmarks.yml
+.github/workflows/ci-benchmarks.yml
+.github/workflows/dependency-watch.yml
+.github/workflows/codeql.yml
+.github/workflows/ci-pr-atomic.yml
+.github/workflows/_reusable_quality.yml
+.github/workflows/docs.yml
+.github/workflows/formal-tla.yml
+.github/CODEOWNERS
+.github/actions/pin-pip/action.yml
+.github/CI_SLO.md
+.github/PR_GATES.yml
+.github/REQUIRED_CHECKS.yml
+.github/REPO_MANIFEST.md
+.github/WORKFLOW_CONTRACTS.md
+.github/pull_request_template.md
+
+--- STDERR ---
+

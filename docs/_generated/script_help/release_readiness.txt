@@ -1,0 +1,10 @@
+usage: release_readiness.py [-h] [--json-out JSON_OUT] [--md-out MD_OUT]
+                            [--advisory]
+
+Generate release readiness report.
+
+options:
+  -h, --help           show this help message and exit
+  --json-out JSON_OUT  Path to write JSON report
+  --md-out MD_OUT      Path to write Markdown report
+  --advisory           Exit 0 even if blocking checks fail

@@ -1,0 +1,40 @@
+usage: calculate_throughput_gain.py [-h] --reference REFERENCE --accelerated
+                                    ACCELERATED [--output OUTPUT]
+
+BN-Syn throughput gain calculator
+
+options:
+  -h, --help            show this help message and exit
+  --reference REFERENCE
+                        Path to reference backend JSON
+  --accelerated ACCELERATED
+                        Path to accelerated backend JSON
+  --output OUTPUT       Output JSON path (default:
+                        benchmarks/throughput_gain.json)
+
+Throughput gain calculator for BN-Syn optimization.
+
+This script calculates and records throughput improvements from physics-preserving
+transformations, creating an audit trail of performance gains.
+
+Parameters
+----------
+--reference : str
+    Path to reference backend physics baseline JSON
+--accelerated : str
+    Path to accelerated backend physics baseline JSON
+--output : str
+    Path to output throughput gain JSON (default: benchmarks/throughput_gain.json)
+
+Returns
+-------
+None
+    Writes JSON with throughput metrics to file
+
+Notes
+-----
+This creates the performance audit trail required for STEP 6.
+
+References
+----------
+Problem statement STEP 6

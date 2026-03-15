@@ -1,0 +1,9 @@
+{
+  "interfaces": [
+    {
+      "id": "governance.gate_runner",
+      "producer": "scripts/ca_governance_gate_runner.py",
+      "consumer": ".github/workflows/pr_gate.yml"
+    }
+  ]
+}

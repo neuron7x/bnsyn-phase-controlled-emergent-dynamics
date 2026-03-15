@@ -1,0 +1,8 @@
+[reliability 2026-02-18T09:48:50+00:00]
+happy_path_schema_ok
+ok
+ok
+ok
+invalid_exit=2
+stderr:
+Error: steps must be greater than 0
