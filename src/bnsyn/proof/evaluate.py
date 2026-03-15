@@ -12,7 +12,9 @@ from bnsyn.paths import runtime_file
 
 from .contracts import (
     CANONICAL_BASE_CONTRACT,
+    CANONICAL_EXPORT_PROOF_CONTRACT,
     ManifestMode,
+    artifacts_for_export_proof,
     manifest_self_hash,
     mode_from_manifest,
 )
@@ -36,21 +38,6 @@ EXPECTED_GATE_IDS = (
 
 DEFAULT_SPIKE_EVENTS_FALLBACK_ROUNDING_TOLERANCE = 1e-6
 CANONICAL_RAW_SPIKE_ARTIFACT = "traces.npz"
-
-# G4 required-artifact floor remains registry-driven and intentionally narrower
-# than canonical CLI payload artifacts, which may include additive evidence files.
-G4_BASE_REQUIRED_ARTIFACTS: tuple[str, ...] = (
-    "emergence_plot.png",
-    "summary_metrics.json",
-    "criticality_report.json",
-    "avalanche_report.json",
-    "phase_space_report.json",
-    "avalanche_fit_report.json",
-    "robustness_report.json",
-    "envelope_report.json",
-    "run_manifest.json",
-)
-G4_EXPORT_REQUIRED_ARTIFACTS: tuple[str, ...] = G4_BASE_REQUIRED_ARTIFACTS + ("proof_report.json",)
 
 
 @dataclass(frozen=True)
@@ -101,7 +88,7 @@ def _required_artifacts_from_registry(registry: dict[str, dict[str, Any]], mode:
         raise ValueError(f"G4 required_artifacts_by_mode invalid for {mode.bundle_contract}")
 
     required_artifacts = tuple(mode_required)
-    expected_floor = G4_EXPORT_REQUIRED_ARTIFACTS if mode.export_proof else G4_BASE_REQUIRED_ARTIFACTS
+    expected_floor = artifacts_for_export_proof(mode.export_proof)
     if set(required_artifacts) != set(expected_floor):
         raise ValueError("registry/runtime artifact contract drift")
     return required_artifacts
@@ -684,7 +671,7 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
         else:
             export_hint = bool(manifest.get("export_proof"))
             fallback_mode = ManifestMode(
-                bundle_contract="canonical-export-proof" if export_hint else "canonical-base",
+                bundle_contract=CANONICAL_EXPORT_PROOF_CONTRACT if export_hint else CANONICAL_BASE_CONTRACT,
                 export_proof=export_hint,
                 cmd=str(manifest.get("cmd", "")),
             )
@@ -708,7 +695,7 @@ def evaluate_all_gates(artifact_dir: str | Path) -> dict[str, Any]:
         verdict, verdict_code, failure_reasons = _compute_verdict(ordered_gates, registry)
 
         manifest_contract = manifest.get("bundle_contract")
-        bundle_contract = manifest_contract if manifest_contract in {"canonical-base", "canonical-export-proof"} else CANONICAL_BASE_CONTRACT
+        bundle_contract = manifest_contract if manifest_contract in {CANONICAL_BASE_CONTRACT, CANONICAL_EXPORT_PROOF_CONTRACT} else CANONICAL_BASE_CONTRACT
         export_proof = manifest.get("export_proof") if isinstance(manifest.get("export_proof"), bool) else False
 
         report = {

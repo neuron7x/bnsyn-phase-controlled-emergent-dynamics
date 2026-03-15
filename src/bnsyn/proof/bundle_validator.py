@@ -6,7 +6,13 @@ from typing import Any
 
 import jsonschema  # type: ignore[import-untyped]
 
-from bnsyn.proof.contracts import EXPORT_PROOF_ARTIFACTS, manifest_self_hash
+from bnsyn.proof.contracts import (
+    artifacts_for_export_proof,
+    contract_artifact_specs,
+    contract_required_schemas,
+    manifest_self_hash,
+    mode_from_manifest,
+)
 from bnsyn.proof.evaluate import sha256_file
 from bnsyn.paths import runtime_file
 
@@ -28,7 +34,17 @@ def validate_canonical_bundle(
     if not isinstance(artifacts, dict):
         raise ValueError("manifest artifacts must be object")
 
-    for artifact in EXPORT_PROOF_ARTIFACTS:
+    mode, mode_errors = mode_from_manifest(manifest)
+    if mode is None:
+        return {"status": "FAIL", "errors": [f"manifest mode invalid: {msg}" for msg in mode_errors]}
+
+    required_artifacts = artifacts_for_export_proof(mode.export_proof)
+    if not mode.export_proof and "proof_report.json" in artifacts:
+        errors.append("base mode forbids proof_report.json manifest entry")
+    if mode.export_proof and "proof_report.json" not in artifacts:
+        errors.append("export-proof mode requires proof_report.json manifest entry")
+
+    for artifact in required_artifacts:
         path = root / artifact
         if not path.is_file():
             errors.append(f"missing artifact: {artifact}")
@@ -49,22 +65,34 @@ def validate_canonical_bundle(
         if sha256_file(path) != expected:
             errors.append(f"manifest hash mismatch: {artifact}")
 
-    schema_map = {
-        "run_manifest.json": "run-manifest.schema.json",
-        "proof_report.json": "proof-report.schema.json",
-        "avalanche_report.json": "avalanche-report.schema.json",
-        "avalanche_fit_report.json": "avalanche-fit-report.schema.json",
-        "robustness_report.json": "robustness-report.schema.json",
-        "envelope_report.json": "envelope-report.schema.json",
-        "phase_space_report.json": "phase-space-report.schema.json",
-    }
-    for artifact, schema_name in schema_map.items():
+    schema_specs = contract_required_schemas()
+    artifact_specs = contract_artifact_specs()
+    for artifact, artifact_spec in artifact_specs.items():
+        if not isinstance(artifact_spec, dict):
+            raise ValueError("canonical proof contract artifact spec must be object")
+        schema_ref = artifact_spec.get("schema")
+        if schema_ref is None:
+            continue
+        if not isinstance(schema_ref, str):
+            raise ValueError(f"canonical proof contract schema ref for {artifact} must be string or null")
+        schema_spec = schema_specs.get(schema_ref)
+        if schema_spec is None:
+            raise ValueError(f"canonical proof contract schema ref missing from required_schema_set: {schema_ref}")
+
         path = root / artifact
         if not path.exists():
             continue
-        schema = _load_json(runtime_file(f"schemas/{schema_name}"))
+
+        schema = _load_json(runtime_file(schema_spec["path"]))
         try:
-            jsonschema.validate(instance=_load_json(path), schema=schema)
+            payload = _load_json(path)
+            jsonschema.validate(instance=payload, schema=schema)
+            schema_version = payload.get("schema_version")
+            expected_version = schema_spec["schema_version"]
+            if isinstance(schema_version, str) and schema_version != expected_version:
+                errors.append(
+                    f"{artifact} schema_version mismatch: expected {expected_version}, got {schema_version}"
+                )
         except jsonschema.ValidationError as exc:
             errors.append(f"{artifact} schema violation at {exc.json_path}: {exc.message}")
 

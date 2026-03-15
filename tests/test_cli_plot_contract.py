@@ -338,7 +338,7 @@ def test_wheel_installed_canonical_commands_smoke(tmp_path: Path) -> None:
     out_plot = tmp_path / "wheel-plot"
 
     cmd1 = subprocess.run(
-        [str(venv_dir / "bin" / "bnsyn"), "demo-product", "--output", str(tmp_path / "wheel-demo")],
+        [str(vpy), "-m", "bnsyn.cli", "demo-product", "--output", str(tmp_path / "wheel-demo")],
         check=False,
         capture_output=True,
         text=True,
@@ -346,7 +346,7 @@ def test_wheel_installed_canonical_commands_smoke(tmp_path: Path) -> None:
     assert cmd1.returncode == 0, cmd1.stdout + cmd1.stderr
 
     cmd2 = subprocess.run(
-        [str(venv_dir / "bin" / "bnsyn"), "validate-bundle", str(tmp_path / "wheel-demo")],
+        [str(vpy), "-m", "bnsyn.cli", "validate-bundle", str(tmp_path / "wheel-demo")],
         check=False,
         capture_output=True,
         text=True,
@@ -354,7 +354,7 @@ def test_wheel_installed_canonical_commands_smoke(tmp_path: Path) -> None:
     assert cmd2.returncode == 0, cmd2.stdout + cmd2.stderr
 
     cmd3 = subprocess.run(
-        [str(venv_dir / "bin" / "bnsyn"), "run", "--profile", "canonical", "--plot", "--export-proof", "--output", str(out_run)],
+        [str(vpy), "-m", "bnsyn.cli", "run", "--profile", "canonical", "--plot", "--export-proof", "--output", str(out_run)],
         check=False,
         capture_output=True,
         text=True,
@@ -362,7 +362,7 @@ def test_wheel_installed_canonical_commands_smoke(tmp_path: Path) -> None:
     assert cmd3.returncode == 0, cmd3.stdout + cmd3.stderr
 
     cmd4 = subprocess.run(
-        [str(venv_dir / "bin" / "bnsyn"), "plot", "--out", str(out_plot)],
+        [str(vpy), "-m", "bnsyn.cli", "plot", "--out", str(out_plot)],
         check=False,
         capture_output=True,
         text=True,

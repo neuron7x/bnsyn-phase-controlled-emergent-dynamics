@@ -49,6 +49,20 @@ python -m pytest -m "property" -q
 
 All three suites are expected to **collect successfully** when test dependencies are installed.
 
+## Validate SSOT canonical proof contract
+
+```bash
+make validate-proof-contract
+```
+
+Equivalent explicit command:
+
+```bash
+python -m scripts.validate_canonical_proof_contract
+```
+
+This command is blocking in CI and fails closed on contract drift across SSOT JSON, validators, docs, and workflow command wiring.
+
 ## Run smoke marker tests
 
 ```bash
