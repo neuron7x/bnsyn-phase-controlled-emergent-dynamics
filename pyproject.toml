@@ -86,7 +86,6 @@ accelerators = [
 
 [project.scripts]
 bnsyn = "bnsyn.cli:main"
-aoc = "aoc.cli:main"
 
 [build-system]
 requires = ["setuptools==82.0.0"]
