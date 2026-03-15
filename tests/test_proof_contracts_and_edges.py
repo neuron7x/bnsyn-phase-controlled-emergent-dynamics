@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import pytest
 import jsonschema
 
 from bnsyn.experiments.declarative import run_canonical_live_bundle
+from bnsyn.proof import contracts as contracts_mod
 from bnsyn.proof import evaluate as proof_evaluate
 from bnsyn.proof.contracts import (
     BASE_ARTIFACTS,
@@ -21,6 +23,8 @@ from bnsyn.proof.contracts import (
     bundle_contract_for_export_proof,
     command_for_export_proof,
     mode_from_manifest,
+    contract_artifact_specs,
+    contract_required_schemas,
 )
 
 
@@ -595,3 +599,75 @@ def test_metric_consistency_gate_reports_missing_recomputed_metric() -> None:
     )
     assert result["status"] == "FAIL"
     assert "sigma_mean: missing recomputed metric" in result["errors"]
+
+
+
+def _write_contract(tmp_path: Path, payload: dict) -> Path:
+    path = tmp_path / "contract.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path
+
+
+def _base_contract_payload() -> dict:
+    return {
+        "contract_name": "Canonical Proof Bundle Contract",
+        "contract_version": "1.0.0",
+        "canonical_command": CANONICAL_EXPORT_PROOF_COMMAND,
+        "canonical_entrypoint": "bnsyn run",
+        "artifact_dir": "artifacts/canonical_run",
+        "bundle_modes": {
+            "canonical-base": {"command": CANONICAL_BASE_COMMAND, "export_proof": False},
+            "canonical-export-proof": {"command": CANONICAL_EXPORT_PROOF_COMMAND, "export_proof": True},
+        },
+        "required_artifacts": {
+            "canonical-base": list(BASE_ARTIFACTS),
+            "canonical-export-proof": list(EXPORT_PROOF_ARTIFACTS),
+        },
+        "optional_artifacts": [
+            item["filename"] for item in contract_artifact_specs().values() if item["required_in_modes"] == []
+        ],
+        "artifacts": copy.deepcopy(list(contract_artifact_specs().values())),
+        "required_schema_set": [
+            {"id": sid, "path": spec["path"], "schema_version": spec["schema_version"]}
+            for sid, spec in contract_required_schemas().items()
+        ],
+        "validation_rules": {},
+        "bundle_invariants": {},
+        "compatibility": {},
+    }
+
+
+def test_contract_loader_rejects_non_object_and_unknown_fields(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    contract_path = tmp_path / "bad_contract.json"
+    contract_path.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(contracts_mod, "_CONTRACT_PATH", contract_path)
+    with pytest.raises(ValueError, match="must contain a JSON object"):
+        contracts_mod._load_contract()
+
+    payload = _base_contract_payload()
+    payload["unexpected"] = 1
+    monkeypatch.setattr(contracts_mod, "_CONTRACT_PATH", _write_contract(tmp_path, payload))
+    with pytest.raises(ValueError, match="unknown fields"):
+        contracts_mod._load_contract()
+
+
+def test_contract_loader_rejects_required_in_modes_mismatch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    payload = _base_contract_payload()
+    payload["artifacts"][0]["required_in_modes"] = []
+    monkeypatch.setattr(contracts_mod, "_CONTRACT_PATH", _write_contract(tmp_path, payload))
+    with pytest.raises(ValueError, match="required_in_modes mismatch"):
+        contracts_mod._load_contract()
+
+
+def test_contract_loader_rejects_optional_and_schema_mismatches(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    payload = _base_contract_payload()
+    payload["optional_artifacts"] = []
+    monkeypatch.setattr(contracts_mod, "_CONTRACT_PATH", _write_contract(tmp_path, payload))
+    with pytest.raises(ValueError, match="optional_artifacts mismatch"):
+        contracts_mod._load_contract()
+
+    payload = _base_contract_payload()
+    payload["required_schema_set"] = payload["required_schema_set"][:-1]
+    monkeypatch.setattr(contracts_mod, "_CONTRACT_PATH", _write_contract(tmp_path, payload))
+    with pytest.raises(ValueError, match="artifact schema ref missing"):
+        contracts_mod._load_contract()

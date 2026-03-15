@@ -2,6 +2,14 @@
 
 `bnsyn run --profile canonical --plot --export-proof` is the canonical command for a single reproducible BN-Syn emergence proof run.
 
+## Authoritative contract source (SSOT)
+
+The **only authoritative machine-readable canonical proof contract** is:
+
+- `src/bnsyn/resources/ci/canonical_proof_contract.json`
+
+All code paths and CI checks must derive from or validate against this JSON contract. This document is explanatory and non-authoritative for contract details.
+
 ## Command
 
 ```bash
@@ -14,30 +22,28 @@ Optional controls:
 bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run
 ```
 
-## Artifact contract (required)
+## Artifact contract (overview)
 
-Canonical base bundle (`bnsyn run --profile canonical --plot`):
+For the exact required/optional artifact set, schema bindings, invariants, and versioned fields, use `src/bnsyn/resources/ci/canonical_proof_contract.json`.
 
-- `emergence_plot.png` — primary canonical emergence visual, a composite image built from spike raster activity and population rate dynamics.
-- `summary_metrics.json` — numeric summary for the run.
-- `run_manifest.json` — reproducibility manifest including command metadata and artifact hashes for external artifacts; self-entry stores a deterministic self-hash computed from canonical manifest JSON with the self-entry normalized to a fixed placeholder token.
-- `criticality_report.json` — machine-readable criticality metrics derived from the canonical run traces.
-- `avalanche_report.json` — machine-readable avalanche event-structure metrics from contiguous nonzero spike-count bins.
-- `phase_space_report.json` — machine-readable state-space trajectory metrics from population rate, sigma, and coherence traces.
-- `population_rate_trace.npy` — deterministic raw population-rate trace used for phase-space evidence.
-- `sigma_trace.npy` — deterministic raw sigma trace used for phase-space evidence.
-- `coherence_trace.npy` — deterministic raw coherence trace used for phase-space evidence.
-- `phase_space_rate_sigma.png` — deterministic phase-space trajectory rendering in `(rate, sigma)`.
-- `phase_space_rate_coherence.png` — deterministic phase-space trajectory rendering in `(rate, coherence)`.
-- `phase_space_activity_map.png` — deterministic `(rate, sigma)` occupancy/density activity map.
-- `avalanche_fit_report.json` — deterministic avalanche fit evidence with machine-readable validity verdict.
-- `robustness_report.json` — fixed 10-seed reproducibility/admissibility run table + same-seed replay trace-hash evidence.
-- `envelope_report.json` — admissibility-band validation summary for the fixed 10-seed run set.
+High-level canonical outputs include:
 
-Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-proof`):
-
-- all base bundle artifacts, plus
-- `proof_report.json` — gate-evaluated proof verdict evaluated against the finalized `run_manifest.json` state.
+- `emergence_plot.png`
+- `summary_metrics.json`
+- `criticality_report.json`
+- `avalanche_report.json`
+- `phase_space_report.json`
+- `population_rate_trace.npy`
+- `sigma_trace.npy`
+- `coherence_trace.npy`
+- `phase_space_rate_sigma.png`
+- `phase_space_rate_coherence.png`
+- `phase_space_activity_map.png`
+- `avalanche_fit_report.json`
+- `robustness_report.json`
+- `envelope_report.json`
+- `run_manifest.json`
+- `proof_report.json` (export-proof mode)
 
 ## Mechanism narrative (research-facing)
 

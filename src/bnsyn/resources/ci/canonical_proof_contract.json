@@ -1,0 +1,296 @@
+{
+  "contract_name": "bnsyn-canonical-proof-contract",
+  "contract_version": "1.0.0",
+  "canonical_command": "bnsyn run --profile canonical --plot --export-proof",
+  "canonical_entrypoint": "bnsyn run",
+  "artifact_dir": {
+    "default": "artifacts/canonical_run",
+    "cli_argument": "--output"
+  },
+  "bundle_modes": {
+    "canonical-base": {
+      "export_proof": false,
+      "command": "bnsyn run --profile canonical --plot"
+    },
+    "canonical-export-proof": {
+      "export_proof": true,
+      "command": "bnsyn run --profile canonical --plot --export-proof"
+    }
+  },
+  "required_artifacts": {
+    "canonical-base": [
+      "emergence_plot.png",
+      "summary_metrics.json",
+      "criticality_report.json",
+      "avalanche_report.json",
+      "phase_space_report.json",
+      "population_rate_trace.npy",
+      "sigma_trace.npy",
+      "coherence_trace.npy",
+      "phase_space_rate_sigma.png",
+      "phase_space_rate_coherence.png",
+      "phase_space_activity_map.png",
+      "avalanche_fit_report.json",
+      "robustness_report.json",
+      "envelope_report.json",
+      "run_manifest.json"
+    ],
+    "canonical-export-proof": [
+      "emergence_plot.png",
+      "summary_metrics.json",
+      "criticality_report.json",
+      "avalanche_report.json",
+      "phase_space_report.json",
+      "population_rate_trace.npy",
+      "sigma_trace.npy",
+      "coherence_trace.npy",
+      "phase_space_rate_sigma.png",
+      "phase_space_rate_coherence.png",
+      "phase_space_activity_map.png",
+      "avalanche_fit_report.json",
+      "robustness_report.json",
+      "envelope_report.json",
+      "run_manifest.json",
+      "proof_report.json"
+    ]
+  },
+  "optional_artifacts": [
+    "traces.npz",
+    "raster_plot.png",
+    "population_rate_plot.png"
+  ],
+  "artifacts": [
+    {
+      "filename": "emergence_plot.png",
+      "category": "visual",
+      "description": "Primary emergence visual",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "summary_metrics.json",
+      "category": "metrics",
+      "description": "Top-level numeric summary",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "criticality_report.json",
+      "category": "report",
+      "description": "Criticality metrics report",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "avalanche_report.json",
+      "category": "report",
+      "description": "Avalanche event metrics report",
+      "schema": "avalanche_report",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "phase_space_report.json",
+      "category": "report",
+      "description": "Phase space metrics report",
+      "schema": "phase_space_report",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "population_rate_trace.npy",
+      "category": "trace",
+      "description": "Population-rate trace",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "sigma_trace.npy",
+      "category": "trace",
+      "description": "Sigma trace",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "coherence_trace.npy",
+      "category": "trace",
+      "description": "Coherence trace",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "phase_space_rate_sigma.png",
+      "category": "visual",
+      "description": "(rate,sigma) trajectory figure",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "phase_space_rate_coherence.png",
+      "category": "visual",
+      "description": "(rate,coherence) trajectory figure",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "phase_space_activity_map.png",
+      "category": "visual",
+      "description": "(rate,sigma) occupancy map",
+      "schema": null,
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "avalanche_fit_report.json",
+      "category": "report",
+      "description": "Avalanche fit evidence",
+      "schema": "avalanche_fit_report",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "robustness_report.json",
+      "category": "report",
+      "description": "Deterministic robustness envelope report",
+      "schema": "robustness_report",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "envelope_report.json",
+      "category": "report",
+      "description": "Admissibility-band envelope report",
+      "schema": "envelope_report",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "run_manifest.json",
+      "category": "manifest",
+      "description": "Manifest with artifact hashes",
+      "schema": "run_manifest",
+      "required_in_modes": [
+        "canonical-base",
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "proof_report.json",
+      "category": "report",
+      "description": "Proof verdict report",
+      "schema": "proof_report",
+      "required_in_modes": [
+        "canonical-export-proof"
+      ]
+    },
+    {
+      "filename": "traces.npz",
+      "category": "trace",
+      "description": "Optional raw trace archive",
+      "schema": null,
+      "required_in_modes": []
+    },
+    {
+      "filename": "raster_plot.png",
+      "category": "visual",
+      "description": "Optional raster plot",
+      "schema": null,
+      "required_in_modes": []
+    },
+    {
+      "filename": "population_rate_plot.png",
+      "category": "visual",
+      "description": "Optional population-rate plot",
+      "schema": null,
+      "required_in_modes": []
+    }
+  ],
+  "required_schema_set": [
+    {
+      "id": "run_manifest",
+      "path": "schemas/run-manifest.schema.json",
+      "schema_version": "1.0.0"
+    },
+    {
+      "id": "proof_report",
+      "path": "schemas/proof-report.schema.json",
+      "schema_version": "1.1.0"
+    },
+    {
+      "id": "avalanche_report",
+      "path": "schemas/avalanche-report.schema.json",
+      "schema_version": "1.0.0"
+    },
+    {
+      "id": "avalanche_fit_report",
+      "path": "schemas/avalanche-fit-report.schema.json",
+      "schema_version": "1.0.0"
+    },
+    {
+      "id": "robustness_report",
+      "path": "schemas/robustness-report.schema.json",
+      "schema_version": "1.0.0"
+    },
+    {
+      "id": "envelope_report",
+      "path": "schemas/envelope-report.schema.json",
+      "schema_version": "1.0.0"
+    },
+    {
+      "id": "phase_space_report",
+      "path": "schemas/phase-space-report.schema.json",
+      "schema_version": "1.1.0"
+    }
+  ],
+  "validation_rules": [
+    "Canonical command and bundle mode commands are deterministic and fixed.",
+    "Manifest artifacts must include SHA-256 hashes for required artifacts.",
+    "JSON artifacts with schema references must validate against required_schema_set.",
+    "Bundle mode required_artifacts must be enforced without permissive fallback."
+  ],
+  "bundle_invariants": [
+    "run_manifest.json self-hash is computed with normalized self placeholder.",
+    "canonical-base mode forbids proof_report.json in manifest artifacts.",
+    "canonical-export-proof mode requires proof_report.json in manifest artifacts."
+  ],
+  "compatibility": {
+    "authoritative": true,
+    "notes": "This JSON is the only canonical proof contract source; all consumers must derive from it or be validated against it."
+  }
+}

@@ -1,4 +1,4 @@
-.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report
+.PHONY: install setup demo reproduce dev-setup quickstart-smoke dev-env-offline wheelhouse-build wheelhouse-validate wheelhouse-report wheelhouse-clean check test test-all test-gate test-diagnostics test-determinism test-validation test-integration test-e2e test-property entropy-gate coverage coverage-fast coverage-baseline coverage-gate quality format fix lint mypy typecheck ssot security sbom profile cleanroom clean docs build release validate-claims-coverage docs-evidence mutation mutation-ci mutation-baseline mutation-check mutation-check-strict release-readiness manifest manifest-validate manifest-check inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate ci-artifacts flake-report validate-proof-contract
 
 PYTHON := ./.venv/bin/python
 ENV_READY := .venv/.ready-dev
@@ -71,7 +71,7 @@ wheelhouse-clean:
 wheelhouse-report: wheelhouse-validate
 	@echo "Wheelhouse report: $(WHEELHOUSE_REPORT)"
 
-PYTHON_READY_TARGETS := setup install demo reproduce dev-setup quickstart-smoke wheelhouse-build wheelhouse-validate dev-env-offline test test-all test-gate test-diagnostics test-determinism test-validation test-property test-integration test-e2e entropy-gate coverage coverage-fast coverage-baseline coverage-gate mutation mutation-ci mutation-baseline mutation-check mutation-check-strict api-contract validate-api-maturity format fix lint mypy ssot validate-claims-coverage docs-evidence security sbom profile ci-artifacts flake-report cleanroom docs build release release-readiness manifest manifest-validate inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate traceability-check public-surfaces
+PYTHON_READY_TARGETS := setup install demo reproduce dev-setup quickstart-smoke wheelhouse-build wheelhouse-validate dev-env-offline test test-all test-gate test-diagnostics test-determinism test-validation test-property test-integration test-e2e entropy-gate coverage coverage-fast coverage-baseline coverage-gate mutation mutation-ci mutation-baseline mutation-check mutation-check-strict api-contract validate-api-maturity format fix lint mypy ssot validate-claims-coverage docs-evidence security sbom profile ci-artifacts flake-report cleanroom docs build release release-readiness manifest manifest-validate inventory inventory-check perfection-gate launch-gate smlrs-gate dsio-gate traceability-check public-surfaces validate-proof-contract
 $(PYTHON_READY_TARGETS): $(ENV_READY)
 
 test:
@@ -314,3 +314,6 @@ traceability-check:
 
 public-surfaces:
 	$(PYTHON) -m scripts.discover_public_surfaces
+
+validate-proof-contract:
+	$(PYTHON) -m scripts.validate_canonical_proof_contract
