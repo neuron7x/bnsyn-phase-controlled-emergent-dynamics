@@ -1,8 +1,6 @@
 name: perfection-gate
 
 on:
-  schedule:
-    - cron: "17 4 * * 2"
   workflow_dispatch:
 
 permissions:

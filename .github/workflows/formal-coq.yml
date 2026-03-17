@@ -3,7 +3,6 @@ name: formal-coq
 # Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
-  schedule:
     # Run nightly at 1 AM UTC
     - cron: '0 1 * * *'
   workflow_dispatch:
