@@ -3,7 +3,6 @@ name: formal-tla
 # Guard: non-PR-gate workflow; must remain off PRs.
 
 on:
-  schedule:
     # Run nightly at 2 AM UTC
     - cron: '0 2 * * *'
   workflow_dispatch:

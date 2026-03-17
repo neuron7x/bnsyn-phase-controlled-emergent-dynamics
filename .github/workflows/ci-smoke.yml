@@ -3,8 +3,6 @@ name: ci-smoke
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *'
 
 permissions:
   contents: read

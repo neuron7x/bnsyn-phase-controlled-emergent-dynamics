@@ -24,11 +24,6 @@ on:
           - timing
           - stochastic
           - io
-  schedule:
-    - cron: "0 3 * * 0"
-    - cron: "0 2 * * *"
-    - cron: "0 4 * * *"
-    - cron: "30 2 * * *"
 permissions:
   contents: read
 

@@ -35,9 +35,6 @@ on:
           - steps_sweep
           - conn_sweep
           - dt_sweep
-  schedule:
-    - cron: '0 2 * * *'
-    - cron: '0 3 * * 0'
 
 permissions:
   contents: read
