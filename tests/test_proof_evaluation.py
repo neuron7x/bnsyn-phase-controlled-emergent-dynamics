@@ -451,6 +451,49 @@ def test_validate_bundle_product_surface_fails_without_summary_metrics_when_prod
     assert "missing artifact: summary_metrics.json" in result["errors"]
 
 
+def test_validate_bundle_product_surface_fails_when_product_summary_shape_is_invalid(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+    )
+
+    product_summary_path = out_dir / "product_summary.json"
+    payload = _load_json(product_summary_path)
+    payload["seed"] = "123"
+    _write_json(product_summary_path, payload)
+
+    result = validate_canonical_bundle(out_dir, require_product_surface=True)
+
+    assert result["status"] == "FAIL"
+    assert any("product_summary invalid" in err for err in result["errors"])
+
+
+def test_validate_bundle_product_surface_fails_when_index_missing_required_navigation(tmp_path: Path) -> None:
+    from bnsyn.proof.bundle_validator import validate_canonical_bundle
+
+    out_dir = tmp_path / "canonical"
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+    )
+
+    index_path = out_dir / "index.html"
+    html = index_path.read_text(encoding="utf-8").replace("proof_report.json", "proof-report-removed")
+    index_path.write_text(html, encoding="utf-8")
+
+    result = validate_canonical_bundle(out_dir, require_product_surface=True)
+
+    assert result["status"] == "FAIL"
+    assert any("index.html missing required content: proof_report.json" in err for err in result["errors"])
+
+
 def test_trace_recompute_happy_path_g9_passes(tmp_path: Path) -> None:
     out_dir = tmp_path / "canonical"
     run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)

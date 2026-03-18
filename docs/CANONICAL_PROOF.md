@@ -41,11 +41,14 @@ Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-pr
 
 - all base bundle artifacts, plus
 - `proof_report.json` — gate-evaluated proof verdict evaluated against the finalized `run_manifest.json` state.
+- `product_summary.json` — machine-readable human-surface summary emitted for local reviewer convenience.
+- `index.html` — primary human-readable review surface emitted alongside the proof bundle.
 
 ## Human-first inspection rule
 
 The primary human interface is `artifacts/canonical_run/index.html`.
 Open that report first, then follow the ordered artifact inspection sequence defined in [README.md](../README.md).
+For the full product-surface contract check after a canonical export-proof run, execute `bnsyn validate-bundle artifacts/canonical_run`.
 
 ## Mechanism narrative (research-facing)
 

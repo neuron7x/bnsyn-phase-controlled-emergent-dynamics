@@ -9,6 +9,7 @@ import jsonschema  # type: ignore[import-untyped]
 from bnsyn.proof.contracts import EXPORT_PROOF_ARTIFACTS, manifest_self_hash
 from bnsyn.proof.evaluate import sha256_file
 from bnsyn.paths import runtime_file
+from bnsyn.viz.product_report import validate_index_html_contents, validate_product_summary_payload
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -88,6 +89,11 @@ def validate_canonical_bundle(
             summary_metrics: dict[str, Any] | None = None
             proof_report: dict[str, Any] | None = None
 
+            try:
+                validate_product_summary_payload(product_summary)
+            except (ValueError, jsonschema.ValidationError) as exc:
+                errors.append(f"product_summary invalid: {exc}")
+
             if summary_metrics_path.is_file():
                 summary_metrics = _load_json(summary_metrics_path)
             if proof_report_path.is_file():
@@ -120,7 +126,12 @@ def validate_canonical_bundle(
             if summary_metrics is not None and seed != summary_metrics.get("seed"):
                 errors.append("product_summary seed mismatch vs summary_metrics")
 
-        if index_path.is_file() and index_path.stat().st_size == 0:
-            errors.append("index.html is empty")
+        if index_path.is_file():
+            if index_path.stat().st_size == 0:
+                errors.append("index.html is empty")
+            else:
+                index_html = index_path.read_text(encoding="utf-8")
+                for snippet in validate_index_html_contents(index_html):
+                    errors.append(f"index.html missing required content: {snippet}")
 
     return {"status": "PASS" if not errors else "FAIL", "errors": errors}
