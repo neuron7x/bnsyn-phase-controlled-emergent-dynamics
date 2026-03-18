@@ -5,7 +5,10 @@ from pathlib import Path
 from typing import Any, Literal, TypedDict, get_type_hints
 from xml.etree import ElementTree as ET
 
+import jsonschema  # type: ignore[import-untyped]
+
 from bnsyn.proof.contracts import CANONICAL_EXPORT_PROOF_CONTRACT
+from bnsyn.paths import runtime_file
 
 _DETERMINISTIC_TIMESTAMP = "1970-01-01T00:00:00Z"
 
@@ -190,6 +193,29 @@ FAQ_ENTRIES: tuple[tuple[str, str], ...] = (
     ),
 )
 
+DEMO_COMPLETION_TASKS: tuple[tuple[str, str], ...] = (
+    ("Terminal design system", "Keep canonical terminal output visually strong but dependency-free."),
+    ("Raw run → product parity", "Ensure the canonical export-proof path emits the human-facing report surface."),
+    ("Primary report first", "Anchor reviewers on index.html before raw JSON and traces."),
+    ("Machine summary path", "Expose product_summary.json for automation and lightweight ingestion."),
+    ("Proof gate continuity", "Keep proof_report.json visible and aligned with the manifest."),
+    ("Validation loop", "Make validate-bundle a first-class follow-up command for local operators."),
+    ("Artifact wayfinding", "Explain why each artifact exists, not just its filename."),
+    ("Command discoverability", "Surface the exact next commands directly in the report."),
+    ("Theme-safe terminal controls", "Respect NO_COLOR and support explicit local theme overrides."),
+    ("Regression coverage", "Protect the demo/onboarding path with runtime and CLI tests."),
+)
+
+PRODUCT_SUMMARY_SCHEMA_PATH = runtime_file("schemas/product-summary.schema.json")
+INDEX_HTML_REQUIRED_SNIPPETS: tuple[str, ...] = (
+    "BN-Syn Canonical Product Report",
+    "product_summary.json",
+    "proof_report.json",
+    "bnsyn validate-bundle",
+    "bnsyn proof-validate-bundle",
+    "Critical pull request completion tasks",
+)
+
 
 def _validate_product_summary(summary: ProductSummary) -> None:
     expected_types = get_type_hints(ProductSummary)
@@ -201,6 +227,18 @@ def _validate_product_summary(summary: ProductSummary) -> None:
             raise ValueError(
                 f"product_summary field {key} has invalid type: expected {expected}, got {type(value)}"
             )
+
+
+def validate_product_summary_payload(payload: dict[str, Any]) -> None:
+    """Validate a product summary against type and JSON-schema contracts."""
+    _validate_product_summary(payload)  # type: ignore[arg-type]
+    schema = json.loads(Path(PRODUCT_SUMMARY_SCHEMA_PATH).read_text(encoding="utf-8"))
+    jsonschema.validate(instance=payload, schema=schema)
+
+
+def validate_index_html_contents(index_html: str) -> list[str]:
+    """Return missing required snippets from a rendered product report."""
+    return [snippet for snippet in INDEX_HTML_REQUIRED_SNIPPETS if snippet not in index_html]
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -260,7 +298,7 @@ def write_product_report_bundle(
         "primary_visual_data_sha256": _manifest_artifact_sha(manifest, "population_rate_trace.npy"),
     }
 
-    _validate_product_summary(product_summary)
+    validate_product_summary_payload(product_summary)
 
     product_summary_path = artifact_dir / "product_summary.json"
     product_summary_path.write_text(
@@ -294,18 +332,48 @@ def _render_index_html(
     ET.SubElement(head, "meta", {"charset": "utf-8"})
     ET.SubElement(head, "title").text = "BN-Syn Canonical Product Report"
     ET.SubElement(head, "style").text = (
-        "body{font-family:Arial,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;line-height:1.5;}"
-        ".ok{color:#0a7f2e;font-weight:bold;}"
-        ".lead{font-size:1.05rem;background:#f7f9fc;padding:0.9rem 1rem;border-left:4px solid #2f6fed;}"
-        ".callout{background:#fbfcfe;border:1px solid #dbe4f0;border-radius:8px;padding:1rem;margin:1rem 0;}"
-        "table{border-collapse:collapse;width:100%;margin:0.75rem 0 1.5rem 0;}"
-        "th,td{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top;}"
-        "th{background:#f5f5f5;}"
-        "code{background:#f4f4f4;padding:0.1rem 0.3rem;border-radius:4px;}"
+        ":root{color-scheme:dark;--bg:#07111f;--panel:#0d1b31;--panel-alt:#112441;"
+        "--border:#27476f;--text:#e8f0ff;--muted:#aac1e6;--accent:#77d3ff;--accent-2:#9b7cff;"
+        "--ok:#88f7b5;--warn:#ffd36f;}"
+        "body{font-family:Inter,Segoe UI,Arial,sans-serif;max-width:1240px;margin:0 auto;padding:2rem 1.25rem 4rem 1.25rem;line-height:1.6;background:radial-gradient(circle at top,#112441 0%,#07111f 58%);color:var(--text);}"
+        "a{color:var(--accent);}"
+        "h1,h2,h3{letter-spacing:0.01em;}"
+        ".ok{color:var(--ok);font-weight:700;}"
+        ".lead{font-size:1.05rem;background:linear-gradient(135deg,rgba(119,211,255,0.16),rgba(155,124,255,0.14));padding:1rem 1.1rem;border:1px solid rgba(119,211,255,0.28);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.18);}"
+        ".hero{background:linear-gradient(135deg,rgba(119,211,255,0.14),rgba(155,124,255,0.14));border:1px solid rgba(119,211,255,0.25);border-radius:24px;padding:1.4rem;margin-bottom:1.4rem;box-shadow:0 16px 40px rgba(0,0,0,0.24);}"
+        ".eyebrow{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.18em;color:var(--accent);margin-bottom:0.6rem;}"
+        ".hero-grid,.stats-grid,.action-grid,.tasks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.9rem;}"
+        ".card,.metric,.action,.task,.callout{background:rgba(13,27,49,0.92);border:1px solid var(--border);border-radius:18px;padding:1rem;box-shadow:0 10px 28px rgba(0,0,0,0.18);}"
+        ".metric strong,.action strong,.task strong{display:block;margin-bottom:0.4rem;font-size:0.95rem;}"
+        ".metric-value{font-size:1.45rem;font-weight:800;color:var(--accent);display:block;}"
+        ".muted{color:var(--muted);}"
+        "table{border-collapse:collapse;width:100%;margin:0.75rem 0 1.5rem 0;background:rgba(13,27,49,0.88);border-radius:14px;overflow:hidden;}"
+        "th,td{border:1px solid rgba(39,71,111,0.85);padding:10px;text-align:left;vertical-align:top;}"
+        "th{background:#10223e;color:var(--accent);}"
+        "code{background:#0b1730;padding:0.12rem 0.32rem;border-radius:6px;color:#d8e6ff;}"
+        "img{max-width:100%;border:1px solid var(--border);border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,0.25);}"
+        "dl{display:grid;grid-template-columns:minmax(220px,280px) 1fr;gap:0.6rem 1rem;}"
+        "dt{font-weight:700;color:var(--accent);}"
+        "dd{margin:0;color:var(--text);}"
+        ".command{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.95rem;}"
     )
 
     body = ET.SubElement(root, "body")
-    ET.SubElement(body, "h1").text = "BN-Syn Canonical Product Report"
+    hero = ET.SubElement(body, "section", {"class": "hero"})
+    ET.SubElement(hero, "div", {"class": "eyebrow"}).text = "Canonical proof surface"
+    ET.SubElement(hero, "h1").text = "BN-Syn Canonical Product Report"
+
+    hero_grid = ET.SubElement(hero, "div", {"class": "hero-grid"})
+    hero_card = ET.SubElement(hero_grid, "div", {"class": "card"})
+    ET.SubElement(hero_card, "strong").text = "Project stance"
+    ET.SubElement(hero_card, "p").text = (
+        "Emergent dynamics here means complex network behavior formed from deterministic interactions among simple neural units."
+    )
+    hero_card_2 = ET.SubElement(hero_grid, "div", {"class": "card"})
+    ET.SubElement(hero_card_2, "strong").text = "Primary operator loop"
+    ET.SubElement(hero_card_2, "p").text = (
+        "Run the canonical proof, open this report, validate the bundle, then inspect traces and JSON evidence."
+    )
 
     lead = ET.SubElement(body, "p", {"class": "lead"})
     lead.text = (
@@ -322,6 +390,44 @@ def _render_index_html(
         "This report proves a deterministic canonical run executed and emitted the expected "
         "evidence bundle; it does not imply unverified biological or cognitive claims."
     )
+
+    ET.SubElement(body, "h2").text = "Demo readiness dashboard"
+    stats = ET.SubElement(body, "div", {"class": "stats-grid"})
+    for label, value, detail in (
+        ("Proof verdict", product_summary["proof_verdict"], "Gate-level bundle verdict."),
+        ("Bundle contract", product_summary["bundle_contract_version"], "Canonical proof mode."),
+        ("Criticality", str(product_summary["criticality_verdict"]), "Criticality evidence non-empty."),
+        ("Avalanche", str(product_summary["avalanche_verdict"]), "Avalanche evidence non-empty."),
+    ):
+        metric = ET.SubElement(stats, "div", {"class": "metric"})
+        ET.SubElement(metric, "strong").text = label
+        ET.SubElement(metric, "span", {"class": "metric-value"}).text = value
+        ET.SubElement(metric, "span", {"class": "muted"}).text = detail
+
+    ET.SubElement(body, "h2").text = "Operator commands"
+    commands = ET.SubElement(body, "div", {"class": "action-grid"})
+    for title, command, detail in (
+        ("One-command smoke path", "make quickstart-smoke", "Best first run from a fresh clone."),
+        (
+            "Canonical proof command",
+            "bnsyn run --profile canonical --plot --export-proof",
+            "Direct raw proof generation path.",
+        ),
+        (
+            "Product validation",
+            f"bnsyn validate-bundle {product_summary['artifact_dir']}",
+            "Re-check HTML surface + manifest + proof alignment.",
+        ),
+        (
+            "Proof-only validation",
+            f"bnsyn proof-validate-bundle {product_summary['artifact_dir']}",
+            "Validate the proof bundle contract directly.",
+        ),
+    ):
+        action = ET.SubElement(commands, "div", {"class": "action"})
+        ET.SubElement(action, "strong").text = title
+        ET.SubElement(action, "div", {"class": "command"}).text = command
+        ET.SubElement(action, "p").text = detail
 
     callout = ET.SubElement(body, "div", {"class": "callout"})
     ET.SubElement(callout, "h2").text = "Open this report first"
@@ -350,6 +456,13 @@ def _render_index_html(
         "Cryptographic evidence link: emergence_plot.png is anchored to population_rate_trace.npy "
         "through the canonical run_manifest.json SHA-256 entries shown below."
     )
+
+    ET.SubElement(body, "h2").text = "Critical pull request completion tasks"
+    tasks = ET.SubElement(body, "div", {"class": "tasks-grid"})
+    for title, detail in DEMO_COMPLETION_TASKS:
+        task = ET.SubElement(tasks, "div", {"class": "task"})
+        ET.SubElement(task, "strong").text = title
+        ET.SubElement(task, "p").text = detail
 
     ET.SubElement(body, "h2").text = "Canonical execution cycle"
     cycle_intro = ET.SubElement(body, "p")

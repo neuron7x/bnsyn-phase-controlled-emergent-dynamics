@@ -39,6 +39,31 @@ bnsyn run --profile canonical --plot --export-proof
 
 Use the raw CLI command when you already have the environment prepared and want the direct proof bundle. Use `make quickstart-smoke` when you want the full first-run path with setup and verification.
 
+### Terminal experience for demos
+
+The canonical CLI now emits a richer terminal presentation on `stderr` during `bnsyn run --profile canonical --plot --export-proof`, `bnsyn demo-product`, and `bnsyn validate-bundle` so local reviewers can immediately see:
+
+- which canonical mode is running;
+- where the bundle is being written;
+- the primary visual and manifest paths;
+- the next proof or product command to execute.
+
+Color is enabled automatically for interactive terminals, respects the community-standard `NO_COLOR` opt-out, and can be forced locally with:
+
+```bash
+BNSYN_CLI_THEME=neon bnsyn run --profile canonical --plot --export-proof
+```
+
+Use `BNSYN_CLI_THEME=plain` when recording plain-text CI logs or minimal shell sessions.
+
+The export-proof canonical run now emits the product review surface as part of the same local output directory, so after `bnsyn run --profile canonical --plot --export-proof` you can immediately:
+
+```bash
+bnsyn validate-bundle artifacts/canonical_run
+```
+
+For proof-only contract checks, `bnsyn proof-validate-bundle <artifact_dir>` remains available as the narrower validator.
+
 ## Canonical Project Vectors (Permanent)
 
 - **V1 — Result:** [NORMATIVE][CLM-0001] one canonical proof command, `bnsyn run --profile canonical --plot --export-proof`, must generate visual and metrics evidence of emergent network dynamics.
@@ -191,6 +216,7 @@ See [docs/STATUS.md](docs/STATUS.md).
 ## Canonical links
 
 - Proof contract reference: [docs/CANONICAL_PROOF.md](docs/CANONICAL_PROOF.md)
+- Demo review and merge-readiness priorities: [docs/DEMO_REVIEW.md](docs/DEMO_REVIEW.md)
 - Reproduce proof details: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
 - System architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Project status and boundaries: [docs/STATUS.md](docs/STATUS.md)

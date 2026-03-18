@@ -18,6 +18,7 @@ from bnsyn.cli import (
     _cmd_proof_check_envelope,
     _cmd_proof_evaluate,
     _cmd_proof_validate_bundle,
+    _cmd_run_experiment,
     _cmd_validate_bundle,
 )
 
@@ -118,6 +119,50 @@ def test_cmd_plot_returns_error_when_bundle_raises(monkeypatch: pytest.MonkeyPat
     captured = capsys.readouterr()
     assert rc == 1
     assert "Error running canonical compatibility plot wrapper: boom" in captured.out
+
+
+def test_cmd_run_experiment_emits_canonical_terminal_guidance(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    out_dir = tmp_path / "canonical-run"
+    monkeypatch.setenv("BNSYN_CLI_THEME", "plain")
+    monkeypatch.setattr("bnsyn.cli.runtime_file", lambda *_args, **_kwargs: Path("configs/canonical_profile.yaml"))
+    monkeypatch.setattr(
+        "bnsyn.experiments.declarative.run_canonical_live_bundle",
+        lambda *_args, **_kwargs: {
+            "artifact_dir": out_dir.as_posix(),
+            "summary_metrics": {
+                "rate_mean_hz": 7.25,
+                "sigma_mean": 1.0123,
+                "coherence_mean": 0.337,
+            },
+            "proof_report_path": (out_dir / "proof_report.json").as_posix(),
+            "product_summary_path": (out_dir / "product_summary.json").as_posix(),
+            "index_html_path": (out_dir / "index.html").as_posix(),
+        },
+    )
+
+    rc = _cmd_run_experiment(
+        argparse.Namespace(
+            config=None,
+            profile="canonical",
+            plot=True,
+            export_proof=True,
+            output=str(out_dir),
+        )
+    )
+
+    captured = capsys.readouterr()
+    payload = json.loads(captured.out)
+
+    assert rc == 0
+    assert payload["status"] == "ok"
+    assert "BN-Syn canonical launch" in captured.err
+    assert "Artifact dir" in captured.err
+    assert "Proof report" in captured.err
+    assert f"bnsyn proof-validate-bundle {out_dir.as_posix()}" in captured.err
+    assert (out_dir / "index.html").as_posix() in captured.err
+    assert f"bnsyn validate-bundle {out_dir.as_posix()}" in captured.err
 
 
 def test_cmd_proof_evaluate_emits_expected_payload(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
@@ -247,6 +292,41 @@ def test_cli_demo_product_emits_required_files(tmp_path: Path) -> None:
     ]
     for name in required:
         assert (out_dir / name).exists(), f"missing {name}"
+
+    validate_proc = subprocess.run(
+        [sys.executable, "-m", "bnsyn.cli", "validate-bundle", str(out_dir)],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    assert validate_proc.returncode == 0, validate_proc.stdout + validate_proc.stderr
+    assert "STATUS: PASS" in validate_proc.stdout
+
+
+def test_cli_run_export_proof_now_emits_product_surface(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical_run"
+    run_proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "run",
+            "--profile",
+            "canonical",
+            "--plot",
+            "--export-proof",
+            "--output",
+            str(out_dir),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+    assert run_proc.returncode == 0, run_proc.stdout + run_proc.stderr
+    assert (out_dir / "product_summary.json").exists()
+    assert (out_dir / "index.html").exists()
 
     validate_proc = subprocess.run(
         [sys.executable, "-m", "bnsyn.cli", "validate-bundle", str(out_dir)],

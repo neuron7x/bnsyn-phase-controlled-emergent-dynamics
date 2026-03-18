@@ -35,6 +35,14 @@ from bnsyn.provenance.manifest_builder import build_sleep_stack_manifest
 from bnsyn.experiments.emergence import run_emergence_to_disk
 from bnsyn.sim.network import run_simulation
 from bnsyn.viz.emergence_plot import plot_emergence_npz
+from bnsyn.presentation import (
+    emit_bundle_validation_failure,
+    emit_bundle_validation_success,
+    emit_canonical_run_epilogue,
+    emit_canonical_run_prelude,
+    emit_demo_product_prelude,
+    emit_demo_product_success,
+)
 from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
 from bnsyn.paths import runtime_file
 
@@ -219,11 +227,15 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
         return CLIExitCode.INVALID_USAGE
 
     if profile == "canonical":
+        output_dir = output or "artifacts/canonical_run"
+        emit_canonical_run_prelude(str(output_dir), export_proof)
         try:
             bundle = run_canonical_live_bundle(
                 config_path,
-                output or "artifacts/canonical_run",
+                output_dir,
                 export_proof=export_proof,
+                generate_product_report=export_proof,
+                product_package_version=_get_package_version(),
             )
         except Exception as e:
             print(f"Error running experiment: {e}")
@@ -233,6 +245,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
             print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
 
         bundle_contract = bundle_contract_for_export_proof(export_proof)
+        emit_canonical_run_epilogue(bundle, export_proof)
 
         payload = {
             "status": "ok",
@@ -732,9 +745,11 @@ def _cmd_validate_bundle(args: argparse.Namespace) -> int:
 
     result = validate_canonical_bundle(args.artifact_dir, require_product_surface=True)
     if result["status"] == "PASS":
+        emit_bundle_validation_success(Path(args.artifact_dir).as_posix())
         print("STATUS: PASS")
         print(f"ARTIFACT_DIR: {Path(args.artifact_dir).as_posix()}")
         return CLIExitCode.OK
+    emit_bundle_validation_failure(Path(args.artifact_dir).as_posix())
     print("STATUS: FAIL")
     for error in result["errors"]:
         print(f"- {error}")
@@ -748,6 +763,7 @@ def _cmd_demo_product(args: argparse.Namespace) -> int:
     output_dir = Path(getattr(args, "output", "artifacts/canonical_run"))
     package_version = _get_package_version()
     config_path = _default_canonical_profile_path()
+    emit_demo_product_prelude(output_dir.as_posix(), package_version)
     try:
         run_canonical_live_bundle(
             config_path,
@@ -770,6 +786,7 @@ def _cmd_demo_product(args: argparse.Namespace) -> int:
         print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
         return CLIExitCode.INVALID_USAGE
 
+    emit_demo_product_success(output_dir.as_posix())
     print("STATUS: PASS")
     print(f"ARTIFACT_DIR: {output_dir.as_posix()}")
     print(f"REPORT: {(output_dir / 'index.html').as_posix()}")

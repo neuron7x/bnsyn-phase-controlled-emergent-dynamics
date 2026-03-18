@@ -184,7 +184,13 @@ def test_cli_run_profile_canonical_end_to_end(monkeypatch, tmp_path: Path) -> No
 
 def test_canonical_export_proof_manifest_command_truth(tmp_path: Path) -> None:
     out_dir = tmp_path / "canonical_export"
-    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+        product_package_version="0.2.0",
+    )
 
     manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
@@ -192,6 +198,8 @@ def test_canonical_export_proof_manifest_command_truth(tmp_path: Path) -> None:
     assert manifest["export_proof"] is True
     assert "proof_report.json" in manifest["artifacts"]
     assert (out_dir / "proof_report.json").exists()
+    assert (out_dir / "product_summary.json").exists()
+    assert (out_dir / "index.html").exists()
 
 
 def test_build_repro_reports_is_stateless_across_invocations(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
