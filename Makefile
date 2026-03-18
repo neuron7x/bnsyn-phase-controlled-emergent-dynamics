@@ -2,6 +2,7 @@
 
 PYTHON := ./.venv/bin/python
 ENV_READY := .venv/.ready-dev
+BOOTSTRAP_SCRIPT := scripts/bootstrap.sh
 
 LOCK_FILE ?= requirements-lock.txt
 WHEELHOUSE_DIR ?= wheelhouse
@@ -18,10 +19,8 @@ SVC ?=
 ensure-venv:
 	@test -x $(PYTHON) || python3 -m venv .venv
 
-$(ENV_READY): pyproject.toml | ensure-venv
-	$(PYTHON) -m pip install -U pip setuptools wheel
-	$(PYTHON) -m pip install -e ".[dev,test]"
-	touch $(ENV_READY)
+$(ENV_READY): pyproject.toml $(BOOTSTRAP_SCRIPT)
+	bash $(BOOTSTRAP_SCRIPT) --venv .venv --ready-file $(ENV_READY) --extras dev,test
 
 setup: $(ENV_READY)
 	$(PYTHON) -V

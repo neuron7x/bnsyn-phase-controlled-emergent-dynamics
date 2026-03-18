@@ -1,6 +1,6 @@
 [project]
 name = "bnsyn"
-version = "0.2.0"
+version = "0.5.0"
 description = "BN-Syn Thermostated Bio-AI System: AdEx + conductances + 3-factor plasticity + criticality control + temperature-gated consolidation"
 requires-python = ">=3.11"
 readme = "README.md"

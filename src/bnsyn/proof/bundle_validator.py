@@ -103,10 +103,16 @@ def validate_canonical_bundle(
                 errors.append("product_summary proof_verdict mismatch vs proof_report verdict")
             if product_summary.get("primary_visual") != "emergence_plot.png":
                 errors.append("product_summary primary_visual must be emergence_plot.png")
+            if product_summary.get("primary_visual_data_artifact") != "population_rate_trace.npy":
+                errors.append("product_summary primary_visual_data_artifact must be population_rate_trace.npy")
             if product_summary.get("artifact_dir") != root.as_posix():
                 errors.append("product_summary artifact_dir mismatch")
             if product_summary.get("bundle_contract_version") != manifest.get("bundle_contract"):
                 errors.append("product_summary bundle_contract_version mismatch vs run_manifest")
+            if product_summary.get("primary_visual_sha256") != artifacts.get("emergence_plot.png"):
+                errors.append("product_summary primary_visual_sha256 mismatch vs run_manifest")
+            if product_summary.get("primary_visual_data_sha256") != artifacts.get("population_rate_trace.npy"):
+                errors.append("product_summary primary_visual_data_sha256 mismatch vs run_manifest")
 
             seed = product_summary.get("seed")
             if seed != manifest.get("seed"):

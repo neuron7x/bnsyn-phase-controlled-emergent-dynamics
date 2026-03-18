@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate canonical install/quickstart commands stay consistent across docs."""
+"""Validate canonical entry-surface commands stay consistent across docs."""
 
 from __future__ import annotations
 
@@ -8,28 +8,32 @@ from pathlib import Path
 REQUIRED_SNIPPETS: dict[str, tuple[str, ...]] = {
     "README.md": (
         "make quickstart-smoke",
-        "python -m pip install -e .",
-        "python -m bnsyn --help",
         "bnsyn run --profile canonical --plot --export-proof",
+        "artifacts/canonical_run/index.html",
+        "product_summary.json",
+        "proof_report.json",
         "criticality_report.json",
         "avalanche_report.json",
         "phase_space_report.json",
+    ),
+    "docs/START_HERE.md": (
+        "README.md",
+        "make quickstart-smoke",
+        "bnsyn run --profile canonical --plot --export-proof",
+        "artifacts/canonical_run/index.html",
     ),
     "docs/QUICKSTART.md": (
-        "python -m pip install -e .",
-        "python -m bnsyn --help",
+        "README.md",
+        "make quickstart-smoke",
         "bnsyn run --profile canonical --plot --export-proof",
-        "criticality_report.json",
-        "avalanche_report.json",
-        "phase_space_report.json",
+        "product_summary.json",
+        "proof_report.json",
     ),
     "docs/LEGENDARY_QUICKSTART.md": (
-        "python -m pip install -e .",
-        "python -m bnsyn --help",
+        "README.md",
+        "make quickstart-smoke",
         "bnsyn run --profile canonical --plot --export-proof",
-        "criticality_report.json",
-        "avalanche_report.json",
-        "phase_space_report.json",
+        "artifacts/canonical_run/index.html",
     ),
 }
 
@@ -37,6 +41,7 @@ FORBIDDEN_SNIPPETS: dict[str, tuple[str, ...]] = {
     "README.md": ("pip install bnsyn",),
     "docs/LEGENDARY_QUICKSTART.md": ("pip install bnsyn",),
     "docs/QUICKSTART.md": ("pip install bnsyn",),
+    "docs/START_HERE.md": ("pip install bnsyn",),
 }
 
 

@@ -12,4 +12,4 @@ def test_bump_semver_modes() -> None:
 
 
 def test_changelog_has_current_version() -> None:
-    assert changelog_has_version(Path("CHANGELOG.md"), "0.2.0")
+    assert changelog_has_version(Path("CHANGELOG.md"), "0.5.0")

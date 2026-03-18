@@ -1,44 +1,24 @@
 # 🚀 60-Second Quickstart
 
-Get from zero to one deterministic BN-Syn proof run.
+This page is a compact redirect to the single canonical entry surface in [README.md](../README.md).
 
-## Canonical install path
-
-BN-Syn is source-first in this repository.
-Use an editable install from source as the canonical path.
-
-## Supported Python versions
-
-- Python 3.11+ (`requires-python = ">=3.11"`)
-
-## Install
-
-```bash
-python -m pip install -e .
-```
-
-## Verify CLI
-
-```bash
-python -m bnsyn --help
-```
-
-## Run canonical proof command
-
-```bash
-bnsyn run --profile canonical --plot --export-proof
-```
-
-Expected output contract: JSON with `status="ok"` and canonical artifacts list including `criticality_report.json`, `avalanche_report.json`, `phase_space_report.json`, and `proof_report.json`.
-
-## Reproducible smoke target
+## First run
 
 ```bash
 make quickstart-smoke
 ```
 
-## Optional: sleep-stack command discovery
+## Underlying proof contract
 
 ```bash
-bnsyn sleep-stack --help
+bnsyn run --profile canonical --plot --export-proof
 ```
+
+## Open this first
+
+`artifacts/canonical_run/index.html`
+
+## Why this page exists
+
+Use this page as a short reminder only.
+Use [README.md](../README.md) for the full onboarding flow, artifact meanings, FAQ, and canonical inspection order.

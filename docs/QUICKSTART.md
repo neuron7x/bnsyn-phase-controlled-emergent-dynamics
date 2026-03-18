@@ -1,41 +1,29 @@
 # Deterministic Quickstart Contract
 
-This quickstart is a runnable contract:
+`README.md` is the single canonical quickstart surface.
+This document exists only to restate the enforced contract in compact form.
 
-1. install
-2. verify CLI
-3. run canonical visual proof command
-4. verify canonical artifact outputs
-
-## Install
+## One-command first run
 
 ```bash
-python -m pip install -e .
+make quickstart-smoke
 ```
 
-## Verify CLI
-
-```bash
-python -m bnsyn --help
-```
-
-## Run canonical proof command
+## Underlying canonical proof command
 
 ```bash
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-## Expected output contract
+## Human-first output contract
 
-CLI stdout is a JSON object containing:
+After execution:
 
-- `status` set to `ok`
-- `artifact_dir`
-- `artifacts` containing:
-  - `emergence_plot.png`
-  - `summary_metrics.json`
-  - `run_manifest.json`
-  - `criticality_report.json`
-  - `avalanche_report.json`
-  - `phase_space_report.json`
-  - `proof_report.json` (only with `--export-proof`)
+1. open `artifacts/canonical_run/index.html` first;
+2. treat `product_summary.json` and `proof_report.json` as the machine-readable verdict layer;
+3. inspect metrics and evidence reports in the ordered sequence from [README.md](../README.md).
+
+## Canonical references
+
+- Canonical entry surface: [README.md](../README.md)
+- Proof contract reference: [docs/CANONICAL_PROOF.md](CANONICAL_PROOF.md)
