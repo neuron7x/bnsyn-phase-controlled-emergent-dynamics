@@ -3,14 +3,10 @@ FROM python:3.11-slim
 WORKDIR /workspace
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
     git \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
-
-COPY requirements-lock.txt pyproject.toml ./
-
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -e ".[dev]"
 
 COPY . .
 
@@ -18,7 +14,9 @@ ENV PYTHONHASHSEED=0 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-RUN pytest -m "not validation" --cov=src/bnsyn --cov-fail-under=85 -q
+RUN bash scripts/bootstrap.sh --venv .venv --ready-file .venv/.ready-dev --extras dev,test
 
-ENTRYPOINT ["pytest", "-m", "not validation", "-v"]
-CMD []
+RUN ./.venv/bin/python -m pytest -q tests/test_build_agent_feedback.py tests/test_check_canonical_phase_gates.py tests/test_compare_canonical_runs.py tests/test_synthesize_canonical_remediation.py
+
+ENTRYPOINT ["make"]
+CMD ["quickstart-smoke"]

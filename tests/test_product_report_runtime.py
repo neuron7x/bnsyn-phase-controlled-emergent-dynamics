@@ -41,15 +41,28 @@ def test_validate_product_summary_fails_closed_on_bad_type() -> None:
         "generated_at": "1970-01-01T00:00:00Z",
         "package_version": "0.2.0",
         "bundle_contract_version": "canonical-export-proof",
+        "primary_visual_sha256": "a" * 64,
+        "primary_visual_data_artifact": "population_rate_trace.npy",
+        "primary_visual_data_sha256": "b" * 64,
     }
 
     with pytest.raises(ValueError, match="invalid type"):
         _validate_product_summary(payload)  # type: ignore[arg-type]
 
 
-def test_render_index_html_is_pretty_printed() -> None:
+def test_render_index_html_is_pretty_printed_and_contains_navigation() -> None:
     html = _render_index_html(
-        manifest={"artifacts": {"summary_metrics.json": "0" * 64}},
+        manifest={
+            "artifacts": {
+                "summary_metrics.json": "0" * 64,
+                "criticality_report.json": "1" * 64,
+                "avalanche_report.json": "2" * 64,
+                "phase_space_report.json": "3" * 64,
+                "proof_report.json": "4" * 64,
+                "run_manifest.json": "5" * 64,
+                "emergence_plot.png": "6" * 64,
+            }
+        },
         summary={"rate_mean_hz": 1.0},
         product_summary={
             "status": "PASS",
@@ -63,8 +76,25 @@ def test_render_index_html_is_pretty_printed() -> None:
             "generated_at": "1970-01-01T00:00:00Z",
             "package_version": "0.2.0",
             "bundle_contract_version": "canonical-export-proof",
+            "primary_visual_sha256": "6" * 64,
+            "primary_visual_data_artifact": "population_rate_trace.npy",
+            "primary_visual_data_sha256": "7" * 64,
         },
     )
 
     assert "\n  <head>" in html
     assert "\n  <body>" in html
+    assert "Open this report first" in html
+    assert "Artifact guide" in html
+    assert "Canonical execution cycle" in html
+    assert "Merge and local-run readiness" in html
+    assert "make quickstart-smoke" in html
+    assert "bnsyn validate-bundle" in html
+    assert "proof_report.json shows PASS" in html
+    assert "Minimal FAQ" in html
+    assert "product_summary.json" in html
+    assert "proof_report.json" in html
+    assert "Cryptographic evidence link" in html
+    assert "population_rate_trace.npy" in html
+    assert '<a href="index.html">index.html</a> — Primary report:' in html
+    assert '<a href="proof_report.json">proof_report.json</a> — Proof verdict:' in html

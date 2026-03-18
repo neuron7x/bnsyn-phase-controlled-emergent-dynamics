@@ -9,12 +9,12 @@ from scripts.validate_quickstart_contract import count_gate_collected, extract_q
 
 class ExtractQuickstartLinesTests(unittest.TestCase):
     def test_extracts_lines_with_standard_spacing(self) -> None:
-        readme = """# Title\n\n## Quickstart\n\n```bash\nmake setup\nmake demo\nmake test\n```\n\n## Other\n"""
-        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+        readme = """# Title\n\n## Quickstart\n\n```bash\nmake quickstart-smoke\n```\n\n## Other\n"""
+        self.assertEqual(extract_quickstart_lines(readme), ["make quickstart-smoke"])
 
     def test_extracts_lines_with_extra_blank_lines(self) -> None:
-        readme = """# Title\n## Quickstart\n\n\n```\n\nmake setup\n\nmake demo\nmake test\n\n```\n"""
-        self.assertEqual(extract_quickstart_lines(readme), ["make setup", "make demo", "make test"])
+        readme = """# Title\n## Quickstart\n\n\n```\n\nmake quickstart-smoke\n\n```\n"""
+        self.assertEqual(extract_quickstart_lines(readme), ["make quickstart-smoke"])
 
 
 class CountGateCollectedTests(unittest.TestCase):

@@ -1,6 +1,15 @@
 # BN-Syn Thermostated Bio-AI System
 
+[![canonical-proof-spine](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/canonical-proof-spine.yml/badge.svg)](https://github.com/neuron7x/bnsyn-phase-controlled-emergent-dynamics/actions/workflows/canonical-proof-spine.yml)
+[![neurodrift-cross-commit](https://img.shields.io/badge/neurodrift-cross--commit%20analytics-blue)](./.github/workflows/canonical-proof-spine.yml)
+[![oidc-attestation](https://img.shields.io/badge/OIDC-attest--canonical--bundle-darkgreen)](./.github/workflows/canonical-proof-spine.yml)
+
 BN-Syn is a deterministic simulation repository for phase-controlled emergent neural dynamics with AdEx neurons, STDP plasticity, and criticality control.
+
+This repository now uses **one canonical entry surface** for first contact: this `README.md`.
+Read this page first, run the one-command smoke path, and then inspect the generated report in the fixed order below.
+For project status boundaries, see [docs/STATUS.md](docs/STATUS.md).
+For the post-merge baseline procedure, see [docs/GENESIS_RUN_PLAN.md](docs/GENESIS_RUN_PLAN.md).
 
 ## Emergent dynamics and orchestration (UA)
 
@@ -8,33 +17,27 @@ BN-Syn is a deterministic simulation repository for phase-controlled emergent ne
 
 Термін оркестрація описує умови (зв’язки, часові затримки, баланс збудження й гальмування), які спрямовують цю самоорганізацію. Тобто система не програмується жорстко, а налаштовується так, щоб її компоненти синхронізувалися і породжували нові функції на рівні всієї мережі.
 
-## Install
+## Single canonical entry surface
+
+### One-command first run
+
+For a clean first run, use exactly one command:
 
 ```bash
-python -m pip install .
+make quickstart-smoke
 ```
 
-## Run
+`make quickstart-smoke` is the **deterministic one-command execution contract** for humans evaluating the repository end-to-end from a fresh checkout. It creates the local environment, verifies the CLI, runs the canonical proof pipeline, and checks that the canonical artifact bundle is present and shaped correctly.
 
-```bash
-bnsyn demo-product
-```
+### Underlying canonical proof command
 
-## Inspect
-
-Open `artifacts/canonical_run/index.html` for the human-readable report, and inspect `artifacts/canonical_run/product_summary.json` for machine-readable status.
-
-## Validate
-
-```bash
-bnsyn validate-bundle artifacts/canonical_run
-```
-
-Canonical proof command remains:
+The scientific proof contract remains:
 
 ```bash
 bnsyn run --profile canonical --plot --export-proof
 ```
+
+Use the raw CLI command when you already have the environment prepared and want the direct proof bundle. Use `make quickstart-smoke` when you want the full first-run path with setup and verification.
 
 ## Canonical Project Vectors (Permanent)
 
@@ -43,6 +46,55 @@ bnsyn run --profile canonical --plot --export-proof
 - **V3 — Audience:** [NORMATIVE][CLM-0003] repository surfaces must stay runnable and inspectable for AI lab, neuroscience grant, and technical investor diligence.
 
 All contributor work is expected to strengthen these vectors and avoid drift.
+
+## What the one-command path does
+
+`make quickstart-smoke` executes this fixed user journey:
+
+1. prepare `.venv` and install the package in editable mode;
+2. verify `bnsyn --help` and `bnsyn run --help`;
+3. run `bnsyn run --profile canonical --plot --export-proof --output artifacts/canonical_run`;
+4. assert the canonical artifact contract is complete.
+
+That means the first human-facing answer is deterministic: run one command, then inspect one report.
+
+## Inspect results in this order
+
+After either `make quickstart-smoke` or the raw canonical proof command, inspect artifacts in this exact sequence:
+
+1. `artifacts/canonical_run/index.html` — the primary human-readable report.
+2. `artifacts/canonical_run/product_summary.json` — machine-readable executive summary.
+3. `artifacts/canonical_run/proof_report.json` — gate verdict for the canonical proof bundle.
+4. `artifacts/canonical_run/summary_metrics.json` — headline run metrics.
+5. `artifacts/canonical_run/criticality_report.json` — criticality evidence and band behavior.
+6. `artifacts/canonical_run/avalanche_report.json` — avalanche structure evidence.
+7. `artifacts/canonical_run/phase_space_report.json` — state-space trajectory evidence.
+8. `artifacts/canonical_run/emergence_plot.png` and phase-space PNGs — visual confirmation.
+9. `artifacts/canonical_run/population_rate_trace.npy`, `sigma_trace.npy`, `coherence_trace.npy` — raw trace evidence.
+10. `artifacts/canonical_run/run_manifest.json` — reproducibility metadata and artifact hashes.
+
+## Canonical artifact guide
+
+| Artifact | Read it as | Why it matters |
+|---|---|---|
+| `index.html` | final report | default entrypoint for a human reviewer |
+| `product_summary.json` | compact verdict payload | fastest machine-readable summary |
+| `proof_report.json` | proof gate decision | tells you PASS/FAIL for the bundle |
+| `summary_metrics.json` | headline measurements | gives the top-level run numbers |
+| `criticality_report.json` | criticality interpretation | shows sigma / branching admissibility evidence |
+| `avalanche_report.json` | avalanche interpretation | shows event-structure evidence |
+| `phase_space_report.json` | dynamical interpretation | shows trajectory and occupancy evidence |
+| `emergence_plot.png` | primary visual | quickest visual confirmation of emergent activity |
+| `phase_space_rate_sigma.png` | rate-vs-sigma visual | visualizes one phase-space projection |
+| `phase_space_rate_coherence.png` | rate-vs-coherence visual | visualizes complementary phase-space projection |
+| `phase_space_activity_map.png` | occupancy visual | shows where the system spends time |
+| `population_rate_trace.npy` | raw rate trace | source data for phase-space evidence |
+| `sigma_trace.npy` | raw sigma trace | source data for criticality evidence |
+| `coherence_trace.npy` | raw coherence trace | source data for synchrony evidence |
+| `run_manifest.json` | reproducibility ledger | binds command, hashes, and bundle contract |
+| `robustness_report.json` | repeat-run admissibility | summarizes the fixed 10-seed robustness sweep |
+| `envelope_report.json` | admissibility envelope | captures allowed operating band behavior |
+| `avalanche_fit_report.json` | fit validity evidence | validates avalanche fit quality |
 
 ## Canonical proof path (single command)
 
@@ -98,30 +150,10 @@ python3 -m venv .venv
 ./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
 ```
 
-Inspect:
-- `artifacts/canonical_run/emergence_plot.png`
-- `artifacts/canonical_run/summary_metrics.json`
-- `artifacts/canonical_run/run_manifest.json`
-- `artifacts/canonical_run/criticality_report.json`
-- `artifacts/canonical_run/avalanche_report.json`
-- `artifacts/canonical_run/phase_space_report.json`
-- `artifacts/canonical_run/population_rate_trace.npy`
-- `artifacts/canonical_run/sigma_trace.npy`
-- `artifacts/canonical_run/coherence_trace.npy`
-- `artifacts/canonical_run/phase_space_rate_sigma.png`
-- `artifacts/canonical_run/phase_space_rate_coherence.png`
-- `artifacts/canonical_run/phase_space_activity_map.png`
-- `artifacts/canonical_run/avalanche_fit_report.json`
-- `artifacts/canonical_run/robustness_report.json`
-- `artifacts/canonical_run/envelope_report.json`
-- `artifacts/canonical_run/proof_report.json` (when `--export-proof` is enabled)
-
 ## Quickstart
 
 ```bash
-make setup
-make demo
-make test
+make quickstart-smoke
 ```
 
 ## Canonical test gate command
@@ -130,50 +162,36 @@ make test
 make test-gate
 ```
 
-## Canonical links
+## FAQ
 
-- Onboarding funnel: [docs/START_HERE.md](docs/START_HERE.md)
-- Canonical proof contract: [docs/CANONICAL_PROOF.md](docs/CANONICAL_PROOF.md)
-- Reproduce proof: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
-- Contributing workflow: [CONTRIBUTING.md](CONTRIBUTING.md)
-- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- Status: [docs/STATUS.md](docs/STATUS.md)
+### Which command should a new user run first?
 
-## Maintainers / Repo Contract
+Run `make quickstart-smoke`. It is the first-run path that performs setup, CLI verification, canonical execution, and artifact-contract checks in one deterministic flow.
 
-```bash
-make quickstart-smoke
-./.venv/bin/python -m pip install -e .
-./.venv/bin/python -m bnsyn --help
-./.venv/bin/python -m bnsyn run --profile canonical --plot --export-proof
-```
+### Which file should I open first after execution?
 
-## AOC v1.0 (Adaptive Orchestration Controller)
+Open `artifacts/canonical_run/index.html` first. Treat it as the permanent primary interface for human review, then follow the ordered inspection list above.
 
-Local deterministic controller for bounded emergence under explicit constraints.
+### I only want the raw proof bundle without setup. What should I run?
 
-Install:
-```bash
-python -m pip install .
-```
+Run `bnsyn run --profile canonical --plot --export-proof`. That is the canonical proof contract and the direct CLI path.
+
+### How do I confirm the generated bundle is valid?
 
 Run:
+
 ```bash
-aoc run --config examples/basic_task.yaml
+bnsyn validate-bundle artifacts/canonical_run
 ```
 
-Deterministic local limitations (v1.0):
-- local deterministic markdown generator only,
-- local cross-model auditor stub only,
-- no network calls.
+### Where is repository status tracked?
 
-Outputs:
-- `final_artifact.md`
-- `zeropoint.json`
-- `run_summary.json`
-- `sigma_trace.json`
-- `delta_trace.json`
-- `audit_trace.json`
-- `auditor_reliability_trace.json`
-- `termination_verdict.json`
-- `evidence_bundle/`
+See [docs/STATUS.md](docs/STATUS.md).
+
+## Canonical links
+
+- Proof contract reference: [docs/CANONICAL_PROOF.md](docs/CANONICAL_PROOF.md)
+- Reproduce proof details: [docs/proof/REPRODUCE.md](docs/proof/REPRODUCE.md)
+- System architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Project status and boundaries: [docs/STATUS.md](docs/STATUS.md)
+- Redirect surfaces: [docs/START_HERE.md](docs/START_HERE.md), [docs/QUICKSTART.md](docs/QUICKSTART.md), [docs/LEGENDARY_QUICKSTART.md](docs/LEGENDARY_QUICKSTART.md)

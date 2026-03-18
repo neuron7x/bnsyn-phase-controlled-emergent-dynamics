@@ -13,8 +13,11 @@
 9. [ ] Add required check: `scientific-product-gate`.
 10. [ ] Add required check: `pr-gate`.
 11. [ ] Add required check: `canonical-proof-spine`.
-12. [ ] Enable (or explicitly document) **Require branches to be up to date before merging**.
-13. [ ] Enable (or explicitly document) **Dismiss stale approvals**.
+12. [ ] Add required check: `cross-commit-analytics`.
+13. [ ] Add required check: `attest-canonical-bundle`.
+14. [ ] Enable **Require branches to be up to date before merging**.
+15. [ ] Enable **Dismiss stale approvals**.
+16. [ ] Do **not** allow administrators to bypass the required checks above.
 
 ## Required status contexts (job-level + matrix-level)
 
@@ -36,6 +39,8 @@ All contexts below MUST be green before merge:
 - `scientific-product-gate / scientific-product`
 - `pr-gate / pr-gate`
 - `canonical-proof-spine / canonical-proof-spine`
+- `canonical-proof-spine / cross-commit-analytics`
+- `canonical-proof-spine / attest-canonical-bundle`
 
 ## Governance-proof evidence (blocking semantics)
 
@@ -46,6 +51,26 @@ All contexts below MUST be green before merge:
 | Branch protection has PR-only merge | PENDING | PENDING | PENDING |
 | Dismiss stale approvals policy | PENDING | PENDING | PENDING |
 | Up-to-date branch policy decision | PENDING | PENDING | PENDING |
+| Admin bypass disabled for required checks | PENDING | PENDING | PENDING |
+
+## Absolute-zero cache reset before Genesis Run
+
+Invalidate legacy GitHub Actions caches before the first baseline run on `main`:
+
+```bash
+gh cache delete --all --repo neuron7x/bnsyn-phase-controlled-emergent-dynamics
+```
+
+This forces the next `workflow_dispatch` run of `canonical-proof-spine.yml` to rebuild from zero state and validates that `scripts/bootstrap.sh` does not depend on residual cache state.
+
+## Genesis Run protocol
+
+Immediately after merge:
+
+1. trigger `canonical-proof-spine.yml` via `workflow_dispatch` on `main`;
+2. confirm `canonical-proof-spine`, `cross-commit-analytics` (on the next PR), and `attest-canonical-bundle` are registered as required checks;
+3. archive the resulting `canonical_run_bundle.tgz` and attestation as **The Baseline Bundle**;
+4. treat that bundle as the reference artifact for all future `compare_canonical_runs.py` drift checks.
 
 ## Control PR protocol (negative testing)
 

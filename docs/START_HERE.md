@@ -1,50 +1,27 @@
 # START_HERE
 
-This is the canonical onboarding funnel.
+`README.md` is the single canonical onboarding surface for first contact with BN-Syn.
+Use it for install, execution, inspection order, FAQ, and links.
 
-## 1) Install
+## First run
 
 ```bash
-make setup
+make quickstart-smoke
 ```
 
-## 2) Run canonical emergence proof
+## Underlying proof contract
 
 ```bash
 bnsyn run --profile canonical --plot --export-proof
 ```
 
-Base mode artifacts (`bnsyn run --profile canonical --plot`):
-- `emergence_plot.png`
-- `summary_metrics.json`
-- `run_manifest.json`
-- `criticality_report.json`
-- `avalanche_report.json`
-- `phase_space_report.json`
+## What to open first
 
-Export-proof additional artifact (`bnsyn run --profile canonical --plot --export-proof`):
-- `proof_report.json`
+After execution, open `artifacts/canonical_run/index.html` first and then follow the ordered artifact inspection sequence documented in [README.md](../README.md).
 
-## 3) Run tests
+## Reference documents
 
-```bash
-make test
-```
-
-## 4) Reproducibility check
-
-```bash
-make reproduce
-```
-
-Expected artifacts:
-- `artifacts/demo.json`
-- `artifacts/demo.sha256`
-- `artifacts/reproduce_manifest.json`
-- `artifacts/reproducibility_report.json`
-
-## 5) Canonical references
-
-- Proof contract: [docs/CANONICAL_PROOF.md](CANONICAL_PROOF.md)
-- Mechanism + architecture: [docs/ARCHITECTURE.md](ARCHITECTURE.md)
-- Reproducibility details: [docs/REPRODUCIBILITY.md](REPRODUCIBILITY.md)
+- Canonical entry surface: [README.md](../README.md)
+- Proof contract reference: [docs/CANONICAL_PROOF.md](CANONICAL_PROOF.md)
+- Reproducibility details: [docs/proof/REPRODUCE.md](proof/REPRODUCE.md)
+- Status boundaries: [docs/STATUS.md](STATUS.md)

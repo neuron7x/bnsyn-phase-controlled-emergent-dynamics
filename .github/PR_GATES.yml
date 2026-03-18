@@ -36,3 +36,5 @@ required_pr_gates:
     workflow_name: canonical-proof-spine
     required_job_ids:
       - canonical-proof-spine
+      - cross-commit-analytics
+      - attest-canonical-bundle

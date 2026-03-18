@@ -10,6 +10,17 @@ All notable changes to this project are documented in this file.
 - `src/bnsyn/proof/evaluate.py`: Refactored spike-events recomputation pipeline. `recompute_metrics_from_artifacts` now reads policy exclusively from the G9 registry gate. Canonical raw artifact path is `traces.npz` only (no glob fallback). Malformed canonical raw fails closed without rate-trace fallback. `_manifest_float` replaced with `_extract_manifest_numeric` (manifest-only, no summary fallback). `evaluate_gate_g9_metric_consistency` is registry-driven. `_fail_closed_report` emits fully schema-valid `recompute_sources` and `metric_consistency`.
 - `PROOF_SCHEMA_VERSION` constant: `1.0.0` → `1.1.0`.
 
+## [0.5.0] - 2026-03-18
+
+### Added
+- Canonical proof CI spine with phase-space gating, agent feedback, remediation synthesis, cross-commit analytics, and OIDC attestation for `canonical_run_bundle.tgz`.
+- Deterministic `scripts/bootstrap.sh` environment bootstrap path and fail-safe Docker entrypoint bound to `make quickstart-smoke`.
+- Cryptographic linkage between `emergence_plot.png` and `population_rate_trace.npy` in `product_summary.json` and the human-facing `index.html`.
+
+### Changed
+- Branch-protection governance and required status context metadata now include `canonical-proof-spine`, `cross-commit-analytics`, and `attest-canonical-bundle` as merge-blocking checks.
+- Project version advanced from `0.2.0` to `0.5.0` to mark the singular canonical proof orchestration milestone.
+
 ## [0.2.0] - 2026-02-06
 
 ### Added

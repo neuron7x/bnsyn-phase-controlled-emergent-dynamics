@@ -1,5 +1,8 @@
 # Canonical Emergence Proof Path
 
+`README.md` is the single canonical entry surface for users.
+This document is the reference specification for the canonical proof command and artifact contract.
+
 `bnsyn run --profile canonical --plot --export-proof` is the canonical command for a single reproducible BN-Syn emergence proof run.
 
 ## Command
@@ -38,6 +41,11 @@ Export-proof augmented bundle (`bnsyn run --profile canonical --plot --export-pr
 
 - all base bundle artifacts, plus
 - `proof_report.json` — gate-evaluated proof verdict evaluated against the finalized `run_manifest.json` state.
+
+## Human-first inspection rule
+
+The primary human interface is `artifacts/canonical_run/index.html`.
+Open that report first, then follow the ordered artifact inspection sequence defined in [README.md](../README.md).
 
 ## Mechanism narrative (research-facing)
 
