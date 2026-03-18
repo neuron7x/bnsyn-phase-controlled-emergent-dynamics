@@ -63,12 +63,34 @@ for i, attr in enumerate(attractors):
     print(f"    Crystallization: {attr.crystallization:.3f}")
 ```
 
+`get_attractors()` returns the **currently active** attractor basins supported by the crystallizer ring buffer. It is an online view of the present emergent structure, not an append-only historical ledger of every attractor ever seen.
+
 **Attractor Properties:**
 - `center`: Attractor center in state space (subsampled)
 - `basin_radius`: Approximate basin of attraction radius
 - `stability`: Fraction of observations in basin (∈ [0, 1])
 - `formation_step`: When attractor was first detected
 - `crystallization`: Local crystallization progress (∈ [0, 1])
+
+## Integration Map: 7 Connection Points
+
+1. **State intake → ring buffer**: `observe()` subsamples full network state into the bounded attractor buffer.
+2. **Ring buffer → PCA**: buffered state windows periodically update the low-dimensional tracking basis.
+3. **PCA space → clustering**: transformed snapshots are clustered into candidate attractor basins.
+4. **Detected basins → active attractor refresh**: current detections are reconciled with the active attractor list.
+5. **Active attractors → callbacks**: genuinely new basins emit `on_attractor_formed` notifications.
+6. **Active attractors → phase state**: refreshed attractor topology updates crystallization phase.
+7. **Public state → external consumers**: `get_attractors()` and `get_crystallization_state()` expose the live emergence view to dashboards, CLI, and experiments.
+
+## Integration Tasks: 7 Synchronization / Communication Checks
+
+1. **Buffer coherence**: verify subsampled snapshots preserve shape and deterministic insertion order.
+2. **PCA resilience**: keep fail-closed behavior when SVD cannot refresh the basis.
+3. **Cluster validity**: ensure DBSCAN-lite only emits clusters with enough support.
+4. **Refresh identity**: preserve `formation_step` for matched active basins.
+5. **Refresh turnover**: drop stale basins when the buffer shifts to a new attractor regime.
+6. **Callback hygiene**: emit formation callbacks only for genuinely new active basins.
+7. **Public-path proof**: validate the whole chain through `observe()` so downstream consumers receive the correct live attractor view.
 
 ### Callbacks
 

@@ -424,6 +424,64 @@ class AttractorCrystallizer:
 
         return attractors
 
+    def _refresh_attractors(self, detected_attractors: list[Attractor]) -> None:
+        """Refresh active attractors from the latest detection pass.
+
+        Parameters
+        ----------
+        detected_attractors : list[Attractor]
+            Attractors detected from the current ring-buffer contents.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Preserves formation_step for matched attractors, updates their current
+        basin/stability statistics, emits callbacks only for newly formed
+        attractors, and drops attractors no longer supported by the active
+        buffer contents so the state remains an online view rather than a
+        cumulative history.
+        """
+        refreshed: list[Attractor] = []
+        matched_existing: set[int] = set()
+
+        for detected in detected_attractors:
+            matched_index: int | None = None
+            matched_distance: float | None = None
+            for idx, existing in enumerate(self._attractors):
+                if idx in matched_existing:
+                    continue
+                dist = float(np.linalg.norm(detected.center - existing.center))
+                if dist >= self.cluster_eps:
+                    continue
+                if matched_distance is None or dist < matched_distance:
+                    matched_index = idx
+                    matched_distance = dist
+
+            if matched_index is not None:
+                matched_existing.add(matched_index)
+
+            if matched_index is None:
+                refreshed.append(detected)
+                for callback in self._attractor_callbacks:
+                    callback(detected)
+                continue
+
+            existing = self._attractors[matched_index]
+            refreshed.append(
+                Attractor(
+                    center=detected.center,
+                    basin_radius=detected.basin_radius,
+                    stability=detected.stability,
+                    formation_step=existing.formation_step,
+                    crystallization=detected.crystallization,
+                )
+            )
+
+        object.__setattr__(self, "_attractors", refreshed)
+
     def _update_phase(self) -> None:
         """Update crystallization phase based on attractor count and stability.
 
@@ -508,25 +566,11 @@ class AttractorCrystallizer:
         # Detect attractors
         if self._observation_count % self.pca_update_interval == 0:
             new_attractors = self._detect_attractors()
-
-            # Check for new attractors
-            for new_attr in new_attractors:
-                is_new = True
-                for existing_attr in self._attractors:
-                    dist = float(np.linalg.norm(new_attr.center - existing_attr.center))
-                    if dist < self.cluster_eps:
-                        is_new = False
-                        break
-
-                if is_new:
-                    self._attractors.append(new_attr)
-                    for callback in self._attractor_callbacks:
-                        callback(new_attr)
-
+            self._refresh_attractors(new_attractors)
             self._update_phase()
 
     def get_attractors(self) -> list[Attractor]:
-        """Return list of detected attractors.
+        """Return active attractors detected in the current buffer window.
 
         Parameters
         ----------
@@ -535,7 +579,7 @@ class AttractorCrystallizer:
         Returns
         -------
         list[Attractor]
-            List of all detected attractors.
+            List of attractors currently supported by the active ring buffer.
 
         Notes
         -----
