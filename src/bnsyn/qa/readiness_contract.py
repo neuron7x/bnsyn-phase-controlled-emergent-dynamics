@@ -19,9 +19,16 @@ from typing import Any, Protocol, Sequence
 
 from tools.entropy_gate.compute_metrics import compute_metrics, flatten
 
-TRUTH_MODEL_VERSION = "1.0.0"
+TRUTH_MODEL_VERSION = "1.1.0"
 _MAX_OUTPUT_CHARS = 4000
-_STATUS_DOC_TOKENS = ("blocked", "advisory", "ready")
+_COMMAND_FAILURE_EXIT_CODE = 124
+_REQUIRED_READINESS_STATES = frozenset({"blocked", "advisory", "ready"})
+_REQUIRED_SUBSYSTEMS = (
+    "static quality",
+    "runtime proof path",
+    "bundle validation",
+    "governance consistency",
+)
 
 
 class ReadinessStatus(StrEnum):
@@ -162,6 +169,7 @@ class CommandSpec:
     argv: tuple[str, ...]
     blocking: bool = True
     cwd: Path | None = None
+    timeout_seconds: float = 900.0
 
 
 @dataclass(frozen=True)
@@ -172,6 +180,15 @@ class CommandOutcome:
     stdout: str
     stderr: str
     duration_seconds: float
+
+
+@dataclass(frozen=True)
+class MarkdownSection:
+    """Normalized markdown heading section."""
+
+    title: str
+    level: int
+    content: tuple[str, ...]
 
 
 class CommandRunner(Protocol):
@@ -187,20 +204,45 @@ class SubprocessCommandRunner:
     def run(self, spec: CommandSpec, repo_root: Path) -> CommandOutcome:
         cwd = spec.cwd or repo_root
         start = perf_counter()
-        completed = subprocess.run(  # nosec B603
-            list(spec.argv),
-            cwd=cwd,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        duration_seconds = perf_counter() - start
-        return CommandOutcome(
-            exit_code=completed.returncode,
-            stdout=completed.stdout,
-            stderr=completed.stderr,
-            duration_seconds=duration_seconds,
-        )
+        try:
+            completed = subprocess.run(  # nosec B603
+                list(spec.argv),
+                cwd=cwd,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=spec.timeout_seconds,
+            )
+            return CommandOutcome(
+                exit_code=completed.returncode,
+                stdout=completed.stdout,
+                stderr=completed.stderr,
+                duration_seconds=perf_counter() - start,
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout if isinstance(exc.stdout, str) else ""
+            stderr = exc.stderr if isinstance(exc.stderr, str) else ""
+            detail = f"Timeout after {spec.timeout_seconds:.1f}s"
+            return CommandOutcome(
+                exit_code=_COMMAND_FAILURE_EXIT_CODE,
+                stdout=stdout,
+                stderr=_append_detail(stderr, detail),
+                duration_seconds=perf_counter() - start,
+            )
+        except OSError as exc:
+            return CommandOutcome(
+                exit_code=_COMMAND_FAILURE_EXIT_CODE,
+                stdout="",
+                stderr=f"OS error while executing command: {exc}",
+                duration_seconds=perf_counter() - start,
+            )
+
+
+def _append_detail(text: str, detail: str) -> str:
+    stripped = text.strip()
+    if not stripped:
+        return detail
+    return f"{stripped}\n{detail}"
 
 
 def _truncate(text: str) -> str | None:
@@ -277,6 +319,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                 name="ruff check",
                 command="ruff check .",
                 argv=(sys.executable, "-m", "ruff", "check", "."),
+                timeout_seconds=300.0,
             ),
             evidence="command:ruff check .",
         ),
@@ -295,6 +338,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                     "--config-file",
                     "pyproject.toml",
                 ),
+                timeout_seconds=600.0,
             ),
             evidence="command:mypy src --strict --config-file pyproject.toml",
         ),
@@ -305,6 +349,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                 name="pylint src/bnsyn",
                 command="pylint src/bnsyn",
                 argv=(sys.executable, "-m", "pylint", "src/bnsyn"),
+                timeout_seconds=600.0,
             ),
             evidence="command:pylint src/bnsyn",
         ),
@@ -345,6 +390,7 @@ def _evaluate_runtime_proof_path(
                     "--output",
                     output_dir.as_posix(),
                 ),
+                timeout_seconds=900.0,
             ),
             evidence=f"command:bnsyn run --profile canonical --plot --export-proof --output {output_dir.as_posix()}",
         ),
@@ -376,6 +422,7 @@ def _evaluate_bundle_validation(
                     "validate-bundle",
                     output_dir.as_posix(),
                 ),
+                timeout_seconds=300.0,
             ),
             evidence=f"command:bnsyn validate-bundle {output_dir.as_posix()}",
         ),
@@ -416,6 +463,73 @@ def _load_json(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError(f"Expected JSON object in {path}")
     return payload
+
+
+def _parse_markdown_sections(text: str) -> dict[str, MarkdownSection]:
+    sections: dict[str, MarkdownSection] = {}
+    current_title: str | None = None
+    current_level = 0
+    current_content: list[str] = []
+
+    def flush() -> None:
+        nonlocal current_title, current_level, current_content
+        if current_title is None:
+            return
+        sections[_normalize_markdown(current_title)] = MarkdownSection(
+            title=current_title,
+            level=current_level,
+            content=tuple(current_content),
+        )
+
+    for raw_line in text.splitlines():
+        stripped = raw_line.strip()
+        if stripped.startswith("#"):
+            marker, _, title = stripped.partition(" ")
+            if title:
+                flush()
+                current_title = title.strip()
+                current_level = len(marker)
+                current_content = []
+                continue
+        if current_title is not None:
+            current_content.append(raw_line)
+
+    flush()
+    return sections
+
+
+def _normalize_markdown(value: str) -> str:
+    collapsed = " ".join(value.strip().lower().split())
+    return collapsed.replace("**", "").replace("`", "")
+
+
+def _extract_list_items(lines: Sequence[str]) -> list[str]:
+    items: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith(("- ", "* ")):
+            items.append(_normalize_markdown(stripped[2:]))
+            continue
+        prefix, dot, remainder = stripped.partition(".")
+        if dot and prefix.isdigit() and remainder.strip():
+            items.append(_normalize_markdown(remainder))
+    return items
+
+
+def _require_section(sections: dict[str, MarkdownSection], title: str) -> MarkdownSection | None:
+    return sections.get(_normalize_markdown(title))
+
+
+def _has_line(lines: Sequence[str], expected: str) -> bool:
+    normalized_expected = _normalize_markdown(expected)
+    return any(_normalize_markdown(line) == normalized_expected for line in lines)
+
+
+def _contains_phrase(lines: Sequence[str], expected: str) -> bool:
+    normalized_expected = _normalize_markdown(expected)
+    return any(normalized_expected in _normalize_markdown(line) for line in lines)
 
 
 def check_mutation_baseline(path: Path) -> ReadinessCheck:
@@ -542,13 +656,7 @@ def check_entropy_gate(repo_root: Path) -> ReadinessCheck:
     )
 
 
-def _status_tokens_present(text: str) -> bool:
-    lowered = text.lower()
-    return all(token in lowered for token in _STATUS_DOC_TOKENS)
-
-
 def check_status_document_contract(path: Path) -> ReadinessCheck:
-    text = path.read_text(encoding="utf-8") if path.exists() else ""
     if not path.exists():
         return _policy_check(
             "STATUS readiness contract",
@@ -557,18 +665,35 @@ def check_status_document_contract(path: Path) -> ReadinessCheck:
             blocking=True,
             evidence=f"file:{path.as_posix()}",
         )
-    required_fragments = (
-        "machine-readable release readiness",
-        "artifacts/release_readiness.json",
-        "python -m scripts.release_readiness",
-    )
-    missing = [fragment for fragment in required_fragments if fragment not in text]
-    if not _status_tokens_present(text) or missing:
+
+    sections = _parse_markdown_sections(path.read_text(encoding="utf-8"))
+    readiness_section = _require_section(sections, "Machine-readable release readiness")
+    if readiness_section is None:
+        return _policy_check(
+            "STATUS readiness contract",
+            status="fail",
+            details="Missing 'Machine-readable release readiness' section",
+            blocking=True,
+            evidence=f"file:{path.as_posix()}",
+        )
+
+    list_items = set(_extract_list_items(readiness_section.content))
+    missing_states = sorted(_REQUIRED_READINESS_STATES - list_items)
+    missing_contract_lines = [
+        line
+        for line in (
+            "python -m scripts.release_readiness",
+            "artifacts/release_readiness.json",
+            "execution-backed",
+        )
+        if not _contains_phrase(readiness_section.content, line)
+    ]
+    if missing_states or missing_contract_lines:
         detail_parts: list[str] = []
-        if not _status_tokens_present(text):
-            detail_parts.append("must define blocked/advisory/ready statuses")
-        if missing:
-            detail_parts.append("missing fragments: " + ", ".join(missing))
+        if missing_states:
+            detail_parts.append("missing readiness states: " + ", ".join(missing_states))
+        if missing_contract_lines:
+            detail_parts.append("missing semantic lines: " + ", ".join(missing_contract_lines))
         return _policy_check(
             "STATUS readiness contract",
             status="fail",
@@ -576,6 +701,7 @@ def check_status_document_contract(path: Path) -> ReadinessCheck:
             blocking=True,
             evidence=f"file:{path.as_posix()}",
         )
+
     return _policy_check(
         "STATUS readiness contract",
         status="pass",
@@ -586,7 +712,6 @@ def check_status_document_contract(path: Path) -> ReadinessCheck:
 
 
 def check_release_readiness_document_contract(path: Path) -> ReadinessCheck:
-    text = path.read_text(encoding="utf-8") if path.exists() else ""
     if not path.exists():
         return _policy_check(
             "RELEASE_READINESS readiness contract",
@@ -595,21 +720,61 @@ def check_release_readiness_document_contract(path: Path) -> ReadinessCheck:
             blocking=True,
             evidence=f"file:{path.as_posix()}",
         )
-    required_fragments = (
-        "static quality",
-        "runtime proof path",
-        "bundle validation",
-        "governance consistency",
-        "truth_model_version",
+
+    sections = _parse_markdown_sections(path.read_text(encoding="utf-8"))
+    source_section = _require_section(sections, "Single-command truth source")
+    states_section = _require_section(sections, "Readiness states")
+    subsystem_section = _require_section(sections, "Subsystems")
+    missing_sections = [
+        title
+        for title, section in (
+            ("Single-command truth source", source_section),
+            ("Readiness states", states_section),
+            ("Subsystems", subsystem_section),
+        )
+        if section is None
+    ]
+    if missing_sections:
+        return _policy_check(
+            "RELEASE_READINESS readiness contract",
+            status="fail",
+            details="Missing sections: " + ", ".join(missing_sections),
+            blocking=True,
+            evidence=f"file:{path.as_posix()}",
+        )
+
+    assert source_section is not None
+    assert states_section is not None
+    assert subsystem_section is not None
+
+    state_items = set(_extract_list_items(states_section.content))
+    missing_states = sorted(_REQUIRED_READINESS_STATES - state_items)
+    subsystem_items = _extract_list_items(subsystem_section.content)
+    missing_subsystems = [
+        item for item in _REQUIRED_SUBSYSTEMS if item not in subsystem_items
+    ]
+    missing_source_lines = [
+        line
+        for line in (
+            "python -m scripts.release_readiness",
+            "truth_model_version",
+        )
+        if not _contains_phrase(source_section.content + states_section.content, line)
+    ]
+    if not _contains_phrase(
+        states_section.content,
         "ready requires at least one execution-backed check",
-    )
-    missing = [fragment for fragment in required_fragments if fragment not in text.lower()]
-    if not _status_tokens_present(text) or missing:
-        detail_parts = []
-        if not _status_tokens_present(text):
-            detail_parts.append("must define blocked/advisory/ready statuses")
-        if missing:
-            detail_parts.append("missing fragments: " + ", ".join(missing))
+    ):
+        missing_source_lines.append("ready requires at least one execution-backed check")
+
+    if missing_states or missing_subsystems or missing_source_lines:
+        detail_parts: list[str] = []
+        if missing_states:
+            detail_parts.append("missing readiness states: " + ", ".join(missing_states))
+        if missing_subsystems:
+            detail_parts.append("missing subsystems: " + ", ".join(missing_subsystems))
+        if missing_source_lines:
+            detail_parts.append("missing semantic lines: " + ", ".join(missing_source_lines))
         return _policy_check(
             "RELEASE_READINESS readiness contract",
             status="fail",
@@ -617,6 +782,7 @@ def check_release_readiness_document_contract(path: Path) -> ReadinessCheck:
             blocking=True,
             evidence=f"file:{path.as_posix()}",
         )
+
     return _policy_check(
         "RELEASE_READINESS readiness contract",
         status="pass",
