@@ -13,11 +13,15 @@ from __future__ import annotations
 import json
 import hashlib
 import math
+import os
 import struct
 import tempfile
 import zlib
+from contextlib import contextmanager
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Callable, Iterator, TextIO, cast
 
 import numpy as np
 import yaml  # type: ignore[import-untyped]
@@ -39,6 +43,16 @@ from bnsyn.paths import runtime_file
 CANONICAL_REPRO_SEEDS: tuple[int, ...] = (11, 23, 37, 41, 53, 67, 79, 83, 97, 101)
 ENVELOPE_SPEC_PATH = runtime_file("ci/envelope_spec.json")
 STAT_POWER_CONFIG_PATH = runtime_file("ci/statistical_power_config.json")
+PIPELINE_SCHEMA_VERSION = "1.1.0"
+STAGE_ORDER: tuple[str, ...] = (
+    "live_run",
+    "summary_reports",
+    "avalanche_and_fit",
+    "robustness_envelope",
+    "manifest",
+    "proof_report",
+    "product_surface",
+)
 
 
 def _derive_subseed(seed: int, *, context: str) -> int:
@@ -483,37 +497,376 @@ def _build_phase_space_report(
         coherence_trace=coherence_trace,
     )
 
-def run_canonical_live_bundle(
-    config_path: str | Path,
-    artifact_dir: str | Path = "artifacts/canonical_run",
-    export_proof: bool = False,
-    generate_product_report: bool = False,
-    product_package_version: str = "unknown",
-) -> dict[str, Any]:
-    """Execute canonical profile and write deterministic live-run artifacts."""
-    config = load_config(config_path)
-    seed = int(config.experiment.seeds[0])
 
-    metrics, artifact_npz = run_emergence_to_disk(
-        N=config.network.size,
-        dt_ms=config.simulation.dt_ms,
-        duration_ms=config.simulation.duration_ms,
-        seed=seed,
-        external_current_pA=config.simulation.external_current_pA,
-        output_dir=artifact_dir,
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+@dataclass
+class PipelineContext:
+    config: BNSynExperimentConfig
+    artifact_dir: Path
+    export_proof: bool
+    generate_product_report: bool
+    product_package_version: str
+    resume_from_stage: str | None
+    progress_stream: TextIO | None = None
+    seed: int = field(init=False)
+    steps: int = field(init=False)
+    run_manifest_path: Path = field(init=False)
+    product_summary_path: Path = field(init=False)
+    index_html_path: Path = field(init=False)
+    proof_report_path: Path = field(init=False)
+    artifact_npz_path: Path | None = None
+    emergence_metrics: dict[str, Any] | None = None
+    spike_steps: np.ndarray | None = None
+    sigma_trace: np.ndarray | None = None
+    rate_trace_hz: np.ndarray | None = None
+    coherence_trace: np.ndarray | None = None
+    spike_neurons: np.ndarray | None = None
+    n_neurons: int | None = None
+    summary_metrics: dict[str, Any] | None = None
+    criticality_report: dict[str, Any] | None = None
+    phase_space_report: dict[str, Any] | None = None
+    population_rate_trace: np.ndarray | None = None
+    phase_space_rate_sigma_image: np.ndarray | None = None
+    phase_space_rate_coherence_image: np.ndarray | None = None
+    phase_space_activity_map_image: np.ndarray | None = None
+    raster_image: np.ndarray | None = None
+    population_rate_image: np.ndarray | None = None
+    emergence_image: np.ndarray | None = None
+    avalanche_report: dict[str, Any] | None = None
+    avalanche_fit_report: dict[str, Any] | None = None
+    robustness_report: dict[str, Any] | None = None
+    envelope_report: dict[str, Any] | None = None
+    proof_report: dict[str, Any] | None = None
+
+    def __post_init__(self) -> None:
+        self.seed = int(self.config.experiment.seeds[0])
+        self.steps = compute_steps_exact(self.config.simulation.duration_ms, self.config.simulation.dt_ms)
+        self.run_manifest_path = self.artifact_dir / "run_manifest.json"
+        self.product_summary_path = self.artifact_dir / "product_summary.json"
+        self.index_html_path = self.artifact_dir / "index.html"
+        self.proof_report_path = self.artifact_dir / "proof_report.json"
+
+
+def _atomic_write_text(path: Path, payload: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(tmp_path, path)
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+
+
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
+    _atomic_write_text(path, json.dumps(payload, indent=2, sort_keys=True) + "\n")
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _stage_manifest_path(artifact_dir: Path, stage_name: str) -> Path:
+    return artifact_dir / f"stage_{stage_name}.json"
+
+
+def _artifact_hashes_for_outputs(outputs: dict[str, Any]) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for name, value in outputs.items():
+        if not isinstance(value, str):
+            continue
+        path = Path(value)
+        if path.is_file():
+            hashes[name] = _sha256_file(path)
+    return hashes
+
+
+def _pipeline_policy(context: PipelineContext) -> dict[str, Any]:
+    return {
+        "seed": context.seed,
+        "steps": context.steps,
+        "N": int(context.config.network.size),
+        "dt_ms": float(context.config.simulation.dt_ms),
+        "duration_ms": float(context.config.simulation.duration_ms),
+        "external_current_pA": float(context.config.simulation.external_current_pA),
+        "export_proof": bool(context.export_proof),
+    }
+
+
+def _write_stage_record(
+    artifact_dir: Path,
+    *,
+    stage_name: str,
+    status: str,
+    started_at: str,
+    finished_at: str,
+    inputs: dict[str, Any],
+    outputs: dict[str, Any],
+    failure_reason: str | None,
+) -> None:
+    _write_json(
+        _stage_manifest_path(artifact_dir, stage_name),
+        {
+            "schema_version": PIPELINE_SCHEMA_VERSION,
+            "status": status,
+            "started_at": started_at,
+            "finished_at": finished_at,
+            "inputs": inputs,
+            "outputs": outputs,
+            "artifact_hashes": _artifact_hashes_for_outputs(outputs),
+            "failure_reason": failure_reason,
+        },
     )
 
-    with np.load(artifact_npz) as data:
-        spike_steps = np.asarray(data["spike_steps"], dtype=np.int64)
-        sigma_trace = np.asarray(data["sigma_trace"], dtype=np.float64)
-        rate_trace_hz = np.asarray(data["rate_trace_hz"], dtype=np.float64)
-        coherence_trace = np.asarray(data["coherence_trace"], dtype=np.float64)
-        spike_neurons = np.asarray(data["spike_neurons"], dtype=np.int64)
-        steps = int(np.asarray(data["steps"]).item())
-        n_neurons = int(np.asarray(data["N"]).item())
 
-    out_dir = Path(artifact_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+def _load_stage_record(artifact_dir: Path, stage_name: str) -> dict[str, Any] | None:
+    path = _stage_manifest_path(artifact_dir, stage_name)
+    if not path.is_file():
+        return None
+    payload = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+    if payload.get("schema_version") != PIPELINE_SCHEMA_VERSION:
+        raise ValueError(
+            f"{path.name} schema_version {payload.get('schema_version')!r} is incompatible with {PIPELINE_SCHEMA_VERSION}"
+        )
+    return payload
+
+
+def _require_artifacts(stage_name: str, required_paths: dict[str, Path]) -> None:
+    missing = [name for name, path in required_paths.items() if not path.exists()]
+    if missing:
+        joined = ", ".join(sorted(missing))
+        raise FileNotFoundError(f"stage_{stage_name} missing required upstream artifacts: {joined}")
+
+
+def _completed_stage_names(artifact_dir: Path) -> list[str]:
+    completed: list[str] = []
+    for stage_name in STAGE_ORDER:
+        payload = _load_stage_record(artifact_dir, stage_name)
+        if payload is None or payload.get("status") != "completed":
+            break
+        completed.append(stage_name)
+    return completed
+
+
+def _validate_stage_output_hashes(stage_name: str, stage_record: dict[str, Any]) -> bool:
+    outputs = stage_record.get("outputs")
+    artifact_hashes = stage_record.get("artifact_hashes")
+    if not isinstance(outputs, dict) or not isinstance(artifact_hashes, dict):
+        return False
+    for output_name, output_path in outputs.items():
+        if not isinstance(output_path, str):
+            return False
+        path = Path(output_path)
+        expected_hash = artifact_hashes.get(output_name)
+        if not path.is_file() or not isinstance(expected_hash, str):
+            return False
+        if _sha256_file(path) != expected_hash:
+            return False
+    return True
+
+
+def _load_json_dict(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected JSON object at {path}")
+    return cast(dict[str, Any], payload)
+
+
+def _first_stage_requiring_rerun(artifact_dir: Path) -> str | None:
+    for stage_name in STAGE_ORDER:
+        payload = _load_stage_record(artifact_dir, stage_name)
+        if payload is None:
+            return stage_name
+        if payload.get("status") != "completed":
+            return stage_name
+        if not _validate_stage_output_hashes(stage_name, payload):
+            return stage_name
+    return None
+
+
+def _resolve_resume_stage(artifact_dir: Path, resume_from_stage: str | None) -> str | None:
+    first_invalid_stage = _first_stage_requiring_rerun(artifact_dir)
+    if resume_from_stage is not None:
+        if resume_from_stage not in STAGE_ORDER:
+            raise ValueError(f"Unknown resume stage: {resume_from_stage}")
+        if first_invalid_stage is not None and STAGE_ORDER.index(first_invalid_stage) < STAGE_ORDER.index(resume_from_stage):
+            raise ValueError(
+                f"Cannot resume from {resume_from_stage}: upstream artifact integrity requires rerun from {first_invalid_stage}"
+            )
+        for stage_name in STAGE_ORDER[:STAGE_ORDER.index(resume_from_stage)]:
+            payload = _load_stage_record(artifact_dir, stage_name)
+            if payload is None or payload.get("status") != "completed":
+                raise ValueError(
+                    f"Cannot resume from {resume_from_stage}: stage_{stage_name}.json is not completed"
+                )
+        return resume_from_stage
+    return first_invalid_stage
+
+
+def _earlier_stage(current_stage: str | None, candidate_stage: str) -> str:
+    if current_stage is None:
+        return candidate_stage
+    return candidate_stage if STAGE_ORDER.index(candidate_stage) < STAGE_ORDER.index(current_stage) else current_stage
+
+
+def _artifact_npz_path(artifact_dir: Path, stage_record: dict[str, Any]) -> Path:
+    outputs = stage_record.get("outputs")
+    if not isinstance(outputs, dict):
+        raise ValueError("stage_live_run outputs must be an object")
+    artifact_npz = outputs.get("artifact_npz")
+    if not isinstance(artifact_npz, str):
+        raise ValueError("stage_live_run outputs must include artifact_npz")
+    path = Path(artifact_npz)
+    _require_artifacts("summary_reports", {"artifact_npz": path})
+    return path
+
+
+def _load_existing_manifest(artifact_dir: Path) -> dict[str, Any] | None:
+    path = artifact_dir / "run_manifest.json"
+    if not path.is_file():
+        return None
+    payload = _load_json_dict(path)
+    schema_version = payload.get("schema_version")
+    if schema_version != PIPELINE_SCHEMA_VERSION:
+        raise ValueError(
+            f"run_manifest.json schema_version {schema_version!r} is incompatible with {PIPELINE_SCHEMA_VERSION}; use a fresh artifact directory"
+        )
+    return payload
+
+
+def _validate_resume_policy(context: PipelineContext, manifest: dict[str, Any] | None) -> None:
+    policy = _pipeline_policy(context)
+    if manifest is not None:
+        manifest_policy = {
+            "seed": manifest.get("seed"),
+            "steps": manifest.get("steps"),
+            "N": manifest.get("N"),
+            "dt_ms": manifest.get("dt_ms"),
+            "duration_ms": manifest.get("duration_ms"),
+            "export_proof": manifest.get("export_proof"),
+        }
+        for key, value in manifest_policy.items():
+            if value != policy[key]:
+                raise ValueError(f"Resume policy mismatch for {key}; use a fresh artifact directory")
+
+    live_stage = _load_stage_record(context.artifact_dir, "live_run")
+    if live_stage is None:
+        return
+    inputs = live_stage.get("inputs")
+    if not isinstance(inputs, dict):
+        raise ValueError("stage_live_run.json inputs must be an object")
+    recorded_policy = inputs.get("policy")
+    if not isinstance(recorded_policy, dict):
+        raise ValueError("stage_live_run.json missing policy snapshot")
+    for key, value in policy.items():
+        if recorded_policy.get(key) != value:
+            raise ValueError(f"Resume policy mismatch for {key}; use a fresh artifact directory")
+
+
+def _require_array(value: np.ndarray | None, field_name: str) -> np.ndarray:
+    if not isinstance(value, np.ndarray):
+        raise ValueError(f"PipelineContext.{field_name} must be loaded before this stage")
+    return value
+
+
+def _require_report(value: dict[str, Any] | None, field_name: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"PipelineContext.{field_name} must be available before writing outputs")
+    return value
+
+
+def _load_live_run_artifacts(context: PipelineContext) -> PipelineContext:
+    artifact_dir = context.artifact_dir
+    stage_record = _load_stage_record(artifact_dir, "live_run")
+    if stage_record is None:
+        raise FileNotFoundError("stage_live_run.json not found")
+    artifact_npz = _artifact_npz_path(artifact_dir, stage_record)
+    with np.load(artifact_npz) as data:
+        context.artifact_npz_path = artifact_npz
+        context.spike_steps = np.asarray(data["spike_steps"], dtype=np.int64)
+        context.sigma_trace = np.asarray(data["sigma_trace"], dtype=np.float64)
+        context.rate_trace_hz = np.asarray(data["rate_trace_hz"], dtype=np.float64)
+        context.coherence_trace = np.asarray(data["coherence_trace"], dtype=np.float64)
+        context.spike_neurons = np.asarray(data["spike_neurons"], dtype=np.int64)
+        context.steps = int(np.asarray(data["steps"]).item())
+        context.n_neurons = int(np.asarray(data["N"]).item())
+    return context
+
+
+@contextmanager
+def _artifact_dir_lock(artifact_dir: Path) -> Iterator[None]:
+    lock_path = artifact_dir / ".lock"
+    try:
+        fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError as exc:
+        raise RuntimeError(f"Artifact directory is locked: {lock_path}") from exc
+
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps({"pid": os.getpid(), "started_at": _utc_now_iso()}, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        yield
+    finally:
+        if lock_path.exists():
+            lock_path.unlink()
+
+
+def _emit_stage_progress(
+    context: PipelineContext,
+    *,
+    completed: set[str],
+    skipped: set[str],
+    running: str | None,
+    failed: str | None = None,
+) -> None:
+    if context.progress_stream is None:
+        return
+    tokens: list[str] = []
+    for stage_name in STAGE_ORDER:
+        if stage_name == failed:
+            state = "FAIL"
+        elif stage_name == running:
+            state = "RUN"
+        elif stage_name in skipped:
+            state = "SKIP"
+        elif stage_name in completed:
+            state = "DONE"
+        else:
+            state = "TODO"
+        tokens.append(f"[{state}] {stage_name}")
+    print(" -> ".join(tokens), file=context.progress_stream)
+
+
+def stage_live_run(context: PipelineContext) -> PipelineContext:
+    metrics, artifact_npz = run_emergence_to_disk(
+        N=context.config.network.size,
+        dt_ms=context.config.simulation.dt_ms,
+        duration_ms=context.config.simulation.duration_ms,
+        seed=context.seed,
+        external_current_pA=context.config.simulation.external_current_pA,
+        output_dir=context.artifact_dir,
+    )
+    context.artifact_npz_path = Path(artifact_npz)
+    context.emergence_metrics = metrics
+    return context
+
+
+def stage_summary_reports(context: PipelineContext) -> PipelineContext:
+    spike_steps = _require_array(context.spike_steps, "spike_steps")
+    sigma_trace = _require_array(context.sigma_trace, "sigma_trace")
+    rate_trace_hz = _require_array(context.rate_trace_hz, "rate_trace_hz")
+    coherence_trace = _require_array(context.coherence_trace, "coherence_trace")
+    spike_neurons = _require_array(context.spike_neurons, "spike_neurons")
+    steps = context.steps
+    n_neurons = int(cast(int, context.n_neurons))
 
     summary_metrics: dict[str, float | int] = {
         "spike_events": int(spike_steps.size),
@@ -523,15 +876,14 @@ def run_canonical_live_bundle(
         "sigma_mean": float(np.mean(sigma_trace)),
         "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
         "sigma_variance": float(np.var(sigma_trace)),
-        "seed": seed,
-        "N": int(config.network.size),
+        "seed": context.seed,
+        "N": int(context.config.network.size),
         "steps": steps,
-        "duration_ms": float(config.simulation.duration_ms),
-        "dt_ms": float(config.simulation.dt_ms),
-        "external_current_pA": float(config.simulation.external_current_pA),
+        "duration_ms": float(context.config.simulation.duration_ms),
+        "dt_ms": float(context.config.simulation.dt_ms),
+        "external_current_pA": float(context.config.simulation.external_current_pA),
     }
-    summary_path = out_dir / "summary_metrics.json"
-    summary_path.write_text(json.dumps(summary_metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
     spike_steps_per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
     active_steps = int(np.count_nonzero(spike_steps_per_step)) if steps > 0 else 0
     nonzero_rate_steps = int(np.count_nonzero(rate_trace_hz > 0.0))
@@ -540,10 +892,10 @@ def run_canonical_live_bundle(
 
     criticality_report: dict[str, float | int | str] = {
         "schema_version": "1.0.0",
-        "seed": seed,
-        "N": int(config.network.size),
-        "dt_ms": float(config.simulation.dt_ms),
-        "duration_ms": float(config.simulation.duration_ms),
+        "seed": context.seed,
+        "N": int(context.config.network.size),
+        "dt_ms": float(context.config.simulation.dt_ms),
+        "duration_ms": float(context.config.simulation.duration_ms),
         "steps": steps,
         "sigma_mean": float(np.mean(sigma_trace)),
         "sigma_final": float(sigma_trace[-1]) if sigma_trace.size else 0.0,
@@ -556,174 +908,432 @@ def run_canonical_live_bundle(
         "active_steps_fraction": float(active_steps / steps) if steps > 0 else 0.0,
         "nonzero_rate_steps_fraction": float(nonzero_rate_steps / steps) if steps > 0 else 0.0,
         "rate_cv": float(np.std(rate_trace_hz) / np.mean(rate_trace_hz)) if np.mean(rate_trace_hz) > 0 else 0.0,
-        "burstiness_proxy": float(np.var(spike_steps_per_step) / np.mean(spike_steps_per_step)) if np.mean(spike_steps_per_step) > 0 else 0.0,
+        "burstiness_proxy": float(np.var(spike_steps_per_step) / np.mean(spike_steps_per_step))
+        if np.mean(spike_steps_per_step) > 0
+        else 0.0,
     }
-    criticality_report_path = out_dir / "criticality_report.json"
-    criticality_report_path.write_text(
-        json.dumps(criticality_report, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    avalanche_report = _build_avalanche_report(
-        seed=seed,
-        n_neurons=int(config.network.size),
-        dt_ms=float(config.simulation.dt_ms),
-        duration_ms=float(config.simulation.duration_ms),
-        steps=steps,
-        spike_steps_per_step=spike_steps_per_step,
-        bin_width_steps=1,
-    )
-    avalanche_report_path = out_dir / "avalanche_report.json"
-    avalanche_report_path.write_text(
-        json.dumps(avalanche_report, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    avalanche_fit_report = _fit_power_law(cast(list[int], avalanche_report["sizes"]), seed=seed)
-    avalanche_fit_report_path = out_dir / "avalanche_fit_report.json"
-    avalanche_fit_report_path.write_text(
-        json.dumps(avalanche_fit_report, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    robustness_report, envelope_report = _build_repro_reports(config)
-    robustness_report_path = out_dir / "robustness_report.json"
-    envelope_report_path = out_dir / "envelope_report.json"
-    robustness_report_path.write_text(json.dumps(robustness_report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    envelope_report_path.write_text(json.dumps(envelope_report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     phase_space_report = _build_phase_space_report(
-        seed=seed,
-        n_neurons=int(config.network.size),
-        dt_ms=float(config.simulation.dt_ms),
-        duration_ms=float(config.simulation.duration_ms),
+        seed=context.seed,
+        n_neurons=int(context.config.network.size),
+        dt_ms=float(context.config.simulation.dt_ms),
+        duration_ms=float(context.config.simulation.duration_ms),
         steps=steps,
         rate_trace_hz=rate_trace_hz,
         sigma_trace=sigma_trace,
         coherence_trace=coherence_trace,
     )
-    phase_space_report_path = out_dir / "phase_space_report.json"
-    phase_space_report_path.write_text(
-        json.dumps(phase_space_report, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    population_rate_trace_path = out_dir / "population_rate_trace.npy"
-    sigma_trace_path = out_dir / "sigma_trace.npy"
-    coherence_trace_path = out_dir / "coherence_trace.npy"
-    np.save(population_rate_trace_path, rate_trace_hz)
-    np.save(sigma_trace_path, sigma_trace)
-    np.save(coherence_trace_path, coherence_trace)
-
-    phase_space_rate_sigma_path = out_dir / "phase_space_rate_sigma.png"
-    phase_space_rate_coherence_path = out_dir / "phase_space_rate_coherence.png"
-    phase_space_activity_map_path = out_dir / "phase_space_activity_map.png"
-
     phase_space_rate_sigma = build_phase_trajectory_image(rate_trace_hz, sigma_trace)
     phase_space_rate_coherence = build_phase_trajectory_image(rate_trace_hz, coherence_trace)
     phase_space_activity_map, _ = build_activity_map(rate_trace_hz, sigma_trace)
-
-    _write_grayscale_png(phase_space_rate_sigma, phase_space_rate_sigma_path)
-    _write_grayscale_png(phase_space_rate_coherence, phase_space_rate_coherence_path)
-    _write_grayscale_png(phase_space_activity_map, phase_space_activity_map_path)
-
-    raster_path = out_dir / "raster_plot.png"
     raster_image = _build_raster_image(spike_steps, spike_neurons, steps, n_neurons)
-    _write_grayscale_png(raster_image, raster_path)
-
-    rate_plot_path = out_dir / "population_rate_plot.png"
     rate_image = _build_rate_image(rate_trace_hz)
-    _write_grayscale_png(rate_image, rate_plot_path)
-
-    emergence_plot_path = out_dir / "emergence_plot.png"
     emergence_image = _build_emergence_image(raster_image, rate_image)
-    _write_grayscale_png(emergence_image, emergence_plot_path)
+
+    context.summary_metrics = summary_metrics
+    context.criticality_report = criticality_report
+    context.phase_space_report = phase_space_report
+    context.population_rate_trace = rate_trace_hz
+    context.phase_space_rate_sigma_image = phase_space_rate_sigma
+    context.phase_space_rate_coherence_image = phase_space_rate_coherence
+    context.phase_space_activity_map_image = phase_space_activity_map
+    context.raster_image = raster_image
+    context.population_rate_image = rate_image
+    context.emergence_image = emergence_image
+    return context
+
+
+def stage_avalanche_and_fit(context: PipelineContext) -> PipelineContext:
+    steps = context.steps
+    spike_steps = _require_array(context.spike_steps, "spike_steps")
+    spike_steps_per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
+    avalanche_report = _build_avalanche_report(
+        seed=context.seed,
+        n_neurons=int(context.config.network.size),
+        dt_ms=float(context.config.simulation.dt_ms),
+        duration_ms=float(context.config.simulation.duration_ms),
+        steps=steps,
+        spike_steps_per_step=spike_steps_per_step,
+        bin_width_steps=1,
+    )
+    context.avalanche_report = avalanche_report
+    context.avalanche_fit_report = _fit_power_law(cast(list[int], avalanche_report["sizes"]), seed=context.seed)
+    return context
+
+
+def stage_robustness_envelope(context: PipelineContext) -> PipelineContext:
+    robustness_report, envelope_report = _build_repro_reports(context.config)
+    context.robustness_report = robustness_report
+    context.envelope_report = envelope_report
+    return context
+
+
+def stage_manifest(
+    context: PipelineContext,
+    *,
+    completed_stages: list[str],
+    failed_stage: str | None = None,
+    failure_reason: str | None = None,
+) -> dict[str, Any]:
+    artifacts: dict[str, str] = {}
+    artifact_names = [
+        "emergence_plot.png",
+        "summary_metrics.json",
+        "criticality_report.json",
+        "avalanche_report.json",
+        "phase_space_report.json",
+        "population_rate_trace.npy",
+        "sigma_trace.npy",
+        "coherence_trace.npy",
+        "phase_space_rate_sigma.png",
+        "phase_space_rate_coherence.png",
+        "phase_space_activity_map.png",
+        "avalanche_fit_report.json",
+        "robustness_report.json",
+        "envelope_report.json",
+        "raster_plot.png",
+        "population_rate_plot.png",
+    ]
+    for artifact_name in artifact_names:
+        path = context.artifact_dir / artifact_name
+        if path.is_file():
+            artifacts[artifact_name] = _sha256_file(path)
+
+    if context.export_proof:
+        proof_path = context.proof_report_path
+        artifacts["proof_report.json"] = _sha256_file(proof_path) if proof_path.is_file() else "0" * 64
 
     manifest: dict[str, Any] = {
-        "schema_version": "1.0.0",
-        "cmd": command_for_export_proof(export_proof),
-        "bundle_contract": bundle_contract_for_export_proof(export_proof),
-        "export_proof": bool(export_proof),
-        "seed": seed,
-        "steps": steps,
-        "N": int(config.network.size),
-        "dt_ms": float(config.simulation.dt_ms),
-        "duration_ms": float(config.simulation.duration_ms),
-        "artifacts": {
-            "emergence_plot.png": hashlib.sha256(emergence_plot_path.read_bytes()).hexdigest(),
-            "summary_metrics.json": hashlib.sha256(summary_path.read_bytes()).hexdigest(),
-            "criticality_report.json": hashlib.sha256(criticality_report_path.read_bytes()).hexdigest(),
-            "avalanche_report.json": hashlib.sha256(avalanche_report_path.read_bytes()).hexdigest(),
-            "phase_space_report.json": hashlib.sha256(phase_space_report_path.read_bytes()).hexdigest(),
-            "population_rate_trace.npy": hashlib.sha256(population_rate_trace_path.read_bytes()).hexdigest(),
-            "sigma_trace.npy": hashlib.sha256(sigma_trace_path.read_bytes()).hexdigest(),
-            "coherence_trace.npy": hashlib.sha256(coherence_trace_path.read_bytes()).hexdigest(),
-            "phase_space_rate_sigma.png": hashlib.sha256(phase_space_rate_sigma_path.read_bytes()).hexdigest(),
-            "phase_space_rate_coherence.png": hashlib.sha256(phase_space_rate_coherence_path.read_bytes()).hexdigest(),
-            "phase_space_activity_map.png": hashlib.sha256(phase_space_activity_map_path.read_bytes()).hexdigest(),
-            "avalanche_fit_report.json": hashlib.sha256(avalanche_fit_report_path.read_bytes()).hexdigest(),
-            "robustness_report.json": hashlib.sha256(robustness_report_path.read_bytes()).hexdigest(),
-            "envelope_report.json": hashlib.sha256(envelope_report_path.read_bytes()).hexdigest(),
-            "run_manifest.json": "",
-            "raster_plot.png": hashlib.sha256(raster_path.read_bytes()).hexdigest(),
-            "population_rate_plot.png": hashlib.sha256(rate_plot_path.read_bytes()).hexdigest(),
-        },
+        "schema_version": PIPELINE_SCHEMA_VERSION,
+        "cmd": command_for_export_proof(context.export_proof),
+        "bundle_contract": bundle_contract_for_export_proof(context.export_proof),
+        "export_proof": bool(context.export_proof),
+        "seed": context.seed,
+        "steps": context.steps,
+        "N": int(context.config.network.size),
+        "dt_ms": float(context.config.simulation.dt_ms),
+        "duration_ms": float(context.config.simulation.duration_ms),
+        "completed_stages": completed_stages,
+        "failed_stage": failed_stage,
+        "failure_reason": failure_reason,
+        "artifacts": artifacts,
     }
     manifest["artifacts"]["run_manifest.json"] = manifest_self_hash(manifest)
-    manifest_path = out_dir / "run_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return manifest
 
-    proof_report_path: Path | None = None
-    proof_report: dict[str, Any] | None = None
-    if export_proof:
-        from bnsyn.proof.evaluate import evaluate_and_emit
 
-        evaluation = evaluate_and_emit(out_dir)
-        proof_report_path = evaluation.report_path
-        proof_report = evaluation.report
+def stage_proof_report(
+    context: PipelineContext,
+    *,
+    refresh_manifest: Callable[[], Path],
+) -> PipelineContext:
+    if not context.export_proof:
+        context.proof_report = None
+        return context
 
-    product_summary_path: Path | None = None
-    index_path: Path | None = None
-    if generate_product_report:
-        product_paths = write_product_report_bundle(
-            artifact_dir=out_dir,
-            profile="canonical",
-            seed=seed,
-            package_version=product_package_version,
+    from bnsyn.proof.evaluate import emit_proof_report, evaluate_all_gates
+
+    provisional_report = evaluate_all_gates(context.artifact_dir)
+    emit_proof_report(provisional_report, context.artifact_dir)
+    refresh_manifest()
+    final_report = evaluate_all_gates(context.artifact_dir)
+    final_path = emit_proof_report(final_report, context.artifact_dir)
+    refresh_manifest()
+
+    consistency_report = evaluate_all_gates(context.artifact_dir)
+    report = final_report
+    report_path = final_path
+    if consistency_report != final_report:
+        report = consistency_report
+        report_path = emit_proof_report(consistency_report, context.artifact_dir)
+        refresh_manifest()
+
+    context.proof_report = report
+    context.proof_report_path = report_path
+    return context
+
+
+def stage_product_surface(
+    context: PipelineContext,
+) -> PipelineContext:
+    if not context.generate_product_report:
+        return context
+    product_paths = write_product_report_bundle(
+        artifact_dir=context.artifact_dir,
+        profile="canonical",
+        seed=context.seed,
+        package_version=context.product_package_version,
+    )
+    context.product_summary_path = product_paths["product_summary"]
+    context.index_html_path = product_paths["index_html"]
+    return context
+
+def run_canonical_live_bundle(
+    config_path: str | Path,
+    artifact_dir: str | Path = "artifacts/canonical_run",
+    export_proof: bool = False,
+    generate_product_report: bool = False,
+    product_package_version: str = "unknown",
+    resume_from_stage: str | None = None,
+    progress_stream: TextIO | None = None,
+) -> dict[str, Any]:
+    """Execute canonical profile with resumable stage-oriented coordination."""
+    context = PipelineContext(
+        config=load_config(config_path),
+        artifact_dir=Path(artifact_dir),
+        export_proof=export_proof,
+        generate_product_report=generate_product_report,
+        product_package_version=product_package_version,
+        resume_from_stage=resume_from_stage,
+        progress_stream=progress_stream,
+    )
+    context.artifact_dir.mkdir(parents=True, exist_ok=True)
+
+    def _write_manifest_snapshot(*, failed_stage: str | None = None, failure_reason: str | None = None) -> Path:
+        manifest_payload = stage_manifest(
+            context,
+            completed_stages=_completed_stage_names(context.artifact_dir),
+            failed_stage=failed_stage,
+            failure_reason=failure_reason,
         )
-        product_summary_path = product_paths["product_summary"]
-        index_path = product_paths["index_html"]
+        _write_json(context.run_manifest_path, manifest_payload)
+        return context.run_manifest_path
+
+    def _run_stage(
+        stage_name: str,
+        *,
+        inputs: dict[str, Any],
+        required_artifacts: dict[str, Path],
+        compute: Callable[[], PipelineContext],
+        write_outputs: Callable[[PipelineContext], dict[str, Any]] | None = None,
+    ) -> None:
+        started_at = _utc_now_iso()
+        skipped_before = set(_completed_stage_names(context.artifact_dir))
+        _emit_stage_progress(context, completed=set(), skipped=skipped_before, running=stage_name)
+        try:
+            _require_artifacts(stage_name, required_artifacts)
+            compute()
+            outputs = write_outputs(context) if write_outputs is not None else {}
+            finished_at = _utc_now_iso()
+            _write_stage_record(
+                context.artifact_dir,
+                stage_name=stage_name,
+                status="completed",
+                started_at=started_at,
+                finished_at=finished_at,
+                inputs=inputs,
+                outputs=outputs,
+                failure_reason=None,
+            )
+        except Exception as exc:
+            finished_at = _utc_now_iso()
+            _emit_stage_progress(
+                context,
+                completed=set(_completed_stage_names(context.artifact_dir)),
+                skipped=set(),
+                running=None,
+                failed=stage_name,
+            )
+            _write_stage_record(
+                context.artifact_dir,
+                stage_name=stage_name,
+                status="failed",
+                started_at=started_at,
+                finished_at=finished_at,
+                inputs=inputs,
+                outputs={},
+                failure_reason=f"{exc.__class__.__name__}: {exc}",
+            )
+            _write_manifest_snapshot(failed_stage=stage_name, failure_reason=f"{exc.__class__.__name__}: {exc}")
+            raise
+
+    with _artifact_dir_lock(context.artifact_dir):
+        existing_manifest = _load_existing_manifest(context.artifact_dir)
+        if existing_manifest is not None and existing_manifest.get("export_proof") is not export_proof:
+            raise ValueError("Existing run_manifest.json contract is immutable; use a fresh artifact directory for a different --export-proof mode")
+        _validate_resume_policy(context, existing_manifest)
+
+        resume_stage = _resolve_resume_stage(context.artifact_dir, resume_from_stage)
+        if context.export_proof and not context.proof_report_path.is_file():
+            resume_stage = _earlier_stage(resume_stage, "proof_report")
+        if context.generate_product_report and (
+            not context.product_summary_path.is_file() or not context.index_html_path.is_file()
+        ):
+            resume_stage = _earlier_stage(resume_stage, "product_surface")
+        start_index = STAGE_ORDER.index(resume_stage) if resume_stage is not None else len(STAGE_ORDER)
+        skipped = set(STAGE_ORDER[:start_index])
+        _emit_stage_progress(context, completed=set(), skipped=skipped, running=resume_stage)
+
+        if start_index <= STAGE_ORDER.index("live_run"):
+            _run_stage(
+                "live_run",
+                inputs={"config_path": str(config_path), "artifact_dir": context.artifact_dir.as_posix(), "policy": _pipeline_policy(context)},
+                required_artifacts={},
+                compute=lambda: stage_live_run(context),
+                write_outputs=lambda ctx: {"artifact_npz": cast(Path, ctx.artifact_npz_path).as_posix()},
+            )
+        _load_live_run_artifacts(context)
+
+        if start_index <= STAGE_ORDER.index("summary_reports"):
+            _run_stage(
+                "summary_reports",
+                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
+                required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
+                compute=lambda: stage_summary_reports(context),
+                write_outputs=lambda ctx: (
+                    _write_json(context.artifact_dir / "summary_metrics.json", _require_report(ctx.summary_metrics, "summary_metrics")),
+                    _write_json(context.artifact_dir / "criticality_report.json", _require_report(ctx.criticality_report, "criticality_report")),
+                    _write_json(context.artifact_dir / "phase_space_report.json", _require_report(ctx.phase_space_report, "phase_space_report")),
+                    np.save(context.artifact_dir / "population_rate_trace.npy", _require_array(ctx.population_rate_trace, "population_rate_trace")),
+                    np.save(context.artifact_dir / "sigma_trace.npy", _require_array(ctx.sigma_trace, "sigma_trace")),
+                    np.save(context.artifact_dir / "coherence_trace.npy", _require_array(ctx.coherence_trace, "coherence_trace")),
+                    _write_grayscale_png(_require_array(ctx.phase_space_rate_sigma_image, "phase_space_rate_sigma_image"), context.artifact_dir / "phase_space_rate_sigma.png"),
+                    _write_grayscale_png(_require_array(ctx.phase_space_rate_coherence_image, "phase_space_rate_coherence_image"), context.artifact_dir / "phase_space_rate_coherence.png"),
+                    _write_grayscale_png(_require_array(ctx.phase_space_activity_map_image, "phase_space_activity_map_image"), context.artifact_dir / "phase_space_activity_map.png"),
+                    _write_grayscale_png(_require_array(ctx.raster_image, "raster_image"), context.artifact_dir / "raster_plot.png"),
+                    _write_grayscale_png(_require_array(ctx.population_rate_image, "population_rate_image"), context.artifact_dir / "population_rate_plot.png"),
+                    _write_grayscale_png(_require_array(ctx.emergence_image, "emergence_image"), context.artifact_dir / "emergence_plot.png"),
+                    {
+                        "summary_metrics_path": (context.artifact_dir / "summary_metrics.json").as_posix(),
+                        "criticality_report_path": (context.artifact_dir / "criticality_report.json").as_posix(),
+                        "phase_space_report_path": (context.artifact_dir / "phase_space_report.json").as_posix(),
+                        "population_rate_trace_path": (context.artifact_dir / "population_rate_trace.npy").as_posix(),
+                        "sigma_trace_path": (context.artifact_dir / "sigma_trace.npy").as_posix(),
+                        "coherence_trace_path": (context.artifact_dir / "coherence_trace.npy").as_posix(),
+                        "phase_space_rate_sigma_path": (context.artifact_dir / "phase_space_rate_sigma.png").as_posix(),
+                        "phase_space_rate_coherence_path": (context.artifact_dir / "phase_space_rate_coherence.png").as_posix(),
+                        "phase_space_activity_map_path": (context.artifact_dir / "phase_space_activity_map.png").as_posix(),
+                        "raster_plot_path": (context.artifact_dir / "raster_plot.png").as_posix(),
+                        "population_rate_plot_path": (context.artifact_dir / "population_rate_plot.png").as_posix(),
+                        "emergence_plot_path": (context.artifact_dir / "emergence_plot.png").as_posix(),
+                    },
+                )[-1],
+            )
+        else:
+            context.summary_metrics = json.loads((context.artifact_dir / "summary_metrics.json").read_text(encoding="utf-8"))
+            context.criticality_report = json.loads((context.artifact_dir / "criticality_report.json").read_text(encoding="utf-8"))
+            context.phase_space_report = json.loads((context.artifact_dir / "phase_space_report.json").read_text(encoding="utf-8"))
+
+        if start_index <= STAGE_ORDER.index("avalanche_and_fit"):
+            _run_stage(
+                "avalanche_and_fit",
+                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
+                required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
+                compute=lambda: stage_avalanche_and_fit(context),
+                write_outputs=lambda ctx: (
+                    _write_json(context.artifact_dir / "avalanche_report.json", _require_report(ctx.avalanche_report, "avalanche_report")),
+                    _write_json(context.artifact_dir / "avalanche_fit_report.json", _require_report(ctx.avalanche_fit_report, "avalanche_fit_report")),
+                    {
+                        "avalanche_report_path": (context.artifact_dir / "avalanche_report.json").as_posix(),
+                        "avalanche_fit_report_path": (context.artifact_dir / "avalanche_fit_report.json").as_posix(),
+                    },
+                )[-1],
+            )
+        else:
+            context.avalanche_report = json.loads((context.artifact_dir / "avalanche_report.json").read_text(encoding="utf-8"))
+            context.avalanche_fit_report = json.loads((context.artifact_dir / "avalanche_fit_report.json").read_text(encoding="utf-8"))
+
+        if start_index <= STAGE_ORDER.index("robustness_envelope"):
+            _run_stage(
+                "robustness_envelope",
+                inputs={"canonical_repro_seeds": list(CANONICAL_REPRO_SEEDS), "policy": _pipeline_policy(context)},
+                required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
+                compute=lambda: stage_robustness_envelope(context),
+                write_outputs=lambda ctx: (
+                    _write_json(context.artifact_dir / "robustness_report.json", _require_report(ctx.robustness_report, "robustness_report")),
+                    _write_json(context.artifact_dir / "envelope_report.json", _require_report(ctx.envelope_report, "envelope_report")),
+                    {
+                        "robustness_report_path": (context.artifact_dir / "robustness_report.json").as_posix(),
+                        "envelope_report_path": (context.artifact_dir / "envelope_report.json").as_posix(),
+                    },
+                )[-1],
+            )
+        else:
+            context.robustness_report = json.loads((context.artifact_dir / "robustness_report.json").read_text(encoding="utf-8"))
+            context.envelope_report = json.loads((context.artifact_dir / "envelope_report.json").read_text(encoding="utf-8"))
+
+        if start_index <= STAGE_ORDER.index("manifest"):
+            _run_stage(
+                "manifest",
+                inputs={"export_proof": context.export_proof, "policy": _pipeline_policy(context)},
+                required_artifacts={
+                    "summary_metrics.json": context.artifact_dir / "summary_metrics.json",
+                    "criticality_report.json": context.artifact_dir / "criticality_report.json",
+                    "avalanche_report.json": context.artifact_dir / "avalanche_report.json",
+                    "avalanche_fit_report.json": context.artifact_dir / "avalanche_fit_report.json",
+                    "robustness_report.json": context.artifact_dir / "robustness_report.json",
+                    "envelope_report.json": context.artifact_dir / "envelope_report.json",
+                    "phase_space_report.json": context.artifact_dir / "phase_space_report.json",
+                    "emergence_plot.png": context.artifact_dir / "emergence_plot.png",
+                },
+                compute=lambda: context,
+                write_outputs=lambda _ctx: {"run_manifest_path": _write_manifest_snapshot().as_posix()},
+            )
+
+        if start_index <= STAGE_ORDER.index("proof_report"):
+            _run_stage(
+                "proof_report",
+                inputs={"export_proof": context.export_proof, "policy": _pipeline_policy(context)},
+                required_artifacts={"run_manifest.json": context.run_manifest_path},
+                compute=lambda: stage_proof_report(context, refresh_manifest=_write_manifest_snapshot),
+                write_outputs=lambda _ctx: {
+                    **({"proof_report_path": context.proof_report_path.as_posix()} if context.proof_report_path.is_file() else {}),
+                    "run_manifest_path": _write_manifest_snapshot().as_posix(),
+                },
+            )
+        elif context.proof_report_path.is_file():
+            context.proof_report = json.loads(context.proof_report_path.read_text(encoding="utf-8"))
+
+        if start_index <= STAGE_ORDER.index("product_surface"):
+            _run_stage(
+                "product_surface",
+                inputs={"generate_product_report": context.generate_product_report, "policy": _pipeline_policy(context)},
+                required_artifacts={
+                    **({"proof_report.json": context.proof_report_path} if context.generate_product_report else {}),
+                    "run_manifest.json": context.run_manifest_path,
+                },
+                compute=lambda: stage_product_surface(context),
+                write_outputs=lambda _ctx: {
+                    **({"product_summary_path": context.product_summary_path.as_posix()} if context.product_summary_path.is_file() else {}),
+                    **({"index_html_path": context.index_html_path.as_posix()} if context.index_html_path.is_file() else {}),
+                    "run_manifest_path": _write_manifest_snapshot().as_posix(),
+                },
+            )
+
+        _write_manifest_snapshot()
+        _emit_stage_progress(context, completed=set(_completed_stage_names(context.artifact_dir)), skipped=set(), running=None)
 
     return {
-        "artifact_dir": out_dir.as_posix(),
-        "artifact_npz": artifact_npz,
-        "run_manifest_path": manifest_path.as_posix(),
-        "summary_metrics": summary_metrics,
-        "summary_metrics_path": summary_path.as_posix(),
-        "criticality_report": criticality_report,
-        "criticality_report_path": criticality_report_path.as_posix(),
-        "avalanche_report": avalanche_report,
-        "avalanche_report_path": avalanche_report_path.as_posix(),
-        "avalanche_fit_report": avalanche_fit_report,
-        "avalanche_fit_report_path": avalanche_fit_report_path.as_posix(),
-        "robustness_report": robustness_report,
-        "robustness_report_path": robustness_report_path.as_posix(),
-        "envelope_report": envelope_report,
-        "envelope_report_path": envelope_report_path.as_posix(),
-        "phase_space_report": phase_space_report,
-        "phase_space_report_path": phase_space_report_path.as_posix(),
-        "population_rate_trace_path": population_rate_trace_path.as_posix(),
-        "sigma_trace_path": sigma_trace_path.as_posix(),
-        "coherence_trace_path": coherence_trace_path.as_posix(),
-        "phase_space_rate_sigma_path": phase_space_rate_sigma_path.as_posix(),
-        "phase_space_rate_coherence_path": phase_space_rate_coherence_path.as_posix(),
-        "phase_space_activity_map_path": phase_space_activity_map_path.as_posix(),
-        "emergence_plot_path": emergence_plot_path.as_posix(),
-        "raster_plot_path": raster_path.as_posix(),
-        "population_rate_plot_path": rate_plot_path.as_posix(),
-        "emergence_metrics": metrics,
-        "proof_report": proof_report,
-        "proof_report_path": proof_report_path.as_posix() if proof_report_path is not None else None,
-        "product_summary_path": product_summary_path.as_posix() if product_summary_path is not None else None,
-        "index_html_path": index_path.as_posix() if index_path is not None else None,
+        "artifact_dir": context.artifact_dir.as_posix(),
+        "artifact_npz": context.artifact_npz_path.as_posix() if context.artifact_npz_path is not None else None,
+        "run_manifest_path": context.run_manifest_path.as_posix(),
+        "summary_metrics": context.summary_metrics,
+        "summary_metrics_path": (context.artifact_dir / "summary_metrics.json").as_posix(),
+        "criticality_report": context.criticality_report,
+        "criticality_report_path": (context.artifact_dir / "criticality_report.json").as_posix(),
+        "avalanche_report": context.avalanche_report,
+        "avalanche_report_path": (context.artifact_dir / "avalanche_report.json").as_posix(),
+        "avalanche_fit_report": context.avalanche_fit_report,
+        "avalanche_fit_report_path": (context.artifact_dir / "avalanche_fit_report.json").as_posix(),
+        "robustness_report": context.robustness_report,
+        "robustness_report_path": (context.artifact_dir / "robustness_report.json").as_posix(),
+        "envelope_report": context.envelope_report,
+        "envelope_report_path": (context.artifact_dir / "envelope_report.json").as_posix(),
+        "phase_space_report": context.phase_space_report,
+        "phase_space_report_path": (context.artifact_dir / "phase_space_report.json").as_posix(),
+        "population_rate_trace_path": (context.artifact_dir / "population_rate_trace.npy").as_posix(),
+        "sigma_trace_path": (context.artifact_dir / "sigma_trace.npy").as_posix(),
+        "coherence_trace_path": (context.artifact_dir / "coherence_trace.npy").as_posix(),
+        "phase_space_rate_sigma_path": (context.artifact_dir / "phase_space_rate_sigma.png").as_posix(),
+        "phase_space_rate_coherence_path": (context.artifact_dir / "phase_space_rate_coherence.png").as_posix(),
+        "phase_space_activity_map_path": (context.artifact_dir / "phase_space_activity_map.png").as_posix(),
+        "emergence_plot_path": (context.artifact_dir / "emergence_plot.png").as_posix(),
+        "raster_plot_path": (context.artifact_dir / "raster_plot.png").as_posix(),
+        "population_rate_plot_path": (context.artifact_dir / "population_rate_plot.png").as_posix(),
+        "emergence_metrics": context.emergence_metrics,
+        "proof_report": context.proof_report,
+        "proof_report_path": context.proof_report_path.as_posix() if context.proof_report_path.is_file() else None,
+        "product_summary_path": context.product_summary_path.as_posix() if context.product_summary_path.is_file() else None,
+        "index_html_path": context.index_html_path.as_posix() if context.index_html_path.is_file() else None,
+        "completed_stages": _completed_stage_names(context.artifact_dir),
     }
