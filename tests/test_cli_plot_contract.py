@@ -339,6 +339,30 @@ def test_cli_run_export_proof_now_emits_product_surface(tmp_path: Path) -> None:
     assert "STATUS: PASS" in validate_proc.stdout
 
 
+def test_cli_run_emits_stage_progress_to_stderr(tmp_path: Path) -> None:
+    out_dir = tmp_path / "canonical_progress"
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "bnsyn.cli",
+            "run",
+            "--profile",
+            "canonical",
+            "--output",
+            str(out_dir),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_cli_env(),
+    )
+
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "[RUN] live_run" in proc.stderr
+    assert "[DONE] product_surface" in proc.stderr
+
+
 def test_cli_validate_bundle_fails_readably_when_proof_report_missing(tmp_path: Path) -> None:
     out_dir = tmp_path / "canonical_run"
     demo_proc = subprocess.run(
