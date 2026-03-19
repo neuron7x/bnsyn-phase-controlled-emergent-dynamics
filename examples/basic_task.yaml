@@ -27,7 +27,7 @@ generator:
   kind: "deterministic_markdown"
   deterministic_seed: 7
 auditor:
-  use_cross_model_stub: true
+  verifier_kind: "required_checks_ground_truth"
 output:
   artifact_filename: "final_artifact.md"
 output_dir: "aoc_output"

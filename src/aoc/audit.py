@@ -1,21 +1,39 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from .contracts import AuditResult, TaskContract
+from .contracts import AuditResult, TaskContract, VerificationResult
 
 
-class CrossModelAuditor(Protocol):
-    def critique(self, content: str, contract: TaskContract) -> dict[str, Any]:
+class PrimaryAuditor(Protocol):
+    def audit(self, content: str, contract: TaskContract) -> AuditResult:
         ...
 
 
-@dataclass(frozen=True)
-class LocalCrossModelAuditorStub:
-    def critique(self, content: str, contract: TaskContract) -> dict[str, Any]:
-        score = 1.0 if contract.objective.lower() in content.lower() else 0.5
-        return {"passed": True, "confidence": score, "note": "deterministic_local_stub"}
+class Verifier(Protocol):
+    def verify(
+        self,
+        *,
+        content: str,
+        contract: TaskContract,
+        audit: AuditResult,
+        iteration: int,
+    ) -> VerificationResult:
+        ...
+
+
+class GroundTruthProvider(Protocol):
+    def provide(
+        self,
+        *,
+        content: str,
+        contract: TaskContract,
+        audit: AuditResult,
+        iteration: int,
+    ) -> tuple[bool | None, dict[str, Any] | None]:
+        ...
 
 
 def _sections(content: str) -> list[str]:
@@ -86,18 +104,16 @@ class StructuralGate:
 
 
 class AuditEngine:
-    def __init__(self, external: CrossModelAuditor | None = None) -> None:
+    def __init__(self) -> None:
         self.functional = FunctionalGate()
         self.spec = SpecComplianceGate()
         self.structural = StructuralGate()
-        self.external = external or LocalCrossModelAuditorStub()
 
-    def run(self, content: str, contract: TaskContract) -> AuditResult:
+    def audit(self, content: str, contract: TaskContract) -> AuditResult:
         checks: dict[str, Any] = {}
         checks.update(self.functional.evaluate(content, contract))
         checks.update(self.spec.evaluate(content, contract))
         checks.update(self.structural.evaluate(content, contract))
-        checks["cross_model_stub"] = self.external.critique(content, contract)
 
         reasons: list[str] = []
         required_fails = [k for k, v in checks.items() if isinstance(v, dict) and v.get("required") and not v.get("passed")]
@@ -118,4 +134,69 @@ class AuditEngine:
             critical_failure=critical_failure,
             reasons=reasons,
             checks=checks,
+        )
+
+    def run(self, content: str, contract: TaskContract) -> AuditResult:
+        return self.audit(content, contract)
+
+
+@dataclass(frozen=True)
+class RequiredChecksGroundTruthProvider:
+    def provide(
+        self,
+        *,
+        content: str,
+        contract: TaskContract,
+        audit: AuditResult,
+        iteration: int,
+    ) -> tuple[bool | None, dict[str, Any] | None]:
+        functional = FunctionalGate().evaluate(content, contract)
+        spec = SpecComplianceGate().evaluate(content, contract)
+        structural = StructuralGate().evaluate(content, contract)
+        basis_checks = {
+            "required_sections_present": functional["required_sections_present"],
+            "forbidden_terms_absent": functional["forbidden_terms_absent"],
+            "length_within_bounds": functional["length_within_bounds"],
+            "objective_included": spec["objective_included"],
+            "has_title": structural["has_title"],
+        }
+        failed = [name for name, result in basis_checks.items() if result["passed"] is False]
+        return len(failed) == 0, {
+            "provider": "required_checks_ground_truth",
+            "basis_version": "v1",
+            "iteration": iteration,
+            "task_id": contract.task_id,
+            "content_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+            "failed_checks": failed,
+            "checks": basis_checks,
+        }
+
+
+@dataclass(frozen=True)
+class GroundTruthVerifier:
+    provider: GroundTruthProvider
+
+    def verify(
+        self,
+        *,
+        content: str,
+        contract: TaskContract,
+        audit: AuditResult,
+        iteration: int,
+    ) -> VerificationResult:
+        ground_truth, basis = self.provider.provide(
+            content=content,
+            contract=contract,
+            audit=audit,
+            iteration=iteration,
+        )
+        if ground_truth is None:
+            return VerificationResult.unverified(basis=basis)
+        verifier_passed = audit.passed is ground_truth
+        return VerificationResult(
+            verification_status="verified_confirmed" if verifier_passed else "verified_rejected",
+            verifier_passed=verifier_passed,
+            ground_truth=ground_truth,
+            basis=basis,
+            latency_iters=1,
         )
