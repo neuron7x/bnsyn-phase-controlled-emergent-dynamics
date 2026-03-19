@@ -44,6 +44,7 @@ from bnsyn.presentation import (
     emit_demo_product_success,
 )
 from bnsyn.proof.contracts import artifacts_for_export_proof, bundle_contract_for_export_proof
+from bnsyn.observability.telemetry import TelemetryLogger, latest_run_id, new_run_id
 from bnsyn.paths import runtime_file
 
 EMERGENCE_SWEEP_CURRENTS_PA = (365.0, 380.0, 395.0, 410.0, 450.0)
@@ -229,6 +230,12 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
 
     if profile == "canonical":
         output_dir = output or "artifacts/canonical_run"
+        telemetry = TelemetryLogger.for_artifact_dir(
+            output_dir,
+            run_id=new_run_id("canonical-cli"),
+            default_stage="cli.run",
+        )
+        cli_started = telemetry.time_stage("cli.run")
         emit_canonical_run_prelude(str(output_dir), export_proof)
         try:
             bundle = run_canonical_live_bundle(
@@ -239,10 +246,13 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
                 product_package_version=_get_package_version(),
                 resume_from_stage=resume_from_stage,
                 progress_stream=sys.stderr,
+                telemetry=telemetry,
             )
         except Exception as e:
+            telemetry.fail_stage("cli.run", cli_started, failure_reason=f"{e.__class__.__name__}: {e}")
             print(f"Error running experiment: {e}")
             return CLIExitCode.ERROR
+        telemetry.finish_stage("cli.run", cli_started, status="completed")
 
         if plot:
             print("Notice: --plot acknowledged; canonical live-run plots are emitted by default", file=sys.stderr)
@@ -739,6 +749,18 @@ def _cmd_proof_validate_bundle(args: argparse.Namespace) -> int:
     from bnsyn.proof.bundle_validator import validate_canonical_bundle
 
     result = validate_canonical_bundle(args.artifact_dir)
+    telemetry = TelemetryLogger.for_artifact_dir(
+        args.artifact_dir,
+        run_id=latest_run_id(Path(args.artifact_dir) / "logs" / "events.jsonl") or new_run_id("canonical-validation"),
+        default_stage="proof_validate_bundle",
+    )
+    telemetry.emit(
+        "bundle_validated",
+        stage="proof_validate_bundle",
+        status=str(result["status"]),
+        failure_reason="; ".join(result["errors"]) if result["status"] != "PASS" else None,
+        validation_errors=result["errors"],
+    )
     print(json.dumps(result, sort_keys=True))
     return CLIExitCode.OK if result["status"] == "PASS" else CLIExitCode.INVALID_USAGE
 
@@ -747,6 +769,18 @@ def _cmd_validate_bundle(args: argparse.Namespace) -> int:
     from bnsyn.proof.bundle_validator import validate_canonical_bundle
 
     result = validate_canonical_bundle(args.artifact_dir, require_product_surface=True)
+    telemetry = TelemetryLogger.for_artifact_dir(
+        args.artifact_dir,
+        run_id=latest_run_id(Path(args.artifact_dir) / "logs" / "events.jsonl") or new_run_id("canonical-validation"),
+        default_stage="validate_bundle",
+    )
+    telemetry.emit(
+        "bundle_validated",
+        stage="validate_bundle",
+        status=str(result["status"]),
+        failure_reason="; ".join(result["errors"]) if result["status"] != "PASS" else None,
+        validation_errors=result["errors"],
+    )
     if result["status"] == "PASS":
         emit_bundle_validation_success(Path(args.artifact_dir).as_posix())
         print("STATUS: PASS")
@@ -766,6 +800,12 @@ def _cmd_demo_product(args: argparse.Namespace) -> int:
     output_dir = Path(getattr(args, "output", "artifacts/canonical_run"))
     package_version = _get_package_version()
     config_path = _default_canonical_profile_path()
+    telemetry = TelemetryLogger.for_artifact_dir(
+        output_dir,
+        run_id=new_run_id("canonical-demo"),
+        default_stage="demo_product",
+    )
+    demo_started = telemetry.time_stage("demo_product")
     emit_demo_product_prelude(output_dir.as_posix(), package_version)
     try:
         run_canonical_live_bundle(
@@ -774,21 +814,37 @@ def _cmd_demo_product(args: argparse.Namespace) -> int:
             export_proof=True,
             generate_product_report=True,
             product_package_version=package_version,
+            telemetry=telemetry,
         )
         validation = validate_canonical_bundle(output_dir, require_product_surface=True)
     except Exception as exc:
+        telemetry.fail_stage("demo_product", demo_started, failure_reason=f"{exc.__class__.__name__}: {exc}")
         print("STATUS: FAIL")
         print(f"REASON: demo-product execution failed: {exc}")
         print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
         return CLIExitCode.ERROR
+    telemetry.emit(
+        "bundle_validated",
+        stage="demo_product",
+        status=str(validation["status"]),
+        failure_reason="; ".join(validation["errors"]) if validation["status"] != "PASS" else None,
+        validation_errors=validation["errors"],
+    )
 
     if validation["status"] != "PASS":
+        telemetry.fail_stage(
+            "demo_product",
+            demo_started,
+            failure_reason="; ".join(validation["errors"]) or "bundle validation failed",
+            status="invalid",
+        )
         print("STATUS: FAIL")
         for error in validation["errors"]:
             print(f"- {error}")
         print(f"VALIDATE: bnsyn validate-bundle {output_dir.as_posix()}")
         return CLIExitCode.INVALID_USAGE
 
+    telemetry.finish_stage("demo_product", demo_started, status="completed")
     emit_demo_product_success(output_dir.as_posix())
     print("STATUS: PASS")
     print(f"ARTIFACT_DIR: {output_dir.as_posix()}")
