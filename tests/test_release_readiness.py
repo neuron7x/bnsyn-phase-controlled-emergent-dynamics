@@ -123,6 +123,16 @@ def test_check_mutation_baseline_rejects_trivial_baseline(tmp_path: Path) -> Non
     assert "killed_mutants" in result.details
 
 
+def test_check_mutation_baseline_rejects_malformed_json(tmp_path: Path) -> None:
+    baseline_path = tmp_path / "mutation_baseline.json"
+    baseline_path.write_text("{broken-json", encoding="utf-8")
+
+    result = check_mutation_baseline(baseline_path)
+
+    assert result.status == "fail"
+    assert "Unreadable mutation baseline" in result.details
+
+
 def test_check_entropy_gate_passes_when_metrics_match(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -165,6 +175,21 @@ def test_check_entropy_gate_passes_when_metrics_match(
 
     assert result.status == "pass"
     assert result.blocking is True
+
+
+def test_check_entropy_gate_rejects_unreadable_json(tmp_path: Path) -> None:
+    entropy_dir = tmp_path / "entropy"
+    entropy_dir.mkdir(parents=True)
+    (entropy_dir / "policy.json").write_text("{broken-json", encoding="utf-8")
+    (entropy_dir / "baseline.json").write_text(
+        json.dumps({"process": {"required_checks_files_present": True}}),
+        encoding="utf-8",
+    )
+
+    result = check_entropy_gate(tmp_path)
+
+    assert result.status == "fail"
+    assert "Unreadable entropy inputs" in result.details
 
 
 def test_status_document_contract_requires_semantic_section(tmp_path: Path) -> None:
@@ -210,6 +235,25 @@ def test_subprocess_command_runner_fails_closed_on_os_error(
 
     assert outcome.exit_code == 124
     assert "OS error" in outcome.stderr
+
+
+def test_subprocess_command_runner_fails_closed_on_timeout(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    runner = SubprocessCommandRunner()
+
+    def _raise_timeout(*args: object, **kwargs: object) -> None:
+        raise subprocess.TimeoutExpired(cmd=["demo"], timeout=1.0, stderr="late stderr")
+
+    monkeypatch.setattr(subprocess, "run", _raise_timeout)
+
+    outcome = runner.run(
+        CommandSpec(name="demo", command="demo", argv=("demo",), timeout_seconds=1.0),
+        tmp_path,
+    )
+
+    assert outcome.exit_code == 124
+    assert "Timeout after 1.0s" in outcome.stderr
 
 
 def test_readiness_state_blocks_when_execution_backed_checks_fail(tmp_path: Path) -> None:

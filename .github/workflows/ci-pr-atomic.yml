@@ -188,6 +188,8 @@ jobs:
       - name: Run no-escape contract tests
         run: |
           pytest -q             tests/test_actions_pinning.py             tests/test_no_escape_tripwires.py             tests/test_tests_inventory.py             tests/test_verify_reproducible_artifacts.py
+      - name: Run readiness contract regression tests
+        run: pytest -q tests/test_release_readiness.py
       - name: Verify reproducible generated artifacts
         run: |
           mkdir -p evidence/zqsg_2026_02_12

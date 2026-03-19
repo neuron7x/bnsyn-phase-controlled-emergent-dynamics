@@ -6,6 +6,7 @@ This module is the single source of truth for release readiness state.
 from __future__ import annotations
 
 import json
+from json import JSONDecodeError
 import shutil
 import subprocess
 import sys
@@ -542,7 +543,16 @@ def check_mutation_baseline(path: Path) -> ReadinessCheck:
             evidence=f"file:{path.as_posix()}",
         )
 
-    data = _load_json(path)
+    try:
+        data = _load_json(path)
+    except (OSError, ValueError, JSONDecodeError) as exc:
+        return _policy_check(
+            "mutation baseline",
+            status="fail",
+            details=f"Unreadable mutation baseline: {exc}",
+            blocking=True,
+            evidence=f"file:{path.as_posix()}",
+        )
     status = data.get("status")
     metrics = data.get("metrics", {})
     total_mutants = metrics.get("total_mutants")
@@ -594,8 +604,17 @@ def check_entropy_gate(repo_root: Path) -> ReadinessCheck:
             evidence="files:entropy/policy.json,entropy/baseline.json",
         )
 
-    policy = _load_json(policy_path)
-    baseline = _load_json(baseline_path)
+    try:
+        policy = _load_json(policy_path)
+        baseline = _load_json(baseline_path)
+    except (OSError, ValueError, JSONDecodeError) as exc:
+        return _policy_check(
+            "entropy gate",
+            status="fail",
+            details=f"Unreadable entropy inputs: {exc}",
+            blocking=True,
+            evidence="files:entropy/policy.json,entropy/baseline.json",
+        )
     comparators = policy.get("comparators", {})
     if not isinstance(comparators, dict) or not comparators:
         return _policy_check(
