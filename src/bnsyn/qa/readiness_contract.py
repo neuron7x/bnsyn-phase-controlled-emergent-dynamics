@@ -5,13 +5,18 @@ This module is the single source of truth for release readiness state.
 
 from __future__ import annotations
 
+from concurrent.futures import Future, ThreadPoolExecutor
+import hashlib
+import inspect
 import json
 from json import JSONDecodeError
+import re
 import shutil
+import signal
 import subprocess
 import sys
 import tomllib
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import StrEnum
 from pathlib import Path
@@ -20,7 +25,7 @@ from typing import Any, Protocol, Sequence
 
 from tools.entropy_gate.compute_metrics import compute_metrics, flatten
 
-TRUTH_MODEL_VERSION = "1.1.0"
+TRUTH_MODEL_VERSION = "1.2.0"
 _MAX_OUTPUT_CHARS = 4000
 _COMMAND_FAILURE_EXIT_CODE = 124
 _REQUIRED_READINESS_STATES = frozenset({"blocked", "advisory", "ready"})
@@ -29,6 +34,25 @@ _REQUIRED_SUBSYSTEMS = (
     "runtime proof path",
     "bundle validation",
     "governance consistency",
+)
+# Bound command timeouts tightly enough to expose regressions while still fitting
+# comfortably inside the current contracts/build CI budgets.
+_RUFF_TIMEOUT_SECONDS = 120.0
+_MYPY_TIMEOUT_SECONDS = 180.0
+_PYLINT_TIMEOUT_SECONDS = 180.0
+_CANONICAL_PROOF_RUN_TIMEOUT_SECONDS = 420.0
+_BUNDLE_VALIDATION_TIMEOUT_SECONDS = 120.0
+TRUTH_MODEL_FINGERPRINT = "76ba615ec09b44fc"
+_SCRUB_PATTERNS = (
+    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
+    re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}\b"),
+    re.compile(r"\bBearer\s+[A-Za-z0-9._\-]{12,}\b", flags=re.IGNORECASE),
+    re.compile(
+        r"\b(?:api[_-]?key|token|secret|password)\s*[:=]\s*[A-Za-z0-9._/\-]{6,}\b",
+        flags=re.IGNORECASE,
+    ),
+    re.compile(r"\b[A-Z][A-Z0-9_]{2,}=(?:[^\s]+)"),
+    re.compile(r"\b(?:/workspace|/root|/tmp|/home)/[^\s]+"),
 )
 
 
@@ -116,10 +140,17 @@ class ReadinessState:
         runner = command_runner or SubprocessCommandRunner()
         output_dir = proof_output_dir or repo_root / "artifacts" / "release_readiness_bundle"
 
-        static_quality = _evaluate_static_quality(repo_root, runner)
-        runtime_proof = _evaluate_runtime_proof_path(repo_root, output_dir, runner)
-        bundle_validation = _evaluate_bundle_validation(repo_root, output_dir, runner)
-        governance = _evaluate_governance_consistency(repo_root)
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            static_quality_future: Future[ReadinessSubsystem] = executor.submit(
+                _evaluate_static_quality, repo_root, runner
+            )
+            governance_future: Future[ReadinessSubsystem] = executor.submit(
+                _evaluate_governance_consistency, repo_root
+            )
+            runtime_proof = _evaluate_runtime_proof_path(repo_root, output_dir, runner)
+            bundle_validation = _evaluate_bundle_validation(repo_root, output_dir, runner)
+            static_quality = static_quality_future.result()
+            governance = governance_future.result()
 
         subsystems = (static_quality, runtime_proof, bundle_validation, governance)
         blocking_failures = tuple(
@@ -192,6 +223,16 @@ class MarkdownSection:
     content: tuple[str, ...]
 
 
+@dataclass
+class MarkdownNode:
+    """Minimal markdown AST node used for structural contract checks."""
+
+    kind: str
+    text: str = ""
+    level: int = 0
+    children: list["MarkdownNode"] = field(default_factory=list)
+
+
 class CommandRunner(Protocol):
     """Protocol for executing readiness commands."""
 
@@ -246,8 +287,23 @@ def _append_detail(text: str, detail: str) -> str:
     return f"{stripped}\n{detail}"
 
 
-def _truncate(text: str) -> str | None:
-    stripped = text.strip()
+def _signal_name(returncode: int) -> str:
+    try:
+        return signal.Signals(-returncode).name
+    except ValueError:
+        return f"SIG{-returncode}"
+
+
+def _scrub_output(text: str, repo_root: Path) -> str:
+    scrubbed = text.replace(repo_root.as_posix(), "[REPO_ROOT]")
+    for pattern in _SCRUB_PATTERNS:
+        scrubbed = pattern.sub("[REDACTED]", scrubbed)
+    return scrubbed
+
+
+def _truncate(text: str, repo_root: Path) -> str | None:
+    scrubbed = _scrub_output(text, repo_root)
+    stripped = scrubbed.strip()
     if not stripped:
         return None
     if len(stripped) <= _MAX_OUTPUT_CHARS:
@@ -264,11 +320,18 @@ def _command_check(
 ) -> ReadinessCheck:
     outcome = runner.run(spec, repo_root)
     status = "pass" if outcome.exit_code == 0 else "fail"
-    details = (
-        f"Command passed in {outcome.duration_seconds:.2f}s"
-        if outcome.exit_code == 0
-        else f"Command failed with exit code {outcome.exit_code} after {outcome.duration_seconds:.2f}s"
-    )
+    if outcome.exit_code == 0:
+        details = f"Command passed in {outcome.duration_seconds:.2f}s"
+    elif outcome.exit_code < 0:
+        details = (
+            f"Command terminated by signal {_signal_name(outcome.exit_code)} "
+            f"after {outcome.duration_seconds:.2f}s"
+        )
+    else:
+        details = (
+            f"Command failed with exit code {outcome.exit_code} "
+            f"after {outcome.duration_seconds:.2f}s"
+        )
     return ReadinessCheck(
         name=spec.name,
         kind="command",
@@ -279,8 +342,8 @@ def _command_check(
         executed_command=list(spec.argv),
         exit_code=outcome.exit_code,
         duration_seconds=round(outcome.duration_seconds, 6),
-        stdout_excerpt=_truncate(outcome.stdout),
-        stderr_excerpt=_truncate(outcome.stderr),
+        stdout_excerpt=_truncate(outcome.stdout, repo_root),
+        stderr_excerpt=_truncate(outcome.stderr, repo_root),
         evidence=evidence,
     )
 
@@ -320,7 +383,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                 name="ruff check",
                 command="ruff check .",
                 argv=(sys.executable, "-m", "ruff", "check", "."),
-                timeout_seconds=300.0,
+                timeout_seconds=_RUFF_TIMEOUT_SECONDS,
             ),
             evidence="command:ruff check .",
         ),
@@ -339,7 +402,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                     "--config-file",
                     "pyproject.toml",
                 ),
-                timeout_seconds=600.0,
+                timeout_seconds=_MYPY_TIMEOUT_SECONDS,
             ),
             evidence="command:mypy src --strict --config-file pyproject.toml",
         ),
@@ -350,7 +413,7 @@ def _evaluate_static_quality(repo_root: Path, runner: CommandRunner) -> Readines
                 name="pylint src/bnsyn",
                 command="pylint src/bnsyn",
                 argv=(sys.executable, "-m", "pylint", "src/bnsyn"),
-                timeout_seconds=600.0,
+                timeout_seconds=_PYLINT_TIMEOUT_SECONDS,
             ),
             evidence="command:pylint src/bnsyn",
         ),
@@ -391,7 +454,7 @@ def _evaluate_runtime_proof_path(
                     "--output",
                     output_dir.as_posix(),
                 ),
-                timeout_seconds=900.0,
+                timeout_seconds=_CANONICAL_PROOF_RUN_TIMEOUT_SECONDS,
             ),
             evidence=f"command:bnsyn run --profile canonical --plot --export-proof --output {output_dir.as_posix()}",
         ),
@@ -423,7 +486,7 @@ def _evaluate_bundle_validation(
                     "validate-bundle",
                     output_dir.as_posix(),
                 ),
-                timeout_seconds=300.0,
+                timeout_seconds=_BUNDLE_VALIDATION_TIMEOUT_SECONDS,
             ),
             evidence=f"command:bnsyn validate-bundle {output_dir.as_posix()}",
         ),
@@ -467,35 +530,50 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 def _parse_markdown_sections(text: str) -> dict[str, MarkdownSection]:
-    sections: dict[str, MarkdownSection] = {}
-    current_title: str | None = None
-    current_level = 0
-    current_content: list[str] = []
-
-    def flush() -> None:
-        nonlocal current_title, current_level, current_content
-        if current_title is None:
-            return
-        sections[_normalize_markdown(current_title)] = MarkdownSection(
-            title=current_title,
-            level=current_level,
-            content=tuple(current_content),
-        )
+    root = MarkdownNode(kind="document")
+    current_section: MarkdownNode | None = None
+    in_code_fence = False
 
     for raw_line in text.splitlines():
         stripped = raw_line.strip()
-        if stripped.startswith("#"):
-            marker, _, title = stripped.partition(" ")
-            if title:
-                flush()
-                current_title = title.strip()
-                current_level = len(marker)
-                current_content = []
-                continue
-        if current_title is not None:
-            current_content.append(raw_line)
+        if stripped.startswith("```"):
+            in_code_fence = not in_code_fence
+            if current_section is not None:
+                current_section.children.append(MarkdownNode(kind="code", text=raw_line))
+            continue
+        if in_code_fence:
+            if current_section is not None:
+                current_section.children.append(MarkdownNode(kind="code", text=raw_line))
+            continue
 
-    flush()
+        heading_match = re.match(r"^(#{1,6})\s+(?P<title>.+?)\s*$", stripped)
+        if heading_match:
+            current_section = MarkdownNode(
+                kind="section",
+                text=heading_match.group("title"),
+                level=len(heading_match.group(1)),
+            )
+            root.children.append(current_section)
+            continue
+
+        if current_section is None:
+            continue
+
+        list_match = re.match(r"^(?:[-*]|\d+\.)\s+(?P<item>.+?)\s*$", stripped)
+        if list_match:
+            current_section.children.append(MarkdownNode(kind="list_item", text=list_match.group("item")))
+            continue
+
+        if stripped:
+            current_section.children.append(MarkdownNode(kind="paragraph", text=stripped))
+
+    sections: dict[str, MarkdownSection] = {}
+    for node in root.children:
+        sections[_normalize_markdown(node.text)] = MarkdownSection(
+            title=node.text,
+            level=node.level,
+            content=tuple(child.text for child in node.children),
+        )
     return sections
 
 
@@ -505,28 +583,11 @@ def _normalize_markdown(value: str) -> str:
 
 
 def _extract_list_items(lines: Sequence[str]) -> list[str]:
-    items: list[str] = []
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            continue
-        if stripped.startswith(("- ", "* ")):
-            items.append(_normalize_markdown(stripped[2:]))
-            continue
-        prefix, dot, remainder = stripped.partition(".")
-        if dot and prefix.isdigit() and remainder.strip():
-            items.append(_normalize_markdown(remainder))
-    return items
+    return [_normalize_markdown(line) for line in lines if line.strip()]
 
 
 def _require_section(sections: dict[str, MarkdownSection], title: str) -> MarkdownSection | None:
     return sections.get(_normalize_markdown(title))
-
-
-def _has_line(lines: Sequence[str], expected: str) -> bool:
-    normalized_expected = _normalize_markdown(expected)
-    return any(_normalize_markdown(line) == normalized_expected for line in lines)
-
 
 def _contains_phrase(lines: Sequence[str], expected: str) -> bool:
     normalized_expected = _normalize_markdown(expected)
@@ -809,3 +870,19 @@ def check_release_readiness_document_contract(path: Path) -> ReadinessCheck:
         blocking=True,
         evidence=f"file:{path.as_posix()}",
     )
+
+
+def compute_truth_model_fingerprint() -> str:
+    """Return a stable fingerprint for readiness-contract logic."""
+    relevant_objects = (
+        ReadinessState.evaluate,
+        SubprocessCommandRunner.run,
+        check_mutation_baseline,
+        check_entropy_gate,
+        check_status_document_contract,
+        check_release_readiness_document_contract,
+    )
+    digest = hashlib.sha256()
+    for obj in relevant_objects:
+        digest.update(inspect.getsource(obj).encode("utf-8"))
+    return digest.hexdigest()[:16]

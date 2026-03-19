@@ -4,22 +4,33 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SRC_ROOT = REPO_ROOT / "src"
-if SRC_ROOT.as_posix() not in sys.path:
-    sys.path.insert(0, SRC_ROOT.as_posix())
 
-from bnsyn.qa.readiness_contract import ReadinessState, ReadinessStatus  # noqa: E402
+
+def _load_readiness_contract() -> tuple[type[Any], type[Any]]:
+    module_path = REPO_ROOT / "src" / "bnsyn" / "qa" / "readiness_contract.py"
+    spec = importlib.util.spec_from_file_location("bnsyn_qa_readiness_contract_cli", module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load readiness contract from {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules.setdefault("bnsyn_qa_readiness_contract_cli", module)
+    spec.loader.exec_module(module)
+    return module.ReadinessState, module.ReadinessStatus
+
+
+ReadinessState, ReadinessStatus = _load_readiness_contract()
 
 
 def build_report(repo_root: Path) -> dict[str, Any]:
     """Build the canonical release readiness report."""
-    return ReadinessState.evaluate(repo_root).to_report()
+    state = cast(Any, ReadinessState).evaluate(repo_root)
+    return cast(dict[str, Any], state.to_report())
 
 
 def render_markdown(report: dict[str, Any]) -> str:

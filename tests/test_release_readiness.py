@@ -12,6 +12,8 @@ from bnsyn.qa.readiness_contract import (
     ReadinessState,
     ReadinessStatus,
     SubprocessCommandRunner,
+    TRUTH_MODEL_FINGERPRINT,
+    compute_truth_model_fingerprint,
     check_entropy_gate,
     check_mutation_baseline,
     check_release_readiness_document_contract,
@@ -58,8 +60,16 @@ The JSON report includes `truth_model_version`.
 
 
 class _StubRunner:
-    def __init__(self, exit_codes: dict[str, int]) -> None:
+    def __init__(
+        self,
+        exit_codes: dict[str, int],
+        *,
+        stdout_by_command: dict[str, str] | None = None,
+        stderr_by_command: dict[str, str] | None = None,
+    ) -> None:
         self.exit_codes = exit_codes
+        self.stdout_by_command = stdout_by_command or {}
+        self.stderr_by_command = stderr_by_command or {}
         self.commands: list[str] = []
 
     def run(self, spec, repo_root: Path):  # type: ignore[no-untyped-def]
@@ -70,8 +80,8 @@ class _StubRunner:
             (),
             {
                 "exit_code": self.exit_codes.get(spec.command, 0),
-                "stdout": f"stdout::{spec.command}",
-                "stderr": "",
+                "stdout": self.stdout_by_command.get(spec.command, f"stdout::{spec.command}"),
+                "stderr": self.stderr_by_command.get(spec.command, ""),
                 "duration_seconds": 0.25,
             },
         )()
@@ -256,6 +266,80 @@ def test_subprocess_command_runner_fails_closed_on_timeout(
     assert "Timeout after 1.0s" in outcome.stderr
 
 
+def test_readiness_state_scrubs_sensitive_output(tmp_path: Path) -> None:
+    _write_governance_inputs(tmp_path)
+
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(
+        "bnsyn.qa.readiness_contract.compute_metrics",
+        lambda _repo_root: {"process": {"required_checks_files_present": True}},
+    )
+    try:
+        state = ReadinessState.evaluate(
+            tmp_path,
+            command_runner=_StubRunner(
+                {command: 0 for command in (
+                    "ruff check .",
+                    "mypy src --strict --config-file pyproject.toml",
+                    "pylint src/bnsyn",
+                    "bnsyn run --profile canonical --plot --export-proof",
+                    "bnsyn validate-bundle <artifact_dir>",
+                )},
+                stdout_by_command={
+                    "ruff check .": (
+                        "SECRET_TOKEN=abc12345\n"
+                        "ghp_abcdefghijklmnopqrstuvwxyz1234567890\n"
+                        f"{tmp_path.as_posix()}/secret/file.txt\n"
+                    )
+                },
+            ),
+            proof_output_dir=tmp_path / "artifacts" / "bundle",
+        )
+    finally:
+        monkeypatch.undo()
+
+    check = state.subsystems[0].checks[0]
+    assert check.stdout_excerpt is not None
+    assert "SECRET_TOKEN" not in check.stdout_excerpt
+    assert "ghp_" not in check.stdout_excerpt
+    assert tmp_path.as_posix() not in check.stdout_excerpt
+    assert "[REDACTED]" in check.stdout_excerpt or "[REPO_ROOT]" in check.stdout_excerpt
+
+
+def test_readiness_state_reports_signal_termination(tmp_path: Path) -> None:
+    _write_governance_inputs(tmp_path)
+
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(
+        "bnsyn.qa.readiness_contract.compute_metrics",
+        lambda _repo_root: {"process": {"required_checks_files_present": True}},
+    )
+    try:
+        state = ReadinessState.evaluate(
+            tmp_path,
+            command_runner=_StubRunner(
+                {
+                    "ruff check .": 0,
+                    "mypy src --strict --config-file pyproject.toml": 0,
+                    "pylint src/bnsyn": 0,
+                    "bnsyn run --profile canonical --plot --export-proof": -9,
+                    "bnsyn validate-bundle <artifact_dir>": 1,
+                }
+            ),
+            proof_output_dir=tmp_path / "artifacts" / "bundle",
+        )
+    finally:
+        monkeypatch.undo()
+
+    runtime_check = state.subsystems[1].checks[0]
+    assert runtime_check.status == "fail"
+    assert "SIGKILL" in runtime_check.details
+
+
+def test_truth_model_fingerprint_matches_versioned_contract() -> None:
+    assert TRUTH_MODEL_FINGERPRINT == compute_truth_model_fingerprint()
+
+
 def test_readiness_state_blocks_when_execution_backed_checks_fail(tmp_path: Path) -> None:
     _write_governance_inputs(tmp_path)
 
@@ -289,10 +373,8 @@ def test_readiness_state_blocks_when_execution_backed_checks_fail(tmp_path: Path
 def test_release_readiness_script_is_not_file_only_gate(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    monkeypatch.setattr(Path, "exists", lambda self: True)
-
     fake_state = ReadinessState(
-        truth_model_version="1.1.0",
+        truth_model_version="1.2.0",
         timestamp="2026-03-19T00:00:00Z",
         version="9.9.9",
         status=ReadinessStatus.BLOCKED,
@@ -323,7 +405,7 @@ def test_release_readiness_script_is_not_file_only_gate(
         ),
     )
 
-    monkeypatch.setattr(ReadinessState, "evaluate", lambda repo_root: fake_state)
+    monkeypatch.setattr(release_readiness.ReadinessState, "evaluate", lambda repo_root: fake_state)
 
     report = release_readiness.build_report(tmp_path)
 
