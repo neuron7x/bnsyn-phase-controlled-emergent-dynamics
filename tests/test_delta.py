@@ -23,7 +23,7 @@ def _contract():
             },
             "invariants": {"must_include_objective": True, "must_preserve_required_sections": False},
             "generator": {"kind": "deterministic_markdown", "deterministic_seed": 1},
-            "auditor": {"use_cross_model_stub": True},
+            "auditor": {"verifier_kind": "required_checks_ground_truth"},
             "output": {"artifact_filename": "final_artifact.md"},
         }
     )

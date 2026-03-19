@@ -21,6 +21,7 @@ class TerminationOracle:
         band: InnovationBand,
         sigma: SigmaIndex,
         audit: AuditResult,
+        audit_verified: bool,
         coherence_threshold: float,
         invariants_ok: bool,
     ) -> TerminationDecision:
@@ -33,6 +34,7 @@ class TerminationOracle:
             band.min_delta <= delta <= band.max_delta
             and sigma.conflict_density < coherence_threshold
             and audit.passed
+            and audit_verified
             and invariants_ok
         )
         if can_pass:

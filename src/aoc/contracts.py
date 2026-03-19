@@ -105,6 +105,7 @@ class TaskContract:
     output: dict[str, Any]
 
     def __post_init__(self) -> None:
+        allowed_verifier_kinds = {"", "required_checks_ground_truth"}
         if not self.task_id.strip():
             raise ContractError("task_id is required")
         if not self.objective.strip():
@@ -125,8 +126,11 @@ class TaskContract:
                 raise ContractError(f"invariants.{req} is required")
         if "kind" not in self.generator or "deterministic_seed" not in self.generator:
             raise ContractError("generator.kind and generator.deterministic_seed are required")
-        if "use_cross_model_stub" not in self.auditor:
-            raise ContractError("auditor.use_cross_model_stub is required")
+        verifier_kind = str(self.auditor.get("verifier_kind", "")).strip().lower()
+        if verifier_kind not in allowed_verifier_kinds:
+            raise ContractError(
+                f"auditor.verifier_kind must be one of {sorted(allowed_verifier_kinds)}"
+            )
         if "artifact_filename" not in self.output:
             raise ContractError("output.artifact_filename is required")
 
@@ -142,27 +146,68 @@ class AuditRecord:
     iteration: int
     audit_passed: bool
     audit_confidence: float
+    verification_status: str
+    verifier_passed: bool | None
     ground_truth: bool | None
+    verifier_basis: dict[str, Any] | None
     latency_iters: int | None
+
+
+@dataclass(frozen=True)
+class VerificationResult:
+    verification_status: str
+    verifier_passed: bool | None
+    ground_truth: bool | None
+    basis: dict[str, Any] | None
+    latency_iters: int | None
+
+    def __post_init__(self) -> None:
+        allowed = {"verified_confirmed", "verified_rejected", "unverified"}
+        if self.verification_status not in allowed:
+            raise ContractError(f"verification_status must be one of {sorted(allowed)}")
+        if self.verification_status == "unverified":
+            if self.verifier_passed is not None or self.ground_truth is not None:
+                raise ContractError("unverified verification result cannot report verifier_passed or ground_truth")
+        else:
+            if self.verifier_passed is None or self.ground_truth is None:
+                raise ContractError("verified verification result requires verifier_passed and ground_truth")
+            if not self.basis:
+                raise ContractError("verified verification result requires basis")
+
+    @classmethod
+    def unverified(cls, basis: dict[str, Any] | None = None) -> "VerificationResult":
+        return cls(
+            verification_status="unverified",
+            verifier_passed=None,
+            ground_truth=None,
+            basis=basis,
+            latency_iters=None,
+        )
 
 
 @dataclass
 class AuditorReliabilityTrace:
     history: list[AuditRecord] = field(default_factory=list)
 
-    def record(self, iteration: int, audit: AuditResult, ground_truth: bool | None = None) -> None:
+    def record(self, iteration: int, audit: AuditResult, verification: VerificationResult) -> None:
         self.history.append(
             AuditRecord(
                 iteration=iteration,
                 audit_passed=audit.passed,
                 audit_confidence=audit.confidence,
-                ground_truth=ground_truth,
-                latency_iters=1,
+                verification_status=verification.verification_status,
+                verifier_passed=verification.verifier_passed,
+                ground_truth=verification.ground_truth,
+                verifier_basis=verification.basis,
+                latency_iters=verification.latency_iters,
             )
         )
 
+    def _verified_records(self) -> list[AuditRecord]:
+        return [r for r in self.history if r.ground_truth is not None and r.verification_status != "unverified"]
+
     def precision(self) -> float | None:
-        judged = [r for r in self.history if r.ground_truth is not None and r.audit_passed]
+        judged = [r for r in self._verified_records() if r.audit_passed]
         if not judged:
             return None
         tp = [r for r in judged if r.ground_truth is True]
@@ -175,15 +220,38 @@ class AuditorReliabilityTrace:
         return sum(observed) / len(observed)
 
     def false_conservation_rate(self) -> float | None:
-        judged = [r for r in self.history if r.ground_truth is not None]
+        judged = self._verified_records()
         if not judged:
             return None
         false_ok = [r for r in judged if r.audit_passed and r.ground_truth is False]
         return len(false_ok) / len(judged)
 
+    def verification_status(self) -> str:
+        if not self.history:
+            return "unverified"
+        last = self.history[-1].verification_status
+        if last == "verified_confirmed":
+            return "reliable_audit"
+        if last == "verified_rejected":
+            return "rejected_by_verifier"
+        return "unverified"
+
+    def metrics_status(self) -> str:
+        verified_records = len(self._verified_records())
+        if verified_records == 0:
+            return "unverified"
+        if verified_records < len(self.history):
+            return "partial"
+        return "verified"
+
     def to_dict(self) -> dict[str, Any]:
+        verified_records = self._verified_records()
         return {
             "history": [asdict(h) for h in self.history],
+            "verification_status": self.verification_status(),
+            "metrics_status": self.metrics_status(),
+            "verified_record_count": len(verified_records),
+            "unverified_record_count": len(self.history) - len(verified_records),
             "precision": self.precision(),
             "avg_latency": self.avg_latency(),
             "false_conservation_rate": self.false_conservation_rate(),

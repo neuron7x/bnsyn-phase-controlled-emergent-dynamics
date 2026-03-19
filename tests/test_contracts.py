@@ -23,7 +23,7 @@ def _payload() -> dict:
             "must_preserve_required_sections": False,
         },
         "generator": {"kind": "deterministic_markdown", "deterministic_seed": 7},
-        "auditor": {"use_cross_model_stub": True},
+        "auditor": {"verifier_kind": "required_checks_ground_truth"},
         "output": {"artifact_filename": "final_artifact.md"},
     }
 
@@ -54,4 +54,11 @@ def test_contract_missing_target_score_in_normalized_constraints_fails() -> None
     p = _payload()
     p["normalized_constraints"] = {"other": 1.0}
     with pytest.raises(ContractError, match="normalized_constraints.target_score"):
+        load_task_contract(p)
+
+
+def test_contract_invalid_verifier_kind_fails() -> None:
+    p = _payload()
+    p["auditor"]["verifier_kind"] = "typoed_verifier"
+    with pytest.raises(ContractError, match="auditor.verifier_kind"):
         load_task_contract(p)

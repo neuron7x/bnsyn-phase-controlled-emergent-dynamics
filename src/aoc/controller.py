@@ -3,8 +3,14 @@ from __future__ import annotations
 from dataclasses import asdict
 from pathlib import Path
 
-from .audit import AuditEngine
-from .contracts import AuditorReliabilityTrace, TaskContract
+from .audit import (
+    AuditEngine,
+    GroundTruthVerifier,
+    PrimaryAuditor,
+    RequiredChecksGroundTruthProvider,
+    Verifier,
+)
+from .contracts import AuditResult, AuditorReliabilityTrace, TaskContract, VerificationResult
 from .delta import DeltaEngine
 from .evidence import EvidenceWriter, hash_text
 from .generator import DeterministicMarkdownGenerator
@@ -16,7 +22,13 @@ from .zeropoint import ZeroPointManager
 
 
 class AOCController:
-    def __init__(self, contract: TaskContract, run_dir: Path) -> None:
+    def __init__(
+        self,
+        contract: TaskContract,
+        run_dir: Path,
+        primary_auditor: PrimaryAuditor | None = None,
+        verifier: Verifier | None = None,
+    ) -> None:
         self.contract = contract
         self.run_dir = run_dir
         self.run_dir.mkdir(parents=True, exist_ok=True)
@@ -24,7 +36,8 @@ class AOCController:
         self.generator = DeterministicMarkdownGenerator()
         self.delta_engine = DeltaEngine()
         self.sigma_engine = SigmaEngine()
-        self.audit_engine = AuditEngine()
+        self.primary_auditor = primary_auditor or AuditEngine()
+        self.verifier = verifier if verifier is not None else self._build_verifier()
         self.modulator = ConstraintModulator()
         self.termination = TerminationOracle()
         self.evidence = EvidenceWriter(run_dir)
@@ -66,8 +79,13 @@ class AOCController:
             artifact_hash = hash_text(content)
 
             invariants_ok = self._check_invariants(content)
-            audit = self.audit_engine.run(content, self.contract)
-            reliability.record(iteration, audit)
+            audit = self.primary_auditor.audit(content, self.contract)
+            verification = self._verify_audit(
+                iteration=iteration,
+                content=content,
+                audit=audit,
+            )
+            reliability.record(iteration, audit, verification)
 
             breakdown = self.delta_engine.compute(self.contract, content, audit.checks)
 
@@ -92,6 +110,7 @@ class AOCController:
                 band=self.contract.innovation_band,
                 sigma=sigma,
                 audit=audit,
+                audit_verified=verification.verification_status == "verified_confirmed",
                 coherence_threshold=self.contract.coherence_threshold,
                 invariants_ok=invariants_ok,
             )
@@ -116,7 +135,13 @@ class AOCController:
                     "secondary_diagnostics": sigma.secondary_diagnostics,
                 }
             )
-            audit_trace.append({"iteration": iteration, **asdict(audit)})
+            audit_trace.append(
+                {
+                    "iteration": iteration,
+                    "primary_audit": asdict(audit),
+                    "verification": asdict(verification),
+                }
+            )
 
             modulation_state, modulation_event = self.modulator.update(
                 contract=self.contract,
@@ -147,6 +172,7 @@ class AOCController:
         self.evidence.write_json("run_summary.json", {
             "task_id": self.contract.task_id,
             "final_status": final_status,
+            "audit_reliability_status": reliability.verification_status(),
             "total_iterations": state.iteration,
             "final_artifact_hash": state.current_artifact_hash,
             "zeropoint_hash": zeropoint_hash,
@@ -161,6 +187,7 @@ class AOCController:
             "delta": state.delta_from_zeropoint,
             "sigma_distance": None if state.sigma is None else state.sigma.distance_to_transition,
             "audit_passed": None if state.audit is None else state.audit.passed,
+            "audit_reliability_status": reliability.verification_status(),
             "band": asdict(self.contract.innovation_band),
         }
         if any(verdict[k] is None for k in ("delta", "sigma_distance", "audit_passed")):
@@ -180,6 +207,27 @@ class AOCController:
             "modulation_trace.json",
         ])
         return verdict
+
+    def _build_verifier(self) -> Verifier | None:
+        verifier_kind = str(self.contract.auditor.get("verifier_kind", "")).strip().lower()
+        if verifier_kind == "required_checks_ground_truth":
+            return GroundTruthVerifier(RequiredChecksGroundTruthProvider())
+        return None
+
+    def _verify_audit(self, *, iteration: int, content: str, audit: AuditResult) -> VerificationResult:
+        if self.verifier is None:
+            return VerificationResult.unverified(
+                basis={
+                    "reason": "no_verifier_configured",
+                    "iteration": iteration,
+                }
+            )
+        return self.verifier.verify(
+            content=content,
+            contract=self.contract,
+            audit=audit,
+            iteration=iteration,
+        )
 
     def _check_invariants(self, content: str) -> bool:
         if self.contract.invariants.get("must_include_objective", False):
