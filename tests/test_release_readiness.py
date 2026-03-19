@@ -3,7 +3,36 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
+from bnsyn.qa.readiness_contract import (
+    ReadinessCheck,
+    ReadinessState,
+    ReadinessStatus,
+    check_entropy_gate,
+    check_mutation_baseline,
+)
 from scripts import release_readiness
+
+
+class _StubRunner:
+    def __init__(self, exit_codes: dict[str, int]) -> None:
+        self.exit_codes = exit_codes
+        self.commands: list[str] = []
+
+    def run(self, spec, repo_root: Path):  # type: ignore[no-untyped-def]
+        del repo_root
+        self.commands.append(spec.command)
+        return type(
+            "Outcome",
+            (),
+            {
+                "exit_code": self.exit_codes.get(spec.command, 0),
+                "stdout": f"stdout::{spec.command}",
+                "stderr": "",
+                "duration_seconds": 0.25,
+            },
+        )()
 
 
 def test_check_mutation_baseline_rejects_trivial_baseline(tmp_path: Path) -> None:
@@ -21,14 +50,14 @@ def test_check_mutation_baseline_rejects_trivial_baseline(tmp_path: Path) -> Non
         encoding="utf-8",
     )
 
-    result = release_readiness.check_mutation_baseline(baseline_path)
+    result = check_mutation_baseline(baseline_path)
 
     assert result.status == "fail"
     assert result.blocking is True
     assert "killed_mutants" in result.details
 
 
-def test_check_entropy_gate_passes_when_metrics_match(tmp_path: Path) -> None:
+def test_check_entropy_gate_passes_when_metrics_match(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     entropy_dir = tmp_path / "entropy"
     entropy_dir.mkdir(parents=True)
     (entropy_dir / "policy.json").write_text(
@@ -54,17 +83,118 @@ def test_check_entropy_gate_passes_when_metrics_match(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    original = release_readiness.compute_metrics
-    try:
-        release_readiness.compute_metrics = lambda _repo_root: {
+    monkeypatch.setattr(
+        "bnsyn.qa.readiness_contract.compute_metrics",
+        lambda _repo_root: {
             "process": {
                 "required_checks_files_present": True,
                 "gh_workflows_missing_job_timeout_count": 4,
             }
-        }
-        result = release_readiness.check_entropy_gate(tmp_path)
-    finally:
-        release_readiness.compute_metrics = original
+        },
+    )
+
+    result = check_entropy_gate(tmp_path)
 
     assert result.status == "pass"
     assert result.blocking is True
+
+
+def test_readiness_state_blocks_when_execution_backed_checks_fail(tmp_path: Path) -> None:
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    (docs_dir / "STATUS.md").write_text(
+        "machine-readable release readiness\nartifacts/release_readiness.json\npython -m scripts.release_readiness\nblocked advisory ready\n",
+        encoding="utf-8",
+    )
+    (docs_dir / "RELEASE_READINESS.md").write_text(
+        "static quality\nruntime proof path\nbundle validation\ngovernance consistency\ntruth_model_version\nready requires at least one execution-backed check\nblocked advisory ready\n",
+        encoding="utf-8",
+    )
+    quality_dir = tmp_path / "quality"
+    quality_dir.mkdir()
+    (quality_dir / "mutation_baseline.json").write_text(
+        json.dumps({"status": "active", "metrics": {"total_mutants": 2, "killed_mutants": 1}}),
+        encoding="utf-8",
+    )
+    entropy_dir = tmp_path / "entropy"
+    entropy_dir.mkdir()
+    (entropy_dir / "policy.json").write_text(
+        json.dumps({"comparators": {"process.required_checks_files_present": "eq"}}),
+        encoding="utf-8",
+    )
+    (entropy_dir / "baseline.json").write_text(
+        json.dumps({"process": {"required_checks_files_present": True}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "pyproject.toml").write_text("[project]\nversion='1.2.3'\n", encoding="utf-8")
+
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(
+        "bnsyn.qa.readiness_contract.compute_metrics",
+        lambda _repo_root: {"process": {"required_checks_files_present": True}},
+    )
+    try:
+        state = ReadinessState.evaluate(
+            tmp_path,
+            command_runner=_StubRunner(
+                {
+                    "ruff check .": 1,
+                    "mypy src --strict --config-file pyproject.toml": 1,
+                    "pylint src/bnsyn": 1,
+                    "bnsyn run --profile canonical --plot --export-proof": 1,
+                    "bnsyn validate-bundle <artifact_dir>": 1,
+                }
+            ),
+            proof_output_dir=tmp_path / "artifacts" / "bundle",
+        )
+    finally:
+        monkeypatch.undo()
+
+    assert state.status.value == "blocked"
+    assert state.release_ready is False
+    assert state.execution_backed_pass_count == 0
+
+
+def test_release_readiness_script_is_not_file_only_gate(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(Path, "exists", lambda self: True)
+
+    fake_state = ReadinessState(
+        truth_model_version="1.0.0",
+        timestamp="2026-03-19T00:00:00Z",
+        version="9.9.9",
+        status=ReadinessStatus.BLOCKED,
+        release_ready=False,
+        execution_backed_pass_count=0,
+        blocking_failures=("Runtime proof path: canonical proof run",),
+        advisory_findings=(),
+        subsystems=(
+            type(
+                "Subsystem",
+                (),
+                {
+                    "key": "runtime_proof_path",
+                    "label": "Runtime proof path",
+                    "status": ReadinessStatus.BLOCKED,
+                    "checks": (
+                        ReadinessCheck(
+                            name="canonical proof run",
+                            kind="command",
+                            status="fail",
+                            blocking=True,
+                            details="Command failed",
+                            command="bnsyn run --profile canonical --plot --export-proof",
+                        ),
+                    ),
+                },
+            )(),
+        ),
+    )
+
+    monkeypatch.setattr(ReadinessState, "evaluate", lambda repo_root: fake_state)
+
+    report = release_readiness.build_report(tmp_path)
+
+    assert report["state"] == "blocked"
+    assert report["release_ready"] is False
+    assert report["execution_backed_pass_count"] == 0
+    assert report["blocking_failures"]
