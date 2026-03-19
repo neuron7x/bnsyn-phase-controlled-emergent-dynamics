@@ -101,7 +101,7 @@ def test_proof_report_schema_rejects_invalid_gates_shape() -> None:
 def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "run-manifest.schema.json")
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-export-proof",
         "export_proof": True,
         "cmd": "bnsyn run --profile canonical --plot --export-proof",
@@ -110,6 +110,15 @@ def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
         "N": 10,
         "dt_ms": 0.1,
         "duration_ms": 10.0,
+        "completed_stages": [
+            "live_run",
+            "summary_reports",
+            "avalanche_and_fit",
+            "robustness_envelope",
+            "manifest",
+            "proof_report",
+            "product_surface",
+        ],
         "artifacts": {
             "summary_metrics.json": "0" * 64,
             "run_manifest.json": "2" * 64,
@@ -122,7 +131,7 @@ def test_run_manifest_schema_accepts_valid_manifest_payload() -> None:
 def test_run_manifest_schema_accepts_base_manifest_payload() -> None:
     schema = _load_json(ROOT / "schemas" / "run-manifest.schema.json")
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "bundle_contract": "canonical-base",
         "export_proof": False,
         "cmd": "bnsyn run --profile canonical --plot",
@@ -131,6 +140,15 @@ def test_run_manifest_schema_accepts_base_manifest_payload() -> None:
         "N": 10,
         "dt_ms": 0.1,
         "duration_ms": 10.0,
+        "completed_stages": [
+            "live_run",
+            "summary_reports",
+            "avalanche_and_fit",
+            "robustness_envelope",
+            "manifest",
+            "proof_report",
+            "product_surface",
+        ],
         "artifacts": {
             "summary_metrics.json": "0" * 64,
             "run_manifest.json": "2" * 64,

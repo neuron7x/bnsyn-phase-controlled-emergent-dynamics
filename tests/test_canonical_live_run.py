@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 from pathlib import Path
 
@@ -57,6 +58,15 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
     assert manifest["bundle_contract"] == "canonical-base"
     assert manifest["export_proof"] is False
+    assert manifest["completed_stages"] == [
+        "live_run",
+        "summary_reports",
+        "avalanche_and_fit",
+        "robustness_envelope",
+        "manifest",
+        "proof_report",
+        "product_surface",
+    ]
     assert "proof_report.json" not in manifest["artifacts"]
 
     metrics = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -196,10 +206,173 @@ def test_canonical_export_proof_manifest_command_truth(tmp_path: Path) -> None:
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot --export-proof"
     assert manifest["bundle_contract"] == "canonical-export-proof"
     assert manifest["export_proof"] is True
+    assert manifest["completed_stages"][-2:] == ["proof_report", "product_surface"]
     assert "proof_report.json" in manifest["artifacts"]
     assert (out_dir / "proof_report.json").exists()
     assert (out_dir / "product_summary.json").exists()
     assert (out_dir / "index.html").exists()
+
+
+def test_canonical_live_bundle_resume_after_product_surface_failure(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from bnsyn.experiments import declarative as decl
+
+    out_dir = tmp_path / "resume_product_surface"
+    live_run_calls = {"n": 0}
+    robustness_calls = {"n": 0}
+    product_calls = {"n": 0}
+
+    original_stage_live_run = decl.stage_live_run
+    original_stage_robustness = decl.stage_robustness_envelope
+    original_product_writer = decl.write_product_report_bundle
+
+    def _count_live_run(context):
+        live_run_calls["n"] += 1
+        return original_stage_live_run(context)
+
+    def _count_robustness(context):
+        robustness_calls["n"] += 1
+        return original_stage_robustness(context)
+
+    def _fail_once_product_writer(*args, **kwargs):
+        product_calls["n"] += 1
+        if product_calls["n"] == 1:
+            raise RuntimeError("synthetic product surface failure")
+        return original_product_writer(*args, **kwargs)
+
+    monkeypatch.setattr(decl, "stage_live_run", _count_live_run)
+    monkeypatch.setattr(decl, "stage_robustness_envelope", _count_robustness)
+    monkeypatch.setattr(decl, "write_product_report_bundle", _fail_once_product_writer)
+
+    with pytest.raises(RuntimeError, match="synthetic product surface failure"):
+        decl.run_canonical_live_bundle(
+            "configs/canonical_profile.yaml",
+            artifact_dir=out_dir,
+            export_proof=True,
+            generate_product_report=True,
+            product_package_version="0.2.0",
+        )
+
+    failed_stage = json.loads((out_dir / "stage_product_surface.json").read_text(encoding="utf-8"))
+    assert failed_stage["status"] == "failed"
+    assert "synthetic product surface failure" in failed_stage["failure_reason"]
+    assert live_run_calls["n"] == 1
+    assert robustness_calls["n"] == 1
+
+    bundle = decl.run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        export_proof=True,
+        generate_product_report=True,
+        product_package_version="0.2.0",
+    )
+
+    assert bundle["completed_stages"] == [
+        "live_run",
+        "summary_reports",
+        "avalanche_and_fit",
+        "robustness_envelope",
+        "manifest",
+        "proof_report",
+        "product_surface",
+    ]
+    assert live_run_calls["n"] == 1
+    assert robustness_calls["n"] == 1
+    assert product_calls["n"] == 2
+    assert (out_dir / "product_summary.json").exists()
+    assert (out_dir / "index.html").exists()
+
+
+def test_resume_reruns_from_first_stage_with_hash_mismatch(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from bnsyn.experiments import declarative as decl
+
+    out_dir = tmp_path / "hash_resume"
+    decl.run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+    call_counts = {"live": 0, "summary": 0}
+    original_live = decl.stage_live_run
+    original_summary = decl.stage_summary_reports
+
+    def _count_live(context):
+        call_counts["live"] += 1
+        return original_live(context)
+
+    def _count_summary(context):
+        call_counts["summary"] += 1
+        return original_summary(context)
+
+    monkeypatch.setattr(decl, "stage_live_run", _count_live)
+    monkeypatch.setattr(decl, "stage_summary_reports", _count_summary)
+
+    (out_dir / "summary_metrics.json").write_text('{"tampered": true}\n', encoding="utf-8")
+
+    bundle = decl.run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+    assert call_counts == {"live": 0, "summary": 1}
+    assert bundle["completed_stages"][1] == "summary_reports"
+
+
+def test_resume_rejects_contract_change(tmp_path: Path) -> None:
+    out_dir = tmp_path / "contract_change"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=False)
+
+    with pytest.raises(ValueError, match="contract is immutable"):
+        run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir, export_proof=True)
+
+
+def test_resume_rejects_old_manifest_schema_version(tmp_path: Path) -> None:
+    out_dir = tmp_path / "old_schema"
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+    manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
+    manifest["schema_version"] = "1.0.0"
+    (out_dir / "run_manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="schema_version"):
+        run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+
+def test_artifact_dir_lock_blocks_parallel_run(tmp_path: Path) -> None:
+    out_dir = tmp_path / "locked"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / ".lock").write_text("busy\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="locked"):
+        run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+
+def test_progress_stream_reports_stage_queue(tmp_path: Path) -> None:
+    out_dir = tmp_path / "progress"
+    progress = io.StringIO()
+
+    run_canonical_live_bundle(
+        "configs/canonical_profile.yaml",
+        artifact_dir=out_dir,
+        progress_stream=progress,
+    )
+
+    text = progress.getvalue()
+    assert "[RUNNING] live_run" in text
+    assert "[DONE] product_surface" in text
+
+
+def test_write_json_uses_atomic_replace(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from bnsyn.experiments import declarative as decl
+
+    target = tmp_path / "payload.json"
+    calls: list[tuple[Path, Path]] = []
+    original_replace = decl.os.replace
+
+    def _record_replace(src: str | Path, dst: str | Path) -> None:
+        calls.append((Path(src), Path(dst)))
+        original_replace(src, dst)
+
+    monkeypatch.setattr(decl.os, "replace", _record_replace)
+
+    decl._write_json(target, {"status": "ok"})
+
+    assert calls
+    assert target.exists()
+    assert json.loads(target.read_text(encoding="utf-8")) == {"status": "ok"}
 
 
 def test_build_repro_reports_is_stateless_across_invocations(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

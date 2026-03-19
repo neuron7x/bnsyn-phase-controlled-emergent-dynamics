@@ -13,10 +13,11 @@
     "N",
     "dt_ms",
     "duration_ms",
+    "completed_stages",
     "artifacts"
   ],
   "properties": {
-    "schema_version": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.1.0"},
     "cmd": {
       "type": "string",
       "enum": [
@@ -34,6 +35,21 @@
     "N": {"type": "integer", "minimum": 1},
     "dt_ms": {"type": "number", "exclusiveMinimum": 0},
     "duration_ms": {"type": "number", "exclusiveMinimum": 0},
+    "completed_stages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "live_run",
+          "summary_reports",
+          "avalanche_and_fit",
+          "robustness_envelope",
+          "manifest",
+          "proof_report",
+          "product_surface"
+        ]
+      }
+    },
     "artifacts": {
       "type": "object",
       "minProperties": 1,

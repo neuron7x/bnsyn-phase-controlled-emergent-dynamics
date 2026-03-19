@@ -219,6 +219,7 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
     plot = bool(getattr(args, "plot", False))
     export_proof = bool(getattr(args, "export_proof", False))
     output = getattr(args, "output", None)
+    resume_from_stage = getattr(args, "resume_from_stage", None)
 
     if config_path is None and profile == "canonical":
         config_path = _default_canonical_profile_path()
@@ -236,6 +237,8 @@ def _cmd_run_experiment(args: argparse.Namespace) -> int:
                 export_proof=export_proof,
                 generate_product_report=export_proof,
                 product_package_version=_get_package_version(),
+                resume_from_stage=resume_from_stage,
+                progress_stream=sys.stderr,
             )
         except Exception as e:
             print(f"Error running experiment: {e}")
@@ -880,6 +883,19 @@ def main() -> None:
         "--export-proof",
         action="store_true",
         help="Emit proof_report.json and finalize manifest/proof consistency for canonical profile",
+    )
+    run_parser.add_argument(
+        "--resume-from-stage",
+        choices=[
+            "live_run",
+            "summary_reports",
+            "avalanche_and_fit",
+            "robustness_envelope",
+            "manifest",
+            "proof_report",
+            "product_surface",
+        ],
+        help="Resume canonical stage pipeline from a specific stage, or auto-resume from the first incomplete stage when omitted",
     )
     run_parser.add_argument("-o", "--output", help="Output directory path (default: artifacts/canonical_run for canonical profile)")
     run_parser.set_defaults(func=_cmd_run_experiment)
