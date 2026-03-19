@@ -1,63 +1,67 @@
 # Release Readiness Protocol
 
-This document defines the **blocking release gates** and the deterministic checklist
-for declaring BN-Syn ready for public production/demo use.
+This document defines the machine-readable readiness contract used by
+`python -m scripts.release_readiness`.
 
-## Single-Command Gate (Blocking)
+## Single-command truth source
 
-Generate the release readiness report (JSON + Markdown):
+Generate the execution-backed readiness report (JSON + Markdown):
 
 ```bash
 python -m scripts.release_readiness
 ```
 
-If any blocking checks fail, the command exits with non-zero status and the
-release is **BLOCKED**. Reports are written to:
+Reports are written to:
 
 - `artifacts/release_readiness.json`
 - `artifacts/release_readiness.md`
 
-## Blocking Release Requirements
+The JSON report includes a dedicated `truth_model_version` key so downstream
+consumers can detect readiness-model changes.
 
-The release readiness gate enforces these requirements:
+## Readiness states
 
-1. **Core repository files present**: `README.md`, `LICENSE`, `SECURITY.md`,
-   `CITATION.cff`, `requirements-lock.txt`.
-2. **Governance evidence present**: `VERIFICATION_REPORT.md`,
-   `GOVERNANCE_VERIFICATION_REPORT.md`, `HARDENING_SUMMARY.md`,
-   `README_CLAIMS_GATE.md`.
-3. **Quality documentation present**: `docs/QUALITY_INFRASTRUCTURE.md`,
-   `docs/CI_GATES.md`, `docs/TESTING_MUTATION.md`.
-4. **Quality scripts present**: governance and formal-verification gates
-   (`scripts/lint_ci_truthfulness.py`, `scripts/verify_formal_constants.py`)
-   and mutation scripts.
-5. **Project version defined** in `pyproject.toml`.
-6. **Mutation baseline non-trivial and factual**: `quality/mutation_baseline.json`
-   must have `status="active"`, `metrics.total_mutants > 0`, and `metrics.killed_mutants > 0`.
-7. **Entropy gate consistency**: current repository entropy metrics must satisfy
-   comparators in `entropy/policy.json` against `entropy/baseline.json` (no regressions).
+The readiness model uses exactly three states:
 
-## Mutation Baseline (Required for Release)
+- `blocked`
+- `advisory`
+- `ready`
 
-The mutation baseline is a **blocking** requirement. Generate it with:
+Transition criteria:
 
-```bash
-make mutation-baseline
-```
+- `blocked`: any blocking subsystem fails, **or** no execution-backed checks pass.
+- `advisory`: every blocking subsystem passes, but at least one non-blocking advisory finding remains.
+- `ready`: every subsystem passes and `ready requires at least one execution-backed check`.
 
-This installs test dependencies and runs mutmut against the critical modules.
-If the test suite does not run cleanly, the baseline generation fails and the
-release remains **BLOCKED** until resolved.
+Because of that rule, `READY` is impossible if execution-backed checks did not
+actually run and pass.
 
-## Optional (Advisory) Mode
+## Subsystems
 
-To generate the report without failing the command:
+`ReadinessState` evaluates four subsystems and serializes each subsystem's real
+results, including command exit codes and excerpts where applicable.
+
+1. **static quality**
+   - `ruff check .`
+   - `mypy src --strict --config-file pyproject.toml`
+   - `pylint src/bnsyn`
+2. **runtime proof path**
+   - `bnsyn run --profile canonical --plot --export-proof`
+3. **bundle validation**
+   - `bnsyn validate-bundle <artifact_dir>` against the readiness proof bundle
+4. **governance consistency**
+   - `docs/STATUS.md` uses the same `blocked` / `advisory` / `ready` vocabulary
+   - `docs/RELEASE_READINESS.md` uses the same criteria
+   - `quality/mutation_baseline.json` remains factual and non-trivial
+   - `entropy/policy.json` and `entropy/baseline.json` remain consistent with the current repository metrics
+
+## Advisory mode
+
+To generate the report without failing the shell command on `blocked`:
 
 ```bash
 python -m scripts.release_readiness --advisory
 ```
 
-
-## Release Pipeline Automation
-
-For changelog/version/build/publish dry-run automation, see [`docs/RELEASE_PIPELINE.md`](RELEASE_PIPELINE.md).
+The report still records the real computed state; `--advisory` changes only the
+process exit code.
