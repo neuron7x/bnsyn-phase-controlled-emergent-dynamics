@@ -35,6 +35,11 @@
     "N": {"type": "integer", "minimum": 1},
     "dt_ms": {"type": "number", "exclusiveMinimum": 0},
     "duration_ms": {"type": "number", "exclusiveMinimum": 0},
+    "failed_stage": {
+      "type": ["string", "null"],
+      "enum": [null, "live_run", "summary_reports", "avalanche_and_fit", "robustness_envelope", "manifest", "proof_report", "product_surface"]
+    },
+    "failure_reason": {"type": ["string", "null"]},
     "completed_stages": {
       "type": "array",
       "items": {

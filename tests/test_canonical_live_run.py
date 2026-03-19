@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 import numpy as np
+import yaml  # type: ignore[import-untyped]
 
 from bnsyn.experiments.declarative import run_canonical_live_bundle
 
@@ -255,6 +256,9 @@ def test_canonical_live_bundle_resume_after_product_surface_failure(monkeypatch:
     failed_stage = json.loads((out_dir / "stage_product_surface.json").read_text(encoding="utf-8"))
     assert failed_stage["status"] == "failed"
     assert "synthetic product surface failure" in failed_stage["failure_reason"]
+    failed_manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
+    assert failed_manifest["failed_stage"] == "product_surface"
+    assert "synthetic product surface failure" in failed_manifest["failure_reason"]
     assert live_run_calls["n"] == 1
     assert robustness_calls["n"] == 1
 
@@ -331,6 +335,19 @@ def test_resume_rejects_old_manifest_schema_version(tmp_path: Path) -> None:
         run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
 
 
+def test_resume_rejects_policy_change_across_configs(tmp_path: Path) -> None:
+    out_dir = tmp_path / "policy_change"
+    alt_config = tmp_path / "alt_canonical.yaml"
+    payload = yaml.safe_load(Path("configs/canonical_profile.yaml").read_text(encoding="utf-8"))
+    payload["simulation"]["external_current_pA"] = float(payload["simulation"]["external_current_pA"]) + 1.0
+    alt_config.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+
+    run_canonical_live_bundle("configs/canonical_profile.yaml", artifact_dir=out_dir)
+
+    with pytest.raises(ValueError, match="Resume policy mismatch"):
+        run_canonical_live_bundle(alt_config, artifact_dir=out_dir)
+
+
 def test_artifact_dir_lock_blocks_parallel_run(tmp_path: Path) -> None:
     out_dir = tmp_path / "locked"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -351,7 +368,7 @@ def test_progress_stream_reports_stage_queue(tmp_path: Path) -> None:
     )
 
     text = progress.getvalue()
-    assert "[RUNNING] live_run" in text
+    assert "[RUN] live_run" in text
     assert "[DONE] product_surface" in text
 
 

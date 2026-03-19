@@ -588,6 +588,18 @@ def _artifact_hashes_for_outputs(outputs: dict[str, Any]) -> dict[str, str]:
     return hashes
 
 
+def _pipeline_policy(context: PipelineContext) -> dict[str, Any]:
+    return {
+        "seed": context.seed,
+        "steps": context.steps,
+        "N": int(context.config.network.size),
+        "dt_ms": float(context.config.simulation.dt_ms),
+        "duration_ms": float(context.config.simulation.duration_ms),
+        "external_current_pA": float(context.config.simulation.external_current_pA),
+        "export_proof": bool(context.export_proof),
+    }
+
+
 def _write_stage_record(
     artifact_dir: Path,
     *,
@@ -660,6 +672,13 @@ def _validate_stage_output_hashes(stage_name: str, stage_record: dict[str, Any])
     return True
 
 
+def _load_json_dict(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected JSON object at {path}")
+    return cast(dict[str, Any], payload)
+
+
 def _first_stage_requiring_rerun(artifact_dir: Path) -> str | None:
     for stage_name in STAGE_ORDER:
         payload = _load_stage_record(artifact_dir, stage_name)
@@ -713,13 +732,54 @@ def _load_existing_manifest(artifact_dir: Path) -> dict[str, Any] | None:
     path = artifact_dir / "run_manifest.json"
     if not path.is_file():
         return None
-    payload = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+    payload = _load_json_dict(path)
     schema_version = payload.get("schema_version")
     if schema_version != PIPELINE_SCHEMA_VERSION:
         raise ValueError(
             f"run_manifest.json schema_version {schema_version!r} is incompatible with {PIPELINE_SCHEMA_VERSION}; use a fresh artifact directory"
         )
     return payload
+
+
+def _validate_resume_policy(context: PipelineContext, manifest: dict[str, Any] | None) -> None:
+    policy = _pipeline_policy(context)
+    if manifest is not None:
+        manifest_policy = {
+            "seed": manifest.get("seed"),
+            "steps": manifest.get("steps"),
+            "N": manifest.get("N"),
+            "dt_ms": manifest.get("dt_ms"),
+            "duration_ms": manifest.get("duration_ms"),
+            "export_proof": manifest.get("export_proof"),
+        }
+        for key, value in manifest_policy.items():
+            if value != policy[key]:
+                raise ValueError(f"Resume policy mismatch for {key}; use a fresh artifact directory")
+
+    live_stage = _load_stage_record(context.artifact_dir, "live_run")
+    if live_stage is None:
+        return
+    inputs = live_stage.get("inputs")
+    if not isinstance(inputs, dict):
+        raise ValueError("stage_live_run.json inputs must be an object")
+    recorded_policy = inputs.get("policy")
+    if not isinstance(recorded_policy, dict):
+        raise ValueError("stage_live_run.json missing policy snapshot")
+    for key, value in policy.items():
+        if recorded_policy.get(key) != value:
+            raise ValueError(f"Resume policy mismatch for {key}; use a fresh artifact directory")
+
+
+def _require_array(value: np.ndarray | None, field_name: str) -> np.ndarray:
+    if not isinstance(value, np.ndarray):
+        raise ValueError(f"PipelineContext.{field_name} must be loaded before this stage")
+    return value
+
+
+def _require_report(value: dict[str, Any] | None, field_name: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"PipelineContext.{field_name} must be available before writing outputs")
+    return value
 
 
 def _load_live_run_artifacts(context: PipelineContext) -> PipelineContext:
@@ -765,13 +825,16 @@ def _emit_stage_progress(
     completed: set[str],
     skipped: set[str],
     running: str | None,
+    failed: str | None = None,
 ) -> None:
     if context.progress_stream is None:
         return
     tokens: list[str] = []
     for stage_name in STAGE_ORDER:
-        if stage_name == running:
-            state = "RUNNING"
+        if stage_name == failed:
+            state = "FAIL"
+        elif stage_name == running:
+            state = "RUN"
         elif stage_name in skipped:
             state = "SKIP"
         elif stage_name in completed:
@@ -797,11 +860,11 @@ def stage_live_run(context: PipelineContext) -> PipelineContext:
 
 
 def stage_summary_reports(context: PipelineContext) -> PipelineContext:
-    spike_steps = cast(np.ndarray, context.spike_steps)
-    sigma_trace = cast(np.ndarray, context.sigma_trace)
-    rate_trace_hz = cast(np.ndarray, context.rate_trace_hz)
-    coherence_trace = cast(np.ndarray, context.coherence_trace)
-    spike_neurons = cast(np.ndarray, context.spike_neurons)
+    spike_steps = _require_array(context.spike_steps, "spike_steps")
+    sigma_trace = _require_array(context.sigma_trace, "sigma_trace")
+    rate_trace_hz = _require_array(context.rate_trace_hz, "rate_trace_hz")
+    coherence_trace = _require_array(context.coherence_trace, "coherence_trace")
+    spike_neurons = _require_array(context.spike_neurons, "spike_neurons")
     steps = context.steps
     n_neurons = int(cast(int, context.n_neurons))
 
@@ -882,7 +945,7 @@ def stage_summary_reports(context: PipelineContext) -> PipelineContext:
 
 def stage_avalanche_and_fit(context: PipelineContext) -> PipelineContext:
     steps = context.steps
-    spike_steps = cast(np.ndarray, context.spike_steps)
+    spike_steps = _require_array(context.spike_steps, "spike_steps")
     spike_steps_per_step = np.bincount(spike_steps, minlength=steps) if steps > 0 else np.zeros(0, dtype=np.int64)
     avalanche_report = _build_avalanche_report(
         seed=context.seed,
@@ -909,6 +972,8 @@ def stage_manifest(
     context: PipelineContext,
     *,
     completed_stages: list[str],
+    failed_stage: str | None = None,
+    failure_reason: str | None = None,
 ) -> dict[str, Any]:
     artifacts: dict[str, str] = {}
     artifact_names = [
@@ -949,6 +1014,8 @@ def stage_manifest(
         "dt_ms": float(context.config.simulation.dt_ms),
         "duration_ms": float(context.config.simulation.duration_ms),
         "completed_stages": completed_stages,
+        "failed_stage": failed_stage,
+        "failure_reason": failure_reason,
         "artifacts": artifacts,
     }
     manifest["artifacts"]["run_manifest.json"] = manifest_self_hash(manifest)
@@ -1022,8 +1089,13 @@ def run_canonical_live_bundle(
     )
     context.artifact_dir.mkdir(parents=True, exist_ok=True)
 
-    def _write_manifest_snapshot() -> Path:
-        manifest_payload = stage_manifest(context, completed_stages=_completed_stage_names(context.artifact_dir))
+    def _write_manifest_snapshot(*, failed_stage: str | None = None, failure_reason: str | None = None) -> Path:
+        manifest_payload = stage_manifest(
+            context,
+            completed_stages=_completed_stage_names(context.artifact_dir),
+            failed_stage=failed_stage,
+            failure_reason=failure_reason,
+        )
         _write_json(context.run_manifest_path, manifest_payload)
         return context.run_manifest_path
 
@@ -1055,6 +1127,13 @@ def run_canonical_live_bundle(
             )
         except Exception as exc:
             finished_at = _utc_now_iso()
+            _emit_stage_progress(
+                context,
+                completed=set(_completed_stage_names(context.artifact_dir)),
+                skipped=set(),
+                running=None,
+                failed=stage_name,
+            )
             _write_stage_record(
                 context.artifact_dir,
                 stage_name=stage_name,
@@ -1065,12 +1144,14 @@ def run_canonical_live_bundle(
                 outputs={},
                 failure_reason=f"{exc.__class__.__name__}: {exc}",
             )
+            _write_manifest_snapshot(failed_stage=stage_name, failure_reason=f"{exc.__class__.__name__}: {exc}")
             raise
 
     with _artifact_dir_lock(context.artifact_dir):
         existing_manifest = _load_existing_manifest(context.artifact_dir)
         if existing_manifest is not None and existing_manifest.get("export_proof") is not export_proof:
             raise ValueError("Existing run_manifest.json contract is immutable; use a fresh artifact directory for a different --export-proof mode")
+        _validate_resume_policy(context, existing_manifest)
 
         resume_stage = _resolve_resume_stage(context.artifact_dir, resume_from_stage)
         if context.export_proof and not context.proof_report_path.is_file():
@@ -1086,7 +1167,7 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("live_run"):
             _run_stage(
                 "live_run",
-                inputs={"config_path": str(config_path), "artifact_dir": context.artifact_dir.as_posix()},
+                inputs={"config_path": str(config_path), "artifact_dir": context.artifact_dir.as_posix(), "policy": _pipeline_policy(context)},
                 required_artifacts={},
                 compute=lambda: stage_live_run(context),
                 write_outputs=lambda ctx: {"artifact_npz": cast(Path, ctx.artifact_npz_path).as_posix()},
@@ -1096,22 +1177,22 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("summary_reports"):
             _run_stage(
                 "summary_reports",
-                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix()},
+                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_summary_reports(context),
                 write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "summary_metrics.json", cast(dict[str, Any], ctx.summary_metrics)),
-                    _write_json(context.artifact_dir / "criticality_report.json", cast(dict[str, Any], ctx.criticality_report)),
-                    _write_json(context.artifact_dir / "phase_space_report.json", cast(dict[str, Any], ctx.phase_space_report)),
-                    np.save(context.artifact_dir / "population_rate_trace.npy", cast(np.ndarray, ctx.population_rate_trace)),
-                    np.save(context.artifact_dir / "sigma_trace.npy", cast(np.ndarray, ctx.sigma_trace)),
-                    np.save(context.artifact_dir / "coherence_trace.npy", cast(np.ndarray, ctx.coherence_trace)),
-                    _write_grayscale_png(cast(np.ndarray, ctx.phase_space_rate_sigma_image), context.artifact_dir / "phase_space_rate_sigma.png"),
-                    _write_grayscale_png(cast(np.ndarray, ctx.phase_space_rate_coherence_image), context.artifact_dir / "phase_space_rate_coherence.png"),
-                    _write_grayscale_png(cast(np.ndarray, ctx.phase_space_activity_map_image), context.artifact_dir / "phase_space_activity_map.png"),
-                    _write_grayscale_png(cast(np.ndarray, ctx.raster_image), context.artifact_dir / "raster_plot.png"),
-                    _write_grayscale_png(cast(np.ndarray, ctx.population_rate_image), context.artifact_dir / "population_rate_plot.png"),
-                    _write_grayscale_png(cast(np.ndarray, ctx.emergence_image), context.artifact_dir / "emergence_plot.png"),
+                    _write_json(context.artifact_dir / "summary_metrics.json", _require_report(ctx.summary_metrics, "summary_metrics")),
+                    _write_json(context.artifact_dir / "criticality_report.json", _require_report(ctx.criticality_report, "criticality_report")),
+                    _write_json(context.artifact_dir / "phase_space_report.json", _require_report(ctx.phase_space_report, "phase_space_report")),
+                    np.save(context.artifact_dir / "population_rate_trace.npy", _require_array(ctx.population_rate_trace, "population_rate_trace")),
+                    np.save(context.artifact_dir / "sigma_trace.npy", _require_array(ctx.sigma_trace, "sigma_trace")),
+                    np.save(context.artifact_dir / "coherence_trace.npy", _require_array(ctx.coherence_trace, "coherence_trace")),
+                    _write_grayscale_png(_require_array(ctx.phase_space_rate_sigma_image, "phase_space_rate_sigma_image"), context.artifact_dir / "phase_space_rate_sigma.png"),
+                    _write_grayscale_png(_require_array(ctx.phase_space_rate_coherence_image, "phase_space_rate_coherence_image"), context.artifact_dir / "phase_space_rate_coherence.png"),
+                    _write_grayscale_png(_require_array(ctx.phase_space_activity_map_image, "phase_space_activity_map_image"), context.artifact_dir / "phase_space_activity_map.png"),
+                    _write_grayscale_png(_require_array(ctx.raster_image, "raster_image"), context.artifact_dir / "raster_plot.png"),
+                    _write_grayscale_png(_require_array(ctx.population_rate_image, "population_rate_image"), context.artifact_dir / "population_rate_plot.png"),
+                    _write_grayscale_png(_require_array(ctx.emergence_image, "emergence_image"), context.artifact_dir / "emergence_plot.png"),
                     {
                         "summary_metrics_path": (context.artifact_dir / "summary_metrics.json").as_posix(),
                         "criticality_report_path": (context.artifact_dir / "criticality_report.json").as_posix(),
@@ -1136,12 +1217,12 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("avalanche_and_fit"):
             _run_stage(
                 "avalanche_and_fit",
-                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix()},
+                inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_avalanche_and_fit(context),
                 write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "avalanche_report.json", cast(dict[str, Any], ctx.avalanche_report)),
-                    _write_json(context.artifact_dir / "avalanche_fit_report.json", cast(dict[str, Any], ctx.avalanche_fit_report)),
+                    _write_json(context.artifact_dir / "avalanche_report.json", _require_report(ctx.avalanche_report, "avalanche_report")),
+                    _write_json(context.artifact_dir / "avalanche_fit_report.json", _require_report(ctx.avalanche_fit_report, "avalanche_fit_report")),
                     {
                         "avalanche_report_path": (context.artifact_dir / "avalanche_report.json").as_posix(),
                         "avalanche_fit_report_path": (context.artifact_dir / "avalanche_fit_report.json").as_posix(),
@@ -1155,12 +1236,12 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("robustness_envelope"):
             _run_stage(
                 "robustness_envelope",
-                inputs={"canonical_repro_seeds": list(CANONICAL_REPRO_SEEDS)},
+                inputs={"canonical_repro_seeds": list(CANONICAL_REPRO_SEEDS), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_robustness_envelope(context),
                 write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "robustness_report.json", cast(dict[str, Any], ctx.robustness_report)),
-                    _write_json(context.artifact_dir / "envelope_report.json", cast(dict[str, Any], ctx.envelope_report)),
+                    _write_json(context.artifact_dir / "robustness_report.json", _require_report(ctx.robustness_report, "robustness_report")),
+                    _write_json(context.artifact_dir / "envelope_report.json", _require_report(ctx.envelope_report, "envelope_report")),
                     {
                         "robustness_report_path": (context.artifact_dir / "robustness_report.json").as_posix(),
                         "envelope_report_path": (context.artifact_dir / "envelope_report.json").as_posix(),
@@ -1174,7 +1255,7 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("manifest"):
             _run_stage(
                 "manifest",
-                inputs={"export_proof": context.export_proof},
+                inputs={"export_proof": context.export_proof, "policy": _pipeline_policy(context)},
                 required_artifacts={
                     "summary_metrics.json": context.artifact_dir / "summary_metrics.json",
                     "criticality_report.json": context.artifact_dir / "criticality_report.json",
@@ -1192,7 +1273,7 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("proof_report"):
             _run_stage(
                 "proof_report",
-                inputs={"export_proof": context.export_proof},
+                inputs={"export_proof": context.export_proof, "policy": _pipeline_policy(context)},
                 required_artifacts={"run_manifest.json": context.run_manifest_path},
                 compute=lambda: stage_proof_report(context, refresh_manifest=_write_manifest_snapshot),
                 write_outputs=lambda _ctx: {
@@ -1206,7 +1287,7 @@ def run_canonical_live_bundle(
         if start_index <= STAGE_ORDER.index("product_surface"):
             _run_stage(
                 "product_surface",
-                inputs={"generate_product_report": context.generate_product_report},
+                inputs={"generate_product_report": context.generate_product_report, "policy": _pipeline_policy(context)},
                 required_artifacts={
                     **({"proof_report.json": context.proof_report_path} if context.generate_product_report else {}),
                     "run_manifest.json": context.run_manifest_path,
