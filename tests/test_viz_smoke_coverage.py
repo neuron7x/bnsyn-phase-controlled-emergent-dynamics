@@ -154,6 +154,15 @@ def test_dashboard_save_animation_mocked() -> None:
     mock_fig.add_subplot.return_value = mock_ax
     mock_plt.figure.return_value = mock_fig
 
+    mock_figure_cls = MagicMock(return_value=mock_fig)
+    mock_canvas_cls = MagicMock()
+
+    mock_backends_agg = MagicMock()
+    mock_backends_agg.FigureCanvasAgg = mock_canvas_cls
+
+    mock_figure_mod = MagicMock()
+    mock_figure_mod.Figure = mock_figure_cls
+
     def mock_import_module(name: str) -> MagicMock:
         if name == "matplotlib.pyplot":
             return mock_plt
@@ -161,6 +170,10 @@ def test_dashboard_save_animation_mocked() -> None:
             return mock_animation
         elif name == "mpl_toolkits.mplot3d":
             return MagicMock()
+        elif name == "matplotlib.backends.backend_agg":
+            return mock_backends_agg
+        elif name == "matplotlib.figure":
+            return mock_figure_mod
         return MagicMock()
 
     with patch("bnsyn.viz.dashboard.importlib.import_module", side_effect=mock_import_module):
@@ -186,9 +199,9 @@ def test_dashboard_save_animation_mocked() -> None:
         # Test save_animation
         dashboard.save_animation("test.png")
 
-        # Verify matplotlib was called
-        mock_plt.figure.assert_called_once()
-        mock_plt.tight_layout.assert_called()
+        # Verify Figure was constructed and savefig was called
+        mock_figure_cls.assert_called_once()
+        mock_fig.tight_layout.assert_called()
         mock_fig.savefig.assert_called_once_with("test.png", dpi=150, bbox_inches="tight")
 
 
