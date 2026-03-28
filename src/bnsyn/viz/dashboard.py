@@ -259,11 +259,35 @@ class EmergenceDashboard:
         For animated formats (.gif, .mp4), requires additional dependencies.
         """
         plt, _ = _load_matplotlib()
-        self._ensure_figure()
+        # Create a fresh Agg-backed figure for headless file saving,
+        # avoiding backend pollution from interactive sessions.
+        import importlib
+        FigureCanvasAgg = importlib.import_module(
+            "matplotlib.backends.backend_agg"
+        ).FigureCanvasAgg
+        Figure = importlib.import_module("matplotlib.figure").Figure
+
+        fig = Figure(figsize=self._figsize)
+        FigureCanvasAgg(fig)
+
+        saved_fig = self._fig
+        saved_axes = dict(self._axes)
+
+        self._fig = fig
+        self._axes.clear()
+        self._axes["attractor"] = fig.add_subplot(2, 3, 1, projection="3d")
+        self._axes["sigma"] = fig.add_subplot(2, 3, 2)
+        self._axes["temperature"] = fig.add_subplot(2, 3, 3)
+        self._axes["sleep"] = fig.add_subplot(2, 3, 4)
+        self._axes["consolidation"] = fig.add_subplot(2, 3, 5)
+        self._axes["avalanche"] = fig.add_subplot(2, 3, 6)
         self._render()
 
-        plt.tight_layout()
-        self._fig.savefig(filename, dpi=150, bbox_inches="tight")
+        fig.tight_layout()
+        fig.savefig(filename, dpi=150, bbox_inches="tight")
+
+        self._fig = saved_fig
+        self._axes = saved_axes
 
     def _ensure_figure(self) -> None:
         """Ensure matplotlib figure and axes are initialized.
