@@ -1,0 +1,13 @@
+{
+  "verdict": "PASS",
+  "gates": {
+    "A": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_install.log", "artifacts/merge_ready/logs/01_rerun_build.log"]},
+    "B": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_tests.log"]},
+    "C": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_lint_ruff.log", "artifacts/merge_ready/logs/00_baseline_lint_pylint.log", "artifacts/merge_ready/logs/00_baseline_mypy.log"]},
+    "D": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_reliability.log", "artifacts/merge_ready/proofs/invalid_stderr.txt"]},
+    "E": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_security.log"]},
+    "F": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_quickstart.log", "artifacts/merge_ready/logs/00_baseline_docs.log"]},
+    "G": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/01_rerun_build.log", "artifacts/merge_ready/manifests/evidence.sha256"]},
+    "H": {"status": "PASS", "evidence": ["artifacts/merge_ready/logs/00_baseline_hygiene.log", "artifacts/merge_ready/logs/00_baseline_security.log"]}
+  }
+}

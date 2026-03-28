@@ -1,0 +1,20 @@
+{
+  "initiatives": [
+    {
+      "initiative_id": "INIT-001",
+      "objective": "Establish CA-DCCG baseline",
+      "value_hypothesis": "reduces governance drift",
+      "risk_class": "P1",
+      "dependencies": [],
+      "cost_estimate": 2,
+      "success_metrics": [
+        "all gates pass"
+      ],
+      "required_gates": [
+        "G0",
+        "G2",
+        "G5"
+      ]
+    }
+  ]
+}

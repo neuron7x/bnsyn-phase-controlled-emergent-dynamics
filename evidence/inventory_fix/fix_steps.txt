@@ -1,0 +1,6 @@
+python tools/generate_inventory.py
+git add INVENTORY.json
+# pre-commit guardrail added: regenerate-inventory hook (pass_filenames: false)
+# CI diagnostics hardened in workflow-integrity.yml validate inventory step
+python tools/generate_inventory.py
+git diff --exit-code -- INVENTORY.json

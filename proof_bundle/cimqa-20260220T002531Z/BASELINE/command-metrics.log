@@ -1,0 +1,6 @@
+__CMD_EXIT_CODE__=0 __DURATION_MS__=1081 __CMD__=python -m ruff check . --output-format json
+__CMD_EXIT_CODE__=0 __DURATION_MS__=25788 __CMD__=python -m pylint src/bnsyn
+__CMD_EXIT_CODE__=0 __DURATION_MS__=45103 __CMD__=python -m pytest -m not (validation or property) -q
+__CMD_EXIT_CODE__=0 __DURATION_MS__=4599 __CMD__=python -m mypy src --strict --config-file pyproject.toml
+__CMD_EXIT_CODE__=0 __DURATION_MS__=6276 __CMD__=python -m build
+__CMD_EXIT_CODE__=0 __DURATION_MS__=1795 __CMD__=python -m bandit -q -r src -f json

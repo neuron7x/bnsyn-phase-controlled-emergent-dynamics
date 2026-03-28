@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-02-18T09:35:00Z",
+  "verdict": "FAIL",
+  "gates": {
+    "A": {
+      "severity": "P0",
+      "status": "PASS",
+      "objective": "Core value delivery",
+      "evidence": [
+        "artifacts/product/evidence/screenshots_or_exports/happy_path.json",
+        "artifacts/product/evidence/logs/baseline_build_run.log"
+      ]
+    },
+    "B": {
+      "severity": "P0",
+      "status": "PASS",
+      "objective": "Requirements and acceptance clarity",
+      "evidence": [
+        "artifacts/product/PRD.md",
+        "artifacts/product/backlog.md"
+      ]
+    },
+    "C": {
+      "severity": "P1",
+      "status": "FAIL",
+      "objective": "UX baseline and copy quality",
+      "evidence": [
+        "artifacts/product/ux_review.md",
+        "artifacts/product/evidence/logs/reliability_checks.log"
+      ],
+      "reason": "Invalid input path exposes raw traceback instead of actionable user guidance."
+    },
+    "D": {
+      "severity": "P0",
+      "status": "FAIL",
+      "objective": "Reliability of critical path",
+      "evidence": [
+        "artifacts/product/evidence/logs/reliability_checks.log"
+      ],
+      "reason": "Expected failure path is non-recoverable UX-wise (traceback), violating predictable recovery criterion."
+    },
+    "E": {
+      "severity": "P0",
+      "status": "PASS",
+      "objective": "Security and privacy baseline",
+      "evidence": [
+        "artifacts/product/security_privacy_review.md"
+      ]
+    },
+    "F": {
+      "severity": "P1",
+      "status": "PASS",
+      "objective": "Analytics truth",
+      "evidence": [
+        "artifacts/product/metrics.md",
+        "artifacts/product/analytics_plan.md"
+      ]
+    },
+    "G": {
+      "severity": "P0",
+      "status": "PASS",
+      "objective": "Release and rollback path",
+      "evidence": [
+        "artifacts/product/release_checklist.md",
+        "artifacts/product/launch_plan.md"
+      ]
+    },
+    "H": {
+      "severity": "P1",
+      "status": "PASS",
+      "objective": "Supportability and operations",
+      "evidence": [
+        "artifacts/product/support_runbook.md"
+      ]
+    },
+    "I": {
+      "severity": "P1",
+      "status": "PASS",
+      "objective": "Pricing and packaging",
+      "evidence": [
+        "artifacts/product/PRD.md"
+      ]
+    },
+    "J": {
+      "severity": "P1",
+      "status": "PASS",
+      "objective": "Market positioning",
+      "evidence": [
+        "artifacts/product/positioning.md"
+      ]
+    },
+    "K": {
+      "severity": "P0",
+      "status": "PASS",
+      "objective": "Legal/compliance surface",
+      "evidence": [
+        "artifacts/product/compliance_notes.md"
+      ]
+    },
+    "L": {
+      "severity": "P1",
+      "status": "PASS",
+      "objective": "Launch communications and onboarding",
+      "evidence": [
+        "artifacts/product/launch_comms.md",
+        "artifacts/product/onboarding.md"
+      ]
+    }
+  },
+  "remaining_blockers": [
+    {
+      "gate": "D",
+      "severity": "P0",
+      "summary": "Invalid-input recovery path returns traceback rather than controlled user error output.",
+      "repro": "bnsyn demo --steps -1 --dt-ms 0.1 --seed 123 --N 16",
+      "evidence": "artifacts/product/evidence/logs/reliability_checks.log"
+    },
+    {
+      "gate": "C",
+      "severity": "P1",
+      "summary": "CLI copy for errors is not actionable.",
+      "repro": "same as Gate D repro",
+      "evidence": "artifacts/product/ux_review.md"
+    }
+  ]
+}

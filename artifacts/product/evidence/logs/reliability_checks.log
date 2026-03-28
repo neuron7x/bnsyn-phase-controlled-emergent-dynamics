@@ -1,0 +1,17 @@
+[START] reliability checks rerun 2026-02-18T09:34:58+00:00
+-- run 1
+ok
+-- run 2
+ok
+-- run 3
+ok
+-- invalid input check
+invalid_status=1
+Traceback (most recent call last):
+  File "/root/.pyenv/versions/3.12.12/bin/bnsyn", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 516, in main
+    raise SystemExit(int(args.func(args)))
+                         ^^^^^^^^^^^^^^^
+  File "/workspace/bnsyn-phase-controlled-emergent-dynamics/src/bnsyn/cli.py", line 121, in _cmd_demo

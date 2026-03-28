@@ -1,0 +1,18 @@
+{
+  "verdict": "PASS",
+  "contradictions": 0,
+  "evidence_coverage": {
+    "P0": 1.0
+  },
+  "gates": {
+    "G0": "PASS",
+    "G1": "PASS",
+    "G2": "PASS",
+    "G3": "PASS",
+    "G4": "PASS",
+    "G5": "PASS",
+    "G6": "PASS",
+    "G7": "PASS",
+    "G8": "PASS"
+  }
+}

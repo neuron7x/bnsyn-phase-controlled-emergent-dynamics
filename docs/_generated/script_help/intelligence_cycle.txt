@@ -1,0 +1,7 @@
+usage: intelligence_cycle.py [-h] [--output OUTPUT]
+
+Run six-cycle deterministic intelligence pipeline.
+
+options:
+  -h, --help       show this help message and exit
+  --output OUTPUT  Optional output JSON path.

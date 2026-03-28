@@ -1,0 +1,4 @@
+LOC=174568
+Scale=L
+Tracked=787
+EvidenceDensity=0.00006301

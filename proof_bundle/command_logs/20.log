@@ -1,0 +1,508 @@
+COMMAND: rg -n "(log|metrics|trace|observ|slo|alert|incident|runbook)" docs src README.md
+START_UTC: 2026-02-15T19:39:07.190634Z
+END_UTC: 2026-02-15T19:39:07.218906Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+README.md:25:- [Demo Runbook](#demo-runbook)
+README.md:69:- [Evidence Coverage](docs/EVIDENCE_COVERAGE.md) — Claims→Evidence traceability
+README.md:98:*Multi-panel view: temperature profiles, weight dynamics, protein synthesis, and stability metrics.*
+README.md:144:- `results/demo1/metrics.json`: Metrics (phase transitions, attractors, consolidation stats)
+README.md:174:The generated `<out>/metrics.json` contains fields:
+README.md:176:- `determinism_hashes` (per-run manifest/metrics hashes)
+README.md:183:Benchmark output is written to `artifacts/local_runs/benchmarks_scale/metrics.json` and is machine-dependent.
+README.md:215:    phase_detector.observe(m["sigma"], _)
+README.md:216:    crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+README.md:276:- ⚡ **Voltage traces**: Membrane potential dynamics
+README.md:421:use the release runbook in [`docs/CONFERENCE_RUNBOOK.md`](docs/CONFERENCE_RUNBOOK.md), which
+README.md:486:Coverage history entry point: download the stable `coverage-trend-metrics` artifact from the latest `tests-smoke` run in GitHub Actions (contains compact `coverage-trend.json` + `coverage-trend.csv` with timestamp/SHA/branch/total coverage (normalized to 0..100%) and quantized `coverage_state` (critical/low/moderate/high/excellent)).
+src/contracts/__init__.py:15:    assert_no_log_domain_violation,
+src/contracts/__init__.py:41:    "assert_no_log_domain_violation",
+src/contracts/math_contracts.py:141:def assert_no_log_domain_violation(x: np.ndarray, context: str) -> None:
+src/contracts/math_contracts.py:145:        raise AssertionError(f"log_domain_violation:{context}:indices={bad[:10].tolist()}")
+docs/emergence_tracking.md:49:    crystallizer.observe(state, temperature)
+docs/emergence_tracking.md:69:- `stability`: Fraction of observations in basin (∈ [0, 1])
+docs/emergence_tracking.md:118:    metrics = network.step()
+docs/emergence_tracking.md:119:    new_phase = detector.observe(metrics["sigma"], step)
+docs/emergence_tracking.md:171:    detector.observe(m["sigma"], step)
+docs/emergence_tracking.md:174:    crystallizer.observe(network.state.V_mV, temp_schedule.T or 1.0)
+docs/emergence_tracking.md:201:- Pure threshold logic (no randomness)
+docs/emergence_tracking.md:210:    crystallizer1.observe(state, temperature=1.0)
+docs/emergence_tracking.md:216:    crystallizer2.observe(state, temperature=1.0)
+docs/emergence_tracking.md:236:    crystallizer.observe(network.state.V_mV, temperature)
+docs/emergence_tracking.md:249:- **Clustering:** cKDTree is O(N log N) for N points
+docs/SSOT.md:32:- **Protected invariant**: `G(T)` is implemented as logistic gating with validated `gate_tau` bounds, preserving bounded plasticity modulation without undocumented threshold-controller behavior.
+docs/SSOT.md:37:  - Both regimes degrade tracked metrics in the ablation protocol: `stability_w_total_var_end`, `stability_w_cons_var_end`, `protein_mean_end`, `tag_activity_mean`.
+src/bnsyn/viz/interactive.py:5:- Voltage traces
+src/bnsyn/viz/interactive.py:104:            metrics_history = []
+src/bnsyn/viz/interactive.py:108:                metrics = net.step()
+src/bnsyn/viz/interactive.py:111:                spikes = np.where(metrics.get("spikes", np.zeros(N, dtype=bool)))[0]
+src/bnsyn/viz/interactive.py:117:                # Record metrics
+src/bnsyn/viz/interactive.py:118:                metrics_history.append(metrics)
+src/bnsyn/viz/interactive.py:143:            fig = create_firing_rate_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:148:            fig = create_stats_plot(metrics_history, dt_ms)
+src/bnsyn/viz/interactive.py:151:            # Summary metrics
+src/bnsyn/viz/interactive.py:154:                mean_rate = np.mean([m.get("spike_rate_hz", 0) for m in metrics_history])
+src/bnsyn/viz/interactive.py:157:                mean_sigma = np.mean([m.get("sigma", 0) for m in metrics_history])
+src/bnsyn/viz/interactive.py:160:                mean_V = np.mean([m.get("V_mean_mV", -60) for m in metrics_history])
+src/bnsyn/viz/interactive.py:164:                    np.sum(m.get("spikes", np.zeros(N, dtype=bool))) for m in metrics_history
+src/bnsyn/viz/interactive.py:210:    fig.add_trace(
+src/bnsyn/viz/interactive.py:230:    """Create voltage trace plot for multiple neurons.
+src/bnsyn/viz/interactive.py:260:        fig.add_trace(
+src/bnsyn/viz/interactive.py:279:def create_firing_rate_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:284:    metrics_history : list[dict]
+src/bnsyn/viz/interactive.py:285:        History of network metrics
+src/bnsyn/viz/interactive.py:305:    times = np.arange(len(metrics_history)) * dt_ms
+src/bnsyn/viz/interactive.py:306:    rates = [m.get("spike_rate_hz", 0) for m in metrics_history]
+src/bnsyn/viz/interactive.py:309:    fig.add_trace(go.Scatter(x=times, y=rates, mode="lines", name="Firing Rate", fill="tozeroy"))
+src/bnsyn/viz/interactive.py:319:def create_stats_plot(metrics_history: list[dict[str, Any]], dt_ms: float) -> go.Figure:
+src/bnsyn/viz/interactive.py:324:    metrics_history : list[dict]
+src/bnsyn/viz/interactive.py:325:        History of network metrics
+src/bnsyn/viz/interactive.py:347:    times = np.arange(len(metrics_history)) * dt_ms
+src/bnsyn/viz/interactive.py:348:    sigmas = [m.get("sigma", 0) for m in metrics_history]
+src/bnsyn/viz/interactive.py:349:    voltages = [m.get("V_mean_mV", -60) for m in metrics_history]
+src/bnsyn/viz/interactive.py:358:    fig.add_trace(
+src/bnsyn/viz/interactive.py:366:    fig.add_trace(
+src/bnsyn/viz/dashboard.py:87:    2. Sigma (branching ratio) trace
+src/bnsyn/viz/dashboard.py:88:    3. Temperature trace
+src/bnsyn/viz/dashboard.py:101:    ...     metrics = collect_metrics()
+src/bnsyn/viz/dashboard.py:102:    ...     dashboard.update(metrics)
+src/bnsyn/viz/dashboard.py:176:    def update(self, metrics: dict[str, Any]) -> None:
+src/bnsyn/viz/dashboard.py:177:        """Update dashboard with new metrics.
+src/bnsyn/viz/dashboard.py:181:        metrics : dict[str, Any]
+src/bnsyn/viz/dashboard.py:182:            Dictionary containing current metrics with keys:
+src/bnsyn/viz/dashboard.py:201:        if "sigma" in metrics:
+src/bnsyn/viz/dashboard.py:202:            self._sigma_history.append(float(metrics["sigma"]))
+src/bnsyn/viz/dashboard.py:204:        if "temperature" in metrics:
+src/bnsyn/viz/dashboard.py:205:            self._temp_history.append(float(metrics["temperature"]))
+src/bnsyn/viz/dashboard.py:207:        if "sleep_stage" in metrics:
+src/bnsyn/viz/dashboard.py:208:            self._stage_history.append((self._step_count, str(metrics["sleep_stage"])))
+src/bnsyn/viz/dashboard.py:210:        if "consolidation" in metrics:
+src/bnsyn/viz/dashboard.py:211:            self._consol_history.append(float(metrics["consolidation"]))
+src/bnsyn/viz/dashboard.py:213:        if "avalanche_size" in metrics and metrics["avalanche_size"] > 0:
+src/bnsyn/viz/dashboard.py:214:            self._avalanche_sizes.append(int(metrics["avalanche_size"]))
+src/bnsyn/viz/dashboard.py:216:        if "attractor_point" in metrics:
+src/bnsyn/viz/dashboard.py:217:            point = metrics["attractor_point"]
+src/bnsyn/viz/dashboard.py:385:        """Render sigma (branching ratio) trace.
+src/bnsyn/viz/dashboard.py:414:        """Render temperature trace.
+src/bnsyn/viz/dashboard.py:481:        """Render consolidation strength trace.
+src/bnsyn/viz/dashboard.py:520:        Shows histogram of avalanche sizes on log-log scale.
+src/bnsyn/viz/dashboard.py:526:            # Create log-binned histogram
+src/bnsyn/viz/dashboard.py:531:                bins = np.logspace(0, np.log10(sizes.max()), 20)
+src/bnsyn/viz/dashboard.py:535:                # Filter out zero counts for log-log plot
+src/bnsyn/viz/dashboard.py:537:                ax.loglog(
+docs/AUDIT_LEDGER.md:20:- **Blast radius:** Violates G0 “No Soft Text” by leaving normative statements untraceable.
+src/bnsyn/synapse/conductance.py:69:        Extracellular magnesium concentration in mM.
+src/bnsyn/synapse/conductance.py:84:    >>> # Typical extracellular Mg concentration
+docs/REPRODUCIBILITY_ENVELOPE.md:8:* Seed values are recorded in benchmark outputs and must be reused for exact trace reproduction.
+docs/REPRODUCIBILITY_ENVELOPE.md:9:* Determinism is verified by asserting bitwise-identical traces for identical seeds.
+docs/REPRODUCIBILITY_ENVELOPE.md:22:* Determinism uses max absolute error ≤ `1e-12` for identical-seed traces.
+src/bnsyn/consolidation/dual_weight.py:52:    - Consolidated weights follow slow tracking when Tag & Protein.
+src/bnsyn/consolidation/dual_weight.py:142:        # consolidation: slow tracking towards w_fast when Tag & Protein
+docs/PLACEHOLDER_BASELINE_CYCLE0.md:45:Saved as: `artifacts/ci_logs/cycle0_PLACEHOLDER_REGISTRY_baseline.md`
+src/bnsyn/temperature/schedule.py:40:        Gate slope parameter.
+src/bnsyn/temperature/schedule.py:114:        Uses the logistic gate defined in SPEC P1-5.
+docs/SPEC.md:23:| P1-6 | Dual-weight consolidation (fast/slow + tags + protein) | `bnsyn/consolidation/dual_weight.py` | `test_consolidation_smoke.py` |
+docs/SPEC.md:29:| P2-12 | Bench harness contract (CLI + metrics) | `bnsyn/cli.py` | `test_cli_smoke.py` |
+docs/SPEC.md:80:Eligibility trace:
+docs/SPEC.md:137:- Both regimes degrade temperature-ablation metrics: `stability_w_total_var_end`, `stability_w_cons_var_end`, and consolidation activity (`protein_mean_end`, `tag_activity_mean`).
+docs/SPEC.md:155:reference implementation) to gate the scalar protein trace.
+docs/SPEC.md:197:## P2-12: Bench harness contract (CLI + metrics)
+docs/SPEC.md:200:metrics for reproducibility checks.
+src/bnsyn/config.py:40:        Exponential slope factor (mV).
+src/bnsyn/config.py:94:        Extracellular magnesium concentration (mM).
+src/bnsyn/config.py:114:    mg_mM: PositiveFloat = 1.0  # extracellular Mg2+
+src/bnsyn/config.py:123:        Eligibility trace decay time constant (ms).
+src/bnsyn/config.py:125:        STDP potentiation trace time constant (ms).
+src/bnsyn/config.py:127:        STDP depression trace time constant (ms).
+src/bnsyn/config.py:221:            "Validated temperature-gate slope window from ablation studies; "
+docs/benchmarks/PROTOCOL.md:22:- OS-level caches are not explicitly flushed; performance metrics should be interpreted with this in mind.
+docs/benchmarks/PROTOCOL.md:131:- Fraction of NaN entries observed in state vectors
+docs/benchmarks/PROTOCOL.md:143:`benchmarks/run_benchmarks.py` also logs per-scenario summaries (mean, p50/p95) to `bench.log`
+docs/benchmarks/PROTOCOL.md:144:for CI traceability.
+docs/benchmarks/PROTOCOL.md:159:- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+docs/benchmarks/PROTOCOL.md:169:- Stability metrics change unexpectedly (determinism violation)
+docs/benchmarks/PROTOCOL.md:179:- Stricter overrides for deterministic metrics:
+docs/benchmarks/PROTOCOL.md:185:Performance metrics are excluded from this deterministic regression check.
+docs/benchmarks/PROTOCOL.md:231:## Changelog
+src/bnsyn/experiments/declarative.py:84:        Experiment results with metrics for each seed
+src/bnsyn/experiments/declarative.py:114:        metrics = run_simulation(
+src/bnsyn/experiments/declarative.py:117:        results["runs"].append({"seed": seed, "metrics": metrics})
+docs/benchmarks/SCHEMA.md:98:All base metrics from a single run are aggregated across repeats using the suffixes
+docs/benchmarks/SCHEMA.md:118:- Aggregation removes outliers with |z-score| > 2 for performance metrics when 3+ repeats are available.
+docs/benchmarks/SCHEMA.md:119:- `learning_weight_entropy` uses Shannon entropy on positive weights: `-Σ(p * log2(p))` with `p = w / Σw`.
+docs/benchmarks/SCHEMA.md:185:All metrics report 5 aggregation statistics:
+docs/benchmarks/SCHEMA.md:194:## Changelog
+src/bnsyn/cli.py:64:    """Run a deterministic demo simulation and print metrics.
+src/bnsyn/cli.py:121:    metrics = run_simulation(steps=args.steps, dt_ms=args.dt_ms, seed=args.seed, N=args.N)
+src/bnsyn/cli.py:122:    print(json.dumps({"demo": metrics}, indent=2, sort_keys=True))
+src/bnsyn/cli.py:127:    """Run dt vs dt/2 invariance check and print metrics.
+src/bnsyn/cli.py:141:    Compares mean-rate and sigma metrics across dt and dt/2 as required by SPEC P2-12.
+src/bnsyn/cli.py:265:    wake_metrics = []
+src/bnsyn/cli.py:268:        wake_metrics.append(m)
+src/bnsyn/cli.py:271:        if len(wake_metrics) % 20 == 0:
+src/bnsyn/cli.py:277:        phase_detector.observe(m["sigma"], len(wake_metrics))
+src/bnsyn/cli.py:280:        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+src/bnsyn/cli.py:301:    # Collect metrics
+src/bnsyn/cli.py:307:    metrics: dict[str, Any] = {
+src/bnsyn/cli.py:311:            "mean_sigma": float(sum(m["sigma"] for m in wake_metrics) / len(wake_metrics)),
+src/bnsyn/cli.py:313:                sum(m["spike_rate_hz"] for m in wake_metrics) / len(wake_metrics)
+src/bnsyn/cli.py:337:    # Write metrics
+src/bnsyn/cli.py:338:    metrics_path = out_dir / "metrics.json"
+src/bnsyn/cli.py:339:    with open(metrics_path, "w") as f:
+src/bnsyn/cli.py:340:        json.dump(metrics, f, indent=2)
+src/bnsyn/cli.py:341:    print(f"Metrics written to {metrics_path}")
+src/bnsyn/cli.py:366:        # Sigma trace
+src/bnsyn/cli.py:368:        wake_sigmas = [m["sigma"] for m in wake_metrics]
+src/bnsyn/cli.py:379:        wake_rates = [m["spike_rate_hz"] for m in wake_metrics]
+src/bnsyn/cli.py:421:    print(f"Wake: {args.steps_wake} steps, {metrics['wake']['memories_recorded']} memories")
+docs/CRITICALITY_CONTROL_VS_MEASUREMENT.md:22:6) Likelihood ratio vs alternatives (e.g., log-normal)
+src/bnsyn/emergence/crystallizer.py:23:import logging
+src/bnsyn/emergence/crystallizer.py:34:logger = logging.getLogger(__name__)
+src/bnsyn/emergence/crystallizer.py:61:    """Attractor representation with stability metrics.
+src/bnsyn/emergence/crystallizer.py:138:        PCA recomputation interval in observations (default: 100).
+src/bnsyn/emergence/crystallizer.py:164:    _observation_count: int = field(default=0, init=False, repr=False)
+src/bnsyn/emergence/crystallizer.py:264:        pca_update_interval observations.
+src/bnsyn/emergence/crystallizer.py:285:            logger.warning(
+src/bnsyn/emergence/crystallizer.py:420:                formation_step=self._observation_count,
+src/bnsyn/emergence/crystallizer.py:465:    def observe(self, state: Float64Array, temperature: float) -> None:
+src/bnsyn/emergence/crystallizer.py:502:        object.__setattr__(self, "_observation_count", self._observation_count + 1)
+src/bnsyn/emergence/crystallizer.py:505:        if self._observation_count % self.pca_update_interval == 0:
+src/bnsyn/emergence/crystallizer.py:509:        if self._observation_count % self.pca_update_interval == 0:
+src/bnsyn/emergence/crystallizer.py:560:        Based on number of attractors and their stability metrics.
+src/bnsyn/emergence/crystallizer.py:614:        Callbacks are invoked synchronously during observe().
+src/bnsyn/emergence/crystallizer.py:632:        Callbacks are invoked synchronously during observe().
+docs/THROUGHPUT_SCALING.md:21:- Measures: spikes, updates/sec, wall time, σ, gain, attractor metrics
+docs/THROUGHPUT_SCALING.md:27:- 14 physics metrics tracked
+docs/THROUGHPUT_SCALING.md:95:- Compares 14 physics metrics between backends
+docs/THROUGHPUT_SCALING.md:106:- ✅ 14/14 metrics within 1% tolerance
+docs/THROUGHPUT_SCALING.md:220:1. `benchmarks/physics_baseline.json` - Reference backend metrics
+docs/THROUGHPUT_SCALING.md:221:2. `benchmarks/physics_accelerated.json` - Accelerated backend metrics
+docs/THROUGHPUT_SCALING.md:309:- Pass physics equivalence tests (14/14 metrics)
+docs/THROUGHPUT_SCALING.md:320:2. ✅ **Emergent dynamics unchanged**: 14/14 metrics within tolerance
+docs/THROUGHPUT_SCALING.md:329:The BN-Syn Throughput Scaling & Integrity Framework provides a rigorous, systematic approach to performance optimization while maintaining exact physics. The 7-step methodology ensures that all transformations are:
+docs/GOVERNANCE.md:12:- Scientific claims are traceable to peer-reviewed sources
+src/bnsyn/memory/trace.py:1:"""Memory trace storage and retrieval for consolidation workflows.
+src/bnsyn/memory/trace.py:4:- ``MemoryTrace``: bounded FIFO trace store with cosine-similarity recall.
+src/bnsyn/memory/trace.py:211:        """Return memory trace state for inspection or serialization.
+docs/BENCHMARK_MAP.md:3:This document maps benchmark metrics to SPEC components so every metric has a SPEC-anchored validation target.
+docs/BENCHMARK_MAP.md:13:| P2-9 Determinism protocol | `reproducibility_bitwise_delta` | Bitwise determinism of core state metrics. |
+src/bnsyn/memory/consolidator.py:14:with enhanced eviction logic and consolidation tracking.
+src/bnsyn/memory/consolidator.py:28:from .trace import MemoryTrace as _InternalMemoryTrace
+src/bnsyn/memory/consolidator.py:54:    Immutable snapshot of a memory trace returned by MemoryConsolidator.
+src/bnsyn/memory/consolidator.py:112:            The stored memory trace.
+src/bnsyn/memory/consolidator.py:215:            List of newly consolidated memory traces.
+src/bnsyn/memory/consolidator.py:234:        consolidated_traces = []
+src/bnsyn/memory/consolidator.py:244:                    consolidated_traces.append(
+src/bnsyn/memory/consolidator.py:255:        return consolidated_traces
+src/bnsyn/memory/consolidator.py:270:            Most similar memory trace above threshold, or None if no match.
+src/bnsyn/memory/__init__.py:1:"""Memory subpackage for trace storage and consolidation ledger.
+src/bnsyn/memory/__init__.py:23:from .trace import MemoryTrace as MemoryTrace
+src/bnsyn/memory/ledger.py:67:        Chronologically ordered consolidation events.
+docs/math/CONTRACTS.md:15:## 3. Network Topology
+docs/math/CONTRACTS.md:22:- **Log domain guard**: requires `x > 0` via `assert_no_log_domain_violation`.
+docs/math/PROVENANCE.md:42:## artifacts/math_audit/hardened_run.log
+docs/math/PROVENANCE.md:43:- Generator: `python scripts/math_validate.py 2>&1 | tee artifacts/math_audit/hardened_run.log`
+docs/sleep_stack.md:50:- Transition event logging
+docs/sleep_stack.md:105:    phase_detector.observe(m["sigma"], _)
+docs/sleep_stack.md:106:    crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+docs/sleep_stack.md:130:- `results/demo1/metrics.json`: Metrics (transitions, attractors, consolidation)
+docs/sleep_stack.md:153:- Sigma traces (float equality)
+docs/sleep_stack.md:169:PhaseTransitionDetector observes sigma from `BranchingEstimator` output:
+docs/sleep_stack.md:171:- Pure observation and logging
+docs/sleep_stack.md:177:- `src/bnsyn/memory/`: Memory consolidation and trace
+docs/QUALITY_INDEX.md:48:cat quality/mutation_baseline.json | jq '.metrics'
+docs/QUALITY_INDEX.md:84:- pip-audit outputs `artifacts/pip-audit.json` for traceability across CI runs.
+docs/QUALITY_INDEX.md:115:- Temporal logic specifications
+docs/QUALITY_INDEX.md:174:- Otherwise: metrics MUST match real mutmut output ✅
+docs/QUALITY_INDEX.md:176:**To populate baseline**: Run `make mutation-baseline` to generate real metrics (~30 minutes).
+docs/QUALITY_INDEX.md:274:cat quality/mutation_baseline.json | jq '.metrics.total_mutants'
+src/bnsyn/provenance/manifest.py:15:best-effort; failures log warnings but do not raise exceptions.
+src/bnsyn/provenance/manifest.py:128:        available or command fails, returns None and logs a warning.
+src/bnsyn/provenance/manifest.py:185:        If unavailable or errors occur, returns an empty dict and logs a warning.
+docs/RELEASE_PIPELINE.md:5:1. changelog contract check
+docs/MUTATION_GATE.md:8:All mutation metrics are defined and derived in:
+docs/MUTATION_GATE.md:59:- `metrics`
+docs/MUTATION_GATE.md:66:Required `metrics` keys:
+src/bnsyn/calibration/accuracy_speed.py:38:    """Accuracy and speed metrics for a numerical integrator.
+docs/VCG.md:9:- If an agent's observable contribution is consistently below threshold, the system mirrors that outcome by withdrawing future **social/resource support** (routing priority, compute budget, access).
+docs/VCG.md:20:### 3) Inputs and observable metrics (SSOT)
+docs/VCG.md:21:VCG operates on **observable outcomes** (no mind-reading, no intent inference).
+docs/VCG.md:47:- I1: `S_i` is deterministic given the same observable log + parameters.
+docs/VCG.md:56:- **Collusion / reputation manipulation** → use signed logs, reviewer diversity constraints, and anomaly detection (non-core).
+docs/VCG.md:59:- A1: Replaying the same event log yields identical `S_i(t)` traces (bitwise).
+src/bnsyn/calibration/fit.py:33:    slope : float
+src/bnsyn/calibration/fit.py:34:        Best-fit slope.
+src/bnsyn/calibration/fit.py:41:    slope: float
+src/bnsyn/calibration/fit.py:47:    """Fit a linear model ``y = slope * x + intercept``.
+src/bnsyn/calibration/fit.py:76:    return LineFit(slope=float(beta[0]), intercept=float(beta[1]), r2=float(r2))
+docs/ENTROPY_LEDGER.md:16:### Baseline metrics
+docs/ENTROPY_LEDGER.md:20:| M1 | Dependency pin ratio (`==`) in `pyproject.toml` dependency surfaces | 0.9459 | >= 0.94 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:21:| M1b | SHA-pinned GitHub Actions ratio in `.github/workflows` | 0.0 | informational | risk | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:22:| M2 | Determinism controls (`hypothesis.derandomize`, `PYTHONHASHSEED`) | 2 | >= 2 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:23:| M3 | Contract validation signals (typed validation boundary modules present) | 2 | >= 2 | pass | `entropy/metrics.json` |
+docs/ENTROPY_LEDGER.md:30:2. Missing machine-readable entropy metrics (`entropy/metrics.json`) — process entropy.
+docs/ENTROPY_LEDGER.md:31:3. Missing command evidence log (`entropy/commands.log`) — audit entropy.
+docs/ENTROPY_LEDGER.md:34:6. No entropy-specific evidence snapshots (`evidence/entropy/*.json`) — weak traceability.
+docs/ENTROPY_LEDGER.md:47:- Fix: add canonical entropy artifacts (`A-F`) with baseline/final metrics and acceptance map.
+docs/ENTROPY_LEDGER.md:49:- Evidence: `entropy/metrics.json`, `entropy/commands.log`, `evidence/entropy/per_cycle/CYCLE_1.json`.
+docs/ENTROPY_LEDGER.md:55:- Added pytest regression test that executes guard logic in CI test runs.
+docs/RELEASE_READINESS.md:36:   must have `status="active"`, `metrics.total_mutants > 0`, and `metrics.killed_mutants > 0`.
+docs/RELEASE_READINESS.md:37:7. **Entropy gate consistency**: current repository entropy metrics must satisfy
+docs/RELEASE_READINESS.md:63:For changelog/version/build/publish dry-run automation, see [`docs/RELEASE_PIPELINE.md`](RELEASE_PIPELINE.md).
+src/bnsyn/criticality/phase_transition.py:113:            Maximum number of sigma/phase observations retained.
+src/bnsyn/criticality/phase_transition.py:123:        transition sharpness calculations over recent observations.
+src/bnsyn/criticality/phase_transition.py:161:    def observe(self, sigma: float, step: int) -> CriticalPhase | None:
+src/bnsyn/criticality/phase_transition.py:250:        Uses last 10 observations if available.
+src/bnsyn/criticality/phase_transition.py:255:        # use last 10 observations for derivative estimate
+docs/QUALITY_INFRASTRUCTURE.md:162:- Test results and logs
+docs/QUALITY_INFRASTRUCTURE.md:182:- `mutation-logs-<sha>/mutation_results.txt` - Full mutmut results
+docs/QUALITY_INFRASTRUCTURE.md:183:- `mutation-logs-<sha>/survived_mutants.txt` - List of survivors
+docs/QUALITY_INFRASTRUCTURE.md:184:- `mutation-logs-<sha>/mutation_report.txt` - Score comparison
+docs/QUALITY_INFRASTRUCTURE.md:229:- `coq-proof-verification-<sha>/coq_output_*.txt` - Compilation logs
+docs/QUALITY_INFRASTRUCTURE.md:259:- `chaos-results-numeric-<sha>` - Numeric fault test logs
+docs/QUALITY_INFRASTRUCTURE.md:260:- `chaos-results-timing-<sha>` - Timing fault test logs
+docs/QUALITY_INFRASTRUCTURE.md:261:- `chaos-results-stochastic-<sha>` - Stochastic fault test logs
+docs/QUALITY_INFRASTRUCTURE.md:262:- `chaos-results-io-<sha>` - I/O fault test logs
+docs/QUALITY_INFRASTRUCTURE.md:282:- `validation-logs-<sha>/validation.log` - Full test output
+docs/QUALITY_INFRASTRUCTURE.md:283:- `validation-logs-<sha>/validation-junit.xml` - JUnit XML report
+docs/QUALITY_INFRASTRUCTURE.md:284:- `property-logs-<sha>/property.log` - Property test output with ci-quick profile
+src/bnsyn/criticality/analysis.py:13:Provides deterministic estimators used to evaluate criticality metrics.
+src/bnsyn/criticality/analysis.py:74:    For each lag k, estimate slope of A(t+k) vs A(t) via least squares, then
+src/bnsyn/criticality/analysis.py:75:    infer sigma_k = slope ** (1/k). Returns the mean sigma_k across lags.
+src/bnsyn/criticality/analysis.py:95:        slope = float(np.dot(x, y) / denom)
+src/bnsyn/criticality/analysis.py:96:        if slope <= 0.0:
+src/bnsyn/criticality/analysis.py:98:        sigma_estimates.append(slope ** (1.0 / k))
+src/bnsyn/criticality/analysis.py:138:    logs = np.log(data / xmin)
+src/bnsyn/criticality/analysis.py:139:    if np.all(logs == 0):
+src/bnsyn/criticality/analysis.py:141:    alpha = 1.0 + len(data) / float(np.sum(logs))
+src/bnsyn/connectivity/__init__.py:13:Exports deterministic sparse connectivity builders and metrics.
+docs/appendix/intelligence_cycle_report.json:815:    "correction_log": [
+docs/appendix/intelligence_cycle_report.json:827:      "correction_log": [
+src/bnsyn/connectivity/sparse.py:13:Implements deterministic connectivity construction and metrics for SPEC P2-11.
+src/bnsyn/connectivity/sparse.py:35:    """Sparsity metrics and performance estimates.
+src/bnsyn/connectivity/sparse.py:119:        Normalizes all numeric storage to float64 and computes stable metrics
+src/bnsyn/connectivity/sparse.py:144:        self.metrics = SparseConnectivityMetrics(
+src/bnsyn/connectivity/sparse.py:227:            f"format={self.format}, density={self.metrics.density:.1%}, "
+src/bnsyn/connectivity/sparse.py:228:            f"memory={self.metrics.memory_sparse_mb:.2f}MB)"
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:17:- `docs/RELEASE_PIPELINE.md` — release pipeline runbook.
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:21:- `artifacts/local_runs/api_contract.log`
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:22:- `artifacts/local_runs/test.log`
+docs/appendix/CODEX_PROJECT_FEEDBACK_UA.md:53:| Documentation readiness | 15 | PARTIAL | 0.5 | Наявні runbooks/контракти, але повна doc-audit перевірка не виконувалась у цьому циклі. |
+docs/appendix/codebase_readiness_audit_2026-02-15.json:15:        "No local clean-room containerized rebuild log was captured in this audit run."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:31:        "No longitudinal flaky-test history/log trends were available locally."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:63:        "Current default-branch lint status cannot be proven without CI run logs."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:79:        "No external API schema-compatibility runtime verification log was captured in this run."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:111:        "No current CodeQL/dependency-review execution logs were available for this specific target_ref."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:138:        "cmd:rg -n \"import logging|logger\\.|structlog|prometheus|opentelemetry|health\" src/bnsyn ...: only limited standard logging use detected",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:139:        "file:src/bnsyn/emergence/crystallizer.py#L23-L31: module-level stdlib logger only",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:140:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging listed as future work"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:143:        "No proven health endpoint, alert routing, SLO/error-budget policy, or dashboard-as-code evidence found in audited artifacts."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:146:        "Ops telemetry stack (structured logs/metrics/tracing/alerts) is not release-grade in evidence-backed form."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:150:      "category": "J Release Engineering (versioning, changelog, artifacts, rollback)",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:157:        "file:CHANGELOG.md#L1-L10: semver changelog entry for 0.2.0"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:171:      "impact": "Production incident detection/triage will be slow and non-deterministic, constraining safe release confidence.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:173:        "Introduce structured JSON logging across runtime paths with correlation IDs.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:174:        "Add health/readiness probes and export metrics for core simulation and CLI flows.",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:175:        "Define SLOs plus incident/alert runbook and enforce checks in CI/docs gates."
+docs/appendix/codebase_readiness_audit_2026-02-15.json:178:        "file:docs/appendix/PRODUCTION_ROADMAP.md#L156-L164: structured logging still marked TODO",
+docs/appendix/codebase_readiness_audit_2026-02-15.json:179:        "cmd:rg -n \"prometheus|opentelemetry|alert\" src/bnsyn docs: no concrete production telemetry implementation evidence"
+docs/appendix/codebase_readiness_audit_2026-02-15.json:211:  "exec_summary": "Readiness is 66% (confidence: medium). Biggest blockers are weak observability/ops evidence, non-reproducible local security gate execution (missing gitleaks plus pip-audit finding), and current lint failures at HEAD. Fastest +15 path: (1) implement structured logging + health/metrics baseline with runbook and CI validation, (2) make security tooling self-installing and enforce clean local security run, (3) clear ruff violations and lock zero-warning static checks. Build, tests, coverage, and release automation are strong and mostly deterministic, but production-grade operations evidence is insufficient."
+docs/appendix/EXECUTIVE_SUMMARY.md:27:- ❌ **Observability:** No logging, profiling, or error tracking
+docs/appendix/EXECUTIVE_SUMMARY.md:40:- P1-HIGH: GPU acceleration, functional API, logging
+docs/appendix/EXECUTIVE_SUMMARY.md:47:- Acceptance criteria (quantifiable success metrics)
+docs/appendix/EXECUTIVE_SUMMARY.md:135:    # Identical logic to NumPy version
+docs/appendix/EXECUTIVE_SUMMARY.md:193:pytest-benchmark compare     # Detect slowdowns
+docs/appendix/EXECUTIVE_SUMMARY.md:274:- Ad-hoc → Systematic (logging, profiling, checkpointing)
+docs/appendix/EXECUTIVE_SUMMARY.md:317:3. **Week 3:** Production hardening (logging, checkpoints)
+docs/appendix/EXECUTIVE_SUMMARY.md:335:- SSOT framework — Fellow-tier epistemology
+src/bnsyn/tools/run_scaled_sleep_stack.py:8:import tracemalloc
+src/bnsyn/tools/run_scaled_sleep_stack.py:50:    sigma_trace: list[float] = []
+src/bnsyn/tools/run_scaled_sleep_stack.py:51:    rate_trace: list[float] = []
+src/bnsyn/tools/run_scaled_sleep_stack.py:57:        sigma_trace.append(float(m["sigma"]))
+src/bnsyn/tools/run_scaled_sleep_stack.py:58:        rate_trace.append(float(m["spike_rate_hz"]))
+src/bnsyn/tools/run_scaled_sleep_stack.py:65:        phase_detector.observe(m["sigma"], step + 1)
+src/bnsyn/tools/run_scaled_sleep_stack.py:66:        crystallizer.observe(net.state.V_mV, temp_schedule.T or 1.0)
+src/bnsyn/tools/run_scaled_sleep_stack.py:90:    metrics: dict[str, Any] = {
+src/bnsyn/tools/run_scaled_sleep_stack.py:94:            "mean_sigma": float(np.mean(sigma_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:95:            "std_sigma": float(np.std(sigma_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:96:            "mean_spike_rate": float(np.mean(rate_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:97:            "std_spike_rate": float(np.std(rate_trace)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:108:        "trace": {"sigma": sigma_trace, "rate": rate_trace},
+src/bnsyn/tools/run_scaled_sleep_stack.py:117:    return manifest, metrics, raster
+src/bnsyn/tools/run_scaled_sleep_stack.py:198:    tracemalloc.start()
+src/bnsyn/tools/run_scaled_sleep_stack.py:201:    b_metrics: dict[str, Any] | None
+src/bnsyn/tools/run_scaled_sleep_stack.py:203:        b_metrics = None
+src/bnsyn/tools/run_scaled_sleep_stack.py:205:        b_manifest, b_metrics, _ = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:215:        (bdir / "metrics.json").write_text(json.dumps(b_metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:218:    first_metrics: dict[str, Any] | None = None
+src/bnsyn/tools/run_scaled_sleep_stack.py:221:        manifest, metrics, raster = _run_once(
+src/bnsyn/tools/run_scaled_sleep_stack.py:231:        kp = rdir / "metrics.json"
+src/bnsyn/tools/run_scaled_sleep_stack.py:233:        kp.write_text(json.dumps(metrics, indent=2))
+src/bnsyn/tools/run_scaled_sleep_stack.py:234:        hashes.append({"manifest": _sha(mp), "metrics": _sha(kp)})
+src/bnsyn/tools/run_scaled_sleep_stack.py:235:        if first_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:236:            first_metrics = metrics
+src/bnsyn/tools/run_scaled_sleep_stack.py:262:        ref_trace = np.asarray(m_ref["trace"]["sigma"], dtype=np.float64)
+src/bnsyn/tools/run_scaled_sleep_stack.py:263:        acc_trace = np.asarray(m_acc["trace"]["sigma"], dtype=np.float64)
+src/bnsyn/tools/run_scaled_sleep_stack.py:266:            "equivalent": bool(np.allclose(ref_trace, acc_trace, atol=1e-8, rtol=0.0)),
+src/bnsyn/tools/run_scaled_sleep_stack.py:267:            "max_abs_sigma_diff": float(np.max(np.abs(ref_trace - acc_trace))),
+src/bnsyn/tools/run_scaled_sleep_stack.py:271:    current, peak = tracemalloc.get_traced_memory()
+src/bnsyn/tools/run_scaled_sleep_stack.py:273:    tracemalloc.stop()
+src/bnsyn/tools/run_scaled_sleep_stack.py:275:    if first_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:280:    if b_metrics is None:
+src/bnsyn/tools/run_scaled_sleep_stack.py:285:            (b_metrics["wake"]["std_sigma"] - first_metrics["wake"]["std_sigma"])
+src/bnsyn/tools/run_scaled_sleep_stack.py:286:            / max(b_metrics["wake"]["std_sigma"], 1e-12)
+src/bnsyn/tools/run_scaled_sleep_stack.py:289:            "wake_std_sigma": b_metrics["wake"]["std_sigma"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:290:            "transitions": b_metrics["transitions"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:291:            "attractors": b_metrics["attractors"]["count"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:313:            "wake_std_sigma": first_metrics["wake"]["std_sigma"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:314:            "transitions": first_metrics["transitions"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:315:            "attractors": first_metrics["attractors"]["count"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:316:            "crystallization_progress": first_metrics["attractors"]["crystallization_progress"],
+src/bnsyn/tools/run_scaled_sleep_stack.py:324:    (out / "metrics.json").write_text(json.dumps(summary, indent=2))
+docs/appendix/PRODUCTION_ROADMAP.md:73:- Hypothesis strategies for neurobiologically plausible inputs
+docs/appendix/PRODUCTION_ROADMAP.md:129:3. ⬜ Profiling infrastructure (structlog + timers)
+docs/appendix/PRODUCTION_ROADMAP.md:153:**Goal:** Reliability, observability, reproducibility
+docs/appendix/PRODUCTION_ROADMAP.md:156:1. ⬜ Structured logging (structlog)
+docs/appendix/PRODUCTION_ROADMAP.md:163:logger.info(
+docs/appendix/PRODUCTION_ROADMAP.md:229:│   └── observability/
+docs/appendix/PRODUCTION_ROADMAP.md:231:│       ├── logging.py        (structured logging)
+docs/appendix/PRODUCTION_ROADMAP.md:325:**Problem:** New features slow down hot paths  
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:6:import tracemalloc
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:25:    tracemalloc.start()
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:30:    current, peak = tracemalloc.get_traced_memory()
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:31:    tracemalloc.stop()
+src/bnsyn/tools/benchmark_sleep_stack_scale.py:50:    (out / "metrics.json").write_text(json.dumps(data, indent=2))
+docs/appendix/PRODUCTION_AUDIT.md:247:    metrics = net.step()  # Mutates net.state, net.g_ampa, etc.
+docs/appendix/PRODUCTION_AUDIT.md:255:**Fix Strategy:** Separate state from simulator logic
+docs/appendix/PRODUCTION_AUDIT.md:312:    DeltaT_mV: float = Field(gt=0, le=10, description="Spike slope factor")
+docs/appendix/PRODUCTION_AUDIT.md:336:**Current:** No logging at all, only exceptions
+docs/appendix/PRODUCTION_AUDIT.md:340:import structlog
+docs/appendix/PRODUCTION_AUDIT.md:342:logger = structlog.get_logger()
+docs/appendix/PRODUCTION_AUDIT.md:346:        logger.debug(
+docs/appendix/PRODUCTION_AUDIT.md:354:        # ... step logic
+docs/appendix/PRODUCTION_AUDIT.md:357:            logger.error(
+docs/appendix/PRODUCTION_AUDIT.md:383:    logger.info("timing", label=label, elapsed_ms=elapsed * 1000)
+docs/appendix/PRODUCTION_AUDIT.md:517:- [ ] ISSUE-009: Structured logging
+src/bnsyn/production/connectivity.py:26:@dataclass(frozen=True, slots=True)
+docs/CI_GATES.md:18:4. **Observability** through artifacts, summaries, and logs
+docs/CI_GATES.md:47:   - pip-audit runs with `--desc --format json` and stores `artifacts/pip-audit.json` for traceability
+docs/CI_GATES.md:80:Coverage trend observability is emitted directly by the reusable pytest workflow used by smoke/unit jobs.
+docs/CI_GATES.md:82:- Artifact name (stable): `coverage-trend-metrics`
+docs/CI_GATES.md:92:3. Download artifact `coverage-trend-metrics`.
+docs/INVENTORY.md:124:└── validation/                 # Validation tests (slow, statistical)
+src/bnsyn/production/adex.py:34:@dataclass(frozen=True, slots=True)
+src/bnsyn/production/adex.py:49:        Exponential slope factor (V).
+src/bnsyn/production/adex.py:88:@dataclass(slots=True)
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:17:   - `pip_install.log` => pass
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:18:   - `ruff_format.log` => pass (`312 files already formatted`)
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:19:   - `ruff_check.log` => pass
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:20:   - `mypy_strict.log` => pass (`Success: no issues found in 69 source files`)
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:21:   - `pytest_q.log` => pass
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:22:   - `validate_status_claims.log` => pass
+docs/CI_BATTLE_USAGE_AUDIT_2026-02-07.md:23:   - `manifest_generate.log` + `manifest_validate.log` + manifest drift check (`manifest_diff.exit=0`) => pass
+docs/ARCHITECTURE.md:5:traceability index, not an independent source of truth. The authoritative definition
+docs/ARCHITECTURE.md:10:## Scope and traceability
+docs/ARCHITECTURE.md:25:- **Macro (slow control)**: criticality controller adjusts global gain to keep σ near target.
+docs/ARCHITECTURE.md:35:| Neuromodulated STDP + eligibility traces | P0-3 | CLM-0005 |
+docs/ARCHITECTURE.md:71:- **SPIE BIMPS 2026** provides context on biologically inspired materials and processes, motivating
+docs/ARCHITECTURE.md:74:  into how biological structures inspire synthetic systems.
+docs/SCALABILITY.md:3:## Methodology
+src/bnsyn/neuron/adex.py:231:        Tuple of (updated state, integration metrics).
+src/bnsyn/neuron/adex.py:271:    metrics = IntegrationMetrics(
+src/bnsyn/neuron/adex.py:276:    return full, metrics
+docs/RELEASE_NOTES.md:15:- **Security evidence**: gitleaks, pip-audit, and bandit logs captured.
+docs/RELEASE_NOTES.md:18:See `artifacts/release_rc/` for the command logs and reports used as evidence.
+src/bnsyn/sleep/cycle.py:181:            List of step metrics.
+src/bnsyn/sleep/cycle.py:208:        metrics = []
+src/bnsyn/sleep/cycle.py:215:            metrics.append(m)
+src/bnsyn/sleep/cycle.py:225:        return metrics
+src/bnsyn/sleep/cycle.py:238:            Summary metrics from sleep cycle.
+src/bnsyn/sleep/cycle.py:253:        total_metrics: list[dict[str, float]] = []
+src/bnsyn/sleep/cycle.py:268:            stage_metrics = []
+src/bnsyn/sleep/cycle.py:272:                stage_metrics.append(m)
+src/bnsyn/sleep/cycle.py:279:            total_metrics.extend(stage_metrics)
+src/bnsyn/sleep/cycle.py:295:            "total_steps": len(total_metrics),
+src/bnsyn/sleep/cycle.py:296:            "mean_sigma": float(np.mean([m["sigma"] for m in total_metrics])),
+src/bnsyn/sleep/cycle.py:297:            "mean_spike_rate": float(np.mean([m["spike_rate_hz"] for m in total_metrics])),
+src/bnsyn/sleep/cycle.py:320:            List of step metrics during replay.
+src/bnsyn/sleep/cycle.py:338:        metrics = []
+src/bnsyn/sleep/cycle.py:371:            metrics.append(m)
+src/bnsyn/sleep/cycle.py:374:        return metrics
+docs/COMPONENT_AUDIT.md:16:| P2-12 | P2-12 | VERIFIED | src/bnsyn/cli.py | tests/test_cli_smoke.py; tests/validation/test_cli_validation.py | CLM-0026 | CLI bench harness outputs deterministic metrics. |
+docs/HYPOTHESIS.md:15:**Rationale**: The temperature schedule (`TemperatureSchedule`) modulates plasticity via `gate_sigmoid(T, Tc, gate_tau)`, which gates the effective learning rate applied to `DualWeights.w_fast`. Piecewise cooling with a warmup phase (`T = T0` for warmup steps, then slow geometric cooling `T0 → Tmin` with `alpha ≈ 0.9995`) provides a controlled annealing process that reduces variance in final consolidated weights (`w_total`) across independent trials while preserving consolidation activity (protein synthesis and w_cons accumulation).
+docs/HYPOTHESIS.md:55:Stability metrics are computed across the `seeds` trials for each condition:
+docs/HYPOTHESIS.md:118:- **results/temp_ablation_v2/**: Per-condition JSON files with per-seed metrics + aggregates.
+docs/HYPOTHESIS.md:121:- **figures/temp_ablation_v2/temperature_vs_stability.png**: Temperature profile vs stability metrics.
+src/bnsyn/plasticity/three_factor.py:36:    """Store eligibility traces for synapses.
+src/bnsyn/plasticity/three_factor.py:45:    Eligibility traces capture pre/post coincidence for three-factor updates.
+src/bnsyn/plasticity/three_factor.py:57:    """Store neuromodulator trace value.
+src/bnsyn/plasticity/three_factor.py:73:    n: float  # scalar dopamine / TD trace
+src/bnsyn/plasticity/three_factor.py:77:    """Apply exponential decay to a trace.
+src/bnsyn/plasticity/three_factor.py:91:        Decayed trace array.
+src/bnsyn/plasticity/three_factor.py:95:    Uses exact exponential decay for deterministic trace updates.
+src/bnsyn/plasticity/three_factor.py:116:        Eligibility trace container.
+src/bnsyn/plasticity/three_factor.py:118:        Neuromodulator trace.
+src/bnsyn/plasticity/three_factor.py:131:        Tuple of (updated weights, updated eligibility traces).
+src/bnsyn/plasticity/three_factor.py:160:    >>> # Weight at (0, 1) increases due to coincident activity + reward
+src/bnsyn/plasticity/three_factor.py:200:    """Update neuromodulator trace with exponential decay and drive.
+src/bnsyn/sim/network.py:229:            Dictionary of metrics including sigma, gain, and spike rate.
+src/bnsyn/sim/network.py:359:            Dictionary of metrics including sigma, gain, and spike rate.
+src/bnsyn/sim/network.py:480:    """Run a deterministic simulation and return summary metrics.
+src/bnsyn/sim/network.py:502:        Summary metrics with mean and standard deviation for sigma and firing rate.
+docs/INTEGRATION.md:15:| `bnsyn.sim.network.run_simulation` | Deterministic network simulator producing metrics | Python 3.11+ | Python API | Explicit args (steps, dt_ms, seed, N, backend) |
+docs/INTEGRATION.md:58:- `run_simulation(steps, dt_ms, seed, N, backend, external_current_pA) -> metrics`
+docs/INTEGRATION.md:92:- Output JSON includes per-seed metrics and aggregated config details.
+docs/INTEGRATION.md:134:- [ ] Output JSON contains config metadata and per-seed metrics.
+docs/INTEGRATION.md:136:- [ ] Integration flow is observable via CLI stdout and JSON output.
+docs/PR40_EVIDENCE_REPORT.md:61:**Independent Audit Results** (script: `scripts/_audit_metrics_pr40.py`):
+docs/PR40_EVIDENCE_REPORT.md:143:**This is NOT a bug** - it's the actual biological mechanism being simulated:
+docs/PR40_EVIDENCE_REPORT.md:191:**Result:** All existing smoke tests pass. No slowdown or breakage.
+docs/PR40_EVIDENCE_REPORT.md:216:   **Policy:** Acceptable. Results are traceable, compressed (JSON), and serve as ground truth for README figures.
+docs/PR40_EVIDENCE_REPORT.md:275:- scripts/_audit_metrics_pr40.py (this audit)
+docs/PR40_EVIDENCE_REPORT.md:323:This is a valid and impressive result. The effect is robust across seed sets and consistent with the biological mechanisms implemented in the DualWeights model.
+docs/PR40_EVIDENCE_REPORT.md:335:- [x] A7: Artifacts justified (~1.5 MB total, traceable, essential)
+docs/PR40_EVIDENCE_REPORT.md:344:**Audit Script:** scripts/_audit_metrics_pr40.py  
+docs/TESTING_MUTATION.md:74:- **metrics**: Total mutants, killed, survived, timeout counts (all non-zero, factual)
+docs/TESTING_MUTATION.md:75:- **metrics_per_module**: Per-module mutation statistics
+docs/TESTING_MUTATION.md:95:   - Update `metrics_per_module` if available
+docs/SCALABILITY_REPORT.md:3:Scalability observations from baseline benchmark runs.
+docs/DEMO.md:28:- `results/demo_rc/metrics.json`
+docs/REPO_STRUCTURE.md:32:   - `tests/validation/*.py`: Validation tests (slow, statistical; use `@pytest.mark.validation`)
+docs/REPO_STRUCTURE.md:36:   - `validate_claims.py`: Enforces claim traceability rules
+docs/REPO_STRUCTURE.md:52:   - `claims.yml`: Authoritative claim registry with traceability fields
+docs/AUDIT_FINDINGS.md:49:- **Notes:** This is a test design issue in the production properties tests, not a core logic bug. The test is marked as `@pytest.mark.validation` and runs in the separate validation CI workflow.
+docs/INDEX.md:63:| [safety/hazard_log.yml](safety/hazard_log.yml) | Machine-readable hazard log |
+docs/INDEX.md:64:| [safety/traceability.yml](safety/traceability.yml) | Requirement → hazard → constraint → test traceability |
+docs/INDEX.md:126:3. **Claim traceability**: Normative statements bind to identifiers such as `CLM-0001` in `claims/claims.yml`.
+docs/ACTIONS_TEST_PROTOCOL.md:63:**Artifacts:** `validation.log`, `property.log`, JUnit XML
+docs/ACTIONS_TEST_PROTOCOL.md:106:| Claims Coverage | 30 days | ci-pr.yml | Evidence traceability |
+docs/ACTIONS_TEST_PROTOCOL.md:118:- `validation-logs-abc123` (per-commit)
+docs/ACTIONS_TEST_PROTOCOL.md:141:**Rationale:** Prevent accidental inclusion of slow tests in PR gates
+docs/ACTIONS_TEST_PROTOCOL.md:186:2. Check `validation.log` artifact
+docs/ACTIONS_TEST_PROTOCOL.md:235:# With thorough profile (slow, 1000 examples)
+docs/TROUBLESHOOTING.md:170:**What BN-Syn does:** Falls back to previous PCA components (see logs).
+docs/TROUBLESHOOTING.md:206:# Stack trace
+docs/TROUBLESHOOTING.md:305:### Simulations are slow
+docs/TROUBLESHOOTING.md:365:   - Full error traceback
+docs/CONFERENCE_RUNBOOK.md:3:This runbook provides deterministic, offline steps for preparing and presenting the BN-Syn demo.
+docs/CONFERENCE_RUNBOOK.md:39:- `results/demo_rc/metrics.json`
+docs/CONFERENCE_RUNBOOK.md:51:- `results/demo_smoke/metrics.json`
+docs/CONFERENCE_RUNBOOK.md:56:Re-run the primary demo with the same seed and confirm that metrics match:
+docs/CONFERENCE_RUNBOOK.md:62:Compare `results/demo_rc/metrics.json` and `results/demo_rc_repeat/metrics.json`.
+docs/CONFERENCE_RUNBOOK.md:68:- If visual output is unavailable (missing `matplotlib`), present the JSON metrics and manifest files.
+docs/BENCHMARKS.md:12:* **Identical seeds → identical traces**
+docs/BENCHMARKS.md:15:* **Different seeds → statistically different traces**
+docs/BENCHMARKS.md:44:* Power-law slope < 0 (negative)
+docs/DOCUMENTATION_FORMALIZATION.md:4:binds documentation to authoritative sources, specifies traceability requirements, and
+docs/DOCUMENTATION_FORMALIZATION.md:15:traceable. The layers below define **where truth lives** and how narrative documents must
+docs/DOCUMENTATION_FORMALIZATION.md:21:2. **Architecture crosswalk (traceability index)**
+docs/DOCUMENTATION_FORMALIZATION.md:54:Formal documentation must support **bidirectional traceability** from spec → implementation
+docs/DOCUMENTATION_FORMALIZATION.md:91:- **No silent divergence**: If the implementation changes, the SPEC and traceability maps
+docs/DOCUMENTATION_FORMALIZATION.md:108:2. **Update traceability**: Modify `docs/spec_to_code.yml` and `docs/COMPONENT_AUDIT.md` if
+docs/SECURITY_GITLEAKS.md:50:5. **Document the incident** in `docs/AUDIT_FINDINGS.md`
+docs/SECURITY_GITLEAKS.md:65:gitleaks detect --config .gitleaks.toml --log-opts="origin/main..HEAD" --verbose
+
+--- STDERR ---
+

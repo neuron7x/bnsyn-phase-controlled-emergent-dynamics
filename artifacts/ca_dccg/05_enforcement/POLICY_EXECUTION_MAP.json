@@ -1,0 +1,9 @@
+{
+  "mappings": [
+    {
+      "claim_id": "CLM-001",
+      "script": "scripts/ca_governance_gate_runner.py",
+      "test": "tests/test_drift_zero_contract.py"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+usage: generate_mutation_baseline.py [-h] [--reuse-cache]
+
+Generate mutation testing baseline.
+
+options:
+  -h, --help     show this help message and exit
+  --reuse-cache  Reuse existing mutmut cache/results without re-running
+                 mutmut.

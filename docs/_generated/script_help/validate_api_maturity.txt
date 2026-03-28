@@ -1,0 +1,7 @@
+usage: validate_api_maturity.py [-h] [--path PATH]
+
+Validate docs/api_maturity.json
+
+options:
+  -h, --help   show this help message and exit
+  --path PATH  Path to api maturity JSON file

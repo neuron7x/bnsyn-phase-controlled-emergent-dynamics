@@ -1,0 +1,83 @@
+COMMAND: find src -maxdepth 4 -type f -print
+START_UTC: 2026-02-15T19:39:07.283833Z
+END_UTC: 2026-02-15T19:39:07.294197Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+src/bnsyn/sim/network.py
+src/bnsyn/sim/__init__.py
+src/bnsyn/rng.py
+src/bnsyn/plasticity/stdp.py
+src/bnsyn/plasticity/__init__.py
+src/bnsyn/plasticity/three_factor.py
+src/bnsyn/sleep/replay.py
+src/bnsyn/sleep/__init__.py
+src/bnsyn/sleep/cycle.py
+src/bnsyn/sleep/stages.py
+src/bnsyn/__main__.py
+src/bnsyn/numerics/integrators.py
+src/bnsyn/numerics/__init__.py
+src/bnsyn/simulation.py
+src/bnsyn/neuron/adex.py
+src/bnsyn/neuron/__init__.py
+src/bnsyn/energy/regularization.py
+src/bnsyn/energy/__init__.py
+src/bnsyn/neurons.py
+src/bnsyn/production/jax_backend.py
+src/bnsyn/production/adex.py
+src/bnsyn/production/__init__.py
+src/bnsyn/production/connectivity.py
+src/bnsyn/tools/benchmark_sleep_stack_scale.py
+src/bnsyn/tools/run_scaled_sleep_stack.py
+src/bnsyn/tools/__init__.py
+src/bnsyn/connectivity/sparse.py
+src/bnsyn/connectivity/__init__.py
+src/bnsyn/criticality/branching.py
+src/bnsyn/criticality/__init__.py
+src/bnsyn/criticality/analysis.py
+src/bnsyn/criticality/phase_transition.py
+src/bnsyn/calibration/fit.py
+src/bnsyn/calibration/__init__.py
+src/bnsyn/calibration/accuracy_speed.py
+src/bnsyn/incremental.py
+src/bnsyn/provenance/manifest.py
+src/bnsyn/provenance/manifest_builder.py
+src/bnsyn/provenance/__init__.py
+src/bnsyn/py.typed
+src/bnsyn/memory/ledger.py
+src/bnsyn/memory/__init__.py
+src/bnsyn/memory/consolidator.py
+src/bnsyn/memory/trace.py
+src/bnsyn/emergence/__init__.py
+src/bnsyn/emergence/crystallizer.py
+src/bnsyn/vcg.py
+src/bnsyn/cli.py
+src/bnsyn/control.py
+src/bnsyn/__init__.py
+src/bnsyn/experiments/__init__.py
+src/bnsyn/experiments/declarative.py
+src/bnsyn/validation/inputs.py
+src/bnsyn/validation/__init__.py
+src/bnsyn/config.py
+src/bnsyn/testing/__init__.py
+src/bnsyn/testing/faults.py
+src/bnsyn/schemas/__init__.py
+src/bnsyn/schemas/experiment.py
+src/bnsyn/temperature/__init__.py
+src/bnsyn/temperature/schedule.py
+src/bnsyn/synapses.py
+src/bnsyn/consolidation/dual_weight.py
+src/bnsyn/consolidation/__init__.py
+src/bnsyn/benchmarks/regime.py
+src/bnsyn/benchmarks/__init__.py
+src/bnsyn/synapse/conductance.py
+src/bnsyn/synapse/__init__.py
+src/bnsyn/viz/__init__.py
+src/bnsyn/viz/dashboard.py
+src/bnsyn/viz/interactive.py
+src/contracts/math_contracts.py
+src/contracts/__init__.py
+
+--- STDERR ---
+

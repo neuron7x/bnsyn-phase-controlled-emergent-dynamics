@@ -1,0 +1,10 @@
+usage: release_pipeline.py [-h] [--bump {major,minor,patch}]
+                           [--apply-version-bump] [--verify-only]
+
+Release pipeline helper
+
+options:
+  -h, --help            show this help message and exit
+  --bump {major,minor,patch}
+  --apply-version-bump
+  --verify-only

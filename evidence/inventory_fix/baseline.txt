@@ -1,0 +1,11 @@
+$ git status --porcelain
+?? evidence/inventory_fix/
+
+$ python --version
+Python 3.12.12
+
+$ python -m pip --version
+pip 25.3 from /root/.pyenv/versions/3.12.12/lib/python3.12/site-packages/pip (python 3.12)
+
+$ sha256sum INVENTORY.json || true
+3353f994fb21609bad64647c88fb094cc1eb5bdedb9f7957772bd61937e1e7ce  INVENTORY.json

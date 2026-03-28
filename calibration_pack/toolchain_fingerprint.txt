@@ -1,0 +1,7 @@
+{
+  "arch": "x86_64",
+  "git_commit": "ebf9b1908b8c4a368735c20267515ccdf93e2235",
+  "os": "Linux",
+  "python": "3.12.12",
+  "timestamp_utc": "2026-02-16T07:25:42.118442+00:00"
+}

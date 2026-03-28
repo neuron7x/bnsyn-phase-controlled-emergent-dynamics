@@ -1,0 +1,11 @@
+$ python -m tools.manifest generate
+manifest.generate computed_sha256=40b811d1165cb314594fc103f08dbb1b2a12a84ed9b6cecd0a2e15da86d78474 rendered_sha256=ce40d99cc828010997d4df71da2f67e9d369a161a5fa51eba92d586c803bc86e workflow_total=28 workflow_call_total=11 ci_manifest_reference_count=0
+$ sha256sum .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json > evidence/manifest_fix/manifest.sha256.1
+ce40d99cc828010997d4df71da2f67e9d369a161a5fa51eba92d586c803bc86e  .github/REPO_MANIFEST.md
+40b811d1165cb314594fc103f08dbb1b2a12a84ed9b6cecd0a2e15da86d78474  manifest/repo_manifest.computed.json
+$ python -m tools.manifest generate
+manifest.generate computed_sha256=40b811d1165cb314594fc103f08dbb1b2a12a84ed9b6cecd0a2e15da86d78474 rendered_sha256=ce40d99cc828010997d4df71da2f67e9d369a161a5fa51eba92d586c803bc86e workflow_total=28 workflow_call_total=11 ci_manifest_reference_count=0
+$ sha256sum .github/REPO_MANIFEST.md manifest/repo_manifest.computed.json > evidence/manifest_fix/manifest.sha256.2
+ce40d99cc828010997d4df71da2f67e9d369a161a5fa51eba92d586c803bc86e  .github/REPO_MANIFEST.md
+40b811d1165cb314594fc103f08dbb1b2a12a84ed9b6cecd0a2e15da86d78474  manifest/repo_manifest.computed.json
+$ diff -u evidence/manifest_fix/manifest.sha256.1 evidence/manifest_fix/manifest.sha256.2

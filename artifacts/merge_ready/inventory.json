@@ -1,0 +1,29 @@
+{
+  "entrypoints": [
+    "src/bnsyn/cli.py",
+    "src/bnsyn/__main__.py"
+  ],
+  "build_system": [
+    "pyproject.toml",
+    "Makefile"
+  ],
+  "test_commands": [
+    "python -m pytest -m \"not validation\" -q"
+  ],
+  "lint_commands": [
+    "ruff check .",
+    "pylint src/bnsyn"
+  ],
+  "typecheck_commands": [
+    "mypy src --strict --config-file pyproject.toml"
+  ],
+  "docs_commands": [
+    "make docs"
+  ],
+  "security_commands": [
+    "make security"
+  ],
+  "packaging_commands": [
+    "python -m build"
+  ]
+}

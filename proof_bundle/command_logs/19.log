@@ -1,0 +1,61 @@
+COMMAND: rg -n "(tenant|org|multi-tenant|isolation|scope)" src docs tests
+START_UTC: 2026-02-15T19:39:07.166715Z
+END_UTC: 2026-02-15T19:39:07.190228Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+docs/emergence_tracking.md:94:- **Critical**: Self-organized criticality (σ ≈ 1)
+docs/AUDIT_LEDGER.md:11:- **Symptom:** SSOT rule registry lacked scope and examples, and used inconsistent enforcement field naming. (docs/SSOT_RULES.md:L1-L94)
+docs/AUDIT_LEDGER.md:14:- **Fix decision:** **FIX** — Expanded each rule entry to include `scope`, `enforcement_script`, and `examples` fields.
+docs/REPRODUCIBILITY_ENVELOPE.md:28:* GPU and mixed-precision execution are out of scope for the reproducibility envelope.
+docs/EVIDENCE_COVERAGE.md:25:| CLM-0013 | Tier-S | false | PROVEN | acm2020badges | https://www.acm.org/publications/policies/artifact-review-and-badging-current | P2-8..12 Artifact badges | `scripts/validate_claims.py` | `scripts/validate_claims.py` |
+docs/EVIDENCE_COVERAGE.md:26:| CLM-0014 | Tier-S | false | PROVEN | pytorch2026randomness | https://pytorch.org/docs/stable/notes/randomness.html | P2-8..12 Determinism docs | `scripts/validate_claims.py` | `scripts/validate_claims.py` |
+docs/SPEC.md:10:> Scaling to large-N / GPU is explicitly out-of-scope for v0.2.0 but interfaces are stable.
+tests/test_mutation_counts_contract.py:28:        "scope",
+tests/test_mutation_counts_contract.py:187:                "scope": {},
+tests/test_mutation_counts_contract.py:255:                "scope": {},
+tests/test_mutation_counts_contract.py:295:                "scope": {},
+docs/benchmarks/PROTOCOL.md:16:3. **Subprocess isolation**: Each run executes in a fresh subprocess with clean state
+docs/MUTATION_GATE.md:58:- `scope`
+docs/appendix/codebase_readiness_audit_2026-02-15.json:28:        "file:.github/workflows/ci-pr-atomic.yml#L79-L125: determinism tests run three times plus RNG isolation"
+docs/ARCHITECTURE.md:76:  providing context for multi-scale organizational principles.
+tests/test_validate_bibliography_script.py:19:        "  howpublished = {\\url{https://example.org/paper}},\n"
+tests/test_validate_bibliography_script.py:29:    assert entries["KeyOne"]["url"] == "https://example.org/paper"
+tests/test_validate_bibliography_script.py:64:    lock_string = "Example2024=10.1000/xyz123::https://example.org::f3::f4"
+tests/test_validate_bibliography_script.py:66:    content = f"Example2024=10.1000/xyz123::https://example.org::f3::f4::sha256:{sha}\n"
+tests/test_validate_bibliography_script.py:76:            "url": "https://example.org",
+docs/placeholder_cycles/cycle1/plan.md:3:## Scope Compression (minimum viable scope)
+docs/placeholder_cycles/cycle1/plan.md:16:No additional modules are in scope unless required to keep tests deterministic and CI-green.
+docs/placeholder_cycles/cycle1/worklist.json:3:  "scope_policy": "only PH files and direct dependencies for fixes/tests",
+docs/RELEASE_NOTES.md:23:  for critical modules. Mitigation: prioritize mutation hardening on the four scoped modules and
+docs/BIBLIOGRAPHY.md:22:2. ACM Artifact Review and Badging v1.1 — https://www.acm.org/publications/policies/artifact-review-and-badging-current
+docs/BIBLIOGRAPHY.md:23:3. PyTorch Notes on Randomness and Determinism — https://pytorch.org/docs/stable/notes/randomness.html
+tests/test_manifest_tooling.py:67:def test_ci_manifest_reference_count_respects_declared_scope(
+docs/INTEGRATION.md:4:BN-Syn deterministic experiment runner. It is scoped to the module-level
+tests/test_math_invariants.py:19:from scripts.math_validate import build_manifest, iter_scope_files, validate_manifest
+tests/test_math_invariants.py:175:def test_manifest_covers_scoped_files() -> None:
+tests/test_math_invariants.py:178:    scoped_paths = {str(path).replace("\\", "/") for path in iter_scope_files()}
+tests/test_math_invariants.py:179:    assert manifest_paths == scoped_paths
+docs/SECURITY_GITLEAKS.md:22:The configuration includes a **strict, path-scoped allowlist** for known false positives:
+docs/AUDIT_FINDINGS.md:117:  1. Created `.gitleaks.toml` with path-scoped allowlist for `bibkey:` pattern
+docs/SSOT_RULES.md:10:    scope: bibliography/, claims/
+docs/SSOT_RULES.md:20:    scope: claims/, bibliography/
+docs/SSOT_RULES.md:30:    scope: bibliography/
+docs/SSOT_RULES.md:38:    scope: claims/, bibliography/
+docs/SSOT_RULES.md:47:    scope: bibliography/
+docs/SSOT_RULES.md:55:    scope: bibliography/
+docs/SSOT_RULES.md:63:    scope: bibliography/
+docs/SSOT_RULES.md:71:    scope: claims/
+docs/SSOT_RULES.md:79:    scope: claims/, src/, tests/, scripts/
+docs/SSOT_RULES.md:87:    scope: docs/, README*.md
+docs/DOCUMENTATION_FORMALIZATION.md:107:1. **Identify scope**: Confirm which components or invariants are affected in `docs/SPEC.md`.
+tests/properties/test_manifest_tooling_properties.py:73:def test_ci_manifest_reference_scope_fuzz(snippets: list[str]) -> None:
+tests/properties/test_manifest_tooling_properties.py:76:        scope_files = [
+tests/properties/test_manifest_tooling_properties.py:85:        for path, snippet in zip(scope_files, snippets):
+tests/properties/test_manifest_tooling_properties.py:92:        _write(root / "tools/out_of_scope.py", "ci_manifest.json\n")
+src/bnsyn/memory/trace.py:42:    - Uses FIFO forgetting when capacity is exceeded.
+src/bnsyn/tools/run_scaled_sleep_stack.py:137:        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">'
+
+--- STDERR ---
+

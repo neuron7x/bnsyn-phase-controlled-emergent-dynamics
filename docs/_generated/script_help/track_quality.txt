@@ -1,0 +1,7 @@
+📊 Quality Metrics
+  Coverage: N/A
+  Lint issues: 0
+  Security issues: 0
+  Test results: FAIL
+
+✅ Metrics saved to metrics.json

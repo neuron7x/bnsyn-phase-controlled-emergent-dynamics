@@ -1,0 +1,10 @@
+{
+  "weights": {
+    "user_value": 3,
+    "risk_reduction": 4,
+    "platform_leverage": 3,
+    "cost": -2,
+    "time_to_value": 2
+  },
+  "scored": true
+}

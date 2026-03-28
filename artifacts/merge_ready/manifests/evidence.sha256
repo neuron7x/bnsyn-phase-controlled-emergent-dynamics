@@ -1,0 +1,5 @@
+[hashes 2026-02-18T09:49:35+00:00]
+00616de098e11d225540cdbfc2568f5a12951692942519858c083a04881eba51  dist/bnsyn-0.2.0.tar.gz
+f6f73cdaf95dc3698a1379c06a6710ad784080193b72064aaad70c09e6455f7a  dist/bnsyn-0.2.0-py3-none-any.whl
+6cb910577af2b91aa06c5e678939b836c23b65badfd356ae3a9efeb863c363dc  artifacts/merge_ready/proofs/happy_path.json
+2b01a5a93cfea1869b158895915a403946c86a26cb0153f647ecb9465c11ddb8  artifacts/merge_ready/proofs/invalid_stderr.txt

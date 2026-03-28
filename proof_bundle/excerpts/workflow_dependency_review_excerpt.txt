@@ -1,0 +1,29 @@
+   1: name: dependency-review
+   2: 
+   3: on:
+   4:   pull_request:
+   5:     paths:
+   6:       - 'pyproject.toml'
+   7:       - 'requirements*.txt'
+   8:       - 'requirements/**/*.txt'
+   9:       - 'setup.py'
+  10:       - 'setup.cfg'
+  11:       - 'poetry.lock'
+  12:       - 'uv.lock'
+  13:       - 'Pipfile'
+  14:       - 'Pipfile.lock'
+  15: 
+  16: permissions:
+  17:   contents: read
+  18: 
+  19: jobs:
+  20:   dependency-review:
+  21:     runs-on: ubuntu-latest
+  22:     permissions:
+  23:       contents: read
+  24:       pull-requests: read
+  25:     steps:
+  26:       - name: Checkout
+  27:         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+  28:       - name: Dependency Review
+  29:         uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261

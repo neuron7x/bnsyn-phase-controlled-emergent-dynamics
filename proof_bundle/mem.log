@@ -1,0 +1,10 @@
+$ free -h
+[exit_code]=0
+[duration_sec]=1.28
+--- STDOUT ---
+               total        used        free      shared  buff/cache   available
+Mem:            17Gi       589Mi        15Gi       5.0Mi       1.7Gi        17Gi
+Swap:             0B          0B          0B
+
+--- STDERR ---
+

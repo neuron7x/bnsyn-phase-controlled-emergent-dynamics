@@ -1,0 +1,9 @@
+usage: bench_ci_smoke.py [-h] [--out OUT] [--json JSON] [--repeats REPEATS]
+
+Run CI smoke benchmark
+
+options:
+  -h, --help         show this help message and exit
+  --out OUT          Output CSV
+  --json JSON        Output JSON
+  --repeats REPEATS  Repeats (default: 2)

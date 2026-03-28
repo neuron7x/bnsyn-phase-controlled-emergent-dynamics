@@ -1,0 +1,11 @@
+usage: collect_ci_run_urls.py [-h] [--repo REPO] [--sha SHA] [--out OUT]
+                              [--required]
+
+Collect GitHub Actions run URLs for a head SHA
+
+options:
+  -h, --help   show this help message and exit
+  --repo REPO
+  --sha SHA
+  --out OUT
+  --required

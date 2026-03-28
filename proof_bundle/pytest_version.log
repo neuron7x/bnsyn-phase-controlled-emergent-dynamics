@@ -1,0 +1,8 @@
+$ python -m pytest --version
+[exit_code]=0
+[duration_sec]=1.67
+--- STDOUT ---
+pytest 9.0.2
+
+--- STDERR ---
+

@@ -1,0 +1,19 @@
+# Entropy calibration command log (deterministic, trimmed)
+python - <<'PY'
+import tomllib, pathlib, re
+root=pathlib.Path('.')
+py=tomllib.loads((root/'pyproject.toml').read_text())
+all_deps=[]
+for d in py['project']['dependencies']: all_deps.append(d)
+for group in py['project']['optional-dependencies'].values(): all_deps.extend(group)
+print('deps_total',len(all_deps),'pinned',sum('==' in d for d in all_deps))
+uses=[]
+for wf in (root/'.github/workflows').glob('*.yml'):
+    uses.extend(re.findall(r'uses:\s*([^\s]+)', wf.read_text()))
+print('uses_total',len(uses),'sha',sum(bool(re.search(r'@[0-9a-f]{40}$',u)) for u in uses),'tag',sum('@v' in u for u in uses))
+print('lockfile', (root/'requirements-lock.txt').exists())
+print('hyp_derandomize', py.get('tool',{}).get('hypothesis',{}).get('derandomize'))
+print('pyhashseed_present', 'PYTHONHASHSEED: 0' in (root/'.github/workflows/ci-pr-atomic.yml').read_text())
+PY
+pytest -q tests/test_entropy_artifacts_guard.py
+python entropy/guards/check_entropy_artifacts.py

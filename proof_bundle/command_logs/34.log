@@ -1,0 +1,285 @@
+COMMAND: jq ".executive" audit_suite_report.json
+START_UTC: 2026-02-15T19:42:11.866706Z
+END_UTC: 2026-02-15T19:42:11.888522Z
+TIMEOUT_SEC: 600
+EXIT_CODE: 0
+TIMED_OUT: false
+--- STDOUT ---
+{
+  "weighted_executive_risk_index_0_100": 70,
+  "confidence_0_1": 0.7,
+  "go_no_go": "NO_GO",
+  "top_board_risks": [
+    {
+      "title": "Auth/AuthZ control plane undefined for potential service exposure",
+      "risk_score": 64,
+      "likelihood": 4,
+      "impact": 4,
+      "evidence": [
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\"",
+        "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+        "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0"
+      ],
+      "owner_hint": "Platform security"
+    },
+    {
+      "title": "Transactional idempotency/webhook controls not evidenced",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+      ],
+      "owner_hint": "Backend architecture"
+    },
+    {
+      "title": "No formal trust-boundary DFD",
+      "risk_score": 64,
+      "likelihood": 4,
+      "impact": 4,
+      "evidence": [
+        "File: path:docs/ARCHITECTURE.md:20-27 snippet:\"control loops and architecture map\"",
+        "File: path:docs/ARCHITECTURE.md:54-60 snippet:\"optional VCG extension boundary\"",
+        "Command: cmd:cat docs/ARCHITECTURE.md log:proof_bundle/command_logs/20.log exit:0"
+      ],
+      "owner_hint": "Security architecture"
+    },
+    {
+      "title": "SBOM automation gap",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "File: path:.github/workflows/codeql.yml:4-33 snippet:\"scheduled CodeQL analysis for python\"",
+        "File: path:.github/workflows/dependency-review.yml:3-29 snippet:\"PR dependency review gate\"",
+        "Command: cmd:find .github -maxdepth 3 -type f -print log:proof_bundle/command_logs/23.log exit:0",
+        "File: path:requirements-lock.txt:2-9 snippet:\"pip-compile with --generate-hashes and pinned packages\"",
+        "Command: cmd:cat requirements-lock.txt log:proof_bundle/command_logs/15.log exit:0",
+        "Command: cmd:sha256sum requirements-lock.txt pyproject.toml log:proof_bundle/command_logs/30.log exit:0"
+      ],
+      "owner_hint": "DevSecOps"
+    },
+    {
+      "title": "Test run failed in environment due missing deps",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "Command: cmd:pytest -q log:proof_bundle/command_logs/28.log exit:2",
+        "Command: cmd:pytest --collect-only -q log:proof_bundle/command_logs/27.log exit:2",
+        "File: path:docs/TESTING.md:7-9 snippet:\"test dependencies must be installed\""
+      ],
+      "owner_hint": "Build engineering"
+    },
+    {
+      "title": "Observability primarily CI-oriented, not runtime SLO telemetry",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+        "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+        "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+        "File: path:.github/CI_SLO.md:1-4 snippet:\"PR SLO targets only\""
+      ],
+      "owner_hint": "Reliability"
+    },
+    {
+      "title": "Rollback and backup runbooks not explicit",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+        "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+        "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0",
+        "Command: cmd:rg -n \"(rollback|backup)\" README.md docs infra Dockerfile docker-compose.yml log:proof_bundle/command_logs/22.log exit:2"
+      ],
+      "owner_hint": "Operations"
+    },
+    {
+      "title": "Privacy controls not mapped to data classes",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "File: path:SECURITY.md:1-6 snippet:\"not a security boundary and private reporting\"",
+        "Command: cmd:cat SECURITY.md log:proof_bundle/command_logs/21.log exit:0",
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+      ],
+      "owner_hint": "Compliance"
+    },
+    {
+      "title": "Cost/scaling model missing for production runtime",
+      "risk_score": 36,
+      "likelihood": 3,
+      "impact": 3,
+      "evidence": [
+        "File: path:README.md:34-43 snippet:\"quality gates and reproducible commands\"",
+        "File: path:README.md:57-65 snippet:\"tiered CI including security scans\"",
+        "Command: cmd:cat README.md log:proof_bundle/command_logs/13.log exit:0"
+      ],
+      "owner_hint": "Performance engineering"
+    },
+    {
+      "title": "Multi-tenancy isolation not applicable/undefined",
+      "risk_score": 64,
+      "likelihood": 4,
+      "impact": 4,
+      "evidence": [
+        "Command: cmd:find src -maxdepth 4 -type f -print log:proof_bundle/command_logs/25.log exit:0",
+        "File: path:src/bnsyn/cli.py:1-20 snippet:\"CLI-oriented module; no HTTP routing layer\""
+      ],
+      "owner_hint": "Platform architecture"
+    }
+  ],
+  "top_mitigations_roi": [
+    {
+      "title": "Publish threat model + trust boundaries",
+      "roi": 12.0,
+      "risk_reduction_points": 18,
+      "effort_points": 2,
+      "steps": [
+        "Create DFD with actors/assets/boundaries.",
+        "Add security controls matrix mapped to code/tests."
+      ],
+      "evidence_targets": [
+        "docs/ARCHITECTURE.md",
+        "docs/SECURITY.md"
+      ]
+    },
+    {
+      "title": "Implement CI SBOM generation + retention",
+      "roi": 7.5,
+      "risk_reduction_points": 15,
+      "effort_points": 2,
+      "steps": [
+        "Generate CycloneDX artifact each release pipeline.",
+        "Gate release on SBOM presence and signature."
+      ],
+      "evidence_targets": [
+        ".github/workflows/release-pipeline.yml"
+      ]
+    },
+    {
+      "title": "Install test extras in CI/local bootstrap",
+      "roi": 6.0,
+      "risk_reduction_points": 12,
+      "effort_points": 2,
+      "steps": [
+        "Enforce `pip install -e \".[test]\"` before pytest.",
+        "Add dependency preflight check."
+      ],
+      "evidence_targets": [
+        "docs/TESTING.md",
+        "Makefile"
+      ]
+    },
+    {
+      "title": "Define production observability baseline",
+      "roi": 5.0,
+      "risk_reduction_points": 10,
+      "effort_points": 2,
+      "steps": [
+        "Add structured logs/metrics/traces requirements.",
+        "Codify incident runbook templates."
+      ],
+      "evidence_targets": [
+        "docs/",
+        ".github/CI_SLO.md"
+      ]
+    },
+    {
+      "title": "Document rollback/backup procedures",
+      "roi": 4.0,
+      "risk_reduction_points": 8,
+      "effort_points": 2,
+      "steps": [
+        "Create restore drill runbook with RTO/RPO."
+      ],
+      "evidence_targets": [
+        "docs/DEMO.md",
+        "README.md"
+      ]
+    },
+    {
+      "title": "Add authz/idempotency design guardrails for future APIs",
+      "roi": 4.0,
+      "risk_reduction_points": 8,
+      "effort_points": 2,
+      "steps": [
+        "Introduce architecture ADR and tests before adding endpoints."
+      ],
+      "evidence_targets": [
+        "docs/ARCHITECTURE.md",
+        "docs/TESTING.md"
+      ]
+    },
+    {
+      "title": "Define data classification and privacy handling",
+      "roi": 3.0,
+      "risk_reduction_points": 9,
+      "effort_points": 3,
+      "steps": [
+        "Map data classes and retention/deletion policy."
+      ],
+      "evidence_targets": [
+        "SECURITY.md"
+      ]
+    },
+    {
+      "title": "Create scalability budget and benchmark SLOs",
+      "roi": 3.0,
+      "risk_reduction_points": 9,
+      "effort_points": 3,
+      "steps": [
+        "Set p95/p99 targets and regression thresholds."
+      ],
+      "evidence_targets": [
+        "docs/BENCHMARKS.md"
+      ]
+    },
+    {
+      "title": "Formalize failure simulations for dependency outages",
+      "roi": 2.5,
+      "risk_reduction_points": 5,
+      "effort_points": 2,
+      "steps": [
+        "Add DB/cache/token-expiry playbooks and tests."
+      ],
+      "evidence_targets": [
+        ".github/workflows/ci-validation.yml"
+      ]
+    },
+    {
+      "title": "Establish tenant isolation policy template",
+      "roi": 2.0,
+      "risk_reduction_points": 4,
+      "effort_points": 2,
+      "steps": [
+        "Template controls for future multi-tenant deployments."
+      ],
+      "evidence_targets": [
+        "docs/ARCHITECTURE.md"
+      ]
+    }
+  ],
+  "timeline_to_production_hardening": {
+    "estimate": "~4-6 weeks for service-grade hardening if API/auth/data planes are introduced.",
+    "critical_path": [
+      "Threat model + authz architecture",
+      "Idempotency/transaction controls",
+      "Observability + incident runbooks",
+      "SBOM and release gates"
+    ],
+    "assumptions": [
+      "Scope expansion from simulator to production SaaS would require net-new service architecture."
+    ]
+  }
+}
+
+--- STDERR ---
+

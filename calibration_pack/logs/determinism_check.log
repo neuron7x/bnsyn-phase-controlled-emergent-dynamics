@@ -1,0 +1,13 @@
+{
+  "equal": true,
+  "first": {
+    "FIXTURE_A.output.json": "89c92864fe77fac045a07ae8fcfabd0a1e6b7bb0c712a9420d4ec3ce9aa1e955",
+    "FIXTURE_B.output.json": "9f2fd41fdb83097b94d076d4f87b4f61266c565b2284fd9bf02da1e6ca214868",
+    "FIXTURE_C.output.json": "13731c76c0275b80aa02cd147ea29f5bce73527be0a7c94fc408207cde5df3f8"
+  },
+  "second": {
+    "FIXTURE_A.output.json": "89c92864fe77fac045a07ae8fcfabd0a1e6b7bb0c712a9420d4ec3ce9aa1e955",
+    "FIXTURE_B.output.json": "9f2fd41fdb83097b94d076d4f87b4f61266c565b2284fd9bf02da1e6ca214868",
+    "FIXTURE_C.output.json": "13731c76c0275b80aa02cd147ea29f5bce73527be0a7c94fc408207cde5df3f8"
+  }
+}
