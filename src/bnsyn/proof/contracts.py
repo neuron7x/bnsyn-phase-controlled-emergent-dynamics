@@ -33,6 +33,16 @@ BASE_ARTIFACTS: tuple[str, ...] = (
 )
 EXPORT_PROOF_ARTIFACTS: tuple[str, ...] = BASE_ARTIFACTS + ("proof_report.json",)
 
+EMERGENCE_ARTIFACTS: tuple[str, ...] = EXPORT_PROOF_ARTIFACTS + (
+    "emergence_proof_report.json",
+    "causality_report.json",
+    "phi_proxy_report.json",
+    "assembly_report.json",
+    "structural_plasticity_report.json",
+    "renormalization_report.json",
+    "neuromodulation_report.json",
+)
+
 
 @dataclass(frozen=True)
 class ManifestMode:

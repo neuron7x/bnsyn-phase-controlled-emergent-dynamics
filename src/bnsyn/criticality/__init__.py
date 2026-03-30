@@ -20,6 +20,12 @@ docs/SPEC.md#P0-4
 from .analysis import PowerLawFit, fit_power_law_mle, mr_branching_ratio
 from .branching import BranchingEstimator, SigmaController
 from .phase_transition import CriticalPhase, PhaseTransition, PhaseTransitionDetector
+from .renormalization import (
+    RenormalizationEngine,
+    RenormalizationParams,
+    RenormalizationResult,
+    ScaleMetrics,
+)
 
 __all__ = [
     "BranchingEstimator",
@@ -30,4 +36,8 @@ __all__ = [
     "CriticalPhase",
     "PhaseTransition",
     "PhaseTransitionDetector",
+    "RenormalizationEngine",
+    "RenormalizationParams",
+    "RenormalizationResult",
+    "ScaleMetrics",
 ]

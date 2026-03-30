@@ -221,6 +221,61 @@ class SparseConnectivity:
             return self.W.copy()
         return sp.csr_matrix(self.W, dtype=np.float64)
 
+    # ------------------------------------------------------------------
+    # Mutation helpers for structural plasticity
+    # ------------------------------------------------------------------
+
+    def _recalculate_metrics(self) -> None:
+        """Recalculate metrics from current W."""
+        n_pre, n_post = self.shape
+        if self.format == "sparse":
+            nnz = self.W.nnz
+        else:
+            nnz = int(np.count_nonzero(self.W))
+        density = nnz / (n_pre * n_post) if (n_pre * n_post) > 0 else 0.0
+        self.metrics = SparseConnectivityMetrics(
+            density=density,
+            sparsity=1.0 - density,
+            nnz=nnz,
+            memory_dense_mb=(n_pre * n_post * 8) / (1024**2),
+            memory_sparse_mb=self._estimate_sparse_size(n_pre, nnz),
+            speedup_estimated=self._estimate_speedup(density),
+        )
+
+    def mutate_add(self, row: int, col: int, value: float) -> None:
+        """Add or update a synapse. Works on both dense and sparse formats."""
+        if self.format == "dense":
+            self.W[row, col] = value
+        else:
+            lil = self.W.tolil()
+            lil[row, col] = value
+            self.W = lil.tocsr()
+        self._recalculate_metrics()
+
+    def mutate_remove(self, row: int, col: int) -> None:
+        """Remove a synapse (set to zero). Works on both dense and sparse formats."""
+        if self.format == "dense":
+            self.W[row, col] = 0.0
+        else:
+            lil = self.W.tolil()
+            lil[row, col] = 0.0
+            self.W = lil.tocsr()
+            self.W.eliminate_zeros()
+        self._recalculate_metrics()
+
+    def rebuild_from_coo(
+        self, rows: np.ndarray, cols: np.ndarray, values: np.ndarray
+    ) -> None:
+        """Rebuild internal storage from COO-format arrays. Updates metrics."""
+        coo = sp.coo_matrix(
+            (values.astype(np.float64), (rows, cols)), shape=self.shape
+        )
+        if self.format == "sparse":
+            self.W = coo.tocsr()
+        else:
+            self.W = np.asarray(coo.todense(), dtype=np.float64)
+        self._recalculate_metrics()
+
     def __repr__(self) -> str:
         return (
             f"SparseConnectivity(shape={self.shape}, "

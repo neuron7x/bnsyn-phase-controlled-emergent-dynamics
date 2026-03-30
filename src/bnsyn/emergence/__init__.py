@@ -23,10 +23,14 @@ from .crystallizer import (
     CrystallizationState,
     Phase,
 )
+from .phi_proxy import PhiProxyEngine, PhiProxyParams, PhiResult
 
 __all__ = [
     "Attractor",
     "AttractorCrystallizer",
     "CrystallizationState",
     "Phase",
+    "PhiProxyEngine",
+    "PhiProxyParams",
+    "PhiResult",
 ]
