@@ -37,6 +37,8 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     avalanche_fit_report_path = out_dir / "avalanche_fit_report.json"
     robustness_report_path = out_dir / "robustness_report.json"
     envelope_report_path = out_dir / "envelope_report.json"
+    events_path = out_dir / "logs" / "events.jsonl"
+    run_health_summary_path = out_dir / "run_health_summary.json"
     assert summary_path.exists()
     assert manifest_path.exists()
     assert criticality_report_path.exists()
@@ -54,6 +56,8 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
     assert avalanche_fit_report_path.exists()
     assert robustness_report_path.exists()
     assert envelope_report_path.exists()
+    assert events_path.exists()
+    assert run_health_summary_path.exists()
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["cmd"] == "bnsyn run --profile canonical --plot"
@@ -108,6 +112,15 @@ def test_canonical_live_bundle_writes_required_outputs(tmp_path: Path) -> None:
 
     envelope = json.loads(envelope_report_path.read_text(encoding="utf-8"))
     assert envelope["verdict"] == "PASS"
+    event_types = [json.loads(line)["event_type"] for line in events_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert "stage_started" in event_types
+    assert "stage_finished" in event_types
+    run_health_summary = json.loads(run_health_summary_path.read_text(encoding="utf-8"))
+    assert run_health_summary["failed"] is False
+    assert run_health_summary["first_failure_stage"] is None
+    assert {stage["stage"] for stage in run_health_summary["stages"]}.issuperset(
+        {"live_run", "summary_reports", "avalanche_and_fit", "robustness_envelope", "manifest", "proof_report", "product_surface"}
+    )
 
     avalanche_required = {
         "schema_version", "seed", "N", "dt_ms", "duration_ms", "steps",
@@ -256,6 +269,17 @@ def test_canonical_live_bundle_resume_after_product_surface_failure(monkeypatch:
     failed_stage = json.loads((out_dir / "stage_product_surface.json").read_text(encoding="utf-8"))
     assert failed_stage["status"] == "failed"
     assert "synthetic product surface failure" in failed_stage["failure_reason"]
+    events = [
+        json.loads(line)
+        for line in (out_dir / "logs" / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    failure_events = [event for event in events if event["event_type"] == "stage_failed" and event["stage"] == "product_surface"]
+    assert failure_events
+    assert "synthetic product surface failure" in failure_events[-1]["failure_reason"]
+    failure_summary = json.loads((out_dir / "run_health_summary.json").read_text(encoding="utf-8"))
+    assert failure_summary["first_failure_stage"] == "product_surface"
+    assert "synthetic product surface failure" in failure_summary["first_failure_reason"]
     failed_manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     assert failed_manifest["failed_stage"] == "product_surface"
     assert "synthetic product surface failure" in failed_manifest["failure_reason"]
@@ -284,6 +308,12 @@ def test_canonical_live_bundle_resume_after_product_surface_failure(monkeypatch:
     assert product_calls["n"] == 2
     assert (out_dir / "product_summary.json").exists()
     assert (out_dir / "index.html").exists()
+    resumed_events = [
+        json.loads(line)
+        for line in (out_dir / "logs" / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert any(event["event_type"] == "resume_used" for event in resumed_events)
 
 
 def test_resume_reruns_from_first_stage_with_hash_mismatch(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

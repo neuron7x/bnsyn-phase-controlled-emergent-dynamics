@@ -29,8 +29,19 @@ def test_full_controller_run_and_determinism(tmp_path: Path) -> None:
     files = {p.name for p in out.iterdir()}
     assert REQUIRED.issubset(files)
     assert (out / "evidence_bundle").is_dir()
+    assert (out / "logs" / "events.jsonl").is_file()
+    assert (out / "run_health_summary.json").is_file()
     assert v1["status"] == "PASS"
     assert v1["audit_reliability_status"] == "reliable_audit"
+    events = [
+        json.loads(line)
+        for line in (out / "logs" / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert any(event["event_type"] == "audit_verdict_emitted" for event in events)
+    summary = json.loads((out / "run_health_summary.json").read_text(encoding="utf-8"))
+    assert summary["audit_verdict_status"] == "PASS"
+    assert summary["failed"] is False
 
     v2 = AOCController(c, out).run()
     assert v1 == v2

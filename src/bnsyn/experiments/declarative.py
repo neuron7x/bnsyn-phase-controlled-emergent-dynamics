@@ -33,6 +33,7 @@ from bnsyn.experiments.phase_space import (
     build_phase_trajectory_image,
 )
 from bnsyn.numerics import compute_steps_exact
+from bnsyn.observability.telemetry import TelemetryLogger, new_run_id
 from bnsyn.schemas.experiment import BNSynExperimentConfig
 from bnsyn.sim.network import run_simulation
 from bnsyn.proof.contracts import bundle_contract_for_export_proof, command_for_export_proof, manifest_self_hash
@@ -511,6 +512,7 @@ class PipelineContext:
     product_package_version: str
     resume_from_stage: str | None
     progress_stream: TextIO | None = None
+    telemetry: TelemetryLogger | None = None
     seed: int = field(init=False)
     steps: int = field(init=False)
     run_manifest_path: Path = field(init=False)
@@ -543,6 +545,13 @@ class PipelineContext:
 
     def __post_init__(self) -> None:
         self.seed = int(self.config.experiment.seeds[0])
+        if self.telemetry is None:
+            self.telemetry = TelemetryLogger.for_artifact_dir(
+                self.artifact_dir,
+                run_id=new_run_id("canonical"),
+                seed=self.seed,
+                default_stage="canonical_pipeline",
+            )
         self.steps = compute_steps_exact(self.config.simulation.duration_ms, self.config.simulation.dt_ms)
         self.run_manifest_path = self.artifact_dir / "run_manifest.json"
         self.product_summary_path = self.artifact_dir / "product_summary.json"
@@ -1068,6 +1077,53 @@ def stage_product_surface(
     context.index_html_path = product_paths["index_html"]
     return context
 
+
+def _write_summary_stage_outputs(context: PipelineContext) -> dict[str, Any]:
+    _write_json(context.artifact_dir / "summary_metrics.json", _require_report(context.summary_metrics, "summary_metrics"))
+    _write_json(context.artifact_dir / "criticality_report.json", _require_report(context.criticality_report, "criticality_report"))
+    _write_json(context.artifact_dir / "phase_space_report.json", _require_report(context.phase_space_report, "phase_space_report"))
+    np.save(context.artifact_dir / "population_rate_trace.npy", _require_array(context.population_rate_trace, "population_rate_trace"))
+    np.save(context.artifact_dir / "sigma_trace.npy", _require_array(context.sigma_trace, "sigma_trace"))
+    np.save(context.artifact_dir / "coherence_trace.npy", _require_array(context.coherence_trace, "coherence_trace"))
+    _write_grayscale_png(_require_array(context.phase_space_rate_sigma_image, "phase_space_rate_sigma_image"), context.artifact_dir / "phase_space_rate_sigma.png")
+    _write_grayscale_png(_require_array(context.phase_space_rate_coherence_image, "phase_space_rate_coherence_image"), context.artifact_dir / "phase_space_rate_coherence.png")
+    _write_grayscale_png(_require_array(context.phase_space_activity_map_image, "phase_space_activity_map_image"), context.artifact_dir / "phase_space_activity_map.png")
+    _write_grayscale_png(_require_array(context.raster_image, "raster_image"), context.artifact_dir / "raster_plot.png")
+    _write_grayscale_png(_require_array(context.population_rate_image, "population_rate_image"), context.artifact_dir / "population_rate_plot.png")
+    _write_grayscale_png(_require_array(context.emergence_image, "emergence_image"), context.artifact_dir / "emergence_plot.png")
+    return {
+        "summary_metrics_path": (context.artifact_dir / "summary_metrics.json").as_posix(),
+        "criticality_report_path": (context.artifact_dir / "criticality_report.json").as_posix(),
+        "phase_space_report_path": (context.artifact_dir / "phase_space_report.json").as_posix(),
+        "population_rate_trace_path": (context.artifact_dir / "population_rate_trace.npy").as_posix(),
+        "sigma_trace_path": (context.artifact_dir / "sigma_trace.npy").as_posix(),
+        "coherence_trace_path": (context.artifact_dir / "coherence_trace.npy").as_posix(),
+        "phase_space_rate_sigma_path": (context.artifact_dir / "phase_space_rate_sigma.png").as_posix(),
+        "phase_space_rate_coherence_path": (context.artifact_dir / "phase_space_rate_coherence.png").as_posix(),
+        "phase_space_activity_map_path": (context.artifact_dir / "phase_space_activity_map.png").as_posix(),
+        "raster_plot_path": (context.artifact_dir / "raster_plot.png").as_posix(),
+        "population_rate_plot_path": (context.artifact_dir / "population_rate_plot.png").as_posix(),
+        "emergence_plot_path": (context.artifact_dir / "emergence_plot.png").as_posix(),
+    }
+
+
+def _write_avalanche_stage_outputs(context: PipelineContext) -> dict[str, Any]:
+    _write_json(context.artifact_dir / "avalanche_report.json", _require_report(context.avalanche_report, "avalanche_report"))
+    _write_json(context.artifact_dir / "avalanche_fit_report.json", _require_report(context.avalanche_fit_report, "avalanche_fit_report"))
+    return {
+        "avalanche_report_path": (context.artifact_dir / "avalanche_report.json").as_posix(),
+        "avalanche_fit_report_path": (context.artifact_dir / "avalanche_fit_report.json").as_posix(),
+    }
+
+
+def _write_robustness_stage_outputs(context: PipelineContext) -> dict[str, Any]:
+    _write_json(context.artifact_dir / "robustness_report.json", _require_report(context.robustness_report, "robustness_report"))
+    _write_json(context.artifact_dir / "envelope_report.json", _require_report(context.envelope_report, "envelope_report"))
+    return {
+        "robustness_report_path": (context.artifact_dir / "robustness_report.json").as_posix(),
+        "envelope_report_path": (context.artifact_dir / "envelope_report.json").as_posix(),
+    }
+
 def run_canonical_live_bundle(
     config_path: str | Path,
     artifact_dir: str | Path = "artifacts/canonical_run",
@@ -1076,6 +1132,7 @@ def run_canonical_live_bundle(
     product_package_version: str = "unknown",
     resume_from_stage: str | None = None,
     progress_stream: TextIO | None = None,
+    telemetry: TelemetryLogger | None = None,
 ) -> dict[str, Any]:
     """Execute canonical profile with resumable stage-oriented coordination."""
     context = PipelineContext(
@@ -1086,6 +1143,7 @@ def run_canonical_live_bundle(
         product_package_version=product_package_version,
         resume_from_stage=resume_from_stage,
         progress_stream=progress_stream,
+        telemetry=telemetry,
     )
     context.artifact_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1108,6 +1166,7 @@ def run_canonical_live_bundle(
         write_outputs: Callable[[PipelineContext], dict[str, Any]] | None = None,
     ) -> None:
         started_at = _utc_now_iso()
+        stage_started = cast(TelemetryLogger, context.telemetry).time_stage(stage_name)
         skipped_before = set(_completed_stage_names(context.artifact_dir))
         _emit_stage_progress(context, completed=set(), skipped=skipped_before, running=stage_name)
         try:
@@ -1125,6 +1184,7 @@ def run_canonical_live_bundle(
                 outputs=outputs,
                 failure_reason=None,
             )
+            cast(TelemetryLogger, context.telemetry).finish_stage(stage_name, stage_started, status="completed")
         except Exception as exc:
             finished_at = _utc_now_iso()
             _emit_stage_progress(
@@ -1144,6 +1204,11 @@ def run_canonical_live_bundle(
                 outputs={},
                 failure_reason=f"{exc.__class__.__name__}: {exc}",
             )
+            cast(TelemetryLogger, context.telemetry).fail_stage(
+                stage_name,
+                stage_started,
+                failure_reason=f"{exc.__class__.__name__}: {exc}",
+            )
             _write_manifest_snapshot(failed_stage=stage_name, failure_reason=f"{exc.__class__.__name__}: {exc}")
             raise
 
@@ -1160,6 +1225,14 @@ def run_canonical_live_bundle(
             not context.product_summary_path.is_file() or not context.index_html_path.is_file()
         ):
             resume_stage = _earlier_stage(resume_stage, "product_surface")
+        if resume_stage is not None:
+            cast(TelemetryLogger, context.telemetry).emit(
+                "resume_used",
+                stage=resume_stage,
+                status="resumed",
+                requested_stage=resume_from_stage,
+                auto_resolved_stage=resume_stage,
+            )
         start_index = STAGE_ORDER.index(resume_stage) if resume_stage is not None else len(STAGE_ORDER)
         skipped = set(STAGE_ORDER[:start_index])
         _emit_stage_progress(context, completed=set(), skipped=skipped, running=resume_stage)
@@ -1180,34 +1253,7 @@ def run_canonical_live_bundle(
                 inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_summary_reports(context),
-                write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "summary_metrics.json", _require_report(ctx.summary_metrics, "summary_metrics")),
-                    _write_json(context.artifact_dir / "criticality_report.json", _require_report(ctx.criticality_report, "criticality_report")),
-                    _write_json(context.artifact_dir / "phase_space_report.json", _require_report(ctx.phase_space_report, "phase_space_report")),
-                    np.save(context.artifact_dir / "population_rate_trace.npy", _require_array(ctx.population_rate_trace, "population_rate_trace")),
-                    np.save(context.artifact_dir / "sigma_trace.npy", _require_array(ctx.sigma_trace, "sigma_trace")),
-                    np.save(context.artifact_dir / "coherence_trace.npy", _require_array(ctx.coherence_trace, "coherence_trace")),
-                    _write_grayscale_png(_require_array(ctx.phase_space_rate_sigma_image, "phase_space_rate_sigma_image"), context.artifact_dir / "phase_space_rate_sigma.png"),
-                    _write_grayscale_png(_require_array(ctx.phase_space_rate_coherence_image, "phase_space_rate_coherence_image"), context.artifact_dir / "phase_space_rate_coherence.png"),
-                    _write_grayscale_png(_require_array(ctx.phase_space_activity_map_image, "phase_space_activity_map_image"), context.artifact_dir / "phase_space_activity_map.png"),
-                    _write_grayscale_png(_require_array(ctx.raster_image, "raster_image"), context.artifact_dir / "raster_plot.png"),
-                    _write_grayscale_png(_require_array(ctx.population_rate_image, "population_rate_image"), context.artifact_dir / "population_rate_plot.png"),
-                    _write_grayscale_png(_require_array(ctx.emergence_image, "emergence_image"), context.artifact_dir / "emergence_plot.png"),
-                    {
-                        "summary_metrics_path": (context.artifact_dir / "summary_metrics.json").as_posix(),
-                        "criticality_report_path": (context.artifact_dir / "criticality_report.json").as_posix(),
-                        "phase_space_report_path": (context.artifact_dir / "phase_space_report.json").as_posix(),
-                        "population_rate_trace_path": (context.artifact_dir / "population_rate_trace.npy").as_posix(),
-                        "sigma_trace_path": (context.artifact_dir / "sigma_trace.npy").as_posix(),
-                        "coherence_trace_path": (context.artifact_dir / "coherence_trace.npy").as_posix(),
-                        "phase_space_rate_sigma_path": (context.artifact_dir / "phase_space_rate_sigma.png").as_posix(),
-                        "phase_space_rate_coherence_path": (context.artifact_dir / "phase_space_rate_coherence.png").as_posix(),
-                        "phase_space_activity_map_path": (context.artifact_dir / "phase_space_activity_map.png").as_posix(),
-                        "raster_plot_path": (context.artifact_dir / "raster_plot.png").as_posix(),
-                        "population_rate_plot_path": (context.artifact_dir / "population_rate_plot.png").as_posix(),
-                        "emergence_plot_path": (context.artifact_dir / "emergence_plot.png").as_posix(),
-                    },
-                )[-1],
+                write_outputs=lambda _ctx: _write_summary_stage_outputs(context),
             )
         else:
             context.summary_metrics = json.loads((context.artifact_dir / "summary_metrics.json").read_text(encoding="utf-8"))
@@ -1220,14 +1266,7 @@ def run_canonical_live_bundle(
                 inputs={"artifact_npz": cast(Path, context.artifact_npz_path).as_posix(), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_avalanche_and_fit(context),
-                write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "avalanche_report.json", _require_report(ctx.avalanche_report, "avalanche_report")),
-                    _write_json(context.artifact_dir / "avalanche_fit_report.json", _require_report(ctx.avalanche_fit_report, "avalanche_fit_report")),
-                    {
-                        "avalanche_report_path": (context.artifact_dir / "avalanche_report.json").as_posix(),
-                        "avalanche_fit_report_path": (context.artifact_dir / "avalanche_fit_report.json").as_posix(),
-                    },
-                )[-1],
+                write_outputs=lambda _ctx: _write_avalanche_stage_outputs(context),
             )
         else:
             context.avalanche_report = json.loads((context.artifact_dir / "avalanche_report.json").read_text(encoding="utf-8"))
@@ -1239,14 +1278,7 @@ def run_canonical_live_bundle(
                 inputs={"canonical_repro_seeds": list(CANONICAL_REPRO_SEEDS), "policy": _pipeline_policy(context)},
                 required_artifacts={"artifact_npz": cast(Path, context.artifact_npz_path)},
                 compute=lambda: stage_robustness_envelope(context),
-                write_outputs=lambda ctx: (
-                    _write_json(context.artifact_dir / "robustness_report.json", _require_report(ctx.robustness_report, "robustness_report")),
-                    _write_json(context.artifact_dir / "envelope_report.json", _require_report(ctx.envelope_report, "envelope_report")),
-                    {
-                        "robustness_report_path": (context.artifact_dir / "robustness_report.json").as_posix(),
-                        "envelope_report_path": (context.artifact_dir / "envelope_report.json").as_posix(),
-                    },
-                )[-1],
+                write_outputs=lambda _ctx: _write_robustness_stage_outputs(context),
             )
         else:
             context.robustness_report = json.loads((context.artifact_dir / "robustness_report.json").read_text(encoding="utf-8"))
